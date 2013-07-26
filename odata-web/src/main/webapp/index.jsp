@@ -31,7 +31,7 @@ th, td { border: 1px solid; padding: 20px; }
 </style>
 </head>
 <body>
-	<h1>SAP OData Library</h1>
+	<h1>Apache Olingo -  OData Library</h1>
 	<hr />
 	<h2>Reference Scenario</h2>
 	<table>
