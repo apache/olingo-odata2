@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  * The exception object is created with localized error texts provided error
  * texts are maintained in localized languages.
  * 
- * @author SAP AG
+ * @author
  * 
  */
 public class ODataJPARuntimeException extends ODataJPAException {

@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.servicedocument;
 import java.io.InputStream;
 
 /**
- * @author SAP AG
+ * @author
  */
 public interface ServiceDocumentParser {
   public ServiceDocument parseXml(InputStream in) throws ServiceDocumentParserException;

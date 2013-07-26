@@ -45,7 +45,7 @@ import org.apache.olingo.odata2.core.ep.producer.XmlMetadataProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EdmServiceMetadataImplProv implements EdmServiceMetadata {
 

@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
  * <p>If an expand clause for a navigation property which points to a feed is found this callback will be called.
  * <br>Pointing to an feed means the navigation property has a multiplicity of 0..* or 1..*.
  * 
- * @author SAP AG
+ * @author
  *
  */
 public interface OnWriteFeedContent extends ODataCallback {

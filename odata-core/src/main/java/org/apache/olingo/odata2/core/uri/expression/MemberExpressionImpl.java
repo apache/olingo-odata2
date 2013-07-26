@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor;
 import org.apache.olingo.odata2.api.uri.expression.MemberExpression;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class MemberExpressionImpl implements BinaryExpression, MemberExpression {
   CommonExpression path;

@@ -54,7 +54,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 
 /**
  * Provider for the entity data model used in the reference scenario
- * @author SAP AG
+ * @author
  */
 public class ScenarioEdmProvider extends EdmProvider {
 

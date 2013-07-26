@@ -63,7 +63,7 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ODataExceptionMapperImplTest extends BaseTest {
 

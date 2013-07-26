@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ODataResponseTest extends BaseTest {
 

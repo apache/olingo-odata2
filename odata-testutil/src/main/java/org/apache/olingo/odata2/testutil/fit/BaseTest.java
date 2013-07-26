@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * Provides basic support for JUnit tests<br>
  * - log & tracing
  * 
- * @author SAP AG
+ * @author
  */
 public abstract class BaseTest {
 

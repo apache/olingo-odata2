@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.core.commons.Decoder;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class BatchRequestParser {
   private static final String LF = "\n";

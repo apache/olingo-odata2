@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
  * The interface {@link Visitable} is part of the visitor pattern used to traverse 
  * the expression tree build from a $filter expression string or $orderby expression string.
  * It is implemented by each class used as node in an expression tree.
- * @author SAP AG
+ * @author
  * @see ExpressionVisitor
  *
  */

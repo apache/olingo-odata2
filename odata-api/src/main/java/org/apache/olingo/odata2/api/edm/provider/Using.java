@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class Using {
 

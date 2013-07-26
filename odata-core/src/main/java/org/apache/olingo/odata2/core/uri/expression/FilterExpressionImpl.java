@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor;
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class FilterExpressionImpl implements FilterExpression {
   private final String filterString;

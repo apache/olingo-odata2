@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.core.servicedocument;
 import org.apache.olingo.odata2.api.servicedocument.ExtensionAttribute;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ExtensionAttributeImpl implements ExtensionAttribute {
   private String namespace;

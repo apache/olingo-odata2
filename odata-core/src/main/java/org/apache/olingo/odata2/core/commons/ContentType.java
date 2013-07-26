@@ -70,7 +70,7 @@ import java.util.TreeMap;
  * 
  * Once created a {@link ContentType} is <b>IMMUTABLE</b>.
  * 
- * @author SAP AG
+ * @author
  */
 public class ContentType {
 

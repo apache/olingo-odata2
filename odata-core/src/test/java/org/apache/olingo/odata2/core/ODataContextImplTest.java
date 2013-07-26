@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ODataContextImplTest {
 

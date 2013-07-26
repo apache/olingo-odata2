@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.api.commons;
 
 /**
  * HTTP header constants
- * @author SAP AG
+ * @author
  *
  */
 public interface HttpHeaders {

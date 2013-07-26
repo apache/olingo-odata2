@@ -57,7 +57,7 @@ import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class JsonEntryEntityProducerTest extends BaseTest {
   protected static final String BASE_URI = "http://host:80/service/";

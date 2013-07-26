@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
  * Internal EntityProvider for simple and complex EDM properties which are pre-analyzed as {@link EntityPropertyInfo}.
- * @author SAP AG
+ * @author
  */
 public class XmlPropertyEntityProducer {
 

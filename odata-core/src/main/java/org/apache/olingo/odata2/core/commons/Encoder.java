@@ -25,7 +25,7 @@ import java.io.UnsupportedEncodingException;
  * percent-encoded UTF-8 representation according to
  * <a href="http://www.ietf.org/rfc/rfc3986.txt">RFC 3986</a>
  * (with consideration of its predecessor RFC 2396).
- * @author SAP AG
+ * @author
  */
 public class Encoder {
 

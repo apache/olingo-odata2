@@ -23,7 +23,7 @@ import com.google.gson.internal.StringMap;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class AbstractRefJsonTest extends AbstractRefTest {
   public StringMap<?> getStringMap(final String body) {

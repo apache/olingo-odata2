@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 /**
  * Producer for writing an entity in JSON, also usable for function imports
  * returning a single instance of an entity type.
- * @author SAP AG
+ * @author
  */
 public class JsonEntryEntityProducer {
 

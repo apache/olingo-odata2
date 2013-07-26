@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.ep.callback.OnReadInlineContent;
  * <li>and the <code>type mappings</code></li>
  * </ul>
  * 
- * @author SAP AG
+ * @author
  */
 public class EntityProviderReadProperties {
   /** Callback which is necessary if entity contains inlined navigation properties. */
@@ -83,7 +83,7 @@ public class EntityProviderReadProperties {
   }
 
   /**
-   * @author SAP AG
+   * @author
    */
   public static class EntityProviderReadPropertiesBuilder {
     private final EntityProviderReadProperties properties = new EntityProviderReadProperties();

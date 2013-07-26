@@ -47,7 +47,7 @@ import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EdmSimpleTypeTest extends BaseTest {
 

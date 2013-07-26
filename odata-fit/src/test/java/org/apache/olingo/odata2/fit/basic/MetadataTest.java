@@ -38,7 +38,7 @@ import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class MetadataTest extends AbstractBasicTest {
 

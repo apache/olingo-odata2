@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.edm.EdmAnnotationAttribute;
 
 /**
  * Objects of this class represent an annotation attribute
- * @author SAP AG
+ * @author
  */
 public class AnnotationAttribute implements EdmAnnotationAttribute {
 

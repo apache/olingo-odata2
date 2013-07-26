@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 
 /**
  * 
- * @author SAP AG
+ * @author
  */
 public abstract class ODataRequest {
 

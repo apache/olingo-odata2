@@ -23,7 +23,7 @@ package org.apache.olingo.odata2.api.edm;
  * EdmContentType is used for Feed Customization.
  * <p>It specifies the content type of the value of the property being mapped via a customizable feed mapping.
  * This value can be "text", "html" or "xhtml". 
- * @author SAP AG
+ * @author
  */
 public enum EdmContentKind {
 

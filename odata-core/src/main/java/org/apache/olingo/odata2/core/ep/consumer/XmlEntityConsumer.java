@@ -40,7 +40,7 @@ import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 /**
  * Xml entity (content type dependent) consumer for reading input (from <code>content</code>).
  * 
- * @author SAP AG
+ * @author
  */
 public class XmlEntityConsumer {
 

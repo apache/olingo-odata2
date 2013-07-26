@@ -27,7 +27,7 @@ package org.apache.olingo.odata2.api.uri.expression;
  * A binary expression node is inserted in the expression tree for any valid
  * ODATA binary operator in {@link BinaryOperator} (e.g. for "and", "div", "eg", ... )
  * <br>
- * @author SAP AG
+ * @author
  */
 public interface BinaryExpression extends CommonExpression {
   /**

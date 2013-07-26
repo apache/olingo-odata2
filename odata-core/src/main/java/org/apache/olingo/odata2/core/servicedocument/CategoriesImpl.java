@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.servicedocument.Category;
 import org.apache.olingo.odata2.api.servicedocument.Fixed;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class CategoriesImpl implements Categories {
   private String href;

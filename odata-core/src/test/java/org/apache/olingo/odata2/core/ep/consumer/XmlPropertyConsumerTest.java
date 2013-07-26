@@ -45,7 +45,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class XmlPropertyConsumerTest extends AbstractConsumerTest {
 

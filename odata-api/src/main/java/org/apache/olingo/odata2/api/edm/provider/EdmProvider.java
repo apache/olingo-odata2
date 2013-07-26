@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 
 /**
  * Default EDM Provider which is to be extended by the application
- * @author SAP AG
+ * @author
  *
  */
 public abstract class EdmProvider {

@@ -30,7 +30,7 @@ import java.util.List;
  * internationalization and translation of exception messages.
  * <br>Theses classes  contain a {@link MessageReference} object which
  * can be mapped to a related key and message text in the resource bundles.
- * @author SAP AG
+ * @author
  */
 public abstract class MessageReference {
 

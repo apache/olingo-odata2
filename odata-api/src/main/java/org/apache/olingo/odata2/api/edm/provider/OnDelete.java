@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.edm.EdmAction;
 
 /**
  * Objects of this class represent an OnDelete Action
- * @author SAP AG
+ * @author
  */
 public class OnDelete {
 

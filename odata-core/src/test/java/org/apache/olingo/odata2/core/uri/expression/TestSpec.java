@@ -48,7 +48,7 @@ import org.apache.olingo.odata2.core.edm.Uint7;
 import org.apache.olingo.odata2.core.edm.provider.EdmComplexPropertyImplProv;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class TestSpec extends TestBase
 {

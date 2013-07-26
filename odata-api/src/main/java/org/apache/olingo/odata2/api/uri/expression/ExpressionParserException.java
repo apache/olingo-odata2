@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 
 /**
  * Exception thrown while parsing a filter or orderby expression
- * @author SAP AG
+ * @author
  */
 public class ExpressionParserException extends ODataBadRequestException {
   private static final long serialVersionUID = 7702L;

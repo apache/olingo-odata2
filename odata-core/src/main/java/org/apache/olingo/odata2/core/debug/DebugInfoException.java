@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 import org.apache.olingo.odata2.core.exception.MessageService;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class DebugInfoException implements DebugInfo {
 

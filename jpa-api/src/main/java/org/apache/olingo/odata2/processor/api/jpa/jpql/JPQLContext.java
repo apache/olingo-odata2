@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  * built can be used for constructing JPQL statements. <br>
  * A default implementation is provided by the library.
  * 
- * @author SAP AG
+ * @author
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLStatement
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.JPQLBuilderFactory
@@ -131,7 +131,7 @@ public abstract class JPQLContext implements JPQLContextView {
    * The abstract class is extended by specific JPQLContext builder for
    * building JPQLContexts.
    * 
-   * @author SAP AG
+   * @author
    * 
    */
   public static abstract class JPQLContextBuilder {

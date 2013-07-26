@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
  * Provider for writing a single link.
- * @author SAP AG
+ * @author
  */
 public class XmlLinkEntityProducer {
 

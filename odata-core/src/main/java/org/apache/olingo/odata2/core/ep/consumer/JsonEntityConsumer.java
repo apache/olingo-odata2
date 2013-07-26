@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class JsonEntityConsumer {
 

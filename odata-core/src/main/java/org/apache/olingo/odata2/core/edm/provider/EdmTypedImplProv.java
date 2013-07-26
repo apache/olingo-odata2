@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EdmTypedImplProv extends EdmNamedImplProv implements EdmTyped {
 

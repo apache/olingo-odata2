@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.uri.expression.ExpressionParserException;
 import org.apache.olingo.odata2.testutil.helper.ODataMessageTextVerifier;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class TestExceptionTexts extends TestBase {
   @Test

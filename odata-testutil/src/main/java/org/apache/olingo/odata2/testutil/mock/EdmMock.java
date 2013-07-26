@@ -53,7 +53,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 
 /**
  * Mocked Entity Data Model, more or less aligned to the Reference Scenario.
- * @author SAP AG
+ * @author
  */
 class EdmMock {
 

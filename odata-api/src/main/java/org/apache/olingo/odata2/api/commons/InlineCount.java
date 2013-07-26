@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.api.commons;
 
 /**
  * Inlinecount constants as described in the OData protocol
- * @author SAP AG
+ * @author
  */
 public enum InlineCount {
   ALLPAGES, NONE;

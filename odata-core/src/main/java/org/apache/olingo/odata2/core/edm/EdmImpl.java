@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.exception.ODataException;
 
 /**
- * @author SAP AG
+ * @author
  */
 public abstract class EdmImpl implements Edm {
 

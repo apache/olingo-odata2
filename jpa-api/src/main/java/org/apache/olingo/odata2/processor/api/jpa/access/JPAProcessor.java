@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeExcep
  * You need to pass the OData request and the API created a JPA response. The JPA response is a JPA entity. 
  * You can now work with the JPA entities directly once it is retrieved from the persistence.
  * 
- * @author SAP AG
+ * @author
  */
 public interface JPAProcessor {
   /**

@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.core.ep.aggregator.EntityTypeMapping;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class XmlPropertyConsumer {
 

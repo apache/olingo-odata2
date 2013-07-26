@@ -25,7 +25,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class Employee {
   private int employeeId;

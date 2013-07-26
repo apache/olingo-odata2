@@ -22,7 +22,7 @@ import java.net.URI;
 
 /**
  * Context given if the target of an expand is a feed. It contains the source entity set, the navigation property pointing to the entry which has to be expanded, the current expand select tree node and the data of the source entry.
- * @author SAP AG
+ * @author
  *
  */
 public class WriteFeedCallbackContext extends WriteCallbackContext {

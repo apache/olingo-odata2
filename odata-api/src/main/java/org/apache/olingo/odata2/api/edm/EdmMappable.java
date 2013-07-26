@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmMappable can be applied to CSDL elements to associate additional information.
- * @author SAP AG
+ * @author
  */
 public interface EdmMappable {
 

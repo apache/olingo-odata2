@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.api.edm.provider;
 
 /**
  * This interface can be used to access the {@link EdmProvider} within an application. 
- * @author SAP AG
+ * @author
  *
  */
 public interface EdmProviderAccessor {

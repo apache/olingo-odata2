@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.processor.api.jpa.model;
 /**
  * The interface provides methods to extend JPA EDM containers.
  * 
- * @author SAP AG
+ * @author
  * 
  */
 public interface JPAEdmExtension {

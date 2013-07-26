@@ -42,7 +42,7 @@ import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.fit.basic.AbstractBasicTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class TestIssue105 extends AbstractBasicTest {
 

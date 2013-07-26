@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
  *  <li>Expression node with EDM-types which are "null" are not considered during the parameter type validation, to the return type of the parent expression node will
  *  also become "null"</li>
  *  
- * @author SAP AG
+ * @author
  */
 public interface OrderByParser {
   /**

@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.api.edm;
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmElement is the base interface for {@link EdmParameter} and {@link EdmProperty} and provides
  * the information by which facets further specialize the usage of the type.
- * @author SAP AG
+ * @author
  */
 public interface EdmElement extends EdmMappable, EdmTyped {
 

@@ -58,7 +58,7 @@ import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.server.TestServer;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ServiceResolutionTest extends BaseTest {
 

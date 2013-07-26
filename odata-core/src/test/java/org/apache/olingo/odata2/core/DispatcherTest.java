@@ -66,7 +66,7 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
  * Tests for request dispatching according to URI type and HTTP method.
- * @author SAP AG
+ * @author
  */
 public class DispatcherTest extends BaseTest {
 

@@ -24,7 +24,7 @@ import java.util.List;
  * The interface provides view on JPA Method Context. JPA Method context can be
  * used to access custom operations or JPA Entity property access methods.
  * 
- * @author SAP AG
+ * @author
  * 
  */
 public interface JPAMethodContextView {

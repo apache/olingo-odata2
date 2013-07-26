@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.edm.provider.Key;
  * given JPA EDM entity type. The view acts as a container for consistent EDM
  * key property of an EDM entity type.
  * 
- * @author SAP AG
+ * @author
  *         <p>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmPropertyView

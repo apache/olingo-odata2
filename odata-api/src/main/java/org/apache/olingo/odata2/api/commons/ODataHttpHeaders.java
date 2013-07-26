@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.api.commons;
 
 /**
  * HTTP header constants as used in the OData protocol
- * @author SAP AG
+ * @author
  */
 public class ODataHttpHeaders {
 

@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.uri.expression.PropertyExpression;
  * input parameters for inserting into the exception text.<br>
  * The exception {@link ExpressionParserException} does not know the org.apache.olingo.odata2.core content
  * 
- * @author SAP AG
+ * @author
  */
 public class FilterParserExceptionImpl extends ExpressionParserException {
   private static final long serialVersionUID = 77L;

@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this class represent a reference to a property via its name
- * @author SAP AG
+ * @author
  *
  */
 public class PropertyRef {

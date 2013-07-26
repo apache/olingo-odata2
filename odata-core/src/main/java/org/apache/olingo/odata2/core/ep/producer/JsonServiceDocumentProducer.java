@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
  * Writes the  OData service document in JSON.
- * @author SAP AG
+ * @author
  */
 public class JsonServiceDocumentProducer {
 

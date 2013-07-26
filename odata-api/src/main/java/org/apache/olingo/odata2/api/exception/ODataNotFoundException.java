@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
  * Exceptions of this class will result in a HTTP status 404 not found
- * @author SAP AG
+ * @author
  */
 public class ODataNotFoundException extends ODataHttpException {
 

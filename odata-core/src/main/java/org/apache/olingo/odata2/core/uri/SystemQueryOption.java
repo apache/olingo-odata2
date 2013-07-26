@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.core.uri;
 
 /**
- * @author SAP AG
+ * @author
  */
 public enum SystemQueryOption {
   $format, $filter, $inlinecount, $orderby, $skiptoken, $skip, $top, $expand, $select;

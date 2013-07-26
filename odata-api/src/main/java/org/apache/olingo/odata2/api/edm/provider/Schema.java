@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this class represent a schema
- * @author SAP AG
+ * @author
  */
 public class Schema {
 

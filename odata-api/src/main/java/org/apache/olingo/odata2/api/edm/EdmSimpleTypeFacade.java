@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * This facade is used as a hook into the core implementation.
- * @author SAP AG
+ * @author
  */
 public interface EdmSimpleTypeFacade {
 

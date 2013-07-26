@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this class represent an association set end
- * @author SAP AG
+ * @author
  */
 public class AssociationSetEnd {
 

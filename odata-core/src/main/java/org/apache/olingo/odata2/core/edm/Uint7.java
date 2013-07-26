@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the internal simple type "unsigned 7-bit integer".
- * @author SAP AG
+ * @author
  */
 public class Uint7 extends AbstractSimpleType {
 

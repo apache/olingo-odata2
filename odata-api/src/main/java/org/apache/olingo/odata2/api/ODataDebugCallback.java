@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.api;
 
 /**
- * @author SAP AG
+ * @author
  *
  */
 public interface ODataDebugCallback extends ODataCallback {

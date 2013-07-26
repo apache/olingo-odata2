@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.api.exception;
 
 /**
  * Base exception for all <code>OData</code>-related exceptions.
- * @author SAP AG
+ * @author
  */
 public class ODataException extends Exception {
 

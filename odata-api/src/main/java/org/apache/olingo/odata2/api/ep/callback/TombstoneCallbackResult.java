@@ -23,7 +23,7 @@ import java.util.Map;
 
 /**
  * Objects of this class are a container for the result of the {@link TombstoneCallback}.
- * @author SAP AG
+ * @author
  *
  */
 public class TombstoneCallbackResult {

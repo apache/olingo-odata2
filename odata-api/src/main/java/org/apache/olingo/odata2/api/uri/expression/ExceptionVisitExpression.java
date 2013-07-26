@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.exception.ODataMessageException;
 
 /**
  * Exception thrown while traversing/visiting a filter expression tree
- * @author SAP AG
+ * @author
  */
 public class ExceptionVisitExpression extends ODataMessageException {
   private static final long serialVersionUID = 7701L;

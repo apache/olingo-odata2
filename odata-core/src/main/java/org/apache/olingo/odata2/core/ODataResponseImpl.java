@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ODataResponseImpl extends ODataResponse {
 

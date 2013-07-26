@@ -28,7 +28,7 @@ import org.junit.Test;
 
 /**
  * Read-only tests employing the reference scenario that use neither XML nor JSON
- * @author SAP AG
+ * @author
  */
 public class MiscReadOnlyTest extends AbstractRefTest {
 

@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EdmServiceMetadataImplProvTest extends BaseTest {
 

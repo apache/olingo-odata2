@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.core.edm.provider.EdmImplProv;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ProviderFacadeImpl implements EntityProviderInterface {
 

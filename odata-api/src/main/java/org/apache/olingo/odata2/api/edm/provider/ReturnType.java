@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 
 /**
  * Objects of this Class represent a return type of a function import
- * @author SAP AG
+ * @author
  */
 public class ReturnType {
 

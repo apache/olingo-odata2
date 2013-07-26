@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class JsonFeedConsumerTest extends AbstractConsumerTest {
 

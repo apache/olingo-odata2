@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.ref.model;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class City {
 

@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 
 /**
  * Compilation of generic context objects.
- * @author SAP AG
+ * @author
  * @org.apache.olingo.odata2.DoNotImplement
  */
 public interface ODataContext {

@@ -44,7 +44,7 @@ import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class BatchRequestParserTest {
 

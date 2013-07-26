@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.core.exception.MessageService.Message;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class MessageServiceTest extends BaseTest {
 

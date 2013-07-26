@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
  * 
  * Details about parsing of time strings to {@link EdmDateTimeOffset} objects can be found in {@link org.apache.olingo.odata2.api.edm.EdmSimpleType} documentation.
  * 
- * @author SAP AG
+ * @author
  */
 public class EdmDateTimeOffset extends AbstractSimpleType {
 

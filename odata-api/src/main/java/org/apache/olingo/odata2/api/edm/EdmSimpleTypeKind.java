@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmSimpleTypeKind holds all EdmSimpleTypes defined as primitive type in the Entity Data Model (EDM).
- * @author SAP AG
+ * @author
  */
 public enum EdmSimpleTypeKind {
 

@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
  * and, optionally, a list of key predicates to determine a single entity out of
  * the target entity set.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author SAP AG
+ * @author
  */
 public interface NavigationSegment {
 

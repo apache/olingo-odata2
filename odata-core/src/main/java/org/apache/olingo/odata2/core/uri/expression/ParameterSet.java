@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.edm.EdmTypeKind;
  * @see InfoMethod 
  * @see InfoBinaryOperator 
  * @see InfoUnaryOperator
- * @author SAP AG 
+ * @author 
  */
 @SuppressWarnings("javadoc")
 public class ParameterSet {

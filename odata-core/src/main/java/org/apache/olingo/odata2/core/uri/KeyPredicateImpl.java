@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class KeyPredicateImpl implements KeyPredicate {
 

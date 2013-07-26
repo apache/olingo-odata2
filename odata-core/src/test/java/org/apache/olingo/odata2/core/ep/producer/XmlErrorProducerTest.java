@@ -49,7 +49,7 @@ import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class XmlErrorProducerTest extends AbstractXmlProducerTestHelper {
 

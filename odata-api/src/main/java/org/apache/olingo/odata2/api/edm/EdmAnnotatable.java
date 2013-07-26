@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmAnnotatable can be applied to CSDL elements as described in the Conceptual Schema Definition Language.
- * @author SAP AG
+ * @author
  */
 public interface EdmAnnotatable {
 

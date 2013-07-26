@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.processor.api.jpa.access.JPAJoinClause;
  * clauses to the Select statement. The JPQL Join context view is built from
  * OData read entity set with navigation request.
  * 
- * @author SAP AG
+ * @author
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLSelectContextView
  * 
  */

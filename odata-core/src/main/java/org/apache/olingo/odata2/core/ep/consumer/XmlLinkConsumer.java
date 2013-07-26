@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class XmlLinkConsumer {
 

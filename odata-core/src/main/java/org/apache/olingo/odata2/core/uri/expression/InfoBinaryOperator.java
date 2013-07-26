@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.uri.expression.BinaryOperator;
 
 /**
  * Describes a binary operator which is allowed in OData expressions
- * @author SAP AG
+ * @author
  */
 class InfoBinaryOperator {
   private BinaryOperator operator;

@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EdmAssociationEndImplProvTest extends BaseTest {
   private static EdmAssociationEndImplProv associationEndProv;

@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
  * Exceptions of this class will result in a HTTP status 501 (Not implemented).
- * @author SAP AG
+ * @author
  */
 public class ODataNotImplementedException extends ODataHttpException {
 

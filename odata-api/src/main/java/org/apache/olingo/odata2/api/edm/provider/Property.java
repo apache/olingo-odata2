@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.edm.EdmFacets;
 
 /**
  * Objects of this class represent a property of an entity type
- * @author SAP AG
+ * @author
  */
 public abstract class Property {
 

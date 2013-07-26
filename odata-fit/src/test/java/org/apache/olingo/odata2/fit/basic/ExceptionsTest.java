@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ExceptionsTest extends AbstractBasicTest {
   @Override

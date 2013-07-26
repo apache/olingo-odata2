@@ -32,7 +32,7 @@ package org.apache.olingo.odata2.api.uri.expression;
  * with a literal expression node for "12".
  * <br>
  * <br>
- * @author SAP AG
+ * @author
  */
 public interface LiteralExpression extends CommonExpression {
 

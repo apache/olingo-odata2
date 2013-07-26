@@ -46,7 +46,7 @@ import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EdmEntityTypeImplProvTest extends BaseTest {
 

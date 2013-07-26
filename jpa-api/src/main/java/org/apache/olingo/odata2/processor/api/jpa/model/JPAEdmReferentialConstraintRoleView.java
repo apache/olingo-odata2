@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.api.edm.provider.ReferentialConstraintRole;
  * can be created from JPA Entity relationships.
  * </p>
  * 
- * @author SAP AG
+ * @author
  *         <p>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintView

@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.core.ep.feed.ODataFeedImpl;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class JsonFeedConsumer {
 

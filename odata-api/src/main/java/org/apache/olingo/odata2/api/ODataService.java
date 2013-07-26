@@ -40,7 +40,7 @@ import org.apache.olingo.odata2.api.processor.part.ServiceDocumentProcessor;
 /**
  * Root interface for a custom OData service.
  * 
- * @author SAP AG
+ * @author
  *
  */
 public interface ODataService {

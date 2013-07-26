@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
  * ODataResponse response = ODataResponse.entity("hello world").setStatus(HttpStatusCodes.OK).build();
  * }
  * </pre>
- * @author SAP AG
+ * @author
  */
 public abstract class ODataResponse {
 
@@ -144,7 +144,7 @@ public abstract class ODataResponse {
 
   /**
    * Implementation of the builder pattern to create instances of this type of object. 
-   * @author SAP AG
+   * @author
    */
   public static abstract class ODataResponseBuilder {
 

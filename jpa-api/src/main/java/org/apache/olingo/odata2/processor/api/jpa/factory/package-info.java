@@ -27,7 +27,7 @@
  * 
  * The instances of these factories can be obtained from an abstract ODataJPAFactory.
  * 
- * @author SAP AG
+ * @author
  */
 package org.apache.olingo.odata2.processor.api.jpa.factory;
 

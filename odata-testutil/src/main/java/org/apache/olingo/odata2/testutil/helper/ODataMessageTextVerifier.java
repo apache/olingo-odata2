@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.api.exception.MessageReference;
  * test whether all fields of type {@link MessageReference} of
  * the tested (Exception) class are provided in the <b>i18n.properties</b> file.
  * 
- * @author SAP AG
+ * @author
  */
 public class ODataMessageTextVerifier {
 

@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.testutil.server;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ServerRuntimeException extends RuntimeException {
 

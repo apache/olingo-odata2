@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.edm.provider.EntityType;
  * entity types. An EDM entity type is said to be consistent only if it has at
  * least one consistent EDM property and at least one consistent EDM key.
  * 
- * @author SAP AG
+ * @author
  *         <p>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmPropertyView

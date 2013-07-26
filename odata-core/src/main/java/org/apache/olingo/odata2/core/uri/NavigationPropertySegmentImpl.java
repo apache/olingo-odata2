@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class NavigationPropertySegmentImpl implements NavigationPropertySegment {
 

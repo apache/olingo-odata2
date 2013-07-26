@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension;
  * <li>An instance of Java Persistence Entity Manager Factory</li>
  * </ol>
  * 
- * @author SAP AG <br>
+ * @author <br>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAAccessFactory

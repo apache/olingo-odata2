@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class FitErrorCallback implements ODataErrorCallback {
 

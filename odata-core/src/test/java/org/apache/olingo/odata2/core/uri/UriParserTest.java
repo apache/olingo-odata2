@@ -55,7 +55,7 @@ import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
  * Tests for OData URI parsing.
- * @author SAP AG
+ * @author
  */
 public class UriParserTest extends BaseTest {
 

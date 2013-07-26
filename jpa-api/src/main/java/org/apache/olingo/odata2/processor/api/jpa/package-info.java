@@ -27,7 +27,7 @@
  * <li>define a JAX-RS servlet in web.xml and configure the service factory as servlet init parameter. 
  * <p><b>See Also:</b>{@link org.apache.olingo.odata2.processor.api.jpa.ODataJPAServiceFactory}</li></ol>
  * 
- * @author SAP AG
+ * @author
  */
 package org.apache.olingo.odata2.processor.api.jpa;
 

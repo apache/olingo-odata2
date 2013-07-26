@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.api.uri.expression;
 
 /**
  * Enumeration describing all possible sort orders used in an $orderby expression 
- * @author SAP AG
+ * @author
  */
 public enum SortOrder {
 

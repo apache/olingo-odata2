@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 
 /**
  * Tests employing the reference scenario changing properties in XML format
- * @author SAP AG
+ * @author
  */
 public class PropertyXmlChangeTest extends AbstractRefXmlTest {
 

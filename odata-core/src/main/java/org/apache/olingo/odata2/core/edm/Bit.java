@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the internal simple type Bit.
- * @author SAP AG
+ * @author
  */
 public class Bit extends AbstractSimpleType {
 

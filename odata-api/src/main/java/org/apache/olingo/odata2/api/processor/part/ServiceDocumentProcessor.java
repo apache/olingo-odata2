@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
 /**
  * Execute a OData service document request. 
  * 
- * @author SAP AG
+ * @author
  */
 public interface ServiceDocumentProcessor extends ODataProcessor {
 

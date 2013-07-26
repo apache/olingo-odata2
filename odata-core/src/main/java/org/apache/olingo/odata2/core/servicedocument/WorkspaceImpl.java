@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.servicedocument.Title;
 import org.apache.olingo.odata2.api.servicedocument.Workspace;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class WorkspaceImpl implements Workspace {
   private Title title;

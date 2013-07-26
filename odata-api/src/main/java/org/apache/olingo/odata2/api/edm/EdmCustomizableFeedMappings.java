@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * Customizable Feed property mappings for the AtomPub Format as defined in the OData specification.
- * @author SAP AG
+ * @author
  */
 public interface EdmCustomizableFeedMappings {
 

@@ -27,7 +27,7 @@ package org.apache.olingo.odata2.api.edm;
  * is stored here separately, the default representation is more appropriate.
  * Should the URI representation be needed, it can be re-created by calling
  * {@link EdmSimpleType#toUriLiteral}.</p>
- * @author SAP AG
+ * @author
  * @see EdmLiteralKind
  */
 public final class EdmLiteral {

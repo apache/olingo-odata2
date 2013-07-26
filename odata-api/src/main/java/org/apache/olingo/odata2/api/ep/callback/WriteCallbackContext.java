@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 /**
  * Wrapper for {@link WriteEntryCallbackContext} and {@link WriteFeedCallbackContext}.
  * @org.apache.olingo.odata2.DoNotImplement 
- * @author SAP AG
+ * @author
  */
 public abstract class WriteCallbackContext {
   private EdmEntitySet sourceEntitySet;

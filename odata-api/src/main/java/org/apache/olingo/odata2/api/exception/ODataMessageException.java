@@ -27,7 +27,7 @@ package org.apache.olingo.odata2.api.exception;
  * <br>To support internationalization and translation of messages, this class
  * and its sub classes contain a {@link MessageReference} object which can be
  * mapped to a related key and message text in the resource bundles.
- * @author SAP AG
+ * @author
  */
 public abstract class ODataMessageException extends ODataException {
 

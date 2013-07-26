@@ -62,7 +62,7 @@ import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class XmlEntityConsumerTest extends AbstractConsumerTest {
 

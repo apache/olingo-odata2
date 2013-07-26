@@ -32,7 +32,7 @@ package org.apache.olingo.odata2.api.uri.expression;
  * containing a member expression node for accessing property "city" which is part of the 
  * complex property "address". Method {@link #getPath()} will return a reference to the "address" property,
  * method {@link #getProperty()} will return a refence to the "city" property.
- * @author SAP AG
+ * @author
  */
 public interface MemberExpression extends CommonExpression {
   /**

@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
  * Error context information bean. Usually created and in error situations.
  * @see org.apache.olingo.odata2.api.ep.EntityProvider EntityProvider
  * @see ODataErrorCallback
- * @author SAP AG
+ * @author
  */
 public class ODataErrorContext {
 

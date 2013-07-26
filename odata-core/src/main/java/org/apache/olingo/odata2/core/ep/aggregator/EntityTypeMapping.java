@@ -28,7 +28,7 @@ import java.util.Set;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EntityTypeMapping {
   private static final EntityTypeMapping ENTITY_TYPE_MAPPING = new EntityTypeMapping();

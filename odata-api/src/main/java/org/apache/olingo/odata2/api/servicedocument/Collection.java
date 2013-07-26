@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A Collection
  * <p>Collection element describes a Collection
- * @author SAP AG
+ * @author
  */
 public interface Collection {
   /**

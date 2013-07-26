@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.api.edm;
  * @org.apache.olingo.odata2.DoNotImplement
  * A CSDL FunctionImportParameter element
  * <p>EdmParameter defines a function import parameter (which is used as input parameter). FunctionImports are described in {@link org.apache.olingo.odata2.api.edm.provider.FunctionImport} or in the OData protocol.
- * @author SAP AG
+ * @author
  */
 public interface EdmParameter extends EdmElement {
 

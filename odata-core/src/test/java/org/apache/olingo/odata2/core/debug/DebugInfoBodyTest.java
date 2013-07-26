@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class DebugInfoBodyTest {
 

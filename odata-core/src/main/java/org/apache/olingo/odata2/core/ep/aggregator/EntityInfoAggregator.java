@@ -48,7 +48,7 @@ import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 /**
  * Aggregator to get easy and fast access to all for serialization and de-serialization necessary {@link EdmEntitySet} informations.
  * 
- * @author SAP AG
+ * @author
  */
 public class EntityInfoAggregator {
 

@@ -40,7 +40,7 @@ import org.apache.olingo.odata2.api.edm.provider.Association;
  * </ol>
  * </p>
  * 
- * @author SAP AG
+ * @author
  *         <p>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationSetView

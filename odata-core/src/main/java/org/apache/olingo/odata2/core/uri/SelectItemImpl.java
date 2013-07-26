@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
 import org.apache.olingo.odata2.api.uri.SelectItem;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class SelectItemImpl implements SelectItem {
 

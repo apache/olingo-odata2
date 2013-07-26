@@ -45,7 +45,7 @@ import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.apache.olingo.odata2.api.servicedocument.Workspace;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class AtomServiceDocumentConsumerTest {
   private static final String NAMESPACE_SAP = "http://www.sap.com/Data";

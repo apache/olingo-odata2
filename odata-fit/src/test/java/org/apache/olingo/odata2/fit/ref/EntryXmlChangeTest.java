@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
  * Tests employing the reference scenario changing entities in XML format.
- * @author SAP AG
+ * @author
  */
 public class EntryXmlChangeTest extends AbstractRefXmlTest {
 

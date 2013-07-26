@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 /**
 * A BatchResponsePart
 * <p> BatchResponsePart represents a distinct part of a Batch Response body. It can be a ChangeSet response or a response to a retrieve request
-* @author SAP AG
+* @author
 */
 public abstract class BatchResponsePart {
 
@@ -68,7 +68,7 @@ public abstract class BatchResponsePart {
 
   /**
    * Implementation of the builder pattern to create instances of this type of object. 
-   * @author SAP AG
+   * @author
    */
   public static abstract class BatchResponsePartBuilder {
     public abstract BatchResponsePart build();

@@ -38,7 +38,7 @@ import org.apache.olingo.odata2.core.servicedocument.ServiceDocumentImpl;
 
 /**
  * Reads the OData service document (JSON).
- * @author SAP AG
+ * @author
  */
 public class JsonServiceDocumentConsumer {
   private static final String DEFAULT_CHARSET = "UTF-8";

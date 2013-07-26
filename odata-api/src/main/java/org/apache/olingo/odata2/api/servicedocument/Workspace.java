@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A Workspace element
  * <p>Workspaces are server-defined groups of Collections. 
- * @author SAP AG
+ * @author
  */
 public interface Workspace {
   /**

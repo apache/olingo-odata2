@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 
 /**
  * Result of a callback. It contains the data of the feed which is to be expanded as well as the BaseUri of the feed. Further callbacks for this feed can also be set.
- * @author SAP AG
+ * @author
  *
  */
 public class WriteFeedCallbackResult {

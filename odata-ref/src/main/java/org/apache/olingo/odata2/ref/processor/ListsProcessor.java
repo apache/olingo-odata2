@@ -120,7 +120,7 @@ import org.apache.olingo.odata2.ref.processor.ListsDataSource.BinaryData;
  * Implementation of the centralized parts of OData processing,
  * allowing to use the simplified {@link ListsDataSource} for the
  * actual data handling.
- * @author SAP AG
+ * @author
  */
 public class ListsProcessor extends ODataSingleProcessor {
 

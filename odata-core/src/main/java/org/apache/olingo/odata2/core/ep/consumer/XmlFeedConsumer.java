@@ -43,7 +43,7 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
  * {@link XmlFeedConsumer} instance use {@link XmlEntryConsumer#readEntry(XMLStreamReader, EntityInfoAggregator, EntityProviderReadProperties)} 
  * for read/consume of several entries.
  * 
- * @author SAP AG
+ * @author
  */
 public class XmlFeedConsumer {
 

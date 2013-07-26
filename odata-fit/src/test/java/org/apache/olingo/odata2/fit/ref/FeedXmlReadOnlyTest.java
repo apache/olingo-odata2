@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
  * Tests employing the reference scenario reading entity sets in XML format.
- * @author SAP AG
+ * @author
  */
 public class FeedXmlReadOnlyTest extends AbstractRefXmlTest {
 

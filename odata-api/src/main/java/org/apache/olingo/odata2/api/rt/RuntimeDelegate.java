@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.api.uri.UriParser;
  * by internal abstract API implementations and it is not intended to be used by others. 
  * 
  * @org.apache.olingo.odata2.DoNotImplement
- * @author SAP AG
+ * @author
  */
 public abstract class RuntimeDelegate {
 

@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.exception.MessageReference;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * Exception for violation of the OData URI construction rules, resulting in a 400 Bad Request response
- * @author SAP AG
+ * @author
  */
 public class EdmLiteralException extends EdmException {
 

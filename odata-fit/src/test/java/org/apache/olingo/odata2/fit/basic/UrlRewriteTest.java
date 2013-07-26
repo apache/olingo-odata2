@@ -51,7 +51,7 @@ import org.apache.olingo.odata2.testutil.helper.HttpSomethingUnsupported;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class UrlRewriteTest extends AbstractBasicTest {
 

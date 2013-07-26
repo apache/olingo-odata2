@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEdmMappingMod
 /**
  * Interface provides methods to access JPA EDM mapping model.
  * 
- * @author SAP AG
+ * @author
  * @see JPAEdmMappingModel
  * 
  */

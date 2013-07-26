@@ -45,7 +45,7 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class UriInfoTest extends BaseTest {
 

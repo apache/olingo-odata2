@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
  * Producer for writing a link in JSON.
- * @author SAP AG
+ * @author
  */
 public class JsonLinkEntityProducer {
 

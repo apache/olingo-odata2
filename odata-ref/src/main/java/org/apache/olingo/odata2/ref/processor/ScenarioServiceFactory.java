@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.ref.model.DataContainer;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ScenarioServiceFactory extends ODataServiceFactory {
 

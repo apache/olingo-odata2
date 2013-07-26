@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  * Extend this class and implement an OData JPA processor if the default
  * behavior of OData JPA Processor library has to be overwritten.
  * 
- * @author SAP AG
+ * @author
  * 
  * 
  */

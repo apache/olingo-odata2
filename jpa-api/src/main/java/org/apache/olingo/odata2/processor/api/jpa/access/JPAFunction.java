@@ -28,7 +28,7 @@ import java.lang.reflect.Type;
  * <li>Custom Operation (Annotated with EDM Annotation FunctionImport)</li>
  * </ol>
  * 
- * @author SAP AG
+ * @author
  * 
  */
 public class JPAFunction {

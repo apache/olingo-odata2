@@ -45,7 +45,7 @@ import org.apache.olingo.odata2.api.uri.expression.UnaryOperator;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class JsonVisitor implements ExpressionVisitor {
 

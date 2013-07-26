@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
  * <code>navigationPropertyName</code> and a <code>NULL</code> entry set.
  * </p>
  * 
- * @author SAP AG
+ * @author
  */
 public interface OnReadInlineContent {
 

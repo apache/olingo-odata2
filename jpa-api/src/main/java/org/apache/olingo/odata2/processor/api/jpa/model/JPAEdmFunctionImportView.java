@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
  * function imports that are consistent.
  * </p>
  * 
- * @author SAP AG
+ * @author
  *         <p>
  * @DoNotImplement
  * 

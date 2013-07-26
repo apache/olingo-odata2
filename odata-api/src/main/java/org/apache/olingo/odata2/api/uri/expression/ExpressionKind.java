@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.api.uri.expression;
 
 /**
  * Enumeration describing all possible node types inside an expression tree
- * @author SAP AG
+ * @author
  */
 public enum ExpressionKind {
   /**

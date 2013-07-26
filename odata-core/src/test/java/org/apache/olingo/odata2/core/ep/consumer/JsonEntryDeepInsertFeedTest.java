@@ -41,7 +41,7 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class JsonEntryDeepInsertFeedTest extends AbstractConsumerTest {
 

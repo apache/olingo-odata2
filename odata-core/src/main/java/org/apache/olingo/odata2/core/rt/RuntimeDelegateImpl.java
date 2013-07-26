@@ -45,7 +45,7 @@ import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.core.uri.UriParserImpl;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class RuntimeDelegateImpl extends RuntimeDelegateInstance {
 

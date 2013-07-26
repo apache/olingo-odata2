@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 
 /**
  * Execute an OData function import value request.
- * @author SAP AG
+ * @author
  */
 public interface FunctionImportValueProcessor extends ODataProcessor {
   /**

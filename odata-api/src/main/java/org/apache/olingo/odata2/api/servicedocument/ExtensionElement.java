@@ -24,7 +24,7 @@ import java.util.List;
  * A ExtensionElement
  * <p>ExtensionElement is an element that is defined in any namespace except 
  * the namespace "app"
- * @author SAP AG
+ * @author
  */
 public interface ExtensionElement {
   /**

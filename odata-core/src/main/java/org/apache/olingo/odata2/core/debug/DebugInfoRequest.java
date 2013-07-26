@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class DebugInfoRequest implements DebugInfo {
 

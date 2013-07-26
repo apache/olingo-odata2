@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
  * as a container for Association Ends.
  * </p>
  * 
- * @author SAP AG
+ * @author
  *         <p>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView

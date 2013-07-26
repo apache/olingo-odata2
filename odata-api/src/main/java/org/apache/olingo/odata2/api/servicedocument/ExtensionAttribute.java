@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.servicedocument;
 /**
  * A ExtensionAttribute
  * <p>ExtensionAttribute is an attribute of an extension element
- * @author SAP AG
+ * @author
  */
 public interface ExtensionAttribute {
   /**

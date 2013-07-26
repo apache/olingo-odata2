@@ -78,7 +78,7 @@ package org.apache.olingo.odata2.api.edm;
  * </tbody>
  * </table></p>
  * </p>
- * @author SAP AG
+ * @author
  * @org.apache.olingo.odata2.DoNotImplement
  */
 public interface EdmSimpleType extends EdmType {

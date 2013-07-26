@@ -56,7 +56,7 @@ import org.apache.olingo.odata2.testutil.helper.ClassHelper;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class HttpExceptionResponseTest extends AbstractBasicTest {
 

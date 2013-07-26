@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ODataEntryImpl implements ODataEntry {
 

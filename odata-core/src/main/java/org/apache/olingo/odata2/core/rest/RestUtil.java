@@ -51,7 +51,7 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Decoder;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class RestUtil {
   public static Response convertResponse(final ODataResponse odataResponse) {

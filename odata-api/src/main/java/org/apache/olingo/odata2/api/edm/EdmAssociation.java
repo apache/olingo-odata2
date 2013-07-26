@@ -23,7 +23,7 @@ package org.apache.olingo.odata2.api.edm;
  * A CSDL Association element
  * 
  * <p>EdmAssociation defines the relationship of two entity types. 
- * @author SAP AG
+ * @author
  */
 public interface EdmAssociation extends EdmType {
 

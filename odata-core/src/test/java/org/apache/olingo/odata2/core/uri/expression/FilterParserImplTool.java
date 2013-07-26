@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.uri.expression.MethodOperator;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class FilterParserImplTool extends FilterParserImpl {
 

@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.uri.expression.UnaryOperator;
 
 /**
  * Describes a unary operator which is allowed in OData expressions
- * @author SAP AG
+ * @author
  */
 class InfoUnaryOperator {
   UnaryOperator operator;

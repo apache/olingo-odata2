@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.servicedocument.Accept;
 import org.apache.olingo.odata2.api.servicedocument.CommonAttributes;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class AcceptImpl implements Accept {
   private String value;

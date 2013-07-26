@@ -62,7 +62,7 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
  * Serializes an ATOM entry.
- * @author SAP AG
+ * @author
  */
 public class AtomEntryEntityProducer {
 

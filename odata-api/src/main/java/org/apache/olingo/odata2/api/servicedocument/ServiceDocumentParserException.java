@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.api.servicedocument;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ServiceDocumentParserException extends Exception {
 

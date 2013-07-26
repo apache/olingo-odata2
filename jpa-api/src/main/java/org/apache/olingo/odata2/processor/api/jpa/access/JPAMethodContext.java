@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType;
  * executing operations on JPA Entity/Custom processor objects. <br>
  * A default implementation is provided by the library.
  * 
- * @author SAP AG
+ * @author
  * @see org.apache.olingo.odata2.processor.api.jpa.access.JPAMethodContextView
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType
  * 
@@ -98,7 +98,7 @@ public abstract class JPAMethodContext implements JPAMethodContextView {
    * The abstract class is extended by specific JPA Method Context Builder to
    * build JPA Method Context types.
    * 
-   * @author SAP AG
+   * @author
    * 
    */
   public static abstract class JPAMethodContextBuilder {

@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ODataSingleProcessorServiceTest extends BaseTest {
 

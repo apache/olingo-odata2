@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 /**
  * Access to the parts of the request URI that are relevant for PUT, PATCH, or MERGE requests.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author SAP AG
+ * @author
  */
 public interface PutMergePatchUriInfo {
   /**

@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class MapFactory extends ODataServiceFactory {
 

@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 
 /**
  * Objects of this class represent an association end
- * @author SAP AG
+ * @author
  */
 public class AssociationEnd {
 

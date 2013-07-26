@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.testutil.server.TestServer;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class FitStaticServiceFactory extends ODataServiceFactory {
 

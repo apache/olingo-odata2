@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Object to keep OData URI information.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author SAP AG
+ * @author
  */
 public interface PathInfo {
 

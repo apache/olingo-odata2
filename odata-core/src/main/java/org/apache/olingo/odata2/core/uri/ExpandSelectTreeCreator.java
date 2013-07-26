@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.uri.SelectItem;
 import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl.AllKinds;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ExpandSelectTreeCreator {
 

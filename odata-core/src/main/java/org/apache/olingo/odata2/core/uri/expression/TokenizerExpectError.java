@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.exception.ODataMessageException;
  * <br><br>
  * <b>This exception in not in the public API</b>, but may be added as cause for
  * the {@link ExpressionParserInternalError} exception. 
- * @author SAP AG
+ * @author
   */
 public class TokenizerExpectError extends ODataMessageException {
 

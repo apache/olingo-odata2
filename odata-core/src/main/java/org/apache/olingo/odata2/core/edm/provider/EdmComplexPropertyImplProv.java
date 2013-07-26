@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.provider.ComplexProperty;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EdmComplexPropertyImplProv extends EdmPropertyImplProv {
 

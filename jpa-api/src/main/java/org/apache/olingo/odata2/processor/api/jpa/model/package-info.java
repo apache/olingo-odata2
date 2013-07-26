@@ -21,7 +21,7 @@
  * The library provides a set of views over the JPA/EDM element containers. 
  * The views can used to access the elements that form EDM.
  * 
- * @author SAP AG
+ * @author
  */
 package org.apache.olingo.odata2.processor.api.jpa.model;
 

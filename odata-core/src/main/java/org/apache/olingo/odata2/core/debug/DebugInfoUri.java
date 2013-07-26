@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
 import org.apache.olingo.odata2.core.uri.expression.JsonVisitor;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class DebugInfoUri implements DebugInfo {
 

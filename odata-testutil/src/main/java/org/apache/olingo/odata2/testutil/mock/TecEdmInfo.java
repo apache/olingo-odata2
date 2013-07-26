@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 
 /**
  * Helper for the entity data model used as technical reference scenario.
- * @author SAP AG
+ * @author
  */
 public class TecEdmInfo
 {

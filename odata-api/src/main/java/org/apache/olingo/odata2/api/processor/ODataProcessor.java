@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
  * An <code>ODataProcessor</code> is the root interface for processor implementation.
  * A processor handles OData requests like reading or writing entities. All possible
  * actions are defined in the {@link org.apache.olingo.odata2.api.processor.feature} package.
- * @author SAP AG
+ * @author
  * @org.apache.olingo.odata2.DoNotImplement
  */
 public interface ODataProcessor {

@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 
 /**
  * URI-parsing exception resulting in a 404 Not Found response.
- * @author SAP AG
+ * @author
  */
 public class UriNotMatchingException extends ODataNotFoundException {
 

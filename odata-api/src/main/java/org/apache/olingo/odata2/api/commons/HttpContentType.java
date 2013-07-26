@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.commons;
 /**
  * Constants for <code>Http Content Type</code> definitions as specified in 
  * <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">RFC 2616 Section 14</a>.
- * @author SAP AG
+ * @author
  */
 public interface HttpContentType {
 

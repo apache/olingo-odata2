@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 
 /**
  * Tests employing the reference scenario reading the metadata document in XML format
- * @author SAP AG
+ * @author
  */
 public class MetadataTest extends AbstractRefXmlTest {
 

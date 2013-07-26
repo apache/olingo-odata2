@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this Class represent a referential constraint role
- * @author SAP AG
+ * @author
  */
 public class ReferentialConstraintRole {
 

@@ -23,7 +23,7 @@ package org.apache.olingo.odata2.api.edm;
  * A CSDL AssociationSet element
  * 
  * <p>EdmAssociationSet defines the relationship of two entity sets.
- * @author SAP AG
+ * @author
  */
 public interface EdmAssociationSet extends EdmNamed {
 

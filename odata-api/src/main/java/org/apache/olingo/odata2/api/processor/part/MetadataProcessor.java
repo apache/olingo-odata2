@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 /**
  * Execute a OData metadata request. 
  * 
- * @author SAP AG
+ * @author
  */
 public interface MetadataProcessor extends ODataProcessor {
 

@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.api.servicedocument.Workspace;
 import org.apache.olingo.odata2.core.edm.provider.EdmEntitySetInfoImplProv;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class AtomInfoImpl implements AtomInfo {
   private List<Workspace> workspaces;

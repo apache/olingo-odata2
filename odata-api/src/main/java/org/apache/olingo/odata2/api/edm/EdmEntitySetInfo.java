@@ -23,7 +23,7 @@ import java.net.URI;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * Objects of this class contain information about one entity set inside the EntityDataModel.
- * @author SAP AG
+ * @author
  *
  */
 public interface EdmEntitySetInfo {

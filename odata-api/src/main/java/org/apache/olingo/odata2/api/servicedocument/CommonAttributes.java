@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * A CommonAttributes
- * @author SAP AG
+ * @author
  */
 public interface CommonAttributes {
   /**

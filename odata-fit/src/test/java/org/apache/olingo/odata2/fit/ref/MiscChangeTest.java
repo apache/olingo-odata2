@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 /**
  * Tests employing the reference scenario that use neither XML nor JSON
  * and that change data in some way
- * @author SAP AG
+ * @author
  */
 public class MiscChangeTest extends AbstractRefTest {
 

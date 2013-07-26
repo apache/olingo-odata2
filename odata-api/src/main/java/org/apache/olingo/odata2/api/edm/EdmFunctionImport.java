@@ -30,7 +30,7 @@ import java.util.Collection;
  * <li>{@link EdmSimpleType} or a collection of simple types
  * <li>{@link EdmEntityType} or a collection of entity types
  * <li>{@link EdmEntitySet}
- * @author SAP AG
+ * @author
  */
 public interface EdmFunctionImport extends EdmMappable, EdmNamed {
 

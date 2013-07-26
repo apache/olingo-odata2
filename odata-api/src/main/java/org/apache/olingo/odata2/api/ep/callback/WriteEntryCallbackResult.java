@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 
 /**
  * Result of a callback. It contains the data of the entry which is to be expanded as well as the properties of this entry.
- * @author SAP AG
+ * @author
  */
 public class WriteEntryCallbackResult {
 

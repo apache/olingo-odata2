@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.servicedocument;
 /**
  * An Accept element
  * <p>Accept element indicates the types of representation accepted by the Collection
- * @author SAP AG
+ * @author
  */
 public interface Accept {
 

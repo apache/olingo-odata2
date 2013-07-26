@@ -44,7 +44,7 @@ import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EdmPropertyImplProvTest extends BaseTest {
 

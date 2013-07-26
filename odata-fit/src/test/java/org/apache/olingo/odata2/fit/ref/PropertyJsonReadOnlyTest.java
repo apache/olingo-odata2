@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 
 /**
  * Tests employing the reference scenario reading properties in JSON format.
- * @author SAP AG
+ * @author
  */
 public class PropertyJsonReadOnlyTest extends AbstractRefTest {
   @Test

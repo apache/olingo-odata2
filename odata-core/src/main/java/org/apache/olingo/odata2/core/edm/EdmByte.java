@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the EDM simple type Byte.
- * @author SAP AG
+ * @author
  */
 public class EdmByte extends AbstractSimpleType {
 

@@ -47,7 +47,7 @@ import org.apache.olingo.odata2.core.edm.EdmBoolean;
 import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class FilterParserImpl implements FilterParser {
   /*do the static initialization*/

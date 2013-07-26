@@ -44,7 +44,7 @@ import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
  * Therefore this library provides (in its <code>core</code> packages) as convenience
  * basic entity providers for accessing entities in the <b>XML</b> and <b>JSON</b>
  * formats.</p>
- * @author SAP AG
+ * @author
  */
 public final class EntityProvider {
 

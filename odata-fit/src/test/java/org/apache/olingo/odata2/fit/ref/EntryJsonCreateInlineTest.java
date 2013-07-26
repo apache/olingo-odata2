@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
 

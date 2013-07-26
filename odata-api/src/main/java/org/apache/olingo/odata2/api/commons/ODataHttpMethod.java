@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.api.commons;
 
 /**
  * The supported HTTP methods.
- * @author SAP AG
+ * @author
  */
 public enum ODataHttpMethod {
   GET, PUT, POST, DELETE, PATCH, MERGE;

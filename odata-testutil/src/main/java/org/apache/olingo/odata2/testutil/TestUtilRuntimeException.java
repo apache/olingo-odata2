@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.testutil;
 
 /**
  * This class is a helper to throw RuntimeExceptions in test util methods
- * @author SAP AG
+ * @author
  *
  */
 public class TestUtilRuntimeException extends RuntimeException {

@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
  * Provider for writing a collection of simple-type or complex-type instances in JSON.
- * @author SAP AG
+ * @author
  */
 public class JsonCollectionEntityProducer {
 

@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class DataServiceVersionTest extends AbstractRefTest {
 

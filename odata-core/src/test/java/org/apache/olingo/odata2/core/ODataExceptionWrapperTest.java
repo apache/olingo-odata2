@@ -49,7 +49,7 @@ import org.apache.olingo.odata2.core.rest.ODataErrorHandlerCallbackImpl;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ODataExceptionWrapperTest extends BaseTest {
 

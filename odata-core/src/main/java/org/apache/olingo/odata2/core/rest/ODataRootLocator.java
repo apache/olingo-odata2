@@ -46,7 +46,7 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
  * <code>/{custom path}{odata path}  e.g. http://host:port/webapp/bmw/odata.svc/$metadata</code><br>
  * The first segment defined by a servlet mapping belong to customer context and the following segments are OData specific.
  * </p>
- * @author SAP AG
+ * @author
  */
 public class ODataRootLocator {
 

@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.uri.PathSegment;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ODataPathSegmentImpl implements PathSegment {
 

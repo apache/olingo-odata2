@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 
 /**
  * Tests employing the reference scenario reading entity sets in JSON format.
- * @author SAP AG
+ * @author
  */
 public class FeedJsonReadOnlyTest extends AbstractRefTest {
 

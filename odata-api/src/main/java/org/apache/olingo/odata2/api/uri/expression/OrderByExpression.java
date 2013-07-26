@@ -25,7 +25,7 @@ import java.util.List;
  * {@link org.apache.olingo.odata2.api.uri.UriParser#parseOrderByString(org.apache.olingo.odata2.api.edm.EdmEntityType, String) }
  * Used to define the <b>root</b> expression node in an $filter expression tree.
  * 
- * @author SAP AG
+ * @author
  */
 public interface OrderByExpression extends CommonExpression {
   /**

@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.uri.expression.CommonExpression;
 
 /**
  * Internal error in the expression parser.
- * @author SAP AG
+ * @author
  */
 public class ExpressionParserInternalError extends ODataMessageException {
 

@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmType holds the namespace of a given type and its type as {@link EdmTypeKind}.
- * @author SAP AG
+ * @author
  */
 public interface EdmType extends EdmNamed {
 

@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeExcep
  * JPAEdmBuilder interface provides methods for building elements of an Entity Data Model (EDM) from
  * a Java Persistence Model.
  * 
- * @author SAP AG
+ * @author
  * 
  */
 public interface JPAEdmBuilder {

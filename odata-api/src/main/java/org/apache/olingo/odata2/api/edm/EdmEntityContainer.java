@@ -23,7 +23,7 @@ package org.apache.olingo.odata2.api.edm;
  * A CSDL EntityContainer element
  * 
  * <p>EdmEntityContainer hold the information of EntitySets, FunctionImports and AssociationSets contained
- * @author SAP AG
+ * @author
  */
 public interface EdmEntityContainer extends EdmNamed {
 

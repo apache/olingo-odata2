@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.PathSegment;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class PathInfoImpl implements PathInfo {
 

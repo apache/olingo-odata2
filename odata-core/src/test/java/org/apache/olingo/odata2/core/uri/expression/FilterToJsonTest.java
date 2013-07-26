@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.api.uri.expression.MethodOperator;
 import org.apache.olingo.odata2.api.uri.expression.UnaryOperator;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class FilterToJsonTest {
 

@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 
 /**
  * Objects of this class represent a complex type
- * @author SAP AG
+ * @author
  */
 public class ComplexType {
 

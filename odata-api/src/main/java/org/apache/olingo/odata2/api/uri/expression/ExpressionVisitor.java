@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.edm.EdmTyped;
  * Any class instance implementing this interface can be passed to the method {@link Visitable#accept(ExpressionVisitor)}
  * of an expression node to start the traversing. While traversing, the appropriate methods of the visitor implementation
  * will be called.
- * @author SAP AG
+ * @author
  */
 public interface ExpressionVisitor {
   /**

@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmLiteralKind indicates the format of an EDM literal.
- * @author SAP AG
+ * @author
  */
 public enum EdmLiteralKind {
 

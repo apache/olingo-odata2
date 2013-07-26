@@ -43,7 +43,7 @@ import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ContentNegotiationDollarFormatTest extends AbstractBasicTest {
 

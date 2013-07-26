@@ -60,7 +60,7 @@ import org.apache.olingo.odata2.core.uri.UriParserImpl;
 import org.apache.olingo.odata2.core.uri.UriType;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ODataRequestHandler {
 

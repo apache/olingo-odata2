@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.servicedocument.AtomInfo;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ServiceDocumentImpl implements ServiceDocument {
   private AtomInfo atomInfo;

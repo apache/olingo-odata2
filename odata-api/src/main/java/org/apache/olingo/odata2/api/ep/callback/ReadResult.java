@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
  * If inlined navigation property is <code>nullable</code> the {@link ReadResult} has the 
  * <code>navigationPropertyName</code> and a <code>NULL</code> entry set.
  * 
- * @author SAP AG
+ * @author
  */
 public abstract class ReadResult {
 

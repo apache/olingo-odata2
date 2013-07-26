@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
  * Tests for percent-encoding.
- * @author SAP AG
+ * @author
  */
 public class EncoderTest extends BaseTest {
 

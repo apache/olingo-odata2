@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class Building {
   private final int id;

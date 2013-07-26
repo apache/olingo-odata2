@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.commons;
 /**
  * HTTP status codes as defined in RFC2616-sec10
  * and additional status codes as defined in RFC6585
- * @author SAP AG
+ * @author
  */
 public enum HttpStatusCodes {
 

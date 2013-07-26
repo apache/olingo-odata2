@@ -40,7 +40,7 @@ import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class EdmNavigationPropertyImplProvTest extends BaseTest {
 

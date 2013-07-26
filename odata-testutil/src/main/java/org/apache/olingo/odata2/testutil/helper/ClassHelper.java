@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ClassHelper {
   public static final FileFilter JAVA_FILE_FILTER = new FileFilter() {

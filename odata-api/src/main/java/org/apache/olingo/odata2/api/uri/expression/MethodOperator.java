@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.uri.expression;
 /**
  * Enumerations for all supported methods of the ODATA expression parser 
  * for ODATA version 2.0 (with some restrictions). 
- * @author SAP AG
+ * @author
  */
 public enum MethodOperator {
   ENDSWITH("endswith"), INDEXOF("indexof"), STARTSWITH("startswith"), TOLOWER("tolower"), TOUPPER("toupper"), TRIM("trim"), SUBSTRING("substring"), SUBSTRINGOF("substringof"), CONCAT("concat"), LENGTH("length"), YEAR("year"), MONTH("month"), DAY("day"), HOUR("hour"), MINUTE("minute"), SECOND("second"), ROUND("round"), FLOOR("floor"), CEILING("ceiling");

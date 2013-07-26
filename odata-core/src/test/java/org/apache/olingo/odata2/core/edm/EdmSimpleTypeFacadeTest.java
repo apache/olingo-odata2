@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
  * Tests for the parsing of URI literals
- * @author SAP AG
+ * @author
  */
 public class EdmSimpleTypeFacadeTest extends BaseTest {
 

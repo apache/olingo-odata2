@@ -30,7 +30,7 @@ import java.util.List;
  * OData method operator in {@link MethodOperator} (e.g. for "substringof", "concat", "year", ... )
  * <br>
  * <br>
- * @author SAP AG
+ * @author
  */
 public interface MethodExpression extends CommonExpression {
 

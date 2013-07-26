@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
  * Tests employing the reference scenario reading the service document in XML format
- * @author SAP AG
+ * @author
  */
 public class ServiceXmlTest extends AbstractRefXmlTest {
 

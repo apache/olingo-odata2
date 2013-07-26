@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class ManagerTest extends BaseTest {
 

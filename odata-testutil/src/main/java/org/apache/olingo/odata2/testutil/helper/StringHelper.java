@@ -31,7 +31,7 @@ import org.apache.http.HttpEntity;
 import org.apache.olingo.odata2.testutil.TestUtilRuntimeException;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class StringHelper {
 

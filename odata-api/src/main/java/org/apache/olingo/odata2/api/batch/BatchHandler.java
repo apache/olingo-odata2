@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 
 /**
- * @author SAP AG
+ * @author
  */
 public interface BatchHandler {
   /**

@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.testutil.server.ServerRuntimeException;
 import org.apache.olingo.odata2.testutil.server.TestServer;
 
 /**
- * @author SAP AG
+ * @author
  */
 public abstract class AbstractFitTest extends BaseTest {
 

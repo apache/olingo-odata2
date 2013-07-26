@@ -23,7 +23,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * Decodes a Java String containing a percent-encoded UTF-8 String value
  * into a Java String (in its internal UTF-16 encoding).
- * @author SAP AG
+ * @author
  */
 public class Decoder {
 

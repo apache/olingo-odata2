@@ -23,7 +23,7 @@ package org.apache.olingo.odata2.api.edm;
  * A CSDL NavigationProperty element
  * 
  * <p>EdmNavigationProperty allows navigation from one entity type to another via a relationship.
- * @author SAP AG
+ * @author
  */
 public interface EdmNavigationProperty extends EdmTyped, EdmMappable {
 

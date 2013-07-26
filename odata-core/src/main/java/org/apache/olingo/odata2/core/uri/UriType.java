@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.core.uri;
 import java.util.ArrayList;
 
 /**
- * @author SAP AG
+ * @author
  */
 public enum UriType {
   /**

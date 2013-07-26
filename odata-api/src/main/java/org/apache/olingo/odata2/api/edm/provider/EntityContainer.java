@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this class represent an entity container including its child elements
- * @author SAP AG
+ * @author
  */
 public class EntityContainer extends EntityContainerInfo {
 

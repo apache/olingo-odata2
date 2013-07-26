@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.api.edm;
  * A CSDL Property element
  * <p>EdmProperty defines a simple type or a complex type.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author SAP AG
+ * @author
  */
 public interface EdmProperty extends EdmElement {
 

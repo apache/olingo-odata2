@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
 /**
- * @author SAP AG
+ * @author
  */
 public class XmlLinkConsumerTest extends AbstractConsumerTest {
 

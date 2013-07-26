@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.edm.provider.EntitySet;
  * of EDM entity sets. An EDM entity set is said to be consistent only if it has
  * consistent EDM entity types.
  * 
- * @author SAP AG
+ * @author
  *         <p>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityTypeView
