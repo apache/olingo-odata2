@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmType;
 
 /**
- * author SAP AG
+ * 
  */
 public class EntityComplexPropertyInfo extends EntityPropertyInfo {
 

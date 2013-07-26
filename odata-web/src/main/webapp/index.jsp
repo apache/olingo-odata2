@@ -3,16 +3,16 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>SAP OData Library</title>
+<title>Apache Olingo - OData2 Library</title>
 <style type="text/css">
 body { font-family: Arial, sans-serif; font-size: 13px; line-height: 18px;
-       color: #333333; background-color: #ffffff; }
-a { color: #0076cb; text-decoration: none; }
-a:focus { outline: thin dotted #0076cb; outline-offset: -1px; }
+       color: blue; background-color: #ffffff; }
+a { color: blue; text-decoration: none; }
+a:focus { outline: thin dotted #4076cb; outline-offset: -1px; }
 a:hover, a:active { outline: 0; }
-a:hover { color: #004a7e; text-decoration: underline; }
+a:hover { color: #404a7e; text-decoration: underline; }
 h1, h2, h3, h4, h5, h6 { margin: 9px 0; font-family: inherit; font-weight: bold;
-                         line-height: 1; color: #f0ab00; }
+                         line-height: 1; color: blue; }
 h1 { font-size: 36px; line-height: 40px; }
 h2 { font-size: 30px; line-height: 40px; }
 h3 { font-size: 24px; line-height: 40px; }
@@ -31,7 +31,7 @@ th, td { border: 1px solid; padding: 20px; }
 </style>
 </head>
 <body>
-	<h1>Apache Olingo -  OData Library</h1>
+	<h1>Apache Olingo - OData2 Library</h1>
 	<hr />
 	<h2>Reference Scenario</h2>
 	<table>
