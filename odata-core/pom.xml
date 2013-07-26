@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+         or more contributor license agreements.  See the NOTICE file
+         distributed with this work for additional information
+         regarding copyright ownership.  The ASF licenses this file
+         to you under the Apache License, Version 2.0 (the
+         "License"); you may not use this file except in compliance
+         with the License.  You may obtain a copy of the License at
+  
+           http://www.apache.org/licenses/LICENSE-2.0
+  
+         Unless required by applicable law or agreed to in writing,
+         software distributed under the License is distributed on an
+         "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+         KIND, either express or implied.  See the License for the
+         specific language governing permissions and limitations
+         under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>org.apache.olingo.odata2.core</artifactId>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>org.apache.olingo</groupId>
+		<artifactId>org.apache.olingo.odata2.parent</artifactId>
+		<version>0.7.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<!-- not supported because of static behaviour of serialization tests -->
+	<!-- <build> -->
+	<!-- <plugins> -->
+	<!-- <plugin> -->
+	<!-- <groupId>org.apache.maven.plugins</groupId> -->
+	<!-- <artifactId>maven-surefire-plugin</artifactId> -->
+	<!-- <configuration> -->
+	<!-- <parallel>classes</parallel> -->
+	<!-- <threadCount>10</threadCount> -->
+	<!-- </configuration> -->
+	<!-- </plugin> -->
+	<!-- </plugins> -->
+	<!-- </build> -->
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>bundle-manifest</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<instructions>
+						<Import-Package>
+							javax.ws.rs,
+							javax.ws.rs.*,
+							*
+						</Import-Package>
+						<Export-Package>
+							org.apache.olingo.odata2.core.rest.app;version=${project.version},
+							org.apache.olingo.odata2.core.rt;version=${project.version},
+						</Export-Package>
+						<Bundle-DocURL>${project.url}</Bundle-DocURL>
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>coverage</id>
+			<activation>
+				<property>
+					<name>ldi.parent.emma-coverage</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- copy api during test to target/api_dependency -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy api classes</id>
+								<phase>generate-test-resources</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>org.apache.olingo</groupId>
+											<artifactId>org.apache.olingo.odata2.api</artifactId>
+											<version>${project.version}</version>
+											<outputDirectory>${project.build.directory}/api_dependency</outputDirectory>
+											<overWrite>true</overWrite>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<!-- instrument the copied api classes -->
+						<groupId>org.sonatype.maven.plugin</groupId>
+						<artifactId>emma-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>instrument api classes</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>instrument</goal>
+								</goals>
+								<configuration>
+									<instrumentationPaths>
+										<param>${project.build.directory}/api_dependency</param>
+									</instrumentationPaths>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<!-- use the instrumented classes for test execution -->
+							<classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>org.apache.olingo.odata2.api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commonscodec.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>org.apache.olingo.odata2.testutil</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+</project>

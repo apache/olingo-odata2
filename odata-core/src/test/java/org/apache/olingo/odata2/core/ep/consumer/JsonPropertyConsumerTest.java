@@ -1,0 +1,533 @@
+/*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one
+ *        or more contributor license agreements.  See the NOTICE file
+ *        distributed with this work for additional information
+ *        regarding copyright ownership.  The ASF licenses this file
+ *        to you under the Apache License, Version 2.0 (the
+ *        "License"); you may not use this file except in compliance
+ *        with the License.  You may obtain a copy of the License at
+ * 
+ *          http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *        Unless required by applicable law or agreed to in writing,
+ *        software distributed under the License is distributed on an
+ *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *        KIND, either express or implied.  See the License for the
+ *        specific language governing permissions and limitations
+ *        under the License.
+ ******************************************************************************/
+package org.apache.olingo.odata2.core.ep.consumer;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.junit.Test;
+
+import com.google.gson.stream.JsonReader;
+import org.apache.olingo.odata2.api.edm.EdmComplexType;
+import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.core.ep.aggregator.EntityComplexPropertyInfo;
+import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
+import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
+import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.apache.olingo.odata2.testutil.mock.MockFacade;
+
+/**
+ * @author SAP AG
+ */
+public class JsonPropertyConsumerTest extends BaseTest {
+
+  @Test
+  public void allNumberSimplePropertyKinds() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"Age\":67}}";
+    EdmProperty edmProperty = mock(EdmProperty.class);
+    when(edmProperty.getName()).thenReturn("Age");
+    when(edmProperty.isSimple()).thenReturn(true);
+
+    //Byte
+    JsonReader reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Byte.getEdmSimpleTypeInstance());
+    Map<String, Object> resultMap = execute(edmProperty, reader);
+    assertEquals(Short.valueOf("67"), resultMap.get("Age"));
+
+    //SByte
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.SByte.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(Byte.valueOf("67"), resultMap.get("Age"));
+    //Int16
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Int16.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(Short.valueOf("67"), resultMap.get("Age"));
+    //Int32
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Int32.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(Integer.valueOf("67"), resultMap.get("Age"));
+  }
+
+  @Test
+  public void allStringSimplePropertyKinds() throws Exception {
+    EdmProperty edmProperty = mock(EdmProperty.class);
+    when(edmProperty.getName()).thenReturn("Name");
+    when(edmProperty.isSimple()).thenReturn(true);
+    String simplePropertyJson;
+
+    //DateTime
+    simplePropertyJson = "{\"d\":{\"Name\":\"\\/Date(915148800000)\\/\"}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance());
+    Map<String, Object> resultMap = execute(edmProperty, reader);
+    Calendar entryDate = (Calendar) resultMap.get("Name");
+    assertEquals(Long.valueOf(915148800000l), Long.valueOf(entryDate.getTimeInMillis()));
+    //DateTimeOffset
+    simplePropertyJson = "{\"d\":{\"Name\":\"\\/Date(915148800000)\\/\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    entryDate = (Calendar) resultMap.get("Name");
+    assertEquals(Long.valueOf(915148800000l), Long.valueOf(entryDate.getTimeInMillis()));
+    //Decimal
+    simplePropertyJson = "{\"d\":{\"Name\":\"123456789\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Decimal.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(BigDecimal.valueOf(Long.valueOf("123456789")), resultMap.get("Name"));
+    //Double
+    simplePropertyJson = "{\"d\":{\"Name\":\"123456789\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Double.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(Double.valueOf("123456789"), resultMap.get("Name"));
+    //Int64
+    simplePropertyJson = "{\"d\":{\"Name\":\"123456789\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Int64.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(Long.valueOf("123456789"), resultMap.get("Name"));
+    //Single
+    simplePropertyJson = "{\"d\":{\"Name\":\"123456\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Single.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(Float.valueOf("123456"), resultMap.get("Name"));
+    //String
+    simplePropertyJson = "{\"d\":{\"Name\":\"123456789\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals("123456789", resultMap.get("Name"));
+    //Guid
+    simplePropertyJson = "{\"d\":{\"Name\":\"AABBCCDD-AABB-CCDD-EEFF-AABBCCDDEEFF\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Guid.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(UUID.fromString("aabbccdd-aabb-ccdd-eeff-aabbccddeeff"), resultMap.get("Name"));
+    //Binary
+    byte[] binary = new byte[] { (byte) 0xAA, (byte) 0xBB, (byte) 0xCC };
+    simplePropertyJson = "{\"d\":{\"Name\":\"qrvM\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    //TODO: check why byte is comming back insted of Byte object
+    //Byte[] expectedArray = new Byte[] { binary[0], binary[1], binary[2] };
+    byte[] actualArray = (byte[]) resultMap.get("Name");
+    assertTrue(Arrays.equals(binary, actualArray));
+    //Time
+    simplePropertyJson = "{\"d\":{\"Name\":\"PT23H32M3S\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Time.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    Calendar dateTime = Calendar.getInstance();
+    dateTime.clear();
+    dateTime.set(Calendar.HOUR_OF_DAY, 23);
+    dateTime.set(Calendar.MINUTE, 32);
+    dateTime.set(Calendar.SECOND, 3);
+    assertEquals(dateTime, resultMap.get("Name"));
+  }
+
+  @Test
+  public void simplePropertyOnOpenReader() throws Exception {
+    String simplePropertyJson = "{\"Name\":\"Team 1\"}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams").getEntityType().getProperty("Name");
+    EntityPropertyInfo entityPropertyInfo = EntityInfoAggregator.create(edmProperty);
+    reader.beginObject();
+    reader.nextName();
+
+    JsonPropertyConsumer jpc = new JsonPropertyConsumer();
+    Object value = jpc.readPropertyValue(reader, entityPropertyInfo, null);
+    assertEquals("Team 1", value);
+  }
+
+  @Test
+  public void veryLongStringStandalone() throws Exception {
+    char[] chars = new char[32768];
+    Arrays.fill(chars, 0, 32768, 'a');
+    String propertyValue = new String(chars);
+    String simplePropertyJson = "{\"d\":{\"Name\":\"" + propertyValue + "\"}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    final EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Room").getProperty("Name");
+
+    EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    when(readProperties.getTypeMappings()).thenReturn(null);
+    Map<String, Object> resultMap = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, readProperties);
+
+    assertEquals(propertyValue, resultMap.get("Name"));
+  }
+
+  @Test
+  public void simplePropertyWithNullMappingStandalone() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"Age\":67}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    final EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+
+    EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    when(readProperties.getTypeMappings()).thenReturn(null);
+    Map<String, Object> resultMap = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, readProperties);
+
+    assertEquals(Integer.valueOf(67), resultMap.get("Age"));
+  }
+
+  @Test
+  public void simplePropertyWithNullMappingStandaloneWithoutD() throws Exception {
+    String simplePropertyJson = "{\"Age\":67}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    final EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+
+    EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    when(readProperties.getTypeMappings()).thenReturn(null);
+    Map<String, Object> resultMap = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, readProperties);
+
+    assertEquals(Integer.valueOf(67), resultMap.get("Age"));
+  }
+
+  @Test
+  public void simplePropertyWithEmptyMappingStandalone() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"Age\":67}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    final EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+
+    EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    when(readProperties.getTypeMappings()).thenReturn(new HashMap<String, Object>());
+    Map<String, Object> resultMap = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, readProperties);
+
+    assertEquals(Integer.valueOf(67), resultMap.get("Age"));
+  }
+
+  @Test
+  public void simplePropertyWithStringToLongMappingStandalone() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"Age\":67}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    final EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+
+    EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    Map<String, Object> typeMappings = new HashMap<String, Object>();
+    typeMappings.put("Age", Long.class);
+    when(readProperties.getTypeMappings()).thenReturn(typeMappings);
+    Map<String, Object> resultMap = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, readProperties);
+
+    assertEquals(Long.valueOf(67), resultMap.get("Age"));
+  }
+
+  @Test
+  public void simplePropertyWithStringToNullMappingStandalone() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"Age\":67}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    final EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+
+    EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    Map<String, Object> typeMappings = new HashMap<String, Object>();
+    typeMappings.put("Age", null);
+    when(readProperties.getTypeMappings()).thenReturn(typeMappings);
+    Map<String, Object> resultMap = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, readProperties);
+
+    assertEquals(Integer.valueOf(67), resultMap.get("Age"));
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void noContent() throws Exception {
+    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    JsonReader reader = prepareReader("{}");
+    new JsonPropertyConsumer().readPropertyStandalone(reader, property, null);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void simplePropertyUnfinished() throws Exception {
+    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    JsonReader reader = prepareReader("{\"Age\":67");
+    new JsonPropertyConsumer().readPropertyStandalone(reader, property, null);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void simplePropertInvalidName() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"Invalid\":67}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    final EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+
+    new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, null);
+  }
+
+  @Test
+  public void complexPropertyWithStringToStringMappingStandalone() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    EdmComplexType complexPropertyType = (EdmComplexType) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location").getType();
+    EdmProperty edmProperty = (EdmProperty) complexPropertyType.getProperty("City");
+
+    EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    Map<String, Object> innerMappings = new HashMap<String, Object>();
+    innerMappings.put("PostalCode", String.class);
+    Map<String, Object> typeMappings = new HashMap<String, Object>();
+    typeMappings.put("City", innerMappings);
+    when(readProperties.getTypeMappings()).thenReturn(typeMappings);
+    Map<String, Object> result = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, readProperties);
+
+    assertEquals(1, result.size());
+    @SuppressWarnings("unchecked")
+    Map<String, Object> innerResult = (Map<String, Object>) result.get("City");
+    assertEquals("Heidelberg", innerResult.get("CityName"));
+    assertEquals("69124", innerResult.get("PostalCode"));
+  }
+
+  @Test
+  public void deepComplexPropertyWithStringToStringMappingStandalone() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"Location\":{\"__metadata\":{\"type\":\"RefScenario.c_Location\"},\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"},\"Country\":\"Germany\"}}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location");
+
+    EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    Map<String, Object> cityMappings = new HashMap<String, Object>();
+    cityMappings.put("PostalCode", String.class);
+    Map<String, Object> locationMappings = new HashMap<String, Object>();
+    locationMappings.put("City", cityMappings);
+    Map<String, Object> mappings = new HashMap<String, Object>();
+    mappings.put("Location", locationMappings);
+    when(readProperties.getTypeMappings()).thenReturn(mappings);
+
+    final Map<String, Object> result = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, readProperties);
+
+    assertEquals(1, result.size());
+    @SuppressWarnings("unchecked")
+    Map<String, Object> locationResult = (Map<String, Object>) result.get("Location");
+    assertEquals(2, locationResult.size());
+    assertEquals("Germany", locationResult.get("Country"));
+    @SuppressWarnings("unchecked")
+    Map<String, Object> innerResult = (Map<String, Object>) locationResult.get("City");
+    assertEquals(2, innerResult.size());
+    assertEquals("Heidelberg", innerResult.get("CityName"));
+    assertEquals("69124", innerResult.get("PostalCode"));
+  }
+
+  @Test
+  public void complexPropertyOnOpenReader() throws Exception {
+    String simplePropertyJson = "{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    EdmComplexType complexPropertyType = (EdmComplexType) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location").getType();
+    EdmProperty edmProperty = (EdmProperty) complexPropertyType.getProperty("City");
+    EntityComplexPropertyInfo entityPropertyInfo = (EntityComplexPropertyInfo) EntityInfoAggregator.create(edmProperty);
+
+    JsonPropertyConsumer jpc = new JsonPropertyConsumer();
+    @SuppressWarnings("unchecked")
+    Map<String, Object> result = (Map<String, Object>) jpc.readPropertyValue(reader, entityPropertyInfo, null);
+
+    assertEquals(2, result.size());
+    assertEquals("Heidelberg", result.get("CityName"));
+    assertEquals("69124", result.get("PostalCode"));
+  }
+
+  @Test
+  public void complexPropertyOnOpenReaderWithNoMetadata() throws Exception {
+    String simplePropertyJson = "{\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    EdmComplexType complexPropertyType = (EdmComplexType) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location").getType();
+    EdmProperty edmProperty = (EdmProperty) complexPropertyType.getProperty("City");
+    EntityComplexPropertyInfo entityPropertyInfo = (EntityComplexPropertyInfo) EntityInfoAggregator.create(edmProperty);
+
+    JsonPropertyConsumer jpc = new JsonPropertyConsumer();
+    @SuppressWarnings("unchecked")
+    Map<String, Object> result = (Map<String, Object>) jpc.readPropertyValue(reader, entityPropertyInfo, null);
+
+    assertEquals(2, result.size());
+    assertEquals("Heidelberg", result.get("CityName"));
+    assertEquals("69124", result.get("PostalCode"));
+  }
+
+  @Test
+  public void deepComplexPropertyOnOpenReader() throws Exception {
+    String simplePropertyJson = "{\"__metadata\":{\"type\":\"RefScenario.c_Location\"},\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"},\"Country\":\"Germany\"}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location");
+    EntityComplexPropertyInfo entityPropertyInfo = (EntityComplexPropertyInfo) EntityInfoAggregator.create(edmProperty);
+
+    JsonPropertyConsumer jpc = new JsonPropertyConsumer();
+    @SuppressWarnings("unchecked")
+    Map<String, Object> result = (Map<String, Object>) jpc.readPropertyValue(reader, entityPropertyInfo, null);
+
+    assertEquals(2, result.size());
+    assertEquals("Germany", result.get("Country"));
+    @SuppressWarnings("unchecked")
+    Map<String, Object> innerResult = (Map<String, Object>) result.get("City");
+    assertEquals(2, innerResult.size());
+    assertEquals("Heidelberg", innerResult.get("CityName"));
+    assertEquals("69124", innerResult.get("PostalCode"));
+  }
+
+  @Test
+  public void simplePropertyStandalone() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"Name\":\"Team 1\"}}";
+    EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams").getEntityType().getProperty("Name");
+    JsonReader reader = prepareReader(simplePropertyJson);
+
+    Map<String, Object> result = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, null);
+    assertEquals("Team 1", result.get("Name"));
+  }
+
+  @Test
+  public void complexPropertyStandalone() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    EdmComplexType complexPropertyType = (EdmComplexType) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location").getType();
+    EdmProperty edmProperty = (EdmProperty) complexPropertyType.getProperty("City");
+
+    Map<String, Object> result = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, null);
+
+    assertEquals(1, result.size());
+    @SuppressWarnings("unchecked")
+    Map<String, Object> innerResult = (Map<String, Object>) result.get("City");
+    assertEquals("Heidelberg", innerResult.get("CityName"));
+    assertEquals("69124", innerResult.get("PostalCode"));
+  }
+
+  @Test
+  public void deepComplexPropertyStandalone() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"Location\":{\"__metadata\":{\"type\":\"RefScenario.c_Location\"},\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"},\"Country\":\"Germany\"}}}";
+    JsonReader reader = prepareReader(simplePropertyJson);
+    EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location");
+
+    JsonPropertyConsumer jpc = new JsonPropertyConsumer();
+    Map<String, Object> result = jpc.readPropertyStandalone(reader, edmProperty, null);
+
+    assertEquals(1, result.size());
+    @SuppressWarnings("unchecked")
+    Map<String, Object> locationResult = (Map<String, Object>) result.get("Location");
+    assertEquals(2, locationResult.size());
+    assertEquals("Germany", locationResult.get("Country"));
+    @SuppressWarnings("unchecked")
+    Map<String, Object> innerResult = (Map<String, Object>) locationResult.get("City");
+    assertEquals(2, innerResult.size());
+    assertEquals("Heidelberg", innerResult.get("CityName"));
+    assertEquals("69124", innerResult.get("PostalCode"));
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void complexPropertyWithInvalidChild() throws Exception {
+    String cityProperty = "{\"d\":{\"City\":{\"Invalid\":\"69124\",\"CityName\":\"Heidelberg\"}}}";
+    JsonReader reader = prepareReader(cityProperty);
+    EdmComplexType complexPropertyType = (EdmComplexType) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location").getType();
+    EdmProperty edmProperty = (EdmProperty) complexPropertyType.getProperty("City");
+
+    new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, null);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void complexPropertyWithInvalidName() throws Exception {
+    String cityProperty = "{\"d\":{\"Invalid\":{\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}}}";
+    JsonReader reader = prepareReader(cityProperty);
+    EdmComplexType complexPropertyType = (EdmComplexType) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location").getType();
+    EdmProperty edmProperty = (EdmProperty) complexPropertyType.getProperty("City");
+
+    new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, null);
+  }
+
+  @Test
+  public void complexPropertyEmpty() throws Exception {
+    String cityProperty = "{\"d\":{\"City\":null}}";
+    JsonReader reader = prepareReader(cityProperty);
+    EdmComplexType complexPropertyType = (EdmComplexType) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location").getType();
+    EdmProperty edmProperty = (EdmProperty) complexPropertyType.getProperty("City");
+
+    Map<String, Object> propertyData = new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, null);
+    assertNotNull(propertyData);
+    assertEquals(1, propertyData.size());
+    @SuppressWarnings("unchecked")
+    Map<String, Object> innerResult = (Map<String, Object>) propertyData.get("City");
+    assertNull(innerResult);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void complexPropertyMetadataInvalidTag() throws Exception {
+    String complexPropertyJson = "{\"__metadata\":{\"invalid\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}";
+    JsonReader reader = prepareReader(complexPropertyJson);
+    EdmComplexType complexPropertyType = (EdmComplexType) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location").getType();
+    EdmProperty edmProperty = (EdmProperty) complexPropertyType.getProperty("City");
+    EntityComplexPropertyInfo entityPropertyInfo = (EntityComplexPropertyInfo) EntityInfoAggregator.create(edmProperty);
+
+    new JsonPropertyConsumer().readPropertyValue(reader, entityPropertyInfo, null);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void complexPropertyMetadataInvalidTypeContent() throws Exception {
+    String complexPropertyJson = "{\"__metadata\":{\"type\":\"Invalid\"},\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}";
+    JsonReader reader = prepareReader(complexPropertyJson);
+    EdmComplexType complexPropertyType = (EdmComplexType) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType().getProperty("Location").getType();
+    EdmProperty edmProperty = (EdmProperty) complexPropertyType.getProperty("City");
+    EntityComplexPropertyInfo entityPropertyInfo = (EntityComplexPropertyInfo) EntityInfoAggregator.create(edmProperty);
+
+    new JsonPropertyConsumer().readPropertyValue(reader, entityPropertyInfo, null);
+  }
+
+  private JsonReader prepareReader(final String json) throws UnsupportedEncodingException {
+    InputStream jsonStream = createContentAsStream(json);
+    JsonReader reader = new JsonReader(new InputStreamReader(jsonStream));
+    return reader;
+  }
+
+  private Map<String, Object> execute(final EdmProperty edmProperty, final JsonReader reader) throws EntityProviderException {
+    JsonPropertyConsumer jpc = new JsonPropertyConsumer();
+    Map<String, Object> resultMap = jpc.readPropertyStandalone(reader, edmProperty, null);
+    return resultMap;
+  }
+
+  private InputStream createContentAsStream(final String json) throws UnsupportedEncodingException {
+    return new ByteArrayInputStream(json.getBytes("UTF-8"));
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void invalidDoubleClosingBrackets() throws Exception {
+    String simplePropertyJson = "{\"d\":{\"Name\":\"Team 1\"}}}";
+    EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams").getEntityType().getProperty("Name");
+    JsonReader reader = prepareReader(simplePropertyJson);
+
+    new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, null);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void invalidDoubleClosingBracketsWithoutD() throws Exception {
+    String simplePropertyJson = "{\"Name\":\"Team 1\"}}";
+    EdmProperty edmProperty = (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams").getEntityType().getProperty("Name");
+    JsonReader reader = prepareReader(simplePropertyJson);
+
+    new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, null);
+  }
+
+}
