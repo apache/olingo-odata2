@@ -9,9 +9,9 @@
 	<packaging>pom</packaging>
 
 	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
+		<groupId>org.apache</groupId>
+		<artifactId>apache</artifactId>
+		<version>13</version>
 	</parent>
 
 	<inceptionYear>2012</inceptionYear>
@@ -302,5 +302,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 </project>
