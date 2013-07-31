@@ -34,8 +34,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntitySetView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
 
-public class JPAEdmAssociationSet extends JPAEdmBaseViewImpl implements
-    JPAEdmAssociationSetView {
+public class JPAEdmAssociationSet extends JPAEdmBaseViewImpl implements JPAEdmAssociationSetView {
 
   private JPAEdmSchemaView schemaView;
   private AssociationSet currentAssociationSet;
@@ -80,22 +79,16 @@ public class JPAEdmAssociationSet extends JPAEdmBaseViewImpl implements
         associationSetList = new ArrayList<AssociationSet>();
       }
 
-      JPAEdmAssociationView associationView = schemaView
-          .getJPAEdmAssociationView();
-      JPAEdmEntitySetView entitySetView = schemaView
-          .getJPAEdmEntityContainerView().getJPAEdmEntitySetView();
+      JPAEdmAssociationView associationView = schemaView.getJPAEdmAssociationView();
+      JPAEdmEntitySetView entitySetView = schemaView.getJPAEdmEntityContainerView().getJPAEdmEntitySetView();
 
-      List<EntitySet> entitySetList = entitySetView
-          .getConsistentEdmEntitySetList();
+      List<EntitySet> entitySetList = entitySetView.getConsistentEdmEntitySetList();
       if (associationView.isConsistent()) {
-        for (Association association : associationView
-            .getConsistentEdmAssociationList()) {
+        for (Association association : associationView.getConsistentEdmAssociationList()) {
 
           currentAssociation = association;
 
-          FullQualifiedName fQname = new FullQualifiedName(schemaView
-              .getEdmSchema().getNamespace(),
-              association.getName());
+          FullQualifiedName fQname = new FullQualifiedName(schemaView.getEdmSchema().getNamespace(), association.getName());
           currentAssociationSet = new AssociationSet();
           currentAssociationSet.setAssociation(fQname);
 
@@ -104,10 +97,7 @@ public class JPAEdmAssociationSet extends JPAEdmBaseViewImpl implements
           for (EntitySet entitySet : entitySetList) {
             fQname = entitySet.getEntityType();
             endFlag = 0;
-            if (fQname.equals(association.getEnd1().getType())
-                || ++endFlag > 1
-                || fQname.equals(association.getEnd2()
-                    .getType())) {
+            if (fQname.equals(association.getEnd1().getType()) || ++endFlag > 1 || fQname.equals(association.getEnd2().getType())) {
 
               AssociationSetEnd end = new AssociationSetEnd();
               end.setEntitySet(entitySet.getName());

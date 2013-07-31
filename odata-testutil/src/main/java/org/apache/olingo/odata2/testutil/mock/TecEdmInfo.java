@@ -28,8 +28,7 @@ import org.apache.olingo.odata2.api.edm.EdmException;
  * Helper for the entity data model used as technical reference scenario.
  *  
  */
-public class TecEdmInfo
-{
+public class TecEdmInfo {
   private final Edm edm;
 
   public TecEdmInfo(final Edm edm) {
@@ -38,10 +37,7 @@ public class TecEdmInfo
 
   public EdmEntityType getTypeEtAllTypes() {
     try {
-      return edm
-          .getEntityContainer(TechnicalScenarioEdmProvider.ENTITY_CONTAINER_1)
-          .getEntitySet(TechnicalScenarioEdmProvider.ES_ALL_TYPES)
-          .getEntityType();
+      return edm.getEntityContainer(TechnicalScenarioEdmProvider.ENTITY_CONTAINER_1).getEntitySet(TechnicalScenarioEdmProvider.ES_ALL_TYPES).getEntityType();
     } catch (final EdmException e) {
       fail("Error in test setup" + e.getLocalizedMessage());
     }

@@ -58,8 +58,7 @@ public abstract class ODataJPAException extends ODataException {
    * @return an instance of type
    *         {@link org.apache.olingo.odata2.api.exception.MessageReference}
    */
-  protected static MessageReference createMessageReference(
-      final Class<? extends ODataJPAException> clazz, final String messageReferenceKey) {
+  protected static MessageReference createMessageReference(final Class<? extends ODataJPAException> clazz, final String messageReferenceKey) {
     return MessageReference.create(clazz, messageReferenceKey);
   }
 

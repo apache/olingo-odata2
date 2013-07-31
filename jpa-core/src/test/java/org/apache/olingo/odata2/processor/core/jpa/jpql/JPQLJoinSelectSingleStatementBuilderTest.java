@@ -25,12 +25,6 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
@@ -41,6 +35,11 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType;
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLJoinSelectSingleContextView;
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLStatement;
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class JPQLJoinSelectSingleStatementBuilderTest {
   JPQLJoinSelectSingleContextView context = null;

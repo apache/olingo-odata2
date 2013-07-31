@@ -104,8 +104,7 @@ public interface JPAEdmAssociationView extends JPAEdmBaseView {
    *            of type
    *            {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintView}
    */
-  public void addJPAEdmRefConstraintView(
-      JPAEdmReferentialConstraintView refView);
+  public void addJPAEdmRefConstraintView(JPAEdmReferentialConstraintView refView);
 
   /**
    * The method returns the referential constraint view that is currently

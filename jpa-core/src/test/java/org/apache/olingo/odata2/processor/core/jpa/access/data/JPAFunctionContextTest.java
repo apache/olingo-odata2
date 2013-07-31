@@ -26,9 +26,6 @@ import java.util.Map;
 
 import junit.framework.Assert;
 
-import org.easymock.EasyMock;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmLiteral;
@@ -42,6 +39,8 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.model.JPAEdmMappingImpl;
+import org.easymock.EasyMock;
+import org.junit.Test;
 
 public class JPAFunctionContextTest {
 
@@ -51,17 +50,13 @@ public class JPAFunctionContextTest {
     JPAFunctionContext functionContext = null;
     try {
       if (VARIANT == 0) {
-        functionContext = (JPAFunctionContext) JPAMethodContext
-            .createBuilder(JPQLContextType.FUNCTION, getView())
-            .build();
+        functionContext = (JPAFunctionContext) JPAMethodContext.createBuilder(JPQLContextType.FUNCTION, getView()).build();
       }
 
     } catch (ODataJPAModelException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
     return functionContext;
@@ -77,12 +72,9 @@ public class JPAFunctionContextTest {
   }
 
   private GetFunctionImportUriInfo getView() {
-    GetFunctionImportUriInfo functiontView = EasyMock
-        .createMock(GetFunctionImportUriInfo.class);
-    EasyMock.expect(functiontView.getFunctionImport()).andStubReturn(
-        getEdmFunctionImport());
-    EasyMock.expect(functiontView.getFunctionImportParameters())
-        .andStubReturn(getFunctionImportParameters());
+    GetFunctionImportUriInfo functiontView = EasyMock.createMock(GetFunctionImportUriInfo.class);
+    EasyMock.expect(functiontView.getFunctionImport()).andStubReturn(getEdmFunctionImport());
+    EasyMock.expect(functiontView.getFunctionImportParameters()).andStubReturn(getFunctionImportParameters());
 
     EasyMock.replay(functiontView);
     return functiontView;
@@ -93,18 +85,13 @@ public class JPAFunctionContextTest {
   }
 
   private EdmFunctionImport getEdmFunctionImport() {
-    EdmFunctionImport edmFunctionImport = EasyMock
-        .createMock(EdmFunctionImport.class);
+    EdmFunctionImport edmFunctionImport = EasyMock.createMock(EdmFunctionImport.class);
     try {
-      EasyMock.expect(edmFunctionImport.getMapping()).andStubReturn(
-          getMapping());
-      EasyMock.expect(edmFunctionImport.getParameterNames())
-          .andStubReturn(getParameterNames());
-      EasyMock.expect(edmFunctionImport.getParameter("Gentleman"))
-          .andStubReturn(getParameter("Gentleman"));
+      EasyMock.expect(edmFunctionImport.getMapping()).andStubReturn(getMapping());
+      EasyMock.expect(edmFunctionImport.getParameterNames()).andStubReturn(getParameterNames());
+      EasyMock.expect(edmFunctionImport.getParameter("Gentleman")).andStubReturn(getParameter("Gentleman"));
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
     EasyMock.replay(edmFunctionImport);
@@ -114,11 +101,9 @@ public class JPAFunctionContextTest {
   private EdmParameter getParameter(final String string) {
     EdmParameter edmParameter = EasyMock.createMock(EdmParameter.class);
     try {
-      EasyMock.expect(edmParameter.getMapping()).andStubReturn(
-          getEdmMapping());
+      EasyMock.expect(edmParameter.getMapping()).andStubReturn(getEdmMapping());
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(edmParameter);
     return edmParameter;

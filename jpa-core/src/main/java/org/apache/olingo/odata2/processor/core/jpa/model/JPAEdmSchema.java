@@ -39,8 +39,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmModelView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
 
-public class JPAEdmSchema extends JPAEdmBaseViewImpl implements
-    JPAEdmSchemaView {
+public class JPAEdmSchema extends JPAEdmBaseViewImpl implements JPAEdmSchemaView {
 
   private Schema schema;
   private JPAEdmComplexTypeView complexTypeView;
@@ -118,8 +117,7 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements
      * ************************************************************
      */
     @Override
-    public void build() throws ODataJPAModelException,
-        ODataJPARuntimeException {
+    public void build() throws ODataJPAModelException, ODataJPARuntimeException {
 
       schema = new Schema();
       JPAEdmNameBuilder.build(JPAEdmSchema.this);
@@ -130,31 +128,22 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements
       complexTypeView.getBuilder().build();
 
       if (getJPAEdmExtension() != null) {
-        getJPAEdmExtension()
-            .extend(JPAEdmSchema.this);
+        getJPAEdmExtension().extend(JPAEdmSchema.this);
       }
 
       entityContainerView = new JPAEdmEntityContainer(JPAEdmSchema.this);
       entityContainerView.getBuilder().build();
-      schema.setEntityContainers(entityContainerView
-          .getConsistentEdmEntityContainerList());
+      schema.setEntityContainers(entityContainerView.getConsistentEdmEntityContainerList());
 
-      JPAEdmEntitySetView entitySetView = entityContainerView
-          .getJPAEdmEntitySetView();
-      if (entitySetView.isConsistent()
-          && entitySetView.getJPAEdmEntityTypeView() != null) {
-        JPAEdmEntityTypeView entityTypeView = entitySetView
-            .getJPAEdmEntityTypeView();
-        if (entityTypeView.isConsistent()
-            && !entityTypeView.getConsistentEdmEntityTypes()
-                .isEmpty()) {
-          schema.setEntityTypes(entityTypeView
-              .getConsistentEdmEntityTypes());
+      JPAEdmEntitySetView entitySetView = entityContainerView.getJPAEdmEntitySetView();
+      if (entitySetView.isConsistent() && entitySetView.getJPAEdmEntityTypeView() != null) {
+        JPAEdmEntityTypeView entityTypeView = entitySetView.getJPAEdmEntityTypeView();
+        if (entityTypeView.isConsistent() && !entityTypeView.getConsistentEdmEntityTypes().isEmpty()) {
+          schema.setEntityTypes(entityTypeView.getConsistentEdmEntityTypes());
         }
       }
       if (complexTypeView.isConsistent()) {
-        List<ComplexType> complexTypes = complexTypeView
-            .getConsistentEdmComplexTypes();
+        List<ComplexType> complexTypes = complexTypeView.getConsistentEdmComplexTypes();
         List<ComplexType> existingComplexTypes = new ArrayList<ComplexType>();
         for (ComplexType complexType : complexTypes) {
           if (complexType != null && nonKeyComplexList.contains(complexType.getName())) {//null check for exclude
@@ -167,21 +156,16 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements
       }
 
       List<String> existingAssociationList = new ArrayList<String>();
-      if (associationView.isConsistent()
-          && !associationView.getConsistentEdmAssociationList()
-              .isEmpty()) {
+      if (associationView.isConsistent() && !associationView.getConsistentEdmAssociationList().isEmpty()) {
 
-        List<Association> consistentAssociationList = associationView
-            .getConsistentEdmAssociationList();
+        List<Association> consistentAssociationList = associationView.getConsistentEdmAssociationList();
         schema.setAssociations(consistentAssociationList);
         for (Association association : consistentAssociationList) {
           existingAssociationList.add(association.getName());
         }
 
       }
-      List<EntityType> entityTypes = entityContainerView
-          .getJPAEdmEntitySetView().getJPAEdmEntityTypeView()
-          .getConsistentEdmEntityTypes();
+      List<EntityType> entityTypes = entityContainerView.getJPAEdmEntitySetView().getJPAEdmEntityTypeView().getConsistentEdmEntityTypes();
       List<NavigationProperty> navigationProperties;
       if (entityTypes != null && !entityTypes.isEmpty()) {
         for (EntityType entityType : entityTypes) {
@@ -191,18 +175,14 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements
           if (navigationProperties != null) {
             consistentNavigationProperties = new ArrayList<NavigationProperty>();
             for (NavigationProperty navigationProperty : navigationProperties) {
-              if (existingAssociationList
-                  .contains(navigationProperty
-                      .getRelationship().getName())) {
-                consistentNavigationProperties
-                    .add(navigationProperty);
+              if (existingAssociationList.contains(navigationProperty.getRelationship().getName())) {
+                consistentNavigationProperties.add(navigationProperty);
               }
             }
             if (consistentNavigationProperties.isEmpty()) {
               entityType.setNavigationProperties(null);
             } else {
-              entityType
-                  .setNavigationProperties(consistentNavigationProperties);
+              entityType.setNavigationProperties(consistentNavigationProperties);
             }
           }
 

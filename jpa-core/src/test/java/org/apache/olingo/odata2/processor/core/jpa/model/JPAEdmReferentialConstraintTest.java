@@ -30,10 +30,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ManagedType;
 
-import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
@@ -44,6 +40,9 @@ import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAJavaMemberMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAManagedTypeMock;
+import org.easymock.EasyMock;
+import org.junit.Before;
+import org.junit.Test;
 
 public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
 
@@ -53,10 +52,7 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
   @Before
   public void setUp() {
     objJPAEdmReferentialConstraintTest = new JPAEdmReferentialConstraintTest();
-    objJPAEdmReferentialConstraint = new JPAEdmReferentialConstraint(
-        objJPAEdmReferentialConstraintTest,
-        objJPAEdmReferentialConstraintTest,
-        objJPAEdmReferentialConstraintTest);
+    objJPAEdmReferentialConstraint = new JPAEdmReferentialConstraint(objJPAEdmReferentialConstraintTest, objJPAEdmReferentialConstraintTest, objJPAEdmReferentialConstraintTest);
     try {
       objJPAEdmReferentialConstraint.getBuilder().build();
     } catch (ODataJPAModelException e) {
@@ -81,17 +77,13 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
 
   @Test
   public void testGetEdmReferentialConstraint() {
-    assertNotNull(objJPAEdmReferentialConstraint
-        .getEdmReferentialConstraint());
+    assertNotNull(objJPAEdmReferentialConstraint.getEdmReferentialConstraint());
   }
 
   @Test
   public void testIsExistsTrue() {
     objJPAEdmReferentialConstraintTest = new JPAEdmReferentialConstraintTest();
-    objJPAEdmReferentialConstraint = new JPAEdmReferentialConstraint(
-        objJPAEdmReferentialConstraintTest,
-        objJPAEdmReferentialConstraintTest,
-        objJPAEdmReferentialConstraintTest);
+    objJPAEdmReferentialConstraint = new JPAEdmReferentialConstraint(objJPAEdmReferentialConstraintTest, objJPAEdmReferentialConstraintTest, objJPAEdmReferentialConstraintTest);
     try {
       objJPAEdmReferentialConstraint.getBuilder().build();
       objJPAEdmReferentialConstraint.getBuilder().build();
@@ -105,21 +97,15 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
 
   @Test
   public void testGetRelationShipName() {
-    assertEquals("Assoc_SalesOrderHeader_SalesOrderItem",
-        objJPAEdmReferentialConstraint.getEdmRelationShipName());
+    assertEquals("Assoc_SalesOrderHeader_SalesOrderItem", objJPAEdmReferentialConstraint.getEdmRelationShipName());
   }
 
   @Override
   public Association getEdmAssociation() {
     Association association = new Association();
     association.setName("Assoc_SalesOrderHeader_SalesOrderItem");
-    association.setEnd1(new AssociationEnd().setType(
-        new FullQualifiedName("salesorderprocessing", "String"))
-        .setRole("SalesOrderHeader"));
-    association.setEnd2(new AssociationEnd()
-        .setType(
-            new FullQualifiedName("salesorderprocessing",
-                "SalesOrderItem")).setRole("SalesOrderItem"));
+    association.setEnd1(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "String")).setRole("SalesOrderHeader"));
+    association.setEnd2(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "SalesOrderItem")).setRole("SalesOrderItem"));
     return association;
   }
 
@@ -134,8 +120,7 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
   }
 
   @SuppressWarnings("hiding")
-  private class AttributeMock<Object, String> extends
-      JPAAttributeMock<Object, String> {
+  private class AttributeMock<Object, String> extends JPAAttributeMock<Object, String> {
 
     @Override
     public Member getJavaMember() {
@@ -175,8 +160,7 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
     @Override
     public <T extends Annotation> T getAnnotation(final Class<T> annotationClass) {
       JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
-      EasyMock.expect(joinColumn.referencedColumnName())
-          .andReturn("SOID");
+      EasyMock.expect(joinColumn.referencedColumnName()).andReturn("SOID");
       EasyMock.expect(joinColumn.name()).andReturn("SOID");
 
       EasyMock.replay(joinColumn);

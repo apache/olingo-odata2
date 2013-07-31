@@ -63,12 +63,10 @@ public abstract class ODataJPAProcessor extends ODataSingleProcessor {
    */
   public ODataJPAProcessor(final ODataJPAContext oDataJPAContext) {
     if (oDataJPAContext == null) {
-      throw new IllegalArgumentException(
-          ODataJPAException.ODATA_JPACTX_NULL);
+      throw new IllegalArgumentException(ODataJPAException.ODATA_JPACTX_NULL);
     }
     this.oDataJPAContext = oDataJPAContext;
-    jpaProcessor = ODataJPAFactory.createFactory().getJPAAccessFactory()
-        .getJPAProcessor(this.oDataJPAContext);
+    jpaProcessor = ODataJPAFactory.createFactory().getJPAAccessFactory().getJPAProcessor(this.oDataJPAContext);
   }
 
 }

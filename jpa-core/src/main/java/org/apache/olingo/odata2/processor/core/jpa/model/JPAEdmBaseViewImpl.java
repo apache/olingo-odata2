@@ -46,8 +46,7 @@ public abstract class JPAEdmBaseViewImpl implements JPAEdmBaseView {
   public JPAEdmBaseViewImpl(final ODataJPAContext context) {
     pUnitName = context.getPersistenceUnitName();
     metaModel = context.getEntityManagerFactory().getMetamodel();
-    jpaEdmMappingModelAccess = ODataJPAFactory.createFactory()
-        .getJPAAccessFactory().getJPAEdmMappingModelAccess(context);
+    jpaEdmMappingModelAccess = ODataJPAFactory.createFactory().getJPAAccessFactory().getJPAEdmMappingModelAccess(context);
     jpaEdmExtension = context.getJPAEdmExtension();
     jpaEdmMappingModelAccess.loadMappingModel();
   }

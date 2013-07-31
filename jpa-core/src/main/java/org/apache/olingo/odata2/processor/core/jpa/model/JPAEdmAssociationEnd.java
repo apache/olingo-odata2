@@ -35,8 +35,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
 
-public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements
-    JPAEdmAssociationEndView {
+public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements JPAEdmAssociationEndView {
 
   private JPAEdmEntityTypeView entityTypeView = null;
   private JPAEdmPropertyView propertyView = null;
@@ -47,8 +46,7 @@ public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements
   private String mappedBy;
   private String ownerPropertyName;
 
-  public JPAEdmAssociationEnd(final JPAEdmEntityTypeView entityTypeView,
-      final JPAEdmPropertyView propertyView) {
+  public JPAEdmAssociationEnd(final JPAEdmEntityTypeView entityTypeView, final JPAEdmPropertyView propertyView) {
     super(entityTypeView);
     this.entityTypeView = entityTypeView;
     this.propertyView = propertyView;
@@ -83,19 +81,14 @@ public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements
       currentAssociationEnd1 = new AssociationEnd();
       currentAssociationEnd2 = new AssociationEnd();
 
-      JPAEdmNameBuilder.build(JPAEdmAssociationEnd.this, entityTypeView,
-          propertyView);
+      JPAEdmNameBuilder.build(JPAEdmAssociationEnd.this, entityTypeView, propertyView);
 
-      currentAssociationEnd1.setRole(currentAssociationEnd1.getType()
-          .getName());
-      currentAssociationEnd2.setRole(currentAssociationEnd2.getType()
-          .getName());
+      currentAssociationEnd1.setRole(currentAssociationEnd1.getType().getName());
+      currentAssociationEnd2.setRole(currentAssociationEnd2.getType().getName());
 
-      setEdmMultiplicity(propertyView.getJPAAttribute()
-          .getPersistentAttributeType());
+      setEdmMultiplicity(propertyView.getJPAAttribute().getPersistentAttributeType());
 
-      AnnotatedElement annotatedElement = (AnnotatedElement) propertyView.getJPAAttribute()
-          .getJavaMember();
+      AnnotatedElement annotatedElement = (AnnotatedElement) propertyView.getJPAAttribute().getJavaMember();
       if (annotatedElement != null) {
         joinColumn = annotatedElement.getAnnotation(JoinColumn.class);
         if (joinColumn != null) {
@@ -109,8 +102,7 @@ public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements
     }
 
     private void setEdmMultiplicity(final PersistentAttributeType type) {
-      AnnotatedElement annotatedElement = (AnnotatedElement) propertyView.getJPAAttribute()
-          .getJavaMember();
+      AnnotatedElement annotatedElement = (AnnotatedElement) propertyView.getJPAAttribute().getJavaMember();
       switch (type) {
       case ONE_TO_MANY:
         currentAssociationEnd1.setMultiplicity(EdmMultiplicity.ONE);
@@ -154,19 +146,7 @@ public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements
 
   @Override
   public boolean compare(final AssociationEnd end1, final AssociationEnd end2) {
-    if ((end1.getType().equals(currentAssociationEnd1.getType())
-        && end2.getType().equals(currentAssociationEnd2.getType())
-        && end1.getMultiplicity().equals(
-            currentAssociationEnd1.getMultiplicity()) && end2
-        .getMultiplicity().equals(
-            currentAssociationEnd2.getMultiplicity()))
-        || (end1.getType().equals(currentAssociationEnd2.getType())
-            && end2.getType().equals(
-                currentAssociationEnd1.getType())
-            && end1.getMultiplicity().equals(
-                currentAssociationEnd2.getMultiplicity()) && end2
-            .getMultiplicity().equals(
-                currentAssociationEnd1.getMultiplicity()))) {
+    if ((end1.getType().equals(currentAssociationEnd1.getType()) && end2.getType().equals(currentAssociationEnd2.getType()) && end1.getMultiplicity().equals(currentAssociationEnd1.getMultiplicity()) && end2.getMultiplicity().equals(currentAssociationEnd2.getMultiplicity())) || (end1.getType().equals(currentAssociationEnd2.getType()) && end2.getType().equals(currentAssociationEnd1.getType()) && end1.getMultiplicity().equals(currentAssociationEnd2.getMultiplicity()) && end2.getMultiplicity().equals(currentAssociationEnd1.getMultiplicity()))) {
       return true;
     }
 

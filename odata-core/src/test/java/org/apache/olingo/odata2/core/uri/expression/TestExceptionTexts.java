@@ -18,11 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.uri.expression.ExceptionVisitExpression;
 import org.apache.olingo.odata2.api.uri.expression.ExpressionParserException;
 import org.apache.olingo.odata2.testutil.helper.ODataMessageTextVerifier;
+import org.junit.Test;
 
 /**
  *  

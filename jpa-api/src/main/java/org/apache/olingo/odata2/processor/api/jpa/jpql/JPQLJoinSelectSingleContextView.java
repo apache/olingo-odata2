@@ -33,8 +33,7 @@ import org.apache.olingo.odata2.processor.api.jpa.access.JPAJoinClause;
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLSelectSingleContextView
  * 
  */
-public interface JPQLJoinSelectSingleContextView extends
-    JPQLSelectSingleContextView {
+public interface JPQLJoinSelectSingleContextView extends JPQLSelectSingleContextView {
 
   /**
    * The method returns a list of JPA Join Clauses. The returned list of

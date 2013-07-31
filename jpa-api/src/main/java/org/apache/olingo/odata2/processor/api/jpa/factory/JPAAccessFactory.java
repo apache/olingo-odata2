@@ -71,6 +71,5 @@ public interface JPAAccessFactory {
    * @return an instance of type
    *         {@link org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmMappingModelAccess}
    */
-  public JPAEdmMappingModelAccess getJPAEdmMappingModelAccess(
-      ODataJPAContext oDataJPAContext);
+  public JPAEdmMappingModelAccess getJPAEdmMappingModelAccess(ODataJPAContext oDataJPAContext);
 }

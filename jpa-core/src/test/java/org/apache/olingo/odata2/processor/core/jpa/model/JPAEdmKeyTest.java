@@ -26,9 +26,6 @@ import java.util.List;
 
 import javax.persistence.metamodel.Attribute;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.ComplexProperty;
@@ -45,6 +42,8 @@ import org.apache.olingo.odata2.processor.core.jpa.mock.ODataJPAContextMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEdmMockData;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEdmMockData.ComplexType.ComplexTypeA;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class JPAEdmKeyTest extends JPAEdmTestModelView {
 
@@ -58,8 +57,7 @@ public class JPAEdmKeyTest extends JPAEdmTestModelView {
   }
 
   @SuppressWarnings("hiding")
-  private class JPAAttributeA<Object, ComplexTypeA> extends
-      JPAAttributeMock<Object, ComplexTypeA> {
+  private class JPAAttributeA<Object, ComplexTypeA> extends JPAAttributeMock<Object, ComplexTypeA> {
     @SuppressWarnings("unchecked")
     @Override
     public Class<ComplexTypeA> getJavaType() {
@@ -79,18 +77,10 @@ public class JPAEdmKeyTest extends JPAEdmTestModelView {
 
     Key key = keyView.getEdmKey();
 
-    assertEquals(
-        JPAEdmMockData.ComplexType.ComplexTypeA.Property.PROPERTY_A,
-        key.getKeys().get(0).getName());
-    assertEquals(
-        JPAEdmMockData.ComplexType.ComplexTypeA.Property.PROPERTY_B,
-        key.getKeys().get(1).getName());
-    assertEquals(
-        JPAEdmMockData.ComplexType.ComplexTypeB.Property.PROPERTY_D,
-        key.getKeys().get(2).getName());
-    assertEquals(
-        JPAEdmMockData.ComplexType.ComplexTypeB.Property.PROPERTY_E,
-        key.getKeys().get(3).getName());
+    assertEquals(JPAEdmMockData.ComplexType.ComplexTypeA.Property.PROPERTY_A, key.getKeys().get(0).getName());
+    assertEquals(JPAEdmMockData.ComplexType.ComplexTypeA.Property.PROPERTY_B, key.getKeys().get(1).getName());
+    assertEquals(JPAEdmMockData.ComplexType.ComplexTypeB.Property.PROPERTY_D, key.getKeys().get(2).getName());
+    assertEquals(JPAEdmMockData.ComplexType.ComplexTypeB.Property.PROPERTY_E, key.getKeys().get(3).getName());
 
   }
 
@@ -117,8 +107,7 @@ public class JPAEdmKeyTest extends JPAEdmTestModelView {
   public ComplexType searchEdmComplexType(final String arg0) {
     if (arg0.equals(JPAEdmMockData.ComplexType.ComplexTypeA.class.getName())) {
       return buildComplexTypeA();
-    } else if (arg0.equals(JPAEdmMockData.ComplexType.ComplexTypeB.class
-        .getSimpleName())) {
+    } else if (arg0.equals(JPAEdmMockData.ComplexType.ComplexTypeB.class.getSimpleName())) {
       return buildComplexTypeB();
     }
 
@@ -175,10 +164,8 @@ public class JPAEdmKeyTest extends JPAEdmTestModelView {
     propertyList.add(property);
 
     ComplexProperty complexProperty = new ComplexProperty();
-    complexProperty
-        .setName(JPAEdmMockData.ComplexType.ComplexTypeA.Property.PROPERTY_C);
-    complexProperty.setType(new FullQualifiedName(ODataJPAContextMock.NAMESPACE,
-        JPAEdmMockData.ComplexType.ComplexTypeB.name));
+    complexProperty.setName(JPAEdmMockData.ComplexType.ComplexTypeA.Property.PROPERTY_C);
+    complexProperty.setType(new FullQualifiedName(ODataJPAContextMock.NAMESPACE, JPAEdmMockData.ComplexType.ComplexTypeB.name));
 
     propertyList.add(complexProperty);
     return propertyList;

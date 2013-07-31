@@ -45,21 +45,17 @@ public class JPQLSelectSingleStatementBuilder extends JPQLStatementBuilder {
 
     StringBuilder jpqlQuery = new StringBuilder();
     String tableAlias = context.getJPAEntityAlias();
-    String fromClause = context.getJPAEntityName()
-        + JPQLStatement.DELIMITER.SPACE + tableAlias;
+    String fromClause = context.getJPAEntityName() + JPQLStatement.DELIMITER.SPACE + tableAlias;
 
-    jpqlQuery.append(JPQLStatement.KEYWORD.SELECT).append(
-        JPQLStatement.DELIMITER.SPACE);
+    jpqlQuery.append(JPQLStatement.KEYWORD.SELECT).append(JPQLStatement.DELIMITER.SPACE);
     jpqlQuery.append(context.getSelectExpression()).append(JPQLStatement.DELIMITER.SPACE);
     jpqlQuery.append(JPQLStatement.KEYWORD.FROM).append(JPQLStatement.DELIMITER.SPACE);
     jpqlQuery.append(fromClause);
 
-    if (context.getKeyPredicates() != null
-        && context.getKeyPredicates().size() > 0) {
+    if (context.getKeyPredicates() != null && context.getKeyPredicates().size() > 0) {
       jpqlQuery.append(JPQLStatement.DELIMITER.SPACE);
       jpqlQuery.append(JPQLStatement.KEYWORD.WHERE).append(JPQLStatement.DELIMITER.SPACE);
-      jpqlQuery.append(ODataExpressionParser.parseKeyPredicates(context.getKeyPredicates(),
-          context.getJPAEntityAlias()));
+      jpqlQuery.append(ODataExpressionParser.parseKeyPredicates(context.getKeyPredicates(), context.getJPAEntityAlias()));
     }
 
     return jpqlQuery.toString();

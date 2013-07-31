@@ -47,9 +47,7 @@ public final class ODataEntityParser {
     this.context = context;
   }
 
-  public final ODataEntry parseEntry(final EdmEntitySet entitySet,
-      final InputStream content, final String requestContentType, final boolean merge)
-      throws ODataBadRequestException {
+  public final ODataEntry parseEntry(final EdmEntitySet entitySet, final InputStream content, final String requestContentType, final boolean merge) throws ODataBadRequestException {
     return null;
 
   }
@@ -66,16 +64,13 @@ public final class ODataEntityParser {
 
       uriInfo = UriParser.parse(edm, subPathSegments, Collections.<String, String> emptyMap());
     } catch (ODataException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
 
     return uriInfo;
   }
 
-  public final UriInfo parseLink(final EdmEntitySet entitySet, final InputStream content, final String contentType)
-      throws ODataJPARuntimeException {
+  public final UriInfo parseLink(final EdmEntitySet entitySet, final InputStream content, final String contentType) throws ODataJPARuntimeException {
 
     String uriString = null;
     UriInfo uri = null;
@@ -85,8 +80,7 @@ public final class ODataEntityParser {
       ODataContext odataContext = context.getODataContext();
       final String serviceRoot = odataContext.getPathInfo().getServiceRoot().toString();
 
-      final String path = uriString.startsWith(serviceRoot.toString()) ?
-          uriString.substring(serviceRoot.length()) : uriString;
+      final String path = uriString.startsWith(serviceRoot.toString()) ? uriString.substring(serviceRoot.length()) : uriString;
 
       final PathSegment pathSegment = new PathSegment() {
         @Override
@@ -105,17 +99,14 @@ public final class ODataEntityParser {
       uri = UriParser.parse(edm, Arrays.asList(pathSegment), Collections.<String, String> emptyMap());
 
     } catch (ODataException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
 
     return uri;
 
   }
 
-  public List<UriInfo> parseLinks(final EdmEntitySet entitySet, final InputStream content, final String contentType)
-      throws ODataJPARuntimeException {
+  public List<UriInfo> parseLinks(final EdmEntitySet entitySet, final InputStream content, final String contentType) throws ODataJPARuntimeException {
 
     List<String> uriList = new ArrayList<String>();
     List<UriInfo> uriInfoList = new ArrayList<UriInfo>();
@@ -129,8 +120,7 @@ public final class ODataEntityParser {
       final Edm edm = odataContext.getService().getEntityDataModel();
 
       for (String uriString : uriList) {
-        final String path = uriString.startsWith(serviceRoot) ?
-            uriString.substring(length) : uriString;
+        final String path = uriString.startsWith(serviceRoot) ? uriString.substring(length) : uriString;
 
         final PathSegment pathSegment = new PathSegment() {
           @Override
@@ -150,9 +140,7 @@ public final class ODataEntityParser {
     } catch (EntityProviderException e) {
       return null;
     } catch (ODataException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
 
     return uriInfoList;

@@ -34,10 +34,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.metamodel.Attribute;
 
-import org.easymock.EasyMock;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -51,6 +47,9 @@ import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEdmMockData.SimpleType;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEdmMockData.SimpleType.SimpleTypeA;
+import org.easymock.EasyMock;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class JPAEdmAssociationTest extends JPAEdmTestModelView {
 
@@ -76,8 +75,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
   @Override
   public AssociationEnd getEdmAssociationEnd1() {
     AssociationEnd associationEnd = new AssociationEnd();
-    associationEnd.setType(new FullQualifiedName("salesorderprocessing",
-        "SalesOrderHeader"));
+    associationEnd.setType(new FullQualifiedName("salesorderprocessing", "SalesOrderHeader"));
     associationEnd.setRole("SalesOrderHeader");
     associationEnd.setMultiplicity(EdmMultiplicity.ONE);
     return associationEnd;
@@ -86,8 +84,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
   @Override
   public AssociationEnd getEdmAssociationEnd2() {
     AssociationEnd associationEnd = new AssociationEnd();
-    associationEnd.setType(new FullQualifiedName("salesorderprocessing",
-        "String"));
+    associationEnd.setType(new FullQualifiedName("salesorderprocessing", "String"));
     associationEnd.setRole("String");
     associationEnd.setMultiplicity(EdmMultiplicity.MANY);
     return associationEnd;
@@ -96,10 +93,8 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
   @Override
   public Association getEdmAssociation() {
     Association association = new Association();
-    association.setEnd1(new AssociationEnd().setType(new FullQualifiedName(
-        "salesorderprocessing", "SalesOrderHeader")));
-    association.setEnd2(new AssociationEnd().setType(new FullQualifiedName(
-        "salesorderprocessing", "String")));
+    association.setEnd1(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "SalesOrderHeader")));
+    association.setEnd2(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "String")));
 
     return association;
   }
@@ -111,8 +106,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
 
   @Override
   public JPAEdmReferentialConstraintView getJPAEdmReferentialConstraintView() {
-    JPAEdmReferentialConstraint refConstraintView = new JPAEdmReferentialConstraint(
-        localView, localView, localView);
+    JPAEdmReferentialConstraint refConstraintView = new JPAEdmReferentialConstraint(localView, localView, localView);
     return refConstraintView;
   }
 
@@ -171,8 +165,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
   @Test
   public void testGetEdmAssociation() {
     assertNotNull(objAssociation.getEdmAssociation());
-    assertEquals(objAssociation.getEdmAssociation().getName(),
-        ASSOCIATION_NAME);
+    assertEquals(objAssociation.getEdmAssociation().getName(), ASSOCIATION_NAME);
   }
 
   @Test
@@ -224,8 +217,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
       }
 
       @Override
-      public int getNumberOfAssociationsWithSimilarEndPoints(
-          final JPAEdmAssociationEndView view) {
+      public int getNumberOfAssociationsWithSimilarEndPoints(final JPAEdmAssociationEndView view) {
         return 1;
       }
 
@@ -242,8 +234,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
       }
 
       @SuppressWarnings("hiding")
-      class AttributeMock<Object, String> extends
-          JPAAttributeMock<Object, String> {
+      class AttributeMock<Object, String> extends JPAAttributeMock<Object, String> {
 
         @SuppressWarnings("unchecked")
         @Override
@@ -272,8 +263,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
         class AnnotatedElementMock implements AnnotatedElement, Member {
 
           @Override
-          public boolean isAnnotationPresent(
-              final Class<? extends Annotation> annotationClass) {
+          public boolean isAnnotationPresent(final Class<? extends Annotation> annotationClass) {
             return true;
           }
 
@@ -286,8 +276,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
               EasyMock.expect(joinColumn.referencedColumnName()).andStubReturn("DEMO_ID");
               EasyMock.replay(joinColumn);
               return joinColumn;
-            }
-            else {
+            } else {
               OneToMany oneToMany = EasyMock.createMock(OneToMany.class);
               EasyMock.expect(oneToMany.mappedBy()).andStubReturn("demo");
               EasyMock.replay(oneToMany);
@@ -334,8 +323,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
       }
     }
     TestAssociationEndView objJPAEdmAssociationEndTest = new TestAssociationEndView();
-    JPAEdmAssociationEnd objJPAEdmAssociationEnd = new JPAEdmAssociationEnd(
-        objJPAEdmAssociationEndTest, objJPAEdmAssociationEndTest);
+    JPAEdmAssociationEnd objJPAEdmAssociationEnd = new JPAEdmAssociationEnd(objJPAEdmAssociationEndTest, objJPAEdmAssociationEndTest);
     try {
       objJPAEdmAssociationEnd.getBuilder().build();
       Field field = objAssociation.getClass().getDeclaredField("associationEndMap");
@@ -368,8 +356,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
       @Override
       public AssociationEnd getEdmAssociationEnd1() {
         AssociationEnd associationEnd = new AssociationEnd();
-        associationEnd.setType(new FullQualifiedName(
-            "salesorderprocessing", "SalesOrderHeader"));
+        associationEnd.setType(new FullQualifiedName("salesorderprocessing", "SalesOrderHeader"));
         associationEnd.setRole("SalesOrderHeader");
         associationEnd.setMultiplicity(EdmMultiplicity.ONE);
         return associationEnd;
@@ -378,8 +365,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
       @Override
       public AssociationEnd getEdmAssociationEnd2() {
         AssociationEnd associationEnd = new AssociationEnd();
-        associationEnd.setType(new FullQualifiedName(
-            "salesorderprocessing", "SalesOrderItem"));
+        associationEnd.setType(new FullQualifiedName("salesorderprocessing", "SalesOrderItem"));
         associationEnd.setRole("SalesOrderItem");
         associationEnd.setMultiplicity(EdmMultiplicity.MANY);
         return associationEnd;
@@ -388,19 +374,14 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
       @Override
       public Association getEdmAssociation() {
         Association association = new Association();
-        association.setEnd1(new AssociationEnd()
-            .setType(new FullQualifiedName("salesorderprocessing",
-                "SalesOrderHeader")));
-        association.setEnd2(new AssociationEnd()
-            .setType(new FullQualifiedName("salesorderprocessing",
-                "SalesOrderItem")));
+        association.setEnd1(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "SalesOrderHeader")));
+        association.setEnd2(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "SalesOrderItem")));
 
         return association;
       }
     }
     LocalJPAAssociationView assocViewObj = new LocalJPAAssociationView();
-    JPAEdmAssociation objLocalAssociation = new JPAEdmAssociation(
-        assocViewObj, assocViewObj, assocViewObj, 1);
+    JPAEdmAssociation objLocalAssociation = new JPAEdmAssociation(assocViewObj, assocViewObj, assocViewObj, 1);
     try {
       objLocalAssociation.getBuilder().build();
     } catch (ODataJPARuntimeException e) {
@@ -427,8 +408,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
     }
 
     objAssociation.addJPAEdmRefConstraintView(localView);
-    assertTrue(objAssociation.getConsistentEdmAssociationList()
-        .size() > 0);
+    assertTrue(objAssociation.getConsistentEdmAssociationList().size() > 0);
   }
 
   @Test

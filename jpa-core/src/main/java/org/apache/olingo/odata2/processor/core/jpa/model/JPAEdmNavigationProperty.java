@@ -30,8 +30,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
 
-public class JPAEdmNavigationProperty extends JPAEdmBaseViewImpl implements
-    JPAEdmNavigationPropertyView {
+public class JPAEdmNavigationProperty extends JPAEdmBaseViewImpl implements JPAEdmNavigationPropertyView {
 
   private JPAEdmAssociationView associationView = null;
   private NavigationProperty currentNavigationProperty = null;
@@ -39,14 +38,12 @@ public class JPAEdmNavigationProperty extends JPAEdmBaseViewImpl implements
   private List<NavigationProperty> consistentNavigationProperties = null;
   private int count;
 
-  public JPAEdmNavigationProperty(final JPAEdmAssociationView associationView,
-      final JPAEdmPropertyView propertyView, final int countNumber) {
+  public JPAEdmNavigationProperty(final JPAEdmAssociationView associationView, final JPAEdmPropertyView propertyView, final int countNumber) {
     super(associationView);
     this.associationView = associationView;
     this.propertyView = propertyView;
     count = countNumber;
-    if (consistentNavigationProperties == null)
-    {
+    if (consistentNavigationProperties == null) {
       consistentNavigationProperties = new ArrayList<NavigationProperty>();
     }
   }
@@ -72,8 +69,7 @@ public class JPAEdmNavigationProperty extends JPAEdmBaseViewImpl implements
     public void build() throws ODataJPAModelException {
 
       currentNavigationProperty = new NavigationProperty();
-      JPAEdmNameBuilder.build(associationView, propertyView,
-          JPAEdmNavigationProperty.this, count);
+      JPAEdmNameBuilder.build(associationView, propertyView, JPAEdmNavigationProperty.this, count);
       consistentNavigationProperties.add(currentNavigationProperty);
     }
 
@@ -90,8 +86,7 @@ public class JPAEdmNavigationProperty extends JPAEdmBaseViewImpl implements
   }
 
   @Override
-  public void addJPAEdmNavigationPropertyView(
-      final JPAEdmNavigationPropertyView view) {
+  public void addJPAEdmNavigationPropertyView(final JPAEdmNavigationPropertyView view) {
     if (view != null && view.isConsistent()) {
       currentNavigationProperty = view.getEdmNavigationProperty();
       consistentNavigationProperties.add(currentNavigationProperty);

@@ -50,8 +50,7 @@ public class JPAFunctionContext extends JPAMethodContext {
     private EdmMapping mapping;
 
     @Override
-    public JPAMethodContext build() throws ODataJPAModelException,
-        ODataJPARuntimeException {
+    public JPAMethodContext build() throws ODataJPAModelException, ODataJPARuntimeException {
       if (functiontView != null) {
 
         functionImport = functiontView.getFunctionImport();
@@ -63,57 +62,39 @@ public class JPAFunctionContext extends JPAMethodContext {
           setJpaFunction(jpaFunctionList);
           setEnclosingObject(generateEnclosingObject());
         } catch (EdmException e) {
-          throw ODataJPARuntimeException.throwException(
-              ODataJPARuntimeException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         } catch (InstantiationException e) {
-          throw ODataJPARuntimeException.throwException(
-              ODataJPARuntimeException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         } catch (IllegalAccessException e) {
-          throw ODataJPARuntimeException.throwException(
-              ODataJPARuntimeException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         } catch (IllegalArgumentException e) {
-          throw ODataJPARuntimeException.throwException(
-              ODataJPARuntimeException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         } catch (InvocationTargetException e) {
-          throw ODataJPARuntimeException.throwException(
-              ODataJPARuntimeException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         } catch (NoSuchMethodException e) {
-          throw ODataJPARuntimeException.throwException(
-              ODataJPARuntimeException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         } catch (SecurityException e) {
-          throw ODataJPARuntimeException.throwException(
-              ODataJPARuntimeException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         }
       }
 
       return JPAFunctionContext.this;
     }
 
-    private JPAFunction generateJPAFunction() throws EdmException,
-        NoSuchMethodException, SecurityException,
-        ODataJPAModelException, ODataJPARuntimeException {
+    private JPAFunction generateJPAFunction() throws EdmException, NoSuchMethodException, SecurityException, ODataJPAModelException, ODataJPARuntimeException {
 
       Class<?>[] parameterTypes = getParameterTypes();
       Method method = getMethod(parameterTypes);
       Type returnType = getReturnType();
       Object[] args = getAruguments();
 
-      JPAFunction jpafunction = new JPAFunction(method, parameterTypes,
-          returnType, args);
+      JPAFunction jpafunction = new JPAFunction(method, parameterTypes, returnType, args);
 
       return jpafunction;
     }
 
     private Object[] getAruguments() throws EdmException {
-      Map<String, EdmLiteral> edmArguements = functiontView
-          .getFunctionImportParameters();
+      Map<String, EdmLiteral> edmArguements = functiontView.getFunctionImportParameters();
 
       if (edmArguements == null) {
         return null;
@@ -122,12 +103,9 @@ public class JPAFunctionContext extends JPAMethodContext {
         int i = 0;
         for (String paramName : functionImport.getParameterNames()) {
           EdmLiteral literal = edmArguements.get(paramName);
-          EdmParameter parameter = functionImport
-              .getParameter(paramName);
-          JPAEdmMapping mapping = (JPAEdmMapping) parameter
-              .getMapping();
-          args[i] = convertArguement(literal, parameter.getFacets(),
-              mapping.getJPAType());
+          EdmParameter parameter = functionImport.getParameter(paramName);
+          JPAEdmMapping mapping = (JPAEdmMapping) parameter.getMapping();
+          args[i] = convertArguement(literal, parameter.getFacets(), mapping.getJPAType());
           i++;
         }
         return args;
@@ -135,34 +113,27 @@ public class JPAFunctionContext extends JPAMethodContext {
 
     }
 
-    private Object convertArguement(final EdmLiteral edmLiteral,
-        final EdmFacets facets, final Class<?> targetType)
-        throws EdmSimpleTypeException {
+    private Object convertArguement(final EdmLiteral edmLiteral, final EdmFacets facets, final Class<?> targetType) throws EdmSimpleTypeException {
       EdmSimpleType edmType = edmLiteral.getType();
-      Object value = edmType.valueOfString(edmLiteral.getLiteral(),
-          EdmLiteralKind.DEFAULT, facets, targetType);
+      Object value = edmType.valueOfString(edmLiteral.getLiteral(), EdmLiteralKind.DEFAULT, facets, targetType);
 
       return value;
     }
 
     private Class<?>[] getParameterTypes() throws EdmException {
 
-      Class<?>[] parameterTypes = new Class<?>[functionImport
-          .getParameterNames().size()];
+      Class<?>[] parameterTypes = new Class<?>[functionImport.getParameterNames().size()];
       int i = 0;
       for (String parameterName : functionImport.getParameterNames()) {
-        EdmParameter parameter = functionImport
-            .getParameter(parameterName);
-        parameterTypes[i] = ((JPAEdmMapping) parameter.getMapping())
-            .getJPAType();
+        EdmParameter parameter = functionImport.getParameter(parameterName);
+        parameterTypes[i] = ((JPAEdmMapping) parameter.getMapping()).getJPAType();
         i++;
       }
 
       return parameterTypes;
     }
 
-    private Method getMethod(final Class<?>[] parameterTypes)
-        throws NoSuchMethodException, SecurityException {
+    private Method getMethod(final Class<?>[] parameterTypes) throws NoSuchMethodException, SecurityException {
 
       Class<?> type = ((JPAEdmMapping) mapping).getJPAType();
       Method method;
@@ -171,15 +142,11 @@ public class JPAFunctionContext extends JPAMethodContext {
       return method;
     }
 
-    private Type getReturnType() throws ODataJPAModelException,
-        ODataJPARuntimeException, EdmException {
+    private Type getReturnType() throws ODataJPAModelException, ODataJPARuntimeException, EdmException {
       return null;
     }
 
-    private Object generateEnclosingObject() throws InstantiationException,
-        IllegalAccessException, IllegalArgumentException,
-        InvocationTargetException, NoSuchMethodException,
-        SecurityException {
+    private Object generateEnclosingObject() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
       Class<?> type = ((JPAEdmMapping) mapping).getJPAType();
       Object[] params = null;

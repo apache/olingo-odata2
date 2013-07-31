@@ -83,8 +83,7 @@ public class ODataExpressionParser {
       case MINUS:
         if (operand.startsWith("-")) {
           return operand.substring(1);
-        }
-        else {
+        } else {
           return "-" + operand; //$NON-NLS-1$
         }
       default:
@@ -154,10 +153,8 @@ public class ODataExpressionParser {
     case METHOD:
       final MethodExpression methodExpression = (MethodExpression) whereExpression;
       String first = parseToJPAWhereExpression(methodExpression.getParameters().get(0), tableAlias);
-      final String second = methodExpression.getParameterCount() > 1 ?
-          parseToJPAWhereExpression(methodExpression.getParameters().get(1), tableAlias) : null;
-      String third = methodExpression.getParameterCount() > 2 ?
-          parseToJPAWhereExpression(methodExpression.getParameters().get(2), tableAlias) : null;
+      final String second = methodExpression.getParameterCount() > 1 ? parseToJPAWhereExpression(methodExpression.getParameters().get(1), tableAlias) : null;
+      String third = methodExpression.getParameterCount() > 2 ? parseToJPAWhereExpression(methodExpression.getParameters().get(2), tableAlias) : null;
 
       switch (methodExpression.getMethod()) {
       case SUBSTRING:
@@ -168,8 +165,7 @@ public class ODataExpressionParser {
         if (methodFlag == 1) {
           methodFlag = 0;
           return String.format("(CASE WHEN %s LIKE '%%%s%%' THEN TRUE ELSE FALSE END)", second, first);
-        }
-        else {
+        } else {
           return String.format("(CASE WHEN %s LIKE '%%%s%%' THEN TRUE ELSE FALSE END) = true", second, first);
         }
       case TOLOWER:
@@ -231,9 +227,7 @@ public class ODataExpressionParser {
           orderByDirection = (orderBy.getSortOrder() == SortOrder.asc) ? EMPTY : "DESC"; //$NON-NLS-1$
           orderByMap.put(tableAlias + JPQLStatement.DELIMITER.PERIOD + orderByField, orderByDirection);
         } catch (EdmException e) {
-          throw ODataJPARuntimeException.throwException(
-              ODataJPARuntimeException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         }
       }
     }
@@ -263,15 +257,12 @@ public class ODataExpressionParser {
         propertyName = keyPredicate.getProperty().getMapping().getInternalName();
         edmSimpleType = (EdmSimpleType) keyPredicate.getProperty().getType();
       } catch (EdmException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
 
       literal = evaluateComparingExpression(literal, edmSimpleType);
 
-      if (edmSimpleType == EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance()
-          || edmSimpleType == EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance()) {
+      if (edmSimpleType == EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance() || edmSimpleType == EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance()) {
         literal = literal.substring(literal.indexOf('\''), literal.indexOf('}'));
       }
 
@@ -294,13 +285,9 @@ public class ODataExpressionParser {
    */
   private static String evaluateComparingExpression(String value, final EdmSimpleType edmSimpleType) throws ODataJPARuntimeException {
 
-    if (edmSimpleType == EdmSimpleTypeKind.String.getEdmSimpleTypeInstance()
-        || edmSimpleType == EdmSimpleTypeKind.Guid.getEdmSimpleTypeInstance())
-    {
+    if (edmSimpleType == EdmSimpleTypeKind.String.getEdmSimpleTypeInstance() || edmSimpleType == EdmSimpleTypeKind.Guid.getEdmSimpleTypeInstance()) {
       value = "\'" + value + "\'"; //$NON-NLS-1$	//$NON-NLS-2$
-    } else if (edmSimpleType == EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance()
-        || edmSimpleType == EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance())
-    {
+    } else if (edmSimpleType == EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance() || edmSimpleType == EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance()) {
       try {
         Calendar datetime = (Calendar) edmSimpleType.valueOfString(value, EdmLiteralKind.DEFAULT, null, edmSimpleType.getDefaultType());
 
@@ -314,9 +301,7 @@ public class ODataExpressionParser {
         value = JPQLStatement.DELIMITER.LEFT_BRACE + JPQLStatement.KEYWORD.TIMESTAMP + JPQLStatement.DELIMITER.SPACE + "\'" + year + JPQLStatement.DELIMITER.HYPHEN + month + JPQLStatement.DELIMITER.HYPHEN + day + JPQLStatement.DELIMITER.SPACE + hour + JPQLStatement.DELIMITER.COLON + min + JPQLStatement.DELIMITER.COLON + sec + JPQLStatement.KEYWORD.OFFSET + "\'" + JPQLStatement.DELIMITER.RIGHT_BRACE;
 
       } catch (EdmSimpleTypeException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
 
     } else if (edmSimpleType == EdmSimpleTypeKind.Time.getEdmSimpleTypeInstance()) {
@@ -329,9 +314,7 @@ public class ODataExpressionParser {
 
         value = "\'" + hourValue + JPQLStatement.DELIMITER.COLON + minValue + JPQLStatement.DELIMITER.COLON + secValue + "\'";
       } catch (EdmSimpleTypeException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
 
     } else if (edmSimpleType == EdmSimpleTypeKind.Int64.getEdmSimpleTypeInstance()) {
@@ -352,9 +335,7 @@ public class ODataExpressionParser {
           propertyName = edmProperty.getName();
         }
       } catch (EdmException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
       orderByMap.put(tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName, EMPTY);
     }

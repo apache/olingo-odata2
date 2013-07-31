@@ -30,9 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.easymock.EasyMock;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
@@ -43,6 +40,8 @@ import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
+import org.easymock.EasyMock;
+import org.junit.Test;
 
 public class JPAEntityParserTest {
   /*
@@ -61,8 +60,7 @@ public class JPAEntityParserTest {
   public void testparse2EdmPropertyValueMap() {
     JPAEntityParser resultParser = JPAEntityParser.create();
     Object jpaEntity = new demoItem("abc", 10);
-    EdmStructuralType structuralType = EasyMock
-        .createMock(EdmStructuralType.class);
+    EdmStructuralType structuralType = EasyMock.createMock(EdmStructuralType.class);
     EdmProperty edmTyped = EasyMock.createMock(EdmProperty.class);
     EdmType edmType = EasyMock.createMock(EdmType.class);
     EdmProperty edmTyped01 = EasyMock.createMock(EdmProperty.class);
@@ -71,8 +69,7 @@ public class JPAEntityParserTest {
     EdmMapping edmMapping01 = EasyMock.createMock(EdmMapping.class);
 
     try {
-      EasyMock.expect(edmType.getKind())
-          .andStubReturn(EdmTypeKind.SIMPLE);
+      EasyMock.expect(edmType.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
       EasyMock.expect(edmTyped.getName()).andStubReturn("identifier");
       EasyMock.replay(edmType);
       EasyMock.expect(edmMapping.getInternalName()).andStubReturn("id");
@@ -80,41 +77,33 @@ public class JPAEntityParserTest {
       EasyMock.expect(edmTyped.getType()).andStubReturn(edmType);
       EasyMock.expect(edmTyped.getMapping()).andStubReturn(edmMapping);
       EasyMock.replay(edmTyped);
-      EasyMock.expect(structuralType.getProperty("identifier"))
-          .andStubReturn(edmTyped);
+      EasyMock.expect(structuralType.getProperty("identifier")).andStubReturn(edmTyped);
 
-      EasyMock.expect(edmType01.getKind()).andStubReturn(
-          EdmTypeKind.SIMPLE);
+      EasyMock.expect(edmType01.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
       EasyMock.expect(edmTyped01.getName()).andStubReturn("Value");
       EasyMock.replay(edmType01);
-      EasyMock.expect(edmMapping01.getInternalName()).andStubReturn(
-          "value");
+      EasyMock.expect(edmMapping01.getInternalName()).andStubReturn("value");
       EasyMock.replay(edmMapping01);
       EasyMock.expect(edmTyped01.getType()).andStubReturn(edmType01);
-      EasyMock.expect(edmTyped01.getMapping())
-          .andStubReturn(edmMapping01);
+      EasyMock.expect(edmTyped01.getMapping()).andStubReturn(edmMapping01);
       EasyMock.replay(edmTyped01);
-      EasyMock.expect(structuralType.getProperty("value")).andStubReturn(
-          edmTyped01);
+      EasyMock.expect(structuralType.getProperty("value")).andStubReturn(edmTyped01);
 
       List<String> propNames = new ArrayList<String>();
       propNames.add("identifier");
       propNames.add("value");
-      EasyMock.expect(structuralType.getPropertyNames()).andReturn(
-          propNames);
+      EasyMock.expect(structuralType.getPropertyNames()).andReturn(propNames);
       EasyMock.replay(structuralType);
 
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
     try {
       Map<String, Object> result = resultParser.parse2EdmPropertyValueMap(jpaEntity, structuralType);
       assertEquals(2, result.size());
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
@@ -123,8 +112,7 @@ public class JPAEntityParserTest {
   public void testparse2EdmPropertyValueMapEdmExcep() {
     JPAEntityParser resultParser = JPAEntityParser.create();
     Object jpaEntity = new demoItem("abc", 10);
-    EdmStructuralType structuralType = EasyMock
-        .createMock(EdmStructuralType.class);
+    EdmStructuralType structuralType = EasyMock.createMock(EdmStructuralType.class);
     EdmProperty edmTyped = EasyMock.createMock(EdmProperty.class);
     EdmType edmType = EasyMock.createMock(EdmType.class);
     EdmProperty edmTyped01 = EasyMock.createMock(EdmProperty.class);
@@ -133,44 +121,34 @@ public class JPAEntityParserTest {
     EdmMapping edmMapping01 = EasyMock.createMock(EdmMapping.class);
 
     try {
-      EasyMock.expect(edmType.getKind())
-          .andStubReturn(EdmTypeKind.SIMPLE);
-      EasyMock.expect(edmType.getName()).andStubThrow(
-          new EdmException(null));
+      EasyMock.expect(edmType.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
+      EasyMock.expect(edmType.getName()).andStubThrow(new EdmException(null));
       EasyMock.replay(edmType);
       EasyMock.expect(edmMapping.getInternalName()).andStubReturn("id");
       EasyMock.replay(edmMapping);
-      EasyMock.expect(edmTyped.getType()).andStubThrow(
-          new EdmException(null));
+      EasyMock.expect(edmTyped.getType()).andStubThrow(new EdmException(null));
       EasyMock.expect(edmTyped.getMapping()).andStubReturn(edmMapping);
       EasyMock.replay(edmTyped);
-      EasyMock.expect(structuralType.getProperty("identifier"))
-          .andStubReturn(edmTyped);
+      EasyMock.expect(structuralType.getProperty("identifier")).andStubReturn(edmTyped);
 
-      EasyMock.expect(edmType01.getKind()).andStubReturn(
-          EdmTypeKind.SIMPLE);
+      EasyMock.expect(edmType01.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
       EasyMock.expect(edmType01.getName()).andStubReturn("value");
       EasyMock.replay(edmType01);
-      EasyMock.expect(edmMapping01.getInternalName()).andStubReturn(
-          "value");
+      EasyMock.expect(edmMapping01.getInternalName()).andStubReturn("value");
       EasyMock.replay(edmMapping01);
       EasyMock.expect(edmTyped01.getType()).andStubReturn(edmType01);
-      EasyMock.expect(edmTyped01.getMapping())
-          .andStubReturn(edmMapping01);
+      EasyMock.expect(edmTyped01.getMapping()).andStubReturn(edmMapping01);
       EasyMock.replay(edmTyped01);
-      EasyMock.expect(structuralType.getProperty("value")).andStubReturn(
-          edmTyped01);
+      EasyMock.expect(structuralType.getProperty("value")).andStubReturn(edmTyped01);
 
       List<String> propNames = new ArrayList<String>();
       propNames.add("identifier");
       propNames.add("value");
-      EasyMock.expect(structuralType.getPropertyNames()).andReturn(
-          propNames);
+      EasyMock.expect(structuralType.getPropertyNames()).andReturn(propNames);
       EasyMock.replay(structuralType);
 
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2); // assertTrue(false);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2); // assertTrue(false);
     }
 
     try {
@@ -182,8 +160,7 @@ public class JPAEntityParserTest {
   }
 
   @Test
-  public void testparse2EdmPropertyListMap()
-  {
+  public void testparse2EdmPropertyListMap() {
     JPAEntityParser resultParser = JPAEntityParser.create();
     Map<String, Object> edmEntity = new HashMap<String, Object>();
     edmEntity.put("SoId", 1);
@@ -201,8 +178,7 @@ public class JPAEntityParserTest {
       EasyMock.expect(navigationProperty.getMapping()).andStubReturn(edmMapping);
       EasyMock.replay(navigationProperty);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
     navigationPropertyList.add(navigationProperty);
@@ -211,14 +187,12 @@ public class JPAEntityParserTest {
       assertEquals(relatedEntity, result.get("RelatedEntities"));
 
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
   @Test
-  public void testparse2EdmPropertyValueMapFromList()
-  {
+  public void testparse2EdmPropertyValueMapFromList() {
     JPAEntityParser resultParser = JPAEntityParser.create();
     demoItem jpaEntity = new demoItem("laptop", 1);
     DemoRelatedEntity relatedEntity = new DemoRelatedEntity("DemoOrder");
@@ -250,8 +224,7 @@ public class JPAEntityParserTest {
       EasyMock.replay(edmProperty2);
 
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     selectPropertyList.add(edmProperty1);
     selectPropertyList.add(edmProperty2);
@@ -259,8 +232,7 @@ public class JPAEntityParserTest {
       Map<String, Object> result = resultParser.parse2EdmPropertyValueMap(jpaEntity, selectPropertyList);
       assertEquals("DemoOrder", result.get("Order"));
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
@@ -268,8 +240,7 @@ public class JPAEntityParserTest {
   // This unit tests when there is a complex type in the select list
   @SuppressWarnings("unchecked")
   @Test
-  public void testparse2EdmPropertyValueMapFromListComplex()
-  {
+  public void testparse2EdmPropertyValueMapFromListComplex() {
     JPAEntityParser resultParser = JPAEntityParser.create();
     demoItem jpaEntity = new demoItem("laptop", 1);
     DemoRelatedEntity relatedEntity = new DemoRelatedEntity("DemoOrder");
@@ -317,8 +288,7 @@ public class JPAEntityParserTest {
       EasyMock.replay(edmProperty2);
 
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     selectPropertyList.add(edmProperty1);
     selectPropertyList.add(edmProperty2);
@@ -326,8 +296,7 @@ public class JPAEntityParserTest {
       Map<String, Object> result = resultParser.parse2EdmPropertyValueMap(jpaEntity, selectPropertyList);
       assertEquals(1, ((HashMap<String, Object>) result.get("Order")).size());
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
@@ -347,29 +316,22 @@ public class JPAEntityParserTest {
        */
       Class<?>[] pars = { String.class, EdmMapping.class, String.class };
       Object[] params = { "Field1", null, "get" };
-      Method getGetterName = resultParser.getClass().getDeclaredMethod(
-          "getAccessModifierName", pars);
+      Method getGetterName = resultParser.getClass().getDeclaredMethod("getAccessModifierName", pars);
       getGetterName.setAccessible(true);
-      String name = (String) getGetterName.invoke(resultParser,
-          params);
+      String name = (String) getGetterName.invoke(resultParser, params);
 
       assertEquals("getField1", name);
 
     } catch (IllegalAccessException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalArgumentException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InvocationTargetException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (NoSuchMethodException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
 
     }
   }
@@ -384,29 +346,22 @@ public class JPAEntityParserTest {
        */
       Class<?>[] pars = { String.class, EdmMapping.class, String.class };
       Object[] params = { null, null, null };
-      Method getGetterName = resultParser.getClass().getDeclaredMethod(
-          "getAccessModifierName", pars);
+      Method getGetterName = resultParser.getClass().getDeclaredMethod("getAccessModifierName", pars);
       getGetterName.setAccessible(true);
 
-      String name = (String) getGetterName.invoke(resultParser,
-          params);
+      String name = (String) getGetterName.invoke(resultParser, params);
       assertNull(name);
 
     } catch (IllegalAccessException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalArgumentException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InvocationTargetException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (NoSuchMethodException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
 
     }
   }
@@ -429,29 +384,22 @@ public class JPAEntityParserTest {
 
       Class<?>[] pars = { String.class, EdmMapping.class, String.class };
       Object[] params = { "myField", edmMapping, "get" };
-      Method getGetterName = resultParser.getClass().getDeclaredMethod(
-          "getAccessModifierName", pars);
+      Method getGetterName = resultParser.getClass().getDeclaredMethod("getAccessModifierName", pars);
       getGetterName.setAccessible(true);
 
-      String name = (String) getGetterName.invoke(resultParser,
-          params);
+      String name = (String) getGetterName.invoke(resultParser, params);
       assertEquals("getField1", name);
 
     } catch (IllegalAccessException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalArgumentException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InvocationTargetException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (NoSuchMethodException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
 
     }
   }
@@ -461,17 +409,13 @@ public class JPAEntityParserTest {
     JPAEntityParser resultParser = JPAEntityParser.create();
     try {
 
-      Method getGetterName = resultParser.getClass().getDeclaredMethod(
-          "getGetterName1", EdmProperty.class);
+      Method getGetterName = resultParser.getClass().getDeclaredMethod("getGetterName1", EdmProperty.class);
       getGetterName.setAccessible(true);
 
     } catch (NoSuchMethodException e) {
-      assertEquals(
-          "org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser.getGetterName1(org.apache.olingo.odata2.api.edm.EdmProperty)",
-          e.getMessage());
+      assertEquals("org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser.getGetterName1(org.apache.olingo.odata2.api.edm.EdmProperty)", e.getMessage());
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
 
     }
   }
@@ -483,8 +427,7 @@ public class JPAEntityParserTest {
     try {
       resultParser.parse2EdmPropertyValueMap(jpaEntity, getEdmPropertyList());
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
@@ -492,52 +435,40 @@ public class JPAEntityParserTest {
   public void testGetGetterEdmException() {
     JPAEntityParser resultParser = JPAEntityParser.create();
     Object jpaEntity = new demoItem("abc", 10);
-    EdmStructuralType structuralType = EasyMock
-        .createMock(EdmStructuralType.class);
+    EdmStructuralType structuralType = EasyMock.createMock(EdmStructuralType.class);
     try {
-      EasyMock.expect(structuralType.getPropertyNames()).andStubThrow(
-          new EdmException(null));
+      EasyMock.expect(structuralType.getPropertyNames()).andStubThrow(new EdmException(null));
       EasyMock.replay(structuralType);
-      Method getGetters = resultParser.getClass().getDeclaredMethod(
-          "getGetters", Object.class, EdmStructuralType.class);
+      Method getGetters = resultParser.getClass().getDeclaredMethod("getGetters", Object.class, EdmStructuralType.class);
       getGetters.setAccessible(true);
       try {
         getGetters.invoke(resultParser, jpaEntity, structuralType);
       } catch (IllegalAccessException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (IllegalArgumentException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (InvocationTargetException e) {
         assertTrue(true);
       }
     } catch (NoSuchMethodException e) {
-      assertEquals(
-          "org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser.getGetters(java.lang.Object, org.apache.olingo.odata2.api.edm.EdmStructuralType)",
-          e.getMessage());
+      assertEquals("org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser.getGetters(java.lang.Object, org.apache.olingo.odata2.api.edm.EdmStructuralType)", e.getMessage());
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
   @Test
   public void testForNullJPAEntity() {
     JPAEntityParser resultParser = JPAEntityParser.create();
-    EdmStructuralType structuralType = EasyMock
-        .createMock(EdmStructuralType.class);
+    EdmStructuralType structuralType = EasyMock.createMock(EdmStructuralType.class);
     Object map;
     try {
-      map = resultParser.parse2EdmPropertyValueMap(null,
-          structuralType);
+      map = resultParser.parse2EdmPropertyValueMap(null, structuralType);
       assertNull(map);
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
@@ -577,8 +508,7 @@ public class JPAEntityParserTest {
 
   }
 
-  class DemoRelatedEntity
-  {
+  class DemoRelatedEntity {
     String order;
 
     public String getOrder() {
@@ -602,8 +532,7 @@ public class JPAEntityParserTest {
     return properties;
   }
 
-  class DemoItem2
-  {
+  class DemoItem2 {
     private String field1;
 
     public String getField1() {
@@ -614,8 +543,7 @@ public class JPAEntityParserTest {
       field1 = field;
     }
 
-    public DemoItem2(final String field)
-    {
+    public DemoItem2(final String field) {
       field1 = field;
     }
 
@@ -625,8 +553,7 @@ public class JPAEntityParserTest {
     EdmProperty edmTyped = EasyMock.createMock(EdmProperty.class);
 
     EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
-    EasyMock.expect(edmMapping.getInternalName()).andStubReturn(
-        "Field1");
+    EasyMock.expect(edmMapping.getInternalName()).andStubReturn("Field1");
     EasyMock.replay(edmMapping);
 
     EdmType edmType = EasyMock.createMock(EdmType.class);
@@ -635,15 +562,13 @@ public class JPAEntityParserTest {
       EasyMock.expect(edmType.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
       EasyMock.expect(edmType.getName()).andStubReturn("identifier");
       EasyMock.expect(edmTyped.getName()).andStubReturn("SalesOrderHeader");
-      EasyMock.expect(edmTyped.getMapping())
-          .andStubReturn(edmMapping);
+      EasyMock.expect(edmTyped.getMapping()).andStubReturn(edmMapping);
 
       EasyMock.expect(edmTyped.getType()).andStubReturn(edmType);
       EasyMock.expect(edmTyped.getMapping()).andStubReturn(edmMapping);
 
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(edmType);
     EasyMock.replay(edmTyped);

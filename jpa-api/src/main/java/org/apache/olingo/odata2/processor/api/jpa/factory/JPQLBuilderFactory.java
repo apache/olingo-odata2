@@ -78,6 +78,5 @@ public interface JPQLBuilderFactory {
    *            parameter cannot be null.
    * @return an instance of JPAMethodContextBuilder
    */
-  public JPAMethodContextBuilder getJPAMethodContextBuilder(
-      JPQLContextType contextType);
+  public JPAMethodContextBuilder getJPAMethodContextBuilder(JPQLContextType contextType);
 }

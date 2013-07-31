@@ -32,8 +32,7 @@ import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType;
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLSelectContextView;
 import org.apache.olingo.odata2.processor.core.jpa.ODataExpressionParser;
 
-public class JPQLSelectContext extends JPQLContext implements
-    JPQLSelectContextView {
+public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextView {
 
   protected String selectExpression;
   protected HashMap<String, String> orderByCollection;
@@ -45,8 +44,7 @@ public class JPQLSelectContext extends JPQLContext implements
     this.isCountOnly = isCountOnly;
   }
 
-  protected final void setOrderByCollection(
-      final HashMap<String, String> orderByCollection) {
+  protected final void setOrderByCollection(final HashMap<String, String> orderByCollection) {
     this.orderByCollection = orderByCollection;
   }
 
@@ -73,15 +71,12 @@ public class JPQLSelectContext extends JPQLContext implements
     return whereCondition;
   }
 
-  public class JPQLSelectContextBuilder
-      extends
-      org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder {
+  public class JPQLSelectContextBuilder extends org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder {
 
     protected GetEntitySetUriInfo entitySetView;
 
     @Override
-    public JPQLContext build() throws ODataJPAModelException,
-        ODataJPARuntimeException {
+    public JPQLContext build() throws ODataJPAModelException, ODataJPARuntimeException {
       if (entitySetView != null) {
 
         try {
@@ -91,8 +86,7 @@ public class JPQLSelectContext extends JPQLContext implements
           } else {
             setType(JPQLContextType.SELECT);
           }
-          EdmEntityType entityType = entitySetView
-              .getTargetEntitySet().getEntityType();
+          EdmEntityType entityType = entitySetView.getTargetEntitySet().getEntityType();
           EdmMapping mapping = entityType.getMapping();
           if (mapping != null) {
             setJPAEntityName(mapping.getInternalName());
@@ -134,20 +128,15 @@ public class JPQLSelectContext extends JPQLContext implements
     /*
      * Generate Order By Clause Fields
      */
-    protected HashMap<String, String> generateOrderByFileds()
-        throws ODataJPARuntimeException, EdmException {
+    protected HashMap<String, String> generateOrderByFileds() throws ODataJPARuntimeException, EdmException {
 
       if (entitySetView.getOrderBy() != null) {
 
-        return ODataExpressionParser
-            .parseToJPAOrderByExpression(entitySetView.getOrderBy(), getJPAEntityAlias());
+        return ODataExpressionParser.parseToJPAOrderByExpression(entitySetView.getOrderBy(), getJPAEntityAlias());
 
-      } else if (entitySetView.getTop() != null
-          || entitySetView.getSkip() != null) {
+      } else if (entitySetView.getTop() != null || entitySetView.getSkip() != null) {
 
-        return ODataExpressionParser
-            .parseKeyPropertiesToJPAOrderByExpression(entitySetView.getTargetEntitySet()
-                .getEntityType().getKeyProperties(), getJPAEntityAlias());
+        return ODataExpressionParser.parseKeyPropertiesToJPAOrderByExpression(entitySetView.getTargetEntitySet().getEntityType().getKeyProperties(), getJPAEntityAlias());
       } else {
         return null;
       }
@@ -159,8 +148,7 @@ public class JPQLSelectContext extends JPQLContext implements
      */
     protected String generateWhereExpression() throws ODataException {
       if (entitySetView.getFilter() != null) {
-        return ODataExpressionParser
-            .parseToJPAWhereExpression(entitySetView.getFilter(), getJPAEntityAlias());
+        return ODataExpressionParser.parseToJPAWhereExpression(entitySetView.getFilter(), getJPAEntityAlias());
       }
       return null;
     }

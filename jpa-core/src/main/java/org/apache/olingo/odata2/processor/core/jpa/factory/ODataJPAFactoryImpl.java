@@ -114,8 +114,7 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
         contextBuilder = singleSelectContext.new JPQLSelectSingleContextBuilder();
         break;
       case JOIN:
-        JPQLJoinSelectContext joinContext = new JPQLJoinSelectContext(
-            false);
+        JPQLJoinSelectContext joinContext = new JPQLJoinSelectContext(false);
         contextBuilder = joinContext.new JPQLJoinContextBuilder();
         break;
       case JOIN_SINGLE:
@@ -123,13 +122,11 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
         contextBuilder = joinSingleContext.new JPQLJoinSelectSingleContextBuilder();
         break;
       case SELECT_COUNT:
-        JPQLSelectContext selectCountContext = new JPQLSelectContext(
-            true);
+        JPQLSelectContext selectCountContext = new JPQLSelectContext(true);
         contextBuilder = selectCountContext.new JPQLSelectContextBuilder();
         break;
       case JOIN_COUNT:
-        JPQLJoinSelectContext joinCountContext = new JPQLJoinSelectContext(
-            true);
+        JPQLJoinSelectContext joinCountContext = new JPQLJoinSelectContext(true);
         contextBuilder = joinCountContext.new JPQLJoinContextBuilder();
       default:
         break;
@@ -147,8 +144,7 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
     }
 
     @Override
-    public JPAMethodContextBuilder getJPAMethodContextBuilder(
-        final JPQLContextType contextType) {
+    public JPAMethodContextBuilder getJPAMethodContextBuilder(final JPQLContextType contextType) {
 
       JPAMethodContextBuilder contextBuilder = null;
       switch (contextType) {
@@ -165,16 +161,14 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
 
   }
 
-  private static class ODataJPAAccessFactoryImpl implements
-      ODataJPAAccessFactory {
+  private static class ODataJPAAccessFactoryImpl implements ODataJPAAccessFactory {
 
     private static ODataJPAAccessFactoryImpl factory = null;
 
     private ODataJPAAccessFactoryImpl() {}
 
     @Override
-    public ODataSingleProcessor createODataProcessor(
-        final ODataJPAContext oDataJPAContext) {
+    public ODataSingleProcessor createODataProcessor(final ODataJPAContext oDataJPAContext) {
       return new ODataJPAProcessorDefault(oDataJPAContext);
     }
 
@@ -210,8 +204,7 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
     private JPAAccessFactoryImpl() {}
 
     @Override
-    public JPAEdmModelView getJPAEdmModelView(
-        final ODataJPAContext oDataJPAContext) {
+    public JPAEdmModelView getJPAEdmModelView(final ODataJPAContext oDataJPAContext) {
       JPAEdmModelView view = null;
 
       view = new JPAEdmModel(oDataJPAContext);
@@ -234,10 +227,8 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
     }
 
     @Override
-    public JPAEdmMappingModelAccess getJPAEdmMappingModelAccess(
-        final ODataJPAContext oDataJPAContext) {
-      JPAEdmMappingModelAccess mappingModelAccess = new JPAEdmMappingModelService(
-          oDataJPAContext);
+    public JPAEdmMappingModelAccess getJPAEdmMappingModelAccess(final ODataJPAContext oDataJPAContext) {
+      JPAEdmMappingModelAccess mappingModelAccess = new JPAEdmMappingModelService(oDataJPAContext);
 
       return mappingModelAccess;
     }

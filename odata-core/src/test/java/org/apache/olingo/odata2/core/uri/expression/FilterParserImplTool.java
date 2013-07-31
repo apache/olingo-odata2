@@ -30,13 +30,11 @@ import org.apache.olingo.odata2.api.uri.expression.MethodOperator;
  */
 public class FilterParserImplTool extends FilterParserImpl {
 
-  public FilterParserImplTool(final EdmEntityType resourceEntityType)
-  {
+  public FilterParserImplTool(final EdmEntityType resourceEntityType) {
     super(resourceEntityType);
   }
 
-  public void addTestfunctions()
-  {
+  public void addTestfunctions() {
     Map<String, InfoMethod> lAvailableMethods = new HashMap<String, InfoMethod>(availableMethods);
     ParameterSetCombination combination = null;
     //create type helpers

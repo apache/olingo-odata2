@@ -35,8 +35,7 @@ import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType;
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLJoinSelectSingleContextView;
 import org.apache.olingo.odata2.processor.core.jpa.ODataExpressionParser;
 
-public class JPQLJoinSelectSingleContext extends JPQLSelectSingleContext
-    implements JPQLJoinSelectSingleContextView {
+public class JPQLJoinSelectSingleContext extends JPQLSelectSingleContext implements JPQLJoinSelectSingleContextView {
 
   private List<JPAJoinClause> jpaJoinClauses = null;
 
@@ -44,51 +43,42 @@ public class JPQLJoinSelectSingleContext extends JPQLSelectSingleContext
     this.jpaJoinClauses = jpaJoinClauses;
   }
 
-  public class JPQLJoinSelectSingleContextBuilder extends
-      JPQLSelectSingleContextBuilder {
+  public class JPQLJoinSelectSingleContextBuilder extends JPQLSelectSingleContextBuilder {
 
     protected int relationShipAliasCounter = 0;
 
     @Override
-    public JPQLContext build() throws ODataJPAModelException,
-        ODataJPARuntimeException {
+    public JPQLContext build() throws ODataJPAModelException, ODataJPARuntimeException {
       try {
         setType(JPQLContextType.JOIN_SINGLE);
         setJPAJoinClause(generateJoinClauses());
 
         if (!jpaJoinClauses.isEmpty()) {
-          JPAJoinClause joinClause = jpaJoinClauses
-              .get(jpaJoinClauses.size() - 1);
+          JPAJoinClause joinClause = jpaJoinClauses.get(jpaJoinClauses.size() - 1);
           setJPAEntityName(joinClause.getEntityName());
-          setJPAEntityAlias(joinClause
-              .getEntityRelationShipAlias());
+          setJPAEntityAlias(joinClause.getEntityRelationShipAlias());
         }
 
-        setKeyPredicates(entityView
-            .getKeyPredicates());
+        setKeyPredicates(entityView.getKeyPredicates());
 
         setSelectExpression(generateSelectExpression());
 
       } catch (EdmException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL, e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL, e);
       }
 
       return JPQLJoinSelectSingleContext.this;
     }
 
-    protected List<JPAJoinClause> generateJoinClauses()
-        throws ODataJPARuntimeException, EdmException {
+    protected List<JPAJoinClause> generateJoinClauses() throws ODataJPARuntimeException, EdmException {
 
       List<JPAJoinClause> jpaOuterJoinClauses = new ArrayList<JPAJoinClause>();
       JPAJoinClause jpaOuterJoinClause = null;
       String joinCondition = null;
       String entityAlias = generateJPAEntityAlias();
-      joinCondition = ODataExpressionParser.parseKeyPredicates(
-          entityView.getKeyPredicates(), entityAlias);
+      joinCondition = ODataExpressionParser.parseKeyPredicates(entityView.getKeyPredicates(), entityAlias);
 
-      EdmEntityType entityType = entityView.getStartEntitySet()
-          .getEntityType();
+      EdmEntityType entityType = entityView.getStartEntitySet().getEntityType();
       Mapping mapping = (Mapping) entityType.getMapping();
       String entityTypeName = null;
       if (mapping != null) {
@@ -97,29 +87,19 @@ public class JPQLJoinSelectSingleContext extends JPQLSelectSingleContext
         entityTypeName = entityType.getName();
       }
 
-      jpaOuterJoinClause = new JPAJoinClause(entityTypeName, entityAlias,
-          null, null, joinCondition, JPAJoinClause.JOIN.INNER);
+      jpaOuterJoinClause = new JPAJoinClause(entityTypeName, entityAlias, null, null, joinCondition, JPAJoinClause.JOIN.INNER);
 
       jpaOuterJoinClauses.add(jpaOuterJoinClause);
 
-      for (NavigationSegment navigationSegment : entityView
-          .getNavigationSegments()) {
+      for (NavigationSegment navigationSegment : entityView.getNavigationSegments()) {
 
-        EdmNavigationProperty navigationProperty = navigationSegment
-            .getNavigationProperty();
+        EdmNavigationProperty navigationProperty = navigationSegment.getNavigationProperty();
 
         String relationShipAlias = generateRelationShipAlias();
 
-        joinCondition = ODataExpressionParser
-            .parseKeyPredicates(
-                navigationSegment.getKeyPredicates(),
-                relationShipAlias);
+        joinCondition = ODataExpressionParser.parseKeyPredicates(navigationSegment.getKeyPredicates(), relationShipAlias);
 
-        jpaOuterJoinClause = new JPAJoinClause(
-            getFromEntityName(navigationProperty), entityAlias,
-            getRelationShipName(navigationProperty),
-            relationShipAlias, joinCondition,
-            JPAJoinClause.JOIN.INNER);
+        jpaOuterJoinClause = new JPAJoinClause(getFromEntityName(navigationProperty), entityAlias, getRelationShipName(navigationProperty), relationShipAlias, joinCondition, JPAJoinClause.JOIN.INNER);
 
         jpaOuterJoinClauses.add(jpaOuterJoinClause);
 
@@ -128,13 +108,11 @@ public class JPQLJoinSelectSingleContext extends JPQLSelectSingleContext
       return jpaOuterJoinClauses;
     }
 
-    private String getFromEntityName(
-        final EdmNavigationProperty navigationProperty) throws EdmException {
+    private String getFromEntityName(final EdmNavigationProperty navigationProperty) throws EdmException {
 
       String fromRole = navigationProperty.getFromRole();
 
-      EdmEntityType fromEntityType = navigationProperty.getRelationship()
-          .getEnd(fromRole).getEntityType();
+      EdmEntityType fromEntityType = navigationProperty.getRelationship().getEnd(fromRole).getEntityType();
 
       EdmMapping mapping = fromEntityType.getMapping();
 
@@ -149,8 +127,7 @@ public class JPQLJoinSelectSingleContext extends JPQLSelectSingleContext
 
     }
 
-    private String getRelationShipName(
-        final EdmNavigationProperty navigationProperty) throws EdmException {
+    private String getRelationShipName(final EdmNavigationProperty navigationProperty) throws EdmException {
 
       EdmMapping mapping = navigationProperty.getMapping();
 

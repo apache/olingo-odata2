@@ -26,10 +26,6 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.easymock.EasyMock;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -51,6 +47,9 @@ import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext;
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.jpql.JPQLSelectContext.JPQLSelectContextBuilder;
+import org.easymock.EasyMock;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class JPQLSelectContextImplTest {
 
@@ -67,14 +66,11 @@ public class JPQLSelectContextImplTest {
 
   }
 
-  private void buildSelectContext(final boolean orderByIsNull,
-      final boolean selectFieldsIsNull, final boolean filterIsNull,
-      final boolean isTopNull, final boolean isSkipNull) {
+  private void buildSelectContext(final boolean orderByIsNull, final boolean selectFieldsIsNull, final boolean filterIsNull, final boolean isTopNull, final boolean isSkipNull) {
     builder = null;
     selectContext = null;
     keyPredicates = new ArrayList<KeyPredicate>();
-    GetEntitySetUriInfo resultsView = EasyMock
-        .createMock(GetEntitySetUriInfo.class);
+    GetEntitySetUriInfo resultsView = EasyMock.createMock(GetEntitySetUriInfo.class);
 
     EdmEntitySet entitySet = EasyMock.createMock(EdmEntitySet.class);
     EdmEntityType entityType = EasyMock.createMock(EdmEntityType.class);
@@ -106,27 +102,21 @@ public class JPQLSelectContextImplTest {
         fail("Exception not Expected");
       }
 
-      PropertyExpression commonExpression = EasyMock
-          .createMock(PropertyExpression.class);
-      EasyMock.expect(commonExpression.getEdmType()).andStubReturn(
-          edmType);
+      PropertyExpression commonExpression = EasyMock.createMock(PropertyExpression.class);
+      EasyMock.expect(commonExpression.getEdmType()).andStubReturn(edmType);
 
       EdmProperty edmTyped = EasyMock.createMock(EdmProperty.class);
       EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
-      EasyMock.expect(edmMapping.getInternalName()).andStubReturn(
-          fields[i]);
+      EasyMock.expect(edmMapping.getInternalName()).andStubReturn(fields[i]);
       try {
-        EasyMock.expect(edmTyped.getMapping())
-            .andStubReturn(edmMapping);
+        EasyMock.expect(edmTyped.getMapping()).andStubReturn(edmMapping);
       } catch (EdmException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      EasyMock.expect(commonExpression.getEdmProperty()).andStubReturn(
-          edmTyped);
+      EasyMock.expect(commonExpression.getEdmProperty()).andStubReturn(edmTyped);
       OrderExpression order = EasyMock.createMock(OrderExpression.class);
-      EasyMock.expect(order.getExpression()).andStubReturn(
-          commonExpression);
+      EasyMock.expect(order.getExpression()).andStubReturn(commonExpression);
       EasyMock.expect(order.getSortOrder()).andStubReturn(orderType[i]);
       EasyMock.replay(edmMapping, edmTyped, commonExpression);
       EasyMock.replay(order);
@@ -135,8 +125,7 @@ public class JPQLSelectContextImplTest {
 
     } while (++i < 2);
 
-    OrderByExpression orderBy = EasyMock
-        .createMock(OrderByExpression.class);
+    OrderByExpression orderBy = EasyMock.createMock(OrderByExpression.class);
     EasyMock.expect(orderBy.getOrders()).andStubReturn(orderList);
     EasyMock.replay(orderBy);
 
@@ -145,17 +134,13 @@ public class JPQLSelectContextImplTest {
       List<SelectItem> selectItemList = new ArrayList<SelectItem>(2);
       do {
         EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
-        EasyMock.expect(edmMapping.getInternalName()).andStubReturn(
-            fields[i]);
-        EdmProperty edmProperty = EasyMock
-            .createMock(EdmProperty.class);
-        EasyMock.expect(edmProperty.getMapping()).andStubReturn(
-            edmMapping);
+        EasyMock.expect(edmMapping.getInternalName()).andStubReturn(fields[i]);
+        EdmProperty edmProperty = EasyMock.createMock(EdmProperty.class);
+        EasyMock.expect(edmProperty.getMapping()).andStubReturn(edmMapping);
         EasyMock.replay(edmMapping, edmProperty);
 
         SelectItem selectItem = EasyMock.createMock(SelectItem.class);
-        EasyMock.expect(selectItem.getProperty()).andStubReturn(
-            edmProperty);
+        EasyMock.expect(selectItem.getProperty()).andStubReturn(edmProperty);
         EasyMock.replay(selectItem);
 
         selectItemList.add(selectItem);
@@ -166,23 +151,19 @@ public class JPQLSelectContextImplTest {
       EasyMock.expect(entityType.getKeyProperties()).andStubReturn(getLocalKeyProperties());
 
       EasyMock.replay(entityType);
-      EasyMock.expect(entitySet.getEntityType())
-          .andStubReturn(entityType);
+      EasyMock.expect(entitySet.getEntityType()).andStubReturn(entityType);
       EasyMock.replay(entitySet);
 
-      EasyMock.expect(resultsView.getTargetEntitySet()).andStubReturn(
-          entitySet);
+      EasyMock.expect(resultsView.getTargetEntitySet()).andStubReturn(entitySet);
       if (orderByIsNull) {
         EasyMock.expect(resultsView.getOrderBy()).andStubReturn(null);
       } else {
-        EasyMock.expect(resultsView.getOrderBy())
-            .andStubReturn(orderBy);
+        EasyMock.expect(resultsView.getOrderBy()).andStubReturn(orderBy);
       }
       if (selectFieldsIsNull) {
         EasyMock.expect(resultsView.getSelect()).andStubReturn(null);
       } else {
-        EasyMock.expect(resultsView.getSelect()).andStubReturn(
-            selectItemList);
+        EasyMock.expect(resultsView.getSelect()).andStubReturn(selectItemList);
       }
       // FilterExpression filterExpression =
       // EasyMock.createMock(FilterExpression.class);
@@ -190,9 +171,7 @@ public class JPQLSelectContextImplTest {
       if (filterIsNull) {
         EasyMock.expect(resultsView.getFilter()).andStubReturn(null);
       } else {
-        EasyMock.expect(resultsView.getFilter()).andStubReturn(
-            getFilterExpressionMockedObj(ExpressionKind.PROPERTY,
-                "SalesOrder"));
+        EasyMock.expect(resultsView.getFilter()).andStubReturn(getFilterExpressionMockedObj(ExpressionKind.PROPERTY, "SalesOrder"));
       }
       if (isTopNull) {
         EasyMock.expect(resultsView.getTop()).andStubReturn(null);
@@ -204,16 +183,14 @@ public class JPQLSelectContextImplTest {
       } else {
         EasyMock.expect(resultsView.getSkip()).andStubReturn(0);
       }
-      EasyMock.expect(resultsView.getKeyPredicates()).andStubReturn(
-          keyPredicates);
+      EasyMock.expect(resultsView.getKeyPredicates()).andStubReturn(keyPredicates);
       EasyMock.replay(resultsView);
 
     } catch (EdmException e1) {
       fail("Exception not Expected");
     }
     try {
-      builder = (JPQLSelectContextBuilder) JPQLContext.createBuilder(
-          JPQLContextType.SELECT, resultsView);
+      builder = (JPQLSelectContextBuilder) JPQLContext.createBuilder(JPQLContextType.SELECT, resultsView);
 
       selectContext = (JPQLSelectContext) builder.build();
     } catch (ODataJPAModelException e) {
@@ -230,8 +207,7 @@ public class JPQLSelectContextImplTest {
       EasyMock.expect(edmProperty.getName()).andStubReturn("Field1");
       EasyMock.expect(edmProperty.getMapping()).andStubReturn(null);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(edmProperty);
     propertyList.add(edmProperty);
@@ -241,17 +217,14 @@ public class JPQLSelectContextImplTest {
   @Test
   public void testEntityNameThrowingException() {
     // buildSelectContext(false, false, false);
-    GetEntitySetUriInfo resultsView = EasyMock
-        .createMock(GetEntitySetUriInfo.class);
+    GetEntitySetUriInfo resultsView = EasyMock.createMock(GetEntitySetUriInfo.class);
 
     EdmEntitySet entitySet = EasyMock.createMock(EdmEntitySet.class);
     EdmEntityType entityType = EasyMock.createMock(EdmEntityType.class);
 
     try {
-      EasyMock.expect(entityType.getName()).andStubThrow(
-          new EdmException(null));
-      EasyMock.expect(entitySet.getEntityType()).andStubThrow(
-          new EdmException(null));
+      EasyMock.expect(entityType.getName()).andStubThrow(new EdmException(null));
+      EasyMock.expect(entitySet.getEntityType()).andStubThrow(new EdmException(null));
     } catch (EdmException e1) {
       // throw new ODataException();
     }
@@ -259,15 +232,13 @@ public class JPQLSelectContextImplTest {
     EasyMock.replay(entityType);
     EasyMock.replay(entitySet);
 
-    EasyMock.expect(resultsView.getTargetEntitySet()).andStubReturn(
-        entitySet);
+    EasyMock.expect(resultsView.getTargetEntitySet()).andStubReturn(entitySet);
     EasyMock.expect(resultsView.getOrderBy()).andStubReturn(null);
     EasyMock.expect(resultsView.getSelect()).andStubReturn(null);
     EasyMock.expect(resultsView.getFilter()).andStubReturn(null);
     EasyMock.replay(resultsView);
     try {
-      JPQLSelectContextBuilder builder1 = (JPQLSelectContextBuilder) JPQLContext
-          .createBuilder(JPQLContextType.SELECT, resultsView);
+      JPQLSelectContextBuilder builder1 = (JPQLSelectContextBuilder) JPQLContext.createBuilder(JPQLContextType.SELECT, resultsView);
 
       builder1.build();
       fail("Should not come here");
@@ -295,23 +266,11 @@ public class JPQLSelectContextImplTest {
   @Test
   public void testGetOrderByCollection() {
     buildSelectContext(false, false, true, true, true);
-    assertEquals(
-        true,
-        selectContext.getOrderByCollection().containsKey(
-            "E1." + JPQLSelectContextImplTest.fields[0]));
-    assertEquals(
-        "",
-        selectContext.getOrderByCollection().get(
-            "E1." + JPQLSelectContextImplTest.fields[0]));
+    assertEquals(true, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[0]));
+    assertEquals("", selectContext.getOrderByCollection().get("E1." + JPQLSelectContextImplTest.fields[0]));
 
-    assertEquals(
-        true,
-        selectContext.getOrderByCollection().containsKey(
-            "E1." + JPQLSelectContextImplTest.fields[1]));
-    assertEquals(
-        "DESC",
-        selectContext.getOrderByCollection().get(
-            "E1." + JPQLSelectContextImplTest.fields[1]));
+    assertEquals(true, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[1]));
+    assertEquals("DESC", selectContext.getOrderByCollection().get("E1." + JPQLSelectContextImplTest.fields[1]));
   }
 
   @Test
@@ -323,8 +282,7 @@ public class JPQLSelectContextImplTest {
   @Test
   public void testGetJPAEntityName() {
     buildSelectContext(false, false, true, true, true);
-    assertEquals(JPQLSelectContextImplTest.entityTypeName,
-        selectContext.getJPAEntityName());
+    assertEquals(JPQLSelectContextImplTest.entityTypeName, selectContext.getJPAEntityName());
   }
 
   @Test
@@ -336,19 +294,16 @@ public class JPQLSelectContextImplTest {
   @Test
   public void testCreateBuilder() {
     buildSelectContext(false, false, true, true, true);
-    assertEquals(JPQLSelectContextBuilder.class.toString(), builder
-        .getClass().toString());
+    assertEquals(JPQLSelectContextBuilder.class.toString(), builder.getClass().toString());
   }
 
   @Test
   public void testEntitySetAsNull() {
     buildSelectContext(false, false, true, true, true);
     try {
-      JPQLSelectContextBuilder builder = (JPQLSelectContextBuilder) JPQLContext
-          .createBuilder(JPQLContextType.SELECT, null);
+      JPQLSelectContextBuilder builder = (JPQLSelectContextBuilder) JPQLContext.createBuilder(JPQLContextType.SELECT, null);
 
-      JPQLSelectContext selectContext1 = (JPQLSelectContext) builder
-          .build();
+      JPQLSelectContext selectContext1 = (JPQLSelectContext) builder.build();
       assertNull(selectContext1.getJPAEntityAlias());
       assertNull(selectContext1.getJPAEntityName());
       assertNull(selectContext1.getOrderByCollection());
@@ -365,38 +320,20 @@ public class JPQLSelectContextImplTest {
   @Test
   public void testOrderingWithSkip() {
     buildSelectContext(true, false, true, true, false);
-    assertEquals(
-        true,
-        selectContext.getOrderByCollection().containsKey(
-            "E1." + JPQLSelectContextImplTest.fields[0]));
-    assertEquals(
-        "",
-        selectContext.getOrderByCollection().get(
-            "E1." + JPQLSelectContextImplTest.fields[0]));
+    assertEquals(true, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[0]));
+    assertEquals("", selectContext.getOrderByCollection().get("E1." + JPQLSelectContextImplTest.fields[0]));
 
-    assertEquals(
-        false,
-        selectContext.getOrderByCollection().containsKey(
-            "E1." + JPQLSelectContextImplTest.fields[1]));
+    assertEquals(false, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[1]));
 
   }
 
   @Test
   public void testOrderingWithTop() {
     buildSelectContext(true, false, true, false, true);
-    assertEquals(
-        true,
-        selectContext.getOrderByCollection().containsKey(
-            "E1." + JPQLSelectContextImplTest.fields[0]));
-    assertEquals(
-        "",
-        selectContext.getOrderByCollection().get(
-            "E1." + JPQLSelectContextImplTest.fields[0]));
+    assertEquals(true, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[0]));
+    assertEquals("", selectContext.getOrderByCollection().get("E1." + JPQLSelectContextImplTest.fields[0]));
 
-    assertEquals(
-        false,
-        selectContext.getOrderByCollection().containsKey(
-            "E1." + JPQLSelectContextImplTest.fields[1]));
+    assertEquals(false, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[1]));
 
   }
 
@@ -413,29 +350,18 @@ public class JPQLSelectContextImplTest {
 
   }
 
-  private FilterExpression getFilterExpressionMockedObj(
-      final ExpressionKind leftOperandExpKind, final String propertyName)
-      throws EdmException {
-    FilterExpression filterExpression = EasyMock
-        .createMock(FilterExpression.class);
-    EasyMock.expect(filterExpression.getKind())
-        .andStubReturn(ExpressionKind.FILTER);
-    EasyMock.expect(filterExpression.getExpression())
-        .andStubReturn(
-            getPropertyExpressionMockedObj(leftOperandExpKind,
-                propertyName));
+  private FilterExpression getFilterExpressionMockedObj(final ExpressionKind leftOperandExpKind, final String propertyName) throws EdmException {
+    FilterExpression filterExpression = EasyMock.createMock(FilterExpression.class);
+    EasyMock.expect(filterExpression.getKind()).andStubReturn(ExpressionKind.FILTER);
+    EasyMock.expect(filterExpression.getExpression()).andStubReturn(getPropertyExpressionMockedObj(leftOperandExpKind, propertyName));
     EasyMock.replay(filterExpression);
     return filterExpression;
   }
 
-  private PropertyExpression getPropertyExpressionMockedObj(
-      final ExpressionKind expKind, final String propertyName) {
-    PropertyExpression leftOperandPropertyExpresion = EasyMock
-        .createMock(PropertyExpression.class);
-    EasyMock.expect(leftOperandPropertyExpresion.getKind()).andReturn(
-        ExpressionKind.PROPERTY);
-    EasyMock.expect(leftOperandPropertyExpresion.getPropertyName())
-        .andReturn(propertyName);
+  private PropertyExpression getPropertyExpressionMockedObj(final ExpressionKind expKind, final String propertyName) {
+    PropertyExpression leftOperandPropertyExpresion = EasyMock.createMock(PropertyExpression.class);
+    EasyMock.expect(leftOperandPropertyExpresion.getKind()).andReturn(ExpressionKind.PROPERTY);
+    EasyMock.expect(leftOperandPropertyExpresion.getPropertyName()).andReturn(propertyName);
     EdmProperty edmtTyped = EasyMock.createMock(EdmProperty.class);
     EdmMapping mapping = EasyMock.createMock(EdmMapping.class);
     EasyMock.expect(mapping.getInternalName()).andStubReturn("field");
@@ -445,8 +371,7 @@ public class JPQLSelectContextImplTest {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    EasyMock.expect(leftOperandPropertyExpresion.getEdmProperty())
-        .andReturn(edmtTyped);
+    EasyMock.expect(leftOperandPropertyExpresion.getEdmProperty()).andReturn(edmtTyped);
     EasyMock.replay(mapping, edmtTyped, leftOperandPropertyExpresion);
     return leftOperandPropertyExpresion;
   }

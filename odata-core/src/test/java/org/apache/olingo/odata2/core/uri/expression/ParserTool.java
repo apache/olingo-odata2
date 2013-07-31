@@ -24,10 +24,6 @@ import static org.junit.Assert.fail;
 import java.util.Locale;
 
 import org.apache.log4j.xml.DOMConfigurator;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
@@ -43,6 +39,9 @@ import org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor;
 import org.apache.olingo.odata2.api.uri.expression.SortOrder;
 import org.apache.olingo.odata2.core.exception.MessageService;
 import org.apache.olingo.odata2.core.exception.MessageService.Message;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  
@@ -384,8 +383,7 @@ public class ParserTool {
   public ParserTool aExpr() {
     String info = "GetExpr(" + expression + ")-->";
 
-    if ((curNode.getKind() != ExpressionKind.ORDER)
-        && (curNode.getKind() != ExpressionKind.FILTER)) {
+    if ((curNode.getKind() != ExpressionKind.ORDER) && (curNode.getKind() != ExpressionKind.FILTER)) {
       String out = info + "Expected: " + ExpressionKind.ORDER + " or " + ExpressionKind.FILTER + " Actual: " + curNode.getKind().toString();
       dout("  " + out);
       fail(out);

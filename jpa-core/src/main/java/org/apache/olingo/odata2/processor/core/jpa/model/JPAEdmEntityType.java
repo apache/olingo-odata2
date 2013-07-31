@@ -37,8 +37,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
 
-public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements
-    JPAEdmEntityTypeView {
+public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntityTypeView {
 
   private JPAEdmSchemaView schemaView = null;
   private EntityType currentEdmEntityType = null;
@@ -85,11 +84,9 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements
   private class JPAEdmEntityTypeBuilder implements JPAEdmBuilder {
 
     @Override
-    public void build() throws ODataJPAModelException,
-        ODataJPARuntimeException {
+    public void build() throws ODataJPAModelException, ODataJPARuntimeException {
 
-      Set<javax.persistence.metamodel.EntityType<?>> jpaEntityTypes = metaModel
-          .getEntities();
+      Set<javax.persistence.metamodel.EntityType<?>> jpaEntityTypes = metaModel.getEntities();
 
       if (jpaEntityTypes == null || jpaEntityTypes.isEmpty() == true) {
         return;
@@ -112,36 +109,25 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements
         JPAEdmPropertyView propertyView = new JPAEdmProperty(schemaView);
         propertyView.getBuilder().build();
 
-        currentEdmEntityType.setProperties(propertyView
-            .getEdmPropertyList());
+        currentEdmEntityType.setProperties(propertyView.getEdmPropertyList());
         if (propertyView.getJPAEdmNavigationPropertyView() != null) {
-          JPAEdmNavigationPropertyView navPropView = propertyView
-              .getJPAEdmNavigationPropertyView();
-          if (navPropView.getConsistentEdmNavigationProperties() != null
-              && !navPropView
-                  .getConsistentEdmNavigationProperties()
-                  .isEmpty()) {
-            currentEdmEntityType
-                .setNavigationProperties(navPropView
-                    .getConsistentEdmNavigationProperties());
+          JPAEdmNavigationPropertyView navPropView = propertyView.getJPAEdmNavigationPropertyView();
+          if (navPropView.getConsistentEdmNavigationProperties() != null && !navPropView.getConsistentEdmNavigationProperties().isEmpty()) {
+            currentEdmEntityType.setNavigationProperties(navPropView.getConsistentEdmNavigationProperties());
           }
         }
         JPAEdmKeyView keyView = propertyView.getJPAEdmKeyView();
         currentEdmEntityType.setKey(keyView.getEdmKey());
 
         consistentEntityTypes.add(currentEdmEntityType);
-        consistentEntityTypeMap.put(currentJPAEntityType.getName(),
-            currentEdmEntityType);
+        consistentEntityTypeMap.put(currentJPAEntityType.getName(), currentEdmEntityType);
       }
 
     }
 
     private boolean isExcluded(final JPAEdmEntityType jpaEdmEntityType) {
-      JPAEdmMappingModelAccess mappingModelAccess = jpaEdmEntityType
-          .getJPAEdmMappingModelAccess();
-      if (mappingModelAccess != null
-          && mappingModelAccess.isMappingModelExists()
-          && mappingModelAccess.checkExclusionOfJPAEntityType(jpaEdmEntityType.getJPAEntityType().getName())) {
+      JPAEdmMappingModelAccess mappingModelAccess = jpaEdmEntityType.getJPAEdmMappingModelAccess();
+      if (mappingModelAccess != null && mappingModelAccess.isMappingModelExists() && mappingModelAccess.checkExclusionOfJPAEntityType(jpaEdmEntityType.getJPAEntityType().getName())) {
         return true;
       }
       return false;

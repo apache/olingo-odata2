@@ -33,9 +33,6 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.Metamodel;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.ComplexType;
 import org.apache.olingo.odata2.api.edm.provider.Mapping;
@@ -49,6 +46,8 @@ import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEmbeddableMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAMetaModelMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPASingularAttributeMock;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class JPAEdmComplexTypeTest extends JPAEdmTestModelView {
 
@@ -72,8 +71,7 @@ public class JPAEdmComplexTypeTest extends JPAEdmTestModelView {
   @Override
   public EmbeddableType<?> getJPAEmbeddableType() {
     @SuppressWarnings("hiding")
-    class JPAComplexAttribute<Long> extends JPAEmbeddableMock<Long>
-    {
+    class JPAComplexAttribute<Long> extends JPAEmbeddableMock<Long> {
 
       @SuppressWarnings("unchecked")
       @Override
@@ -131,8 +129,7 @@ public class JPAEdmComplexTypeTest extends JPAEdmTestModelView {
   }
 
   @Test
-  public void testSearchComplexTypeFullQualifiedNameNegative()
-  {
+  public void testSearchComplexTypeFullQualifiedNameNegative() {
     assertNull(objComplexType.searchEdmComplexType(new FullQualifiedName("salesorderprocessing", "lang.String")));
   }
 
@@ -157,8 +154,7 @@ public class JPAEdmComplexTypeTest extends JPAEdmTestModelView {
     }
 
     objComplexType.addJPAEdmCompleTypeView(localView);
-    assertTrue(objComplexType.getConsistentEdmComplexTypes()
-        .size() > 1);
+    assertTrue(objComplexType.getConsistentEdmComplexTypes().size() > 1);
   }
 
   @Test
@@ -175,11 +171,9 @@ public class JPAEdmComplexTypeTest extends JPAEdmTestModelView {
     properties.add(new SimpleProperty().setName("LINAME").setMapping((Mapping) mapping2));
     complexType.setProperties(properties);
     List<Property> expandedList = null;
-    try
-    {
+    try {
       objComplexType.expandEdmComplexType(complexType, expandedList, "SalesOrderItemKey");
-    } catch (ClassCastException e)
-    {
+    } catch (ClassCastException e) {
       assertTrue(false);
     }
     assertTrue(true);
@@ -187,8 +181,7 @@ public class JPAEdmComplexTypeTest extends JPAEdmTestModelView {
   }
 
   @Test
-  public void testComplexTypeCreation()
-  {
+  public void testComplexTypeCreation() {
     try {
       objComplexType.getBuilder().build();
     } catch (ODataJPARuntimeException e) {
@@ -199,8 +192,7 @@ public class JPAEdmComplexTypeTest extends JPAEdmTestModelView {
     assertEquals(objComplexType.pUnitName, "salesorderprocessing");
   }
 
-  private class JPAEdmMetaModel extends JPAMetaModelMock
-  {
+  private class JPAEdmMetaModel extends JPAMetaModelMock {
     Set<EmbeddableType<?>> embeddableSet;
 
     public JPAEdmMetaModel() {
@@ -216,14 +208,12 @@ public class JPAEdmComplexTypeTest extends JPAEdmTestModelView {
   }
 
   @SuppressWarnings("hiding")
-  private class JPAEdmEmbeddable<String> extends JPAEmbeddableMock<String>
-  {
+  private class JPAEdmEmbeddable<String> extends JPAEmbeddableMock<String> {
 
     Set<Attribute<? super String, ?>> attributeSet = new HashSet<Attribute<? super String, ?>>();
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void setValuesToSet()
-    {
+    private void setValuesToSet() {
       attributeSet.add((Attribute<? super String, String>) new JPAEdmAttribute(java.lang.String.class, "SOID"));
       attributeSet.add((Attribute<? super String, String>) new JPAEdmAttribute(java.lang.String.class, "SONAME"));
     }
@@ -243,8 +233,7 @@ public class JPAEdmComplexTypeTest extends JPAEdmTestModelView {
   }
 
   @SuppressWarnings("hiding")
-  private class JPAEdmAttribute<Object, String> extends JPASingularAttributeMock<Object, String>
-  {
+  private class JPAEdmAttribute<Object, String> extends JPASingularAttributeMock<Object, String> {
 
     @Override
     public PersistentAttributeType getPersistentAttributeType() {

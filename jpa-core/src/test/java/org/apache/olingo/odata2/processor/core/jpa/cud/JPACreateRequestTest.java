@@ -31,8 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmStructuralType;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
@@ -45,6 +43,7 @@ import org.apache.olingo.odata2.core.ep.feed.ODataFeedImpl;
 import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
+import org.junit.Test;
 
 public class JPACreateRequestTest {
 
@@ -59,34 +58,28 @@ public class JPACreateRequestTest {
       if (e.isCausedByMessageException()) {
         assertTrue(true);
       } else {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
     }
 
   }
 
   @Test
-  public void testGetSetterName()
-  {
+  public void testGetSetterName() {
     JPACreateRequest createRequest = new JPACreateRequest();
     Method method = getMethodForTesting("getSetterName", createRequest);
-    if (method != null)
-    {
+    if (method != null) {
       method.setAccessible(true);
       Object[] actualParams = { "salesOrderItems" };
       try {
         String result = (String) method.invoke(createRequest, actualParams);
         assertEquals("setSalesOrderItems", result);
       } catch (IllegalArgumentException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (IllegalAccessException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (InvocationTargetException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
     }
 
@@ -100,8 +93,7 @@ public class JPACreateRequestTest {
     try {
       result = createRequest.parse2JPAEntityValueMap(JPATestUtil.getJPAEntity(), edmEntityType, JPATestUtil.getPropertyValueMap(), "SalesOrderHeader");
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     assertNotNull(result);
     assertEquals(((SalesOrderHeader) result).getId(), 1);
@@ -109,12 +101,10 @@ public class JPACreateRequestTest {
   }
 
   @Test
-  public void testCreateInlinedEntities()
-  {
+  public void testCreateInlinedEntities() {
     JPACreateRequest createRequest = new JPACreateRequest(JPATestUtil.mockMetaModel());
     Method method = getMethodForTesting("createInlinedEntities", createRequest);
-    if (method != null)
-    {
+    if (method != null) {
       method.setAccessible(true);
       EdmEntitySet edmEntitySet = JPATestUtil.mockSourceEdmEntitySet();
       ODataEntryImpl odataEntry = createODataEntry();
@@ -124,14 +114,11 @@ public class JPACreateRequestTest {
         method.invoke(createRequest, actualParams);
 
       } catch (IllegalArgumentException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (IllegalAccessException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (InvocationTargetException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
 
     }
@@ -139,12 +126,10 @@ public class JPACreateRequestTest {
   }
 
   @Test
-  public void testGetSettersForNavigationProperties()
-  {
+  public void testGetSettersForNavigationProperties() {
     JPACreateRequest createRequest = new JPACreateRequest();
     Method method = getMethodForTesting("getSettersForNavigationProperties", createRequest);
-    if (method != null)
-    {
+    if (method != null) {
       method.setAccessible(true);
       Map<String, Class<?>> relatedClassMap = new HashMap<String, Class<?>>();
       relatedClassMap.put("salesOrderLineItems", SalesOrderLineItem.class);
@@ -154,27 +139,22 @@ public class JPACreateRequestTest {
         List<HashMap<?, ?>> result = (List<HashMap<?, ?>>) method.invoke(createRequest, actualParams);
         assertEquals(2, result.size());
       } catch (IllegalArgumentException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (IllegalAccessException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (InvocationTargetException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
 
     }
   }
 
   @Test
-  public void testSetNavigationProperties()
-  {
+  public void testSetNavigationProperties() {
     JPACreateRequest createRequest = new JPACreateRequest();
     Method method = getMethodForTesting("setNavigationProperties", createRequest);
 
-    if (method != null)
-    {
+    if (method != null) {
       method.setAccessible(true);
       Map<String, Class<?>> relatedClassMap = new HashMap<String, Class<?>>();
       relatedClassMap.put("salesOrderLineItems", SalesOrderLineItem.class);
@@ -190,21 +170,17 @@ public class JPACreateRequestTest {
         // If no exception is thrown then we assert true
         assertTrue(true);
       } catch (IllegalArgumentException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (IllegalAccessException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (InvocationTargetException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
     }
   }
 
   @Test
-  public void testPopulateEmbeddableKey()
-  {
+  public void testPopulateEmbeddableKey() {
     JPACreateRequest createRequest = new JPACreateRequest();
     Method method = getMethodForTesting("populateEmbeddableKey", createRequest);
     if (method != null) {
@@ -231,24 +207,19 @@ public class JPACreateRequestTest {
         field.set(createRequest, jpaEmbeddableObjectKeyMap);
         method.invoke(createRequest, actualParams);
       } catch (IllegalArgumentException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (IllegalAccessException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (InvocationTargetException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (SecurityException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
     }
   }
 
   @Test
-  public void testPopulateEmbeddableKeyInvocationIssue()
-  {
+  public void testPopulateEmbeddableKeyInvocationIssue() {
     JPACreateRequest createRequest = new JPACreateRequest();
     Method method = getMethodForTesting("populateEmbeddableKey", createRequest);
     if (method != null) {
@@ -276,23 +247,19 @@ public class JPACreateRequestTest {
         field.set(createRequest, jpaEmbeddableObjectKeyMap);
         method.invoke(createRequest, actualParams);
       } catch (IllegalArgumentException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (IllegalAccessException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (InvocationTargetException e) {
         assertTrue(true);
       } catch (SecurityException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
     }
   }
 
   @Test
-  public void testPopulateEmbeddableKeyNoSuchMethod()
-  {
+  public void testPopulateEmbeddableKeyNoSuchMethod() {
     JPACreateRequest createRequest = new JPACreateRequest();
     Method method = getMethodForTesting("populateEmbeddableKey", createRequest);
     if (method != null) {
@@ -319,16 +286,13 @@ public class JPACreateRequestTest {
         field.set(createRequest, jpaEmbeddableObjectKeyMap);
         method.invoke(createRequest, actualParams);
       } catch (IllegalArgumentException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (IllegalAccessException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (InvocationTargetException e) {
         assertTrue(true);
       } catch (SecurityException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
     }
   }
@@ -359,12 +323,10 @@ public class JPACreateRequestTest {
     return odataEntry;
   }
 
-  private Method getMethodForTesting(final String methodName, final Object object)
-  {
+  private Method getMethodForTesting(final String methodName, final Object object) {
     Method method = null;
     for (Method m : object.getClass().getDeclaredMethods()) {
-      if (m.getName().equals(methodName))
-      {
+      if (m.getName().equals(methodName)) {
         method = m;
         break;
       }

@@ -32,8 +32,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmFunctionImportView
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
 
-public class JPAEdmEntityContainer extends JPAEdmBaseViewImpl implements
-    JPAEdmEntityContainerView {
+public class JPAEdmEntityContainer extends JPAEdmBaseViewImpl implements JPAEdmEntityContainerView {
 
   private JPAEdmEntitySetView entitySetView;
   private JPAEdmSchemaView schemaView;
@@ -106,8 +105,7 @@ public class JPAEdmEntityContainer extends JPAEdmBaseViewImpl implements
      * ************************************************************
      */
     @Override
-    public void build() throws ODataJPAModelException,
-        ODataJPARuntimeException {
+    public void build() throws ODataJPAModelException, ODataJPARuntimeException {
 
       currentEntityContainer = new EntityContainer();
 
@@ -119,8 +117,7 @@ public class JPAEdmEntityContainer extends JPAEdmBaseViewImpl implements
       entitySetView = new JPAEdmEntitySet(schemaView);
       entitySetView.getBuilder().build();
       if (entitySetView.isConsistent()) {
-        currentEntityContainer.setEntitySets(entitySetView
-            .getConsistentEdmEntitySetList());
+        currentEntityContainer.setEntitySets(entitySetView.getConsistentEdmEntitySetList());
       } else {
         isConsistent = false;
         return;
@@ -133,8 +130,7 @@ public class JPAEdmEntityContainer extends JPAEdmBaseViewImpl implements
       associationSetView = new JPAEdmAssociationSet(schemaView);
       associationSetView.getBuilder().build();
       if (associationSetView.isConsistent()) {
-        currentEntityContainer.setAssociationSets(associationSetView
-            .getConsistentEdmAssociationSetList());
+        currentEntityContainer.setAssociationSets(associationSetView.getConsistentEdmAssociationSetList());
       } else {
         isConsistent = false;
         return;
@@ -142,13 +138,10 @@ public class JPAEdmEntityContainer extends JPAEdmBaseViewImpl implements
 
       JPAEdmNameBuilder.build(JPAEdmEntityContainer.this);
       if (schemaView.getJPAEdmExtension() != null) {
-        JPAEdmFunctionImportView functionImportView = new JPAEdmFunctionImport(
-            schemaView);
+        JPAEdmFunctionImportView functionImportView = new JPAEdmFunctionImport(schemaView);
         functionImportView.getBuilder().build();
         if (functionImportView.getConsistentFunctionImportList() != null) {
-          currentEntityContainer
-              .setFunctionImports(functionImportView
-                  .getConsistentFunctionImportList());
+          currentEntityContainer.setFunctionImports(functionImportView.getConsistentFunctionImportList());
         }
       }
 

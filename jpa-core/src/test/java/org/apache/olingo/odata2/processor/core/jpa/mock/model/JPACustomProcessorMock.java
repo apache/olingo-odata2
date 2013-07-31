@@ -34,16 +34,12 @@ public class JPACustomProcessorMock {
   public static final String edmName = "JPACustomProcessor";
 
   @FunctionImport(name = "Method1", entitySet = "MockSet", returnType = ReturnType.ENTITY_TYPE, multiplicity = Multiplicity.MANY)
-  public List<JPACustomProcessorMock> method1(
-      @Parameter(name = "Param1", facets = @Facets(nullable = true, maxLength = 2), mode = Mode.IN) final String param1,
-      final int param2,
-      @Parameter(name = "Param3", facets = @Facets(precision = 10, scale = 2), mode = Mode.IN) final double param3) {
+  public List<JPACustomProcessorMock> method1(@Parameter(name = "Param1", facets = @Facets(nullable = true, maxLength = 2), mode = Mode.IN) final String param1, final int param2, @Parameter(name = "Param3", facets = @Facets(precision = 10, scale = 2), mode = Mode.IN) final double param3) {
     return new ArrayList<JPACustomProcessorMock>();
   }
 
   @FunctionImport(name = "Method2", entitySet = "MockSet", returnType = ReturnType.ENTITY_TYPE, multiplicity = Multiplicity.MANY)
-  public List<JPACustomProcessorMock> method2(
-      @Parameter(facets = @Facets(maxLength = 2), name = "Param2") final String param2) {
+  public List<JPACustomProcessorMock> method2(@Parameter(facets = @Facets(maxLength = 2), name = "Param2") final String param2) {
     return new ArrayList<JPACustomProcessorMock>();
   }
 

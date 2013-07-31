@@ -116,9 +116,7 @@ public class JPAJoinClause {
    *            {@link org.apache.olingo.odata2.processor.api.jpa.access.JPAJoinClause.JOIN}
    *            to execute
    */
-  public JPAJoinClause(final String entityName, final String entityAlias,
-      final String entityRelationShip, final String entityRelationShipAlias,
-      final String joinCondition, final JOIN joinType) {
+  public JPAJoinClause(final String entityName, final String entityAlias, final String entityRelationShip, final String entityRelationShipAlias, final String joinCondition, final JOIN joinType) {
 
     this.entityName = entityName;
     this.entityAlias = entityAlias;

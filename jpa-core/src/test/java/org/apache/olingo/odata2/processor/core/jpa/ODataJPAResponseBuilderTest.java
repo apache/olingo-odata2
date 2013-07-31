@@ -32,9 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.easymock.EasyMock;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -64,6 +61,8 @@ import org.apache.olingo.odata2.processor.api.jpa.ODataJPAContext;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.model.JPAEdmTestModelView;
+import org.easymock.EasyMock;
+import org.junit.Test;
 
 public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
 
@@ -82,37 +81,26 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     // Invoking the private static method using reflection
     Class<?> clazz = ODataJPAResponseBuilder.class;
     Object[] actualParameters = { oDataJPAContext, getEntitySetUriInfo, edmEntityList };
-    Class<?>[] formalParameters = { ODataJPAContext.class,
-        GetEntitySetUriInfo.class, List.class };
+    Class<?>[] formalParameters = { ODataJPAContext.class, GetEntitySetUriInfo.class, List.class };
     EntityProviderWriteProperties providerProperties = null;
     try {
-      ODataJPAResponseBuilder responseBuilder = (ODataJPAResponseBuilder) clazz
-          .newInstance();
-      Method method = clazz.getDeclaredMethod(
-          "getEntityProviderProperties", formalParameters);
+      ODataJPAResponseBuilder responseBuilder = (ODataJPAResponseBuilder) clazz.newInstance();
+      Method method = clazz.getDeclaredMethod("getEntityProviderProperties", formalParameters);
       method.setAccessible(true);
-      providerProperties = (EntityProviderWriteProperties) method.invoke(
-          responseBuilder, actualParameters);
-      assertEquals(1, providerProperties.getExpandSelectTree().getLinks()
-          .size());
+      providerProperties = (EntityProviderWriteProperties) method.invoke(responseBuilder, actualParameters);
+      assertEquals(1, providerProperties.getExpandSelectTree().getLinks().size());
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (NoSuchMethodException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalArgumentException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalAccessException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InvocationTargetException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InstantiationException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
@@ -127,45 +115,33 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     ODataJPAContext oDataJPAContext = getODataJPAContext();
     Class<?> clazz = ODataJPAResponseBuilder.class;
     Object[] actualParameters = { oDataJPAContext, getEntityUriInfo };
-    Class<?>[] formalParameters = { ODataJPAContext.class,
-        GetEntityUriInfo.class };
+    Class<?>[] formalParameters = { ODataJPAContext.class, GetEntityUriInfo.class };
     EntityProviderWriteProperties providerProperties = null;
     try {
-      ODataJPAResponseBuilder responseBuilder = (ODataJPAResponseBuilder) clazz
-          .newInstance();
-      Method method = clazz.getDeclaredMethod(
-          "getEntityProviderProperties", formalParameters);
+      ODataJPAResponseBuilder responseBuilder = (ODataJPAResponseBuilder) clazz.newInstance();
+      Method method = clazz.getDeclaredMethod("getEntityProviderProperties", formalParameters);
       method.setAccessible(true);
-      providerProperties = (EntityProviderWriteProperties) method.invoke(
-          responseBuilder, actualParameters);
-      assertEquals(1, providerProperties.getExpandSelectTree().getLinks()
-          .size());
+      providerProperties = (EntityProviderWriteProperties) method.invoke(responseBuilder, actualParameters);
+      assertEquals(1, providerProperties.getExpandSelectTree().getLinks().size());
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (NoSuchMethodException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalArgumentException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalAccessException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InvocationTargetException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InstantiationException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
 
   @SuppressWarnings("unchecked")
   @Test
-  public void testConstructListofNavProperty()
-  {
+  public void testConstructListofNavProperty() {
     List<ArrayList<NavigationPropertySegment>> expand = new ArrayList<ArrayList<NavigationPropertySegment>>();
     ArrayList<NavigationPropertySegment> navPropList1 = new ArrayList<NavigationPropertySegment>();
     navPropList1.add(getNavigationPropertySegment("DemoNavigationProperties11"));
@@ -180,36 +156,26 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     Class<?>[] formalParameters = { List.class };
     List<EdmNavigationProperty> navigationProperties = null;
     try {
-      ODataJPAResponseBuilder responseBuilder = (ODataJPAResponseBuilder) clazz
-          .newInstance();
-      Method method = clazz.getDeclaredMethod(
-          "constructListofNavProperty", formalParameters);
+      ODataJPAResponseBuilder responseBuilder = (ODataJPAResponseBuilder) clazz.newInstance();
+      Method method = clazz.getDeclaredMethod("constructListofNavProperty", formalParameters);
       method.setAccessible(true);
-      navigationProperties = (List<EdmNavigationProperty>) method.invoke(
-          responseBuilder, actualParameters);
+      navigationProperties = (List<EdmNavigationProperty>) method.invoke(responseBuilder, actualParameters);
       assertEquals("DemoNavigationProperties21", navigationProperties.get(1).getName());
       assertEquals("DemoNavigationProperties11", navigationProperties.get(0).getName());
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (NoSuchMethodException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalArgumentException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalAccessException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InvocationTargetException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InstantiationException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
@@ -217,11 +183,9 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   @Test
   public void testBuildListOfTGetEntitySetUriInfoStringODataJPAContext() {
     try {
-      assertNotNull(ODataJPAResponseBuilder.build(getJPAEntities(),
-          getResultsView(), "application/xml", getODataJPAContext()));
+      assertNotNull(ODataJPAResponseBuilder.build(getJPAEntities(), getResultsView(), "application/xml", getODataJPAContext()));
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
@@ -232,8 +196,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
       EntityType entity = new EntityType();
       entity.setName("SalesOrderHeader");
       try {
-        assertNotNull(ODataJPAResponseBuilder.build(getEntity(),
-            getLocalGetURIInfo(), "xml", getODataJPAContext()));
+        assertNotNull(ODataJPAResponseBuilder.build(getEntity(), getLocalGetURIInfo(), "xml", getODataJPAContext()));
       } catch (ODataNotFoundException e) {
         assertTrue(true);
       }
@@ -241,8 +204,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
       assertTrue(true);// Nothing to do, Expected.
     }
     try {// Bad content type
-      assertNotNull(ODataJPAResponseBuilder.build(getJPAEntities(),
-          getResultsView(), "xml", getODataJPAContext()));
+      assertNotNull(ODataJPAResponseBuilder.build(getJPAEntities(), getResultsView(), "xml", getODataJPAContext()));
     } catch (ODataJPARuntimeException e) {
       assertTrue(true);// Nothing to do, Expected.
     }
@@ -250,24 +212,18 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   }
 
   @Test
-  public void testBuildObjectGetEntityUriInfoStringODataJPAContext()
-      throws ODataNotFoundException {
+  public void testBuildObjectGetEntityUriInfoStringODataJPAContext() throws ODataNotFoundException {
     try {
-      assertNotNull(ODataJPAResponseBuilder.build(new SalesOrderHeader(2,
-          10), getLocalGetURIInfo(), "application/xml",
-          getODataJPAContext()));
+      assertNotNull(ODataJPAResponseBuilder.build(new SalesOrderHeader(2, 10), getLocalGetURIInfo(), "application/xml", getODataJPAContext()));
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
   @Test
   public void testBuildNullSelects() {// Bad content type
     try {
-      ODataJPAResponseBuilder.build(getJPAEntities(),
-          getResultsViewWithNullSelects(), "xml",
-          getODataJPAContext());
+      ODataJPAResponseBuilder.build(getJPAEntities(), getResultsViewWithNullSelects(), "xml", getODataJPAContext());
     } catch (ODataJPARuntimeException e) {
       assertTrue(true);// Nothing to do, Expected.
     } catch (Exception e) {
@@ -279,20 +235,16 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   public void testBuildGetCount() {
     ODataResponse objODataResponse = null;
     try {
-      objODataResponse = ODataJPAResponseBuilder.build(1,
-          getODataJPAContext());
+      objODataResponse = ODataJPAResponseBuilder.build(1, getODataJPAContext());
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     assertNotNull(objODataResponse);
   }
 
   private ODataJPAContext getODataJPAContext() {
-    ODataJPAContext objODataJPAContext = EasyMock
-        .createMock(ODataJPAContext.class);
-    EasyMock.expect(objODataJPAContext.getODataContext()).andStubReturn(
-        getLocalODataContext());
+    ODataJPAContext objODataJPAContext = EasyMock.createMock(ODataJPAContext.class);
+    EasyMock.expect(objODataJPAContext.getODataContext()).andStubReturn(getLocalODataContext());
     EasyMock.replay(objODataJPAContext);
     return objODataJPAContext;
   }
@@ -300,11 +252,9 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   private ODataContext getLocalODataContext() {
     ODataContext objODataContext = EasyMock.createMock(ODataContext.class);
     try {
-      EasyMock.expect(objODataContext.getPathInfo()).andStubReturn(
-          getLocalPathInfo());
+      EasyMock.expect(objODataContext.getPathInfo()).andStubReturn(getLocalPathInfo());
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(objODataContext);
     return objODataContext;
@@ -320,26 +270,19 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   private URI getLocalURI() {
     URI uri = null;
     try {
-      uri = new URI(
-          "http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/");
+      uri = new URI("http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/");
     } catch (URISyntaxException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     return uri;
   }
 
   private GetEntitySetUriInfo getResultsView() {
-    GetEntitySetUriInfo objGetEntitySetUriInfo = EasyMock
-        .createMock(GetEntitySetUriInfo.class);
-    EasyMock.expect(objGetEntitySetUriInfo.getInlineCount()).andStubReturn(
-        getLocalInlineCount());
-    EasyMock.expect(objGetEntitySetUriInfo.getTargetEntitySet())
-        .andStubReturn(getLocalTargetEntitySet());
-    EasyMock.expect(objGetEntitySetUriInfo.getSelect()).andStubReturn(
-        getSelectItemList());
-    EasyMock.expect(objGetEntitySetUriInfo.getExpand()).andStubReturn(
-        getExpandList());
+    GetEntitySetUriInfo objGetEntitySetUriInfo = EasyMock.createMock(GetEntitySetUriInfo.class);
+    EasyMock.expect(objGetEntitySetUriInfo.getInlineCount()).andStubReturn(getLocalInlineCount());
+    EasyMock.expect(objGetEntitySetUriInfo.getTargetEntitySet()).andStubReturn(getLocalTargetEntitySet());
+    EasyMock.expect(objGetEntitySetUriInfo.getSelect()).andStubReturn(getSelectItemList());
+    EasyMock.expect(objGetEntitySetUriInfo.getExpand()).andStubReturn(getExpandList());
     EasyMock.expect(objGetEntitySetUriInfo.getSkip()).andStubReturn(new Integer(1));
     EasyMock.replay(objGetEntitySetUriInfo);
     return objGetEntitySetUriInfo;
@@ -351,12 +294,9 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   }
 
   private GetEntitySetUriInfo getResultsViewWithNullSelects() {
-    GetEntitySetUriInfo objGetEntitySetUriInfo = EasyMock
-        .createMock(GetEntitySetUriInfo.class);
-    EasyMock.expect(objGetEntitySetUriInfo.getInlineCount()).andStubReturn(
-        getLocalInlineCount());
-    EasyMock.expect(objGetEntitySetUriInfo.getTargetEntitySet())
-        .andStubReturn(getLocalTargetEntitySet());
+    GetEntitySetUriInfo objGetEntitySetUriInfo = EasyMock.createMock(GetEntitySetUriInfo.class);
+    EasyMock.expect(objGetEntitySetUriInfo.getInlineCount()).andStubReturn(getLocalInlineCount());
+    EasyMock.expect(objGetEntitySetUriInfo.getTargetEntitySet()).andStubReturn(getLocalTargetEntitySet());
     EasyMock.expect(objGetEntitySetUriInfo.getSelect()).andStubReturn(null);
     EasyMock.expect(objGetEntitySetUriInfo.getExpand()).andStubReturn(null);
     EasyMock.expect(objGetEntitySetUriInfo.getSkip()).andStubReturn(new Integer(1));
@@ -366,14 +306,10 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   }
 
   private GetEntityUriInfo getLocalGetURIInfo() {
-    GetEntityUriInfo objGetEntityUriInfo = EasyMock
-        .createMock(GetEntityUriInfo.class);
-    EasyMock.expect(objGetEntityUriInfo.getSelect()).andStubReturn(
-        getSelectItemList());
-    EasyMock.expect(objGetEntityUriInfo.getTargetEntitySet())
-        .andStubReturn(getLocalTargetEntitySet());
-    EasyMock.expect(objGetEntityUriInfo.getExpand()).andStubReturn(
-        getExpandList());
+    GetEntityUriInfo objGetEntityUriInfo = EasyMock.createMock(GetEntityUriInfo.class);
+    EasyMock.expect(objGetEntityUriInfo.getSelect()).andStubReturn(getSelectItemList());
+    EasyMock.expect(objGetEntityUriInfo.getTargetEntitySet()).andStubReturn(getLocalTargetEntitySet());
+    EasyMock.expect(objGetEntityUriInfo.getExpand()).andStubReturn(getExpandList());
     EasyMock.replay(objGetEntityUriInfo);
     return objGetEntityUriInfo;
   }
@@ -386,11 +322,9 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
 
   private SelectItem getSelectItem() {
     SelectItem selectItem = EasyMock.createMock(SelectItem.class);
-    EasyMock.expect(selectItem.getProperty()).andStubReturn(
-        getEdmPropertyForSelect());
+    EasyMock.expect(selectItem.getProperty()).andStubReturn(getEdmPropertyForSelect());
     List<NavigationPropertySegment> navigationSegmentList = new ArrayList<NavigationPropertySegment>();
-    EasyMock.expect(selectItem.getNavigationPropertySegments())
-        .andStubReturn(navigationSegmentList);
+    EasyMock.expect(selectItem.getNavigationPropertySegments()).andStubReturn(navigationSegmentList);
     EasyMock.replay(selectItem);
     return selectItem;
   }
@@ -400,15 +334,10 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     EasyMock.expect(edmType.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
     Facets facets = new Facets().setNullable(false);
     try {
-      EasyMock.expect(
-          edmType.valueToString(new Integer(2), EdmLiteralKind.URI,
-              facets)).andStubReturn("2");
-      EasyMock.expect(
-          edmType.valueToString(new Integer(2),
-              EdmLiteralKind.DEFAULT, facets)).andStubReturn("2");
+      EasyMock.expect(edmType.valueToString(new Integer(2), EdmLiteralKind.URI, facets)).andStubReturn("2");
+      EasyMock.expect(edmType.valueToString(new Integer(2), EdmLiteralKind.DEFAULT, facets)).andStubReturn("2");
     } catch (EdmSimpleTypeException e1) {
-      fail("There is an exception in mocking EdmType object "
-          + e1.getMessage());
+      fail("There is an exception in mocking EdmType object " + e1.getMessage());
     }
     EasyMock.replay(edmType);
     EdmProperty edmProperty = EasyMock.createMock(EdmProperty.class);
@@ -421,14 +350,12 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
       EasyMock.expect(edmProperty.getType()).andStubReturn(edmType);
       EasyMock.expect(edmProperty.getMapping()).andStubReturn(edmMapping);
       EasyMock.expect(edmProperty.getFacets()).andStubReturn(facets);
-      EasyMock.expect(edmProperty.getCustomizableFeedMappings())
-          .andStubReturn(null);
+      EasyMock.expect(edmProperty.getCustomizableFeedMappings()).andStubReturn(null);
       EasyMock.expect(edmProperty.getMimeType()).andStubReturn(null);
       EasyMock.replay(edmProperty);
 
     } catch (EdmException e) {
-      fail("There is an exception in mocking some object "
-          + e.getMessage());
+      fail("There is an exception in mocking some object " + e.getMessage());
     }
 
     return edmProperty;
@@ -438,15 +365,11 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   private EdmEntitySet getLocalTargetEntitySet() {
     EdmEntitySet objEdmEntitySet = EasyMock.createMock(EdmEntitySet.class);
     try {
-      EasyMock.expect(objEdmEntitySet.getEntityType()).andStubReturn(
-          getLocalEdmEntityType());
-      EasyMock.expect(objEdmEntitySet.getName()).andStubReturn(
-          "SalesOderHeaders");
-      EasyMock.expect(objEdmEntitySet.getEntityContainer())
-          .andStubReturn(getLocalEdmEntityContainer());
+      EasyMock.expect(objEdmEntitySet.getEntityType()).andStubReturn(getLocalEdmEntityType());
+      EasyMock.expect(objEdmEntitySet.getName()).andStubReturn("SalesOderHeaders");
+      EasyMock.expect(objEdmEntitySet.getEntityContainer()).andStubReturn(getLocalEdmEntityContainer());
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
     EasyMock.replay(objEdmEntitySet);
@@ -454,16 +377,12 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   }
 
   private EdmEntityContainer getLocalEdmEntityContainer() {
-    EdmEntityContainer edmEntityContainer = EasyMock
-        .createMock(EdmEntityContainer.class);
-    EasyMock.expect(edmEntityContainer.isDefaultEntityContainer())
-        .andStubReturn(true);
+    EdmEntityContainer edmEntityContainer = EasyMock.createMock(EdmEntityContainer.class);
+    EasyMock.expect(edmEntityContainer.isDefaultEntityContainer()).andStubReturn(true);
     try {
-      EasyMock.expect(edmEntityContainer.getName()).andStubReturn(
-          "salesorderprocessingContainer");
+      EasyMock.expect(edmEntityContainer.getName()).andStubReturn("salesorderprocessingContainer");
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
     EasyMock.replay(edmEntityContainer);
@@ -471,30 +390,21 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   }
 
   private EdmEntityType getLocalEdmEntityType() {
-    EdmEntityType objEdmEntityType = EasyMock
-        .createMock(EdmEntityType.class);
+    EdmEntityType objEdmEntityType = EasyMock.createMock(EdmEntityType.class);
     try {
-      EasyMock.expect(objEdmEntityType.getName()).andStubReturn(
-          "SalesOderHeaders");
-      EasyMock.expect(objEdmEntityType.getNamespace()).andStubReturn(
-          "SalesOderHeaders");
+      EasyMock.expect(objEdmEntityType.getName()).andStubReturn("SalesOderHeaders");
+      EasyMock.expect(objEdmEntityType.getNamespace()).andStubReturn("SalesOderHeaders");
       EasyMock.expect(objEdmEntityType.hasStream()).andStubReturn(false);
       EasyMock.expect(objEdmEntityType.hasStream()).andStubReturn(false);
       ArrayList<String> propertyNames = new ArrayList<String>();
       propertyNames.add("ID");
-      EasyMock.expect(objEdmEntityType.getProperty("ID")).andStubReturn(
-          getEdmPropertyForSelect());
-      EasyMock.expect(objEdmEntityType.getPropertyNames()).andStubReturn(
-          propertyNames);
-      EasyMock.expect(objEdmEntityType.getNavigationPropertyNames())
-          .andStubReturn(new ArrayList<String>());
-      EasyMock.expect(objEdmEntityType.getKeyPropertyNames())
-          .andStubReturn(propertyNames);
-      EasyMock.expect(objEdmEntityType.getKeyProperties()).andStubReturn(
-          getKeyProperties());
+      EasyMock.expect(objEdmEntityType.getProperty("ID")).andStubReturn(getEdmPropertyForSelect());
+      EasyMock.expect(objEdmEntityType.getPropertyNames()).andStubReturn(propertyNames);
+      EasyMock.expect(objEdmEntityType.getNavigationPropertyNames()).andStubReturn(new ArrayList<String>());
+      EasyMock.expect(objEdmEntityType.getKeyPropertyNames()).andStubReturn(propertyNames);
+      EasyMock.expect(objEdmEntityType.getKeyProperties()).andStubReturn(getKeyProperties());
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(objEdmEntityType);
     return objEdmEntityType;
@@ -515,8 +425,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
       EasyMock.expect(edmProperty.getMapping()).andStubReturn(edmMapping);
       EasyMock.replay(edmProperty);
     } catch (EdmException e) {
-      fail("There is an exception is mocking some object "
-          + e.getMessage());
+      fail("There is an exception is mocking some object " + e.getMessage());
     }
 
     edmProperties.add(edmProperty);
@@ -573,31 +482,23 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     List<ArrayList<NavigationPropertySegment>> expandList = new ArrayList<ArrayList<NavigationPropertySegment>>();
     ArrayList<NavigationPropertySegment> navigationPropertyList = new ArrayList<NavigationPropertySegment>();
     // Mocking the navigation property
-    EdmNavigationProperty navigationProperty = EasyMock
-        .createMock(EdmNavigationProperty.class);
+    EdmNavigationProperty navigationProperty = EasyMock.createMock(EdmNavigationProperty.class);
     try {
-      EasyMock.expect(navigationProperty.getName()).andStubReturn(
-          "SalesOrderItemDetails");
+      EasyMock.expect(navigationProperty.getName()).andStubReturn("SalesOrderItemDetails");
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(navigationProperty);
     // Mocking the navigation property segments and adding to expand list
-    NavigationPropertySegment navigationPropertySegment = EasyMock
-        .createMock(NavigationPropertySegment.class);
-    EasyMock.expect(navigationPropertySegment.getNavigationProperty())
-        .andStubReturn(navigationProperty);
-    EasyMock.expect(navigationPropertySegment.getTargetEntitySet())
-        .andStubReturn(getTargetEntitySetForExpand());
+    NavigationPropertySegment navigationPropertySegment = EasyMock.createMock(NavigationPropertySegment.class);
+    EasyMock.expect(navigationPropertySegment.getNavigationProperty()).andStubReturn(navigationProperty);
+    EasyMock.expect(navigationPropertySegment.getTargetEntitySet()).andStubReturn(getTargetEntitySetForExpand());
     EasyMock.replay(navigationPropertySegment);
     navigationPropertyList.add(navigationPropertySegment);
     expandList.add(navigationPropertyList);
     // Mocking EntityUriInfo
-    GetEntityUriInfo entityUriInfo = EasyMock
-        .createMock(GetEntityUriInfo.class);
-    EasyMock.expect(entityUriInfo.getSelect())
-        .andStubReturn(selectItemList);
+    GetEntityUriInfo entityUriInfo = EasyMock.createMock(GetEntityUriInfo.class);
+    EasyMock.expect(entityUriInfo.getSelect()).andStubReturn(selectItemList);
     EasyMock.expect(entityUriInfo.getExpand()).andStubReturn(expandList);
     EasyMock.replay(entityUriInfo);
     return entityUriInfo;
@@ -609,31 +510,23 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     List<ArrayList<NavigationPropertySegment>> expandList = new ArrayList<ArrayList<NavigationPropertySegment>>();
     ArrayList<NavigationPropertySegment> navigationPropertyList = new ArrayList<NavigationPropertySegment>();
     // Mocking the navigation property
-    EdmNavigationProperty navigationProperty = EasyMock
-        .createMock(EdmNavigationProperty.class);
+    EdmNavigationProperty navigationProperty = EasyMock.createMock(EdmNavigationProperty.class);
     try {
-      EasyMock.expect(navigationProperty.getName()).andStubReturn(
-          "SalesOrderItemDetails");
+      EasyMock.expect(navigationProperty.getName()).andStubReturn("SalesOrderItemDetails");
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(navigationProperty);
     // Mocking the navigation property segments and adding to expand list
-    NavigationPropertySegment navigationPropertySegment = EasyMock
-        .createMock(NavigationPropertySegment.class);
-    EasyMock.expect(navigationPropertySegment.getNavigationProperty())
-        .andStubReturn(navigationProperty);
-    EasyMock.expect(navigationPropertySegment.getTargetEntitySet())
-        .andStubReturn(getTargetEntitySetForExpand());
+    NavigationPropertySegment navigationPropertySegment = EasyMock.createMock(NavigationPropertySegment.class);
+    EasyMock.expect(navigationPropertySegment.getNavigationProperty()).andStubReturn(navigationProperty);
+    EasyMock.expect(navigationPropertySegment.getTargetEntitySet()).andStubReturn(getTargetEntitySetForExpand());
     EasyMock.replay(navigationPropertySegment);
     navigationPropertyList.add(navigationPropertySegment);
     expandList.add(navigationPropertyList);
     // Mocking EntityUriInfo
-    GetEntitySetUriInfo entitySetUriInfo = EasyMock
-        .createMock(GetEntitySetUriInfo.class);
-    EasyMock.expect(entitySetUriInfo.getSelect())
-        .andStubReturn(selectItemList);
+    GetEntitySetUriInfo entitySetUriInfo = EasyMock.createMock(GetEntitySetUriInfo.class);
+    EasyMock.expect(entitySetUriInfo.getSelect()).andStubReturn(selectItemList);
     EasyMock.expect(entitySetUriInfo.getExpand()).andStubReturn(expandList);
     EasyMock.expect(entitySetUriInfo.getInlineCount()).andStubReturn(InlineCount.ALLPAGES);
     EasyMock.expect(entitySetUriInfo.getSkip()).andStubReturn(new Integer(1));
@@ -645,25 +538,21 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   private EdmEntitySet getTargetEntitySetForExpand() {
     EdmEntitySet entitySet = EasyMock.createMock(EdmEntitySet.class);
     try {
-      EasyMock.expect(entitySet.getName()).andStubReturn(
-          "SalesOrderHeaders");
+      EasyMock.expect(entitySet.getName()).andStubReturn("SalesOrderHeaders");
       EasyMock.expect(entitySet.getEntityType()).andStubReturn(null);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(entitySet);
     return entitySet;
   }
 
-  private NavigationPropertySegment getNavigationPropertySegment(final String navPropertyName)
-  {
+  private NavigationPropertySegment getNavigationPropertySegment(final String navPropertyName) {
     EdmNavigationProperty navigationProperty = EasyMock.createMock(EdmNavigationProperty.class);
     try {
       EasyMock.expect(navigationProperty.getName()).andStubReturn(navPropertyName);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(navigationProperty);
     NavigationPropertySegment navPropertySegment = EasyMock.createMock(NavigationPropertySegment.class);

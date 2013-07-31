@@ -37,11 +37,6 @@ import javax.persistence.Query;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
-import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
@@ -74,6 +69,10 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAModelExcepti
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.model.JPAEdmTestModelView;
+import org.easymock.EasyMock;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
 
@@ -100,13 +99,11 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
       GetEntityUriInfo getEntityView = getEntityUriInfo();
       Assert.assertNotNull(objODataJPAProcessorDefault.readEntity(getEntityView, HttpContentType.APPLICATION_XML));
     } catch (ODataJPAModelException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (ODataJPARuntimeException e1) {//Expected
       assertTrue(true);
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
@@ -115,13 +112,10 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   public void testcountEntitySet() {
     try {
       Assert.assertNotNull(objODataJPAProcessorDefault.countEntitySet(getEntitySetCountUriInfo(), HttpContentType.APPLICATION_XML));
-      Assert.assertEquals(TEXT_PLAIN_CHARSET_UTF_8,
-          objODataJPAProcessorDefault.countEntitySet(getEntitySetCountUriInfo(), HttpContentType.APPLICATION_XML).getHeader(STR_CONTENT_TYPE));
+      Assert.assertEquals(TEXT_PLAIN_CHARSET_UTF_8, objODataJPAProcessorDefault.countEntitySet(getEntitySetCountUriInfo(), HttpContentType.APPLICATION_XML).getHeader(STR_CONTENT_TYPE));
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    } catch (Exception e)
-    {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (Exception e) {
       assertTrue(true);
     }
   }
@@ -130,13 +124,10 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   public void testExistsEntity() {
     try {
       Assert.assertNotNull(objODataJPAProcessorDefault.existsEntity(getEntityCountCountUriInfo(), HttpContentType.APPLICATION_XML));
-      Assert.assertEquals(TEXT_PLAIN_CHARSET_UTF_8,
-          objODataJPAProcessorDefault.existsEntity(getEntityCountCountUriInfo(), HttpContentType.APPLICATION_XML).getHeader(STR_CONTENT_TYPE));
+      Assert.assertEquals(TEXT_PLAIN_CHARSET_UTF_8, objODataJPAProcessorDefault.existsEntity(getEntityCountCountUriInfo(), HttpContentType.APPLICATION_XML).getHeader(STR_CONTENT_TYPE));
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    } catch (Exception e)
-    {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (Exception e) {
       assertTrue(true);
     }
   }
@@ -145,11 +136,9 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   public void testDeleteEntity() {
     try {
       Assert.assertNotNull(objODataJPAProcessorDefault.deleteEntity(getDeletetUriInfo(), HttpContentType.APPLICATION_XML));
-      Assert.assertEquals(TEXT_PLAIN_CHARSET_UTF_8,
-          objODataJPAProcessorDefault.countEntitySet(getEntitySetCountUriInfo(), HttpContentType.APPLICATION_XML).getHeader(STR_CONTENT_TYPE));
+      Assert.assertEquals(TEXT_PLAIN_CHARSET_UTF_8, objODataJPAProcessorDefault.countEntitySet(getEntitySetCountUriInfo(), HttpContentType.APPLICATION_XML).getHeader(STR_CONTENT_TYPE));
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
@@ -184,27 +173,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   }
 
   private String getEntityBody() {
-    return
-    "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/SalesOrderProcessing.svc/\">"
-        + "<content type=\"application/xml\">"
-        + "<m:properties>"
-        + "<d:ID>2</d:ID>"
-        + "<d:CreationDate>2013-01-02T00:00:00</d:CreationDate>"
-        + "<d:CurrencyCode>Code_555</d:CurrencyCode>"
-        + "<d:BuyerAddressInfo m:type=\"SalesOrderProcessing.AddressInfo\">"
-        + "<d:Street>Test_Street_Name_055</d:Street>"
-        + "<d:Number>2</d:Number>"
-        + "<d:Country>Test_Country_2</d:Country>"
-        + "<d:City>Test_City_2</d:City>"
-        + "</d:BuyerAddressInfo>"
-        + "<d:GrossAmount>0.0</d:GrossAmount>"
-        + "<d:BuyerId>2</d:BuyerId>"
-        + "<d:DeliveryStatus>true</d:DeliveryStatus>"
-        + "<d:BuyerName>buyerName_2</d:BuyerName>"
-        + "<d:NetAmount>0.0</d:NetAmount>"
-        + "</m:properties>"
-        + "</content>"
-        + "</entry>";
+    return "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/SalesOrderProcessing.svc/\">" + "<content type=\"application/xml\">" + "<m:properties>" + "<d:ID>2</d:ID>" + "<d:CreationDate>2013-01-02T00:00:00</d:CreationDate>" + "<d:CurrencyCode>Code_555</d:CurrencyCode>" + "<d:BuyerAddressInfo m:type=\"SalesOrderProcessing.AddressInfo\">" + "<d:Street>Test_Street_Name_055</d:Street>" + "<d:Number>2</d:Number>" + "<d:Country>Test_Country_2</d:Country>" + "<d:City>Test_City_2</d:City>" + "</d:BuyerAddressInfo>" + "<d:GrossAmount>0.0</d:GrossAmount>" + "<d:BuyerId>2</d:BuyerId>" + "<d:DeliveryStatus>true</d:DeliveryStatus>" + "<d:BuyerName>buyerName_2</d:BuyerName>" + "<d:NetAmount>0.0</d:NetAmount>" + "</m:properties>" + "</content>" + "</entry>";
   }
 
   private GetEntitySetCountUriInfo getEntitySetCountUriInfo() {
@@ -265,8 +234,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
       EasyMock.expect(edmEntitySet.getEntityType()).andStubReturn(getLocalEdmEntityType());
       EasyMock.replay(edmEntitySet);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     return edmEntitySet;
   }
@@ -290,8 +258,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
       EasyMock.expect(edmEntityType.getMapping()).andStubReturn(getEdmMappingMockedObj(SALES_ORDER));// ID vs Salesorder ID
       EasyMock.replay(edmEntityType);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     return edmEntityType;
   }
@@ -399,8 +366,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     @Override
     public boolean equals(final Object obj) {
       boolean isEqual = false;
-      if (obj instanceof Address)
-      {
+      if (obj instanceof Address) {
         isEqual = getSoId().equalsIgnoreCase(((Address) obj).getSoId());//
       }
       return isEqual;
@@ -430,21 +396,17 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   }
 
   private GetEntityUriInfo getEntityUriInfo() {
-    GetEntityUriInfo getEntityView = EasyMock
-        .createMock(GetEntityUriInfo.class);
+    GetEntityUriInfo getEntityView = EasyMock.createMock(GetEntityUriInfo.class);
     EdmEntitySet edmEntitySet = EasyMock.createMock(EdmEntitySet.class);
     EdmEntityType edmEntityType = EasyMock.createMock(EdmEntityType.class);
     try {
       EasyMock.expect(getEntityView.getExpand()).andStubReturn(null);
-      EasyMock.expect(edmEntityType.getKeyProperties()).andStubReturn(
-          new ArrayList<EdmProperty>());
-      EasyMock.expect(edmEntitySet.getEntityType()).andStubReturn(
-          edmEntityType);
+      EasyMock.expect(edmEntityType.getKeyProperties()).andStubReturn(new ArrayList<EdmProperty>());
+      EasyMock.expect(edmEntitySet.getEntityType()).andStubReturn(edmEntityType);
       EasyMock.expect(edmEntitySet.getName()).andStubReturn(SALES_ORDER_HEADERS);
 
       EasyMock.expect(getEntityView.getSelect()).andStubReturn(null);
-      EasyMock.expect(getEntityView.getTargetEntitySet()).andStubReturn(
-          edmEntitySet);
+      EasyMock.expect(getEntityView.getTargetEntitySet()).andStubReturn(edmEntitySet);
       EasyMock.expect(edmEntityType.getPropertyNames()).andStubReturn(getLocalPropertyNames());
       EasyMock.expect(edmEntityType.getProperty(SO_ID)).andStubReturn(getEdmTypedMockedObj(SO_ID));
 
@@ -460,17 +422,14 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
       EasyMock.expect(edmEntitySet.getEntityContainer()).andStubReturn(getLocalEdmEntityContainer());
 
       EasyMock.replay(edmEntityType, edmEntitySet);
-      EasyMock.expect(getEntityView.getKeyPredicates()).andStubReturn(
-          new ArrayList<KeyPredicate>());
+      EasyMock.expect(getEntityView.getKeyPredicates()).andStubReturn(new ArrayList<KeyPredicate>());
       List<NavigationSegment> navigationSegments = new ArrayList<NavigationSegment>();
-      EasyMock.expect(getEntityView.getNavigationSegments()).andReturn(
-          navigationSegments);
+      EasyMock.expect(getEntityView.getNavigationSegments()).andReturn(navigationSegments);
       EasyMock.expect(getEntityView.getStartEntitySet()).andReturn(edmEntitySet);
 
       EasyMock.replay(getEntityView);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     return getEntityView;
   }
@@ -481,8 +440,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     try {
       EasyMock.expect(edmEntityContainer.getName()).andStubReturn(SALESORDERPROCESSING_CONTAINER);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
     EasyMock.replay(edmEntityContainer);
@@ -492,8 +450,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   private EdmTyped getEdmTypedMockedObj(final String propertyName) {
     EdmProperty mockedEdmProperty = EasyMock.createMock(EdmProperty.class);
     try {
-      EasyMock.expect(mockedEdmProperty.getMapping())
-          .andStubReturn(getEdmMappingMockedObj(propertyName));
+      EasyMock.expect(mockedEdmProperty.getMapping()).andStubReturn(getEdmMappingMockedObj(propertyName));
       EdmType edmType = EasyMock.createMock(EdmType.class);
       EasyMock.expect(edmType.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
       EasyMock.replay(edmType);
@@ -503,8 +460,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
 
       EasyMock.replay(mockedEdmProperty);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     return mockedEdmProperty;
   }
@@ -520,11 +476,9 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   private EdmMapping getEdmMappingMockedObj(final String propertyName) {
     EdmMapping mockedEdmMapping = EasyMock.createMock(EdmMapping.class);
     if (propertyName.equalsIgnoreCase(SALES_ORDER)) {
-      EasyMock.expect(mockedEdmMapping.getInternalName())
-          .andStubReturn(SALES_ORDER_HEADERS);
+      EasyMock.expect(mockedEdmMapping.getInternalName()).andStubReturn(SALES_ORDER_HEADERS);
     } else {
-      EasyMock.expect(mockedEdmMapping.getInternalName())
-          .andStubReturn(propertyName);
+      EasyMock.expect(mockedEdmMapping.getInternalName()).andStubReturn(propertyName);
     }
     EasyMock.replay(mockedEdmMapping);
     return mockedEdmMapping;
@@ -541,8 +495,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     try {
       EasyMock.expect(objODataContext.getPathInfo()).andStubReturn(getLocalPathInfo());
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(objODataContext);
     return objODataContext;
@@ -560,8 +513,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     try {
       uri = new URI(STR_LOCAL_URI);
     } catch (URISyntaxException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     return uri;
   }

@@ -51,8 +51,7 @@ public class JPQLStatement {
    * @return an instance of JPQL statement builder
    * @throws ODataJPARuntimeException
    */
-  public static JPQLStatementBuilder createBuilder(final JPQLContextView context)
-      throws ODataJPARuntimeException {
+  public static JPQLStatementBuilder createBuilder(final JPQLContextView context) throws ODataJPARuntimeException {
     return JPQLStatementBuilder.create(context);
   }
 
@@ -88,10 +87,8 @@ public class JPQLStatement {
 
     protected JPQLStatementBuilder() {}
 
-    private static final JPQLStatementBuilder create(final JPQLContextView context)
-        throws ODataJPARuntimeException {
-      return ODataJPAFactory.createFactory().getJPQLBuilderFactory()
-          .getStatementBuilder(context);
+    private static final JPQLStatementBuilder create(final JPQLContextView context) throws ODataJPARuntimeException {
+      return ODataJPAFactory.createFactory().getJPQLBuilderFactory().getStatementBuilder(context);
     }
 
     protected final JPQLStatement createStatement(final String statement) {

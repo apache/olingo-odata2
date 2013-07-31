@@ -26,9 +26,6 @@ import static org.junit.Assert.fail;
 
 import javax.persistence.metamodel.Attribute;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
@@ -40,6 +37,8 @@ import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEdmMockData.SimpleType;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEdmMockData.SimpleType.SimpleTypeA;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class JPAEdmAssociationEndTest extends JPAEdmTestModelView {
 
@@ -56,8 +55,7 @@ public class JPAEdmAssociationEndTest extends JPAEdmTestModelView {
   @BeforeClass
   public static void setup() {
     objJPAEdmAssociationEndTest = new JPAEdmAssociationEndTest();
-    objJPAEdmAssociationEnd = new JPAEdmAssociationEnd(
-        objJPAEdmAssociationEndTest, objJPAEdmAssociationEndTest);
+    objJPAEdmAssociationEnd = new JPAEdmAssociationEnd(objJPAEdmAssociationEndTest, objJPAEdmAssociationEndTest);
     try {
       objJPAEdmAssociationEnd.getBuilder().build();
     } catch (ODataJPAModelException e) {
@@ -84,29 +82,24 @@ public class JPAEdmAssociationEndTest extends JPAEdmTestModelView {
 
   @Test
   public void testGetAssociationEnd1() {
-    AssociationEnd associationEnd = objJPAEdmAssociationEnd
-        .getEdmAssociationEnd1();
+    AssociationEnd associationEnd = objJPAEdmAssociationEnd.getEdmAssociationEnd1();
     assertEquals(associationEnd.getType().getName(), "SOID");
   }
 
   @Test
   public void testGetAssociationEnd2() {
-    AssociationEnd associationEnd = objJPAEdmAssociationEnd
-        .getEdmAssociationEnd2();
+    AssociationEnd associationEnd = objJPAEdmAssociationEnd.getEdmAssociationEnd2();
     assertEquals(associationEnd.getType().getName(), "String");
   }
 
   @Test
   public void testCompare() {
-    assertTrue(objJPAEdmAssociationEnd.compare(
-        getAssociationEnd("SOID", 1), getAssociationEnd("String", 1)));
-    assertFalse(objJPAEdmAssociationEnd.compare(
-        getAssociationEnd("String", 2), getAssociationEnd("SOID", 1)));
+    assertTrue(objJPAEdmAssociationEnd.compare(getAssociationEnd("SOID", 1), getAssociationEnd("String", 1)));
+    assertFalse(objJPAEdmAssociationEnd.compare(getAssociationEnd("String", 2), getAssociationEnd("SOID", 1)));
   }
 
   @Test
-  public void testBuildAssociationEnd()
-  {
+  public void testBuildAssociationEnd() {
     assertEquals("SOID", objJPAEdmAssociationEnd.getEdmAssociationEnd1().getType().getName());
     assertEquals(new FullQualifiedName("salesorderprocessing", "SOID"), objJPAEdmAssociationEnd.getEdmAssociationEnd1().getType());
     assertTrue(objJPAEdmAssociationEnd.isConsistent());
@@ -122,16 +115,14 @@ public class JPAEdmAssociationEndTest extends JPAEdmTestModelView {
       associationEnd.setMultiplicity(EdmMultiplicity.ONE);
     } else if (variant == VARIANT3) {
       associationEnd.setMultiplicity(EdmMultiplicity.ZERO_TO_ONE);
-    }
-    else {
+    } else {
       associationEnd.setMultiplicity(EdmMultiplicity.MANY);//
     }
     return associationEnd;
   }
 
   private FullQualifiedName getFullQualifiedName(final String typeName) {
-    FullQualifiedName fullQualifiedName = new FullQualifiedName(PUNIT_NAME,
-        typeName);
+    FullQualifiedName fullQualifiedName = new FullQualifiedName(PUNIT_NAME, typeName);
     return fullQualifiedName;
   }
 

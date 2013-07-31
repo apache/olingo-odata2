@@ -24,11 +24,10 @@ import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
+import org.junit.Test;
 
 public class JPATypeConvertorTest {
 
@@ -59,30 +58,19 @@ public class JPATypeConvertorTest {
     UUID uUID = new UUID(0, 0);
 
     try {
-      edmSimpleKindTypeString = JPATypeConvertor
-          .convertToEdmSimpleType(str.getClass(), null);
-      edmSimpleKindTypeByteArr = JPATypeConvertor
-          .convertToEdmSimpleType(byteArr.getClass(), null);
-      edmSimpleKindTypeLong = JPATypeConvertor
-          .convertToEdmSimpleType(longObj.getClass(), null);
-      edmSimpleKindTypeShort = JPATypeConvertor
-          .convertToEdmSimpleType(shortObj.getClass(), null);
-      edmSimpleKindTypeInteger = JPATypeConvertor
-          .convertToEdmSimpleType(integerObj.getClass(), null);
-      edmSimpleKindTypeDouble = JPATypeConvertor
-          .convertToEdmSimpleType(doubleObj.getClass(), null);
-      edmSimpleKindTypeFloat = JPATypeConvertor
-          .convertToEdmSimpleType(floatObj.getClass(), null);
-      edmSimpleKindTypeBigDecimal = JPATypeConvertor
-          .convertToEdmSimpleType(bigDecimalObj.getClass(), null);
-      edmSimpleKindTypeByte = JPATypeConvertor
-          .convertToEdmSimpleType(byteObj.getClass(), null);
-      edmSimpleKindTypeBoolean = JPATypeConvertor
-          .convertToEdmSimpleType(booleanObj.getClass(), null);
+      edmSimpleKindTypeString = JPATypeConvertor.convertToEdmSimpleType(str.getClass(), null);
+      edmSimpleKindTypeByteArr = JPATypeConvertor.convertToEdmSimpleType(byteArr.getClass(), null);
+      edmSimpleKindTypeLong = JPATypeConvertor.convertToEdmSimpleType(longObj.getClass(), null);
+      edmSimpleKindTypeShort = JPATypeConvertor.convertToEdmSimpleType(shortObj.getClass(), null);
+      edmSimpleKindTypeInteger = JPATypeConvertor.convertToEdmSimpleType(integerObj.getClass(), null);
+      edmSimpleKindTypeDouble = JPATypeConvertor.convertToEdmSimpleType(doubleObj.getClass(), null);
+      edmSimpleKindTypeFloat = JPATypeConvertor.convertToEdmSimpleType(floatObj.getClass(), null);
+      edmSimpleKindTypeBigDecimal = JPATypeConvertor.convertToEdmSimpleType(bigDecimalObj.getClass(), null);
+      edmSimpleKindTypeByte = JPATypeConvertor.convertToEdmSimpleType(byteObj.getClass(), null);
+      edmSimpleKindTypeBoolean = JPATypeConvertor.convertToEdmSimpleType(booleanObj.getClass(), null);
       /*edmSimpleKindTypeDate = JPATypeConvertor
       		.convertToEdmSimpleType(dateObj.getClass(),null);*/
-      edmSimpleKindTypeUUID = JPATypeConvertor
-          .convertToEdmSimpleType(uUID.getClass(), null);
+      edmSimpleKindTypeUUID = JPATypeConvertor.convertToEdmSimpleType(uUID.getClass(), null);
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }

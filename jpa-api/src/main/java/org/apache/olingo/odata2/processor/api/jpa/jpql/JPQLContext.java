@@ -121,9 +121,7 @@ public abstract class JPQLContext implements JPQLContextView {
    *         {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder}
    * @throws ODataJPARuntimeException
    */
-  public final static JPQLContextBuilder createBuilder(
-      final JPQLContextType contextType, final Object resultsView)
-      throws ODataJPARuntimeException {
+  public final static JPQLContextBuilder createBuilder(final JPQLContextType contextType, final Object resultsView) throws ODataJPARuntimeException {
     return JPQLContextBuilder.create(contextType, resultsView);
   }
 
@@ -155,15 +153,10 @@ public abstract class JPQLContext implements JPQLContextView {
      *         {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder}
      * @throws ODataJPARuntimeException
      */
-    private static JPQLContextBuilder create(final JPQLContextType contextType,
-        final Object resultsView) throws ODataJPARuntimeException {
-      JPQLContextBuilder contextBuilder = ODataJPAFactory.createFactory()
-          .getJPQLBuilderFactory().getContextBuilder(contextType);
+    private static JPQLContextBuilder create(final JPQLContextType contextType, final Object resultsView) throws ODataJPARuntimeException {
+      JPQLContextBuilder contextBuilder = ODataJPAFactory.createFactory().getJPQLBuilderFactory().getContextBuilder(contextType);
       if (contextBuilder == null) {
-        throw ODataJPARuntimeException
-            .throwException(
-                ODataJPARuntimeException.ERROR_JPQLCTXBLDR_CREATE,
-                null);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ERROR_JPQLCTXBLDR_CREATE, null);
       }
       contextBuilder.setResultsView(resultsView);
       return contextBuilder;
@@ -179,8 +172,7 @@ public abstract class JPQLContext implements JPQLContextView {
      * @throws ODataJPAModelException
      * @throws ODataJPARuntimeException
      */
-    public abstract JPQLContext build() throws ODataJPAModelException,
-        ODataJPARuntimeException;
+    public abstract JPQLContext build() throws ODataJPAModelException, ODataJPARuntimeException;
 
     /**
      * The abstract method is implemented by specific JPQL context builder.

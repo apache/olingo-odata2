@@ -47,8 +47,7 @@ public class JPAEmbeddableTypeMock<X> implements EmbeddableType<X> {
   }
 
   @Override
-  public <E> CollectionAttribute<? super X, E> getCollection(final String arg0,
-      final Class<E> arg1) {
+  public <E> CollectionAttribute<? super X, E> getCollection(final String arg0, final Class<E> arg1) {
     return null;
   }
 
@@ -68,8 +67,7 @@ public class JPAEmbeddableTypeMock<X> implements EmbeddableType<X> {
   }
 
   @Override
-  public <E> CollectionAttribute<X, E> getDeclaredCollection(final String arg0,
-      final Class<E> arg1) {
+  public <E> CollectionAttribute<X, E> getDeclaredCollection(final String arg0, final Class<E> arg1) {
     return null;
   }
 
@@ -89,8 +87,7 @@ public class JPAEmbeddableTypeMock<X> implements EmbeddableType<X> {
   }
 
   @Override
-  public <K, V> MapAttribute<X, K, V> getDeclaredMap(final String arg0,
-      final Class<K> arg1, final Class<V> arg2) {
+  public <K, V> MapAttribute<X, K, V> getDeclaredMap(final String arg0, final Class<K> arg1, final Class<V> arg2) {
     return null;
   }
 
@@ -115,8 +112,7 @@ public class JPAEmbeddableTypeMock<X> implements EmbeddableType<X> {
   }
 
   @Override
-  public <Y> SingularAttribute<X, Y> getDeclaredSingularAttribute(
-      final String arg0, final Class<Y> arg1) {
+  public <Y> SingularAttribute<X, Y> getDeclaredSingularAttribute(final String arg0, final Class<Y> arg1) {
     return null;
   }
 
@@ -141,8 +137,7 @@ public class JPAEmbeddableTypeMock<X> implements EmbeddableType<X> {
   }
 
   @Override
-  public <K, V> MapAttribute<? super X, K, V> getMap(final String arg0,
-      final Class<K> arg1, final Class<V> arg2) {
+  public <K, V> MapAttribute<? super X, K, V> getMap(final String arg0, final Class<K> arg1, final Class<V> arg2) {
     return null;
   }
 
@@ -167,8 +162,7 @@ public class JPAEmbeddableTypeMock<X> implements EmbeddableType<X> {
   }
 
   @Override
-  public <Y> SingularAttribute<? super X, Y> getSingularAttribute(
-      final String arg0, final Class<Y> arg1) {
+  public <Y> SingularAttribute<? super X, Y> getSingularAttribute(final String arg0, final Class<Y> arg1) {
     return null;
   }
 

@@ -23,10 +23,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
-import org.junit.Test;
-
-import com.google.gson.Gson;
-import com.google.gson.internal.StringMap;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.uri.UriParser;
 import org.apache.olingo.odata2.api.uri.expression.ExceptionVisitExpression;
@@ -34,6 +30,10 @@ import org.apache.olingo.odata2.api.uri.expression.ExpressionKind;
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.expression.MethodOperator;
 import org.apache.olingo.odata2.api.uri.expression.UnaryOperator;
+import org.junit.Test;
+
+import com.google.gson.Gson;
+import com.google.gson.internal.StringMap;
 
 /**
  *  

@@ -27,16 +27,15 @@ import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataProcessor;
 import org.apache.olingo.odata2.processor.api.jpa.ODataJPAContext;
 import org.apache.olingo.odata2.processor.core.jpa.edm.ODataJPAEdmProvider;
 import org.apache.olingo.odata2.processor.core.jpa.mock.ODataJPAContextMock;
+import org.easymock.EasyMock;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ODataJPAContextImplTest {
 
@@ -74,8 +73,7 @@ public class ODataJPAContextImplTest {
     odataJPAContext.setEntityManagerFactory(emf);
     odataJPAContext.setODataContext(odataContext);
     odataJPAContext.setODataProcessor(processor);
-    odataJPAContext
-        .setPersistenceUnitName(ODataJPAContextMock.PERSISTENCE_UNIT_NAME);
+    odataJPAContext.setPersistenceUnitName(ODataJPAContextMock.PERSISTENCE_UNIT_NAME);
     odataJPAContext.setJPAEdmMappingModel(ODataJPAContextMock.MAPPING_MODEL);
   }
 
@@ -86,8 +84,7 @@ public class ODataJPAContextImplTest {
     assertEquals(odataJPAContext.getEntityManagerFactory().hashCode(), emf.hashCode());
     assertEquals(odataJPAContext.getODataContext().hashCode(), odataContext.hashCode());
     assertEquals(odataJPAContext.getODataProcessor().hashCode(), processor.hashCode());
-    assertEquals(odataJPAContext.getPersistenceUnitName(),
-        ODataJPAContextMock.PERSISTENCE_UNIT_NAME);
+    assertEquals(odataJPAContext.getPersistenceUnitName(), ODataJPAContextMock.PERSISTENCE_UNIT_NAME);
     assertEquals(odataJPAContext.getJPAEdmMappingModel(), ODataJPAContextMock.MAPPING_MODEL);
 
     EntityManager em1 = odataJPAContext.getEntityManager();

@@ -47,8 +47,7 @@ public class JPAJavaMemberMock implements Member, AnnotatedElement, Annotation {
   }
 
   @Override
-  public boolean isAnnotationPresent(
-      final Class<? extends Annotation> annotationClass) {
+  public boolean isAnnotationPresent(final Class<? extends Annotation> annotationClass) {
     return false;
   }
 

@@ -55,38 +55,27 @@ public class JPATypeConvertor {
   public static EdmSimpleTypeKind convertToEdmSimpleType(final Class<?> jpaType, final Attribute<?, ?> currentAttribute) throws ODataJPAModelException {
     if (jpaType.equals(String.class)) {
       return EdmSimpleTypeKind.String;
-    }
-    else if (jpaType.equals(Long.class) || jpaType.equals(long.class)) {
+    } else if (jpaType.equals(Long.class) || jpaType.equals(long.class)) {
       return EdmSimpleTypeKind.Int64;
-    }
-    else if (jpaType.equals(Short.class) || jpaType.equals(short.class)) {
+    } else if (jpaType.equals(Short.class) || jpaType.equals(short.class)) {
       return EdmSimpleTypeKind.Int16;
-    }
-    else if (jpaType.equals(Integer.class) || jpaType.equals(int.class)) {
+    } else if (jpaType.equals(Integer.class) || jpaType.equals(int.class)) {
       return EdmSimpleTypeKind.Int32;
-    }
-    else if (jpaType.equals(Double.class) || jpaType.equals(double.class)) {
+    } else if (jpaType.equals(Double.class) || jpaType.equals(double.class)) {
       return EdmSimpleTypeKind.Double;
-    }
-    else if (jpaType.equals(Float.class) || jpaType.equals(float.class)) {
+    } else if (jpaType.equals(Float.class) || jpaType.equals(float.class)) {
       return EdmSimpleTypeKind.Single;
-    }
-    else if (jpaType.equals(BigDecimal.class)) {
+    } else if (jpaType.equals(BigDecimal.class)) {
       return EdmSimpleTypeKind.Decimal;
-    }
-    else if (jpaType.equals(byte[].class)) {
+    } else if (jpaType.equals(byte[].class)) {
       return EdmSimpleTypeKind.Binary;
-    }
-    else if (jpaType.equals(Byte.class) || jpaType.equals(byte.class)) {
+    } else if (jpaType.equals(Byte.class) || jpaType.equals(byte.class)) {
       return EdmSimpleTypeKind.Byte;
-    }
-    else if (jpaType.equals(Byte[].class)) {
+    } else if (jpaType.equals(Byte[].class)) {
       return EdmSimpleTypeKind.Binary;
-    }
-    else if (jpaType.equals(Boolean.class) || jpaType.equals(boolean.class)) {
+    } else if (jpaType.equals(Boolean.class) || jpaType.equals(boolean.class)) {
       return EdmSimpleTypeKind.Boolean;
-    }
-    else if ((jpaType.equals(Date.class)) || (jpaType.equals(Calendar.class))) {
+    } else if ((jpaType.equals(Date.class)) || (jpaType.equals(Calendar.class))) {
       try {
         if ((currentAttribute != null) && (currentAttribute.getDeclaringType().getJavaType().getDeclaredField(currentAttribute.getName()).getAnnotation(Temporal.class).value() == TemporalType.TIME)) {
           return EdmSimpleTypeKind.Time;
@@ -94,14 +83,11 @@ public class JPATypeConvertor {
           return EdmSimpleTypeKind.DateTime;
         }
       } catch (NoSuchFieldException e) {
-        throw ODataJPAModelException
-            .throwException(ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
+        throw ODataJPAModelException.throwException(ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
       } catch (SecurityException e) {
-        throw ODataJPAModelException
-            .throwException(ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
+        throw ODataJPAModelException.throwException(ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
       }
-    }
-    else if (jpaType.equals(UUID.class)) {
+    } else if (jpaType.equals(UUID.class)) {
       return EdmSimpleTypeKind.Guid;
     }
     throw ODataJPAModelException.throwException(ODataJPAModelException.TYPE_NOT_SUPPORTED.addContent(jpaType.toString()), null);

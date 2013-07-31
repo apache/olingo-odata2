@@ -49,8 +49,7 @@ public class TestBase {
   }
 
   static public ParserTool GetPTF(final EdmEntityType resourceEntityType, final String expression) {
-    return new ParserTool(expression, false, true, false,
-        resourceEntityType);
+    return new ParserTool(expression, false, true, false, resourceEntityType);
   }
 
   static public ParserTool GetPTO(final String expression) {
@@ -66,8 +65,7 @@ public class TestBase {
   }
 
   static public ParserTool GetPTF_noTEST(final EdmEntityType resourceEntityType, final String expression) {
-    return new ParserTool(expression, false, false, true,
-        resourceEntityType);
+    return new ParserTool(expression, false, false, true, resourceEntityType);
   }
 
   static public ParserTool GetPTO_noTEST(final String expression) {

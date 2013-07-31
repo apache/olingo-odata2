@@ -53,10 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JPAEmbeddableTypeMapType", propOrder = {
-    "edmComplexType",
-    "jpaAttributes"
-})
+@XmlType(name = "JPAEmbeddableTypeMapType", propOrder = { "edmComplexType", "jpaAttributes" })
 public class JPAEmbeddableTypeMapType {
 
   @XmlElement(name = "EDMComplexType")

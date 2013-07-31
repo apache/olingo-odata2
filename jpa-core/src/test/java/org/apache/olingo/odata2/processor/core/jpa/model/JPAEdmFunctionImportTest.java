@@ -26,9 +26,6 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.annotation.edm.Parameter.Mode;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
@@ -51,6 +48,8 @@ import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.mock.ODataJPAContextMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPACustomProcessorMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPACustomProcessorNegativeMock;
+import org.junit.Before;
+import org.junit.Test;
 
 public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
   private static final int METHOD_COUNT = 6;
@@ -71,8 +70,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 1);
     for (FunctionImport functionImport : functionImportList) {
@@ -81,15 +79,13 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       Mapping mapping = new Mapping();
       mapping.setInternalName("method1");
 
-      assertEquals(mapping.getInternalName(), functionImport.getMapping()
-          .getInternalName());
+      assertEquals(mapping.getInternalName(), functionImport.getMapping().getInternalName());
 
       ReturnType returnType = functionImport.getReturnType();
       assertNotNull(returnType);
       assertEquals(EdmMultiplicity.MANY, returnType.getMultiplicity());
 
-      List<FunctionImportParameter> funcImpList = functionImport
-          .getParameters();
+      List<FunctionImportParameter> funcImpList = functionImport.getParameters();
       assertEquals(2, funcImpList.size());
       assertEquals("Param1", funcImpList.get(0).getName());
       assertEquals(EdmSimpleTypeKind.String, funcImpList.get(0).getType());
@@ -112,8 +108,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 0);
 
@@ -128,8 +123,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(METHOD_COUNT, functionImportList.size());
 
@@ -145,8 +139,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 1);
 
@@ -157,8 +150,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
     ReturnType returnType = functionImport.getReturnType();
     assertNotNull(returnType);
     assertEquals(EdmMultiplicity.ONE, returnType.getMultiplicity());
-    assertEquals(returnType.getTypeName().toString(),
-        EdmSimpleTypeKind.Int32.getFullQualifiedName().toString());
+    assertEquals(returnType.getTypeName().toString(), EdmSimpleTypeKind.Int32.getFullQualifiedName().toString());
   }
 
   /**
@@ -170,8 +162,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 0);
 
@@ -195,8 +186,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       jpaEdmfunctionImport.getBuilder().build();
       fail("Exception Expected");
     } catch (ODataJPAModelException e) {
-      assertEquals(ODataJPAModelException.FUNC_ENTITYSET_EXP.getKey(), e
-          .getMessageReference().getKey());
+      assertEquals(ODataJPAModelException.FUNC_ENTITYSET_EXP.getKey(), e.getMessageReference().getKey());
     } catch (ODataJPARuntimeException e) {
       fail("Model Exception Expected");
     }
@@ -214,8 +204,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       jpaEdmfunctionImport.getBuilder().build();
       fail("Exception Expected");
     } catch (ODataJPAModelException e) {
-      assertEquals(ODataJPAModelException.FUNC_RETURN_TYPE_EXP.getKey(),
-          e.getMessageReference().getKey());
+      assertEquals(ODataJPAModelException.FUNC_RETURN_TYPE_EXP.getKey(), e.getMessageReference().getKey());
     } catch (ODataJPARuntimeException e) {
       fail("Model Exception Expected");
     }
@@ -231,8 +220,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 1);
 
@@ -245,9 +233,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
     ReturnType returnType = functionImport.getReturnType();
     assertNotNull(returnType);
     assertEquals(EdmMultiplicity.ONE, returnType.getMultiplicity());
-    assertEquals(returnType.getTypeName().toString(),
-        ODataJPAContextMock.PERSISTENCE_UNIT_NAME + "."
-            + JPACustomProcessorMock.edmName);
+    assertEquals(returnType.getTypeName().toString(), ODataJPAContextMock.PERSISTENCE_UNIT_NAME + "." + JPACustomProcessorMock.edmName);
   }
 
   /**
@@ -262,10 +248,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       jpaEdmfunctionImport.getBuilder().build();
       fail("Exception Expected");
     } catch (ODataJPAModelException e) {
-      assertEquals(
-          ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND
-              .getKey(),
-          e.getMessageReference().getKey());
+      assertEquals(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND.getKey(), e.getMessageReference().getKey());
     } catch (ODataJPARuntimeException e) {
       fail("Model Exception Expected");
     }
@@ -281,8 +264,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 1);
 
@@ -293,9 +275,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
     ReturnType returnType = functionImport.getReturnType();
     assertNotNull(returnType);
     assertEquals(EdmMultiplicity.ONE, returnType.getMultiplicity());
-    assertEquals(returnType.getTypeName().toString(),
-        ODataJPAContextMock.PERSISTENCE_UNIT_NAME + "."
-            + JPACustomProcessorMock.edmName);
+    assertEquals(returnType.getTypeName().toString(), ODataJPAContextMock.PERSISTENCE_UNIT_NAME + "." + JPACustomProcessorMock.edmName);
 
   }
 
@@ -309,8 +289,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 1);
 
@@ -321,9 +300,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
     ReturnType returnType = functionImport.getReturnType();
     assertNotNull(returnType);
     assertEquals(EdmMultiplicity.MANY, returnType.getMultiplicity());
-    assertEquals(returnType.getTypeName().toString(),
-        ODataJPAContextMock.PERSISTENCE_UNIT_NAME + "."
-            + JPACustomProcessorMock.edmName);
+    assertEquals(returnType.getTypeName().toString(), ODataJPAContextMock.PERSISTENCE_UNIT_NAME + "." + JPACustomProcessorMock.edmName);
 
   }
 
@@ -339,10 +316,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       jpaEdmfunctionImport.getBuilder().build();
       fail("Exception Expected");
     } catch (ODataJPAModelException e) {
-      assertEquals(
-          ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND
-              .getKey(),
-          e.getMessageReference().getKey());
+      assertEquals(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND.getKey(), e.getMessageReference().getKey());
     } catch (ODataJPARuntimeException e) {
       fail("Model Exception Expected");
     }
@@ -360,8 +334,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       jpaEdmfunctionImport.getBuilder().build();
       fail("Exception Expected");
     } catch (ODataJPAModelException e) {
-      assertEquals(ODataJPAModelException.TYPE_NOT_SUPPORTED.getKey(), e
-          .getMessageReference().getKey());
+      assertEquals(ODataJPAModelException.TYPE_NOT_SUPPORTED.getKey(), e.getMessageReference().getKey());
     } catch (ODataJPARuntimeException e) {
       fail("Model Exception Expected");
     }
@@ -379,8 +352,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       jpaEdmfunctionImport.getBuilder().build();
       fail("Exception Expected");
     } catch (ODataJPAModelException e) {
-      assertEquals(ODataJPAModelException.FUNC_PARAM_NAME_EXP.getKey(), e
-          .getMessageReference().getKey());
+      assertEquals(ODataJPAModelException.FUNC_PARAM_NAME_EXP.getKey(), e.getMessageReference().getKey());
     } catch (ODataJPARuntimeException e) {
       fail("Model Exception Expected");
     }
@@ -396,13 +368,11 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 1);
 
-    List<FunctionImportParameter> funcImpParamList = functionImportList
-        .get(0).getParameters();
+    List<FunctionImportParameter> funcImpParamList = functionImportList.get(0).getParameters();
     EdmFacets facets = funcImpParamList.get(0).getFacets();
     assertNotNull(facets);
     assertEquals(2, facets.getMaxLength().intValue());
@@ -425,13 +395,11 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 1);
 
-    List<FunctionImportParameter> funcImpParamList = functionImportList
-        .get(0).getParameters();
+    List<FunctionImportParameter> funcImpParamList = functionImportList.get(0).getParameters();
     EdmFacets facets = funcImpParamList.get(0).getFacets();
     assertNotNull(facets);
     assertNull(facets.getMaxLength());
@@ -453,8 +421,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       jpaEdmfunctionImport.getBuilder().build();
       fail("Exception Expected");
     } catch (ODataJPAModelException e) {
-      assertEquals(ODataJPAModelException.FUNC_RETURN_TYPE_EXP.getKey(), e
-          .getMessageReference().getKey());
+      assertEquals(ODataJPAModelException.FUNC_RETURN_TYPE_EXP.getKey(), e.getMessageReference().getKey());
     } catch (ODataJPARuntimeException e) {
       fail("Model Exception Expected");
     }
@@ -473,8 +440,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       jpaEdmfunctionImport.getBuilder().build();
       fail("Exception Expected");
     } catch (ODataJPAModelException e) {
-      assertEquals(ODataJPAModelException.FUNC_RETURN_TYPE_EXP.getKey(), e
-          .getMessageReference().getKey());
+      assertEquals(ODataJPAModelException.FUNC_RETURN_TYPE_EXP.getKey(), e.getMessageReference().getKey());
     } catch (ODataJPARuntimeException e) {
       fail("Model Exception Expected");
     }
@@ -487,8 +453,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     build();
 
-    List<FunctionImport> functionImportList = jpaEdmfunctionImport
-        .getConsistentFunctionImportList();
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 0);
 
@@ -496,8 +461,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
   @Test
   public void testGetBuilderIdempotent() {
-    JPAEdmFunctionImport jpaEdmfunctionImport = new JPAEdmFunctionImport(
-        this);
+    JPAEdmFunctionImport jpaEdmfunctionImport = new JPAEdmFunctionImport(this);
 
     JPAEdmBuilder builder1 = jpaEdmfunctionImport.getBuilder();
     JPAEdmBuilder builder2 = jpaEdmfunctionImport.getBuilder();
@@ -511,58 +475,41 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
     HashMap<Class<?>, String[]> customOperations = new HashMap<Class<?>, String[]>();
 
     if (VARIANT == 0) {
-      customOperations.put(JPACustomProcessorMock.class,
-          new String[] { "method1" });
+      customOperations.put(JPACustomProcessorMock.class, new String[] { "method1" });
     } else if (VARIANT == 1) {
-      customOperations.put(JPACustomProcessorMock.class,
-          new String[] { "XYX" });
+      customOperations.put(JPACustomProcessorMock.class, new String[] { "XYX" });
     } else if (VARIANT == 2) {
       customOperations.put(JPACustomProcessorMock.class, null);
     } else if (VARIANT == 3) {
-      customOperations.put(JPACustomProcessorMock.class,
-          new String[] { "method3" });
+      customOperations.put(JPACustomProcessorMock.class, new String[] { "method3" });
     } else if (VARIANT == 4) {
-      customOperations.put(JPACustomProcessorMock.class,
-          new String[] { "method4" });
+      customOperations.put(JPACustomProcessorMock.class, new String[] { "method4" });
     } else if (VARIANT == 5) {
-      customOperations.put(JPACustomProcessorNegativeMock.class,
-          new String[] { "method5" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method5" });
     } else if (VARIANT == 6) {
-      customOperations.put(JPACustomProcessorNegativeMock.class,
-          new String[] { "method6" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method6" });
     } else if (VARIANT == 7) {
-      customOperations.put(JPACustomProcessorMock.class,
-          new String[] { "method7" });
+      customOperations.put(JPACustomProcessorMock.class, new String[] { "method7" });
     } else if (VARIANT == 8) {
-      customOperations.put(JPACustomProcessorNegativeMock.class,
-          new String[] { "method8" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method8" });
     } else if (VARIANT == 9) {
-      customOperations.put(JPACustomProcessorMock.class,
-          new String[] { "method9" });
+      customOperations.put(JPACustomProcessorMock.class, new String[] { "method9" });
     } else if (VARIANT == 10) {
-      customOperations.put(JPACustomProcessorMock.class,
-          new String[] { "method10" });
+      customOperations.put(JPACustomProcessorMock.class, new String[] { "method10" });
     } else if (VARIANT == 11) {
-      customOperations.put(JPACustomProcessorNegativeMock.class,
-          new String[] { "method11" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method11" });
     } else if (VARIANT == 12) {
-      customOperations.put(JPACustomProcessorNegativeMock.class,
-          new String[] { "method12" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method12" });
     } else if (VARIANT == 13) {
-      customOperations.put(JPACustomProcessorNegativeMock.class,
-          new String[] { "method13" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method13" });
     } else if (VARIANT == 14) {
-      customOperations.put(JPACustomProcessorMock.class,
-          new String[] { "method1" });
+      customOperations.put(JPACustomProcessorMock.class, new String[] { "method1" });
     } else if (VARIANT == 15) {
-      customOperations.put(JPACustomProcessorMock.class,
-          new String[] { "method3" });
+      customOperations.put(JPACustomProcessorMock.class, new String[] { "method3" });
     } else if (VARIANT == 16) {
-      customOperations.put(JPACustomProcessorNegativeMock.class,
-          new String[] { "method16" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method16" });
     } else if (VARIANT == 17) {
-      customOperations.put(JPACustomProcessorNegativeMock.class,
-          new String[] { "method17" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method17" });
     } else {
       return null;
     }
@@ -617,11 +564,9 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
     try {
       jpaEdmfunctionImport.getBuilder().build();
     } catch (ODataJPAModelException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 }

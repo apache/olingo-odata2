@@ -26,10 +26,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 
+import org.apache.olingo.odata2.processor.core.jpa.mock.ODataJPAContextMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.apache.olingo.odata2.processor.core.jpa.mock.ODataJPAContextMock;
 
 public class JPAEdmMappingModelServiceTest extends JPAEdmMappingModelService {
 

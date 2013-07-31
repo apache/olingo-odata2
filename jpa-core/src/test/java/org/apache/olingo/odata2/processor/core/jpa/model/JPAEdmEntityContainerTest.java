@@ -31,9 +31,6 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAModelException;
@@ -46,6 +43,8 @@ import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEntityTypeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAMetaModelMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPASingularAttributeMock;
+import org.junit.Before;
+import org.junit.Test;
 
 public class JPAEdmEntityContainerTest extends JPAEdmTestModelView {
 
@@ -162,8 +161,7 @@ public class JPAEdmEntityContainerTest extends JPAEdmTestModelView {
     };
   }
 
-  private class JPAEdmMetaModel extends JPAMetaModelMock
-  {
+  private class JPAEdmMetaModel extends JPAMetaModelMock {
     Set<EntityType<?>> entities;
 
     public JPAEdmMetaModel() {
@@ -189,8 +187,7 @@ public class JPAEdmEntityContainerTest extends JPAEdmTestModelView {
     Set<Attribute<? super String, ?>> attributeSet = new HashSet<Attribute<? super String, ?>>();
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void setValuesToSet()
-    {
+    private void setValuesToSet() {
       attributeSet.add((Attribute<? super String, String>) new JPAEdmAttribute(java.lang.String.class, "SOID"));
       attributeSet.add((Attribute<? super String, String>) new JPAEdmAttribute(java.lang.String.class, "SONAME"));
     }
@@ -201,8 +198,7 @@ public class JPAEdmEntityContainerTest extends JPAEdmTestModelView {
       return attributeSet;
     }
 
-    private class JPAEdmAttribute<Object, String> extends JPASingularAttributeMock<Object, String>
-    {
+    private class JPAEdmAttribute<Object, String> extends JPASingularAttributeMock<Object, String> {
 
       @Override
       public PersistentAttributeType getPersistentAttributeType() {

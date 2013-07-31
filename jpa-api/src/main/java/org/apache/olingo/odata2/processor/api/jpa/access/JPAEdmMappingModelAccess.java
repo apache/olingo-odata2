@@ -99,8 +99,7 @@ public interface JPAEdmMappingModelAccess {
    * @return EDM property name mapped to Java persistence attribute name or
    *         null if no mapping is available
    */
-  public String mapJPAAttribute(String jpaEntityTypeName,
-      String jpaAttributeName);
+  public String mapJPAAttribute(String jpaEntityTypeName, String jpaAttributeName);
 
   /**
    * The method returns EDM navigation property name for the Java persistence
@@ -113,8 +112,7 @@ public interface JPAEdmMappingModelAccess {
    * @return EDM navigation property name mapped to Java persistence entity
    *         relationship name or null if no mapping is available
    */
-  public String mapJPARelationship(String jpaEntityTypeName,
-      String jpaRelationshipName);
+  public String mapJPARelationship(String jpaEntityTypeName, String jpaRelationshipName);
 
   /**
    * The method returns EDM complex type name for the Java embeddable type
@@ -138,8 +136,7 @@ public interface JPAEdmMappingModelAccess {
    * @return EDM property name mapped to Java persistence attribute name or
    *         null if no mapping is available
    */
-  public String mapJPAEmbeddableTypeAttribute(String jpaEmbeddableTypeName,
-      String jpaAttributeName);
+  public String mapJPAEmbeddableTypeAttribute(String jpaEmbeddableTypeName, String jpaAttributeName);
 
   /**
    * The method returns whether the JPA Entity should be excluded from EDM
@@ -165,8 +162,7 @@ public interface JPAEdmMappingModelAccess {
    *         <b>false</b> - if JPA attribute should be not be excluded
    * 
    */
-  public boolean checkExclusionOfJPAAttributeType(String jpaEntityTypeName,
-      String jpaAttributeName);
+  public boolean checkExclusionOfJPAAttributeType(String jpaEntityTypeName, String jpaAttributeName);
 
   /**
    * The method returns whether the JPA Embeddable Type should be excluded
@@ -178,8 +174,7 @@ public interface JPAEdmMappingModelAccess {
    *         <b>false</b> - if JPA Embeddable Type should be not be excluded
    * 
    */
-  public boolean checkExclusionOfJPAEmbeddableType(
-      String jpaEmbeddableTypeName);
+  public boolean checkExclusionOfJPAEmbeddableType(String jpaEmbeddableTypeName);
 
   /**
    * The method returns whether the JPA Embeddable Attribute Type should be
@@ -194,6 +189,5 @@ public interface JPAEdmMappingModelAccess {
    *         excluded
    * 
    */
-  public boolean checkExclusionOfJPAEmbeddableAttributeType(
-      String jpaEmbeddableTypeName, String jpaAttributeName);
+  public boolean checkExclusionOfJPAEmbeddableAttributeType(String jpaEmbeddableTypeName, String jpaAttributeName);
 }

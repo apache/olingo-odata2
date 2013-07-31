@@ -55,8 +55,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
   }
 
   @Override
-  public WriteEntryCallbackResult retrieveEntryResult(
-      final WriteEntryCallbackContext context) {
+  public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context) {
     WriteEntryCallbackResult result = new WriteEntryCallbackResult();
     Map<String, Object> entry = context.getEntryData();
     Map<String, Object> edmPropertyValueMap = null;
@@ -72,8 +71,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(inlinedEntry, nextEntitySet.getEntityType());
       result.setEntryData(edmPropertyValueMap);
       navigationLinks = context.getCurrentExpandSelectTreeNode().getLinks();
-      if (navigationLinks.size() > 0)
-      {
+      if (navigationLinks.size() > 0) {
         currentNavPropertyList = new ArrayList<EdmNavigationProperty>();
         currentNavPropertyList.add(getNextNavigationProperty(context.getSourceEntitySet().getEntityType(), context.getNavigationProperty()));
         HashMap<String, Object> navigationMap = jpaResultParser.parse2EdmNavigationValueMap(inlinedEntry, currentNavPropertyList);
@@ -91,8 +89,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
   }
 
   @Override
-  public WriteFeedCallbackResult retrieveFeedResult(
-      final WriteFeedCallbackContext context) {
+  public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context) {
     WriteFeedCallbackResult result = new WriteFeedCallbackResult();
     HashMap<String, Object> inlinedEntry = (HashMap<String, Object>) context.getEntryData();
     List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
@@ -106,19 +103,16 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       if (nextEntitySet == null) {
         nextEntitySet = context.getSourceEntitySet().getRelatedEntitySet(currentNavigationProperty);
       }
-      for (Object object : listOfItems)
-      {
+      for (Object object : listOfItems) {
         edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(object, nextEntitySet.getEntityType());
         edmEntityList.add(edmPropertyValueMap);
       }
       result.setFeedData(edmEntityList);
-      if (context.getCurrentExpandSelectTreeNode().getLinks().size() > 0)
-      {
+      if (context.getCurrentExpandSelectTreeNode().getLinks().size() > 0) {
         currentNavPropertyList = new ArrayList<EdmNavigationProperty>();
         currentNavPropertyList.add(getNextNavigationProperty(context.getSourceEntitySet().getEntityType(), context.getNavigationProperty()));
         int count = 0;
-        for (Object object : listOfItems)
-        {
+        for (Object object : listOfItems) {
           HashMap<String, Object> navigationMap = jpaResultParser.parse2EdmNavigationValueMap(object, currentNavPropertyList);
           edmEntityList.get(count).putAll(navigationMap);
           count++;
@@ -134,14 +128,11 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     return result;
   }
 
-  private EdmNavigationProperty getNextNavigationProperty(
-      final EdmEntityType sourceEntityType, final EdmNavigationProperty navigationProperty) throws EdmException {
+  private EdmNavigationProperty getNextNavigationProperty(final EdmEntityType sourceEntityType, final EdmNavigationProperty navigationProperty) throws EdmException {
     int count;
-    for (ArrayList<NavigationPropertySegment> navPropSegments : expandList)
-    {
+    for (ArrayList<NavigationPropertySegment> navPropSegments : expandList) {
       count = 0;
-      for (NavigationPropertySegment navPropSegment : navPropSegments)
-      {
+      for (NavigationPropertySegment navPropSegment : navPropSegments) {
         EdmNavigationProperty navProperty = navPropSegment.getNavigationProperty();
         if (navProperty.getFromRole().equalsIgnoreCase(sourceEntityType.getName()) && navProperty.getName().equals(navigationProperty.getName())) {
           return navPropSegments.get(count + 1).getNavigationProperty();

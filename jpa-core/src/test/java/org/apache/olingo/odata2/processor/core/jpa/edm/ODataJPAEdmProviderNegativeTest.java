@@ -26,9 +26,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
@@ -38,6 +35,8 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.mock.ODataJPAContextMock;
 import org.apache.olingo.odata2.processor.core.jpa.model.JPAEdmModel;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class ODataJPAEdmProviderNegativeTest {
 
@@ -61,17 +60,13 @@ public class ODataJPAEdmProviderNegativeTest {
       field.setAccessible(true);
       field.set(edmProvider, new JPAEdmModel(null, null));
     } catch (IllegalArgumentException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalAccessException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (NoSuchFieldException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
@@ -80,36 +75,30 @@ public class ODataJPAEdmProviderNegativeTest {
   public void testNullGetEntityContainerInfo() {
     EntityContainerInfo entityContainer = null;
     try {
-      entityContainer = edmProvider
-          .getEntityContainerInfo("salesorderprocessingContainer");
+      entityContainer = edmProvider.getEntityContainerInfo("salesorderprocessingContainer");
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     assertNull(entityContainer);
   }
 
   @Test
   public void testNullGetEntityType() {
-    FullQualifiedName entityTypeName = new FullQualifiedName(
-        "salesorderprocessing", "SalesOrderHeader");
+    FullQualifiedName entityTypeName = new FullQualifiedName("salesorderprocessing", "SalesOrderHeader");
     try {
       assertNull(edmProvider.getEntityType(entityTypeName));
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
   @Test
   public void testNullGetComplexType() {
-    FullQualifiedName complexTypeName = new FullQualifiedName(
-        "salesorderprocessing", "Address");
+    FullQualifiedName complexTypeName = new FullQualifiedName("salesorderprocessing", "Address");
     try {
       assertNull(edmProvider.getComplexType(complexTypeName));
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
@@ -117,11 +106,9 @@ public class ODataJPAEdmProviderNegativeTest {
   public void testGetAssociationFullQualifiedName() {
     Association association = null;
     try {
-      association = edmProvider.getAssociation(new FullQualifiedName(
-          "salesorderprocessing", "SalesOrderHeader_SalesOrderItem"));
+      association = edmProvider.getAssociation(new FullQualifiedName("salesorderprocessing", "SalesOrderHeader_SalesOrderItem"));
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     assertNull(association);
   }
@@ -129,25 +116,18 @@ public class ODataJPAEdmProviderNegativeTest {
   @Test
   public void testGetEntitySet() {
     try {
-      assertNull(edmProvider.getEntitySet(
-          "salesorderprocessingContainer", "SalesOrderHeaders"));
+      assertNull(edmProvider.getEntitySet("salesorderprocessingContainer", "SalesOrderHeaders"));
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
   @Test
   public void testGetAssociationSet() {
     try {
-      assertNull(edmProvider.getAssociationSet(
-          "salesorderprocessingContainer", new FullQualifiedName(
-              "salesorderprocessing",
-              "SalesOrderHeader_SalesOrderItem"),
-          "SalesOrderHeaders", "SalesOrderHeader"));
+      assertNull(edmProvider.getAssociationSet("salesorderprocessingContainer", new FullQualifiedName("salesorderprocessing", "SalesOrderHeader_SalesOrderItem"), "SalesOrderHeaders", "SalesOrderHeader"));
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
@@ -156,16 +136,13 @@ public class ODataJPAEdmProviderNegativeTest {
   public void testNullGetFunctionImport() {
 
     try {
-      assertNull(edmProvider.getFunctionImport(
-          "salesorderprocessingContainer",
-          "SalesOrder_FunctionImport1"));
+      assertNull(edmProvider.getFunctionImport("salesorderprocessingContainer", "SalesOrder_FunctionImport1"));
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
-  
+
   @Test
   public void testNullGetFunctionImport2() {
 
@@ -184,25 +161,18 @@ public class ODataJPAEdmProviderNegativeTest {
         schemas.add(schema); //Empty Schema
         field.set(provider, schemas);
       } catch (IllegalArgumentException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (IllegalAccessException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (NoSuchFieldException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       } catch (SecurityException e) {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
 
-      assertNull(provider.getFunctionImport(
-          "salesorderprocessingContainer",
-          "SalesOrder_FunctionImport1"));
+      assertNull(provider.getFunctionImport("salesorderprocessingContainer", "SalesOrder_FunctionImport1"));
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
@@ -212,8 +182,7 @@ public class ODataJPAEdmProviderNegativeTest {
     try {
       assertNotNull(edmProvider.getSchemas());
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 

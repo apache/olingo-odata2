@@ -26,13 +26,6 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmAssociation;
 import org.apache.olingo.odata2.api.edm.EdmAssociationEnd;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -50,6 +43,12 @@ import org.apache.olingo.odata2.processor.api.jpa.access.JPAJoinClause;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.processor.core.jpa.jpql.JPQLJoinSelectContext.JPQLJoinContextBuilder;
+import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class JPQLJoinContextTest {
 
@@ -115,15 +114,13 @@ public class JPQLJoinContextTest {
     EasyMock.expect(entitySetUriInfo.getSelect()).andStubReturn(null);
     EasyMock.expect(entitySetUriInfo.getFilter()).andStubReturn(null);
     EasyMock.expect(entitySetUriInfo.getKeyPredicates()).andStubReturn(keyPredicates);
-    EasyMock.expect(entitySetUriInfo
-        .getTargetEntitySet()).andStubReturn(edmEntitySet);
+    EasyMock.expect(entitySetUriInfo.getTargetEntitySet()).andStubReturn(edmEntitySet);
     EdmEntitySet startEdmEntitySet = EasyMock.createMock(EdmEntitySet.class);
     EdmEntityType startEdmEntityType = EasyMock.createMock(EdmEntityType.class);
     EasyMock.expect(startEdmEntityType.getMapping()).andStubReturn(null);
     EasyMock.expect(startEdmEntityType.getName()).andStubReturn("SOHeader");
     EasyMock.expect(startEdmEntitySet.getEntityType()).andStubReturn(startEdmEntityType);
-    EasyMock.expect(entitySetUriInfo.getStartEntitySet()).andStubReturn(
-        startEdmEntitySet);
+    EasyMock.expect(entitySetUriInfo.getStartEntitySet()).andStubReturn(startEdmEntitySet);
     EasyMock.replay(startEdmEntityType, startEdmEntitySet);
     EasyMock.expect(edmEntitySet.getEntityType()).andStubReturn(edmEntityType);
     EasyMock.expect(edmEntityType.getMapping()).andStubReturn(null);

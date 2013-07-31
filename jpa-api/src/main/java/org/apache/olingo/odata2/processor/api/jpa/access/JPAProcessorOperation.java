@@ -19,9 +19,5 @@
 package org.apache.olingo.odata2.processor.api.jpa.access;
 
 public enum JPAProcessorOperation {
-  Read,
-  Query,
-  Create,
-  Update,
-  Delete
+  Read, Query, Create, Update, Delete
 }

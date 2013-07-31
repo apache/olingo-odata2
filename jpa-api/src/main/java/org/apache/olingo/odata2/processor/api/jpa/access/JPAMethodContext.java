@@ -88,9 +88,7 @@ public abstract class JPAMethodContext implements JPAMethodContextView {
    * 
    * @throws ODataJPARuntimeException
    */
-  public final static JPAMethodContextBuilder createBuilder(
-      final JPQLContextType contextType, final Object resultsView)
-      throws ODataJPARuntimeException {
+  public final static JPAMethodContextBuilder createBuilder(final JPQLContextType contextType, final Object resultsView) throws ODataJPARuntimeException {
     return JPAMethodContextBuilder.create(contextType, resultsView);
   }
 
@@ -110,23 +108,15 @@ public abstract class JPAMethodContext implements JPAMethodContextView {
      * @throws ODataJPAModelException
      * @throws ODataJPARuntimeException
      */
-    public abstract JPAMethodContext build() throws ODataJPAModelException,
-        ODataJPARuntimeException;
+    public abstract JPAMethodContext build() throws ODataJPAModelException, ODataJPARuntimeException;
 
     protected JPAMethodContextBuilder() {}
 
-    private static JPAMethodContextBuilder create(
-        final JPQLContextType contextType, final Object resultsView)
-        throws ODataJPARuntimeException {
-      JPAMethodContextBuilder contextBuilder = ODataJPAFactory
-          .createFactory().getJPQLBuilderFactory()
-          .getJPAMethodContextBuilder(contextType);
+    private static JPAMethodContextBuilder create(final JPQLContextType contextType, final Object resultsView) throws ODataJPARuntimeException {
+      JPAMethodContextBuilder contextBuilder = ODataJPAFactory.createFactory().getJPQLBuilderFactory().getJPAMethodContextBuilder(contextType);
 
       if (contextBuilder == null) {
-        throw ODataJPARuntimeException
-            .throwException(
-                ODataJPARuntimeException.ERROR_JPQLCTXBLDR_CREATE,
-                null);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ERROR_JPQLCTXBLDR_CREATE, null);
       }
       contextBuilder.setResultsView(resultsView);
       return contextBuilder;

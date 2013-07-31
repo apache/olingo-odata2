@@ -64,9 +64,7 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JPAAttributeMapType", propOrder = {
-    "jpaAttribute"
-})
+@XmlType(name = "JPAAttributeMapType", propOrder = { "jpaAttribute" })
 public class JPAAttributeMapType {
 
   @XmlElement(name = "JPAAttribute")
@@ -120,9 +118,7 @@ public class JPAAttributeMapType {
    * 
    */
   @XmlAccessorType(XmlAccessType.FIELD)
-  @XmlType(name = "", propOrder = {
-      "value"
-  })
+  @XmlType(name = "", propOrder = { "value" })
   public static class JPAAttribute {
 
     @XmlValue

@@ -25,13 +25,12 @@ import static org.junit.Assert.fail;
 
 import java.util.Map;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
+import org.junit.Test;
 
 public class JPAUpdateRequestTest {
 
@@ -46,8 +45,7 @@ public class JPAUpdateRequestTest {
       if (e.isCausedByMessageException()) {
         assertTrue(true);
       } else {
-        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-            + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
     }
 
@@ -66,8 +64,7 @@ public class JPAUpdateRequestTest {
       assertEquals("desktop", ((SalesOrderHeader) result).getDescription());
       assertEquals(1, ((SalesOrderHeader) result).getId());
     } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     assertNotNull(result);
     assertEquals(((SalesOrderHeader) result).getId(), 1);

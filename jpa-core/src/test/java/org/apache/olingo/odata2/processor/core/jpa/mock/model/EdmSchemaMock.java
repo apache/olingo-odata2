@@ -59,8 +59,7 @@ public class EdmSchemaMock {
   private static final String COMPLEX_TYPE_NAME_ONE = "Address";
   private static final String COMPLEX_TYPE_NAME_TWO = "SalesOrderItemKey";
 
-  public static Schema createMockEdmSchema()
-  {
+  public static Schema createMockEdmSchema() {
     Schema schema = new Schema();
     schema.setNamespace(NAMESPACE);
     schema.setComplexTypes(createComplexTypes());
@@ -87,10 +86,8 @@ public class EdmSchemaMock {
     AssociationSet associationSet = new AssociationSet();
     associationSet.setName(ASSOCIATION_SET_NAME);
     associationSet.setAssociation(new FullQualifiedName(NAMESPACE, ASSOCIATION_NAME));
-    associationSet.setEnd1(new AssociationSetEnd().setEntitySet(ENTITY_SET_NAME_ONE)
-        .setRole(ASSOCIATION_ROLE_NAME_ONE));
-    associationSet.setEnd2(new AssociationSetEnd().setEntitySet(ENTITY_SET_NAME_TWO)
-        .setRole(ASSOCIATION_ROLE_NAME_TWO));
+    associationSet.setEnd1(new AssociationSetEnd().setEntitySet(ENTITY_SET_NAME_ONE).setRole(ASSOCIATION_ROLE_NAME_ONE));
+    associationSet.setEnd2(new AssociationSetEnd().setEntitySet(ENTITY_SET_NAME_TWO).setRole(ASSOCIATION_ROLE_NAME_TWO));
     associationSets.add(associationSet);
     return associationSets;
   }
@@ -123,12 +120,8 @@ public class EdmSchemaMock {
     List<Association> associations = new ArrayList<Association>();
     Association association = new Association();
     association.setName(ASSOCIATION_NAME);
-    association.setEnd1(new AssociationEnd().setMultiplicity(EdmMultiplicity.ONE)
-        .setRole(ASSOCIATION_ROLE_NAME_ONE)
-        .setType(new FullQualifiedName(NAMESPACE, ENTITY_NAME_ONE)));
-    association.setEnd2(new AssociationEnd().setMultiplicity(EdmMultiplicity.MANY)
-        .setRole(ASSOCIATION_ROLE_NAME_TWO)
-        .setType(new FullQualifiedName(NAMESPACE, ENTITY_NAME_TWO)));
+    association.setEnd1(new AssociationEnd().setMultiplicity(EdmMultiplicity.ONE).setRole(ASSOCIATION_ROLE_NAME_ONE).setType(new FullQualifiedName(NAMESPACE, ENTITY_NAME_ONE)));
+    association.setEnd2(new AssociationEnd().setMultiplicity(EdmMultiplicity.MANY).setRole(ASSOCIATION_ROLE_NAME_TWO).setType(new FullQualifiedName(NAMESPACE, ENTITY_NAME_TWO)));
     associations.add(association);
     return associations;
   }

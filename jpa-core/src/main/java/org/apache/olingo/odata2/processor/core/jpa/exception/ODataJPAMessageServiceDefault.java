@@ -70,14 +70,11 @@ public class ODataJPAMessageServiceDefault implements ODataJPAMessageService {
     } catch (MissingResourceException e) {
       return "Missing message for key '" + key + "'!";
     } catch (MissingFormatArgumentException e) {
-      return "Missing replacement for place holder in value '" + value
-          + "' for following arguments '"
-          + Arrays.toString(contentAsArray) + "'!";
+      return "Missing replacement for place holder in value '" + value + "' for following arguments '" + Arrays.toString(contentAsArray) + "'!";
     }
   }
 
-  private ODataJPAMessageServiceDefault(final ResourceBundle resourceBundle,
-      final Locale locale) {
+  private ODataJPAMessageServiceDefault(final ResourceBundle resourceBundle, final Locale locale) {
     this.resourceBundle = resourceBundle;
     lanLocale = locale;
   }
@@ -101,18 +98,15 @@ public class ODataJPAMessageServiceDefault implements ODataJPAMessageService {
       }
     }
 
-    ODataJPAMessageService messagesInstance = LOCALE_2_MESSAGE_SERVICE
-        .get(acceptedLocale);
+    ODataJPAMessageService messagesInstance = LOCALE_2_MESSAGE_SERVICE.get(acceptedLocale);
     if (messagesInstance == null) {
       ResourceBundle resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME, acceptedLocale);
 
       if (resourceBundle != null) {
-        messagesInstance = new ODataJPAMessageServiceDefault(
-            resourceBundle, acceptedLocale);
+        messagesInstance = new ODataJPAMessageServiceDefault(resourceBundle, acceptedLocale);
         LOCALE_2_MESSAGE_SERVICE.put(acceptedLocale, messagesInstance);
       } else if (defaultResourceBundle != null) {
-        messagesInstance = new ODataJPAMessageServiceDefault(
-            defaultResourceBundle, null);
+        messagesInstance = new ODataJPAMessageServiceDefault(defaultResourceBundle, null);
       }
 
     }

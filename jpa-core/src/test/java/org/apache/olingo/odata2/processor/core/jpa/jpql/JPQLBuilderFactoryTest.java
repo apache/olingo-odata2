@@ -36,9 +36,6 @@ import javax.persistence.PersistenceUnitUtil;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
 
-import org.easymock.EasyMock;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -63,6 +60,8 @@ import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.factory.ODataJPAFactoryImpl;
 import org.apache.olingo.odata2.processor.core.jpa.jpql.JPQLSelectContext.JPQLSelectContextBuilder;
 import org.apache.olingo.odata2.processor.core.jpa.jpql.JPQLSelectSingleContext.JPQLSelectSingleContextBuilder;
+import org.easymock.EasyMock;
+import org.junit.Test;
 
 public class JPQLBuilderFactoryTest {
 
@@ -72,58 +71,47 @@ public class JPQLBuilderFactoryTest {
     GetEntitySetUriInfo getEntitySetView = getUriInfo();
 
     // Build JPQL Context
-    JPQLContext selectContext = JPQLContext.createBuilder(
-        JPQLContextType.SELECT, getEntitySetView).build();
-    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl()
-        .getJPQLBuilderFactory().getStatementBuilder(selectContext);
+    JPQLContext selectContext = JPQLContext.createBuilder(JPQLContextType.SELECT, getEntitySetView).build();
+    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
 
     assertTrue(statementBuilder instanceof JPQLSelectStatementBuilder);
 
   }
 
   @Test
-  public void testGetStatementBuilderFactoryforSelectSingle()
-      throws ODataException {
+  public void testGetStatementBuilderFactoryforSelectSingle() throws ODataException {
 
     GetEntityUriInfo getEntityView = getEntityUriInfo();
 
     // Build JPQL Context
-    JPQLContext selectContext = JPQLContext.createBuilder(
-        JPQLContextType.SELECT_SINGLE, getEntityView).build();
-    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl()
-        .getJPQLBuilderFactory().getStatementBuilder(selectContext);
+    JPQLContext selectContext = JPQLContext.createBuilder(JPQLContextType.SELECT_SINGLE, getEntityView).build();
+    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
 
     assertTrue(statementBuilder instanceof JPQLSelectSingleStatementBuilder);
 
   }
 
   @Test
-  public void testGetStatementBuilderFactoryforJoinSelect()
-      throws ODataException {
+  public void testGetStatementBuilderFactoryforJoinSelect() throws ODataException {
 
     GetEntitySetUriInfo getEntitySetView = getUriInfo();
 
     // Build JPQL Context
-    JPQLContext selectContext = JPQLContext.createBuilder(
-        JPQLContextType.JOIN, getEntitySetView).build();
-    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl()
-        .getJPQLBuilderFactory().getStatementBuilder(selectContext);
+    JPQLContext selectContext = JPQLContext.createBuilder(JPQLContextType.JOIN, getEntitySetView).build();
+    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
 
     assertTrue(statementBuilder instanceof JPQLJoinStatementBuilder);
 
   }
 
   @Test
-  public void testGetStatementBuilderFactoryforJoinSelectSingle()
-      throws ODataException {
+  public void testGetStatementBuilderFactoryforJoinSelectSingle() throws ODataException {
 
     GetEntityUriInfo getEntityView = getEntityUriInfo();
 
     // Build JPQL Context
-    JPQLContext selectContext = JPQLContext.createBuilder(
-        JPQLContextType.JOIN_SINGLE, getEntityView).build();
-    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl()
-        .getJPQLBuilderFactory().getStatementBuilder(selectContext);
+    JPQLContext selectContext = JPQLContext.createBuilder(JPQLContextType.JOIN_SINGLE, getEntityView).build();
+    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
 
     assertTrue(statementBuilder instanceof JPQLJoinSelectSingleStatementBuilder);
 
@@ -133,9 +121,7 @@ public class JPQLBuilderFactoryTest {
   public void testGetContextBuilderforDelete() throws ODataException {
 
     // Build JPQL ContextBuilder
-    JPQLContextBuilder contextBuilder = new ODataJPAFactoryImpl()
-        .getJPQLBuilderFactory().getContextBuilder(
-            JPQLContextType.DELETE);
+    JPQLContextBuilder contextBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getContextBuilder(JPQLContextType.DELETE);
 
     assertNull(contextBuilder);
 
@@ -145,9 +131,7 @@ public class JPQLBuilderFactoryTest {
   public void testGetContextBuilderforSelect() throws ODataException {
 
     // Build JPQL ContextBuilder
-    JPQLContextBuilder contextBuilder = new ODataJPAFactoryImpl()
-        .getJPQLBuilderFactory().getContextBuilder(
-            JPQLContextType.SELECT);
+    JPQLContextBuilder contextBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getContextBuilder(JPQLContextType.SELECT);
 
     assertNotNull(contextBuilder);
     assertTrue(contextBuilder instanceof JPQLSelectContextBuilder);
@@ -158,9 +142,7 @@ public class JPQLBuilderFactoryTest {
   public void testGetContextBuilderforSelectSingle() throws ODataException {
 
     // Build JPQL ContextBuilder
-    JPQLContextBuilder contextBuilder = new ODataJPAFactoryImpl()
-        .getJPQLBuilderFactory().getContextBuilder(
-            JPQLContextType.SELECT_SINGLE);
+    JPQLContextBuilder contextBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getContextBuilder(JPQLContextType.SELECT_SINGLE);
 
     assertNotNull(contextBuilder);
     assertTrue(contextBuilder instanceof JPQLSelectSingleContextBuilder);
@@ -168,38 +150,29 @@ public class JPQLBuilderFactoryTest {
   }
 
   private GetEntitySetUriInfo getUriInfo() throws EdmException {
-    GetEntitySetUriInfo getEntitySetView = EasyMock
-        .createMock(GetEntitySetUriInfo.class);
+    GetEntitySetUriInfo getEntitySetView = EasyMock.createMock(GetEntitySetUriInfo.class);
     EdmEntitySet edmEntitySet = EasyMock.createMock(EdmEntitySet.class);
     EdmEntityType edmEntityType = EasyMock.createMock(EdmEntityType.class);
     EasyMock.expect(edmEntityType.getMapping()).andStubReturn(null);
     EasyMock.expect(edmEntityType.getName()).andStubReturn("SOItem");
     EasyMock.replay(edmEntityType);
-    OrderByExpression orderByExpression = EasyMock
-        .createMock(OrderByExpression.class);
-    EasyMock.expect(getEntitySetView.getTargetEntitySet()).andStubReturn(
-        edmEntitySet);
+    OrderByExpression orderByExpression = EasyMock.createMock(OrderByExpression.class);
+    EasyMock.expect(getEntitySetView.getTargetEntitySet()).andStubReturn(edmEntitySet);
     EdmEntitySet startEdmEntitySet = EasyMock.createMock(EdmEntitySet.class);
     EdmEntityType startEdmEntityType = EasyMock.createMock(EdmEntityType.class);
     EasyMock.expect(startEdmEntityType.getMapping()).andStubReturn(null);
     EasyMock.expect(startEdmEntityType.getName()).andStubReturn("SOHeader");
     EasyMock.expect(startEdmEntitySet.getEntityType()).andStubReturn(startEdmEntityType);
-    EasyMock.expect(getEntitySetView.getStartEntitySet()).andStubReturn(
-        startEdmEntitySet);
+    EasyMock.expect(getEntitySetView.getStartEntitySet()).andStubReturn(startEdmEntitySet);
     EasyMock.replay(startEdmEntityType, startEdmEntitySet);
-    EasyMock.expect(getEntitySetView.getOrderBy()).andStubReturn(
-        orderByExpression);
+    EasyMock.expect(getEntitySetView.getOrderBy()).andStubReturn(orderByExpression);
     EasyMock.expect(getEntitySetView.getSelect()).andStubReturn(null);
     EasyMock.expect(getEntitySetView.getFilter()).andStubReturn(null);
     List<NavigationSegment> navigationSegments = new ArrayList<NavigationSegment>();
-    EasyMock.expect(getEntitySetView.getNavigationSegments())
-        .andStubReturn(navigationSegments);
-    KeyPredicate keyPredicate = EasyMock
-        .createMock(KeyPredicate.class);
-    EdmProperty kpProperty = EasyMock
-        .createMock(EdmProperty.class);
-    EdmSimpleType edmType = EasyMock
-        .createMock(EdmSimpleType.class);
+    EasyMock.expect(getEntitySetView.getNavigationSegments()).andStubReturn(navigationSegments);
+    KeyPredicate keyPredicate = EasyMock.createMock(KeyPredicate.class);
+    EdmProperty kpProperty = EasyMock.createMock(EdmProperty.class);
+    EdmSimpleType edmType = EasyMock.createMock(EdmSimpleType.class);
     EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("Field1");
     EasyMock.expect(keyPredicate.getLiteral()).andStubReturn("1");
@@ -218,40 +191,32 @@ public class JPQLBuilderFactoryTest {
     keyPredicates.add(keyPredicate);
     EasyMock.expect(getEntitySetView.getKeyPredicates()).andStubReturn(keyPredicates);
     EasyMock.replay(getEntitySetView);
-    EasyMock.expect(edmEntitySet.getEntityType()).andStubReturn(
-        edmEntityType);
+    EasyMock.expect(edmEntitySet.getEntityType()).andStubReturn(edmEntityType);
     EasyMock.replay(edmEntitySet);
     return getEntitySetView;
   }
 
   private GetEntityUriInfo getEntityUriInfo() throws EdmException {
-    GetEntityUriInfo getEntityView = EasyMock
-        .createMock(GetEntityUriInfo.class);
+    GetEntityUriInfo getEntityView = EasyMock.createMock(GetEntityUriInfo.class);
     EdmEntitySet edmEntitySet = EasyMock.createMock(EdmEntitySet.class);
     EdmEntityType edmEntityType = EasyMock.createMock(EdmEntityType.class);
-    EasyMock.expect(edmEntityType.getKeyProperties()).andStubReturn(
-        new ArrayList<EdmProperty>());
+    EasyMock.expect(edmEntityType.getKeyProperties()).andStubReturn(new ArrayList<EdmProperty>());
     EasyMock.expect(edmEntityType.getMapping()).andStubReturn(null);
     EasyMock.expect(edmEntityType.getName()).andStubReturn("");
-    EasyMock.expect(edmEntitySet.getEntityType()).andStubReturn(
-        edmEntityType);
+    EasyMock.expect(edmEntitySet.getEntityType()).andStubReturn(edmEntityType);
     EasyMock.expect(getEntityView.getSelect()).andStubReturn(null);
-    EasyMock.expect(getEntityView.getTargetEntitySet()).andStubReturn(
-        edmEntitySet);
+    EasyMock.expect(getEntityView.getTargetEntitySet()).andStubReturn(edmEntitySet);
     EdmEntitySet startEdmEntitySet = EasyMock.createMock(EdmEntitySet.class);
     EdmEntityType startEdmEntityType = EasyMock.createMock(EdmEntityType.class);
     EasyMock.expect(startEdmEntityType.getMapping()).andStubReturn(null);
     EasyMock.expect(startEdmEntityType.getName()).andStubReturn("SOHeader");
     EasyMock.expect(startEdmEntitySet.getEntityType()).andStubReturn(startEdmEntityType);
-    EasyMock.expect(getEntityView.getStartEntitySet()).andStubReturn(
-        startEdmEntitySet);
+    EasyMock.expect(getEntityView.getStartEntitySet()).andStubReturn(startEdmEntitySet);
     EasyMock.replay(startEdmEntityType, startEdmEntitySet);
     EasyMock.replay(edmEntityType, edmEntitySet);
-    EasyMock.expect(getEntityView.getKeyPredicates()).andStubReturn(
-        new ArrayList<KeyPredicate>());
+    EasyMock.expect(getEntityView.getKeyPredicates()).andStubReturn(new ArrayList<KeyPredicate>());
     List<NavigationSegment> navigationSegments = new ArrayList<NavigationSegment>();
-    EasyMock.expect(getEntityView.getNavigationSegments()).andStubReturn(
-        navigationSegments);
+    EasyMock.expect(getEntityView.getNavigationSegments()).andStubReturn(navigationSegments);
     EasyMock.replay(getEntityView);
     return getEntityView;
   }
@@ -259,8 +224,7 @@ public class JPQLBuilderFactoryTest {
   @Test
   public void testJPAAccessFactory() {
     ODataJPAFactoryImpl oDataJPAFactoryImpl = new ODataJPAFactoryImpl();
-    JPAAccessFactory jpaAccessFactory = oDataJPAFactoryImpl
-        .getJPAAccessFactory();
+    JPAAccessFactory jpaAccessFactory = oDataJPAFactoryImpl.getJPAAccessFactory();
     ODataJPAContextImpl oDataJPAContextImpl = new ODataJPAContextImpl();
     Class<?> clazz = oDataJPAContextImpl.getClass();
     try {
@@ -268,17 +232,13 @@ public class JPQLBuilderFactoryTest {
       field.setAccessible(true);
       field.set(oDataJPAContextImpl, new JPAProcessorImplTest().getLocalEntityManager());
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (NoSuchFieldException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalArgumentException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalAccessException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EntityManagerFactory emf = new EntityManagerFactory() {
 
@@ -338,8 +298,7 @@ public class JPQLBuilderFactoryTest {
   public void testOdataJpaAccessFactory() {
 
     ODataJPAFactoryImpl oDataJPAFactoryImpl = new ODataJPAFactoryImpl();
-    ODataJPAAccessFactory jpaAccessFactory = oDataJPAFactoryImpl
-        .getODataJPAAccessFactory();
+    ODataJPAAccessFactory jpaAccessFactory = oDataJPAFactoryImpl.getODataJPAAccessFactory();
     ODataJPAContextImpl oDataJPAContextImpl = new ODataJPAContextImpl();
 
     EntityManagerFactory emf = new EntityManagerFactory() {
@@ -402,13 +361,10 @@ public class JPQLBuilderFactoryTest {
     oDataJPAContextImpl.setEntityManagerFactory(emf);
     oDataJPAContextImpl.setPersistenceUnitName("pUnit");
 
-    assertNotNull(jpaAccessFactory.getODataJPAMessageService(new Locale(
-        "en")));
+    assertNotNull(jpaAccessFactory.getODataJPAMessageService(new Locale("en")));
     assertNotNull(jpaAccessFactory.createODataJPAContext());
-    assertNotNull(jpaAccessFactory
-        .createJPAEdmProvider(oDataJPAContextImpl));
-    assertNotNull(jpaAccessFactory
-        .createODataProcessor(oDataJPAContextImpl));
+    assertNotNull(jpaAccessFactory.createJPAEdmProvider(oDataJPAContextImpl));
+    assertNotNull(jpaAccessFactory.createODataProcessor(oDataJPAContextImpl));
 
   }
 }

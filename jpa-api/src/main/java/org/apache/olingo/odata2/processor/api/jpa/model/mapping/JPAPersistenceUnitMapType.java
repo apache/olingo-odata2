@@ -55,8 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JPAPersistenceUnitMapType", propOrder = {
-    "edmSchemaNamespace", "jpaEntityTypes", "jpaEmbeddableTypes" })
+@XmlType(name = "JPAPersistenceUnitMapType", propOrder = { "edmSchemaNamespace", "jpaEntityTypes", "jpaEmbeddableTypes" })
 public class JPAPersistenceUnitMapType {
 
   @XmlElement(name = "EDMSchemaNamespace")

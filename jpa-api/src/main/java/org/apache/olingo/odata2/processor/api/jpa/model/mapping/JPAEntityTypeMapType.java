@@ -55,12 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JPAEntityTypeMapType", propOrder = {
-    "edmEntityType",
-    "edmEntitySet",
-    "jpaAttributes",
-    "jpaRelationships"
-})
+@XmlType(name = "JPAEntityTypeMapType", propOrder = { "edmEntityType", "edmEntitySet", "jpaAttributes", "jpaRelationships" })
 public class JPAEntityTypeMapType {
 
   @XmlElement(name = "EDMEntityType")

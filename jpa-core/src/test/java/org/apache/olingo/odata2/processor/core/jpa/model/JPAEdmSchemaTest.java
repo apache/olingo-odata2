@@ -26,11 +26,10 @@ import static org.junit.Assert.assertTrue;
 
 import javax.persistence.metamodel.Metamodel;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAMetaModelMock;
+import org.junit.Before;
+import org.junit.Test;
 
 public class JPAEdmSchemaTest extends JPAEdmTestModelView {
   private JPAEdmSchemaTest objJPAEdmSchemaTest;

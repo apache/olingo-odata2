@@ -24,9 +24,6 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.easymock.EasyMock;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
@@ -53,6 +50,8 @@ import org.apache.olingo.odata2.api.uri.expression.UnaryOperator;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.processor.core.jpa.ODataExpressionParser;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
+import org.easymock.EasyMock;
+import org.junit.Test;
 
 public class ODataExpressionParserTest {
 
@@ -96,27 +95,20 @@ public class ODataExpressionParserTest {
     try {
       String parsedStr = ODataJPATestConstants.EMPTY_STRING;
       // Simple Binary query -
-      parsedStr = ODataExpressionParser.parseToJPAWhereExpression(
-          getBinaryExpressionMockedObj(BinaryOperator.EQ, ExpressionKind.PROPERTY,
-              SALES_ORDER, SAMPLE_DATA_1), TABLE_ALIAS);
+      parsedStr = ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpressionMockedObj(BinaryOperator.EQ, ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_1), TABLE_ALIAS);
 
       assertEquals(EXPECTED_STR_1, parsedStr);
       // complex query -
       parsedStr = ODataJPATestConstants.EMPTY_STRING;
 
-      CommonExpression exp1 = getBinaryExpressionMockedObj(
-          BinaryOperator.GE, ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_1);
-      CommonExpression exp2 = getBinaryExpressionMockedObj(
-          BinaryOperator.NE, ExpressionKind.PROPERTY, SALES_ABC, SAMPLE_DATA_XYZ);
-      parsedStr = ODataExpressionParser.parseToJPAWhereExpression(
-          getBinaryExpression(exp1, BinaryOperator.AND, exp2), TABLE_ALIAS);
+      CommonExpression exp1 = getBinaryExpressionMockedObj(BinaryOperator.GE, ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_1);
+      CommonExpression exp2 = getBinaryExpressionMockedObj(BinaryOperator.NE, ExpressionKind.PROPERTY, SALES_ABC, SAMPLE_DATA_XYZ);
+      parsedStr = ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpression(exp1, BinaryOperator.AND, exp2), TABLE_ALIAS);
       assertEquals(EXPECTED_STR_2, parsedStr);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (ODataException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
@@ -124,19 +116,12 @@ public class ODataExpressionParserTest {
   public void testMoreThanOneBinaryExpression() {
     // complex query -
     String parsedStr = ODataJPATestConstants.EMPTY_STRING;
-    CommonExpression exp1 = getBinaryExpressionMockedObj(BinaryOperator.GE,
-        ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_1);
-    CommonExpression exp2 = getBinaryExpressionMockedObj(BinaryOperator.NE,
-        ExpressionKind.PROPERTY, SALES_ABC, SAMPLE_DATA_XYZ);
+    CommonExpression exp1 = getBinaryExpressionMockedObj(BinaryOperator.GE, ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_1);
+    CommonExpression exp2 = getBinaryExpressionMockedObj(BinaryOperator.NE, ExpressionKind.PROPERTY, SALES_ABC, SAMPLE_DATA_XYZ);
     try {
-      parsedStr = ODataExpressionParser.parseToJPAWhereExpression(
-          getBinaryExpression(exp1, BinaryOperator.AND, exp2),
-          TABLE_ALIAS);
+      parsedStr = ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpression(exp1, BinaryOperator.AND, exp2), TABLE_ALIAS);
       assertEquals(EXPECTED_STR_2, parsedStr);
-      parsedStr = ODataExpressionParser
-          .parseToJPAWhereExpression(
-              getBinaryExpression(exp1, BinaryOperator.OR, exp2),
-              TABLE_ALIAS);
+      parsedStr = ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpression(exp1, BinaryOperator.OR, exp2), TABLE_ALIAS);
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -146,10 +131,7 @@ public class ODataExpressionParserTest {
   @Test
   public void testParseFilterExpression() {
     try {
-      assertEquals(EXPECTED_STR_10,
-          ODataExpressionParser.parseToJPAWhereExpression(
-              getFilterExpressionMockedObj(ExpressionKind.PROPERTY,
-                  SALES_ORDER), TABLE_ALIAS));
+      assertEquals(EXPECTED_STR_10, ODataExpressionParser.parseToJPAWhereExpression(getFilterExpressionMockedObj(ExpressionKind.PROPERTY, SALES_ORDER), TABLE_ALIAS));
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -161,25 +143,17 @@ public class ODataExpressionParserTest {
     String parsedStr1 = ODataJPATestConstants.EMPTY_STRING;
     String parsedStr2 = ODataJPATestConstants.EMPTY_STRING;
 
-    CommonExpression exp1 = getBinaryExpressionMockedObj(BinaryOperator.LT,
-        ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_1);
-    CommonExpression exp2 = getBinaryExpressionMockedObj(BinaryOperator.LE,
-        ExpressionKind.PROPERTY, SALES_ABC, SAMPLE_DATA_XYZ);
+    CommonExpression exp1 = getBinaryExpressionMockedObj(BinaryOperator.LT, ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_1);
+    CommonExpression exp2 = getBinaryExpressionMockedObj(BinaryOperator.LE, ExpressionKind.PROPERTY, SALES_ABC, SAMPLE_DATA_XYZ);
 
     try {
-      parsedStr1 = ODataExpressionParser.parseToJPAWhereExpression(
-          (BinaryExpression) getBinaryExpression(exp1,
-              BinaryOperator.AND, exp2), TABLE_ALIAS);
+      parsedStr1 = ODataExpressionParser.parseToJPAWhereExpression((BinaryExpression) getBinaryExpression(exp1, BinaryOperator.AND, exp2), TABLE_ALIAS);
       assertEquals(EXPECTED_STR_4, parsedStr1);
 
-      CommonExpression exp3 = getBinaryExpressionMockedObj(BinaryOperator.GT,
-          ExpressionKind.PROPERTY, SAMPLE_DATA_LINE_ITEMS, SAMPLE_DATA_2);
-      CommonExpression exp4 = getBinaryExpressionMockedObj(BinaryOperator.GE,
-          ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_AMAZON);
+      CommonExpression exp3 = getBinaryExpressionMockedObj(BinaryOperator.GT, ExpressionKind.PROPERTY, SAMPLE_DATA_LINE_ITEMS, SAMPLE_DATA_2);
+      CommonExpression exp4 = getBinaryExpressionMockedObj(BinaryOperator.GE, ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_AMAZON);
 
-      parsedStr2 = ODataExpressionParser.parseToJPAWhereExpression(
-          getBinaryExpression(exp3, BinaryOperator.AND, exp4),
-          TABLE_ALIAS);
+      parsedStr2 = ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpression(exp3, BinaryOperator.AND, exp4), TABLE_ALIAS);
 
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -190,23 +164,8 @@ public class ODataExpressionParserTest {
   @Test
   public void testParseMemberExpression() {
     try {
-      assertEquals(EXPECTED_STR_6,
-          ODataExpressionParser
-              .parseToJPAWhereExpression(
-                  getBinaryExpression(
-                      getMemberExpressionMockedObj(ADDRESS,
-                          CITY),
-                      BinaryOperator.EQ,
-                      getLiteralExpressionMockedObj(SAMPLE_DATA_CITY_3)),
-                  TABLE_ALIAS));
-      assertEquals(EXPECTED_STR_7,
-          ODataExpressionParser
-              .parseToJPAWhereExpression(
-                  getBinaryExpression(
-                      getMultipleMemberExpressionMockedObj(ADDRESS, CITY, AREA),
-                      BinaryOperator.EQ,
-                      getLiteralExpressionMockedObj(SAMPLE_DATA_BTM)),
-                  TABLE_ALIAS));
+      assertEquals(EXPECTED_STR_6, ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpression(getMemberExpressionMockedObj(ADDRESS, CITY), BinaryOperator.EQ, getLiteralExpressionMockedObj(SAMPLE_DATA_CITY_3)), TABLE_ALIAS));
+      assertEquals(EXPECTED_STR_7, ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpression(getMultipleMemberExpressionMockedObj(ADDRESS, CITY, AREA), BinaryOperator.EQ, getLiteralExpressionMockedObj(SAMPLE_DATA_BTM)), TABLE_ALIAS));
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -215,56 +174,22 @@ public class ODataExpressionParserTest {
   @Test
   public void testParseMethodExpression() {
     try {
-      assertEquals(EXPECTED_STR_12,
-          ODataExpressionParser
-              .parseToJPAWhereExpression(
-                  getBinaryExpression(
-                      getMethodExpressionMockedObj(MethodOperator.SUBSTRINGOF, "'Ru'", "currencyCode", null, 2),
-                      BinaryOperator.EQ,
-                      getLiteralExpressionMockedObj("true")),
-                  TABLE_ALIAS));
-      assertEquals(EXPECTED_STR_13,
-          ODataExpressionParser
-              .parseToJPAWhereExpression(
-                  getBinaryExpression(
-                      getMethodExpressionMockedObj(MethodOperator.SUBSTRING, "currencyCode", "1", "2", 3),
-                      BinaryOperator.EQ,
-                      getLiteralExpressionMockedObj("'NR'")),
-                  TABLE_ALIAS));
-      assertEquals(EXPECTED_STR_14,
-          ODataExpressionParser
-              .parseToJPAWhereExpression(
-                  getBinaryExpression(
-                      getMethodExpressionMockedObj(MethodOperator.TOLOWER, "currencyCode", null, null, 1),
-                      BinaryOperator.EQ,
-                      getLiteralExpressionMockedObj("'inr rupees'")),
-                  TABLE_ALIAS));
-      assertEquals(EXPECTED_STR_15,
-          ODataExpressionParser
-              .parseToJPAWhereExpression(
-                  getBinaryExpression(
-                      getMultipleMethodExpressionMockedObj(MethodOperator.SUBSTRINGOF, "'nr rupees'", MethodOperator.TOLOWER, "currencyCode", 2, 1),
-                      BinaryOperator.EQ,
-                      getLiteralExpressionMockedObj("true")),
-                  TABLE_ALIAS));
-      assertEquals(EXPECTED_STR_16,
-          ODataExpressionParser
-              .parseToJPAWhereExpression(getFilterExpressionForFunctionsMockedObj(MethodOperator.SUBSTRINGOF, "'INR'", null, "currencyCode", 2, null)
-                  /*getBinaryExpression(
-                  		getMemberExpressionMockedObj(ADDRESS,
-                  				CITY),
-                  		BinaryOperator.EQ,
-                  		getLiteralExpressionMockedObj(SAMPLE_DATA_CITY_3))*/,
-                  TABLE_ALIAS));
-      assertEquals(EXPECTED_STR_17,
-          ODataExpressionParser
-              .parseToJPAWhereExpression(getFilterExpressionForFunctionsMockedObj(MethodOperator.SUBSTRINGOF, "'nr rupees'", MethodOperator.TOLOWER, "currencyCode", 2, 1)
-                  /*getBinaryExpression(
-                  		getMemberExpressionMockedObj(ADDRESS,
-                  				CITY),
-                  		BinaryOperator.EQ,
-                  		getLiteralExpressionMockedObj(SAMPLE_DATA_CITY_3))*/,
-                  TABLE_ALIAS));
+      assertEquals(EXPECTED_STR_12, ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpression(getMethodExpressionMockedObj(MethodOperator.SUBSTRINGOF, "'Ru'", "currencyCode", null, 2), BinaryOperator.EQ, getLiteralExpressionMockedObj("true")), TABLE_ALIAS));
+      assertEquals(EXPECTED_STR_13, ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpression(getMethodExpressionMockedObj(MethodOperator.SUBSTRING, "currencyCode", "1", "2", 3), BinaryOperator.EQ, getLiteralExpressionMockedObj("'NR'")), TABLE_ALIAS));
+      assertEquals(EXPECTED_STR_14, ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpression(getMethodExpressionMockedObj(MethodOperator.TOLOWER, "currencyCode", null, null, 1), BinaryOperator.EQ, getLiteralExpressionMockedObj("'inr rupees'")), TABLE_ALIAS));
+      assertEquals(EXPECTED_STR_15, ODataExpressionParser.parseToJPAWhereExpression(getBinaryExpression(getMultipleMethodExpressionMockedObj(MethodOperator.SUBSTRINGOF, "'nr rupees'", MethodOperator.TOLOWER, "currencyCode", 2, 1), BinaryOperator.EQ, getLiteralExpressionMockedObj("true")), TABLE_ALIAS));
+      assertEquals(EXPECTED_STR_16, ODataExpressionParser.parseToJPAWhereExpression(getFilterExpressionForFunctionsMockedObj(MethodOperator.SUBSTRINGOF, "'INR'", null, "currencyCode", 2, null)
+      /*getBinaryExpression(
+      		getMemberExpressionMockedObj(ADDRESS,
+      				CITY),
+      		BinaryOperator.EQ,
+      		getLiteralExpressionMockedObj(SAMPLE_DATA_CITY_3))*/, TABLE_ALIAS));
+      assertEquals(EXPECTED_STR_17, ODataExpressionParser.parseToJPAWhereExpression(getFilterExpressionForFunctionsMockedObj(MethodOperator.SUBSTRINGOF, "'nr rupees'", MethodOperator.TOLOWER, "currencyCode", 2, 1)
+      /*getBinaryExpression(
+      		getMemberExpressionMockedObj(ADDRESS,
+      				CITY),
+      		BinaryOperator.EQ,
+      		getLiteralExpressionMockedObj(SAMPLE_DATA_CITY_3))*/, TABLE_ALIAS));
 
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -284,8 +209,7 @@ public class ODataExpressionParserTest {
       parameters.add(getPropertyExpressionMockedObj(ExpressionKind.PROPERTY, firstName));
       parameters.add(getLiteralExpressionMockedObj(secondName));
       parameters.add(getLiteralExpressionMockedObj(thirdName));
-    }
-    else if (methodOperator == MethodOperator.TOLOWER) {
+    } else if (methodOperator == MethodOperator.TOLOWER) {
       parameters.add(getPropertyExpressionMockedObj(ExpressionKind.PROPERTY, firstName));
     }
 
@@ -334,25 +258,18 @@ public class ODataExpressionParserTest {
   @Test
   public void testParseUnaryExpression() {
 
-    UnaryExpression unaryExpression = getUnaryExpressionMockedObj(
-        getPropertyExpressionMockedObj(ExpressionKind.PROPERTY,
-            "deliveryStatus"),
-        org.apache.olingo.odata2.api.uri.expression.UnaryOperator.NOT);
+    UnaryExpression unaryExpression = getUnaryExpressionMockedObj(getPropertyExpressionMockedObj(ExpressionKind.PROPERTY, "deliveryStatus"), org.apache.olingo.odata2.api.uri.expression.UnaryOperator.NOT);
     try {
-      assertEquals(EXPECTED_STR_11, ODataExpressionParser.parseToJPAWhereExpression(
-          unaryExpression, TABLE_ALIAS));
+      assertEquals(EXPECTED_STR_11, ODataExpressionParser.parseToJPAWhereExpression(unaryExpression, TABLE_ALIAS));
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
   }
 
-  private UnaryExpression getUnaryExpressionMockedObj(
-      final CommonExpression operand, final UnaryOperator unaryOperator) {
-    UnaryExpression unaryExpression = EasyMock
-        .createMock(UnaryExpression.class);
-    EasyMock.expect(unaryExpression.getKind())
-        .andStubReturn(ExpressionKind.UNARY);
+  private UnaryExpression getUnaryExpressionMockedObj(final CommonExpression operand, final UnaryOperator unaryOperator) {
+    UnaryExpression unaryExpression = EasyMock.createMock(UnaryExpression.class);
+    EasyMock.expect(unaryExpression.getKind()).andStubReturn(ExpressionKind.UNARY);
     EasyMock.expect(unaryExpression.getOperand()).andStubReturn(operand);
     EasyMock.expect(unaryExpression.getOperator()).andStubReturn(unaryOperator);
 
@@ -360,34 +277,21 @@ public class ODataExpressionParserTest {
     return unaryExpression;
   }
 
-  private CommonExpression getMemberExpressionMockedObj(
-      final String pathUriLiteral, final String propertyUriLiteral) {
-    MemberExpression memberExpression = EasyMock
-        .createMock(MemberExpression.class);
-    EasyMock.expect(memberExpression.getPath())
-        .andStubReturn(
-            getPropertyExpressionMockedObj(ExpressionKind.PROPERTY,
-                pathUriLiteral));
-    EasyMock.expect(memberExpression.getProperty())
-        .andStubReturn(
-            getPropertyExpressionMockedObj(ExpressionKind.PROPERTY,
-                propertyUriLiteral));
-    EasyMock.expect(memberExpression.getKind())
-        .andStubReturn(ExpressionKind.MEMBER);
+  private CommonExpression getMemberExpressionMockedObj(final String pathUriLiteral, final String propertyUriLiteral) {
+    MemberExpression memberExpression = EasyMock.createMock(MemberExpression.class);
+    EasyMock.expect(memberExpression.getPath()).andStubReturn(getPropertyExpressionMockedObj(ExpressionKind.PROPERTY, pathUriLiteral));
+    EasyMock.expect(memberExpression.getProperty()).andStubReturn(getPropertyExpressionMockedObj(ExpressionKind.PROPERTY, propertyUriLiteral));
+    EasyMock.expect(memberExpression.getKind()).andStubReturn(ExpressionKind.MEMBER);
 
     EasyMock.replay(memberExpression);
     return memberExpression;
   }
 
   private LiteralExpression getLiteralExpressionMockedObj(final String uriLiteral) {
-    LiteralExpression rightOperandLiteralExpresion = EasyMock
-        .createMock(LiteralExpression.class);
-    EasyMock.expect(rightOperandLiteralExpresion.getKind())
-        .andStubReturn(ExpressionKind.LITERAL);
-    EasyMock.expect(rightOperandLiteralExpresion.getUriLiteral())
-        .andStubReturn(uriLiteral);// SAMPLE_DATA
-    EasyMock.expect(rightOperandLiteralExpresion.getEdmType())
-        .andStubReturn(getEdmSimpleTypeMockedObj(uriLiteral));
+    LiteralExpression rightOperandLiteralExpresion = EasyMock.createMock(LiteralExpression.class);
+    EasyMock.expect(rightOperandLiteralExpresion.getKind()).andStubReturn(ExpressionKind.LITERAL);
+    EasyMock.expect(rightOperandLiteralExpresion.getUriLiteral()).andStubReturn(uriLiteral);// SAMPLE_DATA
+    EasyMock.expect(rightOperandLiteralExpresion.getEdmType()).andStubReturn(getEdmSimpleTypeMockedObj(uriLiteral));
     EasyMock.replay(rightOperandLiteralExpresion);
     return rightOperandLiteralExpresion;
 
@@ -398,11 +302,9 @@ public class ODataExpressionParserTest {
     try {
       EasyMock.expect(edmSimpleType.getName()).andReturn(value);
       EasyMock.expect(edmSimpleType.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
-      EasyMock.expect(edmSimpleType.valueOfString(value, EdmLiteralKind.URI,
-          getEdmFacetsMockedObj(), null)).andStubReturn(value);
+      EasyMock.expect(edmSimpleType.valueOfString(value, EdmLiteralKind.URI, getEdmFacetsMockedObj(), null)).andStubReturn(value);
       EasyMock.expect(edmSimpleType.valueOfString(value, EdmLiteralKind.URI, null, null)).andStubReturn(value);
-      EasyMock.expect(edmSimpleType.valueToString(value, EdmLiteralKind.DEFAULT,
-          getEdmFacetsMockedObj())).andStubReturn(value);
+      EasyMock.expect(edmSimpleType.valueToString(value, EdmLiteralKind.DEFAULT, getEdmFacetsMockedObj())).andStubReturn(value);
       EasyMock.expect(edmSimpleType.valueToString(value, EdmLiteralKind.DEFAULT, null)).andStubReturn(value);
     } catch (EdmException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -419,8 +321,7 @@ public class ODataExpressionParserTest {
     return facets;
   }
 
-  private PropertyExpression getPropertyExpressionMockedObj(
-      final ExpressionKind expKind, final String propertyName) {
+  private PropertyExpression getPropertyExpressionMockedObj(final ExpressionKind expKind, final String propertyName) {
     PropertyExpression leftOperandPropertyExpresion = EasyMock.createMock(PropertyExpression.class);
     EasyMock.expect(leftOperandPropertyExpresion.getKind()).andStubReturn(ExpressionKind.PROPERTY);
     EasyMock.expect(leftOperandPropertyExpresion.getPropertyName()).andStubReturn(propertyName);
@@ -442,79 +343,50 @@ public class ODataExpressionParserTest {
 
   private EdmMapping getEdmMappingMockedObj(final String propertyName) {
     EdmMapping mockedEdmMapping = EasyMock.createMock(EdmMapping.class);
-    EasyMock.expect(mockedEdmMapping.getInternalName())
-        .andStubReturn(propertyName);
+    EasyMock.expect(mockedEdmMapping.getInternalName()).andStubReturn(propertyName);
     EasyMock.replay(mockedEdmMapping);
     return mockedEdmMapping;
   }
 
-  private BinaryExpression getBinaryExpressionMockedObj(
-      final BinaryOperator operator, final ExpressionKind leftOperandExpKind,
-      final String propertyName, final String literalStr) {
-    BinaryExpression binaryExpression = EasyMock
-        .createMock(BinaryExpression.class);
-    EasyMock.expect(binaryExpression.getKind())
-        .andStubReturn(ExpressionKind.BINARY);
-    EasyMock.expect(binaryExpression.getLeftOperand())
-        .andStubReturn(
-            getPropertyExpressionMockedObj(leftOperandExpKind,
-                propertyName));
+  private BinaryExpression getBinaryExpressionMockedObj(final BinaryOperator operator, final ExpressionKind leftOperandExpKind, final String propertyName, final String literalStr) {
+    BinaryExpression binaryExpression = EasyMock.createMock(BinaryExpression.class);
+    EasyMock.expect(binaryExpression.getKind()).andStubReturn(ExpressionKind.BINARY);
+    EasyMock.expect(binaryExpression.getLeftOperand()).andStubReturn(getPropertyExpressionMockedObj(leftOperandExpKind, propertyName));
     EasyMock.expect(binaryExpression.getOperator()).andStubReturn(operator);
-    EasyMock.expect(binaryExpression.getRightOperand())
-        .andStubReturn(getLiteralExpressionMockedObj(literalStr));
+    EasyMock.expect(binaryExpression.getRightOperand()).andStubReturn(getLiteralExpressionMockedObj(literalStr));
 
     EasyMock.replay(binaryExpression);
     return binaryExpression;
   }
 
-  private FilterExpression getFilterExpressionMockedObj(
-      final ExpressionKind leftOperandExpKind, final String propertyName) {
-    FilterExpression filterExpression = EasyMock
-        .createMock(FilterExpression.class);
-    EasyMock.expect(filterExpression.getKind())
-        .andStubReturn(ExpressionKind.FILTER);
-    EasyMock.expect(filterExpression.getExpression())
-        .andStubReturn(
-            getPropertyExpressionMockedObj(leftOperandExpKind,
-                propertyName));
+  private FilterExpression getFilterExpressionMockedObj(final ExpressionKind leftOperandExpKind, final String propertyName) {
+    FilterExpression filterExpression = EasyMock.createMock(FilterExpression.class);
+    EasyMock.expect(filterExpression.getKind()).andStubReturn(ExpressionKind.FILTER);
+    EasyMock.expect(filterExpression.getExpression()).andStubReturn(getPropertyExpressionMockedObj(leftOperandExpKind, propertyName));
 
     EasyMock.replay(filterExpression);
     return filterExpression;
   }
 
-  private FilterExpression getFilterExpressionForFunctionsMockedObj(
-      final MethodOperator methodOperator1, final String firstName, final MethodOperator methodOperator2, final String secondName, final Integer parameterCount1, final Integer parameterCount2) {
+  private FilterExpression getFilterExpressionForFunctionsMockedObj(final MethodOperator methodOperator1, final String firstName, final MethodOperator methodOperator2, final String secondName, final Integer parameterCount1, final Integer parameterCount2) {
     //default value handling of SUBSTRINGOF
-    FilterExpression filterExpression = EasyMock
-        .createMock(FilterExpression.class);
-    EasyMock.expect(filterExpression.getKind())
-        .andStubReturn(ExpressionKind.FILTER);
+    FilterExpression filterExpression = EasyMock.createMock(FilterExpression.class);
+    EasyMock.expect(filterExpression.getKind()).andStubReturn(ExpressionKind.FILTER);
     if ((methodOperator2 != null) && (parameterCount2 != null)) {
-      EasyMock.expect(filterExpression.getExpression())
-          .andStubReturn(
-              getMultipleMethodExpressionMockedObj(methodOperator1, firstName, methodOperator2, secondName, parameterCount1, parameterCount2));
-    }
-    else {
-      EasyMock.expect(filterExpression.getExpression())
-          .andStubReturn(
-              getMethodExpressionMockedObj(methodOperator1, firstName, secondName, null, parameterCount1));
+      EasyMock.expect(filterExpression.getExpression()).andStubReturn(getMultipleMethodExpressionMockedObj(methodOperator1, firstName, methodOperator2, secondName, parameterCount1, parameterCount2));
+    } else {
+      EasyMock.expect(filterExpression.getExpression()).andStubReturn(getMethodExpressionMockedObj(methodOperator1, firstName, secondName, null, parameterCount1));
     }
 
     EasyMock.replay(filterExpression);
     return filterExpression;
   }
 
-  private CommonExpression getBinaryExpression(
-      final CommonExpression leftOperand, final BinaryOperator operator,
-      final CommonExpression rightOperand) {
-    BinaryExpression binaryExpression = EasyMock
-        .createMock(BinaryExpression.class);
-    EasyMock.expect(binaryExpression.getKind())
-        .andStubReturn(ExpressionKind.BINARY);
-    EasyMock.expect(binaryExpression.getLeftOperand())
-        .andStubReturn(leftOperand);
-    EasyMock.expect(binaryExpression.getRightOperand())
-        .andStubReturn(rightOperand);
+  private CommonExpression getBinaryExpression(final CommonExpression leftOperand, final BinaryOperator operator, final CommonExpression rightOperand) {
+    BinaryExpression binaryExpression = EasyMock.createMock(BinaryExpression.class);
+    EasyMock.expect(binaryExpression.getKind()).andStubReturn(ExpressionKind.BINARY);
+    EasyMock.expect(binaryExpression.getLeftOperand()).andStubReturn(leftOperand);
+    EasyMock.expect(binaryExpression.getRightOperand()).andStubReturn(rightOperand);
     EasyMock.expect(binaryExpression.getOperator()).andStubReturn(operator);
 
     EasyMock.replay(binaryExpression);
@@ -533,11 +405,9 @@ public class ODataExpressionParserTest {
     EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
     try {
       EasyMock.expect(kpProperty1.getName()).andStubReturn(SAMPLE_DATA_FIELD1);
-      EasyMock.expect(kpProperty1.getType()).andStubReturn(
-          EdmSimpleTypeKind.Int32.getEdmSimpleTypeInstance());
+      EasyMock.expect(kpProperty1.getType()).andStubReturn(EdmSimpleTypeKind.Int32.getEdmSimpleTypeInstance());
       EasyMock.expect(kpProperty2.getName()).andStubReturn(SAMPLE_DATA_FIELD2);
-      EasyMock.expect(kpProperty2.getType()).andStubReturn(
-          EdmSimpleTypeKind.String.getEdmSimpleTypeInstance());
+      EasyMock.expect(kpProperty2.getType()).andStubReturn(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance());
       EasyMock.expect(keyPredicate1.getProperty()).andStubReturn(kpProperty1);
       EasyMock.expect(kpProperty1.getMapping()).andReturn(edmMapping);
       EasyMock.expect(edmMapping.getInternalName()).andReturn(SAMPLE_DATA_FIELD1);
@@ -556,8 +426,7 @@ public class ODataExpressionParserTest {
     String str = null;
 
     try {
-      str = ODataExpressionParser.parseKeyPredicates(keyPredicates,
-          TABLE_ALIAS);
+      str = ODataExpressionParser.parseKeyPredicates(keyPredicates, TABLE_ALIAS);
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -573,14 +442,10 @@ public class ODataExpressionParserTest {
     selectedFields.add("BuyerName");
     selectedFields.add("BuyerId");
 
-    assertEquals(EXPECTED_STR_9,
-        ODataExpressionParser.parseToJPASelectExpression(TABLE_ALIAS,
-            selectedFields));
-    assertEquals(TABLE_ALIAS, ODataExpressionParser.parseToJPASelectExpression(
-        TABLE_ALIAS, null));
+    assertEquals(EXPECTED_STR_9, ODataExpressionParser.parseToJPASelectExpression(TABLE_ALIAS, selectedFields));
+    assertEquals(TABLE_ALIAS, ODataExpressionParser.parseToJPASelectExpression(TABLE_ALIAS, null));
 
     selectedFields.clear();
-    assertEquals(TABLE_ALIAS, ODataExpressionParser.parseToJPASelectExpression(
-        TABLE_ALIAS, selectedFields));
+    assertEquals(TABLE_ALIAS, ODataExpressionParser.parseToJPASelectExpression(TABLE_ALIAS, selectedFields));
   }
 }

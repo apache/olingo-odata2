@@ -21,9 +21,6 @@ package org.apache.olingo.odata2.processor.core.jpa.access.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.easymock.EasyMock;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.provider.ComplexProperty;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexPropertyView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityTypeView;
@@ -31,6 +28,8 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.processor.core.jpa.ODataJPAContextImpl;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEntityTypeMock;
+import org.easymock.EasyMock;
+import org.junit.Test;
 
 public class JPAEdmNameBuilderTest {
 
@@ -60,8 +59,7 @@ public class JPAEdmNameBuilderTest {
   }
 
   @SuppressWarnings("hiding")
-  class JAttribute<Object, String> extends JPAAttributeMock<Object, java.lang.String>
-  {
+  class JAttribute<Object, String> extends JPAAttributeMock<Object, java.lang.String> {
 
     @Override
     public java.lang.String getName() {
@@ -75,8 +73,7 @@ public class JPAEdmNameBuilderTest {
 
   }
 
-  class JEntityType<Object> extends JPAEntityTypeMock<Object>
-  {
+  class JEntityType<Object> extends JPAEntityTypeMock<Object> {
 
     @Override
     public java.lang.String getName() {

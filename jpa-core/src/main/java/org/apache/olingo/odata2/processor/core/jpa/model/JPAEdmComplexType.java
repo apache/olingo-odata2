@@ -43,8 +43,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
 
-public class JPAEdmComplexType extends JPAEdmBaseViewImpl implements
-    JPAEdmComplexTypeView {
+public class JPAEdmComplexType extends JPAEdmBaseViewImpl implements JPAEdmComplexTypeView {
 
   private JPAEdmSchemaView schemaView;
   private ComplexType currentComplexType = null;
@@ -63,10 +62,8 @@ public class JPAEdmComplexType extends JPAEdmBaseViewImpl implements
   public JPAEdmComplexType(final JPAEdmSchemaView view, final Attribute<?, ?> complexAttribute) {
     super(view);
     schemaView = view;
-    for (EmbeddableType<?> jpaEmbeddable : schemaView.getJPAMetaModel().getEmbeddables())
-    {
-      if (jpaEmbeddable.getJavaType().getName().equals(complexAttribute.getJavaType().getName()))
-      {
+    for (EmbeddableType<?> jpaEmbeddable : schemaView.getJPAMetaModel().getEmbeddables()) {
+      if (jpaEmbeddable.getJavaType().getName().equals(complexAttribute.getJavaType().getName())) {
         nestedComplexType = jpaEmbeddable;
         break;
       }
@@ -136,8 +133,7 @@ public class JPAEdmComplexType extends JPAEdmBaseViewImpl implements
     if (expandedList == null) {
       expandedList = new ArrayList<Property>();
     }
-    for (Property property : complexType.getProperties())
-    {
+    for (Property property : complexType.getProperties()) {
       try {
         SimpleProperty newSimpleProperty = new SimpleProperty();
         SimpleProperty oldSimpleProperty = (SimpleProperty) property;
@@ -227,13 +223,11 @@ public class JPAEdmComplexType extends JPAEdmBaseViewImpl implements
           continue;
         }
 
-        JPAEdmPropertyView propertyView = new JPAEdmProperty(
-            schemaView, JPAEdmComplexType.this);
+        JPAEdmPropertyView propertyView = new JPAEdmProperty(schemaView, JPAEdmComplexType.this);
         propertyView.getBuilder().build();
 
         currentComplexType = new ComplexType();
-        currentComplexType
-            .setProperties(propertyView.getEdmPropertyList());
+        currentComplexType.setProperties(propertyView.getEdmPropertyList());
         JPAEdmNameBuilder.build(JPAEdmComplexType.this);
 
         searchMap.put(searchKey, currentComplexType);
@@ -245,12 +239,8 @@ public class JPAEdmComplexType extends JPAEdmBaseViewImpl implements
 
     private boolean isExcluded(final JPAEdmComplexType jpaEdmComplexType) {
 
-      JPAEdmMappingModelAccess mappingModelAccess = jpaEdmComplexType
-          .getJPAEdmMappingModelAccess();
-      if (mappingModelAccess != null
-          && mappingModelAccess.isMappingModelExists()
-          && mappingModelAccess.checkExclusionOfJPAEmbeddableType(jpaEdmComplexType.getJPAEmbeddableType()
-              .getJavaType().getSimpleName())) {
+      JPAEdmMappingModelAccess mappingModelAccess = jpaEdmComplexType.getJPAEdmMappingModelAccess();
+      if (mappingModelAccess != null && mappingModelAccess.isMappingModelExists() && mappingModelAccess.checkExclusionOfJPAEmbeddableType(jpaEdmComplexType.getJPAEmbeddableType().getJavaType().getSimpleName())) {
         return true;
       }
       return false;

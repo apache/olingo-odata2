@@ -29,8 +29,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstra
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintRoleView.RoleType;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintView;
 
-public class JPAEdmReferentialConstraint extends JPAEdmBaseViewImpl implements
-    JPAEdmReferentialConstraintView {
+public class JPAEdmReferentialConstraint extends JPAEdmBaseViewImpl implements JPAEdmReferentialConstraintView {
 
   private JPAEdmRefConstraintBuilder builder = null;
 
@@ -48,8 +47,7 @@ public class JPAEdmReferentialConstraint extends JPAEdmBaseViewImpl implements
 
   private String relationShipName;
 
-  public JPAEdmReferentialConstraint(final JPAEdmAssociationView associationView,
-      final JPAEdmEntityTypeView entityTypeView, final JPAEdmPropertyView propertyView) {
+  public JPAEdmReferentialConstraint(final JPAEdmAssociationView associationView, final JPAEdmEntityTypeView entityTypeView, final JPAEdmPropertyView propertyView) {
     super(associationView);
     this.associationView = associationView;
     this.propertyView = propertyView;
@@ -102,32 +100,26 @@ public class JPAEdmReferentialConstraint extends JPAEdmBaseViewImpl implements
       if (firstBuild) {
         firstBuild();
       } else {
-        if (exists && !firstBuild
-            && principalRoleView.isConsistent() == false) {
+        if (exists && !firstBuild && principalRoleView.isConsistent() == false) {
           principalRoleView.getBuilder().build();
         }
 
-        if (exists && !firstBuild
-            && dependentRoleView.isConsistent() == false) {
+        if (exists && !firstBuild && dependentRoleView.isConsistent() == false) {
           dependentRoleView.getBuilder().build();
         }
       }
 
       if (principalRoleView.isConsistent()) {
-        referentialConstraint.setPrincipal(principalRoleView
-            .getEdmReferentialConstraintRole());
+        referentialConstraint.setPrincipal(principalRoleView.getEdmReferentialConstraintRole());
       }
 
       if (dependentRoleView.isConsistent()) {
-        referentialConstraint.setDependent(dependentRoleView
-            .getEdmReferentialConstraintRole());
+        referentialConstraint.setDependent(dependentRoleView.getEdmReferentialConstraintRole());
       }
 
-      exists = principalRoleView.isExists()
-          & dependentRoleView.isExists();
+      exists = principalRoleView.isExists() & dependentRoleView.isExists();
 
-      isConsistent = principalRoleView.isConsistent()
-          & dependentRoleView.isConsistent();
+      isConsistent = principalRoleView.isConsistent() & dependentRoleView.isConsistent();
 
     }
 
@@ -135,14 +127,10 @@ public class JPAEdmReferentialConstraint extends JPAEdmBaseViewImpl implements
       firstBuild = false;
       if (principalRoleView == null && dependentRoleView == null) {
 
-        principalRoleView = new JPAEdmReferentialConstraintRole(
-            RoleType.PRINCIPAL, entityTypeView, propertyView,
-            associationView);
+        principalRoleView = new JPAEdmReferentialConstraintRole(RoleType.PRINCIPAL, entityTypeView, propertyView, associationView);
         principalRoleView.getBuilder().build();
 
-        dependentRoleView = new JPAEdmReferentialConstraintRole(
-            RoleType.DEPENDENT, entityTypeView, propertyView,
-            associationView);
+        dependentRoleView = new JPAEdmReferentialConstraintRole(RoleType.DEPENDENT, entityTypeView, propertyView, associationView);
         dependentRoleView.getBuilder().build();
 
         if (referentialConstraint == null) {

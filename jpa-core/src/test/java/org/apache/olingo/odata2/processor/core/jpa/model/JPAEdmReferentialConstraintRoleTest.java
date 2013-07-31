@@ -33,10 +33,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ManagedType;
 
-import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
@@ -51,6 +47,9 @@ import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAJavaMemberMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAManagedTypeMock;
+import org.easymock.EasyMock;
+import org.junit.Before;
+import org.junit.Test;
 
 public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
 
@@ -61,10 +60,7 @@ public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
   public void setUp() {
     objJPAEdmReferentialConstraintRoleTest = new JPAEdmReferentialConstraintRoleTest();
 
-    objJPAEdmReferentialConstraintRole = new JPAEdmReferentialConstraintRole(
-        RoleType.PRINCIPAL, objJPAEdmReferentialConstraintRoleTest,
-        objJPAEdmReferentialConstraintRoleTest,
-        objJPAEdmReferentialConstraintRoleTest);
+    objJPAEdmReferentialConstraintRole = new JPAEdmReferentialConstraintRole(RoleType.PRINCIPAL, objJPAEdmReferentialConstraintRoleTest, objJPAEdmReferentialConstraintRoleTest, objJPAEdmReferentialConstraintRoleTest);
 
     try {
       objJPAEdmReferentialConstraintRole.getBuilder().build();
@@ -87,27 +83,21 @@ public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
 
   @Test
   public void testGetBuilderIdempotent() {
-    JPAEdmBuilder builder1 = objJPAEdmReferentialConstraintRole
-        .getBuilder();
-    JPAEdmBuilder builder2 = objJPAEdmReferentialConstraintRole
-        .getBuilder();
+    JPAEdmBuilder builder1 = objJPAEdmReferentialConstraintRole.getBuilder();
+    JPAEdmBuilder builder2 = objJPAEdmReferentialConstraintRole.getBuilder();
 
     assertEquals(builder1.hashCode(), builder2.hashCode());
   }
 
   @Test
   public void testGetRoleTypePrincipal() {
-    assertEquals(objJPAEdmReferentialConstraintRole.getRoleType(),
-        RoleType.PRINCIPAL);
+    assertEquals(objJPAEdmReferentialConstraintRole.getRoleType(), RoleType.PRINCIPAL);
   }
 
   @Test
   public void testGetRoleTypeDependent() {
     objJPAEdmReferentialConstraintRoleTest = new JPAEdmReferentialConstraintRoleTest();
-    objJPAEdmReferentialConstraintRole = new JPAEdmReferentialConstraintRole(
-        RoleType.DEPENDENT, objJPAEdmReferentialConstraintRoleTest,
-        objJPAEdmReferentialConstraintRoleTest,
-        objJPAEdmReferentialConstraintRoleTest);
+    objJPAEdmReferentialConstraintRole = new JPAEdmReferentialConstraintRole(RoleType.DEPENDENT, objJPAEdmReferentialConstraintRoleTest, objJPAEdmReferentialConstraintRoleTest, objJPAEdmReferentialConstraintRoleTest);
 
     try {
       objJPAEdmReferentialConstraintRole.getBuilder().build();
@@ -117,8 +107,7 @@ public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
-    assertEquals(objJPAEdmReferentialConstraintRole.getRoleType(),
-        RoleType.DEPENDENT);
+    assertEquals(objJPAEdmReferentialConstraintRole.getRoleType(), RoleType.DEPENDENT);
   }
 
   @Test
@@ -130,8 +119,7 @@ public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
-    assertNotNull(objJPAEdmReferentialConstraintRole
-        .getEdmReferentialConstraintRole());
+    assertNotNull(objJPAEdmReferentialConstraintRole.getEdmReferentialConstraintRole());
   }
 
   @Test
@@ -158,13 +146,8 @@ public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
   public Association getEdmAssociation() {
     Association association = new Association();
     association.setName("Assoc_SalesOrderHeader_SalesOrderItem");
-    association.setEnd1(new AssociationEnd().setType(
-        new FullQualifiedName("salesorderprocessing", "String"))
-        .setRole("SalesOrderHeader"));
-    association.setEnd2(new AssociationEnd()
-        .setType(
-            new FullQualifiedName("salesorderprocessing",
-                "SalesOrderItem")).setRole("SalesOrderItem"));
+    association.setEnd1(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "String")).setRole("SalesOrderHeader"));
+    association.setEnd2(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "SalesOrderItem")).setRole("SalesOrderItem"));
     return association;
   }
 
@@ -194,8 +177,7 @@ public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
   }
 
   @SuppressWarnings("hiding")
-  private class AttributeMock<Object, String> extends
-      JPAAttributeMock<Object, String> {
+  private class AttributeMock<Object, String> extends JPAAttributeMock<Object, String> {
 
     @Override
     public Member getJavaMember() {
@@ -235,8 +217,7 @@ public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
     @Override
     public <T extends Annotation> T getAnnotation(final Class<T> annotationClass) {
       JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
-      EasyMock.expect(joinColumn.referencedColumnName())
-          .andReturn("SOID");
+      EasyMock.expect(joinColumn.referencedColumnName()).andReturn("SOID");
       EasyMock.expect(joinColumn.name()).andReturn("SOID");
 
       EasyMock.replay(joinColumn);

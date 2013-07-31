@@ -42,157 +42,121 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
   public ODataJPAProcessorDefault(final ODataJPAContext oDataJPAContext) {
     super(oDataJPAContext);
     if (oDataJPAContext == null) {
-      throw new IllegalArgumentException(
-          ODataJPAException.ODATA_JPACTX_NULL);
+      throw new IllegalArgumentException(ODataJPAException.ODATA_JPACTX_NULL);
     }
   }
 
   @Override
-  public ODataResponse readEntitySet(final GetEntitySetUriInfo uriParserResultView,
-      final String contentType) throws ODataException {
+  public ODataResponse readEntitySet(final GetEntitySetUriInfo uriParserResultView, final String contentType) throws ODataException {
 
     List<?> jpaEntities = jpaProcessor.process(uriParserResultView);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(
-        jpaEntities, uriParserResultView, contentType, oDataJPAContext);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntities, uriParserResultView, contentType, oDataJPAContext);
 
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse readEntity(final GetEntityUriInfo uriParserResultView,
-      final String contentType) throws ODataException {
+  public ODataResponse readEntity(final GetEntityUriInfo uriParserResultView, final String contentType) throws ODataException {
 
     Object jpaEntity = jpaProcessor.process(uriParserResultView);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntity,
-        uriParserResultView, contentType, oDataJPAContext);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntity, uriParserResultView, contentType, oDataJPAContext);
 
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse countEntitySet(final GetEntitySetCountUriInfo uriParserResultView,
-      final String contentType) throws ODataException {
+  public ODataResponse countEntitySet(final GetEntitySetCountUriInfo uriParserResultView, final String contentType) throws ODataException {
 
     long jpaEntityCount = jpaProcessor.process(uriParserResultView);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(
-        jpaEntityCount, oDataJPAContext);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntityCount, oDataJPAContext);
 
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse existsEntity(final GetEntityCountUriInfo uriInfo,
-      final String contentType) throws ODataException {
+  public ODataResponse existsEntity(final GetEntityCountUriInfo uriInfo, final String contentType) throws ODataException {
 
     long jpaEntityCount = jpaProcessor.process(uriInfo);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(
-        jpaEntityCount, oDataJPAContext);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntityCount, oDataJPAContext);
 
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse createEntity(final PostUriInfo uriParserResultView, final InputStream content,
-      final String requestContentType, final String contentType)
-      throws ODataException {
+  public ODataResponse createEntity(final PostUriInfo uriParserResultView, final InputStream content, final String requestContentType, final String contentType) throws ODataException {
 
-    List<Object> createdJpaEntityList = jpaProcessor.process(uriParserResultView, content,
-        requestContentType);
+    List<Object> createdJpaEntityList = jpaProcessor.process(uriParserResultView, content, requestContentType);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(createdJpaEntityList,
-        uriParserResultView, contentType, oDataJPAContext);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(createdJpaEntityList, uriParserResultView, contentType, oDataJPAContext);
 
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse updateEntity(final PutMergePatchUriInfo uriParserResultView,
-      final InputStream content, final String requestContentType, final boolean merge,
-      final String contentType) throws ODataException {
+  public ODataResponse updateEntity(final PutMergePatchUriInfo uriParserResultView, final InputStream content, final String requestContentType, final boolean merge, final String contentType) throws ODataException {
 
-    Object jpaEntity = jpaProcessor.process(uriParserResultView, content,
-        requestContentType);
+    Object jpaEntity = jpaProcessor.process(uriParserResultView, content, requestContentType);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntity,
-        uriParserResultView);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntity, uriParserResultView);
 
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse deleteEntity(final DeleteUriInfo uriParserResultView,
-      final String contentType) throws ODataException {
+  public ODataResponse deleteEntity(final DeleteUriInfo uriParserResultView, final String contentType) throws ODataException {
 
-    Object deletedObj = jpaProcessor.process(uriParserResultView,
-        contentType);
+    Object deletedObj = jpaProcessor.process(uriParserResultView, contentType);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(deletedObj,
-        uriParserResultView);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(deletedObj, uriParserResultView);
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse executeFunctionImport(
-      final GetFunctionImportUriInfo uriParserResultView,
-      final String contentType) throws ODataException {
+  public ODataResponse executeFunctionImport(final GetFunctionImportUriInfo uriParserResultView, final String contentType) throws ODataException {
 
-    List<Object> resultEntity = jpaProcessor
-        .process(uriParserResultView);
+    List<Object> resultEntity = jpaProcessor.process(uriParserResultView);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(
-        resultEntity, uriParserResultView, contentType,
-        oDataJPAContext);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(resultEntity, uriParserResultView, contentType, oDataJPAContext);
 
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse executeFunctionImportValue(
-      final GetFunctionImportUriInfo uriParserResultView,
-      final String contentType) throws ODataException {
+  public ODataResponse executeFunctionImportValue(final GetFunctionImportUriInfo uriParserResultView, final String contentType) throws ODataException {
 
     List<Object> result = jpaProcessor.process(uriParserResultView);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(result,
-        uriParserResultView, contentType, oDataJPAContext);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(result, uriParserResultView, contentType, oDataJPAContext);
 
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse readEntityLink(
-      final GetEntityLinkUriInfo uriParserResultView,
-      final String contentType) throws ODataException {
+  public ODataResponse readEntityLink(final GetEntityLinkUriInfo uriParserResultView, final String contentType) throws ODataException {
 
     Object jpaEntity = jpaProcessor.process(uriParserResultView);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntity,
-        uriParserResultView, contentType, oDataJPAContext);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntity, uriParserResultView, contentType, oDataJPAContext);
 
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse readEntityLinks(
-      final GetEntitySetLinksUriInfo uriParserResultView,
-      final String contentType) throws ODataException {
+  public ODataResponse readEntityLinks(final GetEntitySetLinksUriInfo uriParserResultView, final String contentType) throws ODataException {
 
     List<Object> jpaEntity = jpaProcessor.process(uriParserResultView);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntity,
-        uriParserResultView, contentType, oDataJPAContext);
+    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntity, uriParserResultView, contentType, oDataJPAContext);
 
     return oDataResponse;
   }
 
   @Override
-  public ODataResponse createEntityLink(
-      final PostUriInfo uriParserResultView, final InputStream content,
-      final String requestContentType, final String contentType) throws ODataException {
+  public ODataResponse createEntityLink(final PostUriInfo uriParserResultView, final InputStream content, final String requestContentType, final String contentType) throws ODataException {
 
     jpaProcessor.process(uriParserResultView, content, requestContentType, contentType);
 
@@ -200,9 +164,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
   }
 
   @Override
-  public ODataResponse updateEntityLink(final PutMergePatchUriInfo uriParserResultView,
-      final InputStream content, final String requestContentType, final String contentType)
-      throws ODataException {
+  public ODataResponse updateEntityLink(final PutMergePatchUriInfo uriParserResultView, final InputStream content, final String requestContentType, final String contentType) throws ODataException {
 
     jpaProcessor.process(uriParserResultView, content, requestContentType, contentType);
 

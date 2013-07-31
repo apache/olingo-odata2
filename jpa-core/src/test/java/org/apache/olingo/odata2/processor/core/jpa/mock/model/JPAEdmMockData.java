@@ -49,15 +49,12 @@ public interface JPAEdmMockData {
     }
   }
 
-  public interface EntityType
-  {
-    public interface EntityTypeA
-    {
+  public interface EntityType {
+    public interface EntityTypeA {
       public static final String name = "SalesOrderHeader";
       public static final Class<EntityTypeA> entityClazz = EntityTypeA.class;
 
-      public interface Property
-      {
+      public interface Property {
         public static final String PROPERTY_A = SimpleType.SimpleTypeA.NAME;
 
       }
@@ -65,10 +62,8 @@ public interface JPAEdmMockData {
     }
   }
 
-  public interface SimpleType
-  {
-    public interface SimpleTypeA
-    {
+  public interface SimpleType {
+    public interface SimpleTypeA {
       public static final String NAME = "SOID";
       public static final Class<String> clazz = String.class;
       public static final Class<EntityTypeA> declaringClazz = EntityType.EntityTypeA.class;

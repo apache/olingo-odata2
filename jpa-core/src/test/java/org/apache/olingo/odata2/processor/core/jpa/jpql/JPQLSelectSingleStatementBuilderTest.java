@@ -24,10 +24,6 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -42,6 +38,9 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext;
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder;
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType;
+import org.easymock.EasyMock;
+import org.junit.Before;
+import org.junit.Test;
 
 public class JPQLSelectSingleStatementBuilderTest {
 
@@ -66,12 +65,9 @@ public class JPQLSelectSingleStatementBuilderTest {
     List<SelectItem> selectItemList = null;
 
     //Setting up the expected value
-    KeyPredicate keyPredicate = EasyMock
-        .createMock(KeyPredicate.class);
-    EdmProperty kpProperty = EasyMock
-        .createMock(EdmProperty.class);
-    EdmSimpleType edmType = EasyMock
-        .createMock(EdmSimpleType.class);
+    KeyPredicate keyPredicate = EasyMock.createMock(KeyPredicate.class);
+    EdmProperty kpProperty = EasyMock.createMock(EdmProperty.class);
+    EdmSimpleType edmType = EasyMock.createMock(EdmSimpleType.class);
     EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("Field1");
     EasyMock.expect(keyPredicate.getLiteral()).andStubReturn("1");
@@ -96,8 +92,7 @@ public class JPQLSelectSingleStatementBuilderTest {
     EasyMock.replay(edmEntityType);
     ArrayList<KeyPredicate> arrayList = new ArrayList<KeyPredicate>();
     arrayList.add(keyPredicate);
-    EasyMock.expect(getEntityView.getKeyPredicates()).andStubReturn(
-        arrayList);
+    EasyMock.expect(getEntityView.getKeyPredicates()).andStubReturn(arrayList);
     EasyMock.replay(getEntityView);
 
     JPQLContextBuilder contextBuilder1 = JPQLContext.createBuilder(JPQLContextType.SELECT_SINGLE, getEntityView);

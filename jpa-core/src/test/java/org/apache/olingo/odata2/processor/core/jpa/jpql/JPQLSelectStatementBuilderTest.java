@@ -27,10 +27,6 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.List;
 
-import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -43,6 +39,9 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext;
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder;
 import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType;
+import org.easymock.EasyMock;
+import org.junit.Before;
+import org.junit.Test;
 
 public class JPQLSelectStatementBuilderTest {
 

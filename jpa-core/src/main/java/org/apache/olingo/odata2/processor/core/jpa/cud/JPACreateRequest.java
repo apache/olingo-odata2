@@ -69,22 +69,17 @@ public class JPACreateRequest extends JPAWriteRequest {
     try {
       entityType = entitySet.getEntityType();
     } catch (EdmException e3) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e3.getMessage()), e3);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e3.getMessage()), e3);
     }
     String entityName = null;
     try {
-      if (entityType.getMapping() != null && entityType.getMapping().getInternalName() != null)
-      {
+      if (entityType.getMapping() != null && entityType.getMapping().getInternalName() != null) {
         entityName = entityType.getMapping().getInternalName();
       } else {
         entityName = entityType.getName();
       }
     } catch (EdmException e1) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e1.getMessage()), e1);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e1.getMessage()), e1);
     }
     Object jpaEntity = null;
     Set<EntityType<?>> entityTypeSet = metamodel.getEntities();
@@ -96,13 +91,9 @@ public class JPACreateRequest extends JPAWriteRequest {
           jpaEntity = entityTypeTemp.getJavaType().newInstance();
           break;
         } catch (InstantiationException e) {
-          throw ODataJPARuntimeException
-              .throwException(ODataJPARuntimeException.GENERAL
-                  .addContent(e.getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         } catch (IllegalAccessException e) {
-          throw ODataJPARuntimeException
-              .throwException(ODataJPARuntimeException.GENERAL
-                  .addContent(e.getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         }
       }
     }
@@ -111,9 +102,7 @@ public class JPACreateRequest extends JPAWriteRequest {
     try {
       entryValues = parseEntry(entitySet, content, requestContentType, true);
     } catch (ODataBadRequestException e1) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e1.getMessage()), e1);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e1.getMessage()), e1);
     }
 
     Map<String, Object> propertyValueMap = entryValues.getProperties();
@@ -123,9 +112,7 @@ public class JPACreateRequest extends JPAWriteRequest {
     try {
       navPropEntitySetMap = createInlinedEntities(jpaEntity, entitySet, entryValues, currentEntityName);
     } catch (ODataException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
     List<T> objectList = new ArrayList<T>();
     objectList.add((T) jpaEntity);
@@ -134,9 +121,7 @@ public class JPACreateRequest extends JPAWriteRequest {
   }
 
   @SuppressWarnings("unchecked")
-  public final Object parse2JPAEntityValueMap(
-      final Object jpaEntity, final EdmStructuralType edmEntityType, final Map<String, Object> propertyValueMap, final String entityName)
-      throws ODataJPARuntimeException {
+  public final Object parse2JPAEntityValueMap(final Object jpaEntity, final EdmStructuralType edmEntityType, final Map<String, Object> propertyValueMap, final String entityName) throws ODataJPARuntimeException {
 
     if (jpaEntity == null || edmEntityType == null || propertyValueMap == null || propertyValueMap.size() == 0) {
       return null;
@@ -145,20 +130,16 @@ public class JPACreateRequest extends JPAWriteRequest {
     String jpaEntityAccessKey = jpaEntity.getClass().getName();
 
     if (!jpaEntityAccessMap.containsKey(jpaEntityAccessKey)) {
-      jpaEntityAccessMap.put(jpaEntityAccessKey,
-          getSetters(jpaEntity, edmEntityType, true));
+      jpaEntityAccessMap.put(jpaEntityAccessKey, getSetters(jpaEntity, edmEntityType, true));
     }
 
-    HashMap<String, Method> setters = jpaEntityAccessMap
-        .get(jpaEntityAccessKey);
-    HashMap<String, String> embeddableKeys = jpaEmbeddableKeyMap
-        .get(jpaEntityAccessKey);
+    HashMap<String, Method> setters = jpaEntityAccessMap.get(jpaEntityAccessKey);
+    HashMap<String, String> embeddableKeys = jpaEmbeddableKeyMap.get(jpaEntityAccessKey);
     String propertyName = null;
     try {
       for (String key : setters.keySet()) {
 
-        EdmProperty property = (EdmProperty) edmEntityType
-            .getProperty(key);
+        EdmProperty property = (EdmProperty) edmEntityType.getProperty(key);
         if (property.getMapping() != null && property.getMapping().getInternalName() != null) {
           propertyName = property.getMapping().getInternalName();
         } else {
@@ -176,8 +157,7 @@ public class JPACreateRequest extends JPAWriteRequest {
         if (method != null) {
           if (property.getType().getKind().equals(EdmTypeKind.COMPLEX)) {
             Object complexObject = jpaComplexObjectMap.get(propertyName);
-            parse2JPAEntityValueMap(complexObject, ((EdmComplexType) property.getType()),
-                (Map<String, Object>) propertyValue, propertyName);
+            parse2JPAEntityValueMap(complexObject, ((EdmComplexType) property.getType()), (Map<String, Object>) propertyValue, propertyName);
             setters.get(key).invoke(jpaEntity, complexObject);
           } else {
             setters.get(key).invoke(jpaEntity, propertyValue);
@@ -195,57 +175,40 @@ public class JPACreateRequest extends JPAWriteRequest {
           Class<?> propertyClass = null;
 
           try {
-            for (EntityType<?> entity : metamodel.getEntities())
-            {
-              if (entity.getName().equals(entityName))
-              {
+            for (EntityType<?> entity : metamodel.getEntities()) {
+              if (entity.getName().equals(entityName)) {
                 Attribute<?, ?> attribute = entity.getAttribute(nameParts[0].substring(3, 4).toLowerCase() + nameParts[0].substring(4));
                 propertyClass = attribute.getJavaType();
                 if (embeddableKeyObj == null) {
                   try {
                     embeddableKeyObj = propertyClass.newInstance();
                   } catch (InstantiationException e) {
-                    throw ODataJPARuntimeException
-                        .throwException(ODataJPARuntimeException.GENERAL
-                            .addContent(e.getMessage()), e);
+                    throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
                   }
                 }
                 break;
               }
             }
 
-            method = propertyValue.getClass().getMethod(
-                nameParts[0], propertyClass);
+            method = propertyValue.getClass().getMethod(nameParts[0], propertyClass);
             populateEmbeddableKey(embeddableKeyObj, embeddableKey, nameParts[1], propertyValueMap);
           } catch (NoSuchMethodException e) {
-            throw ODataJPARuntimeException
-                .throwException(ODataJPARuntimeException.GENERAL
-                    .addContent(e.getMessage()), e);
+            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
           }
         }
         propertyName = "Embeddable Key";//$NON-NLS-1$
         method.invoke(jpaEntity, embeddableKeyObj);
       }
     } catch (SecurityException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     } catch (EdmException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     } catch (IllegalAccessException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     } catch (IllegalArgumentException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.ERROR_JPQL_PARAM_VALUE
-              .addContent(propertyName), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ERROR_JPQL_PARAM_VALUE.addContent(propertyName), e);
     } catch (InvocationTargetException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
     return jpaEntity;
   }
@@ -256,28 +219,18 @@ public class JPACreateRequest extends JPAWriteRequest {
     try {
       method = embeddableKeyObject.getClass().getMethod(setterName, propertyClass);
     } catch (NoSuchMethodException e1) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e1.getMessage()), e1);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e1.getMessage()), e1);
     } catch (SecurityException e1) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e1.getMessage()), e1);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e1.getMessage()), e1);
     }
     try {
       method.invoke(embeddableKeyObject, propertyValueMap.get(key));
     } catch (IllegalAccessException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     } catch (IllegalArgumentException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.ERROR_JPQL_KEY_VALUE
-              .addContent(key), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ERROR_JPQL_KEY_VALUE.addContent(key), e);
     } catch (InvocationTargetException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
   }
 
@@ -305,16 +258,13 @@ public class JPACreateRequest extends JPAWriteRequest {
           String entityName = null;
           EdmEntityType relatedEntityType = relatedEntitySet.getEntityType();
           try {
-            if (relatedEntityType.getMapping() != null && relatedEntityType.getMapping().getInternalName() != null)
-            {
+            if (relatedEntityType.getMapping() != null && relatedEntityType.getMapping().getInternalName() != null) {
               entityName = relatedEntityType.getMapping().getInternalName();
             } else {
               entityName = relatedEntityType.getName();
             }
           } catch (EdmException e1) {
-            throw ODataJPARuntimeException
-                .throwException(ODataJPARuntimeException.GENERAL
-                    .addContent(e1.getMessage()), e1);
+            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e1.getMessage()), e1);
           }
 
           Object relatedData = null;
@@ -328,13 +278,9 @@ public class JPACreateRequest extends JPAWriteRequest {
                 relatedData = entityTypeTemp.getJavaType().newInstance();
                 break;
               } catch (InstantiationException e) {
-                throw ODataJPARuntimeException
-                    .throwException(ODataJPARuntimeException.GENERAL
-                        .addContent(e.getMessage()), e);
+                throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
               } catch (IllegalAccessException e) {
-                throw ODataJPARuntimeException
-                    .throwException(ODataJPARuntimeException.GENERAL
-                        .addContent(e.getMessage()), e);
+                throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
               }
             }
           }
@@ -357,8 +303,7 @@ public class JPACreateRequest extends JPAWriteRequest {
   }
 
   @SuppressWarnings("unchecked")
-  private void setNavigationProperties(
-      final Object jpaEntity, final EdmEntitySet entitySet, final Map<String, Object> propertyValueMap, final String entityName, final Map<String, Class<?>> relatedClassMap) throws ODataJPARuntimeException {
+  private void setNavigationProperties(final Object jpaEntity, final EdmEntitySet entitySet, final Map<String, Object> propertyValueMap, final String entityName, final Map<String, Class<?>> relatedClassMap) throws ODataJPARuntimeException {
     if (jpaEntity == null || entitySet == null || propertyValueMap == null || propertyValueMap.size() == 0) {
       return;
     }
@@ -378,17 +323,11 @@ public class JPACreateRequest extends JPAWriteRequest {
           method.invoke(jpaEntity, propertyValue.get(0));
         }
       } catch (IllegalAccessException e) {
-        throw ODataJPARuntimeException
-            .throwException(ODataJPARuntimeException.GENERAL
-                .addContent(e.getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       } catch (IllegalArgumentException e) {
-        throw ODataJPARuntimeException
-            .throwException(ODataJPARuntimeException.GENERAL
-                .addContent(e.getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       } catch (InvocationTargetException e) {
-        throw ODataJPARuntimeException
-            .throwException(ODataJPARuntimeException.GENERAL
-                .addContent(e.getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
     }
 
@@ -402,9 +341,7 @@ public class JPACreateRequest extends JPAWriteRequest {
     try {
       edmEntityType = edmEntitySet.getEntityType();
     } catch (EdmException e2) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e2.getMessage()), e2);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e2.getMessage()), e2);
     }
 
     try {
@@ -412,16 +349,13 @@ public class JPACreateRequest extends JPAWriteRequest {
         final EdmNavigationProperty navigationProperty = (EdmNavigationProperty) edmEntityType.getProperty(navigationPropertyName);
         String entityName = null;
         try {
-          if (navigationProperty.getMapping() != null && navigationProperty.getMapping().getInternalName() != null)
-          {
+          if (navigationProperty.getMapping() != null && navigationProperty.getMapping().getInternalName() != null) {
             entityName = navigationProperty.getMapping().getInternalName();
           } else {
             entityName = navigationProperty.getName();
           }
         } catch (EdmException e1) {
-          throw ODataJPARuntimeException
-              .throwException(ODataJPARuntimeException.GENERAL
-                  .addContent(e1.getMessage()), e1);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e1.getMessage()), e1);
         }
         String name = getSetterName(entityName);
 
@@ -437,31 +371,22 @@ public class JPACreateRequest extends JPAWriteRequest {
           multiplicityMap.put(entityName, EdmMultiplicity.ONE);
         }
         try {
-          setters.put(
-              entityName,
-              jpaEntity.getClass().getDeclaredMethod(name, propertyClass));
+          setters.put(entityName, jpaEntity.getClass().getDeclaredMethod(name, propertyClass));
         } catch (NoSuchMethodException e) {
-          throw ODataJPARuntimeException
-              .throwException(ODataJPARuntimeException.GENERAL
-                  .addContent(e.getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         } catch (SecurityException e) {
-          throw ODataJPARuntimeException
-              .throwException(ODataJPARuntimeException.GENERAL
-                  .addContent(e.getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         }
       }
     } catch (EdmException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
     mapList.add(0, setters);
     mapList.add(1, multiplicityMap);
     return mapList;
   }
 
-  private String getSetterName(final String navigationPropertyName)
-      throws ODataJPARuntimeException {
+  private String getSetterName(final String navigationPropertyName) throws ODataJPARuntimeException {
     StringBuilder builder = new StringBuilder();
     char c = Character.toUpperCase(navigationPropertyName.charAt(0));
 

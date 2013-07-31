@@ -69,12 +69,10 @@ public class JPQLSelectStatementBuilder extends JPQLStatementBuilder {
       jpqlQuery.append(context.getWhereExpression());
     }
 
-    if (context.getOrderByCollection() != null
-        && context.getOrderByCollection().size() > 0) {
+    if (context.getOrderByCollection() != null && context.getOrderByCollection().size() > 0) {
 
       StringBuilder orderByBuilder = new StringBuilder();
-      Iterator<Entry<String, String>> orderItr = context
-          .getOrderByCollection().entrySet().iterator();
+      Iterator<Entry<String, String>> orderItr = context.getOrderByCollection().entrySet().iterator();
 
       int i = 0;
 

@@ -86,8 +86,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
    * {@link org.apache.olingo.odata2.api.processor.ODataContext}.
    */
   @Override
-  public final ODataService createService(final ODataContext ctx)
-      throws ODataException {
+  public final ODataService createService(final ODataContext ctx) throws ODataException {
 
     oDataContext = ctx;
 
@@ -97,19 +96,17 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
     validatePreConditions();
 
     ODataJPAFactory factory = ODataJPAFactory.createFactory();
-    ODataJPAAccessFactory accessFactory = factory
-        .getODataJPAAccessFactory();
+    ODataJPAAccessFactory accessFactory = factory.getODataJPAAccessFactory();
 
     // OData JPA Processor
-    if (oDataJPAContext.getODataContext() == null)
+    if (oDataJPAContext.getODataContext() == null) {
       oDataJPAContext.setODataContext(ctx);
+    }
 
-    ODataSingleProcessor odataJPAProcessor = accessFactory
-        .createODataProcessor(oDataJPAContext);
+    ODataSingleProcessor odataJPAProcessor = accessFactory.createODataProcessor(oDataJPAContext);
 
     // OData Entity Data Model Provider based on JPA
-    EdmProvider edmProvider = accessFactory
-        .createJPAEdmProvider(oDataJPAContext);
+    EdmProvider edmProvider = accessFactory.createJPAEdmProvider(oDataJPAContext);
 
     return createODataSingleProcessorService(edmProvider, odataJPAProcessor);
   }
@@ -117,9 +114,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
   private void validatePreConditions() throws ODataJPARuntimeException {
 
     if (oDataJPAContext.getEntityManagerFactory() == null) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ENTITY_MANAGER_NOT_INITIALIZED,
-          null);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ENTITY_MANAGER_NOT_INITIALIZED, null);
     }
 
   }
@@ -152,21 +147,19 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
    *         {@link org.apache.olingo.odata2.processor.api.jpa.ODataJPAContext}
    * @throws ODataJPARuntimeException
    */
-  public abstract ODataJPAContext initializeODataJPAContext()
-      throws ODataJPARuntimeException;
+  public abstract ODataJPAContext initializeODataJPAContext() throws ODataJPARuntimeException;
 
   /**
    * @return an instance of type {@link ODataJPAContext}
    * @throws ODataJPARuntimeException
    */
-  public final ODataJPAContext getODataJPAContext()
-      throws ODataJPARuntimeException {
+  public final ODataJPAContext getODataJPAContext() throws ODataJPARuntimeException {
     if (oDataJPAContext == null) {
-      oDataJPAContext = ODataJPAFactory.createFactory()
-          .getODataJPAAccessFactory().createODataJPAContext();
+      oDataJPAContext = ODataJPAFactory.createFactory().getODataJPAAccessFactory().createODataJPAContext();
     }
-    if (oDataContext != null)
+    if (oDataContext != null) {
       oDataJPAContext.setODataContext(oDataContext);
+    }
     return oDataJPAContext;
 
   }

@@ -33,43 +33,25 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  */
 public class ODataJPARuntimeException extends ODataJPAException {
 
-  public static final MessageReference ENTITY_MANAGER_NOT_INITIALIZED = createMessageReference(
-      ODataJPARuntimeException.class, "ENTITY_MANAGER_NOT_INITIALIZED");
-  public static final MessageReference RESOURCE_NOT_FOUND = createMessageReference(
-      ODataJPARuntimeException.class, "RESOURCE_NOT_FOUND");
-  public static final MessageReference GENERAL = createMessageReference(
-      ODataJPARuntimeException.class, "GENERAL");
-  public static final MessageReference INNER_EXCEPTION = createMessageReference(
-      ODataJPARuntimeException.class, "INNER_EXCEPTION");
-  public static final MessageReference JOIN_CLAUSE_EXPECTED = createMessageReference(
-      ODataJPARuntimeException.class, "JOIN_CLAUSE_EXPECTED");
-  public static final MessageReference ERROR_JPQLCTXBLDR_CREATE = createMessageReference(
-      ODataJPARuntimeException.class, "ERROR_JPQLCTXBLDR_CREATE");
-  public static final MessageReference ERROR_ODATA_FILTER_CONDITION = createMessageReference(
-      ODataJPARuntimeException.class, "ERROR_ODATA_FILTER_CONDITION");
-  public static final MessageReference ERROR_JPQL_QUERY_CREATE = createMessageReference(
-      ODataJPARuntimeException.class, "ERROR_JPQL_QUERY_CREATE");
-  public static final MessageReference ERROR_JPQL_CREATE_REQUEST = createMessageReference(
-      ODataJPARuntimeException.class, "ERROR_JPQL_CREATE_REQUEST");
-  public static final MessageReference ERROR_JPQL_UPDATE_REQUEST = createMessageReference(
-      ODataJPARuntimeException.class, "ERROR_JPQL_UPDATE_REQUEST");
-  public static final MessageReference ERROR_JPQL_DELETE_REQUEST = createMessageReference(
-      ODataJPARuntimeException.class, "ERROR_JPQL_DELETE_REQUEST");
-  public static final MessageReference ERROR_JPQL_KEY_VALUE = createMessageReference(
-      ODataJPARuntimeException.class, "ERROR_JPQL_KEY_VALUE");
-  public static final MessageReference ERROR_JPQL_PARAM_VALUE = createMessageReference(
-      ODataJPARuntimeException.class, "ERROR_JPQL_PARAM_VALUE");
-  public static final MessageReference ERROR_JPQL_UNIQUE_CONSTRAINT = createMessageReference(
-      ODataJPARuntimeException.class, "ERROR_JPQL_UNIQUE_CONSTRAINT");
-  public static final MessageReference ERROR_JPQL_INTEGRITY_CONSTRAINT = createMessageReference(
-      ODataJPARuntimeException.class, "ERROR_JPQL_INTEGRITY_CONSTRAINT");
-  public static final MessageReference RELATIONSHIP_INVALID = createMessageReference(
-      ODataJPARuntimeException.class, "RELATIONSHIP_INVALID");
-  public static final MessageReference RESOURCE_X_NOT_FOUND = createMessageReference(
-      ODataJPARuntimeException.class, "RESOURCE_X_NOT_FOUND");
+  public static final MessageReference ENTITY_MANAGER_NOT_INITIALIZED = createMessageReference(ODataJPARuntimeException.class, "ENTITY_MANAGER_NOT_INITIALIZED");
+  public static final MessageReference RESOURCE_NOT_FOUND = createMessageReference(ODataJPARuntimeException.class, "RESOURCE_NOT_FOUND");
+  public static final MessageReference GENERAL = createMessageReference(ODataJPARuntimeException.class, "GENERAL");
+  public static final MessageReference INNER_EXCEPTION = createMessageReference(ODataJPARuntimeException.class, "INNER_EXCEPTION");
+  public static final MessageReference JOIN_CLAUSE_EXPECTED = createMessageReference(ODataJPARuntimeException.class, "JOIN_CLAUSE_EXPECTED");
+  public static final MessageReference ERROR_JPQLCTXBLDR_CREATE = createMessageReference(ODataJPARuntimeException.class, "ERROR_JPQLCTXBLDR_CREATE");
+  public static final MessageReference ERROR_ODATA_FILTER_CONDITION = createMessageReference(ODataJPARuntimeException.class, "ERROR_ODATA_FILTER_CONDITION");
+  public static final MessageReference ERROR_JPQL_QUERY_CREATE = createMessageReference(ODataJPARuntimeException.class, "ERROR_JPQL_QUERY_CREATE");
+  public static final MessageReference ERROR_JPQL_CREATE_REQUEST = createMessageReference(ODataJPARuntimeException.class, "ERROR_JPQL_CREATE_REQUEST");
+  public static final MessageReference ERROR_JPQL_UPDATE_REQUEST = createMessageReference(ODataJPARuntimeException.class, "ERROR_JPQL_UPDATE_REQUEST");
+  public static final MessageReference ERROR_JPQL_DELETE_REQUEST = createMessageReference(ODataJPARuntimeException.class, "ERROR_JPQL_DELETE_REQUEST");
+  public static final MessageReference ERROR_JPQL_KEY_VALUE = createMessageReference(ODataJPARuntimeException.class, "ERROR_JPQL_KEY_VALUE");
+  public static final MessageReference ERROR_JPQL_PARAM_VALUE = createMessageReference(ODataJPARuntimeException.class, "ERROR_JPQL_PARAM_VALUE");
+  public static final MessageReference ERROR_JPQL_UNIQUE_CONSTRAINT = createMessageReference(ODataJPARuntimeException.class, "ERROR_JPQL_UNIQUE_CONSTRAINT");
+  public static final MessageReference ERROR_JPQL_INTEGRITY_CONSTRAINT = createMessageReference(ODataJPARuntimeException.class, "ERROR_JPQL_INTEGRITY_CONSTRAINT");
+  public static final MessageReference RELATIONSHIP_INVALID = createMessageReference(ODataJPARuntimeException.class, "RELATIONSHIP_INVALID");
+  public static final MessageReference RESOURCE_X_NOT_FOUND = createMessageReference(ODataJPARuntimeException.class, "RESOURCE_X_NOT_FOUND");
 
-  private ODataJPARuntimeException(final String localizedMessage, final Throwable e,
-      final MessageReference msgRef) {
+  private ODataJPARuntimeException(final String localizedMessage, final Throwable e, final MessageReference msgRef) {
     super(localizedMessage, e, msgRef);
   }
 
@@ -86,14 +68,10 @@ public class ODataJPARuntimeException extends ODataJPAException {
    * @return an instance of ODataJPARuntimeException which can be then raised.
    * @throws ODataJPARuntimeException
    */
-  public static ODataJPARuntimeException throwException(
-      final MessageReference messageReference, final Throwable e) {
+  public static ODataJPARuntimeException throwException(final MessageReference messageReference, final Throwable e) {
     ODataJPAMessageService messageService;
-    messageService = ODataJPAFactory.createFactory()
-        .getODataJPAAccessFactory()
-        .getODataJPAMessageService(DEFAULT_LOCALE);
-    String message = messageService
-        .getLocalizedMessage(messageReference, e);
+    messageService = ODataJPAFactory.createFactory().getODataJPAAccessFactory().getODataJPAMessageService(DEFAULT_LOCALE);
+    String message = messageService.getLocalizedMessage(messageReference, e);
     return new ODataJPARuntimeException(message, e, messageReference);
   }
 

@@ -23,17 +23,15 @@ import static org.junit.Assert.fail;
 
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.uri.expression.ExpressionParserException;
 import org.apache.olingo.odata2.core.exception.MessageService;
 import org.apache.olingo.odata2.core.exception.MessageService.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class TokenTool
-{
+public class TokenTool {
   protected Token token;
   protected TokenList tokens = null;
   private Exception curException;
@@ -44,8 +42,7 @@ public class TokenTool
   private static final Logger log = LoggerFactory.getLogger(ParserTool.class);
   private static final Locale DEFAULT_LANGUAGE = new Locale("test", "SAP");
 
-  public TokenTool(final String expression, final boolean wsp)
-  {
+  public TokenTool(final String expression, final boolean wsp) {
     dout("TokenTool - Testing: " + expression);
     this.expression = expression;
 
@@ -69,8 +66,7 @@ public class TokenTool
    * @return Returns <code>this</code>
    * @throws AssertionError
    */
-  public TokenTool at(final int index)
-  {
+  public TokenTool at(final int index) {
     token = tokens.elementAt(index);
     return this;
   }
@@ -82,8 +78,7 @@ public class TokenTool
    * @return Returns <code>this</code>
    * @throws AssertionError 
    */
-  public TokenTool aKind(final TokenKind kind)
-  {
+  public TokenTool aKind(final TokenKind kind) {
     assertEquals(kind, token.getKind());
     return this;
   }
@@ -95,8 +90,7 @@ public class TokenTool
    * @return Returns <code>this</code>
    * @throws AssertionError
    */
-  public TokenTool aEdmType(final int edmType)
-  {
+  public TokenTool aEdmType(final int edmType) {
     assertEquals(edmType, token.getEdmType());
     return this;
   }
@@ -108,27 +102,23 @@ public class TokenTool
    * @return Returns <code>this</code>
    * @throws AssertionError
    */
-  public TokenTool aUriLiteral(final String stringValue)
-  {
+  public TokenTool aUriLiteral(final String stringValue) {
     assertEquals(stringValue, token.getUriLiteral());
     return this;
   }
 
-  public TokenTool aPosition(final int position)
-  {
+  public TokenTool aPosition(final int position) {
     assertEquals(position, token.getPosition());
     return this;
   }
 
-  public static void dout(final String out)
-  {
+  public static void dout(final String out) {
     if (debug) {
       log.debug(out);
     }
   }
 
-  public static void out(final String out)
-  {
+  public static void out(final String out) {
     log.debug(out);
   }
 
@@ -136,21 +126,17 @@ public class TokenTool
    * Verifies that all place holders in the message text definition of the thrown exception are provided with content
    * @return TokenTool
    */
-  public TokenTool aExMsgContentAllSet()
-  {
+  public TokenTool aExMsgContentAllSet() {
     String info = "aExMessageTextNoEmptyTag(" + expression + ")-->";
-    if (curException == null)
-    {
+    if (curException == null) {
       fail("Error in aExMessageText: Expected exception.");
     }
 
     ODataMessageException messageException;
 
-    try
-    {
+    try {
       messageException = (ODataMessageException) curException;
-    } catch (ClassCastException ex)
-    {
+    } catch (ClassCastException ex) {
       fail("Error in aExNext: curException not an ODataMessageException");
       return this;
     }
@@ -160,8 +146,7 @@ public class TokenTool
 
     dout(info);
 
-    if (ms.getText().contains("[%"))
-    {
+    if (ms.getText().contains("[%")) {
       fail(info);
     }
     return this;
@@ -171,21 +156,17 @@ public class TokenTool
    * Verifies that the message text of the thrown exception is not empty
    * @return TokenTool
    */
-  public TokenTool aExMsgNotEmpty()
-  {
+  public TokenTool aExMsgNotEmpty() {
     String info = "aExTextNotEmpty(" + expression + ")-->";
-    if (curException == null)
-    {
+    if (curException == null) {
       fail("Error in aExMessageText: Expected exception.");
     }
 
     ODataMessageException messageException;
 
-    try
-    {
+    try {
       messageException = (ODataMessageException) curException;
-    } catch (ClassCastException ex)
-    {
+    } catch (ClassCastException ex) {
       fail("Error in aExNext: curException not an ODataMessageException");
       return this;
     }
@@ -194,30 +175,25 @@ public class TokenTool
     info = "  " + info + "check if Messagetext is empty";
     dout(info);
 
-    if (ms.getText().length() == 0)
-    {
+    if (ms.getText().length() == 0) {
       fail(info);
     }
     return this;
   }
 
-  public TokenTool aExKey(final MessageReference expressionExpectedAtPos)
-  {
+  public TokenTool aExKey(final MessageReference expressionExpectedAtPos) {
     String expectedKey = expressionExpectedAtPos.getKey();
     ODataMessageException messageException;
 
     String info = "GetExceptionType(" + expression + ")-->";
 
-    if (curException == null)
-    {
+    if (curException == null) {
       fail("Error in aExType: Expected exception");
     }
 
-    try
-    {
+    try {
       messageException = (ODataMessageException) curException;
-    } catch (ClassCastException ex)
-    {
+    } catch (ClassCastException ex) {
       fail("Error in aExNext: curException not an ODataMessageException");
       return this;
     }
@@ -225,27 +201,22 @@ public class TokenTool
     String actualKey = messageException.getMessageReference().getKey();
     dout("  " + info + "Expected key: " + expectedKey + " Actual: " + actualKey);
 
-    if (expectedKey != actualKey)
-    {
+    if (expectedKey != actualKey) {
       fail("  " + info + "Expected: " + expectedKey + " Actual: " + actualKey);
     }
     return this;
   }
 
-  public TokenTool printExMessage()
-  {
+  public TokenTool printExMessage() {
     ODataMessageException messageException;
 
-    if (curException == null)
-    {
+    if (curException == null) {
       fail("Error in aExMsgPrint: Expected exception");
     }
 
-    try
-    {
+    try {
       messageException = (ODataMessageException) curException;
-    } catch (ClassCastException ex)
-    {
+    } catch (ClassCastException ex) {
       fail("Error in aExNext: curException not an ODataMessageException");
       return this;
     }
@@ -264,21 +235,17 @@ public class TokenTool
    *   Expected message text 
    * @return  this
    */
-  public TokenTool aExMsgText(final String messageText)
-  {
+  public TokenTool aExMsgText(final String messageText) {
     String info = "aExMessageText(" + expression + ")-->";
-    if (curException == null)
-    {
+    if (curException == null) {
       fail("Error in aExMessageText: Expected exception.");
     }
 
     ODataMessageException messageException;
 
-    try
-    {
+    try {
       messageException = (ODataMessageException) curException;
-    } catch (ClassCastException ex)
-    {
+    } catch (ClassCastException ex) {
       fail("Error in aExNext: curException not an ODataMessageException");
       return this;
     }

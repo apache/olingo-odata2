@@ -26,8 +26,7 @@ public class SalesOrderHeader {
   private int id;
   private String description;
 
-  public SalesOrderHeader()
-  {}
+  public SalesOrderHeader() {}
 
   public SalesOrderHeader(final int id, final String description) {
     super();

@@ -32,8 +32,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
 
-public class JPAEdmEntitySet extends JPAEdmBaseViewImpl implements
-    JPAEdmEntitySetView {
+public class JPAEdmEntitySet extends JPAEdmBaseViewImpl implements JPAEdmEntitySetView {
 
   private EntitySet currentEntitySet = null;
   private List<EntitySet> consistentEntitySetList = null;
@@ -92,12 +91,10 @@ public class JPAEdmEntitySet extends JPAEdmBaseViewImpl implements
       if (entityTypeView.isConsistent() && entityTypeView.getConsistentEdmEntityTypes() != null) {
 
         String nameSpace = schemaView.getEdmSchema().getNamespace();
-        for (EntityType entityType : entityTypeView
-            .getConsistentEdmEntityTypes()) {
+        for (EntityType entityType : entityTypeView.getConsistentEdmEntityTypes()) {
 
           currentEntitySet = new EntitySet();
-          currentEntitySet.setEntityType(new FullQualifiedName(
-              nameSpace, entityType.getName()));
+          currentEntitySet.setEntityType(new FullQualifiedName(nameSpace, entityType.getName()));
           JPAEdmNameBuilder.build(JPAEdmEntitySet.this, entityTypeView);
           consistentEntitySetList.add(currentEntitySet);
 

@@ -26,9 +26,6 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
@@ -43,6 +40,8 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityContainerView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntitySetView;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
+import org.junit.Before;
+import org.junit.Test;
 
 public class JPAEdmAssociationSetTest extends JPAEdmTestModelView {
 

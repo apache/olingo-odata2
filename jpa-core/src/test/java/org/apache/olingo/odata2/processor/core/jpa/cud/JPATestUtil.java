@@ -39,8 +39,6 @@ import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.Type;
 
-import org.easymock.EasyMock;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -56,11 +54,11 @@ import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.model.JPAEdmMappingImpl;
+import org.easymock.EasyMock;
 
 public class JPATestUtil {
 
-  public static EdmStructuralType getEdmStructuralType()
-  {
+  public static EdmStructuralType getEdmStructuralType() {
     EdmStructuralType edmType = EasyMock.createMock(EdmStructuralType.class);
     try {
       List<String> propertyNames = new ArrayList<String>();
@@ -75,15 +73,13 @@ public class JPATestUtil {
       EasyMock.expect(edmType.getProperty("description")).andStubReturn(edmProperty2);
       EasyMock.expect(edmType.getMapping()).andStubReturn(edmMapping);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(edmType);
     return edmType;
   }
 
-  public static Map<String, Object> getPropertyValueMap()
-  {
+  public static Map<String, Object> getPropertyValueMap() {
     Map<String, Object> propertyValueMap = new HashMap<String, Object>();
     propertyValueMap.put("id", 1);
     return propertyValueMap;
@@ -112,15 +108,13 @@ public class JPATestUtil {
       EasyMock.expect(entitySet.getEntityType()).andStubReturn(mockEdmEntityType(navigationProperty));
       EasyMock.expect(entitySet.getRelatedEntitySet(navigationProperty)).andStubReturn(getSIEntitySet());
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(entitySet);
     return entitySet;
   }
 
-  public static Object getJPAEntity()
-  {
+  public static Object getJPAEntity() {
     SalesOrderHeader sHead = new SalesOrderHeader(1, "laptop");
     SalesOrderLineItem sItem = new SalesOrderLineItem(23);
     List<SalesOrderLineItem> sItems = new ArrayList<SalesOrderLineItem>();
@@ -155,8 +149,7 @@ public class JPATestUtil {
       EasyMock.expect(entityType.getPropertyNames()).andStubReturn(propertyNames);
 
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(entityType);
     return entityType;
@@ -165,11 +158,9 @@ public class JPATestUtil {
   private static EdmEntitySet getSIEntitySet() {
     EdmEntitySet entitySet = EasyMock.createMock(EdmEntitySet.class);
     try {
-      EasyMock.expect(entitySet.getEntityType()).andStubReturn(
-          mockTargetEdmEntityType());
+      EasyMock.expect(entitySet.getEntityType()).andStubReturn(mockTargetEdmEntityType());
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(entitySet);
     return entitySet;
@@ -183,21 +174,16 @@ public class JPATestUtil {
     List<String> propertyNames = new ArrayList<String>();
     propertyNames.add("price");
     try {
-      EasyMock.expect(mapping.getInternalName()).andStubReturn(
-          "SalesOrderLineItem");
+      EasyMock.expect(mapping.getInternalName()).andStubReturn("SalesOrderLineItem");
       EasyMock.replay(mapping);
-      EasyMock.expect(entityType.getName()).andStubReturn(
-          "SalesOrderLineItem");
+      EasyMock.expect(entityType.getName()).andStubReturn("SalesOrderLineItem");
       EasyMock.expect(entityType.getMapping()).andStubReturn(mapping);
       EdmProperty property = mockEdmPropertyOfTarget();
-      EasyMock.expect(entityType.getProperty("price")).andStubReturn(
-          property);
-      EasyMock.expect(entityType.getPropertyNames()).andStubReturn(
-          propertyNames);
+      EasyMock.expect(entityType.getProperty("price")).andStubReturn(property);
+      EasyMock.expect(entityType.getPropertyNames()).andStubReturn(propertyNames);
 
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(entityType);
     return entityType;
@@ -217,8 +203,7 @@ public class JPATestUtil {
       EasyMock.expect(edmProperty.getType()).andStubReturn(type);
       EasyMock.expect(edmProperty.getMapping()).andStubReturn(mapping);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(edmProperty);
     return edmProperty;
@@ -234,8 +219,7 @@ public class JPATestUtil {
       EasyMock.expect(navigationProperty.getMapping()).andStubReturn(mapping);
 
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(navigationProperty);
     return navigationProperty;
@@ -243,8 +227,7 @@ public class JPATestUtil {
     //EdmNavigationPropertyImplProv navigationPropertyImplProv = new EdmNavigationPropertyImplProv(edm, property)
   }
 
-  public static Metamodel mockMetaModel()
-  {
+  public static Metamodel mockMetaModel() {
     Set<EntityType<?>> jpaEntities = new HashSet<EntityType<?>>();
     jpaEntities.add(new JPATestUtil.DemoEntityType());
     Metamodel metaModel = EasyMock.createMock(Metamodel.class);
@@ -269,8 +252,7 @@ public class JPATestUtil {
       EasyMock.expect(edmProperty.getType()).andStubReturn(edmType);
       EasyMock.expect(edmProperty.getMapping()).andStubReturn(edmMapping);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(edmProperty);
     return edmProperty;
@@ -286,8 +268,7 @@ public class JPATestUtil {
       EasyMock.expect(edmProperty.getType()).andStubReturn(edmType);
       EasyMock.expect(edmProperty.getMapping()).andStubReturn(edmMapping);
     } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
-          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     EasyMock.replay(edmProperty);
     return edmProperty;
@@ -318,30 +299,25 @@ public class JPATestUtil {
 
   }
 
-  static class DemoEntityType implements EntityType<SalesOrderHeader>
-  {
+  static class DemoEntityType implements EntityType<SalesOrderHeader> {
 
     @Override
-    public <Y> SingularAttribute<? super org.apache.olingo.odata2.processor.core.jpa.cud.SalesOrderHeader, Y> getId(
-        final Class<Y> type) {
+    public <Y> SingularAttribute<? super org.apache.olingo.odata2.processor.core.jpa.cud.SalesOrderHeader, Y> getId(final Class<Y> type) {
       return null;
     }
 
     @Override
-    public <Y> SingularAttribute<org.apache.olingo.odata2.processor.core.jpa.cud.SalesOrderHeader, Y> getDeclaredId(
-        final Class<Y> type) {
+    public <Y> SingularAttribute<org.apache.olingo.odata2.processor.core.jpa.cud.SalesOrderHeader, Y> getDeclaredId(final Class<Y> type) {
       return null;
     }
 
     @Override
-    public <Y> SingularAttribute<? super SalesOrderHeader, Y> getVersion(
-        final Class<Y> type) {
+    public <Y> SingularAttribute<? super SalesOrderHeader, Y> getVersion(final Class<Y> type) {
       return null;
     }
 
     @Override
-    public <Y> SingularAttribute<SalesOrderHeader, Y> getDeclaredVersion(
-        final Class<Y> type) {
+    public <Y> SingularAttribute<SalesOrderHeader, Y> getDeclaredVersion(final Class<Y> type) {
       return null;
     }
 
@@ -381,14 +357,12 @@ public class JPATestUtil {
     }
 
     @Override
-    public <Y> SingularAttribute<? super SalesOrderHeader, Y> getSingularAttribute(
-        final String name, final Class<Y> type) {
+    public <Y> SingularAttribute<? super SalesOrderHeader, Y> getSingularAttribute(final String name, final Class<Y> type) {
       return null;
     }
 
     @Override
-    public <Y> SingularAttribute<SalesOrderHeader, Y> getDeclaredSingularAttribute(
-        final String name, final Class<Y> type) {
+    public <Y> SingularAttribute<SalesOrderHeader, Y> getDeclaredSingularAttribute(final String name, final Class<Y> type) {
       return null;
     }
 
@@ -403,50 +377,42 @@ public class JPATestUtil {
     }
 
     @Override
-    public <E> CollectionAttribute<? super SalesOrderHeader, E> getCollection(
-        final String name, final Class<E> elementType) {
+    public <E> CollectionAttribute<? super SalesOrderHeader, E> getCollection(final String name, final Class<E> elementType) {
       return null;
     }
 
     @Override
-    public <E> CollectionAttribute<SalesOrderHeader, E> getDeclaredCollection(
-        final String name, final Class<E> elementType) {
+    public <E> CollectionAttribute<SalesOrderHeader, E> getDeclaredCollection(final String name, final Class<E> elementType) {
       return null;
     }
 
     @Override
-    public <E> SetAttribute<? super SalesOrderHeader, E> getSet(
-        final String name, final Class<E> elementType) {
+    public <E> SetAttribute<? super SalesOrderHeader, E> getSet(final String name, final Class<E> elementType) {
       return null;
     }
 
     @Override
-    public <E> SetAttribute<SalesOrderHeader, E> getDeclaredSet(
-        final String name, final Class<E> elementType) {
+    public <E> SetAttribute<SalesOrderHeader, E> getDeclaredSet(final String name, final Class<E> elementType) {
       return null;
     }
 
     @Override
-    public <E> ListAttribute<? super SalesOrderHeader, E> getList(
-        final String name, final Class<E> elementType) {
+    public <E> ListAttribute<? super SalesOrderHeader, E> getList(final String name, final Class<E> elementType) {
       return null;
     }
 
     @Override
-    public <E> ListAttribute<SalesOrderHeader, E> getDeclaredList(
-        final String name, final Class<E> elementType) {
+    public <E> ListAttribute<SalesOrderHeader, E> getDeclaredList(final String name, final Class<E> elementType) {
       return null;
     }
 
     @Override
-    public <K, V> MapAttribute<? super SalesOrderHeader, K, V> getMap(
-        final String name, final Class<K> keyType, final Class<V> valueType) {
+    public <K, V> MapAttribute<? super SalesOrderHeader, K, V> getMap(final String name, final Class<K> keyType, final Class<V> valueType) {
       return null;
     }
 
     @Override
-    public <K, V> MapAttribute<SalesOrderHeader, K, V> getDeclaredMap(
-        final String name, final Class<K> keyType, final Class<V> valueType) {
+    public <K, V> MapAttribute<SalesOrderHeader, K, V> getDeclaredMap(final String name, final Class<K> keyType, final Class<V> valueType) {
       return null;
     }
 
@@ -471,26 +437,22 @@ public class JPATestUtil {
     }
 
     @Override
-    public SingularAttribute<? super SalesOrderHeader, ?> getSingularAttribute(
-        final String name) {
+    public SingularAttribute<? super SalesOrderHeader, ?> getSingularAttribute(final String name) {
       return null;
     }
 
     @Override
-    public SingularAttribute<SalesOrderHeader, ?> getDeclaredSingularAttribute(
-        final String name) {
+    public SingularAttribute<SalesOrderHeader, ?> getDeclaredSingularAttribute(final String name) {
       return null;
     }
 
     @Override
-    public CollectionAttribute<? super SalesOrderHeader, ?> getCollection(
-        final String name) {
+    public CollectionAttribute<? super SalesOrderHeader, ?> getCollection(final String name) {
       return null;
     }
 
     @Override
-    public CollectionAttribute<SalesOrderHeader, ?> getDeclaredCollection(
-        final String name) {
+    public CollectionAttribute<SalesOrderHeader, ?> getDeclaredCollection(final String name) {
       return null;
     }
 

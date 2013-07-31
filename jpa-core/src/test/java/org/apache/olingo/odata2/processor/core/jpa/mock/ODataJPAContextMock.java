@@ -21,9 +21,8 @@ package org.apache.olingo.odata2.processor.core.jpa.mock;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.metamodel.Metamodel;
 
-import org.easymock.EasyMock;
-
 import org.apache.olingo.odata2.processor.api.jpa.ODataJPAContext;
+import org.easymock.EasyMock;
 
 public abstract class ODataJPAContextMock {
 
@@ -31,8 +30,7 @@ public abstract class ODataJPAContextMock {
   public static final String MAPPING_MODEL = "SalesOrderProcessingMappingModel";
   public static final String PERSISTENCE_UNIT_NAME = "salesorderprocessing";
 
-  public static ODataJPAContext mockODataJPAContext()
-  {
+  public static ODataJPAContext mockODataJPAContext() {
     ODataJPAContext odataJPAContext = EasyMock.createMock(ODataJPAContext.class);
     EasyMock.expect(odataJPAContext.getPersistenceUnitName()).andStubReturn(NAMESPACE);
     EasyMock.expect(odataJPAContext.getEntityManagerFactory()).andReturn(mockEntityManagerFactory());

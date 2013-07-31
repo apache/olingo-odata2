@@ -42,8 +42,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmMapping;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintRoleView;
 
-public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl
-    implements JPAEdmReferentialConstraintRoleView {
+public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implements JPAEdmReferentialConstraintRoleView {
   /*
    * Static Buffer
    */
@@ -67,11 +66,7 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl
   private JPAEdmRefConstraintRoleBuilder builder;
   private ReferentialConstraintRole currentRole;
 
-  public JPAEdmReferentialConstraintRole(
-      final JPAEdmReferentialConstraintRoleView.RoleType roleType,
-      final JPAEdmEntityTypeView entityTypeView,
-      final JPAEdmPropertyView propertyView,
-      final JPAEdmAssociationView associationView) {
+  public JPAEdmReferentialConstraintRole(final JPAEdmReferentialConstraintRoleView.RoleType roleType, final JPAEdmEntityTypeView entityTypeView, final JPAEdmPropertyView propertyView, final JPAEdmAssociationView associationView) {
 
     super(entityTypeView);
     this.entityTypeView = entityTypeView;
@@ -132,13 +127,9 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl
         try {
           buildRole();
         } catch (SecurityException e) {
-          throw ODataJPAModelException.throwException(
-              ODataJPAModelException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPAModelException.throwException(ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
         } catch (NoSuchFieldException e) {
-          throw ODataJPAModelException.throwException(
-              ODataJPAModelException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPAModelException.throwException(ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
         }
       }
 
@@ -174,35 +165,25 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl
         EntityType edmEntityType = null;
 
         if (roleType == RoleType.PRINCIPAL) {
-          jpaAttributeType = jpaAttribute.getJavaType()
-              .getSimpleName();
+          jpaAttributeType = jpaAttribute.getJavaType().getSimpleName();
           if (jpaAttributeType.equals("List")) {
-            Type type = ((ParameterizedType) jpaAttribute
-                .getJavaMember().getDeclaringClass()
-                .getDeclaredField(jpaAttribute.getName())
-                .getGenericType()).getActualTypeArguments()[0];
+            Type type = ((ParameterizedType) jpaAttribute.getJavaMember().getDeclaringClass().getDeclaredField(jpaAttribute.getName()).getGenericType()).getActualTypeArguments()[0];
             int lastIndexOfDot = type.toString().lastIndexOf(".");
-            jpaAttributeType = type.toString().substring(
-                lastIndexOfDot + 1);
+            jpaAttributeType = type.toString().substring(lastIndexOfDot + 1);
           }
-          edmEntityType = entityTypeView
-              .searchEdmEntityType(jpaAttributeType);
+          edmEntityType = entityTypeView.searchEdmEntityType(jpaAttributeType);
 
         }
 
         else if (roleType == RoleType.DEPENDENT) {
-          edmEntityType = entityTypeView
-              .searchEdmEntityType(jpaAttribute
-                  .getDeclaringType().getJavaType()
-                  .getSimpleName());
+          edmEntityType = entityTypeView.searchEdmEntityType(jpaAttribute.getDeclaringType().getJavaType().getSimpleName());
         }
 
         List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();
         if (edmEntityType != null) {
           for (String columnName : jpaColumnNames) {
             for (Property property : edmEntityType.getProperties()) {
-              if (columnName.equals(((JPAEdmMapping) property
-                  .getMapping()).getJPAColumnName())) {
+              if (columnName.equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName())) {
                 PropertyRef propertyRef = new PropertyRef();
                 propertyRef.setName(property.getName());
                 propertyRefs.add(propertyRef);
@@ -221,8 +202,7 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl
             isConsistent = true;
           } else {
             end = association.getEnd2();
-            if (end.getType().getName()
-                .equals(edmEntityType.getName())) {
+            if (end.getType().getName().equals(edmEntityType.getName())) {
               currentRole.setRole(end.getRole());
               isConsistent = true;
             }
@@ -248,18 +228,15 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl
         return;
       }
 
-      AnnotatedElement annotatedElement = (AnnotatedElement) jpaAttribute
-          .getJavaMember();
+      AnnotatedElement annotatedElement = (AnnotatedElement) jpaAttribute.getJavaMember();
 
       if (annotatedElement == null) {
         return;
       }
 
-      JoinColumn joinColumn = annotatedElement
-          .getAnnotation(JoinColumn.class);
+      JoinColumn joinColumn = annotatedElement.getAnnotation(JoinColumn.class);
       if (joinColumn == null) {
-        JoinColumns joinColumns = annotatedElement
-            .getAnnotation(JoinColumns.class);
+        JoinColumns joinColumns = annotatedElement.getAnnotation(JoinColumns.class);
 
         if (joinColumns != null) {
           JoinColumn[] joinColumnArray = joinColumns.value();

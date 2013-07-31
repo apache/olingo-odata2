@@ -70,8 +70,7 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
 
       } catch (JAXBException e) {
         mappingModelExists = false;
-        ODataJPAModelException.throwException(
-            ODataJPAModelException.GENERAL, e);
+        ODataJPAModelException.throwException(ODataJPAModelException.GENERAL, e);
       }
     }
   }
@@ -89,8 +88,7 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   @Override
   public String mapJPAPersistenceUnit(final String persistenceUnitName) {
 
-    JPAPersistenceUnitMapType persistenceUnit = mappingModel
-        .getPersistenceUnit();
+    JPAPersistenceUnitMapType persistenceUnit = mappingModel.getPersistenceUnit();
     if (persistenceUnit.getName().equals(persistenceUnitName)) {
       return persistenceUnit.getEDMSchemaNamespace();
     }
@@ -120,16 +118,13 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   @Override
-  public String mapJPAAttribute(final String jpaEntityTypeName,
-      final String jpaAttributeName) {
+  public String mapJPAAttribute(final String jpaEntityTypeName, final String jpaAttributeName) {
     JPAEntityTypeMapType jpaEntityTypeMap = searchJPAEntityTypeMapType(jpaEntityTypeName);
-    if (jpaEntityTypeMap != null
-        && jpaEntityTypeMap.getJPAAttributes() != null) {
+    if (jpaEntityTypeMap != null && jpaEntityTypeMap.getJPAAttributes() != null) {
       // fixing attributes
       // removal issue
       // from mapping
-      for (JPAAttribute jpaAttribute : jpaEntityTypeMap
-          .getJPAAttributes().getJPAAttribute()) {
+      for (JPAAttribute jpaAttribute : jpaEntityTypeMap.getJPAAttributes().getJPAAttribute()) {
         if (jpaAttribute.getName().equals(jpaAttributeName)) {
           return jpaAttribute.getValue();
         }
@@ -140,12 +135,10 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   @Override
-  public String mapJPARelationship(final String jpaEntityTypeName,
-      final String jpaRelationshipName) {
+  public String mapJPARelationship(final String jpaEntityTypeName, final String jpaRelationshipName) {
     JPAEntityTypeMapType jpaEntityTypeMap = searchJPAEntityTypeMapType(jpaEntityTypeName);
     if (jpaEntityTypeMap != null) {
-      for (JPARelationship jpaRealtionship : jpaEntityTypeMap
-          .getJPARelationships().getJPARelationship()) {
+      for (JPARelationship jpaRealtionship : jpaEntityTypeMap.getJPARelationships().getJPARelationship()) {
         if (jpaRealtionship.getName().equals(jpaRelationshipName)) {
           return jpaRealtionship.getValue();
         }
@@ -166,12 +159,10 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   @Override
-  public String mapJPAEmbeddableTypeAttribute(final String jpaEmbeddableTypeName,
-      final String jpaAttributeName) {
+  public String mapJPAEmbeddableTypeAttribute(final String jpaEmbeddableTypeName, final String jpaAttributeName) {
     JPAEmbeddableTypeMapType jpaEmbeddableType = searchJPAEmbeddableTypeMapType(jpaEmbeddableTypeName);
     if (jpaEmbeddableType != null && jpaEmbeddableType.getJPAAttributes() != null) {
-      for (JPAAttribute jpaAttribute : jpaEmbeddableType
-          .getJPAAttributes().getJPAAttribute()) {
+      for (JPAAttribute jpaAttribute : jpaEmbeddableType.getJPAAttributes().getJPAAttribute()) {
         if (jpaAttribute.getName().equals(jpaAttributeName)) {
           return jpaAttribute.getValue();
         }
@@ -180,10 +171,8 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
     return null;
   }
 
-  private JPAEntityTypeMapType searchJPAEntityTypeMapType(
-      final String jpaEntityTypeName) {
-    for (JPAEntityTypeMapType jpaEntityType : mappingModel
-        .getPersistenceUnit().getJPAEntityTypes().getJPAEntityType()) {
+  private JPAEntityTypeMapType searchJPAEntityTypeMapType(final String jpaEntityTypeName) {
+    for (JPAEntityTypeMapType jpaEntityType : mappingModel.getPersistenceUnit().getJPAEntityTypes().getJPAEntityType()) {
       if (jpaEntityType.getName().equals(jpaEntityTypeName)) {
         return jpaEntityType;
       }
@@ -192,11 +181,8 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
     return null;
   }
 
-  private JPAEmbeddableTypeMapType searchJPAEmbeddableTypeMapType(
-      final String jpaEmbeddableTypeName) {
-    for (JPAEmbeddableTypeMapType jpaEmbeddableType : mappingModel
-        .getPersistenceUnit().getJPAEmbeddableTypes()
-        .getJPAEmbeddableType()) {
+  private JPAEmbeddableTypeMapType searchJPAEmbeddableTypeMapType(final String jpaEmbeddableTypeName) {
+    for (JPAEmbeddableTypeMapType jpaEmbeddableType : mappingModel.getPersistenceUnit().getJPAEmbeddableTypes().getJPAEmbeddableType()) {
       if (jpaEmbeddableType.getName().equals(jpaEmbeddableTypeName)) {
         return jpaEmbeddableType;
       }
@@ -206,8 +192,7 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   protected InputStream loadMappingModelInputStream() {
-    InputStream is = JPAEdmMappingModelService.class.getClassLoader()
-        .getResourceAsStream("../../" + mappingModelName);
+    InputStream is = JPAEdmMappingModelService.class.getClassLoader().getResourceAsStream("../../" + mappingModelName);
 
     return is;
 
@@ -223,12 +208,10 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   @Override
-  public boolean checkExclusionOfJPAAttributeType(final String jpaEntityTypeName,
-      final String jpaAttributeName) {
+  public boolean checkExclusionOfJPAAttributeType(final String jpaEntityTypeName, final String jpaAttributeName) {
     JPAEntityTypeMapType type = searchJPAEntityTypeMapType(jpaEntityTypeName);
     if (type != null && type.getJPAAttributes() != null) {
-      for (JPAAttribute jpaAttribute : type.getJPAAttributes()
-          .getJPAAttribute()) {
+      for (JPAAttribute jpaAttribute : type.getJPAAttributes().getJPAAttribute()) {
         if (jpaAttribute.getName().equals(jpaAttributeName)) {
           return jpaAttribute.isExclude();
         }
@@ -238,8 +221,7 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   @Override
-  public boolean checkExclusionOfJPAEmbeddableType(
-      final String jpaEmbeddableTypeName) {
+  public boolean checkExclusionOfJPAEmbeddableType(final String jpaEmbeddableTypeName) {
     JPAEmbeddableTypeMapType type = searchJPAEmbeddableTypeMapType(jpaEmbeddableTypeName);
     if (type != null) {
       return type.isExclude();
@@ -248,12 +230,10 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   @Override
-  public boolean checkExclusionOfJPAEmbeddableAttributeType(
-      final String jpaEmbeddableTypeName, final String jpaAttributeName) {
+  public boolean checkExclusionOfJPAEmbeddableAttributeType(final String jpaEmbeddableTypeName, final String jpaAttributeName) {
     JPAEmbeddableTypeMapType type = searchJPAEmbeddableTypeMapType(jpaEmbeddableTypeName);
     if (type != null && type.getJPAAttributes() != null) {
-      for (JPAAttribute jpaAttribute : type.getJPAAttributes()
-          .getJPAAttribute()) {
+      for (JPAAttribute jpaAttribute : type.getJPAAttributes().getJPAAttribute()) {
         if (jpaAttribute.getName().equals(jpaAttributeName)) {
           return jpaAttribute.isExclude();
         }

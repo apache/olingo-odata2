@@ -53,8 +53,7 @@ public interface ODataJPAAccessFactory {
    *            The context should be initialized properly and cannot be null.
    * @return An implementation of OData JPA Processor.
    */
-  public ODataSingleProcessor createODataProcessor(
-      ODataJPAContext oDataJPAContext);
+  public ODataSingleProcessor createODataProcessor(ODataJPAContext oDataJPAContext);
 
   /**
    * 

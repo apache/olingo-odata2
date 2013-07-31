@@ -59,12 +59,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 
-public class JPAEdmTestModelView implements JPAEdmAssociationEndView,
-    JPAEdmAssociationSetView, JPAEdmAssociationView, JPAEdmBaseView,
-    JPAEdmComplexPropertyView, JPAEdmComplexTypeView,
-    JPAEdmEntityContainerView, JPAEdmEntitySetView, JPAEdmEntityTypeView,
-    JPAEdmKeyView, JPAEdmModelView, JPAEdmNavigationPropertyView,
-    JPAEdmPropertyView, JPAEdmReferentialConstraintView, JPAEdmSchemaView {
+public class JPAEdmTestModelView implements JPAEdmAssociationEndView, JPAEdmAssociationSetView, JPAEdmAssociationView, JPAEdmBaseView, JPAEdmComplexPropertyView, JPAEdmComplexTypeView, JPAEdmEntityContainerView, JPAEdmEntitySetView, JPAEdmEntityTypeView, JPAEdmKeyView, JPAEdmModelView, JPAEdmNavigationPropertyView, JPAEdmPropertyView, JPAEdmReferentialConstraintView, JPAEdmSchemaView {
 
   protected JPAEdmMappingModelAccess mappingModelAccess;
 
@@ -304,8 +299,7 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView,
   }
 
   @Override
-  public void addJPAEdmNavigationPropertyView(
-      final JPAEdmNavigationPropertyView view) {
+  public void addJPAEdmNavigationPropertyView(final JPAEdmNavigationPropertyView view) {
 
   }
 
@@ -320,8 +314,7 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView,
   }
 
   @Override
-  public void expandEdmComplexType(final ComplexType complexType,
-      final List<Property> expandedPropertyList, final String embeddablePropertyName) {
+  public void expandEdmComplexType(final ComplexType complexType, final List<Property> expandedPropertyList, final String embeddablePropertyName) {
 
   }
 
@@ -354,15 +347,13 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView,
   }
 
   @Override
-  public void addJPAEdmAssociationView(final JPAEdmAssociationView associationView,
-      final JPAEdmAssociationEndView associationEndView) {
+  public void addJPAEdmAssociationView(final JPAEdmAssociationView associationView, final JPAEdmAssociationEndView associationEndView) {
     // TODO Auto-generated method stub
 
   }
 
   @Override
-  public int getNumberOfAssociationsWithSimilarEndPoints(
-      final JPAEdmAssociationEndView view) {
+  public int getNumberOfAssociationsWithSimilarEndPoints(final JPAEdmAssociationEndView view) {
     // TODO Auto-generated method stub
     return 0;
   }

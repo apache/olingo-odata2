@@ -54,9 +54,7 @@ public class JPQLSelectSingleContext extends JPQLContext implements JPQLSelectSi
     return selectExpression;
   }
 
-  public class JPQLSelectSingleContextBuilder
-      extends
-      org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder {
+  public class JPQLSelectSingleContextBuilder extends org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder {
 
     protected GetEntityUriInfo entityView;
 
@@ -68,8 +66,7 @@ public class JPQLSelectSingleContext extends JPQLContext implements JPQLSelectSi
 
           setType(JPQLContextType.SELECT_SINGLE);
 
-          EdmEntityType entityType = entityView
-              .getTargetEntitySet().getEntityType();
+          EdmEntityType entityType = entityView.getTargetEntitySet().getEntityType();
           EdmMapping mapping = entityType.getMapping();
           if (mapping != null) {
             setJPAEntityName(mapping.getInternalName());
@@ -84,9 +81,7 @@ public class JPQLSelectSingleContext extends JPQLContext implements JPQLSelectSi
           setSelectExpression(generateSelectExpression());
 
         } catch (EdmException e) {
-          throw ODataJPARuntimeException.throwException(
-              ODataJPARuntimeException.GENERAL.addContent(e
-                  .getMessage()), e);
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         }
 
       }

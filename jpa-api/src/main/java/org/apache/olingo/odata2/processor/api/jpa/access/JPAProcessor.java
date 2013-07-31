@@ -57,8 +57,7 @@ public interface JPAProcessor {
    *            <p>
    * @return list of objects representing JPA entity types
    **/
-  public <T> List<T> process(GetEntitySetUriInfo requestView)
-      throws ODataJPAModelException, ODataJPARuntimeException;
+  public <T> List<T> process(GetEntitySetUriInfo requestView) throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**
    * Processes OData request for reading an Entity. The method returns an
@@ -76,8 +75,7 @@ public interface JPAProcessor {
    *            <p>
    * @return object representing JPA entity type
    **/
-  public <T> Object process(GetEntityUriInfo requestView)
-      throws ODataJPAModelException, ODataJPARuntimeException;
+  public <T> Object process(GetEntityUriInfo requestView) throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**
    * Processes OData request for fetching Entity count. The method returns JPA Entity count
@@ -90,8 +88,7 @@ public interface JPAProcessor {
    * @throws ODataJPARuntimeException
    */
 
-  public long process(GetEntitySetCountUriInfo requestView)
-      throws ODataJPAModelException, ODataJPARuntimeException;
+  public long process(GetEntitySetCountUriInfo requestView) throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**
    * Processes OData request for fetching Entity count. The method returns count of target entity.
@@ -104,8 +101,7 @@ public interface JPAProcessor {
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException
    */
-  public long process(GetEntityCountUriInfo resultsView)
-      throws ODataJPAModelException, ODataJPARuntimeException;
+  public long process(GetEntityCountUriInfo resultsView) throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**
    * Processes OData request for creating Entity. The method returns an Object
@@ -121,9 +117,7 @@ public interface JPAProcessor {
    * @throws ODataJPARuntimeException
    */
 
-  public <T> List<T> process(PostUriInfo createView, InputStream content,
-      String requestContentType) throws ODataJPAModelException,
-      ODataJPARuntimeException;
+  public <T> List<T> process(PostUriInfo createView, InputStream content, String requestContentType) throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**
    * Processes OData request for updating Entity. The method returns an Object
@@ -136,9 +130,7 @@ public interface JPAProcessor {
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException
    */
-  public <T> Object process(PutMergePatchUriInfo updateView,
-      InputStream content, String requestContentType)
-      throws ODataJPAModelException, ODataJPARuntimeException;
+  public <T> Object process(PutMergePatchUriInfo updateView, InputStream content, String requestContentType) throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**
    * Processes OData request for deleting Entity. The method returns an Object
@@ -151,8 +143,7 @@ public interface JPAProcessor {
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException
    */
-  public Object process(DeleteUriInfo deleteuriInfo, String contentType)
-      throws ODataJPAModelException, ODataJPARuntimeException;
+  public Object process(DeleteUriInfo deleteuriInfo, String contentType) throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**
    * Processes OData request for executing custom operations. The method
@@ -165,8 +156,7 @@ public interface JPAProcessor {
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException
    */
-  public List<Object> process(GetFunctionImportUriInfo requestView)
-      throws ODataJPAModelException, ODataJPARuntimeException;
+  public List<Object> process(GetFunctionImportUriInfo requestView) throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**
    * Processes OData request for executing $links OData command for N:1 relation. 
@@ -178,8 +168,7 @@ public interface JPAProcessor {
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException
    */
-  public Object process(GetEntityLinkUriInfo uriParserResultView)
-      throws ODataJPAModelException, ODataJPARuntimeException;
+  public Object process(GetEntityLinkUriInfo uriParserResultView) throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**
    * Processes OData request for executing $links OData command for N:1 relation. 
@@ -191,8 +180,7 @@ public interface JPAProcessor {
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException
    */
-  public <T> List<T> process(GetEntitySetLinksUriInfo uriParserResultView)
-      throws ODataJPAModelException, ODataJPARuntimeException;
+  public <T> List<T> process(GetEntitySetLinksUriInfo uriParserResultView) throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**
    * Process OData request for creating Links. The OData request should contain
@@ -207,9 +195,7 @@ public interface JPAProcessor {
    * @throws ODataJPARuntimeException
    * @throws ODataJPAModelException
    */
-  public void process(PostUriInfo uriParserResultView,
-      InputStream content, String requestContentType, String contentType)
-      throws ODataJPARuntimeException, ODataJPAModelException;
+  public void process(PostUriInfo uriParserResultView, InputStream content, String requestContentType, String contentType) throws ODataJPARuntimeException, ODataJPAModelException;
 
   /**
    * Process OData request for updating Links. The OData request should contain
@@ -224,7 +210,5 @@ public interface JPAProcessor {
    * @throws ODataJPARuntimeException
    * @throws ODataJPAModelException
    */
-  public void process(PutMergePatchUriInfo uriParserResultView,
-      InputStream content, String requestContentType, String contentType)
-      throws ODataJPARuntimeException, ODataJPAModelException;
+  public void process(PutMergePatchUriInfo uriParserResultView, InputStream content, String requestContentType, String contentType) throws ODataJPARuntimeException, ODataJPAModelException;
 }

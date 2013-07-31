@@ -48,8 +48,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPATypeConvertor;
 
-public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements
-    JPAEdmFunctionImportView {
+public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFunctionImportView {
 
   private List<FunctionImport> consistentFunctionImportList = new ArrayList<FunctionImport>();
   private JPAEdmBuilder builder = null;
@@ -79,14 +78,11 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements
     private JPAEdmComplexTypeView jpaEdmComplexTypeView = null;
 
     @Override
-    public void build() throws ODataJPAModelException,
-        ODataJPARuntimeException {
+    public void build() throws ODataJPAModelException, ODataJPARuntimeException {
 
-      HashMap<Class<?>, String[]> customOperations = schemaView
-          .getRegisteredOperations();
+      HashMap<Class<?>, String[]> customOperations = schemaView.getRegisteredOperations();
 
-      jpaEdmEntityTypeView = schemaView.getJPAEdmEntityContainerView()
-          .getJPAEdmEntitySetView().getJPAEdmEntityTypeView();
+      jpaEdmEntityTypeView = schemaView.getJPAEdmEntityContainerView().getJPAEdmEntitySetView().getJPAEdmEntityTypeView();
       jpaEdmComplexTypeView = schemaView.getJPAEdmComplexTypeView();
 
       if (customOperations != null) {
@@ -110,8 +106,7 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements
             try {
               if (operationNames != null) {
                 for (Method method2 : methods) {
-                  if (method2.getName().equals(
-                      operationNames[i])) {
+                  if (method2.getName().equals(operationNames[i])) {
                     found = true;
                     method = method2;
                     break;
@@ -128,24 +123,20 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements
 
               FunctionImport functionImport = buildFunctionImport(method);
               if (functionImport != null) {
-                consistentFunctionImportList
-                    .add(functionImport);
+                consistentFunctionImportList.add(functionImport);
               }
 
             } catch (SecurityException e) {
-              throw ODataJPAModelException.throwException(
-                  ODataJPAModelException.GENERAL, e);
+              throw ODataJPAModelException.throwException(ODataJPAModelException.GENERAL, e);
             }
           }
         }
       }
     }
 
-    private FunctionImport buildFunctionImport(final Method method)
-        throws ODataJPAModelException {
+    private FunctionImport buildFunctionImport(final Method method) throws ODataJPAModelException {
 
-      org.apache.olingo.odata2.api.annotation.edm.FunctionImport annotation = method
-          .getAnnotation(org.apache.olingo.odata2.api.annotation.edm.FunctionImport.class);
+      org.apache.olingo.odata2.api.annotation.edm.FunctionImport annotation = method.getAnnotation(org.apache.olingo.odata2.api.annotation.edm.FunctionImport.class);
       if (annotation != null && annotation.returnType() != ReturnType.NONE) {
         FunctionImport functionImport = new FunctionImport();
 
@@ -170,8 +161,7 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements
       return null;
     }
 
-    private void buildParameter(final FunctionImport functionImport, final Method method)
-        throws ODataJPAModelException {
+    private void buildParameter(final FunctionImport functionImport, final Method method) throws ODataJPAModelException {
 
       Annotation[][] annotations = method.getParameterAnnotations();
       Class<?>[] parameterTypes = method.getParameterTypes();
@@ -186,20 +176,13 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements
             Parameter annotation = (Parameter) element;
             FunctionImportParameter functionImportParameter = new FunctionImportParameter();
             if (annotation.name().equals("")) {
-              throw ODataJPAModelException.throwException(
-                  ODataJPAModelException.FUNC_PARAM_NAME_EXP
-                      .addContent(method
-                          .getDeclaringClass()
-                          .getName(), method
-                          .getName()), null);
+              throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_PARAM_NAME_EXP.addContent(method.getDeclaringClass().getName(), method.getName()), null);
             } else {
               functionImportParameter.setName(annotation.name());
             }
 
-            functionImportParameter.setType(JPATypeConvertor
-                .convertToEdmSimpleType(parameterType, null));
-            functionImportParameter.setMode(annotation.mode()
-                .toString());
+            functionImportParameter.setType(JPATypeConvertor.convertToEdmSimpleType(parameterType, null));
+            functionImportParameter.setMode(annotation.mode().toString());
 
             Facets facets = new Facets();
             if (annotation.facets().maxLength() > 0) {
@@ -231,10 +214,7 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements
       }
     }
 
-    private void buildReturnType(final FunctionImport functionImport,
-        final Method method,
-        final org.apache.olingo.odata2.api.annotation.edm.FunctionImport annotation)
-        throws ODataJPAModelException {
+    private void buildReturnType(final FunctionImport functionImport, final Method method, final org.apache.olingo.odata2.api.annotation.edm.FunctionImport annotation) throws ODataJPAModelException {
       ReturnType returnType = annotation.returnType();
       Multiplicity multiplicity = null;
 
@@ -251,79 +231,46 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements
         if (returnType == ReturnType.ENTITY_TYPE) {
           String entitySet = annotation.entitySet();
           if (entitySet.equals("")) {
-            throw ODataJPAModelException
-                .throwException(
-                    ODataJPAModelException.FUNC_ENTITYSET_EXP,
-                    null);
+            throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_ENTITYSET_EXP, null);
           }
           functionImport.setEntitySet(entitySet);
         }
 
         Class<?> methodReturnType = method.getReturnType();
-        if (methodReturnType == null
-            || methodReturnType.getName().equals("void")) {
-          throw ODataJPAModelException.throwException(
-              ODataJPAModelException.FUNC_RETURN_TYPE_EXP
-                  .addContent(method.getDeclaringClass(),
-                      method.getName()), null);
+        if (methodReturnType == null || methodReturnType.getName().equals("void")) {
+          throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_EXP.addContent(method.getDeclaringClass(), method.getName()), null);
         }
         switch (returnType) {
         case ENTITY_TYPE:
           EntityType edmEntityType = null;
           if (multiplicity == Multiplicity.ONE) {
-            edmEntityType = jpaEdmEntityTypeView
-                .searchEdmEntityType(methodReturnType
-                    .getSimpleName());
+            edmEntityType = jpaEdmEntityTypeView.searchEdmEntityType(methodReturnType.getSimpleName());
           } else if (multiplicity == Multiplicity.MANY) {
-            edmEntityType = jpaEdmEntityTypeView
-                .searchEdmEntityType(getReturnTypeSimpleName(method));
+            edmEntityType = jpaEdmEntityTypeView.searchEdmEntityType(getReturnTypeSimpleName(method));
           }
 
           if (edmEntityType == null) {
-            throw ODataJPAModelException
-                .throwException(
-                    ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND
-                        .addContent(
-                            method.getDeclaringClass(),
-                            method.getName(),
-                            methodReturnType
-                                .getSimpleName()),
-                    null);
+            throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND.addContent(method.getDeclaringClass(), method.getName(), methodReturnType.getSimpleName()), null);
           }
-          functionReturnType.setTypeName(JPAEdmNameBuilder.build(
-              schemaView, edmEntityType.getName()));
+          functionReturnType.setTypeName(JPAEdmNameBuilder.build(schemaView, edmEntityType.getName()));
           break;
         case SCALAR:
 
-          EdmSimpleTypeKind edmSimpleTypeKind = JPATypeConvertor
-              .convertToEdmSimpleType(methodReturnType, null);
-          functionReturnType.setTypeName(edmSimpleTypeKind
-              .getFullQualifiedName());
+          EdmSimpleTypeKind edmSimpleTypeKind = JPATypeConvertor.convertToEdmSimpleType(methodReturnType, null);
+          functionReturnType.setTypeName(edmSimpleTypeKind.getFullQualifiedName());
 
           break;
         case COMPLEX_TYPE:
           ComplexType complexType = null;
           if (multiplicity == Multiplicity.ONE) {
-            complexType = jpaEdmComplexTypeView
-                .searchEdmComplexType(methodReturnType
-                    .getName());
+            complexType = jpaEdmComplexTypeView.searchEdmComplexType(methodReturnType.getName());
           } else if (multiplicity == Multiplicity.MANY) {
-            complexType = jpaEdmComplexTypeView
-                .searchEdmComplexType(getReturnTypeName(method));
+            complexType = jpaEdmComplexTypeView.searchEdmComplexType(getReturnTypeName(method));
           }
           if (complexType == null) {
-            throw ODataJPAModelException
-                .throwException(
-                    ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND
-                        .addContent(
-                            method.getDeclaringClass(),
-                            method.getName(),
-                            methodReturnType
-                                .getSimpleName()),
-                    null);
+            throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND.addContent(method.getDeclaringClass(), method.getName(), methodReturnType.getSimpleName()), null);
           }
-          functionReturnType.setTypeName(JPAEdmNameBuilder.build(
-              schemaView, complexType.getName()));
+          functionReturnType.setTypeName(JPAEdmNameBuilder.build(schemaView, complexType.getName()));
           break;
         default:
           break;
@@ -334,8 +281,7 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements
 
     private String getReturnTypeName(final Method method) {
       try {
-        ParameterizedType pt = (ParameterizedType) method
-            .getGenericReturnType();
+        ParameterizedType pt = (ParameterizedType) method.getGenericReturnType();
         Type t = pt.getActualTypeArguments()[0];
         return ((Class<?>) t).getName();
       } catch (ClassCastException e) {
@@ -345,8 +291,7 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements
 
     private String getReturnTypeSimpleName(final Method method) {
       try {
-        ParameterizedType pt = (ParameterizedType) method
-            .getGenericReturnType();
+        ParameterizedType pt = (ParameterizedType) method.getGenericReturnType();
         Type t = pt.getActualTypeArguments()[0];
         return ((Class<?>) t).getSimpleName();
       } catch (ClassCastException e) {

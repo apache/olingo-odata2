@@ -113,7 +113,6 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
    *            is the name of the complex property. The name is used as the
    *            qualifier for the expanded simple property names.
    */
-  public void expandEdmComplexType(ComplexType complexType,
-      List<Property> expandedPropertyList, String embeddablePropertyName);
+  public void expandEdmComplexType(ComplexType complexType, List<Property> expandedPropertyList, String embeddablePropertyName);
 
 }
