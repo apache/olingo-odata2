@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author
+ *  
  */
 public class EdmImplTest extends BaseTest {
 

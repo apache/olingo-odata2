@@ -38,7 +38,7 @@ import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
  * list of EDM navigation properties of an EDM entity type. EDM navigation
  * property is consistent only if there exists a consistent EDM association.
  * 
- * @author
+ *  
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView
  * 

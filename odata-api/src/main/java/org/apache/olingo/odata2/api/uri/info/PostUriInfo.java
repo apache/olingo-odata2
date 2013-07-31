@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.api.uri.NavigationSegment;
 /**
  * Access to the parts of the request URI that are relevant for POST requests.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author
+ *  
  */
 public interface PostUriInfo {
   /**

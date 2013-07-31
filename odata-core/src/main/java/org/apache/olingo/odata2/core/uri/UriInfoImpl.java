@@ -40,7 +40,7 @@ import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
 
 /**
- * @author
+ *  
  */
 public class UriInfoImpl implements UriInfo {
 

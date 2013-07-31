@@ -78,7 +78,7 @@ import org.apache.olingo.odata2.testutil.mock.MockFacade;
 /**
  * Tests for the validation of HTTP method, URI path, query options,
  * and request-body content type.
- * @author
+ *  
  */
 public class ODataRequestHandlerValidationTest extends BaseTest {
 

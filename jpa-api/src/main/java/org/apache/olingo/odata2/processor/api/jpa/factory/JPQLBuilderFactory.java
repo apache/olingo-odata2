@@ -38,7 +38,7 @@ import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLStatement.JPQLStateme
  * </ul>
  * </p>
  * 
- * @author
+ *  
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory
  */
 public interface JPQLBuilderFactory {

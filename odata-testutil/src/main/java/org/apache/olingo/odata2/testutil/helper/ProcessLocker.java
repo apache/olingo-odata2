@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.testutil.TestUtilRuntimeException;
 /**
  * Interprocess synchronization to enable parallel test executions.
  * 
- * @author
+ *  
  */
 public class ProcessLocker {
 

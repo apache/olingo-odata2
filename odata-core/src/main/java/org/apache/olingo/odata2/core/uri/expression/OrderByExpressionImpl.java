@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
 import org.apache.olingo.odata2.api.uri.expression.OrderExpression;
 
 /**
- * @author
+ *  
  */
 public class OrderByExpressionImpl implements OrderByExpression {
   private String orderbyString;

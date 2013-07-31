@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.api.ep.feed;
 
 /**
  * {@link FeedMetadata} objects contain metadata information about one feed.
- * @author
+ *  
  *
  */
 public interface FeedMetadata {

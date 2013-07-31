@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
- * @author
+ *  
  */
 public class MyCallback implements OnWriteEntryContent, OnWriteFeedContent {
 

@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmModelView;
  * <li>JPA Processor</li>
  * </ol>
  * 
- * @author
+ *  
  * 
  */
 public interface JPAAccessFactory {

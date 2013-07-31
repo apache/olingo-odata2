@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  * kinds of JPQL statements are built. 
  * The JPQL statements thus generated can be executed using JPA Query APIs to fetch JPA entities.
  * 
- * @author
+ *  
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.JPQLBuilderFactory
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextView
  */
@@ -81,7 +81,7 @@ public class JPQLStatement {
    * A default statement builder for building each kind of JPQL statements is
    * provided by the library.
    * 
-   * @author
+   *  
    * 
    */
   public static abstract class JPQLStatementBuilder {

@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.core.ep.entry;
 import org.apache.olingo.odata2.api.ep.entry.MediaMetadata;
 
 /**
- * @author
+ *  
  */
 public class MediaMetadataImpl implements MediaMetadata {
 

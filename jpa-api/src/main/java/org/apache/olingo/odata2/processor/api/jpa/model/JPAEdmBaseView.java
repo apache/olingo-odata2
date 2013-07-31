@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmMappingModelAcces
  * The implementation of the view acts as a base container for containers of
  * Java Persistence Model and Entity Data Model elements.
  * 
- * @author
+ *  
  *         <p>
  * @DoNotImplement
  * 

@@ -59,7 +59,7 @@ import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
  * Tests for the debug information output.
- * @author
+ *  
  */
 public class ODataDebugResponseWrapperTest extends BaseTest {
 

@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.testutil.mock.TecEdmInfo;
 import org.apache.olingo.odata2.testutil.mock.TechnicalScenarioEdmProvider;
 
 /**
- * @author
+ *  
  */
 public class TestBase {
 

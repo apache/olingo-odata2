@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author
+ *  
  */
 public class TeamTest extends BaseTest {
 

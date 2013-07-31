@@ -49,7 +49,7 @@ import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author
+ *  
  *
  */
 public class EdmEntitySetProvTest extends BaseTest {

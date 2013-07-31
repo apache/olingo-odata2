@@ -48,7 +48,7 @@ import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
 
 /**
- * @author
+ *  
  */
 public class JsonEntryConsumer {
 

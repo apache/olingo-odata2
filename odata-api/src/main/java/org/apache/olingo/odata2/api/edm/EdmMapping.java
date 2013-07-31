@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmMapping holds custom mapping information which can be applied to a CSDL element.
- * @author
+ *  
  */
 public interface EdmMapping {
 

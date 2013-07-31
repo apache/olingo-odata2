@@ -58,7 +58,7 @@ import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 /**
  * Provider for all basic (content type independent) entity provider methods.
  * 
- * @author
+ *  
  */
 public class BasicEntityProvider {
 

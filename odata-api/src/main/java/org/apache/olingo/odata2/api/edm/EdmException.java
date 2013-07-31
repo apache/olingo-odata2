@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.exception.ODataMessageException;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * An exception for problems regarding the Entity Data Model.
- * @author
+ *  
  */
 public class EdmException extends ODataMessageException {
 

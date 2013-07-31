@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.uri.expression.UnaryExpression;
 import org.apache.olingo.odata2.api.uri.expression.UnaryOperator;
 
 /**
- * @author
+ *  
  */
 public class UnaryExpressionImpl implements UnaryExpression {
   private InfoUnaryOperator operatorInfo = null;

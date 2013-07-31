@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.core.uri.expression;
 
 /**
  * Internal error. If used(thrown) the thrower
- * @author 
+ *   
  */
 public class TokenizerRTException extends Exception {
 

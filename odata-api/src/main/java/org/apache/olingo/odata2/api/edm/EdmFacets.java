@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.api.edm;
  * @org.apache.olingo.odata2.DoNotImplement
  * <p>A Facet is an element defined in CSDL that provides information
  * that specializes the usage of a type.</p>
- * @author
+ *  
  */
 public interface EdmFacets {
 

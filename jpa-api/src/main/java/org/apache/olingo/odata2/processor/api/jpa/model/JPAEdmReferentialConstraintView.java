@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.edm.provider.ReferentialConstraint;
  * to be consistent only if referential constraint role is consistent.
  * </p>
  * 
- * @author<br>
+ *  <br>
  * @DoNotImplement
  * <br>
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintRoleView

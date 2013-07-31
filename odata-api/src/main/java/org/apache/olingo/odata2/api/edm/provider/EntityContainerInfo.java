@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this class represent an entity container
- * @author
+ *  
  */
 public class EntityContainerInfo {
 

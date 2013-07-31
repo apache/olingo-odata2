@@ -55,7 +55,7 @@ import org.apache.olingo.odata2.testutil.helper.HttpSomethingUnsupported;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author
+ *  
  */
 public class BasicHttpTest extends AbstractBasicTest {
 

@@ -40,7 +40,7 @@ import org.apache.olingo.odata2.testutil.helper.XMLUnitHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author
+ *  
  */
 public class XmlPropertyProducerTest extends AbstractProviderTest {
 

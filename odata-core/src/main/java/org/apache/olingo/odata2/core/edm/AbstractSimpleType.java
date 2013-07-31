@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 
 /**
  * Abstract implementation of the EDM simple-type interface.
- * @author
+ *  
  */
 public abstract class AbstractSimpleType implements EdmSimpleType {
 

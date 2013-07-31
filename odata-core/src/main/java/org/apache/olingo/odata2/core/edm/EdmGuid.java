@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the EDM simple type Guid.
- * @author
+ *  
  */
 public class EdmGuid extends AbstractSimpleType {
 

@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
- * @author
+ *  
  */
 public class EdmSimpleTypeFacadeImpl implements EdmSimpleTypeFacade {
 

@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmAnnotations holds all annotation attributes and elements for a specific CSDL element.
- * @author
+ *  
  */
 public interface EdmAnnotations {
 

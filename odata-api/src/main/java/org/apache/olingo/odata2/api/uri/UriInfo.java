@@ -52,7 +52,7 @@ import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 /**
  * Structured parts of the request URI - the result of URI parsing.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author
+ *  
  * @see UriParser
  */
 public interface UriInfo extends GetServiceDocumentUriInfo,

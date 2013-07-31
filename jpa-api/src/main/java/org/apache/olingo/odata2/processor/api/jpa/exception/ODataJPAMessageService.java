@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.exception.MessageReference;
  * not found for the given language then the default language -EN is used for
  * the message texts.
  * 
- * @author
+ *  
  * @see org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAException
  * @see org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException
  * @see org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAModelException

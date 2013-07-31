@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.processor.api.jpa.access.JPAJoinClause;
  * any WHERE,ORDERBY clauses. The clauses are built from OData read entity
  * request views.
  * 
- * @author
+ *  
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLSelectSingleContextView
  * 
  */

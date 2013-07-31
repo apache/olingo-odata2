@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmTypeKind specifies the type of an EDM element.
- * @author
+ *  
  */
 public enum EdmTypeKind {
 

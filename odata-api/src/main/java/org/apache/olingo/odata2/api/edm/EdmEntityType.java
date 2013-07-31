@@ -26,7 +26,7 @@ import java.util.List;
  * properties and {@link EdmComplexType} properties and in addition to a
  * {@link EdmComplexType complex type} it provides information about key properties,
  * customizable feed mappings and {@link EdmNavigationProperty navigation properties}. 
- * @author
+ *  
  * @org.apache.olingo.odata2.DoNotImplement
  */
 public interface EdmEntityType extends EdmStructuralType {

@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.core.ep.feed.FeedMetadataImpl;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 
 /**
- * @author
+ *  
  */
 public class JsonLinkConsumer {
 

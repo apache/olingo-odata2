@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the EDM simple type Binary.
- * @author
+ *  
  */
 public class EdmBinary extends AbstractSimpleType {
 

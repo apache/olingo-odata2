@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
  * provides non localized error texts that can be used for raising OData JPA
  * exceptions with non localized error texts.
  * 
- * @author
+ *  
  * 
  */
 public abstract class ODataJPAException extends ODataException {

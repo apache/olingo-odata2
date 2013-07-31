@@ -41,7 +41,7 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author
+ *  
  */
 public class JsonServiceDocumentProducerTest extends BaseTest {
 

@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.edm.EdmTyped;
  * against the EDM.
  * <br>
  * <br>
- * @author
+ *  
  */
 public interface PropertyExpression extends CommonExpression {
   /**

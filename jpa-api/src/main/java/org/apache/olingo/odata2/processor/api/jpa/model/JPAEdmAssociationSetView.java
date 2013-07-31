@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
  * container for list of association sets that are consistent.
  * </p>
  * 
- * @author
+ *  
  *         <p>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView

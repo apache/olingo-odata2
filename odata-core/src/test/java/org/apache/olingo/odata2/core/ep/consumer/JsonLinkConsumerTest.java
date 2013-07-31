@@ -30,7 +30,7 @@ import com.google.gson.stream.JsonReader;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
 /**
- * @author
+ *  
  */
 public class JsonLinkConsumerTest extends AbstractConsumerTest {
 

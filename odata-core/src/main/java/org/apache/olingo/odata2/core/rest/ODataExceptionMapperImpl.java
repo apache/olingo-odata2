@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 /**
  * Creates an error response according to the format defined by the OData standard
  * if an exception occurs that is not handled elsewhere.
- * @author
+ *  
  */
 @Provider
 public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {

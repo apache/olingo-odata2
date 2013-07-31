@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the EDM simple type Int64.
- * @author
+ *  
  */
 public class EdmInt64 extends AbstractSimpleType {
 

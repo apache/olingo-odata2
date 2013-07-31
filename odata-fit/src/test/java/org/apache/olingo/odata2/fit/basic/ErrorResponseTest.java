@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
- * @author
+ *  
  */
 public class ErrorResponseTest extends AbstractBasicTest {
 

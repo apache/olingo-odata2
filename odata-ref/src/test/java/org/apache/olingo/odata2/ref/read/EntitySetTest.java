@@ -49,7 +49,7 @@ import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author
+ *  
  */
 public class EntitySetTest extends BaseTest {
 

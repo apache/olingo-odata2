@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.api.edm;
  * @org.apache.olingo.odata2.DoNotImplement
  * Entity Data Model (EDM)
  * <p>Interface representing a Entity Data Model as described in the Conceptual Schema Definition.
- * @author
+ *  
  */
 public interface Edm {
 

@@ -27,7 +27,7 @@ package org.apache.olingo.odata2.api.edm;
  * <dt>   1</dt><dd>exactly one</dd>
  * <dt>   *</dt><dd>many</dd>
  * </dl></p> 
- * @author
+ *  
  */
 public enum EdmMultiplicity {
 

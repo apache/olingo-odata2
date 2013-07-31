@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.processor.api.jpa.access;
 
 /**
  * 
- * @author
+ *  
  *
  */
 public class JPAProcessorRegistry {

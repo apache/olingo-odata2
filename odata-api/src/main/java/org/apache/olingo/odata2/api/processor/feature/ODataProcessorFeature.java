@@ -23,7 +23,7 @@ package org.apache.olingo.odata2.api.processor.feature;
  * the OData library can request additional information from the processor to change
  * control over request handling. 
  * 
- * @author
+ *  
  */
 public interface ODataProcessorFeature {
 

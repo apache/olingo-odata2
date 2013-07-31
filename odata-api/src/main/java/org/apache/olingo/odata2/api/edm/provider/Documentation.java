@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this class represent documentation
- * @author
+ *  
  */
 public class Documentation {
 

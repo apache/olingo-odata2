@@ -45,7 +45,7 @@ import org.apache.olingo.odata2.ref.model.Team;
 
 /**
  * Data for the reference scenario
- * @author
+ *  
  */
 public class ScenarioDataSource implements ListsDataSource {
 

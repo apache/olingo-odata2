@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmName is the base interface for nearly all CSDL constructs.
- * @author
+ *  
  */
 public interface EdmNamed {
 

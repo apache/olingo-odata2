@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.exception.ODataMessageException;
  * This exception is thrown if there is an error during tokenizing.<br>
  * <b>This exception in not in the public API</b>, but may be added as cause for
  * the {@link org.apache.olingo.odata2.api.uri.expression.ExpressionParserException} exception.  
- * @author
+ *  
  */
 public class TokenizerException extends ODataMessageException {
   private static final long serialVersionUID = 77L;

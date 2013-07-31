@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.api.edm.provider.Property;
  * complex types. An EDM complex type is said to be consistent only if it used
  * in at least one of the EDM entity type.
  * 
- * @author
+ *  
  *         <p>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexPropertyView

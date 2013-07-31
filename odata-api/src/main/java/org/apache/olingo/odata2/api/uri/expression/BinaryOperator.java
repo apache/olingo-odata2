@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.uri.expression;
 /**
  * Enumerations for supported binary operators of the ODATA expression parser 
  * for ODATA version 2.0 (with some restrictions)
- * @author
+ *  
 */
 public enum BinaryOperator {
   AND("and"), OR("or"), EQ("eq"), NE("ne"), LT("lt"), LE("le"), GT("gt"), GE("ge"), ADD("add"), SUB("sub"), MUL("mul"), DIV("div"), MODULO("mod"),

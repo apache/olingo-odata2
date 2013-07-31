@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.ref.model;
 
 /**
- * @author
+ *  
  */
 public class ModelException extends RuntimeException {
 

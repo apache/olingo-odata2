@@ -55,7 +55,7 @@ import org.apache.olingo.odata2.core.exception.MessageService.Message;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
- * @author
+ *  
  */
 public class ODataExceptionWrapper {
 

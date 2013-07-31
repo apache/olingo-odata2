@@ -38,7 +38,7 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata2.api.exception.ODataException;
 
 /**
- * @author
+ *  
  */
 public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnotatable {
 

@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 /**
  * Key predicate, consisting of a simple-type property and its value as String literal
  * @org.apache.olingo.odata2.DoNotImplement
- * @author
+ *  
  */
 public interface KeyPredicate {
 

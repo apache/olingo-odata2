@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
 
 /**
- * @author
+ *  
  */
 public class ContextTest extends AbstractBasicTest {
 

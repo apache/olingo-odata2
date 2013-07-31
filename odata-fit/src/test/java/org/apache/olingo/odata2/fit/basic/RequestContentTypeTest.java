@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 
 /**
- * @author
+ *  
  */
 public class RequestContentTypeTest extends AbstractBasicTest {
 

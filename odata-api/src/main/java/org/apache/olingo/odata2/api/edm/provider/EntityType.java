@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 
 /**
  * Objects of this class represent an entity type
- * @author
+ *  
  */
 public class EntityType extends ComplexType {
 

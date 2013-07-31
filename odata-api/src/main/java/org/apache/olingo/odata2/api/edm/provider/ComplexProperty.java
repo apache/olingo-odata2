@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 
 /**
  * Objects of this class represent a complex property.
- * @author
+ *  
  */
 public class ComplexProperty extends Property {
 

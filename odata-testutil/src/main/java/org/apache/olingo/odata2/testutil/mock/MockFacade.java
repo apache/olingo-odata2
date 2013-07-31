@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.uri.PathSegment;
 
 /**
  * Mocked Entity Data Model, more or less aligned to the Reference Scenario.
- * @author
+ *  
  */
 public class MockFacade {
 

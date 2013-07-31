@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmTargetPath specifies the possible default targets for an EDM property which is mapped to an atom element.
- * @author
+ *  
  */
 public class EdmTargetPath {
 

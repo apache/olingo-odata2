@@ -45,7 +45,7 @@ import org.apache.olingo.odata2.core.exception.MessageService;
 import org.apache.olingo.odata2.core.exception.MessageService.Message;
 
 /**
- * @author
+ *  
  */
 public class ParserTool {
 

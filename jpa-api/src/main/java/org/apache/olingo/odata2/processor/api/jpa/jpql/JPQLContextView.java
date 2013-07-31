@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.processor.api.jpa.jpql;
  * The interface provides a view on JPQL Context. The view can be used to access
  * different JPQL context type implementations.
  * 
- * @author
+ *  
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType
  */

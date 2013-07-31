@@ -52,7 +52,7 @@ import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author
+ *  
  */
 public class XmlSelectProducerTest extends AbstractProviderTest {
 

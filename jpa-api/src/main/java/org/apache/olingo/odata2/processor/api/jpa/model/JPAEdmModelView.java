@@ -29,7 +29,7 @@ package org.apache.olingo.odata2.processor.api.jpa.model;
  * meta model using
  * {@link org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmBuilder}.
  * 
- * @author
+ *  
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.JPAAccessFactory
  */

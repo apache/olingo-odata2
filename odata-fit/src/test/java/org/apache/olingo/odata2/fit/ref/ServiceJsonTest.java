@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 
 /**
  * Tests employing the reference scenario reading the service document in JSON format.
- * @author
+ *  
  */
 public class ServiceJsonTest extends AbstractRefTest {
   @Test

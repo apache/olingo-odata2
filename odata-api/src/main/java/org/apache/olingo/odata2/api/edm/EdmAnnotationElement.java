@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
  * @org.apache.olingo.odata2.DoNotImplement
  * A CSDL AnnotationElement element
  * <p>EdmAnnotationElement is a custom XML element which can be applied to a CSDL element. 
- * @author
+ *  
  */
 public interface EdmAnnotationElement {
 

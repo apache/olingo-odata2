@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author
+ *  
  */
 public class EntityInfoAggregatorTest extends AbstractProviderTest {
 

@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author
+ *  
  */
 public class PathSegmentTest extends BaseTest {
 

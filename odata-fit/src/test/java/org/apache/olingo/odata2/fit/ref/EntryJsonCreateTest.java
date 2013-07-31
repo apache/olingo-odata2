@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
- * @author
+ *  
  */
 public class EntryJsonCreateTest extends AbstractRefJsonTest {
 

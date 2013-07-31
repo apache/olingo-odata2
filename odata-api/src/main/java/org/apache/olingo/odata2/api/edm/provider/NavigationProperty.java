@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 
 /**
  * Objects of this Class represent a navigation property
- * @author
+ *  
  */
 public class NavigationProperty {
 

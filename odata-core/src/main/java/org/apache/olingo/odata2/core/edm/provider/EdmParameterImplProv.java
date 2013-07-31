@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImportParameter;
 import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 
 /**
- * @author
+ *  
  */
 public class EdmParameterImplProv extends EdmElementImplProv implements EdmParameter, EdmAnnotatable {
 

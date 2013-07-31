@@ -40,7 +40,7 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
  * </ol>
  * </p>
  * 
- * @author
+ *  
  *         <p>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView

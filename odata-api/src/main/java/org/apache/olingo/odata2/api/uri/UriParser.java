@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
 
 /**
  * Wrapper for UriParser functionality.
- * @author
+ *  
  */
 public abstract class UriParser {
 

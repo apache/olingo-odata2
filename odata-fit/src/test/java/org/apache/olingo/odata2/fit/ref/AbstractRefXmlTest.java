@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 
 /**
  * Abstract base class for tests employing the reference scenario reading or writing XML.
- * @author
+ *  
  */
 public class AbstractRefXmlTest extends AbstractRefTest {
   @Before

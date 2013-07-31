@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author
+ *  
  */
 public class ODataSingleProcessorServiceTest extends BaseTest {
 

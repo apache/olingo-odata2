@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
  * 
- * @author
+ *  
  */
 public class BatchTest extends AbstractRefTest {
 

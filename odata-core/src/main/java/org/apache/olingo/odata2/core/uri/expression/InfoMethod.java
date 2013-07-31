@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.uri.expression.MethodOperator;
 
 /**
  * Describes a method expression which is allowed in OData expressions
- * @author
+ *  
  */
 class InfoMethod {
 

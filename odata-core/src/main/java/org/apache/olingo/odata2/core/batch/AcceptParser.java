@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import org.apache.olingo.odata2.api.batch.BatchException;
 
 /**
- * @author
+ *  
  */
 public class AcceptParser {
 

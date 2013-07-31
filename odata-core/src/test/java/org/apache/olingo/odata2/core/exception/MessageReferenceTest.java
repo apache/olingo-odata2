@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.uri.UriNotMatchingException;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author
+ *  
  */
 public class MessageReferenceTest extends BaseTest {
 

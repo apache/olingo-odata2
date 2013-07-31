@@ -48,7 +48,7 @@ import org.apache.olingo.odata2.api.exception.ODataMessageException;
 
 /**
  * Provider for the entity data model used as technical reference scenario
- * @author
+ *  
  */
 public class TechnicalScenarioEdmProvider extends EdmProvider {
 

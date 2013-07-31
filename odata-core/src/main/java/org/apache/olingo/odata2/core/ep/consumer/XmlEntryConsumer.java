@@ -62,7 +62,7 @@ import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
  * 
  * {@link XmlEntryConsumer} instance can be reused for several {@link #readEntry(XMLStreamReader, EntityInfoAggregator, EntityProviderReadProperties)} calls
  * but be aware that the instance and their <code>readEntry*</code> methods are <b>NOT THREAD SAFE</b>.
- * @author
+ *  
  */
 public class XmlEntryConsumer {
 

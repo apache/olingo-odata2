@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  * The exception is thrown for any unexpected errors raising while
  * accessing/transforming Java Persistence Models.
  * 
- * @author
+ *  
  * 
  */
 public class ODataJPAModelException extends ODataJPAException {

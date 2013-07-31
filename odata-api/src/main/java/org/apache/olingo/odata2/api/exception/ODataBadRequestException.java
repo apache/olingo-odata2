@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
  * Exceptions of this class will result in a HTTP status 400 bad request
- * @author
+ *  
  */
 public class ODataBadRequestException extends ODataHttpException {
 

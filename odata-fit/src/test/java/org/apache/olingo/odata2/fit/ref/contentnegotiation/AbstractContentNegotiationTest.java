@@ -63,7 +63,7 @@ import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author
+ *  
  */
 public abstract class AbstractContentNegotiationTest extends AbstractFitTest {
 

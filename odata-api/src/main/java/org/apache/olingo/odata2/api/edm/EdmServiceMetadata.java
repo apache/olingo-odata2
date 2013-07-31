@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * This interface gives access to the metadata of a service, the calculated Data Service Version and an info list of all entity sets inside this EntityDataModel.
- * @author
+ *  
  *
  */
 public interface EdmServiceMetadata {

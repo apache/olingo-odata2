@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.edm.EdmMapping;
 
 /**
  * Object of this class represent the mapping of a value to a MIME type.
- * @author
+ *  
  */
 public class Mapping implements EdmMapping {
 

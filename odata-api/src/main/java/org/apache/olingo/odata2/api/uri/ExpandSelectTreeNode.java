@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 /**
  * Expression tree node with information about selected properties and to be expanded links.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author
+ *  
  */
 public interface ExpandSelectTreeNode {
 

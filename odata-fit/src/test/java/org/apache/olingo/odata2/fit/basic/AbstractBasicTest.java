@@ -41,7 +41,7 @@ import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 
 /**
- * @author
+ *  
  */
 public abstract class AbstractBasicTest extends AbstractFitTest {
 

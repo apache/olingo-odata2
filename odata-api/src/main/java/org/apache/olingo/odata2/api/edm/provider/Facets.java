@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.edm.EdmFacets;
 
 /**
  * Objects of this class represent the facets an entity type, property or function import can have
- * @author
+ *  
  */
 public class Facets implements EdmFacets {
 

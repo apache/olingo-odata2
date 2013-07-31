@@ -26,7 +26,7 @@ import javax.ws.rs.core.Request;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 
 /**
- * @author
+ *  
  */
 public class SubLocatorParameter {
 

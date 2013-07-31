@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 
 /**
  * Objects of this class represent function import parameters
- * @author
+ *  
  */
 public class FunctionImportParameter {
 

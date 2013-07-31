@@ -26,7 +26,7 @@ import java.util.HashMap;
  * "ORDERBY", "WHERE". The clauses are built from OData read entity set request
  * views. The clauses thus built can be used for building JPQL Statements.
  * 
- * @author
+ *  
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLStatement
  * 
  */

@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 /**
  * Execute a OData entity simple property value request. 
  * 
- * @author
+ *  
  */
 public interface EntitySimplePropertyValueProcessor extends ODataProcessor {
 

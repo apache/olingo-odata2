@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 
 /**
- * @author
+ *  
  */
 public abstract class EdmElementImplProv extends EdmTypedImplProv implements EdmElement {
 

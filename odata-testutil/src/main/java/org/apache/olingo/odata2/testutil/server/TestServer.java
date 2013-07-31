@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.testutil.fit.FitStaticServiceFactory;
 
 /**
- * @author
+ *  
  */
 public class TestServer {
   private static final Logger log = Logger.getLogger(TestServer.class);

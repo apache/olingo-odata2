@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.core.ep.util;
 
 /**
  * String constants for formatting and parsing of XML.
- * @author
+ *  
  */
 public class FormatXml {
 

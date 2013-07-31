@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.processor.ODataContext.RuntimeMeasurement;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
- * @author
+ *  
  */
 public class DebugInfoRuntime implements DebugInfo {
 

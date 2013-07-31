@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
  * Provider for writing a collection of simple-type or complex-type instances
- * @author
+ *  
  */
 public class XmlCollectionEntityProducer {
 

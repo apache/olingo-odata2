@@ -26,7 +26,7 @@ import javax.xml.stream.XMLOutputFactory;
 import org.junit.Test;
 
 /**
- * @author
+ *  
  */
 public class LoadXMLFactoryTest {
   // CHECKSTYLE:OFF

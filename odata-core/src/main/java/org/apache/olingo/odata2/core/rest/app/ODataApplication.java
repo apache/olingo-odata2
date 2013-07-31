@@ -38,7 +38,7 @@ import org.apache.olingo.odata2.core.rest.ODataExceptionMapperImpl;
 import org.apache.olingo.odata2.core.rest.ODataRootLocator;
 
 /**
- * @author
+ *  
  */
 public class ODataApplication extends Application {
 

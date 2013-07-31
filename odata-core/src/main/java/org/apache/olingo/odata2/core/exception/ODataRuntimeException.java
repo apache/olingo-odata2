@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.core.exception;
  * Common un-checked exception for the <code>OData</code> library and
  * base exception for all <code>OData</code>-related exceptions
  * caused by programming errors and/or unexpected behavior within the code.
- * @author
+ *  
  */
 public final class ODataRuntimeException extends RuntimeException {
 

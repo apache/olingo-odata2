@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.servicedocument.ExtensionAttribute;
 import org.apache.olingo.odata2.api.servicedocument.ExtensionElement;
 
 /**
- * @author
+ *  
  */
 public class ExtensionElementImpl implements ExtensionElement {
   private String namespace;

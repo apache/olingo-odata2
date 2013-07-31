@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.servicedocument.Category;
 import org.apache.olingo.odata2.api.servicedocument.CommonAttributes;
 
 /**
- * @author
+ *  
  */
 public class CategoryImpl implements Category {
   private String scheme;

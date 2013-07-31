@@ -51,7 +51,7 @@ import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
  * Abstract base class for tests employing the reference scenario.
- * @author
+ *  
  */
 public class AbstractRefTest extends AbstractFitTest {
 

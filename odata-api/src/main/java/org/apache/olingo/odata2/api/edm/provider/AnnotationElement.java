@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.edm.EdmAnnotationElement;
 
 /**
  * Objects of this class represent an annotation element.
- * @author
+ *  
  */
 public class AnnotationElement implements EdmAnnotationElement {
 

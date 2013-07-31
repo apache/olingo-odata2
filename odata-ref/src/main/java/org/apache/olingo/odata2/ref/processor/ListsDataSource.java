@@ -41,7 +41,7 @@ import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
  * <li>Following navigation paths must only be done step by step.</li>
  * </ul>
  * </p>
- * @author
+ *  
  */
 public interface ListsDataSource {
 

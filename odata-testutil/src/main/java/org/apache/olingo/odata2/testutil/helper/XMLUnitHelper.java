@@ -26,7 +26,7 @@ import org.junit.Assert;
 
 /**
  * Helper for XML unit tests.
- * @author
+ *  
  */
 public class XMLUnitHelper {
 

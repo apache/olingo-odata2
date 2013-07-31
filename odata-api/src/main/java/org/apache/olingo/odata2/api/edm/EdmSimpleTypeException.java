@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.exception.MessageReference;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * Exception for parsing errors with {@link EdmSimpleType}s
- * @author
+ *  
  */
 public class EdmSimpleTypeException extends EdmException {
 

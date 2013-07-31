@@ -38,7 +38,7 @@ import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
- * @author
+ *  
  */
 public class TombstoneProducer {
 

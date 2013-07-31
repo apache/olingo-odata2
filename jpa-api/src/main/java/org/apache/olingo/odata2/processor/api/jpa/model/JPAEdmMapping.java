@@ -23,7 +23,7 @@ package org.apache.olingo.odata2.processor.api.jpa.model;
  * JPA EDM mapping instance can be associated with any EDM simple, EDM complex
  * property to denote the properties Java persistence column name.
  * 
- * @author
+ *  
  * 
  */
 public interface JPAEdmMapping {

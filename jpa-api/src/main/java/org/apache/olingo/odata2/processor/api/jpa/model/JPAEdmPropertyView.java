@@ -42,7 +42,7 @@ import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
  * exists at least one property in the entity type and there is at least one key
  * property.
  * 
- * @author
+ *  
  *         <p>
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmKeyView

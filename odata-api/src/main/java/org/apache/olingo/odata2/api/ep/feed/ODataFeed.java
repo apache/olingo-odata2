@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 
 /**
  * An {@link ODataFeed} object contains a list of {@link ODataEntry}s and the metadata associated with this feed.
- * @author
+ *  
  *
  */
 public interface ODataFeed {

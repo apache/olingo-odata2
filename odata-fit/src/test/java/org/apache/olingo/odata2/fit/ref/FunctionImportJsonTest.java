@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.commons.HttpHeaders;
 
 /**
  * Tests employing the reference scenario reading function-import output in JSON format.
- * @author
+ *  
  */
 public class FunctionImportJsonTest extends AbstractRefTest {
 

@@ -57,7 +57,7 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
 // accept-extension = ";" token [ "=" ( token | quoted-string ) ]
 
 /**
- * @author
+ *  
  */
 public class ContentTypeTest extends BaseTest {
 

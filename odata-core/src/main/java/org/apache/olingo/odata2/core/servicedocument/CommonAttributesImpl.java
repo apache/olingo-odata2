@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.servicedocument.CommonAttributes;
 import org.apache.olingo.odata2.api.servicedocument.ExtensionAttribute;
 
 /**
- * @author
+ *  
  */
 public class CommonAttributesImpl implements CommonAttributes {
   private String base;

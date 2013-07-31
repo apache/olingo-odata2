@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the simple type Null.
- * @author
+ *  
  */
 public class EdmNull extends AbstractSimpleType {
 

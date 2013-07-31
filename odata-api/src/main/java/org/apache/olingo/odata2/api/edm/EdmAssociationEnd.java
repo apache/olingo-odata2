@@ -23,7 +23,7 @@ package org.apache.olingo.odata2.api.edm;
  * A CSDL AssociationEnd element
  * 
  * <p>EdmAssociationEnd defines one side of the relationship of two entity types.
- * @author
+ *  
  */
 public interface EdmAssociationEnd {
 

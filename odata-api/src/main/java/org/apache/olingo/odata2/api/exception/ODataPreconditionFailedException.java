@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
  * Exceptions of this class will result in a HTTP Status 412 Precondition Failed.
- * @author
+ *  
  */
 public class ODataPreconditionFailedException extends ODataHttpException {
 

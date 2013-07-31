@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
  * If inlined navigation property is <code>nullable</code> the {@link ReadFeedResult} has the 
  * <code>navigationPropertyName</code> and a <code>NULL</code> entry set.
  * 
- * @author
+ *  
  */
 public class ReadFeedResult extends ReadResult {
 

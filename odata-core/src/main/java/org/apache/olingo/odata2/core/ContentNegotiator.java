@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.core.uri.UriType;
 
 /**
- * @author
+ *  
  */
 public class ContentNegotiator {
   private static final String URI_INFO_FORMAT_JSON = "json";

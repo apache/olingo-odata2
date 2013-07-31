@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.uri.expression;
 /**
  * Enumerations for supported unary operators of the OData expression parser
  * for OData version 2.0
- * @author 
+ *   
  */
 public enum UnaryOperator {
   MINUS("-", "negation"), NOT("not");

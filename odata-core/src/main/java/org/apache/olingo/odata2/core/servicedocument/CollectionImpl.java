@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.servicedocument.ExtensionElement;
 import org.apache.olingo.odata2.api.servicedocument.Title;
 
 /**
- * @author
+ *  
  */
 public class CollectionImpl implements Collection {
   private Title title;

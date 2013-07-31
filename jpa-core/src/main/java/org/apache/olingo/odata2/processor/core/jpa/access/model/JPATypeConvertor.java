@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeExcep
 /**
  * This class holds utility methods for Type conversions between JPA and OData Types.
  * 
- * @author
+ *  
  *
  */
 public class JPATypeConvertor {

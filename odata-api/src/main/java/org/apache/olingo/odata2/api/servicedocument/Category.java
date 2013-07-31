@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.servicedocument;
 /**
  * A Category element
  * <p>Category element 
- * @author
+ *  
  */
 public interface Category {
   /**

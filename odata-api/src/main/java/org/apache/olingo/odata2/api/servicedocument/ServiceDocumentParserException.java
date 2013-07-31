@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.api.servicedocument;
 
 /**
- * @author
+ *  
  */
 public class ServiceDocumentParserException extends Exception {
 

@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 /**
  * An item of a $select system query option.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author
+ *  
  */
 public interface SelectItem {
 

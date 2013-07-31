@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.api.edm;
  * @org.apache.olingo.odata2.DoNotImplement
  * A CSDL AnnotationAttribute element. 
  * <p>EdmAnnotationAttribute is a custom XML attribute which can be applied to a CSDL element.
- * @author
+ *  
  */
 public interface EdmAnnotationAttribute {
 

@@ -75,7 +75,7 @@ import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
  * {@link ODataNotImplementedException} for all other requests.
  * Sub classes have to override only methods they want to support.</p> 
  * 
- * @author
+ *  
  */
 public abstract class ODataSingleProcessor implements MetadataProcessor, ServiceDocumentProcessor, EntityProcessor, EntitySetProcessor, EntityComplexPropertyProcessor, EntityLinkProcessor, EntityLinksProcessor, EntityMediaProcessor, EntitySimplePropertyProcessor, EntitySimplePropertyValueProcessor, FunctionImportProcessor, FunctionImportValueProcessor, BatchProcessor, CustomContentType {
 

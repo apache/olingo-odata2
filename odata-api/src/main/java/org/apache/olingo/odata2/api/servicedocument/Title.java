@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.servicedocument;
 /**
  * A Title element
  * <p>Title element gives a human-readable title
- * @author
+ *  
  */
 public interface Title {
   /**

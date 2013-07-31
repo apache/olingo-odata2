@@ -40,7 +40,7 @@ import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 
 /**
  * Tests employing the reference scenario reading a single entity in XML format.
- * @author
+ *  
  */
 public class EntryXmlReadOnlyTest extends AbstractRefXmlTest {
 

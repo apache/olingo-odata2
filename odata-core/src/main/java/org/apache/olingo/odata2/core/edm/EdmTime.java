@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
  * The time value is interpreted and formatted as local time.</p>
  * <p>Formatting simply ignores the year, month, and day parts of time instances.
  * Parsing returns a Calendar object where all unused fields have been cleared.</p>
- * @author
+ *  
  */
 public class EdmTime extends AbstractSimpleType {
 

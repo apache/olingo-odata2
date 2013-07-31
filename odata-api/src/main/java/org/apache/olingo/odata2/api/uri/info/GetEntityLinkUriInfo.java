@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.uri.NavigationSegment;
  * Access to the parts of the request URI that are relevant for GET requests
  * of the URI of a single entity.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author
+ *  
  */
 public interface GetEntityLinkUriInfo {
   /**

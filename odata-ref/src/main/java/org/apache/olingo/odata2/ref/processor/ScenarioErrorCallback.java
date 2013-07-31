@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 
 /**
  * Callback for handling errors by logging internal server errors additionally.
- * @author
+ *  
  */
 public class ScenarioErrorCallback implements ODataErrorCallback {
 

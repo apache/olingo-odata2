@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.testutil.mock.SampleClassForInvalidMessageRefere
 /**
  * This class tests the {@link ODataMessageTextVerifier}
  * 
- * @author
+ *  
  */
 public class ODataMessageTextVerifierTest extends BaseTest {
 

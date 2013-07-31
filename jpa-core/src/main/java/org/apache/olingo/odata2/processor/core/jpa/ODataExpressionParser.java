@@ -54,7 +54,7 @@ import org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLStatement;
 /**
  * This class contains utility methods for parsing the filter expressions built by core library from user OData Query.
  * 
- * @author
+ *  
  *
  */
 public class ODataExpressionParser {

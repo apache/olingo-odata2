@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 /**
  * A Service document
  * <p>Service document lists all EntitySets
- * @author
+ *  
  */
 public interface ServiceDocument {
   /**

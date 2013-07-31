@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 
 /**
  * Expression tokenizer
- * @author
+ *  
  */
 public class Tokenizer {
 

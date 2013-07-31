@@ -25,7 +25,7 @@ import java.util.TimeZone;
 
 /**
  * Container and initialization code for the data objects of the reference scenario.
- * @author
+ *  
  */
 public class DataContainer {
 

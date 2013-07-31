@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the EDM simple type Int32.
- * @author
+ *  
  */
 public class EdmInt32 extends AbstractSimpleType {
 

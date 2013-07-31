@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
- * @author
+ *  
  */
 public class ExpandSelectTreeNodeImpl implements ExpandSelectTreeNode {
 

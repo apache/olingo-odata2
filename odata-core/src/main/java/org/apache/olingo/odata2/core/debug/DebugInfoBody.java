@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.core.ep.BasicEntityProvider;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
- * @author
+ *  
  */
 public class DebugInfoBody implements DebugInfo {
 

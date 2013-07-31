@@ -66,7 +66,7 @@ import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
- * @author
+ *  
  */
 public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 

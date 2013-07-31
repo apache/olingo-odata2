@@ -29,7 +29,7 @@ package org.apache.olingo.odata2.processor.api.jpa.access;
  * </ol>
  * </b>
  * 
- * @author
+ *  
  * 
  */
 public class JPAJoinClause {
@@ -43,7 +43,7 @@ public class JPAJoinClause {
    * <li>INNER - inner join
    * </ol>
    * 
-   * @author
+   *  
    * 
    */
   public enum JOIN {

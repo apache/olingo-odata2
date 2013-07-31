@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.processor.ODataProcessor;
  * various types like Json (application/json), Atom (application/xml+atom) and XML (application/xml). But
  * the OData specification allows also other types like e.g. CSV or plain text.  
  * 
- * @author
+ *  
  */
 public interface CustomContentType extends ODataProcessorFeature {
 

@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.uri.expression.ExpressionKind;
 import org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor;
 
 /**
- * @author
+ *  
  */
 public class BinaryExpressionImpl implements BinaryExpression {
   final protected InfoBinaryOperator operatorInfo;

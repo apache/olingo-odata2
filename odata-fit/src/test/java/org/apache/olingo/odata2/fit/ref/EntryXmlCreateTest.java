@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
  * Tests employing the reference scenario changing entities in XML format.
- * @author
+ *  
  */
 public class EntryXmlCreateTest extends AbstractRefXmlTest {
 

@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 
 /**
- * @author
+ *  
  */
 public abstract class EdmStructuralTypeImplProv extends EdmNamedImplProv implements EdmStructuralType, EdmAnnotatable {
 

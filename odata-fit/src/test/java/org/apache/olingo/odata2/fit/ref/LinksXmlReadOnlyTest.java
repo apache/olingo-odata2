@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 
 /**
  * Tests employing the reference scenario reading links in XML format
- * @author
+ *  
  */
 public final class LinksXmlReadOnlyTest extends AbstractRefXmlTest {
 

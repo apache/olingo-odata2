@@ -28,7 +28,7 @@ package org.apache.olingo.odata2.api.uri.expression;
  * will be inserted into the expression tree
  * <br>
  * <br>
- * @author
+ *  
  */
 public interface OrderExpression extends CommonExpression {
 

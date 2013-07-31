@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.commons.HttpHeaders;
 
 /**
  * Tests employing the reference scenario reading function-import output in XML format.
- * @author
+ *  
  */
 public class FunctionImportXmlTest extends AbstractRefXmlTest {
 

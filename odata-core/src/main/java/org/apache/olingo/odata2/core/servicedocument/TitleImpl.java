@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.core.servicedocument;
 import org.apache.olingo.odata2.api.servicedocument.Title;
 
 /**
- * @author
+ *  
  */
 public class TitleImpl implements Title {
   private String text;

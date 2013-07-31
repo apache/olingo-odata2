@@ -33,7 +33,7 @@ import java.util.ResourceBundle;
 import org.apache.olingo.odata2.api.exception.MessageReference;
 
 /**
- * @author
+ *  
  */
 public class MessageService {
   private static final String BUNDLE_NAME = "i18n";

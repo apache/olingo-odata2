@@ -40,7 +40,7 @@ import org.apache.olingo.odata2.core.edm.EdmTime;
 import org.apache.olingo.odata2.core.edm.Uint7;
 
 /**
- * @author
+ *  
  * Differences to ABAP Parser
  * - for $orderBy it the sortorder (asc/desc) not case insensitive anymore, so ASC/DESC is not allowed 
  * 

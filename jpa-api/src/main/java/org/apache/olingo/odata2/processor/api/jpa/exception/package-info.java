@@ -25,7 +25,7 @@
  * The Model Exception is thrown while processing JPA metamodels and 
  * runtime exception is thrown while processing persistence data.
  * 
- * @author
+ *  
  */
 package org.apache.olingo.odata2.processor.api.jpa.exception;
 

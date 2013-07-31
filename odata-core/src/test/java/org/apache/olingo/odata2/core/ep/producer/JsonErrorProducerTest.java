@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author
+ *  
  */
 public class JsonErrorProducerTest {
 

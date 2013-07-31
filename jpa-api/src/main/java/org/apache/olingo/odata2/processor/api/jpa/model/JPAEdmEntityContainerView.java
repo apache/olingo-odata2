@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
  * container is said to be consistent only if the JPA EDM association set and
  * JPA EDM Entity Set view are consistent.
  * 
- * @author
+ *  
  * @DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntitySetView
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationSetView

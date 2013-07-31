@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
  * <p>If an expand clause for a navigation property which points to an entry is found this callback will be called.
  * <br>Pointing to an entry means the navigation property has a multiplicity of 0..1 or 1..1.
  * 
- * @author
+ *  
  *
  */
 public interface OnWriteEntryContent extends ODataCallback {

@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.core.uri.UriType;
 
 /**
- * @author
+ *  
  */
 public class ContentNegotiationPostRequestTest extends AbstractContentNegotiationTest {
 

@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
  * Exceptions of this class will result in a HTTP status 415 unsupported media type
- * @author
+ *  
  */
 public class ODataUnsupportedMediaTypeException extends ODataHttpException {
 

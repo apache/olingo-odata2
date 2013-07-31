@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
  * Producer for writing an entity collection (a feed) in JSON.
- * @author
+ *  
  */
 public class JsonFeedEntityProducer {
 

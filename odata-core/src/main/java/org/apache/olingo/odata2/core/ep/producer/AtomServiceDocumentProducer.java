@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
  * Writes the  OData service document in XML.
- * @author
+ *  
  */
 public class AtomServiceDocumentProducer {
 

@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.uri.expression.OrderExpression;
 import org.apache.olingo.odata2.api.uri.expression.SortOrder;
 
 /**
- * @author
+ *  
  */
 public class OrderExpressionImpl implements OrderExpression {
 

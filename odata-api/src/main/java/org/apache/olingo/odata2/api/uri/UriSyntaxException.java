@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 /**
  * Exception for violation of the OData URI construction rules,
  * resulting in a 400 Bad Request response.
- * @author
+ *  
  */
 public class UriSyntaxException extends ODataBadRequestException {
 

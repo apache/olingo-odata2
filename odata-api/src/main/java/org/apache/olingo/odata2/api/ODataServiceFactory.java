@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 /**
  * Creates instance of custom OData service.
  * 
- * @author
+ *  
  */
 public abstract class ODataServiceFactory {
 

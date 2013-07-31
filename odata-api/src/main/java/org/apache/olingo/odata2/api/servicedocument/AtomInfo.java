@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A AtomInfo
  * <p>AtomInfo represents the structure of Service Document according RFC 5023 (for ATOM format) 
- * @author
+ *  
  */
 public interface AtomInfo {
 

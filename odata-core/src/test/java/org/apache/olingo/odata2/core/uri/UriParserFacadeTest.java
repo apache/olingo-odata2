@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author
+ *  
  */
 public class UriParserFacadeTest extends BaseTest {
 

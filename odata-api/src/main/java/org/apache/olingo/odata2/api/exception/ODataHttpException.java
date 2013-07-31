@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 
 /**
  * {@link ODataMessageException} with a HTTP status code.
- * @author
+ *  
  */
 public abstract class ODataHttpException extends ODataMessageException {
 

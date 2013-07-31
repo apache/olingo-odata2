@@ -44,7 +44,7 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author
+ *  
  */
 public class EdmEntityContainerImplProvTest extends BaseTest {
 

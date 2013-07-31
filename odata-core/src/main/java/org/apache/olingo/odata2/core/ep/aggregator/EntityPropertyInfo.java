@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.edm.EdmType;
 
 /**
  * Collects informations about a property of an entity.
- * @author
+ *  
  */
 public class EntityPropertyInfo {
   private String name;

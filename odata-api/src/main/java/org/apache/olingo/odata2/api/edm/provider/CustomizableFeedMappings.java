@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.edm.EdmCustomizableFeedMappings;
 
 /**
  * Objects of this class represent customizable feed mappings.
- * @author
+ *  
  */
 public class CustomizableFeedMappings implements EdmCustomizableFeedMappings {
 

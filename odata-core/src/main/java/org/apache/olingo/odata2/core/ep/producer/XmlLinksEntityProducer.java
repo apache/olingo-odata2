@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
  * Provider for writing a collection of links
- * @author
+ *  
  */
 public class XmlLinksEntityProducer {
 

@@ -30,7 +30,7 @@ import java.util.Map;
  * and the matrix parameter <code>mul</code> has a multi-value list.</p> 
  *
  * @org.apache.olingo.odata2.DoNotImplement
- * @author
+ *  
  */
 public interface PathSegment {
 

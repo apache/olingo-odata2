@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 /**
  * Execute a OData batch request. 
  * 
- * @author
+ *  
  *
  */
 public interface BatchProcessor extends ODataProcessor {

@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * A CommonAttributes
- * @author
+ *  
  */
 public interface CommonAttributes {
   /**

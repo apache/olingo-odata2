@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.edm.EdmLiteral;
  * Access to the parts of the request URI that are relevant for requests
  * of function imports.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author
+ *  
  */
 public interface GetFunctionImportUriInfo {
   /**

@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
  * This class represents a translated application exception. Use this exception class to display custom exception messages. 
  * <br>If a HTTP status is given this exception will result in the set status code like an HTTP exception. 
  * <br>A set status code can be used to show a substatus to a HTTP status as described in the OData protocol specification. 
- * @author
+ *  
  */
 public class ODataApplicationException extends ODataException {
 

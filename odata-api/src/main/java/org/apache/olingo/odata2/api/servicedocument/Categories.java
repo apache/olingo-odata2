@@ -24,7 +24,7 @@ import java.util.List;
  * A Categories element
  * <p>Categories element provides a list of the categories that can be applied to the members of a Collection
  * <p>If the "href" attribute is provided, the Categories element MUST be empty and MUST NOT have the "fixed" or "scheme" attributes
- * @author
+ *  
  */
 
 public interface Categories {

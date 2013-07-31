@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 
 /**
  * This interface is called if an error occurred and is process inside the exception mapper.
- * @author
+ *  
  *
  */
 public interface ODataErrorCallback extends ODataCallback {

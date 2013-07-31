@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.processor.api.jpa.jpql;
 /**
  * Enumerated list of JPQL context Types.
  * 
- * @author
+ *  
  * 
  */
 public enum JPQLContextType {

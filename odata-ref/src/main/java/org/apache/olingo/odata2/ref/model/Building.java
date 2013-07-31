@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author
+ *  
  */
 public class Building {
   private final int id;

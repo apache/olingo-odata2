@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.core.uri.UriType;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
- * @author
+ *  
  */
 @Ignore
 public class ContentNegotiationGetRequestTest extends AbstractContentNegotiationTest {

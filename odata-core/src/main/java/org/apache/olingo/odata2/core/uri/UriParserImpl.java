@@ -67,7 +67,7 @@ import org.apache.olingo.odata2.core.uri.expression.OrderByParserImpl;
 
 /**
  * Parser for the OData part of the URL.
- * @author
+ *  
  */
 public class UriParserImpl extends UriParser {
 

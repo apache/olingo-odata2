@@ -23,7 +23,7 @@ import java.io.Writer;
 
 /**
  * Writes JSON output.
- * @author
+ *  
  */
 public class JsonStreamWriter {
   private final Writer writer;

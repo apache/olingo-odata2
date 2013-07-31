@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this class represent an association
- * @author
+ *  
  */
 public class Association {
 

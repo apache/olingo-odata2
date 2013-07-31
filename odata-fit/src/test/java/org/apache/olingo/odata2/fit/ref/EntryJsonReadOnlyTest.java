@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 
 /**
  * Tests employing the reference scenario reading a single entity in JSON format.
- * @author
+ *  
  */
 public class EntryJsonReadOnlyTest extends AbstractRefTest {
 

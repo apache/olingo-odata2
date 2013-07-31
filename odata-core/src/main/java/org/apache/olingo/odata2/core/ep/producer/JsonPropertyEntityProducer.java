@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 /**
  * Producer for writing a single simple or complex property in JSON, also usable
  * for function imports returning a single instance of a simple or complex type.
- * @author
+ *  
  */
 public class JsonPropertyEntityProducer {
 

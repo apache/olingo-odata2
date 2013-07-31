@@ -28,7 +28,7 @@ package org.apache.olingo.odata2.api.uri.expression;
  * ODATA unary operator in {@link UnaryOperator} (e.g. for "not or "-" )
  * <br>
  * <br>
- * @author
+ *  
  */
 public interface UnaryExpression extends CommonExpression {
 

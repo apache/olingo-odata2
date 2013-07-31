@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.ODataCallback;
  * <p>The callback implementing this interface is registered at the
  * {@link org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties EntityProviderWriteProperties}
  * using the callback key of this class.</p>
- * @author
+ *  
  */
 public interface TombstoneCallback extends ODataCallback {
 

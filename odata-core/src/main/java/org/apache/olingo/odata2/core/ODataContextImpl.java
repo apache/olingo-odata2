@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.core.debug.ODataDebugResponseWrapper;
 
 /**
- * @author
+ *  
  */
 public class ODataContextImpl implements ODataContext {
 

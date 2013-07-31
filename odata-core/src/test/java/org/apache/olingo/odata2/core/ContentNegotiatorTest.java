@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.core.uri.UriType;
 
 /**
- * @author
+ *  
  */
 public class ContentNegotiatorTest {
   private void negotiateContentType(final List<ContentType> contentTypes, final List<ContentType> supportedTypes, final String expected) throws ODataException {

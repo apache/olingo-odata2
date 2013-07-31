@@ -41,7 +41,7 @@ import org.apache.olingo.odata2.core.ODataExceptionWrapper;
 import org.apache.olingo.odata2.core.ODataRequestHandler;
 
 /**
- * @author
+ *  
  */
 public final class ODataSubLocator {
 

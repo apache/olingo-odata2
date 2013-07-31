@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.edm;
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmTyped indicates if an EDM element is of a special type and holds the multiplicity of that type.
- * @author
+ *  
  */
 public interface EdmTyped extends EdmNamed {
 

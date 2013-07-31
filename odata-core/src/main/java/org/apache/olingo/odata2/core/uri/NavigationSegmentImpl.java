@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.NavigationSegment;
 
 /**
- * @author
+ *  
  */
 public class NavigationSegmentImpl implements NavigationSegment {
 

@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
- * @author
+ *  
  */
 public interface DebugInfo {
 

@@ -32,7 +32,7 @@ package org.apache.olingo.odata2.processor.api.jpa.factory;
  * factory implementation.
  * <p>
  * 
- * @author
+ *  
  * 
  * 
  * 

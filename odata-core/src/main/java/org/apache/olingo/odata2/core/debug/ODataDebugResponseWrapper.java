@@ -42,7 +42,7 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 /**
  * Wraps an OData response into an OData response containing additional
  * information useful for support purposes.
- * @author
+ *  
  */
 public class ODataDebugResponseWrapper {
 

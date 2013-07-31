@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.core.commons.ContentType;
 
 /**
- * @author
+ *  
  */
 public class ODataRequestImpl extends ODataRequest {
 

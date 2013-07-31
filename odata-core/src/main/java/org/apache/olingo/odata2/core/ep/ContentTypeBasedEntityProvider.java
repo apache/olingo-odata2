@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 /**
  * Interface for all none basic (content type <b>dependent</b>) provider methods.
  * 
- * @author
+ *  
  */
 public interface ContentTypeBasedEntityProvider {
 

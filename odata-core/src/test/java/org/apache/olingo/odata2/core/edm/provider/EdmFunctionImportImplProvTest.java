@@ -48,7 +48,7 @@ import org.apache.olingo.odata2.api.edm.provider.ReturnType;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
- * @author
+ *  
  */
 public class EdmFunctionImportImplProvTest extends BaseTest {
 

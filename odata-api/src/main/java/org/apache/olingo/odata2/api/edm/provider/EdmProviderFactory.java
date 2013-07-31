@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 
 /**
  * EDM Provider Factory which can be used to create an edm provider (e.g. from a metadata document)
- * @author
+ *  
  *
  */
 public class EdmProviderFactory {

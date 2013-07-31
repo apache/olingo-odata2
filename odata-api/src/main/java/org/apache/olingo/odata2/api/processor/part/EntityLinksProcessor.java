@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 /**
  * Execute a OData entity links request. 
  * 
- * @author
+ *  
  */
 public interface EntityLinksProcessor extends ODataProcessor {
   /**

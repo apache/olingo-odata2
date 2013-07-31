@@ -41,7 +41,7 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 /**
- * @author
+ *  
  */
 public class JsonEntryConsumerTest extends AbstractConsumerTest {
 

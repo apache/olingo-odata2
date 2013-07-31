@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.api.edm;
  * @org.apache.olingo.odata2.DoNotImplement
  * A CSDL Action Element
  * <p>EdmAction can either be Cascade or None. Cascade implies that a delete operation on an entity also should delete the relationship instances.
- * @author
+ *  
  */
 public enum EdmAction {
 

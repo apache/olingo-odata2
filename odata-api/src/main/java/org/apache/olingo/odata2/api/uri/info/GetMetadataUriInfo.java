@@ -24,7 +24,7 @@ import java.util.Map;
  * Access to the parts of the request URI that are relevant for GET requests
  * of the metadata document.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author
+ *  
  */
 public interface GetMetadataUriInfo {
   /**

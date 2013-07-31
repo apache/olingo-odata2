@@ -24,7 +24,7 @@ import java.util.List;
  * @org.apache.olingo.odata2.DoNotImplement
  * EdmStructuralType is the base for a complex type or an entity type.
  * <p>Complex types and entity types are described in the Conceptual Schema Definition of the OData protocol.
- * @author
+ *  
  */
 public interface EdmStructuralType extends EdmMappable, EdmType {
 

@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.api.edm;
  * @org.apache.olingo.odata2.DoNotImplement
  * A CSDL EntitySet element
  * <p>EdmEntitySet is the container for entity type instances as described in the OData protocol. 
- * @author
+ *  
  */
 public interface EdmEntitySet extends EdmMappable, EdmNamed {
 

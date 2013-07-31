@@ -22,7 +22,7 @@ package org.apache.olingo.odata2.api.edm;
  * <p>A CSDL ComplexType element.</p>
  * <p>EdmComplexType holds a set of related information like {@link EdmSimpleType}
  * properties and EdmComplexType properties.
- * @author
+ *  
  * @org.apache.olingo.odata2.DoNotImplement
  */
 public interface EdmComplexType extends EdmStructuralType {

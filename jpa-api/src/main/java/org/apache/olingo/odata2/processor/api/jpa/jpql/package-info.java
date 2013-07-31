@@ -21,7 +21,7 @@
  * The library provides set of APIs for building JPQL contexts from OData Requests.
  * The JPQL contexts thus built can be used for building JPQL Statements.
  * 
- * @author
+ *  
  */
 package org.apache.olingo.odata2.processor.api.jpa.jpql;
 

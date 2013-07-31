@@ -44,7 +44,7 @@ import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 
 /**
- * @author
+ *  
  */
 public class AcceptHeaderTypeTest extends AbstractBasicTest {
 

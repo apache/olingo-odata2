@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this class represent a schema
- * @author
+ *  
  */
 public class Schema {
 

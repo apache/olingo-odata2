@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this class represent a key for an entity type
- * @author
+ *  
  */
 public class Key {
 

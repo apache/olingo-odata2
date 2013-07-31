@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.edm.EdmType;
  * <p>This interface defines the default methods for all expression tree nodes 
  * <br>
  * <br>
- * @author
+ *  
  */
 public interface CommonExpression extends Visitable {
   /**

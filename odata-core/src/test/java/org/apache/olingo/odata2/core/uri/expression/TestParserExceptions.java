@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.api.uri.expression.ExpressionKind;
 import org.apache.olingo.odata2.api.uri.expression.ExpressionParserException;
 
 /**
- * @author
+ *  
  */
 public class TestParserExceptions extends TestBase {
 

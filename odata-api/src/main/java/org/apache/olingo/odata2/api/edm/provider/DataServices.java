@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Objects of this class represent the data service. They contain all schemas of the EDM as well as the dataServiceVersion
- * @author
+ *  
  */
 public class DataServices {
 

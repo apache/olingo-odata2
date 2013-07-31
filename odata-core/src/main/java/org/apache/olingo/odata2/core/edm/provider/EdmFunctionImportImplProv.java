@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImportParameter;
 import org.apache.olingo.odata2.api.edm.provider.ReturnType;
 
 /**
- * @author
+ *  
  */
 public class EdmFunctionImportImplProv extends EdmNamedImplProv implements EdmFunctionImport, EdmAnnotatable {
 

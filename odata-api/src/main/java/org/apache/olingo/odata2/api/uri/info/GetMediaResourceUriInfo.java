@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
  * Access to the parts of the request URI that are relevant for GET requests
  * of the media resource of a single entity.
  * @org.apache.olingo.odata2.DoNotImplement
- * @author
+ *  
  */
 public interface GetMediaResourceUriInfo {
   /**

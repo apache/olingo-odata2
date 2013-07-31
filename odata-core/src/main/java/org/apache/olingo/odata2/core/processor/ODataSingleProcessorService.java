@@ -52,7 +52,7 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
  * {@link org.apache.olingo.odata2.api.ODataServiceFactory} and populate it with their custom {@link EdmProvider}
  * and custom {@link ODataSingleProcessor} implementations.</p>
  *
- * @author
+ *  
  */
 public class ODataSingleProcessorService implements ODataService {
 

@@ -48,7 +48,7 @@ import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 
 /**
  * Request dispatching according to URI type and HTTP method.
- * @author
+ *  
  */
 public class Dispatcher {
 

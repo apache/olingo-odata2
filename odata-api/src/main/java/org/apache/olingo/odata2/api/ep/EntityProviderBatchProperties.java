@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 /**
  * The {@link EntityProviderBatchProperties} contains necessary informations to parse a Batch Request body.
  * 
- * @author
+ *  
  */
 public class EntityProviderBatchProperties {
   /**

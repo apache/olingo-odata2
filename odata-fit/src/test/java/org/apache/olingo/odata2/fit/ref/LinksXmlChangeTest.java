@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 
 /**
  * Tests employing the reference scenario changing links in XML format.
- * @author
+ *  
  */
 public final class LinksXmlChangeTest extends AbstractRefTest {
 

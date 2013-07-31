@@ -27,7 +27,7 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 
 /**
- * @author
+ *  
  */
 public class EntryMetadataImpl implements EntryMetadata {
   private String id;
