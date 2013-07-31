@@ -34,8 +34,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>org.apache.olingo.odata2.api.annotation</artifactId>
+			<groupId>org.apache.olingo.odata2</groupId>
+			<artifactId>api.annotation</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -54,14 +54,14 @@
 		<!-- OData Java Library Support -->
 		<!-- ########################## -->
 		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>org.apache.olingo.odata2.api</artifactId>
+			<groupId>org.apache.olingo.odata2</groupId>
+			<artifactId>api</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>org.apache.olingo.odata2.core</artifactId>
+			<groupId>org.apache.olingo.odata2</groupId>
+			<artifactId>core</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -70,8 +70,8 @@
 		<!-- OData Java JPA API -->
 		<!-- ########################## -->
 		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>org.apache.olingo.odata2.processor.api</artifactId>
+			<groupId>org.apache.olingo.odata2</groupId>
+			<artifactId>jpa.processor.api</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>

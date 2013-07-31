@@ -187,18 +187,18 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>org.apache.olingo.odata2.core</artifactId>
+			<groupId>org.apache.olingo.odata2</groupId>
+			<artifactId>core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>org.apache.olingo.odata2.ref</artifactId>
+			<groupId>org.apache.olingo.odata2</groupId>
+			<artifactId>ref</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>org.apache.olingo.odata2.testutil</artifactId>
+			<groupId>org.apache.olingo.odata2</groupId>
+			<artifactId>testutil</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

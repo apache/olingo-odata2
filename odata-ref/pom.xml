@@ -82,19 +82,19 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>org.apache.olingo.odata2.api</artifactId>
+			<groupId>org.apache.olingo.odata2</groupId>
+			<artifactId>api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>org.apache.olingo.odata2.core</artifactId>
+			<groupId>org.apache.olingo.odata2</groupId>
+			<artifactId>core</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>org.apache.olingo.odata2.testutil</artifactId>
+			<groupId>org.apache.olingo.odata2</groupId>
+			<artifactId>testutil</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
