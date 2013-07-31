@@ -3,11 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.apache.olingo</groupId>
-	<artifactId>org.apache.olingo.odata2.parent</artifactId>
+	<groupId>org.apache.olingo.odata2</groupId>
+	<artifactId>parent</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
+	<name>${project.groupId}-${project.artifactId}</name>
+	
 	<parent>
 		<groupId>org.apache</groupId>
 		<artifactId>apache</artifactId>
@@ -117,6 +118,7 @@
 	</modules>
 
 	<build>
+		<finalName>${project.groupId}-${project.artifactId}</finalName>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -179,6 +181,13 @@
 
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>com.keyboardsamurais.maven</groupId>
 				<artifactId>maven-timestamp-plugin</artifactId>
 				<configuration>
@@ -205,6 +214,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<configuration>
+					<addGroupIdToProjectName>true</addGroupIdToProjectName>
+					<addVersionToProjectName>true</addVersionToProjectName>
 					<wtpversion>2.0</wtpversion>
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>true</downloadJavadocs>
