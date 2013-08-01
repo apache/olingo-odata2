@@ -25,19 +25,6 @@ package org.apache.olingo.odata2.processor.api.jpa.model;
  * 
  */
 public interface JPAEdmExtension {
-  /**
-   * The method is used to extend the JPA EDM schema view. Use this method to
-   * register custom operations.
-   * 
-   * @param view
-   *            is the schema view
-   * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView#registerOperations(Class,
-   *      String[])
-   * @deprecated Use {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension#extendWithOperation(JPAEdmSchemaView view)}
-   * 
-   */
-  @Deprecated
-  public void extend(JPAEdmSchemaView view);
 
   /**
    * The method is used to extend the JPA EDM schema view with custom operations. Use this method to

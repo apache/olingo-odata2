@@ -128,7 +128,7 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements JPAEdmSchemaView
       complexTypeView.getBuilder().build();
 
       if (getJPAEdmExtension() != null) {
-        getJPAEdmExtension().extend(JPAEdmSchema.this);
+        getJPAEdmExtension().extendWithOperation(JPAEdmSchema.this);
       }
 
       entityContainerView = new JPAEdmEntityContainer(JPAEdmSchema.this);
