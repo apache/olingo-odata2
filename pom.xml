@@ -124,7 +124,7 @@
 				<plugin>
 					<groupId>org.apache.rat</groupId>
 					<artifactId>apache-rat-plugin</artifactId>
-					<version>0.10-SNAPSHOT</version>
+					<version>0.9</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-checkstyle-plugin</artifactId>
@@ -343,7 +343,6 @@
 										<exclude>.gitignore</exclude>
 										<exclude>.git/**</exclude>
 										<exclude>bin/**</exclude>
-										<exclude>*.sh</exclude>
 										<exclude>**/*.project</exclude>
 										<exclude>**/*.classpath</exclude>
 										<exclude>**/*.json</exclude>
