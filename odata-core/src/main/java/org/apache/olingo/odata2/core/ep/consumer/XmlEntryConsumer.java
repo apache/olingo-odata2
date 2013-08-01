@@ -408,7 +408,8 @@ public class XmlEntryConsumer {
    * 
    * @param isFeed
    * @param inlineEntries
-   * @return
+   * @return list of {@link ODataEntry}, an empty list, a single {@link ODataEntry} or <code>NULL</code> based on 
+   * <code>isFeed</code> value and <code>inlineEntries</code> content
    */
   private Object extractODataEntity(final boolean isFeed, final List<ODataEntry> inlineEntries) {
     if (isFeed) {
@@ -452,7 +453,8 @@ public class XmlEntryConsumer {
    * 
    * @param readProperties
    * @param navigationProperty
-   * @return
+   * @return the created {@link EntityProviderReadProperties} which can be used for reading of inline properties/entrys of navigation links within
+   * this current read entry.
    * @throws EntityProviderException 
    */
   private EntityProviderReadProperties createInlineProperties(final EntityProviderReadProperties readProperties, final EdmNavigationProperty navigationProperty) throws EntityProviderException {

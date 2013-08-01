@@ -207,28 +207,28 @@ public interface ODataContext {
     /**
      * Sets the start heap memory used.
      * @param usedHeap the start heap memory used in bytes
-     * @see ManagementFactory#getMemoryMXBean()
+     * @see java.lang.ManagementFactory#getMemoryMXBean()
      */
     void setMemoryStarted(long usedHeap);
 
     /**
      * Sets the stop heap memory used.
      * @param usedHeap the stop heap memory used in bytes
-     * @see ManagementFactory#getMemoryMXBean()
+     * @see java.lang.ManagementFactory#getMemoryMXBean()
      */
     void setMemoryStopped(long usedHeap);
 
     /**
      * Gets the start heap memory used.
      * @return start heap memory used or 0 if not set
-     * @see ManagementFactory#getMemoryMXBean()
+     * @see java.lang.ManagementFactory#getMemoryMXBean()
      */
     long getMemoryStarted();
 
     /**
      * Gets the stop heap memory used.
      * @return stop heap memory used or 0 if not set
-     * @see ManagementFactory#getMemoryMXBean()
+     * @see java.lang.ManagementFactory#getMemoryMXBean()
      */
     long getMemoryStopped();
   }
