@@ -45,11 +45,11 @@ import org.apache.olingo.odata2.testutil.mock.MockFacade;
  */
 public class JsonEntryConsumerTest extends AbstractConsumerTest {
 
-  private static final String SIMPLE_ENTRY_BUILDING = "JsonBuilding";
-  private static final String SIMPLE_ENTRY_EMPLOYEE = "JsonEmployee";
-  private static final String SIMPLE_ENTRY_TEAM = "JsonTeam";
-  private static final String INVALID_ENTRY_TEAM_DOUBLE_NAME_PROPERTY = "JsonInvalidTeamDoubleNameProperty";
-  private static final String SIMPLE_ENTRY_BUILDING_WITHOUT_D = "JsonBuildingWithoutD";
+  private static final String SIMPLE_ENTRY_BUILDING = "JsonBuilding.json";
+  private static final String SIMPLE_ENTRY_EMPLOYEE = "JsonEmployee.json";
+  private static final String SIMPLE_ENTRY_TEAM = "JsonTeam.json";
+  private static final String INVALID_ENTRY_TEAM_DOUBLE_NAME_PROPERTY = "JsonInvalidTeamDoubleNameProperty.json";
+  private static final String SIMPLE_ENTRY_BUILDING_WITHOUT_D = "JsonBuildingWithoutD.json";
 
   //Negative Test jsonStart
   private static final String negativeJsonStart_1 = "{ \"abc\": {";

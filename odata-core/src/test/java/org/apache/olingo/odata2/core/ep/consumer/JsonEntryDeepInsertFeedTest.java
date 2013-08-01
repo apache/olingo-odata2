@@ -45,9 +45,9 @@ import org.apache.olingo.odata2.testutil.mock.MockFacade;
  */
 public class JsonEntryDeepInsertFeedTest extends AbstractConsumerTest {
 
-  private static final String BUILDING_WITH_INLINE_ROOMS = "JsonBuildingWithInlineRooms";
-  private static final String TEAM_WITH_INLINE_EMPLOYEES = "JsonTeamsWithInlineEmployees";
-  private static final String BUILDING_WITH_INLINE_ROOMS_NEXTLINK_AND_COUNT = "JsonBuildingWithInlineRoomsAndNextLinkAndCount";
+  private static final String BUILDING_WITH_INLINE_ROOMS = "JsonBuildingWithInlineRooms.json";
+  private static final String TEAM_WITH_INLINE_EMPLOYEES = "JsonTeamsWithInlineEmployees.json";
+  private static final String BUILDING_WITH_INLINE_ROOMS_NEXTLINK_AND_COUNT = "JsonBuildingWithInlineRoomsAndNextLinkAndCount.json";
 
   @Test
   public void innerFeedNoMediaResourceWithoutCallback() throws Exception {

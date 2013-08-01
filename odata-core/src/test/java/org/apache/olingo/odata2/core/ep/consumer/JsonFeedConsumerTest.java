@@ -43,7 +43,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
 
   @Test
   public void teamsFeed() throws Exception {
-    ODataFeed feed = prepareAndExecuteFeed("JsonTeams", "Teams", DEFAULT_PROPERTIES);
+    ODataFeed feed = prepareAndExecuteFeed("JsonTeams.json", "Teams", DEFAULT_PROPERTIES);
 
     List<ODataEntry> entries = feed.getEntries();
     assertNotNull(entries);
@@ -88,7 +88,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
 
   @Test
   public void teamsFeedWithoutD() throws Exception {
-    ODataFeed feed = prepareAndExecuteFeed("JsonTeamsWithoutD", "Teams", DEFAULT_PROPERTIES);
+    ODataFeed feed = prepareAndExecuteFeed("JsonTeamsWithoutD.json", "Teams", DEFAULT_PROPERTIES);
 
     List<ODataEntry> entries = feed.getEntries();
     assertNotNull(entries);
@@ -272,7 +272,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
 
   @Test
   public void teamsFeedWithCount() throws Exception {
-    ODataFeed feed = prepareAndExecuteFeed("JsonTeamsWithCount", "Teams", DEFAULT_PROPERTIES);
+    ODataFeed feed = prepareAndExecuteFeed("JsonTeamsWithCount.json", "Teams", DEFAULT_PROPERTIES);
 
     List<ODataEntry> entries = feed.getEntries();
     assertNotNull(entries);
@@ -287,7 +287,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
 
   @Test
   public void teamsFeedWithCountWithoutD() throws Exception {
-    ODataFeed feed = prepareAndExecuteFeed("JsonTeamsWithCountWithoutD", "Teams", DEFAULT_PROPERTIES);
+    ODataFeed feed = prepareAndExecuteFeed("JsonTeamsWithCountWithoutD.json", "Teams", DEFAULT_PROPERTIES);
 
     List<ODataEntry> entries = feed.getEntries();
     assertNotNull(entries);

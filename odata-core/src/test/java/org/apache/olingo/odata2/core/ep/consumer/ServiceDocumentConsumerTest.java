@@ -66,19 +66,19 @@ public class ServiceDocumentConsumerTest {
 
   @Test
   public void testJson() throws EntityProviderException {
-    InputStream in = ClassLoader.class.getResourceAsStream("/svcDocJson.txt");
+    InputStream in = ClassLoader.class.getResourceAsStream("/svcDocJson.json");
     assertNotNull(EntityProvider.readServiceDocument(in, "application/json"));
   }
 
   @Test(expected = EntityProviderException.class)
   public void testInvalidInputStream() throws EntityProviderException {
-    InputStream in = ClassLoader.class.getResourceAsStream("/svcDocJson.txt");
+    InputStream in = ClassLoader.class.getResourceAsStream("/svcDocJson.json");
     EntityProvider.readServiceDocument(in, "application/atom+xml");
   }
 
   @Test
   public void testJsonServiceDocument() throws EntityProviderException {
-    InputStream in = ClassLoader.class.getResourceAsStream("/svcDocJson.txt");
+    InputStream in = ClassLoader.class.getResourceAsStream("/svcDocJson.json");
     ServiceDocument serviceDoc = EntityProvider.readServiceDocument(in, "application/json");
     assertNotNull(serviceDoc);
     assertNull(serviceDoc.getAtomInfo());
@@ -97,7 +97,7 @@ public class ServiceDocumentConsumerTest {
 
   @Test
   public void testCompareJsonWithAtom() throws EntityProviderException {
-    InputStream inputJson = ClassLoader.class.getResourceAsStream("/svcDocJson.txt");
+    InputStream inputJson = ClassLoader.class.getResourceAsStream("/svcDocJson.json");
     ServiceDocument serviceDocJson = EntityProvider.readServiceDocument(inputJson, "application/json");
     assertNotNull(serviceDocJson);
     List<EdmEntitySetInfo> entitySetsInfoJson = serviceDocJson.getEntitySetsInfo();

@@ -36,7 +36,7 @@ public class JsonServiceDocumentConsumerTest {
   @Test
   public void test() throws EntityProviderException {
     JsonServiceDocumentConsumer parser = new JsonServiceDocumentConsumer();
-    InputStream in = ClassLoader.class.getResourceAsStream("/svcDocJson.txt");
+    InputStream in = ClassLoader.class.getResourceAsStream("/svcDocJson.json");
     ServiceDocument serviceDoc = parser.parseJson(in);
     List<EdmEntitySetInfo> entitySetsInfo = serviceDoc.getEntitySetsInfo();
     assertNotNull(entitySetsInfo);
@@ -57,14 +57,14 @@ public class JsonServiceDocumentConsumerTest {
   @Test(expected = EntityProviderException.class)
   public void testInvalidServiceDocument() throws EntityProviderException {
     JsonServiceDocumentConsumer parser = new JsonServiceDocumentConsumer();
-    InputStream in = ClassLoader.class.getResourceAsStream("/invalidSvcDocJson.txt");
+    InputStream in = ClassLoader.class.getResourceAsStream("/invalidSvcDocJson.json");
     parser.parseJson(in);
   }
 
   @Test(expected = EntityProviderException.class)
   public void testServiceDocumentWithInvalidStructure() throws EntityProviderException {
     JsonServiceDocumentConsumer parser = new JsonServiceDocumentConsumer();
-    InputStream in = ClassLoader.class.getResourceAsStream("/invalidSvcDocJson2.txt");
+    InputStream in = ClassLoader.class.getResourceAsStream("/invalidSvcDocJson2.json");
     parser.parseJson(in);
   }
 }
