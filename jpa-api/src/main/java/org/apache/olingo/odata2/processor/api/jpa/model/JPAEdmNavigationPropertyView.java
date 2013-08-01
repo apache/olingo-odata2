@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
  * property is consistent only if there exists a consistent EDM association.
  * 
  *  
- * @DoNotImplement
+ * @org.apache.olingo.odata2.DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView
  * 
  */

@@ -29,7 +29,6 @@ import javax.persistence.metamodel.Attribute;
 
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAModelException;
-import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 
 /**
  * This class holds utility methods for Type conversions between JPA and OData Types.

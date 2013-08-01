@@ -42,7 +42,7 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
  * 
  *  
  *         <p>
- * @DoNotImplement
+ * @org.apache.olingo.odata2.DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityContainerView
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexTypeView

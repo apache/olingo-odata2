@@ -33,7 +33,7 @@ public interface JPAEdmExtension {
    *            is the schema view
    * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView#registerOperations(Class,
    *      String[])
-   * @deprecated Use {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension#extendWithOperations(JPAEdmSchemaView view)}
+   * @deprecated Use {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension#extendWithOperation(JPAEdmSchemaView view)}
    * 
    */
   @Deprecated

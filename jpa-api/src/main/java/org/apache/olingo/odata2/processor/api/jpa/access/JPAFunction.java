@@ -57,7 +57,7 @@ public class JPAFunction {
   /**
    * The method returns the parameter types for the Java method.
    * 
-   * @return an array of type {@link java.lang.Class<?>}
+   * @return an array of type {@link java.lang.Class}
    */
   public Class<?>[] getParameterTypes() {
     return parameterTypes;

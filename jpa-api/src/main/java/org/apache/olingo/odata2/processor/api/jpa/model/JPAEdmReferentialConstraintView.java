@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.edm.provider.ReferentialConstraint;
  * </p>
  * 
  *  <br>
- * @DoNotImplement
+ * @org.apache.olingo.odata2.DoNotImplement
  * <br>
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintRoleView
  * 

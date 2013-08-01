@@ -110,8 +110,7 @@ public interface JPAProcessor {
    * @param createView
    * @param content
    * @param requestContentType
-   * @param contentType
-   * @return Created Object
+   * @return a list of JPA entities
    * 
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException
@@ -123,9 +122,10 @@ public interface JPAProcessor {
    * Processes OData request for updating Entity. The method returns an Object
    * which is updated. Null means object was not found or updated.
    * 
-   * @param deleteuriInfo
-   * @param contentType
-   * @return Deleted Object
+   * @param updateView
+   * @param content
+   * @param requestContentType
+   * @return updated JPA Entity
    * 
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException
@@ -138,7 +138,7 @@ public interface JPAProcessor {
    * 
    * @param deleteuriInfo
    * @param contentType
-   * @return Deleted Object
+   * @return deleted JPA Entity
    * 
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException

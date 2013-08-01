@@ -172,7 +172,6 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
             jpaAttributeType = type.toString().substring(lastIndexOfDot + 1);
           }
           edmEntityType = entityTypeView.searchEdmEntityType(jpaAttributeType);
-
         }
 
         else if (roleType == RoleType.DEPENDENT) {

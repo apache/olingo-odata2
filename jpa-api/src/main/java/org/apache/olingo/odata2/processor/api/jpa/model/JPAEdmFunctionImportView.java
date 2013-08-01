@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
  * 
  *  
  *         <p>
- * @DoNotImplement
+ * @org.apache.olingo.odata2.DoNotImplement
  * 
  */
 public interface JPAEdmFunctionImportView extends JPAEdmBaseView {

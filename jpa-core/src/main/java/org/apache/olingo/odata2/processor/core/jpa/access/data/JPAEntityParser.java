@@ -64,7 +64,7 @@ public final class JPAEntityParser {
    * properties of an EdmEntity Type
    * 
    * @param jpaEntity
-   * @param selectedItems
+   * @param selectPropertyList
    * @return a Hash Map of Properties and values for given selected properties
    *         of an EdmEntity Type
    * @throws ODataJPARuntimeException

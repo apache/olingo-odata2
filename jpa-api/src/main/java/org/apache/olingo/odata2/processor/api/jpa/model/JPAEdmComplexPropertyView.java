@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.api.edm.provider.ComplexProperty;
  * container for the properties of EDM complex type.
  * </p>
  * 
- *  
+ * @org.apache.olingo.odata2.DoNotImplement 
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexTypeView
  */
 public interface JPAEdmComplexPropertyView extends JPAEdmBaseView {

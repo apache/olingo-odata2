@@ -44,7 +44,7 @@ public class JPAEdmMappingModelFactory {
   public JPAEdmMappingModelFactory() {}
 
   /**
-   * Create an instance of {@link JPARelationshipMapType }
+   * Create an instance of {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPARelationshipMapType }
    * 
    */
   public JPARelationshipMapType createJPARelationshipMapType() {
@@ -52,7 +52,7 @@ public class JPAEdmMappingModelFactory {
   }
 
   /**
-   * Create an instance of {@link JPAAttributeMapType }
+   * Create an instance of {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAAttributeMapType }
    * 
    */
   public JPAAttributeMapType createJPAAttributeMapType() {
@@ -60,7 +60,7 @@ public class JPAEdmMappingModelFactory {
   }
 
   /**
-   * Create an instance of {@link JPAEDMMappingModel }
+   * Create an instance of {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEdmMappingModel }
    * 
    */
   public JPAEdmMappingModel createJPAEDMMappingModel() {
@@ -68,7 +68,7 @@ public class JPAEdmMappingModelFactory {
   }
 
   /**
-   * Create an instance of {@link JPAPersistenceUnitMapType }
+   * Create an instance of {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAPersistenceUnitMapType }
    * 
    */
   public JPAPersistenceUnitMapType createJPAPersistenceUnitMapType() {
@@ -76,7 +76,7 @@ public class JPAEdmMappingModelFactory {
   }
 
   /**
-   * Create an instance of {@link JPAEmbeddableTypeMapType }
+   * Create an instance of {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEmbeddableTypeMapType }
    * 
    */
   public JPAEmbeddableTypeMapType createJPAEmbeddableTypeMapType() {

@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmMappingModelAcces
  * 
  *  
  *         <p>
- * @DoNotImplement
+ * @org.apache.olingo.odata2.DoNotImplement
  * 
  */
 public interface JPAEdmBaseView {

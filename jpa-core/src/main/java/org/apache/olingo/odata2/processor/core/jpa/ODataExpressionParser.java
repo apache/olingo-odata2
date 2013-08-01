@@ -184,7 +184,7 @@ public class ODataExpressionParser {
    * 
    * @param tableAlias
    * @param selectedFields
-   * @return
+   * @return a select expression
    */
   public static String parseToJPASelectExpression(final String tableAlias, final ArrayList<String> selectedFields) {
 
@@ -211,7 +211,7 @@ public class ODataExpressionParser {
    * This method parses the order by condition in the query.
    * 
    * @param orderByExpression
-   * @return
+   * @return a map of JPA attributes and their sort order
    * @throws ODataJPARuntimeException
    */
   public static HashMap<String, String> parseToJPAOrderByExpression(final OrderByExpression orderByExpression, final String tableAlias) throws ODataJPARuntimeException {

@@ -30,7 +30,7 @@ package org.apache.olingo.odata2.processor.api.jpa.model;
  * {@link org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmBuilder}.
  * 
  *  
- * @DoNotImplement
+ * @org.apache.olingo.odata2.DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.JPAAccessFactory
  */
 public interface JPAEdmModelView extends JPAEdmBaseView {

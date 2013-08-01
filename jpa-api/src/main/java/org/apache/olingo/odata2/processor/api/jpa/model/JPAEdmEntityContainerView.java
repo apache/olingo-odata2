@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
  * JPA EDM Entity Set view are consistent.
  * 
  *  
- * @DoNotImplement
+ * @org.apache.olingo.odata2.DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntitySetView
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationSetView
  * 

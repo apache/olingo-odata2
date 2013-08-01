@@ -38,7 +38,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension;
  * </ol>
  * 
  *   <br>
- * @DoNotImplement
+ * @org.apache.olingo.odata2.DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAAccessFactory
  * 
@@ -174,7 +174,7 @@ public interface ODataJPAContext {
   /**
    * The method returns the JPA Edm Extension instance set into the context.
    * 
-   * @return
+   * @return an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEmbeddableTypeMapType}
    */
   public JPAEdmExtension getJPAEdmExtension();
 

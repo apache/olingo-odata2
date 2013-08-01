@@ -42,7 +42,7 @@ import org.apache.olingo.odata2.api.edm.provider.Association;
  * 
  *  
  *         <p>
- * @DoNotImplement
+ * @org.apache.olingo.odata2.DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationSetView
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintView
  * 
