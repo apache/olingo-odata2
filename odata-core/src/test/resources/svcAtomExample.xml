@@ -17,7 +17,7 @@
          specific language governing permissions and limitations
          under the License.
 -->
-<service xmlns="http://www.w3.org/2007/app" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sap="http://www.sap.com/Data">
+<service xmlns="http://www.w3.org/2007/app" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:foo="http://www.foo.bar/Data">
 	<workspace>
 	 	<atom:title>Main Site</atom:title>
 		<collection href="http://example.org/blog/main">
@@ -44,9 +44,9 @@
 			</categories>
 		</collection>
 	</workspace>
-	<sap:extension>
-		<sap:extension2 attr="attributeValue"/>
-		<sap:extension3>value</sap:extension3>
-		<sap:extension4 attr="attributeValue">text</sap:extension4>
-	</sap:extension>
+	<foo:extension>
+		<foo:extension2 attr="attributeValue"/>
+		<foo:extension3>value</foo:extension3>
+		<foo:extension4 attr="attributeValue">text</foo:extension4>
+	</foo:extension>
 </service>

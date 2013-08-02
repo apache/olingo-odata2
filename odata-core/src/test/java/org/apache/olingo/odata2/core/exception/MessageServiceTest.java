@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
  */
 public class MessageServiceTest extends BaseTest {
 
-  private static final Locale DEFAULT_LANGUAGE = new Locale("test", "SAP");
+  private static final Locale DEFAULT_LANGUAGE = new Locale("test", "foo");
 
   @Test
   public void testResourceBundleException() throws Exception {

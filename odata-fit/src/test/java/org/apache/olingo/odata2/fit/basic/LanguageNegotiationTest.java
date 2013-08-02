@@ -76,7 +76,7 @@ public class LanguageNegotiationTest extends AbstractBasicTest {
   }
 
   @Test
-  public void issue_ODATAFORSAP_61() throws ClientProtocolException, IOException, XpathException, SAXException {
+  public void issue_61() throws ClientProtocolException, IOException, XpathException, SAXException {
     final HttpGet get = new HttpGet(URI.create(getEndpoint().toString() + "$metadata"));
     get.setHeader(HttpHeaders.ACCEPT_LANGUAGE, "es");
 

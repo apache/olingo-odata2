@@ -16,9 +16,6 @@
  *        specific language governing permissions and limitations
  *        under the License.
  ******************************************************************************/
-/**
- * (c) 2013 by SAP AG
- */
 package org.apache.olingo.odata2.core.ep.consumer;
 
 import static org.junit.Assert.assertEquals;

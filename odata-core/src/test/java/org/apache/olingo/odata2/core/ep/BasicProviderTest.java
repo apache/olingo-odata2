@@ -59,7 +59,7 @@ public class BasicProviderTest extends AbstractProviderTest {
   public void writeMetadata() throws Exception {
     Map<String, String> predefinedNamespaces = new HashMap<String, String>();
     predefinedNamespaces.put("annoPrefix", "http://annoNamespace");
-    predefinedNamespaces.put("sap", "http://sap");
+    predefinedNamespaces.put("foo", "http://foo");
     predefinedNamespaces.put("annoPrefix2", "http://annoNamespace");
     predefinedNamespaces.put("annoPrefix", "http://annoNamespace");
 
@@ -68,7 +68,7 @@ public class BasicProviderTest extends AbstractProviderTest {
     assertNotNull(response.getEntity());
     assertEquals(ContentType.APPLICATION_XML_CS_UTF_8.toString(), response.getContentHeader());
     String metadata = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertTrue(metadata.contains("xmlns:sap=\"http://sap\""));
+    assertTrue(metadata.contains("xmlns:foo=\"http://foo\""));
     assertTrue(metadata.contains("xmlns:annoPrefix=\"http://annoNamespace\""));
     assertTrue(metadata.contains("xmlns:annoPrefix2=\"http://annoNamespace\""));
   }
@@ -91,7 +91,7 @@ public class BasicProviderTest extends AbstractProviderTest {
 
     Map<String, String> predefinedNamespaces = new HashMap<String, String>();
     predefinedNamespaces.put("annoPrefix", "http://annoNamespace");
-    predefinedNamespaces.put("sap", "http://sap");
+    predefinedNamespaces.put("foo", "http://foo");
     predefinedNamespaces.put("annoPrefix2", "http://annoNamespace");
     predefinedNamespaces.put("annoPrefix", "http://annoNamespace");
     predefinedNamespaces.put("prefix", "namespace");

@@ -56,7 +56,7 @@ public class ServiceDocumentConsumerTest {
       for (Collection collection : workspace.getCollections()) {
         assertNotNull(collection.getExtesionElements().get(0));
         assertEquals("member-title", collection.getExtesionElements().get(0).getName());
-        assertEquals("sap", collection.getExtesionElements().get(0).getPrefix());
+        assertEquals("foo", collection.getExtesionElements().get(0).getPrefix());
       }
     }
     for (ExtensionElement extElement : atomInfo.getExtesionElements()) {

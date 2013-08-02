@@ -40,7 +40,7 @@ public class TokenTool {
   private static boolean debug = false;
 
   private static final Logger log = LoggerFactory.getLogger(ParserTool.class);
-  private static final Locale DEFAULT_LANGUAGE = new Locale("test", "SAP");
+  private static final Locale DEFAULT_LANGUAGE = new Locale("test", "foo");
 
   public TokenTool(final String expression, final boolean wsp) {
     dout("TokenTool - Testing: " + expression);

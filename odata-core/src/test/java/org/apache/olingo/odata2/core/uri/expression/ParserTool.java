@@ -60,7 +60,7 @@ public class ParserTool {
   private CommonExpression tree;
   private CommonExpression curNode;
   private Exception curException;
-  private static final Locale DEFAULT_LANGUAGE = new Locale("test", "SAP");
+  private static final Locale DEFAULT_LANGUAGE = new Locale("test", "foo");
 
   public static void dout(final String out) {
     if (debug) {

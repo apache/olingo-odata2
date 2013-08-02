@@ -48,8 +48,8 @@ import org.apache.olingo.odata2.api.servicedocument.Workspace;
  *  
  */
 public class AtomServiceDocumentConsumerTest {
-  private static final String NAMESPACE_SAP = "http://www.sap.com/Data";
-  private static final String PREFIX_SAP = "sap";
+  private static final String NAMESPACE = "http://www.foo.bar/Data";
+  private static final String PREFIX = "foo";
 
   @Test
   public void testServiceDocument() throws IOException, EntityProviderException {
@@ -68,14 +68,14 @@ public class AtomServiceDocumentConsumerTest {
           assertEquals("TypeOneEntityCollection", collection.getTitle().getText());
           assertFalse(collection.getCommonAttributes().getAttributes().isEmpty());
           assertEquals("content-version", collection.getCommonAttributes().getAttributes().get(0).getName());
-          assertEquals(NAMESPACE_SAP, collection.getCommonAttributes().getAttributes().get(0).getNamespace());
-          assertEquals(PREFIX_SAP, collection.getCommonAttributes().getAttributes().get(0).getPrefix());
+          assertEquals(NAMESPACE, collection.getCommonAttributes().getAttributes().get(0).getNamespace());
+          assertEquals(PREFIX, collection.getCommonAttributes().getAttributes().get(0).getPrefix());
           assertEquals("1", collection.getCommonAttributes().getAttributes().get(0).getText());
           assertFalse(collection.getExtesionElements().isEmpty());
           for (ExtensionElement extElement : collection.getExtesionElements()) {
-            assertEquals(PREFIX_SAP, extElement.getPrefix());
+            assertEquals(PREFIX, extElement.getPrefix());
             assertEquals("member-title", extElement.getName());
-            assertEquals(NAMESPACE_SAP, extElement.getNamespace());
+            assertEquals(NAMESPACE, extElement.getNamespace());
           }
         }
       }
@@ -214,18 +214,18 @@ public class AtomServiceDocumentConsumerTest {
           assertEquals("TravelagencyCollection", collection.getTitle().getText());
           assertEquals(2, collection.getCommonAttributes().getAttributes().size());
           assertEquals("content-version", collection.getCommonAttributes().getAttributes().get(1).getName());
-          assertEquals(NAMESPACE_SAP, collection.getCommonAttributes().getAttributes().get(1).getNamespace());
-          assertEquals(PREFIX_SAP, collection.getCommonAttributes().getAttributes().get(1).getPrefix());
+          assertEquals(NAMESPACE, collection.getCommonAttributes().getAttributes().get(1).getNamespace());
+          assertEquals(PREFIX, collection.getCommonAttributes().getAttributes().get(1).getPrefix());
           assertEquals("1", collection.getCommonAttributes().getAttributes().get(1).getText());
           assertFalse(collection.getExtesionElements().isEmpty());
           for (ExtensionElement extElement : collection.getExtesionElements()) {
             if ("member-title".equals(extElement.getName())) {
-              assertEquals(PREFIX_SAP, extElement.getPrefix());
-              assertEquals(NAMESPACE_SAP, extElement.getNamespace());
+              assertEquals(PREFIX, extElement.getPrefix());
+              assertEquals(NAMESPACE, extElement.getNamespace());
               assertEquals("Travelagency", extElement.getText());
             } else if ("collectionLayout".equals(extElement.getName())) {
               assertEquals("gp", extElement.getPrefix());
-              assertEquals("http://www.sap.com/Data/GP", extElement.getNamespace());
+              assertEquals("http://www.foo.bar/Data/GP", extElement.getNamespace());
               assertNotNull(extElement.getAttributes());
               assertEquals(2, extElement.getAttributes().size());
               assertEquals("display-order", extElement.getAttributes().get(0).getName());
