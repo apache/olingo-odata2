@@ -19,10 +19,10 @@ public class JPAEdmFacets {
     if (jpaAttribute.getJavaMember() instanceof AnnotatedElement) {
       column = ((AnnotatedElement) jpaAttribute
           .getJavaMember()).getAnnotation(Column.class);
-    } else {
-      return;
     }
 
+    if (column == null) return;
+    
     setNullable(column, edmProperty);
 
     switch (edmTypeKind) {
