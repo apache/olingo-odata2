@@ -291,9 +291,11 @@ public class ContentType {
   }
 
   /**
+   * Map combination of type/subtype to corresponding {@link ODataFormat}.
    * 
-   * @param subtype
-   * @return
+   * @param type type which is used for mapping
+   * @param subtype subtype which is used for mapping
+   * @return corresponding {@link ODataFormat} or {@link ODataFormat#CUSTOM} if none specific format is available.
    */
   private static ODataFormat mapToODataFormat(final String type, final String subtype) {
     ODataFormat odataFormat = ODataFormat.CUSTOM;
@@ -312,8 +314,10 @@ public class ContentType {
   }
 
   /**
+   * Maps content of array into map. 
+   * Therefore it must be an combination of <code>key</code> followed by the <code>value</code> in the array.
    * 
-   * @param content
+   * @param content content which is added to {@link Map}. 
    * @return a new <code>ContentType</code> object
    */
   private static Map<String, String> parameterMap(final String... content) {
@@ -552,9 +556,9 @@ public class ContentType {
   /**
    * Check whether both string are equal ignoring the case of the strings.
    * 
-   * @param first
-   * @param second
-   * @return
+   * @param first first string
+   * @param second second string
+   * @return <code>true</code> if both strings are equal (by ignoring the case), otherwise <code>false</code> is returned
    */
   private static boolean areEqual(final String first, final String second) {
     if (first == null) {

@@ -71,7 +71,7 @@ public class BatchRequestParserTest {
 
   @Test
   public void test() throws IOException, BatchException, URISyntaxException {
-    String fileName = "/batchWithPost.txt";
+    String fileName = "/batchWithPost.batch";
     InputStream in = ClassLoader.class.getResourceAsStream(fileName);
     if (in == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");
@@ -122,7 +122,7 @@ public class BatchRequestParserTest {
 
   @Test
   public void testImageInContent() throws IOException, BatchException, URISyntaxException {
-    String fileName = "/batchWithContent.txt";
+    String fileName = "/batchWithContent.batch";
     InputStream contentInputStream = ClassLoader.class.getResourceAsStream(fileName);
     if (contentInputStream == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");
@@ -180,7 +180,7 @@ public class BatchRequestParserTest {
 
   @Test
   public void testPostWithoutBody() throws IOException, BatchException, URISyntaxException {
-    String fileName = "/batchWithContent.txt";
+    String fileName = "/batchWithContent.batch";
     InputStream contentInputStream = ClassLoader.class.getResourceAsStream(fileName);
     if (contentInputStream == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");

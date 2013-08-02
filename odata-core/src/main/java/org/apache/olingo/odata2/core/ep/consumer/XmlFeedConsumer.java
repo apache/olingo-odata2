@@ -79,12 +79,12 @@ public class XmlFeedConsumer {
   /**
    * Read all feed specific data (like <code>inline count</code> and <code>next link</code>) as well as all feed entries (<code>entry</code>).
    * 
-   * @param reader
-   * @param eia
-   * @param entryReadProperties
-   * @return
-   * @throws XMLStreamException
-   * @throws EntityProviderException
+   * @param reader xml stream reader with xml content to be read
+   * @param eia entity infos for validation and mapping
+   * @param entryReadProperties properties which are used for read of feed.
+   * @return all feed specific data (like <code>inline count</code> and <code>next link</code>) as well as all feed entries (<code>entry</code>).
+   * @throws XMLStreamException if malformed xml is read in stream
+   * @throws EntityProviderException if xml contains invalid data (based on odata specification and edm definition)
    */
   private ODataFeed readFeedData(final XMLStreamReader reader, final EntityInfoAggregator eia, final EntityProviderReadProperties entryReadProperties) throws XMLStreamException, EntityProviderException {
     FeedMetadataImpl metadata = new FeedMetadataImpl();
@@ -146,12 +146,12 @@ public class XmlFeedConsumer {
   }
 
   /**
+   * Maps all all found namespaces of current xml tag into a map.
    * 
-   * @param reader
-   * @return 
-   * @throws EntityProviderException
+   * @param reader xml reader with current position at a xml tag
+   * @return map with all found namespaces of current xml tag
    */
-  private Map<String, String> extractNamespacesFromTag(final XMLStreamReader reader) throws EntityProviderException {
+  private Map<String, String> extractNamespacesFromTag(final XMLStreamReader reader) {
     // collect namespaces
     Map<String, String> foundPrefix2NamespaceUri = new HashMap<String, String>();
     int namespaceCount = reader.getNamespaceCount();

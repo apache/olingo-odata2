@@ -50,8 +50,8 @@ import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
 public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
 
-  private static final String EMPLOYEE_WITH_INLINE_TEAM = "JsonEmployeeWithInlineTeam";
-  private static final String INLINE_ROOM_WITH_INLINE_BUILDING = "JsonInlineRoomWithInlineBuilding";
+  private static final String EMPLOYEE_WITH_INLINE_TEAM = "JsonEmployeeWithInlineTeam.json";
+  private static final String INLINE_ROOM_WITH_INLINE_BUILDING = "JsonInlineRoomWithInlineBuilding.json";
 
   @Test
   public void innerEntryNoMediaResourceWithoutCallback() throws Exception {
