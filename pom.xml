@@ -35,49 +35,6 @@
 		</license>
 	</licenses>
 
-	<developers>
-		<developer>
-			<id>chandan.v.a</id>
-			<name>Chandan V A</name>
-			<email>chandan.v.a@sap.com</email>
-		</developer>
-		<developer>
-			<id>chitresh.chauhan</id>
-			<name>Chitresh Chauhan</name>
-			<email>chitresh.chauhan@sap.com</email>
-		</developer>
-		<developer>
-			<id>anirban.roy</id>
-			<name>Anirban Roy</name>
-			<email>anirban.roy@sap.com</email>
-		</developer>
-		<developer>
-			<id>stephan.klevenz</id>
-			<name>Stephan Klevenz</name>
-			<email>stephan.klevenz@sap.com</email>
-		</developer>
-		<developer>
-			<id>christian.amend</id>
-			<name>Christian Amend</name>
-			<email>christian.amend@sap.com</email>
-		</developer>
-		<developer>
-			<id>michael.bolz</id>
-			<name>Michael Bolz</name>
-			<email>michael.bolz@sap.com</email>
-		</developer>
-		<developer>
-			<id>klaus.straubinger</id>
-			<name>Klaus Straubinger</name>
-			<email>klaus.straubinger@sap.com</email>
-		</developer>
-		<developer>
-			<id>jens.huesken</id>
-			<name>Jens Huesken</name>
-			<email>jens.huesken@sap.com</email>
-		</developer>
-	</developers>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
