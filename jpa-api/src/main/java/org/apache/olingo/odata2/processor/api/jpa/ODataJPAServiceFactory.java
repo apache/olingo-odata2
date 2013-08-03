@@ -63,7 +63,7 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  *  </init-param>
  *  <init-param>
  *    <param-name>org.apache.olingo.odata2.processor.factory</param-name>
- *    <param-value>com.sap.sample.processor.SampleProcessorFactory</param-value>
+ *    <param-value>foo.bar.sample.processor.SampleProcessorFactory</param-value>
  *  </init-param>
  *  <init-param>
  *    <param-name>org.apache.olingo.odata2.path.split</param-name>

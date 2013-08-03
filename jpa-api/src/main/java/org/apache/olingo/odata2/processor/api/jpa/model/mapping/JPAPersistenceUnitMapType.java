@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="EDMSchemaNamespace" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="JPAEntityTypes" type="{http://www.sap.com/core/odata/processor/api/jpa/model/mapping}JPAEntityTypesMapType"/>
- *         &lt;element name="JPAEmbeddableTypes" type="{http://www.sap.com/core/odata/processor/api/jpa/model/mapping}JPAEmbeddableTypesMapType"/>
+ *         &lt;element name="JPAEntityTypes" type="{http://www.apache.org/olingo/odata2/processor/api/jpa/model/mapping}JPAEntityTypesMapType"/>
+ *         &lt;element name="JPAEmbeddableTypes" type="{http://www.apache.org/olingo/odata2/processor/api/jpa/model/mapping}JPAEmbeddableTypesMapType"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>

@@ -22,6 +22,6 @@
  * 
  *  
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.sap.com/core/odata/processor/api/jpa/model/mapping", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.apache.org/olingo/odata2/processor/api/jpa/model/mapping", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.olingo.odata2.processor.api.jpa.model.mapping;
 
