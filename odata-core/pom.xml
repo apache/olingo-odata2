@@ -163,11 +163,11 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
+        <dependency>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>javax.ws.rs-api</artifactId>
+          <version>${jax.ws.rs.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>org.apache.olingo.odata2</groupId>
@@ -184,12 +184,20 @@
 			<artifactId>gson</artifactId>
 			<version>${gson.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.olingo.odata2</groupId>
-			<artifactId>testutil</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
+    
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.apache.olingo.odata2</groupId>
+            <artifactId>testutil</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${cxf.version}</version>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 
 </project>
