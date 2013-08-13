@@ -225,7 +225,26 @@
 					</execution>
 				</executions>
 			</plugin>
-
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <outputFileFormat>xml</outputFileFormat>
+          <consoleOutput>true</consoleOutput>
+          <enableRSS>false</enableRSS>
+          <linkXRef>false</linkXRef>
+          <configLocation>src/checkstyle/config.xml</configLocation>
+          <sourceDirectory>${basedir}/src</sourceDirectory>
+          <encoding>UTF-8</encoding>
+          <failOnViolation>false</failOnViolation>
+        </configuration>
+      </plugin>
 		</plugins>
 	</build>
 
@@ -264,21 +283,12 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-checkstyle-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>check</goal>
-								</goals>
-							</execution>
-						</executions>
+            <executions>
+              <execution>
+                <phase>package</phase>
+              </execution>
+            </executions>
 						<configuration>
-							<outputFileFormat>xml</outputFileFormat>
-							<consoleOutput>true</consoleOutput>
-							<enableRSS>false</enableRSS>
-							<linkXRef>false</linkXRef>
-							<configLocation>src/checkstyle/config.xml</configLocation>
-							<sourceDirectory>${basedir}/src</sourceDirectory>
-							<encoding>UTF-8</encoding>
 							<failOnViolation>true</failOnViolation>
 							<violationSeverity>error</violationSeverity>
 						</configuration>
