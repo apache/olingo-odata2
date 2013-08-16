@@ -16,37 +16,23 @@
  *        specific language governing permissions and limitations
  *        under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.processor.core.jpa.cud;
+package org.apache.olingo.odata2.processor.core.jpa.mock.data;
 
-public class SalesOrderLineItemKey {
+public class SalesOrderLineItem {
 
-  private int soId;
-  private int liId;
+  private int price;
 
-  public SalesOrderLineItemKey() {
-
-  }
-
-  public SalesOrderLineItemKey(final int soId, final int liId) {
+  public SalesOrderLineItem(final int price) {
     super();
-    this.soId = soId;
-    this.liId = liId;
+    this.price = price;
   }
 
-  public int getSoId() {
-    return soId;
+  public int getPrice() {
+    return price;
   }
 
-  public void setSoId(final int soId) {
-    this.soId = soId;
-  }
-
-  public int getLiId() {
-    return liId;
-  }
-
-  public void setLiId(final int liId) {
-    this.liId = liId;
+  public void setPrice(final int price) {
+    this.price = price;
   }
 
 }

@@ -16,7 +16,7 @@
  *        specific language governing permissions and limitations
  *        under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.processor.core.jpa.cud;
+package org.apache.olingo.odata2.processor.core.jpa.mock.data;
 
 import java.util.ArrayList;
 import java.util.List;

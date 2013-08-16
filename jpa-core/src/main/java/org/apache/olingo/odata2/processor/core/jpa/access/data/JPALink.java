@@ -16,7 +16,7 @@
  *        specific language governing permissions and limitations
  *        under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.processor.core.jpa.cud;
+package org.apache.olingo.odata2.processor.core.jpa.access.data;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -40,7 +40,6 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAModelExcepti
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
 import org.apache.olingo.odata2.processor.core.jpa.ODataEntityParser;
-import org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser;
 
 public class JPALink {
 

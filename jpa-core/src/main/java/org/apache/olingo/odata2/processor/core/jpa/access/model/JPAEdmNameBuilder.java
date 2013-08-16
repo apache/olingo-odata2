@@ -30,6 +30,7 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
 import org.apache.olingo.odata2.api.edm.provider.ComplexProperty;
+import org.apache.olingo.odata2.api.edm.provider.ComplexType;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
 import org.apache.olingo.odata2.api.edm.provider.Mapping;
 import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
@@ -142,6 +143,7 @@ public class JPAEdmNameBuilder {
 
     JPAEdmMapping mapping = new JPAEdmMappingImpl();
     ((Mapping) mapping).setInternalName(jpaAttributeName);
+    mapping.setJPAType(jpaAttribute.getJavaType());
 
     AnnotatedElement annotatedElement = (AnnotatedElement) jpaAttribute.getJavaMember();
     if (annotatedElement != null) {
@@ -233,6 +235,11 @@ public class JPAEdmNameBuilder {
     }
 
     view.getEdmComplexType().setName(edmComplexTypeName);
+    ComplexType complexType = view.getEdmComplexType();
+    complexType.setName(edmComplexTypeName);
+    JPAEdmMapping mapping = new JPAEdmMappingImpl();
+    mapping.setJPAType(view.getJPAEmbeddableType().getJavaType());
+    complexType.setMapping((Mapping) mapping);
 
   }
 

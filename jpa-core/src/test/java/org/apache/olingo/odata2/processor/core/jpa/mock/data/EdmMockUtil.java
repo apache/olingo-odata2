@@ -16,7 +16,7 @@
  *        specific language governing permissions and limitations
  *        under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.processor.core.jpa.access.data;
+package org.apache.olingo.odata2.processor.core.jpa.mock.data;
 
 import static org.junit.Assert.fail;
 
@@ -42,10 +42,9 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackContext;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
-import org.apache.olingo.odata2.processor.core.jpa.cud.SalesOrderLineItem;
 import org.easymock.EasyMock;
 
-public class TestUtil {
+public class EdmMockUtil {
 
   public static ExpandSelectTreeNode mockExpandSelectTreeNode() {
     ExpandSelectTreeNode nextExpandNode = EasyMock.createMock(ExpandSelectTreeNode.class);

@@ -41,6 +41,7 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.processor.core.jpa.mock.data.EdmMockUtil;
 import org.junit.Test;
 
 public class JPAExpandCallBackTest {
@@ -48,11 +49,11 @@ public class JPAExpandCallBackTest {
   @Test
   public void testRetrieveEntryResult() {
     JPAExpandCallBack callBack = getJPAExpandCallBackObject();
-    WriteEntryCallbackContext writeFeedContext = TestUtil.getWriteEntryCallBackContext();
+    WriteEntryCallbackContext writeFeedContext = EdmMockUtil.getWriteEntryCallBackContext();
     try {
       Field field = callBack.getClass().getDeclaredField("nextEntitySet");
       field.setAccessible(true);
-      field.set(callBack, TestUtil.mockTargetEntitySet());
+      field.set(callBack, EdmMockUtil.mockTargetEntitySet());
       WriteEntryCallbackResult result = callBack.retrieveEntryResult(writeFeedContext);
       assertEquals(1, result.getEntryData().size());
     } catch (SecurityException e) {
@@ -69,11 +70,11 @@ public class JPAExpandCallBackTest {
   @Test
   public void testRetrieveFeedResult() {
     JPAExpandCallBack callBack = getJPAExpandCallBackObject();
-    WriteFeedCallbackContext writeFeedContext = TestUtil.getWriteFeedCallBackContext();
+    WriteFeedCallbackContext writeFeedContext = EdmMockUtil.getWriteFeedCallBackContext();
     try {
       Field field = callBack.getClass().getDeclaredField("nextEntitySet");
       field.setAccessible(true);
-      field.set(callBack, TestUtil.mockTargetEntitySet());
+      field.set(callBack, EdmMockUtil.mockTargetEntitySet());
       WriteFeedCallbackResult result = callBack.retrieveFeedResult(writeFeedContext);
       assertEquals(2, result.getFeedData().size());
     } catch (SecurityException e) {
@@ -92,8 +93,8 @@ public class JPAExpandCallBackTest {
     Map<String, ODataCallback> callBacks = null;
     try {
       URI baseUri = new URI("http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/SalesOrderProcessing.svc/");
-      ExpandSelectTreeNode expandSelectTreeNode = TestUtil.mockExpandSelectTreeNode();
-      List<ArrayList<NavigationPropertySegment>> expandList = TestUtil.getExpandList();
+      ExpandSelectTreeNode expandSelectTreeNode = EdmMockUtil.mockExpandSelectTreeNode();
+      List<ArrayList<NavigationPropertySegment>> expandList = EdmMockUtil.getExpandList();
       callBacks = JPAExpandCallBack.getCallbacks(baseUri, expandSelectTreeNode, expandList);
     } catch (URISyntaxException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -107,16 +108,16 @@ public class JPAExpandCallBackTest {
   @Test
   public void testGetNextNavigationProperty() {
     JPAExpandCallBack callBack = getJPAExpandCallBackObject();
-    List<ArrayList<NavigationPropertySegment>> expandList = TestUtil.getExpandList();
+    List<ArrayList<NavigationPropertySegment>> expandList = EdmMockUtil.getExpandList();
     ArrayList<NavigationPropertySegment> expands = expandList.get(0);
-    expands.add(TestUtil.mockThirdNavigationPropertySegment());
+    expands.add(EdmMockUtil.mockThirdNavigationPropertySegment());
     EdmNavigationProperty result = null;
     try {
       Field field = callBack.getClass().getDeclaredField("expandList");
       field.setAccessible(true);
       field.set(callBack, expandList);
       Class<?>[] formalParams = { EdmEntityType.class, EdmNavigationProperty.class };
-      Object[] actualParams = { TestUtil.mockSourceEdmEntityType(), TestUtil.mockNavigationProperty() };
+      Object[] actualParams = { EdmMockUtil.mockSourceEdmEntityType(), EdmMockUtil.mockNavigationProperty() };
       Method method = callBack.getClass().getDeclaredMethod("getNextNavigationProperty", formalParams);
       method.setAccessible(true);
       result = (EdmNavigationProperty) method.invoke(callBack, actualParams);
@@ -143,8 +144,8 @@ public class JPAExpandCallBackTest {
     Map<String, ODataCallback> callBacks = null;
     try {
       URI baseUri = new URI("http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/SalesOrderProcessing.svc/");
-      ExpandSelectTreeNode expandSelectTreeNode = TestUtil.mockExpandSelectTreeNode();
-      List<ArrayList<NavigationPropertySegment>> expandList = TestUtil.getExpandList();
+      ExpandSelectTreeNode expandSelectTreeNode = EdmMockUtil.mockExpandSelectTreeNode();
+      List<ArrayList<NavigationPropertySegment>> expandList = EdmMockUtil.getExpandList();
       callBacks = JPAExpandCallBack.getCallbacks(baseUri, expandSelectTreeNode, expandList);
     } catch (URISyntaxException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);

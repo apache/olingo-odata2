@@ -29,6 +29,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
@@ -47,8 +48,17 @@ public final class ODataEntityParser {
     this.context = context;
   }
 
-  public final ODataEntry parseEntry(final EdmEntitySet entitySet, final InputStream content, final String requestContentType, final boolean merge) throws ODataBadRequestException {
-    return null;
+  public final ODataEntry parseEntry(final EdmEntitySet entitySet,
+      final InputStream content, final String requestContentType, final boolean merge)
+      throws ODataBadRequestException {
+    ODataEntry entryValues;
+    try {
+      EntityProviderReadProperties entityProviderProperties = EntityProviderReadProperties.init().mergeSemantic(merge).build();
+      entryValues = EntityProvider.readEntry(requestContentType, entitySet, content, entityProviderProperties);
+    } catch (EntityProviderException e) {
+      throw new ODataBadRequestException(ODataBadRequestException.BODY, e);
+    }
+    return entryValues;
 
   }
 
