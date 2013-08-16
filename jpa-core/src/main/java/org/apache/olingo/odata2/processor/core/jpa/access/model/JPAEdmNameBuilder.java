@@ -315,15 +315,13 @@ public class JPAEdmNameBuilder {
 
     name = null;
     String jpaEntityTypeName = null;
-    try {
-
-      PluralAttribute<?, ?, ?> jpattr = (PluralAttribute<?, ?, ?>) propertyView.getJPAAttribute();
-
-      jpaEntityTypeName = jpattr.getElementType().getJavaType().getSimpleName();
-
-    } catch (Exception e) {
-      jpaEntityTypeName = propertyView.getJPAAttribute().getJavaType().getSimpleName();
-    }
+    Attribute<?, ?> jpaAttribute = propertyView.getJPAAttribute();
+    if (jpaAttribute.isCollection())
+      jpaEntityTypeName = ((PluralAttribute<?, ?, ?>) jpaAttribute).getElementType().getJavaType()
+          .getSimpleName();
+    else
+      jpaEntityTypeName = propertyView.getJPAAttribute().getJavaType()
+          .getSimpleName();
 
     JPAEdmMappingModelAccess mappingModelAccess = assocaitionEndView.getJPAEdmMappingModelAccess();
 
@@ -398,7 +396,9 @@ public class JPAEdmNameBuilder {
 
   }
 
-  public static void build(final JPAEdmAssociationView associationView, final JPAEdmPropertyView propertyView, final JPAEdmNavigationPropertyView navPropertyView, final int count) {
+  public static void build(final JPAEdmAssociationView associationView,
+      final JPAEdmPropertyView propertyView,
+      final JPAEdmNavigationPropertyView navPropertyView, final int count) {
 
     String toName = null;
     String fromName = null;
@@ -407,79 +407,60 @@ public class JPAEdmNameBuilder {
     String namespace = buildNamespace(associationView);
 
     Association association = associationView.getEdmAssociation();
-    navProp.setRelationship(new FullQualifiedName(namespace, association.getName()));
+    navProp.setRelationship(new FullQualifiedName(namespace, association
+        .getName()));
 
-    FullQualifiedName associationEndTypeOne = association.getEnd1().getType();
-    FullQualifiedName associationEndTypeTwo = association.getEnd2().getType();
+    FullQualifiedName associationEndTypeOne = association.getEnd1()
+        .getType();
+    FullQualifiedName associationEndTypeTwo = association.getEnd2()
+        .getType();
 
     Attribute<?, ?> jpaAttribute = propertyView.getJPAAttribute();
     navProp.setMapping(new Mapping().setInternalName(jpaAttribute.getName()));
 
-    String jpaEntityTypeName = propertyView.getJPAEdmEntityTypeView().getJPAEntityType().getName();
-    JPAEdmMappingModelAccess mappingModelAccess = navPropertyView.getJPAEdmMappingModelAccess();
+    String jpaEntityTypeName = propertyView.getJPAEdmEntityTypeView()
+        .getJPAEntityType().getName();
+    JPAEdmMappingModelAccess mappingModelAccess = navPropertyView
+        .getJPAEdmMappingModelAccess();
 
-    try {
-      PluralAttribute<?, ?, ?> jpattr = (PluralAttribute<?, ?, ?>) propertyView.getJPAAttribute();
+    String targetEntityTypeName = null;
+    if (jpaAttribute.isCollection())
+      targetEntityTypeName = ((PluralAttribute<?, ?, ?>) jpaAttribute).getElementType().getJavaType().getSimpleName();
+    else
+      targetEntityTypeName = jpaAttribute.getJavaType().getSimpleName();
 
-      if (mappingModelAccess != null && mappingModelAccess.isMappingModelExists()) {
-        toName = mappingModelAccess.mapJPAEntityType(jpattr.getElementType().getJavaType().getSimpleName());
-        fromName = mappingModelAccess.mapJPAEntityType(jpaEntityTypeName);
-        navPropName = mappingModelAccess.mapJPARelationship(jpaEntityTypeName, jpattr.getName());
-      }
-      if (toName == null) {
-        toName = jpattr.getElementType().getJavaType().getSimpleName();
-      }
-      if (fromName == null) {
-        fromName = jpaEntityTypeName;
-      }
-
-      if (navPropName == null) {
-        navPropName = toName.concat(NAVIGATION_NAME);
-      }
-      if (count > 1) {
-        navPropName = navPropName + Integer.toString(count - 1);
-      }
-      navProp.setName(navPropName);
-
-      if (toName.equals(associationEndTypeOne.getName())) {
-        navProp.setFromRole(association.getEnd2().getRole());
-        navProp.setToRole(association.getEnd1().getRole());
-      } else if (toName.equals(associationEndTypeTwo.getName())) {
-        navProp.setToRole(association.getEnd2().getRole());
-        navProp.setFromRole(association.getEnd1().getRole());
-      }
-
-    } catch (Exception e) {
-      if (mappingModelAccess != null && mappingModelAccess.isMappingModelExists()) {
-        navPropName = mappingModelAccess.mapJPARelationship(jpaEntityTypeName, jpaAttribute.getName());
-        toName = mappingModelAccess.mapJPAEntityType(jpaAttribute.getJavaType().getSimpleName());
-        fromName = mappingModelAccess.mapJPAEntityType(jpaEntityTypeName);
-      }
-      if (toName == null) {
-        toName = jpaAttribute.getJavaType().getSimpleName();
-      }
-      if (fromName == null) {
-        fromName = jpaEntityTypeName;
-      }
-
-      if (navPropName == null) {
-        navPropName = toName.concat(NAVIGATION_NAME);
-      }
-      if (count > 1) {
-        navPropName = navPropName + Integer.toString(count - 1);
-      }
-      navProp.setName(navPropName);
-
-      if (toName.equals(associationEndTypeOne.getName())) {
-        navProp.setFromRole(association.getEnd2().getRole());
-        navProp.setToRole(association.getEnd1().getRole());
-      } else if (toName.equals(associationEndTypeTwo.getName())) {
-
-        navProp.setToRole(association.getEnd2().getRole());
-        navProp.setFromRole(association.getEnd1().getRole());
-      }
+    if (mappingModelAccess != null
+        && mappingModelAccess.isMappingModelExists()) {
+      navPropName = mappingModelAccess.mapJPARelationship(
+          jpaEntityTypeName, jpaAttribute.getName());
+      toName = mappingModelAccess.mapJPAEntityType(targetEntityTypeName);
+      fromName = mappingModelAccess
+          .mapJPAEntityType(jpaEntityTypeName);
+    }
+    if (toName == null) {
+      toName = targetEntityTypeName;
     }
 
+    if (fromName == null) {
+      fromName = jpaEntityTypeName;
+    }
+
+    if (navPropName == null) {
+      navPropName = toName.concat(NAVIGATION_NAME);
+    }
+    if (count > 1) {
+      navPropName = navPropName + Integer.toString(count - 1);
+    }
+    navProp.setName(navPropName);
+
+    if (toName.equals(associationEndTypeOne.getName())) {
+      navProp.setFromRole(association.getEnd2().getRole());
+      navProp.setToRole(association.getEnd1().getRole());
+    } else if (toName.equals(associationEndTypeTwo.getName())) {
+
+      navProp.setToRole(association.getEnd2().getRole());
+      navProp.setFromRole(association.getEnd1().getRole());
+    }
   }
 
 }

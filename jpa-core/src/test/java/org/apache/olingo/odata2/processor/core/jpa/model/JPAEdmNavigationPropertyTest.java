@@ -25,6 +25,7 @@ import static org.junit.Assert.fail;
 
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Type;
 
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -34,8 +35,8 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAModelExcepti
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
-import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEntityTypeMock;
+import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAPluralAttributeMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -48,7 +49,8 @@ public class JPAEdmNavigationPropertyTest extends JPAEdmTestModelView {
   public static void setup() {
     JPAEdmNavigationPropertyTest localView = new JPAEdmNavigationPropertyTest();
     navPropView = new JPAEdmNavigationPropertyTest();
-    objNavigationProperty = new JPAEdmNavigationProperty(localView, localView, 1);
+    objNavigationProperty = new JPAEdmNavigationProperty(localView,
+        localView, 1);
     try {
       objNavigationProperty.getBuilder().build();
     } catch (ODataJPAModelException e) {
@@ -88,8 +90,13 @@ public class JPAEdmNavigationPropertyTest extends JPAEdmTestModelView {
 
     Association association = new Association();
     association.setName("Assoc_SalesOrderHeader_SalesOrderItem");
-    association.setEnd1(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "String")).setRole("SalesOrderHeader"));
-    association.setEnd2(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "SalesOrderItem")).setRole("SalesOrderItem"));
+    association.setEnd1(new AssociationEnd().setType(
+        new FullQualifiedName("salesorderprocessing", "String"))
+        .setRole("SalesOrderHeader"));
+    association.setEnd2(new AssociationEnd()
+        .setType(
+            new FullQualifiedName("salesorderprocessing",
+                "SalesOrderItem")).setRole("SalesOrderItem"));
     return association;
   }
 
@@ -112,7 +119,8 @@ public class JPAEdmNavigationPropertyTest extends JPAEdmTestModelView {
     if (objNavigationProperty == null || objNavigationProperty.getEdmNavigationProperty() == null) {
       JPAEdmNavigationPropertyTest localView = new JPAEdmNavigationPropertyTest();
       navPropView = new JPAEdmNavigationPropertyTest();
-      objNavigationProperty = new JPAEdmNavigationProperty(localView, localView, 1);
+      objNavigationProperty = new JPAEdmNavigationProperty(localView,
+          localView, 1);
       try {
         objNavigationProperty.getBuilder().build();
       } catch (ODataJPAModelException e) {
@@ -121,19 +129,23 @@ public class JPAEdmNavigationPropertyTest extends JPAEdmTestModelView {
         fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       }
     }
-    assertEquals(objNavigationProperty.getEdmNavigationProperty().getName(), "StringDetails");
+    assertEquals(
+        objNavigationProperty.getEdmNavigationProperty().getName(),
+        "StringDetails");
   }
 
   @Test
   public void testGetConsistentEdmNavigationProperties() {
-    assertTrue(objNavigationProperty.getConsistentEdmNavigationProperties().size() > 0);
+    assertTrue(objNavigationProperty.getConsistentEdmNavigationProperties()
+        .size() > 0);
   }
 
   @Test
   public void testAddJPAEdmNavigationPropertyView() {
     JPAEdmNavigationPropertyTest localView = new JPAEdmNavigationPropertyTest();
     navPropView = new JPAEdmNavigationPropertyTest();
-    objNavigationProperty = new JPAEdmNavigationProperty(localView, localView, 1);
+    objNavigationProperty = new JPAEdmNavigationProperty(localView,
+        localView, 1);
     try {
       objNavigationProperty.getBuilder().build();
     } catch (ODataJPAModelException e) {
@@ -142,7 +154,8 @@ public class JPAEdmNavigationPropertyTest extends JPAEdmTestModelView {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     objNavigationProperty.addJPAEdmNavigationPropertyView(navPropView);
-    assertTrue(objNavigationProperty.getConsistentEdmNavigationProperties().size() > 1);
+    assertTrue(objNavigationProperty.getConsistentEdmNavigationProperties()
+        .size() > 1);
   }
 
   @Override
@@ -160,20 +173,26 @@ public class JPAEdmNavigationPropertyTest extends JPAEdmTestModelView {
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
-    assertEquals(objNavigationProperty.getEdmNavigationProperty().getFromRole(), "SalesOrderItem");
-    assertEquals(objNavigationProperty.getEdmNavigationProperty().getToRole(), "SalesOrderHeader");
+    assertEquals(objNavigationProperty.getEdmNavigationProperty()
+        .getFromRole(), "SalesOrderItem");
+    assertEquals(objNavigationProperty.getEdmNavigationProperty()
+        .getToRole(), "SalesOrderHeader");
 
   }
 
   @SuppressWarnings("hiding")
-  private class AttributeMock<Object, String> extends JPAAttributeMock<Object, String> {
+  private class AttributeMock<Object, String> extends
+      JPAPluralAttributeMock {
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Class<String> getJavaType() {
-      return (Class<String>) java.lang.String.class;
+    public boolean isCollection() {
+      return true;
     }
 
+    @Override
+    public Type<java.lang.String> getElementType() {
+      return new ElementType();
+    }
   }
 
   private class JPAEdmEntityType extends JPAEntityTypeMock<String> {
@@ -183,4 +202,17 @@ public class JPAEdmNavigationPropertyTest extends JPAEdmTestModelView {
     }
   }
 
+  private class ElementType implements Type<String> {
+
+    @Override
+    public javax.persistence.metamodel.Type.PersistenceType getPersistenceType() {
+      return PersistenceType.BASIC;
+    }
+
+    @Override
+    public Class<String> getJavaType() {
+      return String.class;
+    }
+
+  }
 }
