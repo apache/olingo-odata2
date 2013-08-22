@@ -85,6 +85,8 @@ public class EdmParserTest extends AbstractXmlProducerTestHelper {
 
   private final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
 
+  private final String xml2 = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\" xmlns:prefix=\"namespace\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_01 + "\">" +"<prefix:schemaElement>text3</prefix:schemaElement>"+ "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+
   private final String xmlWithBaseType = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
 
   private final String xmlWithAssociation = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Employees\" ToRole=\"r_Manager\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Manager\" ToRole=\"r_Employees\" />" + "</EntityType>" + "<Association Name=\"" + ASSOCIATION + "\">"
@@ -123,6 +125,39 @@ public class EdmParserTest extends AbstractXmlProducerTestHelper {
       }
       assertEquals(1, schema.getComplexTypes().size());
       assertEquals("c_Location", schema.getComplexTypes().get(0).getName());
+    }
+  }
+  
+  @Test
+  public void testOtherEdmNamespace() throws XMLStreamException, EntityProviderException {
+    int i = 0;
+    EdmParser parser = new EdmParser();
+    XMLStreamReader reader = createStreamReader(xml2);
+    DataServices result = parser.readMetadata(reader, true);
+    assertEquals("2.0", result.getDataServiceVersion());
+    for (Schema schema : result.getSchemas()) {
+      assertEquals(NAMESPACE, schema.getNamespace());
+      assertEquals(1, schema.getEntityTypes().size());
+      assertEquals("Employee", schema.getEntityTypes().get(0).getName());
+      for (PropertyRef propertyRef : schema.getEntityTypes().get(0).getKey().getKeys()) {
+        assertEquals("EmployeeId", propertyRef.getName());
+      }
+      for (Property property : schema.getEntityTypes().get(0).getProperties()) {
+    	assertEquals(propertyNames[i], property.getName());
+        if ("Location".equals(property.getName())) {
+          ComplexProperty cProperty = (ComplexProperty) property;
+          assertEquals("c_Location", cProperty.getType().getName());
+        } else if ("EmployeeName".equals(property.getName())) {
+          assertNotNull(property.getCustomizableFeedMappings());
+        }
+        i++;
+      }
+      for (AnnotationElement annoElement : schema.getAnnotationElements()) {
+    	  assertEquals("prefix", annoElement.getPrefix());
+    	  assertEquals("namespace", annoElement.getNamespace());
+    	  assertEquals("schemaElement", annoElement.getName());
+    	  assertEquals("text3", annoElement.getText());
+      }
     }
   }
 
@@ -636,9 +671,8 @@ public class EdmParserTest extends AbstractXmlProducerTestHelper {
 
   @Test
   public void testAnnotations() throws XMLStreamException, EntityProviderException {
-    final String xmlWithAnnotations = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" prefix1:href=\"http://google.de\" xmlns:prefix1=\"namespaceForAnno\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"EmployeeId\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"EmployeeName\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\" annoPrefix:annoName=\"annoText\" xmlns:annoPrefix=\"http://annoNamespace\">" + "<propertyAnnoElement>text</propertyAnnoElement>" + "<propertyAnnoElement2 />" + "</Property>" + "</EntityType>" + "<schemaElementTest1>" + "<prefix:schemaElementTest2 xmlns:prefix=\"namespace\">text3" + "</prefix:schemaElementTest2>"
-        + "<schemaElementTest3 rel=\"self\" pre:href=\"http://google.com\" xmlns:pre=\"namespaceForAnno\">text4</schemaElementTest3>" + " </schemaElementTest1>" + "</Schema>"
-
+    final String xmlWithAnnotations = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\" xmlns:annoPrefix=\"http://annoNamespace\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" prefix1:href=\"http://foo.de\" xmlns:prefix1=\"namespaceForAnno\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"EmployeeId\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"EmployeeName\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\" annoPrefix:annoName=\"annoText\">" + "<annoPrefix:propertyAnnoElement>text</annoPrefix:propertyAnnoElement>" + "<annoPrefix:propertyAnnoElement2 />" + "</Property>" + "</EntityType>" + "<annoPrefix:schemaElementTest1>" + "<prefix:schemaElementTest2 xmlns:prefix=\"namespace\">text3" + "</prefix:schemaElementTest2>"
+        + "<annoPrefix:schemaElementTest3 rel=\"self\" pre:href=\"http://foo.com\" xmlns:pre=\"namespaceForAnno\">text4</annoPrefix:schemaElementTest3>" + " </annoPrefix:schemaElementTest1>" + "</Schema>"
         + "</edmx:DataServices>" + "</edmx:Edmx>";
     EdmParser parser = new EdmParser();
     XMLStreamReader reader = createStreamReader(xmlWithAnnotations);
@@ -660,7 +694,7 @@ public class EdmParserTest extends AbstractXmlProducerTestHelper {
             assertEquals("href", childAnnoElement.getAttributes().get(1).getName());
             assertEquals("pre", childAnnoElement.getAttributes().get(1).getPrefix());
             assertEquals("namespaceForAnno", childAnnoElement.getAttributes().get(1).getNamespace());
-            assertEquals("http://google.com", childAnnoElement.getAttributes().get(1).getText());
+            assertEquals("http://foo.com", childAnnoElement.getAttributes().get(1).getText());
           } else {
             throw new EntityProviderException(null, "xmlWithAnnotations");
           }
@@ -672,7 +706,7 @@ public class EdmParserTest extends AbstractXmlProducerTestHelper {
         assertEquals("href", attr.getName());
         assertEquals("prefix1", attr.getPrefix());
         assertEquals("namespaceForAnno", attr.getNamespace());
-        assertEquals("http://google.de", attr.getText());
+        assertEquals("http://foo.de", attr.getText());
         for (Property property : entityType.getProperties()) {
           if ("EmployeeName".equals(property.getName())) {
             assertEquals(2, property.getAnnotationElements().size());

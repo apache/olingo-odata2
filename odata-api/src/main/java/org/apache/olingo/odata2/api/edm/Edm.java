@@ -25,7 +25,10 @@ package org.apache.olingo.odata2.api.edm;
  *  
  */
 public interface Edm {
-
+	
+  public static final String NAMESPACE_EDM_2006_04 = "http://schemas.microsoft.com/ado/2006/04/edm";
+  public static final String NAMESPACE_EDM_2007_05 = "http://schemas.microsoft.com/ado/2007/05/edm";
+  public static final String NAMESPACE_EDM_2008_01 = "http://schemas.microsoft.com/ado/2008/01/edm";
   public static final String NAMESPACE_EDM_2008_09 = "http://schemas.microsoft.com/ado/2008/09/edm";
   public static final String NAMESPACE_APP_2007 = "http://www.w3.org/2007/app";
   public static final String NAMESPACE_ATOM_2005 = "http://www.w3.org/2005/Atom";
