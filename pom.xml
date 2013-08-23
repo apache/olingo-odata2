@@ -69,6 +69,7 @@
         <module>jpa-annotation</module>
         <module>jpa-api</module>
         <module>jpa-core</module>
+        <module>odata-dist</module>
     </modules>
 
     <build>
@@ -112,7 +113,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.2.1</version>
+                    <version>2.4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -217,7 +218,7 @@
             </activation>
             <build>
                 <plugins>
-                 </plugins>
+                </plugins>
             </build>
         </profile>
         <profile>
@@ -232,7 +233,7 @@
                                 <id>javadoc-jar</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>aggregate-jar</goal>
                                 </goals>
                                 <configuration>
                                     <tags>
@@ -245,6 +246,12 @@
                                     <additionalJOptions>
                                         <additionalJOption>-quiet</additionalJOption>
                                     </additionalJOptions>
+                                    <includeDependencySources>false</includeDependencySources>
+                                    <dependencySourceIncludes>
+                                        <dependencySourceInclude>org.apache.olingo.odata2:api</dependencySourceInclude>
+                                        <dependencySourceInclude>org.apache.olingo.odata2:jpa.processor.api</dependencySourceInclude>
+                                        <dependencySourceInclude>org.apache.olingo.odata2:api.annotation</dependencySourceInclude>
+                                    </dependencySourceIncludes>
                                 </configuration>
                             </execution>
                         </executions>
@@ -298,6 +305,8 @@
                                         <exclude>**/*.classpath</exclude>
                                         <exclude>**/*.json</exclude>
                                         <exclude>**/*.batch</exclude>
+                                        <exclude>**/NOTICE</exclude>
+                                        <exclude>**/DEPENDENCIES</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>
