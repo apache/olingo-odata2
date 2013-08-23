@@ -146,6 +146,6 @@ public class EdmBinary extends AbstractSimpleType {
 
   @Override
   public String toUriLiteral(final String literal) throws EdmSimpleTypeException {
-    return "binary'" + Hex.encodeHexString(Base64.decodeBase64(literal)).toUpperCase(Locale.ROOT) + "'";
+    return "binary'" + String.valueOf(Hex.encodeHex(Base64.decodeBase64(literal), false)) + "'";
   }
 }

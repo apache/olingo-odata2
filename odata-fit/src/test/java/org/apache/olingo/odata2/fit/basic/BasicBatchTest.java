@@ -36,11 +36,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.batch.BatchHandler;
-import org.apache.olingo.odata2.api.batch.BatchPart;
+import org.apache.olingo.odata2.api.batch.BatchRequestPart;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -60,6 +58,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 /**
  *  
@@ -141,8 +140,8 @@ public class BasicBatchTest extends AbstractBasicTest {
         pathInfo.setServiceRoot(new URI("http://localhost:19000/odata"));
 
         EntityProviderBatchProperties batchProperties = EntityProviderBatchProperties.init().pathInfo(pathInfo).build();
-        List<BatchPart> batchParts = EntityProvider.parseBatchRequest(requestContentType, content, batchProperties);
-        for (BatchPart batchPart : batchParts) {
+        List<BatchRequestPart> batchParts = EntityProvider.parseBatchRequest(requestContentType, content, batchProperties);
+        for (BatchRequestPart batchPart : batchParts) {
           batchResponseParts.add(handler.handleBatchPart(batchPart));
         }
         batchResponse = EntityProvider.writeBatchResponse(batchResponseParts);

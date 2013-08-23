@@ -16,28 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.api.batch;
-
-import java.util.List;
-
-import org.apache.olingo.odata2.api.processor.ODataRequest;
+package org.apache.olingo.odata2.api.client.batch;
 
 /**
- * A BatchPart
- * <p> BatchPart represents a distinct MIME part of a Batch Request body. It can be ChangeSet or Query Operation
- *  
+ * A BatchPartRequest
+ * <p> BatchPartRequest represents a distinct part of a Batch Request body. It can be a ChangeSet or Query Operation.
  */
 public interface BatchPart {
 
-  /**
-   * Get the info if a BatchPart is a ChangeSet
-   * @return true or false
-   */
-  public boolean isChangeSet();
-
-  /**
-   * Get requests. If a BatchPart is a Query Operation, the list contains one request.
-   * @return a list of {@link ODataRequest}
-   */
-  public List<ODataRequest> getRequests();
 }

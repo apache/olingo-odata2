@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.core.ep.consumer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.InputStream;
@@ -29,13 +30,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.entry.MediaMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 /**
  *  
@@ -86,7 +87,7 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Integer.valueOf(52), properties.get("Age"));
     Calendar entryDate = (Calendar) properties.get("EntryDate");
-    assertEquals(Long.valueOf(915148800000l), Long.valueOf(entryDate.getTimeInMillis()));
+    assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
     assertEquals("Employees('1')/$value", properties.get("ImageUrl"));
 
@@ -135,7 +136,7 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
     assertNotNull(properties);
     assertEquals("1", properties.get("Id"));
     assertEquals("Building 1", properties.get("Name"));
-    assertEquals(null, properties.get("Image"));
+    assertNull(properties.get("Image"));
     assertNull(properties.get("nb_Rooms"));
 
     List<String> associationUris = result.getMetadata().getAssociationUris("nb_Rooms");
@@ -153,7 +154,7 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
     assertNotNull(properties);
     assertEquals("1", properties.get("Id"));
     assertEquals("Building 1", properties.get("Name"));
-    assertEquals(null, properties.get("Image"));
+    assertNull(properties.get("Image"));
     assertNull(properties.get("nb_Rooms"));
 
     List<String> associationUris = result.getMetadata().getAssociationUris("nb_Rooms");
@@ -161,6 +162,41 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
     assertEquals("http://localhost:8080/ReferenceScenario.svc/Buildings('1')/nb_Rooms", associationUris.get(0));
 
     checkMediaDataInitial(result.getMediaMetadata());
+  }
+
+  @Test
+  public void readMinimalEntry() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
+    final ODataEntry result = new JsonEntityConsumer().readEntry(entitySet, createContentAsStream("{\"Id\":\"99\"}"), DEFAULT_PROPERTIES);
+
+    final Map<String, Object> properties = result.getProperties();
+    assertNotNull(properties);
+    assertEquals(1, properties.size());
+    assertEquals("99", properties.get("Id"));
+
+    assertTrue(result.getMetadata().getAssociationUris("nt_Employees").isEmpty());
+    checkMediaDataInitial(result.getMediaMetadata());
+  }
+
+  @Test
+  public void readEntryWithNullProperty() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    final String content = "{\"Id\":\"99\",\"Seats\":null}";
+
+    for (final boolean merge : new boolean[] { false, true }) {
+      final ODataEntry result = new JsonEntityConsumer().readEntry(entitySet, createContentAsStream(content),
+          EntityProviderReadProperties.init().mergeSemantic(merge).build());
+
+      final Map<String, Object> properties = result.getProperties();
+      assertNotNull(properties);
+      assertEquals(2, properties.size());
+      assertEquals("99", properties.get("Id"));
+      assertTrue(properties.containsKey("Seats"));
+      assertNull(properties.get("Seats"));
+
+      assertTrue(result.getMetadata().getAssociationUris("nr_Employees").isEmpty());
+      checkMediaDataInitial(result.getMediaMetadata());
+    }
   }
 
   @Test

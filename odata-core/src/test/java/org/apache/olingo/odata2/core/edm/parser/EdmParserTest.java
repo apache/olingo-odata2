@@ -30,8 +30,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmAction;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
@@ -61,10 +59,16 @@ import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.ep.AbstractXmlProducerTestHelper;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
+import org.junit.Test;
 
-public class EdmParserTest {
+public class EdmParserTest extends AbstractXmlProducerTestHelper {
+
+  public EdmParserTest(final StreamWriterImplType type) {
+    super(type);
+  }
 
   private static final String DEFAULT_VALUE = "Photo";
   private static final String FC_TARGET_PATH = "Содержание";
@@ -663,6 +667,7 @@ public class EdmParserTest {
         }
       }
       for (EntityType entityType : schema.getEntityTypes()) {
+        assertEquals(1, entityType.getAnnotationAttributes().size());
         AnnotationAttribute attr = entityType.getAnnotationAttributes().get(0);
         assertEquals("href", attr.getName());
         assertEquals("prefix1", attr.getPrefix());

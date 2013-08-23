@@ -18,19 +18,32 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
-public class BatchConstants {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-  public static final String HTTP_APPLICATION_HTTP = "application/http";
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
 
-  public static final String MULTIPART_MIXED = "multipart/mixed";
+public class BatchChangeSetImpl extends BatchChangeSet {
+  private List<BatchChangeSetPart> requests = new ArrayList<BatchChangeSetPart>();
 
-  public static final String BINARY_ENCODING = "binary";
+  @Override
+  public void add(final BatchChangeSetPart request) {
+    requests.add(request);
+  }
 
-  public static final String HTTP_CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
+  @Override
+  public List<BatchChangeSetPart> getChangeSetParts() {
+    return Collections.unmodifiableList(requests);
+  }
 
-  public static final String HTTP_CONTENT_ID = "Content-Id";
+  public class BatchChangeSetBuilderImpl extends BatchChangeSetBuilder {
 
-  public static final String MIME_HEADER_CONTENT_ID = "MimeHeader-ContentId";
+    @Override
+    public BatchChangeSet build() {
+      return BatchChangeSetImpl.this;
+    }
 
-  public static final String REQUEST_HEADER_CONTENT_ID = "RequestHeader-ContentId";
+  }
 }

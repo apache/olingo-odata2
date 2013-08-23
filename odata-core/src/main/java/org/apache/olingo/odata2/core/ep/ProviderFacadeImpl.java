@@ -23,8 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
-import org.apache.olingo.odata2.api.batch.BatchPart;
+import org.apache.olingo.odata2.api.batch.BatchRequestPart;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
+import org.apache.olingo.odata2.api.client.batch.BatchPart;
+import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
@@ -43,6 +45,8 @@ import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.apache.olingo.odata2.core.batch.BatchRequestParser;
+import org.apache.olingo.odata2.core.batch.BatchRequestWriter;
+import org.apache.olingo.odata2.core.batch.BatchResponseParser;
 import org.apache.olingo.odata2.core.batch.BatchResponseWriter;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.edm.parser.EdmxProvider;
@@ -189,8 +193,8 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   }
 
   @Override
-  public List<BatchPart> parseBatchRequest(final String contentType, final InputStream content, final EntityProviderBatchProperties properties) throws BatchException {
-    List<BatchPart> batchParts = new BatchRequestParser(contentType, properties).parse(content);
+  public List<BatchRequestPart> parseBatchRequest(final String contentType, final InputStream content, final EntityProviderBatchProperties properties) throws BatchException {
+    List<BatchRequestPart> batchParts = new BatchRequestParser(contentType, properties).parse(content);
     return batchParts;
   }
 
@@ -198,6 +202,18 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   public ODataResponse writeBatchResponse(final List<BatchResponsePart> batchResponseParts) throws BatchException {
     BatchResponseWriter batchWriter = new BatchResponseWriter();
     return batchWriter.writeResponse(batchResponseParts);
+  }
+
+  @Override
+  public InputStream writeBatchRequest(final List<BatchPart> batchParts, final String boundary) {
+    BatchRequestWriter batchWriter = new BatchRequestWriter();
+    return batchWriter.writeBatchRequest(batchParts, boundary);
+  }
+
+  @Override
+  public List<BatchSingleResponse> parseBatchResponse(final String contentType, final InputStream content) throws BatchException {
+    List<BatchSingleResponse> responses = new BatchResponseParser(contentType).parse(content);
+    return responses;
   }
 
 }

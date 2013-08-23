@@ -235,8 +235,7 @@ public class TestAbapCompatibility extends TestBase {
   }
 
   @Test
-  public void abapTestFilterParser() //copy of ABAP method test_filter_parser
-  {
+  public void abapTestFilterParser() { //copy of ABAP method test_filter_parser 
     //lcl_helper=>veri_expression( iv_expression = 'W/X' iv_expected = '{W/X}' ).
     GetPTF("W/X").aSerialized("{W/X}");
 

@@ -22,6 +22,9 @@ import java.io.InputStream;
 
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart.BatchResponsePartBuilder;
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSet.BatchChangeSetBuilder;
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart.BatchChangeSetPartBuilder;
+import org.apache.olingo.odata2.api.client.batch.BatchQueryPart.BatchQueryPartBuilder;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeFacade;
@@ -36,6 +39,9 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate.RuntimeDelegateInstance;
 import org.apache.olingo.odata2.api.uri.UriParser;
 import org.apache.olingo.odata2.core.ODataRequestImpl;
 import org.apache.olingo.odata2.core.ODataResponseImpl;
+import org.apache.olingo.odata2.core.batch.BatchChangeSetImpl;
+import org.apache.olingo.odata2.core.batch.BatchChangeSetPartImpl;
+import org.apache.olingo.odata2.core.batch.BatchQueryPartImpl;
 import org.apache.olingo.odata2.core.batch.BatchResponsePartImpl;
 import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 import org.apache.olingo.odata2.core.edm.parser.EdmxProvider;
@@ -100,6 +106,25 @@ public class RuntimeDelegateImpl extends RuntimeDelegateInstance {
   protected ODataRequestBuilder createODataRequestBuilder() {
     ODataRequestImpl request = new ODataRequestImpl();
     return request.new ODataRequestBuilderImpl();
+  }
+
+  @Override
+  protected BatchChangeSetBuilder createBatchChangeSetBuilder() {
+    BatchChangeSetImpl changeSet = new BatchChangeSetImpl();
+    return changeSet.new BatchChangeSetBuilderImpl();
+  }
+
+  @Override
+  protected BatchQueryPartBuilder createBatchQueryRequestBuilder() {
+    BatchQueryPartImpl batchQueryRequest = new BatchQueryPartImpl();
+    return batchQueryRequest.new BatchQueryRequestBuilderImpl();
+  }
+
+  @Override
+  protected BatchChangeSetPartBuilder createBatchChangeSetRequest() {
+    BatchChangeSetPartImpl batchChangeSetRequest = new BatchChangeSetPartImpl();
+    ;
+    return batchChangeSetRequest.new BatchChangeSetRequestBuilderImpl();
   }
 
 }

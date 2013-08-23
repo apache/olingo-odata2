@@ -16,34 +16,43 @@
  *        specific language governing permissions and limitations
  *        under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.testutil.mock;
+package org.apache.olingo.odata2.core.batch;
 
-import static org.junit.Assert.fail;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import org.apache.olingo.odata2.api.edm.Edm;
-import org.apache.olingo.odata2.api.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.batch.BatchRequestPart;
+import org.apache.olingo.odata2.api.processor.ODataRequest;
 
-/**
- * Helper for the entity data model used as technical reference scenario.
- *  
- */
-public class TecEdmInfo {
-  private final Edm edm;
+public class BatchRequestPartImpl implements BatchRequestPart {
 
-  public TecEdmInfo(final Edm edm) {
-    this.edm = edm;
+  private List<ODataRequest> requests = new ArrayList<ODataRequest>();
+  private boolean isChangeSet;
+
+  public BatchRequestPartImpl() {}
+
+  public BatchRequestPartImpl(final boolean isChangeSet, final List<ODataRequest> requests) {
+    this.isChangeSet = isChangeSet;
+    this.requests = requests;
   }
 
-  public EdmEntityType getTypeEtAllTypes() {
-    try {
-      return edm
-          .getEntityContainer(TechnicalScenarioEdmProvider.ENTITY_CONTAINER_1)
-          .getEntitySet(TechnicalScenarioEdmProvider.ES_ALL_TYPES)
-          .getEntityType();
-    } catch (final EdmException e) {
-      fail("Error in test setup" + e.getLocalizedMessage());
-    }
-    return null;
+  @Override
+  public boolean isChangeSet() {
+    return isChangeSet;
   }
+
+  public void setChangeSet(final boolean isChangeSet) {
+    this.isChangeSet = isChangeSet;
+  }
+
+  @Override
+  public List<ODataRequest> getRequests() {
+    return Collections.unmodifiableList(requests);
+  }
+
+  public void setRequests(final List<ODataRequest> requests) {
+    this.requests = requests;
+  }
+
 }

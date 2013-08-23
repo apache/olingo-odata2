@@ -22,6 +22,9 @@ import java.io.InputStream;
 
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart.BatchResponsePartBuilder;
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSet.BatchChangeSetBuilder;
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart.BatchChangeSetPartBuilder;
+import org.apache.olingo.odata2.api.client.batch.BatchQueryPart.BatchQueryPartBuilder;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeFacade;
@@ -95,6 +98,12 @@ public abstract class RuntimeDelegate {
     protected abstract BatchResponsePartBuilder createBatchResponsePartBuilder();
 
     protected abstract ODataRequestBuilder createODataRequestBuilder();
+
+    protected abstract BatchChangeSetBuilder createBatchChangeSetBuilder();
+
+    protected abstract BatchQueryPartBuilder createBatchQueryRequestBuilder();
+
+    protected abstract BatchChangeSetPartBuilder createBatchChangeSetRequest();
 
   }
 
@@ -184,5 +193,17 @@ public abstract class RuntimeDelegate {
 
   public static ODataRequestBuilder createODataRequestBuilder() {
     return RuntimeDelegate.getInstance().createODataRequestBuilder();
+  }
+
+  public static BatchChangeSetBuilder createBatchChangeSetBuilder() {
+    return RuntimeDelegate.getInstance().createBatchChangeSetBuilder();
+  }
+
+  public static BatchQueryPartBuilder createBatchQueryPartBuilder() {
+    return RuntimeDelegate.getInstance().createBatchQueryRequestBuilder();
+  }
+
+  public static BatchChangeSetPartBuilder createBatchChangeSetPartBuilder() {
+    return RuntimeDelegate.getInstance().createBatchChangeSetRequest();
   }
 }

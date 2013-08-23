@@ -18,41 +18,34 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
-import org.apache.olingo.odata2.api.batch.BatchPart;
-import org.apache.olingo.odata2.api.processor.ODataRequest;
+import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
-public class BatchPartImpl implements BatchPart {
+public class BatchHelper {
 
-  private List<ODataRequest> requests = new ArrayList<ODataRequest>();
-  private boolean isChangeSet;
+  public static final String BINARY_ENCODING = "binary";
 
-  public BatchPartImpl() {}
+  public static final String DEFAULT_ENCODING = "utf-8";
 
-  public BatchPartImpl(final boolean isChangeSet, final List<ODataRequest> requests) {
-    this.isChangeSet = isChangeSet;
-    this.requests = requests;
+  public static final String HTTP_CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
+
+  public static final String HTTP_CONTENT_ID = "Content-Id";
+
+  public static final String MIME_HEADER_CONTENT_ID = "MimeHeader-ContentId";
+
+  public static final String REQUEST_HEADER_CONTENT_ID = "RequestHeader-ContentId";
+
+  protected static String generateBoundary(final String value) {
+    return value + "_" + UUID.randomUUID().toString();
   }
 
-  @Override
-  public boolean isChangeSet() {
-    return isChangeSet;
+  protected static byte[] getBytes(final String body) {
+    try {
+      return body.getBytes(DEFAULT_ENCODING);
+    } catch (UnsupportedEncodingException e) {
+      throw new ODataRuntimeException(e);
+    }
   }
-
-  public void setChangeSet(final boolean isChangeSet) {
-    this.isChangeSet = isChangeSet;
-  }
-
-  @Override
-  public List<ODataRequest> getRequests() {
-    return Collections.unmodifiableList(requests);
-  }
-
-  public void setRequests(final List<ODataRequest> requests) {
-    this.requests = requests;
-  }
-
 }

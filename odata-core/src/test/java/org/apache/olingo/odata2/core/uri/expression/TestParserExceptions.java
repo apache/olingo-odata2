@@ -240,16 +240,14 @@ public class TestParserExceptions extends TestBase {
   }
 
   @Test
-  public void testPMvalidateBinaryOperator() /*PM = Parsermethod*/
-  {
+  public void testPMvalidateBinaryOperator() {/*PM = Parsermethod*/
     //http://services.odata.org/Northwind/Northwind.svc/Products(1)/Supplier?$filter=123 add 'abc'
     //-->Operator 'add' incompatible with operand types 'System.Int32' and 'System.String' at position 4.
     GetPTF("123 add 'abc'").aExType(ExpressionParserException.class).aExKey(ExpressionParserException.INVALID_TYPES_FOR_BINARY_OPERATOR).aExMsgText("Operator \"add\" incompatible with operand types \"System.Uint7\" and \"Edm.String\" at position 5 in \"123 add 'abc'\".");
   }
 
   @Test
-  public void testPMvalidateMethodTypes() /*PM = Parsermethod*/
-  {
+  public void testPMvalidateMethodTypes() /*PM = Parsermethod*/{
     //CASE 1
     //http://services.odata.org/Northwind/Northwind.svc/Products/?$filter=year(327686)
     //-->No applicable function found for 'year' at position 0 with the specified arguments. The functions considered are: year(System.DateTime).
@@ -258,8 +256,8 @@ public class TestParserExceptions extends TestBase {
   }
 
   @Test
-  public void testPMparseFilterString() /*PM = Parsermethod*/
-  {
+  public void testPMparseFilterString() { /*PM = Parsermethod*/
+
     //http://services.odata.org/Northwind/Northwind.svc/Products(1)/Supplier?$filter='123
     //-->Unterminated string literal at position 4 in ''123'.
     GetPTF("'123").aExType(ExpressionParserException.class).aExKey(ExpressionParserException.TOKEN_UNDETERMINATED_STRING).aExMsgText("Unterminated string literal at position 1 in \"'123\".");
