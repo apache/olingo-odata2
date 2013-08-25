@@ -103,7 +103,7 @@ public class JPALink {
           }
         }
 
-        JPAEntityParser entityParser = JPAEntityParser.create();
+        JPAEntityParser entityParser = new JPAEntityParser();
         Method setMethod = entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 
         Method getMethod = entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
@@ -187,7 +187,7 @@ public class JPALink {
           }
         }
 
-        JPAEntityParser entityParser = JPAEntityParser.create();
+        JPAEntityParser entityParser = new JPAEntityParser();
         Method setMethod = entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 
         Method getMethod = entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);

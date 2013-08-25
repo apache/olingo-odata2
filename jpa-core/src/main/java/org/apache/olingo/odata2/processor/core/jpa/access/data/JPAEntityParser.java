@@ -45,26 +45,17 @@ public final class JPAEntityParser {
   private HashMap<String, HashMap<String, Method>> jpaEntityAccessMap = null;
   private HashMap<String, HashMap<String, String>> jpaEmbeddableKeyMap = null;
 
-  private static JPAEntityParser jpaEntityParser;
-
-  private JPAEntityParser() {
+  public JPAEntityParser() {
     jpaEntityAccessMap = new HashMap<String, HashMap<String, Method>>(
         MAX_SIZE);
     jpaEmbeddableKeyMap = new HashMap<String, HashMap<String, String>>();
   };
 
-  public static final JPAEntityParser create() {
-    if (jpaEntityParser == null) {
-      jpaEntityParser = new JPAEntityParser();
-    }
-    return jpaEntityParser;
-  }
-
-  public HashMap<String, Method> getJPAEntityAccessMap(String jpaEntityName) {
+  public HashMap<String, Method> getJPAEntityAccessMap(final String jpaEntityName) {
     return jpaEntityAccessMap.get(jpaEntityName);
   }
 
-  public HashMap<String, String> getJPAEmbeddableKeyMap(String jpaEntityName) {
+  public HashMap<String, String> getJPAEmbeddableKeyMap(final String jpaEntityName) {
     return jpaEmbeddableKeyMap.get(jpaEntityName);
   }
 
@@ -301,6 +292,28 @@ public final class JPAEntityParser {
     return navigationMap;
   }
 
+  public Method getAccessModifierSet(final Object jpaEntity, final String methodName) throws ODataJPARuntimeException {
+    Class<?> jpaType = jpaEntity.getClass();
+    String methodNameGet = ACCESS_MODIFIER_GET + methodName.substring(3);
+    Method method = null;
+
+    try {
+      method = jpaType.getMethod(methodNameGet, (Class<?>[]) null);
+      Class<?> parameterType = method.getReturnType();
+      method = jpaType.getMethod(methodName, new Class<?>[] { parameterType });
+    } catch (NoSuchMethodException e) {
+      throw ODataJPARuntimeException
+          .throwException(ODataJPARuntimeException.GENERAL
+              .addContent(e.getMessage()), e);
+    } catch (SecurityException e) {
+      throw ODataJPARuntimeException
+          .throwException(ODataJPARuntimeException.GENERAL
+              .addContent(e.getMessage()), e);
+    }
+
+    return method;
+  }
+
   public HashMap<String, Method> getAccessModifiers(final Object jpaEntity,
       final EdmStructuralType structuralType, final String accessModifier) throws ODataJPARuntimeException {
 
@@ -323,12 +336,12 @@ public final class JPAEntityParser {
             accessModifierMap.put(
                 propertyName,
                 jpaEntity.getClass().getMethod(name, new Class<?>[] { jpaEdmMapping.getJPAType() }));
-          }
-          else
+          } else {
             accessModifierMap.put(
                 propertyName,
                 jpaEntity.getClass().getMethod(name,
                     (Class<?>[]) null));
+          }
         }
       }
     } catch (NoSuchMethodException e) {

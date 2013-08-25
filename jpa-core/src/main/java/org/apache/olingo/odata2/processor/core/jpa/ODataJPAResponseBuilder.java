@@ -76,7 +76,7 @@ public final class ODataJPAResponseBuilder {
       edmEntityType = resultsView.getTargetEntitySet().getEntityType();
       List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
       Map<String, Object> edmPropertyValueMap = null;
-      JPAEntityParser jpaResultParser = JPAEntityParser.create();
+      JPAEntityParser jpaResultParser = new JPAEntityParser();
       final List<SelectItem> selectedItems = resultsView.getSelect();
       if (selectedItems != null && selectedItems.size() > 0) {
         for (Object jpaEntity : jpaEntities) {
@@ -130,7 +130,7 @@ public final class ODataJPAResponseBuilder {
       edmEntityType = resultsView.getTargetEntitySet().getEntityType();
       Map<String, Object> edmPropertyValueMap = null;
 
-      JPAEntityParser jpaResultParser = JPAEntityParser.create();
+      JPAEntityParser jpaResultParser = new JPAEntityParser();
       final List<SelectItem> selectedItems = resultsView.getSelect();
       if (selectedItems != null && selectedItems.size() > 0) {
         edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, buildSelectItemList(selectedItems, resultsView.getTargetEntitySet().getEntityType()));
@@ -187,7 +187,7 @@ public final class ODataJPAResponseBuilder {
       edmEntityType = uriInfo.getTargetEntitySet().getEntityType();
       Map<String, Object> edmPropertyValueMap = null;
 
-      JPAEntityParser jpaResultParser = JPAEntityParser.create();
+      JPAEntityParser jpaResultParser = new JPAEntityParser();
       edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(createdObjectList.get(0), edmEntityType);
 
       List<ArrayList<NavigationPropertySegment>> expandList = null;
@@ -265,7 +265,7 @@ public final class ODataJPAResponseBuilder {
     ODataResponse odataResponse = null;
 
     if (resultList != null && !resultList.isEmpty()) {
-      JPAEntityParser jpaResultParser = JPAEntityParser.create();
+      JPAEntityParser jpaResultParser = new JPAEntityParser();
       EdmType edmType = null;
       EdmFunctionImport functionImport = null;
       Map<String, Object> edmPropertyValueMap = null;
@@ -332,7 +332,7 @@ public final class ODataJPAResponseBuilder {
       edmEntityType = entitySet.getEntityType();
       Map<String, Object> edmPropertyValueMap = null;
 
-      JPAEntityParser jpaResultParser = JPAEntityParser.create();
+      JPAEntityParser jpaResultParser = new JPAEntityParser();
       edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType.getKeyProperties());
 
       EntityProviderWriteProperties entryProperties = EntityProviderWriteProperties.serviceRoot(oDataJPAContext.getODataContext().getPathInfo().getServiceRoot()).build();
@@ -362,7 +362,7 @@ public final class ODataJPAResponseBuilder {
 
       List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
       Map<String, Object> edmPropertyValueMap = null;
-      JPAEntityParser jpaResultParser = JPAEntityParser.create();
+      JPAEntityParser jpaResultParser = new JPAEntityParser();
 
       for (Object jpaEntity : jpaEntities) {
         edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, keyProperties);
