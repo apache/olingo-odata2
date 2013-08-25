@@ -31,16 +31,48 @@ import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.mock.data.EdmMockUtilV2;
 import org.apache.olingo.odata2.processor.core.jpa.mock.data.JPATypeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.data.JPATypeMock.JPARelatedTypeMock;
+import org.apache.olingo.odata2.processor.core.jpa.mock.data.JPATypeMock.JPATypeEmbeddableMock;
+import org.apache.olingo.odata2.processor.core.jpa.mock.data.JPATypeMock.JPATypeEmbeddableMock2;
 import org.apache.olingo.odata2.processor.core.jpa.mock.data.ODataEntryMockUtil;
 import org.junit.Test;
 
 public class JPAEntityTest {
+
   private JPAEntity jpaEntity = null;
+
+  @Test
+  public void testCreateODataEntryWithComplexType() {
+    try {
+      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, true);
+      EdmEntityType edmEntityType = edmEntitySet.getEntityType();
+
+      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
+      jpaEntity.create(ODataEntryMockUtil.mockODataEntryWithComplexType(JPATypeMock.ENTITY_NAME));
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
+          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (EdmException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
+          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+    JPATypeMock jpaTypeMock = (JPATypeMock) jpaEntity.getJPAEntity();
+    assertEquals(jpaTypeMock.getMInt(), ODataEntryMockUtil.VALUE_MINT);
+    assertEquals(jpaTypeMock.getMString(), ODataEntryMockUtil.VALUE_MSTRING);
+    assertTrue(jpaTypeMock.getMDateTime().equals(ODataEntryMockUtil.VALUE_DATE_TIME));
+    JPATypeEmbeddableMock jpaEmbeddableMock = jpaTypeMock.getComplexType();
+    assertNotNull(jpaEmbeddableMock);
+
+    assertEquals(jpaEmbeddableMock.getMShort(), ODataEntryMockUtil.VALUE_SHORT);
+    JPATypeEmbeddableMock2 jpaEmbeddableMock2 = jpaEmbeddableMock.getMEmbeddable();
+    assertNotNull(jpaEmbeddableMock2);
+    assertEquals(jpaEmbeddableMock2.getMFloat(), ODataEntryMockUtil.VALUE_MFLOAT, 1);
+    assertEquals(jpaEmbeddableMock2.getMUUID(), ODataEntryMockUtil.VALUE_UUID);
+  }
 
   @Test
   public void testCreateODataEntry() {
     try {
-      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME);
+      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
       jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
@@ -61,7 +93,7 @@ public class JPAEntityTest {
   @Test
   public void testCreateODataEntryWithInline() {
     try {
-      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME);
+      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
       jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
@@ -89,7 +121,7 @@ public class JPAEntityTest {
   @Test
   public void testCreateODataEntryProperty() {
     try {
-      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME);
+      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
       jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
@@ -110,7 +142,7 @@ public class JPAEntityTest {
   @Test
   public void testUpdateODataEntry() {
     try {
-      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME);
+      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
       jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
@@ -133,7 +165,7 @@ public class JPAEntityTest {
   @Test
   public void testUpdateODataEntryProperty() {
     try {
-      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME);
+      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
       jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
@@ -152,5 +184,4 @@ public class JPAEntityTest {
     assertEquals(jpaTypeMock.getMString(), ODataEntryMockUtil.VALUE_MSTRING);
     assertTrue(jpaTypeMock.getMDateTime().equals(ODataEntryMockUtil.VALUE_DATE_TIME));
   }
-
 }

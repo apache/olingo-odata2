@@ -20,19 +20,23 @@ package org.apache.olingo.odata2.processor.core.jpa.mock.data;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
+/*========================================================================= */
 public class JPATypeMock {
 
   public static final String ENTITY_NAME = "JPATypeMock";
   public static final String PROPERTY_NAME_MINT = "mInt";
   public static final String PROPERTY_NAME_MSTRING = "mString";
   public static final String PROPERTY_NAME_MDATETIME = "mDateTime";
-  public static final String PROPERTY_NAME_KEY = "key";
+  public static final String PROPERTY_NAME_MKEY = "key";
+  public static final String PROPERTY_NAME_MCOMPLEXTYPE = "complexType";
 
   public static final String NAVIGATION_PROPERTY_X = "mRelatedEntity";
   public static final String NAVIGATION_PROPERTY_XS = "mRelatedEntities";
 
   private JPATypeEmbeddableMock key;
+  private JPATypeEmbeddableMock complexType;
   private int mInt;
   private String mString;
   private Calendar mDateTime;
@@ -43,7 +47,7 @@ public class JPATypeMock {
     return mString;
   }
 
-  public void setMString(String mString) {
+  public void setMString(final String mString) {
     this.mString = mString;
   }
 
@@ -51,7 +55,7 @@ public class JPATypeMock {
     return key;
   }
 
-  public void setKey(JPATypeEmbeddableMock key) {
+  public void setKey(final JPATypeEmbeddableMock key) {
     this.key = key;
   }
 
@@ -59,7 +63,7 @@ public class JPATypeMock {
     return mInt;
   }
 
-  public void setMInt(int mInt) {
+  public void setMInt(final int mInt) {
     this.mInt = mInt;
   }
 
@@ -67,7 +71,7 @@ public class JPATypeMock {
     return mDateTime;
   }
 
-  public void setMDateTime(Calendar mDateTime) {
+  public void setMDateTime(final Calendar mDateTime) {
     this.mDateTime = mDateTime;
   }
 
@@ -75,7 +79,7 @@ public class JPATypeMock {
     return mRelatedEntity;
   }
 
-  public void setMRelatedEntity(JPARelatedTypeMock mRelatedEntity) {
+  public void setMRelatedEntity(final JPARelatedTypeMock mRelatedEntity) {
     this.mRelatedEntity = mRelatedEntity;
   }
 
@@ -83,64 +87,76 @@ public class JPATypeMock {
     return mRelatedEntities;
   }
 
-  public void setMRelatedEntities(List<JPARelatedTypeMock> mRelatedEntities) {
+  public void setMRelatedEntities(final List<JPARelatedTypeMock> mRelatedEntities) {
     this.mRelatedEntities = mRelatedEntities;
   }
 
+  public JPATypeEmbeddableMock getComplexType() {
+    return complexType;
+  }
+
+  public void setComplexType(final JPATypeEmbeddableMock complexType) {
+    this.complexType = complexType;
+  }
+
+  /*========================================================================= */
   public static class JPATypeEmbeddableMock {
 
-    public static final String PROPERTY_NAME_MBOOLEAN = "mBoolean";
-    public static final String PROPERTY_Y = "y";
-    public static final String PROPERTY_Z = "z";
+    public static final String ENTITY_NAME = "JPATypeEmbeddableMock";
+    public static final String PROPERTY_NAME_MSHORT = "mShort";
+    public static final String PROPERTY_NAME_MEMBEDDABLE = "mEmbeddable";
 
-    private boolean mBoolean;
-    private int y;
-    private JPATypeEmbeddableMock2 z;
+    private short mShort;
+    private JPATypeEmbeddableMock2 mEmbeddable;
 
-    public void setMBoolean(boolean x) {
-      this.mBoolean = x;
+    public short getMShort() {
+      return mShort;
     }
 
-    public void setY(int y) {
-      this.y = y;
+    public void setMShort(final short mShort) {
+      this.mShort = mShort;
     }
 
-    public void setZ(JPATypeEmbeddableMock2 z) {
-      this.z = z;
+    public JPATypeEmbeddableMock2 getMEmbeddable() {
+      return mEmbeddable;
     }
 
-    public boolean getMBoolean() {
-      return this.mBoolean;
-    }
-
-    public int getY() {
-      return this.y;
-    }
-
-    public JPATypeEmbeddableMock2 getZ() {
-      return this.z;
-    }
-
-    public static class JPATypeEmbeddableMock2 {
-      private int x;
-      private int y;
-
-      public void setX(int x) {
-        this.x = x;
-      }
-
-      public int getX() {
-        return this.x;
-      }
-
-      public int getY() {
-        return this.y;
-      }
+    public void setMEmbeddable(final JPATypeEmbeddableMock2 mEmbeddable) {
+      this.mEmbeddable = mEmbeddable;
     }
 
   }
 
-  public static class JPARelatedTypeMock {
+  /*========================================================================= */
+  public static class JPATypeEmbeddableMock2 {
+
+    public static final String ENTITY_NAME = "JPATypeEmbeddableMock2";
+    public static final String PROPERTY_NAME_MUUID = "mUUID";
+    public static final String PROPERTY_NAME_MFLOAT = "mFloat";
+
+    private UUID mUUID;
+    private float mFloat;
+
+    public UUID getMUUID() {
+      return mUUID;
+    }
+
+    public void setMUUID(final UUID mUUID) {
+      this.mUUID = mUUID;
+    }
+
+    public float getMFloat() {
+      return mFloat;
+    }
+
+    public void setMFloat(final float mFloat) {
+      this.mFloat = mFloat;
+    }
+
+  }
+
+  /*========================================================================= */
+  public static final class JPARelatedTypeMock {
     public static final String ENTITY_NAME = "JPARelatedTypeMock";
     public static final String PROPERTY_NAME_MLONG = "mLong";
     public static final String PROPERTY_NAME_MDOUBLE = "mDouble";
@@ -156,15 +172,15 @@ public class JPATypeMock {
       return mLong;
     }
 
-    public void setMLong(long key) {
-      this.mLong = key;
+    public void setMLong(final long key) {
+      mLong = key;
     }
 
     public double getMDouble() {
       return mDouble;
     }
 
-    public void setMDouble(double mDouble) {
+    public void setMDouble(final double mDouble) {
       this.mDouble = mDouble;
     }
 
@@ -172,7 +188,7 @@ public class JPATypeMock {
       return mByte;
     }
 
-    public void setMByte(byte mByte) {
+    public void setMByte(final byte mByte) {
       this.mByte = mByte;
     }
 
@@ -180,7 +196,7 @@ public class JPATypeMock {
       return mByteArray;
     }
 
-    public void setMByteArray(byte mByteArray[]) {
+    public void setMByteArray(final byte mByteArray[]) {
       this.mByteArray = mByteArray;
     }
 

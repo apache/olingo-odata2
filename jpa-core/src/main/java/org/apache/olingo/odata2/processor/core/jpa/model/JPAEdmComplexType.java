@@ -157,7 +157,7 @@ public class JPAEdmComplexType extends JPAEdmBaseViewImpl implements JPAEdmCompl
         expandedList.add(newSimpleProperty);
       } catch (ClassCastException e) {
         ComplexProperty complexProperty = (ComplexProperty) property;
-        String name = complexProperty.getMapping().getInternalName();
+        String name = embeddablePropertyName + "." + complexProperty.getMapping().getInternalName();
         expandEdmComplexType(searchComplexTypeByName(complexProperty.getName()), expandedList, name);
       }
     }
