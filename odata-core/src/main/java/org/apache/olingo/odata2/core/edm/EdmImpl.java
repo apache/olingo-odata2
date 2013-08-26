@@ -19,14 +19,17 @@
 package org.apache.olingo.odata2.core.edm;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmAssociation;
 import org.apache.olingo.odata2.api.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmServiceMetadata;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.exception.ODataException;
@@ -40,6 +43,8 @@ public abstract class EdmImpl implements Edm {
   private Map<FullQualifiedName, EdmEntityType> edmEntityTypes;
   private Map<FullQualifiedName, EdmComplexType> edmComplexTypes;
   private Map<FullQualifiedName, EdmAssociation> edmAssociations;
+  private List<EdmEntitySet> edmEntitySets;
+  private List<EdmFunctionImport> edmFunctionImports;
 
   protected EdmServiceMetadata edmServiceMetadata;
 
@@ -153,6 +158,30 @@ public abstract class EdmImpl implements Edm {
   public EdmEntityContainer getDefaultEntityContainer() throws EdmException {
     return getEntityContainer(null);
   }
+  
+  @Override
+  public List<EdmEntitySet> getEntitySets() throws EdmException {
+	try {
+	  if(edmEntitySets==null){		  
+		  edmEntitySets = createEntitySets();
+	  } 
+	} catch (ODataException e) {
+        throw new EdmException(EdmException.COMMON, e);
+	}
+    return edmEntitySets;
+  }
+  
+  @Override
+  public List<EdmFunctionImport> getFunctionImports() throws EdmException {
+	try {
+	  if(edmFunctionImports==null){		  
+		edmFunctionImports = createFunctionImports();
+	  } 
+	} catch (ODataException e) {
+        throw new EdmException(EdmException.COMMON, e);
+	}
+    return edmFunctionImports;
+  }
 
   protected abstract EdmEntityContainer createEntityContainer(String name) throws ODataException;
 
@@ -161,4 +190,8 @@ public abstract class EdmImpl implements Edm {
   protected abstract EdmComplexType createComplexType(FullQualifiedName fqName) throws ODataException;
 
   protected abstract EdmAssociation createAssociation(FullQualifiedName fqName) throws ODataException;
+  
+  protected abstract List<EdmEntitySet> createEntitySets() throws ODataException;
+  
+  protected abstract List<EdmFunctionImport> createFunctionImports() throws ODataException;
 }

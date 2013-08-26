@@ -26,9 +26,9 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
@@ -42,6 +42,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.edm.provider.EdmImplProv;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
+import org.junit.Test;
 
 public class EdmxProviderTest {
 
@@ -133,6 +134,24 @@ public class EdmxProviderTest {
     assertNotNull(container);
     assertEquals(testContainer.getName(), container.getName());
     assertEquals(testContainer.isDefaultEntityContainer(), container.isDefaultEntityContainer());
+  }
+  
+  @Test
+  public void testEntitySets() throws EntityProviderException, ODataException{
+	Edm edm = createEdm();
+    assertNotNull(edm);
+    
+    List<EdmEntitySet> entitySets = edm.getEntitySets();
+    assertEquals(6, entitySets.size());
+  }
+  
+  @Test
+  public void testFunctionImports() throws EntityProviderException, ODataException{
+	Edm edm = createEdm();
+    assertNotNull(edm);
+    
+    List<EdmFunctionImport> functionImports = edm.getFunctionImports();
+    assertEquals(7, functionImports.size());
   }
 
   private Edm createEdm() throws EntityProviderException, ODataException {

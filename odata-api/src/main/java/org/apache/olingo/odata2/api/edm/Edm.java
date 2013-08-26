@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.api.edm;
 
+import java.util.List;
+
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * Entity Data Model (EDM)
@@ -105,4 +107,20 @@ public interface Edm {
    * @throws EdmException
    */
   EdmEntityContainer getDefaultEntityContainer() throws EdmException;
+  
+  /**
+   * Get all contained EntitySets
+   * 
+   * @return a list of {@link EdmEntitySet}
+   * @throws EdmException
+   * */
+  List<EdmEntitySet> getEntitySets() throws EdmException;
+  
+  /**
+   * Get all contained FunctionImports
+   * 
+   * @return a list of {@link EdmFunctionImport}
+   * @throws EdmException
+   */
+  List<EdmFunctionImport> getFunctionImports() throws EdmException;
 }

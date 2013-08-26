@@ -23,17 +23,21 @@ import static org.junit.Assert.assertNotSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.olingo.odata2.api.edm.EdmAssociation;
 import org.apache.olingo.odata2.api.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *  
@@ -72,7 +76,17 @@ public class EdmImplTest extends BaseTest {
     assertEquals(edm.getAssociation("foo", "bar"), edm.getAssociation("foo", "bar"));
     assertNotSame(edm.getAssociation("foo", "bar"), edm.getAssociation("bar", "foo"));
   }
+  
+  @Test
+  public void testEntitySetsCache() throws EdmException {
+	assertEquals(edm.getEntitySets(), edm.getEntitySets());
+  }
 
+  @Test
+  public void testFunctionImportCache() throws EdmException {
+	assertEquals(edm.getFunctionImports(), edm.getFunctionImports());
+  }
+  
   private class ForEdmImplTest extends EdmImpl {
 
     public ForEdmImplTest() {
@@ -109,5 +123,17 @@ public class EdmImplTest extends BaseTest {
       when(edmAssociation.getName()).thenReturn(fqName.getName());
       return edmAssociation;
     }
+
+	@Override
+	protected List<EdmEntitySet> createEntitySets() throws ODataException {
+	  List<EdmEntitySet> edmEntitySets = new ArrayList<EdmEntitySet>();
+	  return edmEntitySets;
+	}
+
+	@Override
+	protected List<EdmFunctionImport> createFunctionImports() throws ODataException {
+	  List<EdmFunctionImport> edmFunctionImports = new ArrayList<EdmFunctionImport>();
+	  return edmFunctionImports;
+	}
   }
 }

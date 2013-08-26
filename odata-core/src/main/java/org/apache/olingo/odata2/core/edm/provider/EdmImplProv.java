@@ -18,23 +18,33 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.odata2.api.edm.EdmAssociation;
 import org.apache.olingo.odata2.api.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.ComplexType;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.EdmProviderAccessor;
+import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
+import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
+import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
+import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.core.edm.EdmImpl;
 
 public class EdmImplProv extends EdmImpl implements EdmProviderAccessor {
 
   protected EdmProvider edmProvider;
+  private List<Schema> schemas;
 
   public EdmImplProv(final EdmProvider edmProvider) {
     super(new EdmServiceMetadataImplProv(edmProvider));
@@ -81,5 +91,39 @@ public class EdmImplProv extends EdmImpl implements EdmProviderAccessor {
   @Override
   public EdmProvider getEdmProvider() {
     return edmProvider;
+  }
+  
+  @Override
+  protected List<EdmEntitySet> createEntitySets() throws ODataException {
+	List<EdmEntitySet> edmEntitySets = new ArrayList<EdmEntitySet>();
+	if (schemas == null) {
+      schemas = edmProvider.getSchemas();
+    }
+	for(Schema schema: schemas) {
+	  for(EntityContainer entityContainer: schema.getEntityContainers()) {
+	   	for(EntitySet entitySet: entityContainer.getEntitySets()) {
+   		  EdmEntityContainer edmEntityContainer = createEntityContainer(entityContainer.getName());
+   		  edmEntitySets.add( new EdmEntitySetImplProv(this, entitySet, edmEntityContainer));	  
+		}
+	  }
+   	}
+	return edmEntitySets;
+  }
+  
+  @Override
+  protected List<EdmFunctionImport> createFunctionImports() throws ODataException {
+	List<EdmFunctionImport> edmFunctionImports = new ArrayList<EdmFunctionImport>();
+	if (schemas == null) {
+      schemas = edmProvider.getSchemas();
+    }
+	for(Schema schema: schemas) {
+  	  for(EntityContainer entityContainer: schema.getEntityContainers()) {
+	  	for(FunctionImport functionImport: entityContainer.getFunctionImports()) {
+   	      EdmEntityContainer edmEntityContainer = createEntityContainer(entityContainer.getName());
+   	      edmFunctionImports.add( new EdmFunctionImportImplProv(this, functionImport, edmEntityContainer));	  
+		}
+	  }
+   	}
+	return edmFunctionImports;
   }
 }
