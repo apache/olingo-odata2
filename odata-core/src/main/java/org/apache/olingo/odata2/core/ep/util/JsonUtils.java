@@ -20,9 +20,10 @@ package org.apache.olingo.odata2.core.ep.util;
 
 import java.io.IOException;
 
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
+
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
-import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
 public class JsonUtils {
 

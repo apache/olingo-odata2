@@ -23,8 +23,6 @@ import static junit.framework.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Locale;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
@@ -33,6 +31,7 @@ import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.junit.Test;
 
 /**
  *  

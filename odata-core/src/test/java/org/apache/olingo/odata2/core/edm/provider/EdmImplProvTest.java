@@ -22,9 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -33,6 +30,8 @@ import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class EdmImplProvTest extends BaseTest {
 

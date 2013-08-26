@@ -30,11 +30,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
@@ -47,6 +42,10 @@ import org.apache.olingo.odata2.core.ep.AbstractXmlProducerTestHelper;
 import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
 import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *  

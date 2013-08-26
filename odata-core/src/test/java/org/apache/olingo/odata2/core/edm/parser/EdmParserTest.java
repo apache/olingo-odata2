@@ -85,7 +85,7 @@ public class EdmParserTest extends AbstractXmlProducerTestHelper {
 
   private final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
 
-  private final String xml2 = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\" xmlns:prefix=\"namespace\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_01 + "\">" +"<prefix:schemaElement>text3</prefix:schemaElement>"+ "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+  private final String xml2 = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\" xmlns:prefix=\"namespace\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_01 + "\">" + "<prefix:schemaElement>text3</prefix:schemaElement>" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
 
   private final String xmlWithBaseType = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
 
@@ -127,7 +127,7 @@ public class EdmParserTest extends AbstractXmlProducerTestHelper {
       assertEquals("c_Location", schema.getComplexTypes().get(0).getName());
     }
   }
-  
+
   @Test
   public void testOtherEdmNamespace() throws XMLStreamException, EntityProviderException {
     int i = 0;
@@ -143,7 +143,7 @@ public class EdmParserTest extends AbstractXmlProducerTestHelper {
         assertEquals("EmployeeId", propertyRef.getName());
       }
       for (Property property : schema.getEntityTypes().get(0).getProperties()) {
-    	assertEquals(propertyNames[i], property.getName());
+        assertEquals(propertyNames[i], property.getName());
         if ("Location".equals(property.getName())) {
           ComplexProperty cProperty = (ComplexProperty) property;
           assertEquals("c_Location", cProperty.getType().getName());
@@ -153,10 +153,10 @@ public class EdmParserTest extends AbstractXmlProducerTestHelper {
         i++;
       }
       for (AnnotationElement annoElement : schema.getAnnotationElements()) {
-    	  assertEquals("prefix", annoElement.getPrefix());
-    	  assertEquals("namespace", annoElement.getNamespace());
-    	  assertEquals("schemaElement", annoElement.getName());
-    	  assertEquals("text3", annoElement.getText());
+        assertEquals("prefix", annoElement.getPrefix());
+        assertEquals("namespace", annoElement.getNamespace());
+        assertEquals("schemaElement", annoElement.getName());
+        assertEquals("text3", annoElement.getText());
       }
     }
   }
@@ -549,7 +549,7 @@ public class EdmParserTest extends AbstractXmlProducerTestHelper {
   @Test(expected = EntityProviderException.class)
   public void testMissingAssociation() throws Exception {
     final String xmlWithAssociation = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Employees\" ToRole=\"r_Manager\" />" + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "<AssociationSet Name=\"" + ASSOCIATION
-    //        + "\" Association=\"RefScenario." + ASSOCIATION 
+        //        + "\" Association=\"RefScenario." + ASSOCIATION 
         + "\">" + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>" + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices></edmx:Edmx>";
     EdmParser parser = new EdmParser();
     XMLStreamReader reader = createStreamReader(xmlWithAssociation);

@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.codec.binary.Base64;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;

@@ -27,8 +27,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
@@ -39,6 +37,7 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ep.JsonEntityProvider;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.junit.Test;
 
 /**
  *  

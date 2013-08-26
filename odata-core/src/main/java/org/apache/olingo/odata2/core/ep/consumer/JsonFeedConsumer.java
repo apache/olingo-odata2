@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
@@ -33,6 +31,9 @@ import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.feed.FeedMetadataImpl;
 import org.apache.olingo.odata2.core.ep.feed.ODataFeedImpl;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
+
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 
 /**
  *  

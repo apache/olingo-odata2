@@ -24,13 +24,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 /**
  *  

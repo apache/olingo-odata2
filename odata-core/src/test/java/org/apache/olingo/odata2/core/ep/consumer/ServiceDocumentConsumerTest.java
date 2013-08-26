@@ -25,8 +25,6 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.List;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
@@ -35,6 +33,7 @@ import org.apache.olingo.odata2.api.servicedocument.Collection;
 import org.apache.olingo.odata2.api.servicedocument.ExtensionElement;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.apache.olingo.odata2.api.servicedocument.Workspace;
+import org.junit.Test;
 
 public class ServiceDocumentConsumerTest {
 

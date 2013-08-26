@@ -31,12 +31,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.xml.sax.SAXException;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
@@ -47,6 +41,11 @@ import org.apache.olingo.odata2.core.ep.producer.AtomEntryEntityProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.custommonkey.xmlunit.exceptions.XpathException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 /**
  *  

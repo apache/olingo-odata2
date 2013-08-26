@@ -37,12 +37,6 @@ import java.util.Map;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.junit.Test;
-import org.xml.sax.SAXException;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmCustomizableFeedMappings;
@@ -62,6 +56,11 @@ import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.helper.XMLUnitHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.exceptions.XpathException;
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 /**
  *  

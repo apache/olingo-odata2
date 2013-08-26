@@ -22,9 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.CustomizableFeedMappings;
@@ -33,6 +30,8 @@ import org.apache.olingo.odata2.api.edm.provider.Mapping;
 import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class EdmMappingTest extends BaseTest {
 

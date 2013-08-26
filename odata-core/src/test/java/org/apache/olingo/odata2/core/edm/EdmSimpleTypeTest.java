@@ -35,8 +35,6 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
@@ -45,6 +43,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
 
 /**
  *  

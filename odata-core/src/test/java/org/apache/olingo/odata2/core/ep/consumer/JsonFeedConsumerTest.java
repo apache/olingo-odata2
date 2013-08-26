@@ -26,8 +26,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.entry.MediaMetadata;
@@ -35,6 +33,7 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 /**
  *  

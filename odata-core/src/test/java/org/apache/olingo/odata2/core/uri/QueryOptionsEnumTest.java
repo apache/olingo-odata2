@@ -21,9 +21,8 @@ package org.apache.olingo.odata2.core.uri;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
 
 /**
  *  

@@ -23,9 +23,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
 import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmAssociationSetEnd;
@@ -35,6 +32,8 @@ import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class EdmAssociationSetEndImplProvTest extends BaseTest {
   private static EdmAssociationSetEnd edmAssociationSetEnd;

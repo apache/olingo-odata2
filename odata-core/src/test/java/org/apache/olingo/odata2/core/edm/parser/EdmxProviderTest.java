@@ -135,21 +135,21 @@ public class EdmxProviderTest {
     assertEquals(testContainer.getName(), container.getName());
     assertEquals(testContainer.isDefaultEntityContainer(), container.isDefaultEntityContainer());
   }
-  
+
   @Test
-  public void testEntitySets() throws EntityProviderException, ODataException{
-	Edm edm = createEdm();
+  public void testEntitySets() throws EntityProviderException, ODataException {
+    Edm edm = createEdm();
     assertNotNull(edm);
-    
+
     List<EdmEntitySet> entitySets = edm.getEntitySets();
     assertEquals(6, entitySets.size());
   }
-  
+
   @Test
-  public void testFunctionImports() throws EntityProviderException, ODataException{
-	Edm edm = createEdm();
+  public void testFunctionImports() throws EntityProviderException, ODataException {
+    Edm edm = createEdm();
     assertNotNull(edm);
-    
+
     List<EdmFunctionImport> functionImports = edm.getFunctionImports();
     assertEquals(7, functionImports.size());
   }

@@ -28,10 +28,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jetty.http.HttpMethods;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
 import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -46,6 +42,9 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata2.api.edm.provider.FunctionImportParameter;
 import org.apache.olingo.odata2.api.edm.provider.ReturnType;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.eclipse.jetty.http.HttpMethods;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *  

@@ -26,13 +26,12 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *  

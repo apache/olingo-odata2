@@ -27,12 +27,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.junit.Test;
 
 public class BatchResponseWriterTest {
 

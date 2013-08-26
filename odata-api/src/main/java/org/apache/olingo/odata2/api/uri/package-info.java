@@ -24,3 +24,4 @@
  * <br>The URI syntax is specified in the OData Protocol Specification in the form of an ABNF. </p>
  */
 package org.apache.olingo.odata2.api.uri;
+

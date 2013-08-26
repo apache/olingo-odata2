@@ -24,10 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 /**
  *  

@@ -31,8 +31,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.servicedocument.AtomInfo;
@@ -43,6 +41,7 @@ import org.apache.olingo.odata2.api.servicedocument.ExtensionElement;
 import org.apache.olingo.odata2.api.servicedocument.Fixed;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.apache.olingo.odata2.api.servicedocument.Workspace;
+import org.junit.Test;
 
 /**
  *  

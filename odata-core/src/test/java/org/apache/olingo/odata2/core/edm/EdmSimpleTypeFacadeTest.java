@@ -24,8 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmLiteral;
 import org.apache.olingo.odata2.api.edm.EdmLiteralException;
@@ -34,6 +32,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.uri.UriSyntaxException;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
 
 /**
  * Tests for the parsing of URI literals

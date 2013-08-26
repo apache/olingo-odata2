@@ -29,12 +29,6 @@ import java.util.Map;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.custommonkey.xmlunit.NamespaceContext;
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
@@ -49,6 +43,11 @@ import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.core.ep.AbstractXmlProducerTestHelper;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.custommonkey.xmlunit.NamespaceContext;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Before;
+import org.junit.Test;
 
 public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
 

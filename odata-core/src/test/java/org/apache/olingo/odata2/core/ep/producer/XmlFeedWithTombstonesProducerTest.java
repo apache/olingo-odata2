@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
@@ -41,6 +39,7 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 public class XmlFeedWithTombstonesProducerTest extends AbstractProviderTest {
 

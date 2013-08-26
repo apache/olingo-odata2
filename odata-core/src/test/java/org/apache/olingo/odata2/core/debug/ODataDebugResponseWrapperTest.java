@@ -32,8 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
@@ -56,6 +54,7 @@ import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.junit.Test;
 
 /**
  * Tests for the debug information output.

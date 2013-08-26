@@ -24,3 +24,4 @@
  * <br>Different types of expressions can be found in {@link org.apache.olingo.odata2.api.uri.expression.ExpressionKind}.
  */
 package org.apache.olingo.odata2.api.uri.expression;
+

@@ -33,8 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
@@ -47,6 +45,7 @@ import org.apache.olingo.odata2.api.ep.callback.ReadFeedResult;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
 

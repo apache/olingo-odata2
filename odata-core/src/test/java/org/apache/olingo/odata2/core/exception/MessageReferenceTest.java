@@ -21,11 +21,10 @@ package org.apache.olingo.odata2.core.exception;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.uri.UriNotMatchingException;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
 
 /**
  *  

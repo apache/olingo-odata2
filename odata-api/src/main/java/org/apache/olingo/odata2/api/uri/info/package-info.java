@@ -22,3 +22,4 @@
  * request URI for the methods that process a request inside the dispatcher.</p>
  */
 package org.apache.olingo.odata2.api.uri.info;
+

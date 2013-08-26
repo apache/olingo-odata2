@@ -34,9 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -52,6 +49,8 @@ import org.apache.olingo.odata2.api.uri.UriSyntaxException;
 import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for OData URI parsing.

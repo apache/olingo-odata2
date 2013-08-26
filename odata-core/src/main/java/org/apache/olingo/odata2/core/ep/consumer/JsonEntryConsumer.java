@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -46,6 +44,9 @@ import org.apache.olingo.odata2.core.ep.entry.MediaMetadataImpl;
 import org.apache.olingo.odata2.core.ep.entry.ODataEntryImpl;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
+
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 
 /**
  *  

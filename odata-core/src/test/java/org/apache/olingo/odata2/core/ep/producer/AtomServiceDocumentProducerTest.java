@@ -32,11 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmServiceMetadata;
@@ -51,6 +46,10 @@ import org.apache.olingo.odata2.core.edm.provider.EdmServiceMetadataImplProv;
 import org.apache.olingo.odata2.core.ep.AbstractXmlProducerTestHelper;
 import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Before;
+import org.junit.Test;
 
 public class AtomServiceDocumentProducerTest extends AbstractXmlProducerTestHelper {
 

@@ -76,17 +76,17 @@ public class EdmImplTest extends BaseTest {
     assertEquals(edm.getAssociation("foo", "bar"), edm.getAssociation("foo", "bar"));
     assertNotSame(edm.getAssociation("foo", "bar"), edm.getAssociation("bar", "foo"));
   }
-  
+
   @Test
   public void testEntitySetsCache() throws EdmException {
-	assertEquals(edm.getEntitySets(), edm.getEntitySets());
+    assertEquals(edm.getEntitySets(), edm.getEntitySets());
   }
 
   @Test
   public void testFunctionImportCache() throws EdmException {
-	assertEquals(edm.getFunctionImports(), edm.getFunctionImports());
+    assertEquals(edm.getFunctionImports(), edm.getFunctionImports());
   }
-  
+
   private class ForEdmImplTest extends EdmImpl {
 
     public ForEdmImplTest() {
@@ -124,16 +124,16 @@ public class EdmImplTest extends BaseTest {
       return edmAssociation;
     }
 
-	@Override
-	protected List<EdmEntitySet> createEntitySets() throws ODataException {
-	  List<EdmEntitySet> edmEntitySets = new ArrayList<EdmEntitySet>();
-	  return edmEntitySets;
-	}
+    @Override
+    protected List<EdmEntitySet> createEntitySets() throws ODataException {
+      List<EdmEntitySet> edmEntitySets = new ArrayList<EdmEntitySet>();
+      return edmEntitySets;
+    }
 
-	@Override
-	protected List<EdmFunctionImport> createFunctionImports() throws ODataException {
-	  List<EdmFunctionImport> edmFunctionImports = new ArrayList<EdmFunctionImport>();
-	  return edmFunctionImports;
-	}
+    @Override
+    protected List<EdmFunctionImport> createFunctionImports() throws ODataException {
+      List<EdmFunctionImport> edmFunctionImports = new ArrayList<EdmFunctionImport>();
+      return edmFunctionImports;
+    }
   }
 }

@@ -24,9 +24,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
 import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
@@ -42,6 +39,8 @@ import org.apache.olingo.odata2.api.edm.provider.Mapping;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *  

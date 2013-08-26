@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.stream.JsonReader;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -35,6 +34,8 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.core.edm.provider.EdmEntitySetInfoImplProv;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.servicedocument.ServiceDocumentImpl;
+
+import com.google.gson.stream.JsonReader;
 
 /**
  * Reads the OData service document (JSON).

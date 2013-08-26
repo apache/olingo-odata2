@@ -33,11 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.edm.EdmServiceMetadata;
@@ -48,6 +43,10 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *  

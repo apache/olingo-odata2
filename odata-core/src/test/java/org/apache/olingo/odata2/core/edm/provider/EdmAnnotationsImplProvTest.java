@@ -25,14 +25,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmAnnotationAttribute;
 import org.apache.olingo.odata2.api.edm.EdmAnnotationElement;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class EdmAnnotationsImplProvTest extends BaseTest {
 

@@ -32,9 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
@@ -74,6 +71,8 @@ import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.core.uri.UriType;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the validation of HTTP method, URI path, query options,

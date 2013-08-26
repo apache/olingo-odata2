@@ -158,28 +158,28 @@ public abstract class EdmImpl implements Edm {
   public EdmEntityContainer getDefaultEntityContainer() throws EdmException {
     return getEntityContainer(null);
   }
-  
+
   @Override
   public List<EdmEntitySet> getEntitySets() throws EdmException {
-	try {
-	  if(edmEntitySets==null){		  
-		  edmEntitySets = createEntitySets();
-	  } 
-	} catch (ODataException e) {
-        throw new EdmException(EdmException.COMMON, e);
-	}
+    try {
+      if (edmEntitySets == null) {
+        edmEntitySets = createEntitySets();
+      }
+    } catch (ODataException e) {
+      throw new EdmException(EdmException.COMMON, e);
+    }
     return edmEntitySets;
   }
-  
+
   @Override
   public List<EdmFunctionImport> getFunctionImports() throws EdmException {
-	try {
-	  if(edmFunctionImports==null){		  
-		edmFunctionImports = createFunctionImports();
-	  } 
-	} catch (ODataException e) {
-        throw new EdmException(EdmException.COMMON, e);
-	}
+    try {
+      if (edmFunctionImports == null) {
+        edmFunctionImports = createFunctionImports();
+      }
+    } catch (ODataException e) {
+      throw new EdmException(EdmException.COMMON, e);
+    }
     return edmFunctionImports;
   }
 
@@ -190,8 +190,8 @@ public abstract class EdmImpl implements Edm {
   protected abstract EdmComplexType createComplexType(FullQualifiedName fqName) throws ODataException;
 
   protected abstract EdmAssociation createAssociation(FullQualifiedName fqName) throws ODataException;
-  
+
   protected abstract List<EdmEntitySet> createEntitySets() throws ODataException;
-  
+
   protected abstract List<EdmFunctionImport> createFunctionImports() throws ODataException;
 }

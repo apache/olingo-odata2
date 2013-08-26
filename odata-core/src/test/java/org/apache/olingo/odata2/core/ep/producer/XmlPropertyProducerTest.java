@@ -25,8 +25,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
@@ -38,6 +36,7 @@ import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.helper.XMLUnitHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 /**
  *  

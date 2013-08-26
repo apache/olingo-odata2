@@ -23,9 +23,8 @@ import static org.junit.Assert.assertEquals;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
 
 /**
  * Tests for percent-encoding.

@@ -30,9 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
@@ -41,6 +38,8 @@ import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.UriParser;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *  

@@ -21,11 +21,10 @@ package org.apache.olingo.odata2.core.uri;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.uri.UriParser;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 /**
  *  

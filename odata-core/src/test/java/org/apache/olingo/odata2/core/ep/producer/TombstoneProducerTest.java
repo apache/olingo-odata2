@@ -35,9 +35,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
@@ -48,6 +45,8 @@ import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TombstoneProducerTest extends AbstractProviderTest {
 

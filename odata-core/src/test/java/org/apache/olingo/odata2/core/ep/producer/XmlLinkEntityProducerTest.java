@@ -25,14 +25,13 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 /**
  *  

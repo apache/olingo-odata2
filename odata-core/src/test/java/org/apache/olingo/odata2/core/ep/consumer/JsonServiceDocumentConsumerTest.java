@@ -25,11 +25,10 @@ import static org.junit.Assert.fail;
 import java.io.InputStream;
 import java.util.List;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
+import org.junit.Test;
 
 public class JsonServiceDocumentConsumerTest {
 

@@ -20,10 +20,9 @@ package org.apache.olingo.odata2.core.rt;
 
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
 
 public class RuntimeDelegateTest extends BaseTest {
 

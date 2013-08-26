@@ -30,12 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.ep.EntityProvider.EntityProviderInterface;
@@ -45,6 +39,11 @@ import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.uri.PathInfo;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  

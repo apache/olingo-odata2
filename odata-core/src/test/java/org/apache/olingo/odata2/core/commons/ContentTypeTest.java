@@ -33,13 +33,12 @@ import java.util.UUID;
 
 import javax.ws.rs.core.MediaType;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.core.commons.ContentType.ODataFormat;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
 // 14.1 Accept
 //

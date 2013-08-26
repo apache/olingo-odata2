@@ -20,13 +20,12 @@ package org.apache.olingo.odata2.core.edm.provider;
 
 import static org.mockito.Mockito.mock;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
 
 public class EdmNamedImplProvTest extends BaseTest {
 

@@ -24,14 +24,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotAcceptableException;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.core.uri.UriType;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  *  

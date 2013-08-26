@@ -24,10 +24,10 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.junit.Test;
 
 import com.google.gson.stream.JsonReader;
-import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
 /**
  *  

@@ -22,12 +22,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Locale;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.core.exception.MessageService.Message;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
 
 /**
  *  

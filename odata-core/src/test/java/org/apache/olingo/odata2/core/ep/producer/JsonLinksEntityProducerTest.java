@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -38,6 +36,7 @@ import org.apache.olingo.odata2.core.ep.JsonEntityProvider;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 /**
  *  

@@ -27,9 +27,6 @@ import static org.mockito.Mockito.withSettings;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.api.processor.feature.CustomContentType;
@@ -48,6 +45,8 @@ import org.apache.olingo.odata2.api.processor.part.MetadataProcessor;
 import org.apache.olingo.odata2.api.processor.part.ServiceDocumentProcessor;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *  

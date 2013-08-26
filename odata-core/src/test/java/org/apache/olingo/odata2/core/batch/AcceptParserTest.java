@@ -23,9 +23,8 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.batch.BatchException;
+import org.junit.Test;
 
 public class AcceptParserTest {
   private static final String TAB = "\t";

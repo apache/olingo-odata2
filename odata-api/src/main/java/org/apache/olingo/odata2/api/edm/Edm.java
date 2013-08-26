@@ -27,7 +27,7 @@ import java.util.List;
  *  
  */
 public interface Edm {
-	
+
   public static final String NAMESPACE_EDM_2006_04 = "http://schemas.microsoft.com/ado/2006/04/edm";
   public static final String NAMESPACE_EDM_2007_05 = "http://schemas.microsoft.com/ado/2007/05/edm";
   public static final String NAMESPACE_EDM_2008_01 = "http://schemas.microsoft.com/ado/2008/01/edm";
@@ -107,7 +107,7 @@ public interface Edm {
    * @throws EdmException
    */
   EdmEntityContainer getDefaultEntityContainer() throws EdmException;
-  
+
   /**
    * Get all contained EntitySets
    * 
@@ -115,7 +115,7 @@ public interface Edm {
    * @throws EdmException
    * */
   List<EdmEntitySet> getEntitySets() throws EdmException;
-  
+
   /**
    * Get all contained FunctionImports
    * 

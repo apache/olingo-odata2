@@ -25,9 +25,6 @@ import static org.mockito.Mockito.mock;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
 import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmAssociation;
@@ -39,6 +36,8 @@ import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *  

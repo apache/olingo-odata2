@@ -92,38 +92,38 @@ public class EdmImplProv extends EdmImpl implements EdmProviderAccessor {
   public EdmProvider getEdmProvider() {
     return edmProvider;
   }
-  
+
   @Override
   protected List<EdmEntitySet> createEntitySets() throws ODataException {
-	List<EdmEntitySet> edmEntitySets = new ArrayList<EdmEntitySet>();
-	if (schemas == null) {
+    List<EdmEntitySet> edmEntitySets = new ArrayList<EdmEntitySet>();
+    if (schemas == null) {
       schemas = edmProvider.getSchemas();
     }
-	for(Schema schema: schemas) {
-	  for(EntityContainer entityContainer: schema.getEntityContainers()) {
-	   	for(EntitySet entitySet: entityContainer.getEntitySets()) {
-   		  EdmEntityContainer edmEntityContainer = createEntityContainer(entityContainer.getName());
-   		  edmEntitySets.add( new EdmEntitySetImplProv(this, entitySet, edmEntityContainer));	  
-		}
-	  }
-   	}
-	return edmEntitySets;
+    for (Schema schema : schemas) {
+      for (EntityContainer entityContainer : schema.getEntityContainers()) {
+        for (EntitySet entitySet : entityContainer.getEntitySets()) {
+          EdmEntityContainer edmEntityContainer = createEntityContainer(entityContainer.getName());
+          edmEntitySets.add(new EdmEntitySetImplProv(this, entitySet, edmEntityContainer));
+        }
+      }
+    }
+    return edmEntitySets;
   }
-  
+
   @Override
   protected List<EdmFunctionImport> createFunctionImports() throws ODataException {
-	List<EdmFunctionImport> edmFunctionImports = new ArrayList<EdmFunctionImport>();
-	if (schemas == null) {
+    List<EdmFunctionImport> edmFunctionImports = new ArrayList<EdmFunctionImport>();
+    if (schemas == null) {
       schemas = edmProvider.getSchemas();
     }
-	for(Schema schema: schemas) {
-  	  for(EntityContainer entityContainer: schema.getEntityContainers()) {
-	  	for(FunctionImport functionImport: entityContainer.getFunctionImports()) {
-   	      EdmEntityContainer edmEntityContainer = createEntityContainer(entityContainer.getName());
-   	      edmFunctionImports.add( new EdmFunctionImportImplProv(this, functionImport, edmEntityContainer));	  
-		}
-	  }
-   	}
-	return edmFunctionImports;
+    for (Schema schema : schemas) {
+      for (EntityContainer entityContainer : schema.getEntityContainers()) {
+        for (FunctionImport functionImport : entityContainer.getFunctionImports()) {
+          EdmEntityContainer edmEntityContainer = createEntityContainer(entityContainer.getName());
+          edmFunctionImports.add(new EdmFunctionImportImplProv(this, functionImport, edmEntityContainer));
+        }
+      }
+    }
+    return edmFunctionImports;
   }
 }

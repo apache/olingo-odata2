@@ -18,12 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
-import java.util.Locale;
-
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;

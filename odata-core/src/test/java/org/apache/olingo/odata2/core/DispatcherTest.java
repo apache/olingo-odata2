@@ -30,12 +30,6 @@ import static org.mockito.Mockito.when;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.batch.BatchHandler;
@@ -63,6 +57,11 @@ import org.apache.olingo.odata2.api.processor.part.ServiceDocumentProcessor;
 import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.core.uri.UriType;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Tests for request dispatching according to URI type and HTTP method.

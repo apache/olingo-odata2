@@ -24,12 +24,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
 
 public class EdmEntitySetInfoImplProvTest extends BaseTest {
 

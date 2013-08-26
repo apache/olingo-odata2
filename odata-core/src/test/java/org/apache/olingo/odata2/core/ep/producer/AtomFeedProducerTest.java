@@ -30,9 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
@@ -44,6 +41,8 @@ import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *  

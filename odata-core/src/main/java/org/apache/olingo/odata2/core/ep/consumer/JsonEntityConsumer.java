@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.stream.JsonReader;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
@@ -33,6 +32,8 @@ import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
+
+import com.google.gson.stream.JsonReader;
 
 /**
  *  

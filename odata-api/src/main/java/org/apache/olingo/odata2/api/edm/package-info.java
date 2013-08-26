@@ -25,3 +25,4 @@
  * to indicate these classes should only be used and not implemented.</p>
  */
 package org.apache.olingo.odata2.api.edm;
+

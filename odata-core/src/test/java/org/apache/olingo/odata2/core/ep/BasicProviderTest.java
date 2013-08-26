@@ -29,10 +29,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
@@ -43,6 +39,9 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Test;
 
 /**
  *  

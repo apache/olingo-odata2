@@ -22,9 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -38,6 +35,8 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.edm.provider.EdmImplProv;
 import org.apache.olingo.odata2.core.ep.AbstractXmlProducerTestHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ServiceDocumentProducerTest extends AbstractXmlProducerTestHelper {
 

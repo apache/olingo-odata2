@@ -30,10 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.custommonkey.xmlunit.exceptions.XpathException;
-import org.junit.Test;
-import org.xml.sax.SAXException;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
@@ -50,6 +46,9 @@ import org.apache.olingo.odata2.core.uri.UriParserImpl;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.custommonkey.xmlunit.exceptions.XpathException;
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 /**
  *  

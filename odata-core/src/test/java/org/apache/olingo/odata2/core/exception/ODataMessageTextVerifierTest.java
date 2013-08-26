@@ -23,11 +23,10 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.ODataMessageTextVerifier;
 import org.apache.olingo.odata2.testutil.mock.SampleClassForInvalidMessageReferences;
+import org.junit.Test;
 
 /**
  * This class tests the {@link ODataMessageTextVerifier}

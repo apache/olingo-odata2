@@ -26,10 +26,9 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamReader;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.junit.Test;
 
 /**
  *  

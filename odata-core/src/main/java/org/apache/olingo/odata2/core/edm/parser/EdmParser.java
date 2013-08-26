@@ -20,8 +20,10 @@ package org.apache.olingo.odata2.core.edm.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -64,9 +66,6 @@ import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.api.edm.provider.Using;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class EdmParser {
 
   private Map<String, Set<String>> inscopeMap = new HashMap<String, Set<String>>();
@@ -82,7 +81,6 @@ public class EdmParser {
   private String currentNamespace;
   private String edmNamespace = Edm.NAMESPACE_EDM_2008_09;
   private Set<String> edmNamespaces;
-  private final String DEFAULT_NAMESPACE = "";
 
   public DataServices readMetadata(final XMLStreamReader reader, final boolean validate)
       throws EntityProviderException {
@@ -97,8 +95,8 @@ public class EdmParser {
         if (reader.isStartElement()) {
           extractNamespaces(reader);
           if (EdmParserConstants.EDM_SCHEMA.equals(reader.getLocalName())) {
-        	edmNamespace = reader.getNamespaceURI();
-        	checkEdmNamespace();
+            edmNamespace = reader.getNamespaceURI();
+            checkEdmNamespace();
             schemas.add(readSchema(reader));
           } else if (EdmParserConstants.EDM_DATA_SERVICES.equals(reader
               .getLocalName())) {
@@ -130,7 +128,7 @@ public class EdmParser {
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
 
     schema.setNamespace(reader.getAttributeValue(null, EdmParserConstants.EDM_SCHEMA_NAMESPACE));
-    this.inscopeMap.put(schema.getNamespace(), new HashSet<String>());
+    inscopeMap.put(schema.getNamespace(), new HashSet<String>());
     schema.setAlias(reader.getAttributeValue(null, EdmParserConstants.EDM_SCHEMA_ALIAS));
     schema.setAnnotationAttributes(readAnnotationAttribute(reader));
     currentNamespace = schema.getNamespace();
@@ -161,37 +159,37 @@ public class EdmParser {
     return schema;
   }
 
-    private Using readUsing(final XMLStreamReader reader, final String schemaNamespace) 
-            throws XMLStreamException, EntityProviderException {
-        
-        reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_USING);
+  private Using readUsing(final XMLStreamReader reader, final String schemaNamespace)
+      throws XMLStreamException, EntityProviderException {
 
-        Using using = new Using();
-        using.setNamespace(reader.getAttributeValue(null, EdmParserConstants.EDM_SCHEMA_NAMESPACE));
-        this.inscopeMap.get(schemaNamespace).add(using.getNamespace());
-        using.setAlias(reader.getAttributeValue(null, EdmParserConstants.EDM_SCHEMA_ALIAS));
-        using.setAnnotationAttributes(readAnnotationAttribute(reader));
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_USING);
 
-        List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
-        while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
-                && EdmParserConstants.EDM_USING.equals(reader.getLocalName()))) {
-            
-            reader.next();
-            if (reader.isStartElement()) {
-                extractNamespaces(reader);
-                currentHandledStartTagName = reader.getLocalName();
-                annotationElements.add(readAnnotationElement(reader));
-            }
-        }
-        using.setAnnotationElements(annotationElements);
+    Using using = new Using();
+    using.setNamespace(reader.getAttributeValue(null, EdmParserConstants.EDM_SCHEMA_NAMESPACE));
+    inscopeMap.get(schemaNamespace).add(using.getNamespace());
+    using.setAlias(reader.getAttributeValue(null, EdmParserConstants.EDM_SCHEMA_ALIAS));
+    using.setAnnotationAttributes(readAnnotationAttribute(reader));
 
-        if (using.getAlias() != null) {
-            aliasNamespaceMap.put(using.getAlias(), using.getNamespace());
-        }
+    List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
+    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && EdmParserConstants.EDM_USING.equals(reader.getLocalName()))) {
 
-        return using;
+      reader.next();
+      if (reader.isStartElement()) {
+        extractNamespaces(reader);
+        currentHandledStartTagName = reader.getLocalName();
+        annotationElements.add(readAnnotationElement(reader));
+      }
     }
-  
+    using.setAnnotationElements(annotationElements);
+
+    if (using.getAlias() != null) {
+      aliasNamespaceMap.put(using.getAlias(), using.getNamespace());
+    }
+
+    return using;
+  }
+
   private EntityContainer readEntityContainer(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
     reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ENTITY_CONTAINER);
     EntityContainer container = new EntityContainer();
@@ -787,9 +785,9 @@ public class EdmParser {
     List<AnnotationAttribute> annotationAttributes = new ArrayList<AnnotationAttribute>();
     for (int i = 0; i < reader.getAttributeCount(); i++) {
       String attributeNamespace = reader.getAttributeNamespace(i);
-	if (attributeNamespace != null && !isDefaultNamespace(attributeNamespace) 
-			&& !mandatoryNamespaces.containsValue(attributeNamespace) 
-    		&& !edmNamespaces.contains(attributeNamespace)) {
+      if (attributeNamespace != null && !isDefaultNamespace(attributeNamespace)
+          && !mandatoryNamespaces.containsValue(attributeNamespace)
+          && !edmNamespaces.contains(attributeNamespace)) {
         annotationAttributes.add(new AnnotationAttribute().setName(reader.getAttributeLocalName(i)).
             setPrefix(reader.getAttributePrefix(i)).setNamespace(attributeNamespace).setText(reader.getAttributeValue(i)));
       }
@@ -809,12 +807,12 @@ public class EdmParser {
       throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_EDMX_2007_06));
     } else if (!xmlNamespaceMap.containsValue(Edm.NAMESPACE_M_2007_08)) {
       throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_EDMX_2007_06));
-    } 
+    }
   }
-  
+
   private void checkEdmNamespace() throws EntityProviderException {
-	if(!edmNamespaces.contains(edmNamespace)){
-	  throw new EntityProviderException( EntityProviderException.INVALID_NAMESPACE.addContent(EdmParserConstants.EDM_SCHEMA));
+    if (!edmNamespaces.contains(edmNamespace)) {
+      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(EdmParserConstants.EDM_SCHEMA));
     }
   }
 
@@ -981,6 +979,6 @@ public class EdmParser {
     edmNamespaces.add(Edm.NAMESPACE_EDM_2007_05);
     edmNamespaces.add(Edm.NAMESPACE_EDM_2008_01);
     edmNamespaces.add(Edm.NAMESPACE_EDM_2008_09);
-    
+
   }
 }

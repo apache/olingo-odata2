@@ -22,9 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.StringWriter;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Test;
 
 /**
  *  

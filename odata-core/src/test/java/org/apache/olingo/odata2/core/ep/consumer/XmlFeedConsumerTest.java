@@ -25,14 +25,13 @@ import java.io.InputStream;
 
 import junit.framework.Assert;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Test;
 
 public class XmlFeedConsumerTest extends AbstractConsumerTest {
 

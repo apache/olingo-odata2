@@ -21,10 +21,9 @@ package org.apache.olingo.odata2.core.ep;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import org.apache.olingo.odata2.testutil.fit.BaseTest;
 
 @RunWith(Parameterized.class)
 public abstract class AbstractXmlProducerTestHelper extends BaseTest {

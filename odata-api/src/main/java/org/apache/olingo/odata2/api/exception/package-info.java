@@ -58,3 +58,4 @@
  * <br> **** {@link org.apache.olingo.odata2.api.uri.UriSyntaxException}
  */
 package org.apache.olingo.odata2.api.exception;
+
