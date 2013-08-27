@@ -16,7 +16,7 @@
  *        specific language governing permissions and limitations
  *        under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.edm.parser;
+package org.apache.olingo.odata2.core.edm.provider;
 
 import java.io.InputStream;
 import java.util.List;
@@ -39,12 +39,13 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.core.ep.consumer.XmlMetadataConsumer;
 
 public class EdmxProvider extends EdmProvider {
   private DataServices dataServices;
 
   public EdmxProvider parse(final InputStream in, final boolean validate) throws EntityProviderException {
-    EdmParser parser = new EdmParser();
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader streamReader = createStreamReader(in);
     dataServices = parser.readMetadata(streamReader, validate);
     return this;

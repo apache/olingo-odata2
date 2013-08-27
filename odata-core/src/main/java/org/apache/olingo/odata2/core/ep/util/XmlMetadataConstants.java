@@ -16,11 +16,16 @@
  *        specific language governing permissions and limitations
  *        under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.edm.parser;
+package org.apache.olingo.odata2.core.ep.util;
 
-public class EdmParserConstants {
+/**
+ * String constants for deserialization and serialization of metadata document.
+ *  
+ */
+public class XmlMetadataConstants {
 
   public static final String EDM_DATA_SERVICES = "DataServices";
+  public static final String EDM_DATA_SERVICE_VERSION = "DataServiceVersion";
   public static final String EDM_SCHEMA = "Schema";
   public static final String EDM_SCHEMA_NAMESPACE = "Namespace";
   public static final String EDM_SCHEMA_ALIAS = "Alias";
@@ -32,7 +37,7 @@ public class EdmParserConstants {
   public static final String EDM_NAME = "Name";
   public static final String EDM_TYPE = "Type";
   public static final String EDM_ENTITY_TYPE_KEY = "Key";
-  public static final String EDM_ENTITY_TYPE_ABSTRACT = "Abstract";
+  public static final String EDM_TYPE_ABSTRACT = "Abstract";
   public static final String EDM_BASE_TYPE = "BaseType";
   public static final String EDM_PROPERTY_REF = "PropertyRef";
 
@@ -61,14 +66,16 @@ public class EdmParserConstants {
   public static final String EDM_ONDELETE_ACTION = "Action";
 
   public static final String EDM_ENTITY_CONTAINER = "EntityContainer";
+  public static final String EDM_CONTAINER_IS_DEFAULT = "IsDefaultEntityContainer";
+  public static final String EDM_CONTAINER_EXTENDZ = "Extendz";
   public static final String EDM_ENTITY_SET = "EntitySet";
   public static final String EDM_ASSOCIATION_SET = "AssociationSet";
   public static final String EDM_FUNCTION_IMPORT = "FunctionImport";
-  public static final String EDM_CONTAINER_EXTENDZ = "Extendz";
 
   public static final String EDM_FUNCTION_IMPORT_HTTP_METHOD = "HttpMethod";
   public static final String EDM_FUNCTION_IMPORT_RETURN = "ReturnType";
   public static final String EDM_FUNCTION_PARAMETER = "Parameter";
+  public static final String EDM_FUNCTION_PARAMETER_MODE = "Mode";
 
   public static final String M_ENTITY_TYPE_HAS_STREAM = "HasStream";
   public static final String M_MIMETYPE = "MimeType";
@@ -82,5 +89,8 @@ public class EdmParserConstants {
   public static final String EDM_ASSOCIATION_DEPENDENT = "Dependent";
 
   public static final String EDM_ROLE = "Role";
+  public static final String DOCUMENTATION = "Documentation";
+  public static final String SUMMARY = "Summary";
+  public static final String LONG_DESCRIPTION = "LongDescription";
 
 }

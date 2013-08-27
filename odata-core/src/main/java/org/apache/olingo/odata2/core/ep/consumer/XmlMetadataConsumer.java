@@ -16,7 +16,7 @@
  *        specific language governing permissions and limitations
  *        under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.edm.parser;
+package org.apache.olingo.odata2.core.ep.consumer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,8 +65,9 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.api.edm.provider.Using;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.core.ep.util.XmlMetadataConstants;
 
-public class EdmParser {
+public class XmlMetadataConsumer {
 
   private Map<String, Set<String>> inscopeMap = new HashMap<String, Set<String>>();
   private Map<String, String> aliasNamespaceMap = new HashMap<String, String>();
@@ -90,15 +91,16 @@ public class EdmParser {
       List<Schema> schemas = new ArrayList<Schema>();
 
       while (reader.hasNext()
-          && !(reader.isEndElement() && Edm.NAMESPACE_EDMX_2007_06.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_DATA_SERVICES.equals(reader.getLocalName()))) {
+          && !(reader.isEndElement() && Edm.NAMESPACE_EDMX_2007_06.equals(reader.getNamespaceURI())
+          && XmlMetadataConstants.EDM_DATA_SERVICES.equals(reader.getLocalName()))) {
         reader.next();
         if (reader.isStartElement()) {
           extractNamespaces(reader);
-          if (EdmParserConstants.EDM_SCHEMA.equals(reader.getLocalName())) {
+          if (XmlMetadataConstants.EDM_SCHEMA.equals(reader.getLocalName())) {
             edmNamespace = reader.getNamespaceURI();
             checkEdmNamespace();
             schemas.add(readSchema(reader));
-          } else if (EdmParserConstants.EDM_DATA_SERVICES.equals(reader
+          } else if (XmlMetadataConstants.EDM_DATA_SERVICES.equals(reader
               .getLocalName())) {
             dataServices.setDataServiceVersion(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, "DataServiceVersion"));
           }
@@ -117,7 +119,7 @@ public class EdmParser {
   }
 
   private Schema readSchema(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_SCHEMA);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_SCHEMA);
 
     Schema schema = new Schema();
     List<Using> usings = new ArrayList<Using>();
@@ -127,25 +129,27 @@ public class EdmParser {
     List<EntityContainer> entityContainers = new ArrayList<EntityContainer>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
 
-    schema.setNamespace(reader.getAttributeValue(null, EdmParserConstants.EDM_SCHEMA_NAMESPACE));
+    schema.setNamespace(reader.getAttributeValue(null, XmlMetadataConstants.EDM_SCHEMA_NAMESPACE));
     inscopeMap.put(schema.getNamespace(), new HashSet<String>());
-    schema.setAlias(reader.getAttributeValue(null, EdmParserConstants.EDM_SCHEMA_ALIAS));
+    schema.setAlias(reader.getAttributeValue(null, XmlMetadataConstants.EDM_SCHEMA_ALIAS));
     schema.setAnnotationAttributes(readAnnotationAttribute(reader));
     currentNamespace = schema.getNamespace();
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_SCHEMA.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_SCHEMA.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_USING.equals(currentHandledStartTagName)) {
+        if (XmlMetadataConstants.EDM_USING.equals(currentHandledStartTagName)) {
           usings.add(readUsing(reader, schema.getNamespace()));
-        } else if (EdmParserConstants.EDM_ENTITY_TYPE.equals(currentHandledStartTagName)) {
+        } else if (XmlMetadataConstants.EDM_ENTITY_TYPE.equals(currentHandledStartTagName)) {
           entityTypes.add(readEntityType(reader));
-        } else if (EdmParserConstants.EDM_COMPLEX_TYPE.equals(currentHandledStartTagName)) {
+        } else if (XmlMetadataConstants.EDM_COMPLEX_TYPE.equals(currentHandledStartTagName)) {
           complexTypes.add(readComplexType(reader));
-        } else if (EdmParserConstants.EDM_ASSOCIATION.equals(currentHandledStartTagName)) {
+        } else if (XmlMetadataConstants.EDM_ASSOCIATION.equals(currentHandledStartTagName)) {
           associations.add(readAssociation(reader));
-        } else if (EdmParserConstants.EDM_ENTITY_CONTAINER.equals(currentHandledStartTagName)) {
+        } else if (XmlMetadataConstants.EDM_ENTITY_CONTAINER.equals(currentHandledStartTagName)) {
           entityContainers.add(readEntityContainer(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -155,24 +159,25 @@ public class EdmParser {
     if (schema.getAlias() != null) {
       aliasNamespaceMap.put(schema.getAlias(), schema.getNamespace());
     }
-    schema.setUsings(usings).setEntityTypes(entityTypes).setComplexTypes(complexTypes).setAssociations(associations).setEntityContainers(entityContainers).setAnnotationElements(annotationElements);
+    schema.setUsings(usings).setEntityTypes(entityTypes).setComplexTypes(complexTypes).setAssociations(associations)
+        .setEntityContainers(entityContainers).setAnnotationElements(annotationElements);
     return schema;
   }
 
   private Using readUsing(final XMLStreamReader reader, final String schemaNamespace)
       throws XMLStreamException, EntityProviderException {
 
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_USING);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_USING);
 
     Using using = new Using();
-    using.setNamespace(reader.getAttributeValue(null, EdmParserConstants.EDM_SCHEMA_NAMESPACE));
+    using.setNamespace(reader.getAttributeValue(null, XmlMetadataConstants.EDM_SCHEMA_NAMESPACE));
     inscopeMap.get(schemaNamespace).add(using.getNamespace());
-    using.setAlias(reader.getAttributeValue(null, EdmParserConstants.EDM_SCHEMA_ALIAS));
+    using.setAlias(reader.getAttributeValue(null, XmlMetadataConstants.EDM_SCHEMA_ALIAS));
     using.setAnnotationAttributes(readAnnotationAttribute(reader));
 
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
     while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
-        && EdmParserConstants.EDM_USING.equals(reader.getLocalName()))) {
+        && XmlMetadataConstants.EDM_USING.equals(reader.getLocalName()))) {
 
       reader.next();
       if (reader.isStartElement()) {
@@ -190,31 +195,34 @@ public class EdmParser {
     return using;
   }
 
-  private EntityContainer readEntityContainer(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ENTITY_CONTAINER);
+  private EntityContainer readEntityContainer(final XMLStreamReader reader)
+      throws XMLStreamException, EntityProviderException {
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ENTITY_CONTAINER);
     EntityContainer container = new EntityContainer();
     List<EntitySet> entitySets = new ArrayList<EntitySet>();
     List<AssociationSet> associationSets = new ArrayList<AssociationSet>();
     List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
 
-    container.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
-    if (reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, "IsDefaultEntityContainer") != null) {
+    container.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
+    if (reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.EDM_CONTAINER_IS_DEFAULT) != null) {
       container.setDefaultEntityContainer("true".equalsIgnoreCase(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, "IsDefaultEntityContainer")));
     }
-    container.setExtendz(reader.getAttributeValue(null, EdmParserConstants.EDM_CONTAINER_EXTENDZ));
+    container.setExtendz(reader.getAttributeValue(null, XmlMetadataConstants.EDM_CONTAINER_EXTENDZ));
     container.setAnnotationAttributes(readAnnotationAttribute(reader));
 
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_ENTITY_CONTAINER.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_ENTITY_CONTAINER.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_ENTITY_SET.equals(currentHandledStartTagName)) {
+        if (XmlMetadataConstants.EDM_ENTITY_SET.equals(currentHandledStartTagName)) {
           entitySets.add(readEntitySet(reader));
-        } else if (EdmParserConstants.EDM_ASSOCIATION_SET.equals(currentHandledStartTagName)) {
+        } else if (XmlMetadataConstants.EDM_ASSOCIATION_SET.equals(currentHandledStartTagName)) {
           associationSets.add(readAssociationSet(reader));
-        } else if (EdmParserConstants.EDM_FUNCTION_IMPORT.equals(currentHandledStartTagName)) {
+        } else if (XmlMetadataConstants.EDM_FUNCTION_IMPORT.equals(currentHandledStartTagName)) {
           functionImports.add(readFunctionImport(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -227,36 +235,36 @@ public class EdmParser {
     return container;
   }
 
-  private FunctionImport readFunctionImport(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_FUNCTION_IMPORT);
+  private FunctionImport readFunctionImport(final XMLStreamReader reader)
+      throws XMLStreamException, EntityProviderException {
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_FUNCTION_IMPORT);
     FunctionImport function = new FunctionImport();
     List<FunctionImportParameter> functionParameters = new ArrayList<FunctionImportParameter>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
 
-    function.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
-    function.setHttpMethod(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, EdmParserConstants.EDM_FUNCTION_IMPORT_HTTP_METHOD));
-    function.setEntitySet(reader.getAttributeValue(null, EdmParserConstants.EDM_ENTITY_SET));
+    function.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
+    function.setHttpMethod(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.EDM_FUNCTION_IMPORT_HTTP_METHOD));
+    function.setEntitySet(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ENTITY_SET));
     ReturnType returnType = new ReturnType();
-    String returnTypeString = reader.getAttributeValue(null, EdmParserConstants.EDM_FUNCTION_IMPORT_RETURN);
+    String returnTypeString = reader.getAttributeValue(null, XmlMetadataConstants.EDM_FUNCTION_IMPORT_RETURN);
     if (returnTypeString != null) {
       if (returnTypeString.startsWith("Collection") || returnTypeString.startsWith("collection")) {
         returnType.setMultiplicity(EdmMultiplicity.MANY);
         returnTypeString = returnTypeString.substring(returnTypeString.indexOf("(") + 1, returnTypeString.length() - 1);
-        if (function.getEntitySet() == null) {
-          //				throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent("EntitySet");
-        }
       }
       FullQualifiedName fqName = extractFQName(returnTypeString);
       returnType.setTypeName(fqName);
       function.setReturnType(returnType);
     }
     function.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_FUNCTION_IMPORT.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_FUNCTION_IMPORT.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_FUNCTION_PARAMETER.equals(currentHandledStartTagName)) {
+        if (XmlMetadataConstants.EDM_FUNCTION_PARAMETER.equals(currentHandledStartTagName)) {
           functionParameters.add(readFunctionImportParameter(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -267,21 +275,24 @@ public class EdmParser {
     return function;
   }
 
-  private FunctionImportParameter readFunctionImportParameter(final XMLStreamReader reader) throws EntityProviderException, XMLStreamException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_FUNCTION_PARAMETER);
+  private FunctionImportParameter readFunctionImportParameter(final XMLStreamReader reader)
+      throws EntityProviderException, XMLStreamException {
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_FUNCTION_PARAMETER);
     FunctionImportParameter functionParameter = new FunctionImportParameter();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
 
-    functionParameter.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
-    String type = reader.getAttributeValue(null, EdmParserConstants.EDM_TYPE);
+    functionParameter.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
+    String type = reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE);
     if (type == null) {
       throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE
-          .addContent(EdmParserConstants.EDM_TYPE).addContent(EdmParserConstants.EDM_FUNCTION_PARAMETER));
+          .addContent(XmlMetadataConstants.EDM_TYPE).addContent(XmlMetadataConstants.EDM_FUNCTION_PARAMETER));
     }
     functionParameter.setType(EdmSimpleTypeKind.valueOf(extractFQName(type).getName()));
     functionParameter.setFacets(readFacets(reader));
     functionParameter.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_FUNCTION_IMPORT.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_FUNCTION_IMPORT.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
@@ -292,30 +303,31 @@ public class EdmParser {
     return functionParameter;
   }
 
-  private AssociationSet readAssociationSet(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ASSOCIATION_SET);
+  private AssociationSet readAssociationSet(final XMLStreamReader reader)
+      throws XMLStreamException, EntityProviderException {
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_SET);
     AssociationSet associationSet = new AssociationSet();
     List<AssociationSetEnd> ends = new ArrayList<AssociationSetEnd>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
 
-    associationSet.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
-    String association = reader.getAttributeValue(null, EdmParserConstants.EDM_ASSOCIATION);
+    associationSet.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
+    String association = reader.getAttributeValue(null, XmlMetadataConstants.EDM_ASSOCIATION);
     if (association != null) {
       associationSet.setAssociation(extractFQName(association));
     } else {
       throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE
-          .addContent(EdmParserConstants.EDM_ASSOCIATION).addContent(EdmParserConstants.EDM_ASSOCIATION_SET));
+          .addContent(XmlMetadataConstants.EDM_ASSOCIATION).addContent(XmlMetadataConstants.EDM_ASSOCIATION_SET));
     }
     associationSet.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_ASSOCIATION_SET.equals(reader.getLocalName()))) {
+    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && XmlMetadataConstants.EDM_ASSOCIATION_SET.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_ASSOCIATION_END.equals(currentHandledStartTagName)) {
+        if (XmlMetadataConstants.EDM_ASSOCIATION_END.equals(currentHandledStartTagName)) {
           AssociationSetEnd associationSetEnd = new AssociationSetEnd();
-          associationSetEnd.setEntitySet(reader.getAttributeValue(null, EdmParserConstants.EDM_ENTITY_SET));
-          associationSetEnd.setRole(reader.getAttributeValue(null, EdmParserConstants.EDM_ROLE));
+          associationSetEnd.setEntitySet(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ENTITY_SET));
+          associationSetEnd.setRole(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ROLE));
           ends.add(associationSetEnd);
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -332,20 +344,22 @@ public class EdmParser {
   }
 
   private EntitySet readEntitySet(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ENTITY_SET);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ENTITY_SET);
     EntitySet entitySet = new EntitySet();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
-    entitySet.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
-    String entityType = reader.getAttributeValue(null, EdmParserConstants.EDM_ENTITY_TYPE);
+    entitySet.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
+    String entityType = reader.getAttributeValue(null, XmlMetadataConstants.EDM_ENTITY_TYPE);
     if (entityType != null) {
       FullQualifiedName fqName = extractFQName(entityType);
       entitySet.setEntityType(fqName);
     } else {
       throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE
-          .addContent(EdmParserConstants.EDM_ENTITY_TYPE).addContent(EdmParserConstants.EDM_ENTITY_SET));
+          .addContent(XmlMetadataConstants.EDM_ENTITY_TYPE).addContent(XmlMetadataConstants.EDM_ENTITY_SET));
     }
     entitySet.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_ENTITY_SET.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_ENTITY_SET.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
@@ -357,21 +371,23 @@ public class EdmParser {
   }
 
   private Association readAssociation(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ASSOCIATION);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION);
 
     Association association = new Association();
-    association.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
+    association.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
     List<AssociationEnd> associationEnds = new ArrayList<AssociationEnd>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
     association.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_ASSOCIATION.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_ASSOCIATION.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_ASSOCIATION_END.equals(currentHandledStartTagName)) {
+        if (XmlMetadataConstants.EDM_ASSOCIATION_END.equals(currentHandledStartTagName)) {
           associationEnds.add(readAssociationEnd(reader));
-        } else if (EdmParserConstants.EDM_ASSOCIATION_CONSTRAINT.equals(currentHandledStartTagName)) {
+        } else if (XmlMetadataConstants.EDM_ASSOCIATION_CONSTRAINT.equals(currentHandledStartTagName)) {
           association.setReferentialConstraint(readReferentialConstraint(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -388,20 +404,22 @@ public class EdmParser {
   }
 
   private ReferentialConstraint readReferentialConstraint(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ASSOCIATION_CONSTRAINT);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_CONSTRAINT);
     ReferentialConstraint refConstraint = new ReferentialConstraint();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
     refConstraint.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_ASSOCIATION_CONSTRAINT.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_ASSOCIATION_CONSTRAINT.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_ASSOCIATION_PRINCIPAL.equals(currentHandledStartTagName)) {
-          reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ASSOCIATION_PRINCIPAL);
+        if (XmlMetadataConstants.EDM_ASSOCIATION_PRINCIPAL.equals(currentHandledStartTagName)) {
+          reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_PRINCIPAL);
           refConstraint.setPrincipal(readReferentialConstraintRole(reader));
-        } else if (EdmParserConstants.EDM_ASSOCIATION_DEPENDENT.equals(currentHandledStartTagName)) {
-          reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ASSOCIATION_DEPENDENT);
+        } else if (XmlMetadataConstants.EDM_ASSOCIATION_DEPENDENT.equals(currentHandledStartTagName)) {
+          reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_DEPENDENT);
           refConstraint.setDependent(readReferentialConstraintRole(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -414,17 +432,18 @@ public class EdmParser {
 
   private ReferentialConstraintRole readReferentialConstraintRole(final XMLStreamReader reader) throws EntityProviderException, XMLStreamException {
     ReferentialConstraintRole rcRole = new ReferentialConstraintRole();
-    rcRole.setRole(reader.getAttributeValue(null, EdmParserConstants.EDM_ROLE));
+    rcRole.setRole(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ROLE));
     List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
     rcRole.setAnnotationAttributes(readAnnotationAttribute(reader));
     while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
-        && (EdmParserConstants.EDM_ASSOCIATION_PRINCIPAL.equals(reader.getLocalName()) || EdmParserConstants.EDM_ASSOCIATION_DEPENDENT.equals(reader.getLocalName())))) {
+        && (XmlMetadataConstants.EDM_ASSOCIATION_PRINCIPAL.equals(reader.getLocalName())
+        || XmlMetadataConstants.EDM_ASSOCIATION_DEPENDENT.equals(reader.getLocalName())))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_PROPERTY_REF.equals(currentHandledStartTagName)) {
+        if (XmlMetadataConstants.EDM_PROPERTY_REF.equals(currentHandledStartTagName)) {
           propertyRefs.add(readPropertyRef(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -436,26 +455,28 @@ public class EdmParser {
   }
 
   private ComplexType readComplexType(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_COMPLEX_TYPE);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_COMPLEX_TYPE);
 
     ComplexType complexType = new ComplexType();
     List<Property> properties = new ArrayList<Property>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
-    complexType.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
-    String baseType = reader.getAttributeValue(null, EdmParserConstants.EDM_BASE_TYPE);
+    complexType.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
+    String baseType = reader.getAttributeValue(null, XmlMetadataConstants.EDM_BASE_TYPE);
     if (baseType != null) {
       complexType.setBaseType(extractFQName(baseType));
     }
-    if (reader.getAttributeValue(null, EdmParserConstants.EDM_ENTITY_TYPE_ABSTRACT) != null) {
-      complexType.setAbstract("true".equalsIgnoreCase(reader.getAttributeValue(null, EdmParserConstants.EDM_ENTITY_TYPE_ABSTRACT)));
+    if (reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE_ABSTRACT) != null) {
+      complexType.setAbstract("true".equalsIgnoreCase(reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE_ABSTRACT)));
     }
     complexType.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_COMPLEX_TYPE.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_COMPLEX_TYPE.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_PROPERTY.equals(currentHandledStartTagName)) {
+        if (XmlMetadataConstants.EDM_PROPERTY.equals(currentHandledStartTagName)) {
           properties.add(readProperty(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -474,37 +495,39 @@ public class EdmParser {
   }
 
   private EntityType readEntityType(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ENTITY_TYPE);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ENTITY_TYPE);
     EntityType entityType = new EntityType();
     List<Property> properties = new ArrayList<Property>();
     List<NavigationProperty> navProperties = new ArrayList<NavigationProperty>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
     Key key = null;
 
-    entityType.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
-    String hasStream = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, EdmParserConstants.M_ENTITY_TYPE_HAS_STREAM);
+    entityType.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
+    String hasStream = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_ENTITY_TYPE_HAS_STREAM);
     if (hasStream != null) {
       entityType.setHasStream("true".equalsIgnoreCase(hasStream));
     }
 
-    if (reader.getAttributeValue(null, EdmParserConstants.EDM_ENTITY_TYPE_ABSTRACT) != null) {
-      entityType.setAbstract("true".equalsIgnoreCase(reader.getAttributeValue(null, EdmParserConstants.EDM_ENTITY_TYPE_ABSTRACT)));
+    if (reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE_ABSTRACT) != null) {
+      entityType.setAbstract("true".equalsIgnoreCase(reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE_ABSTRACT)));
     }
-    String baseType = reader.getAttributeValue(null, EdmParserConstants.EDM_BASE_TYPE);
+    String baseType = reader.getAttributeValue(null, XmlMetadataConstants.EDM_BASE_TYPE);
     if (baseType != null) {
       entityType.setBaseType(extractFQName(baseType));
     }
     entityType.setCustomizableFeedMappings(readCustomizableFeedMappings(reader));
     entityType.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_ENTITY_TYPE.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_ENTITY_TYPE.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_ENTITY_TYPE_KEY.equals(currentHandledStartTagName)) {
+        if (XmlMetadataConstants.EDM_ENTITY_TYPE_KEY.equals(currentHandledStartTagName)) {
           key = readEntityTypeKey(reader);
-        } else if (EdmParserConstants.EDM_PROPERTY.equals(currentHandledStartTagName)) {
+        } else if (XmlMetadataConstants.EDM_PROPERTY.equals(currentHandledStartTagName)) {
           properties.add(readProperty(reader));
-        } else if (EdmParserConstants.EDM_NAVIGATION_PROPERTY.equals(currentHandledStartTagName)) {
+        } else if (XmlMetadataConstants.EDM_NAVIGATION_PROPERTY.equals(currentHandledStartTagName)) {
           navProperties.add(readNavigationProperty(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -523,17 +546,19 @@ public class EdmParser {
   }
 
   private Key readEntityTypeKey(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ENTITY_TYPE_KEY);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ENTITY_TYPE_KEY);
     List<PropertyRef> keys = new ArrayList<PropertyRef>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
     List<AnnotationAttribute> annotationAttributes = readAnnotationAttribute(reader);
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_ENTITY_TYPE_KEY.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_ENTITY_TYPE_KEY.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_PROPERTY_REF.equals(currentHandledStartTagName)) {
-          reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_PROPERTY_REF);
+        if (XmlMetadataConstants.EDM_PROPERTY_REF.equals(currentHandledStartTagName)) {
+          reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_PROPERTY_REF);
           keys.add(readPropertyRef(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -544,12 +569,13 @@ public class EdmParser {
   }
 
   private PropertyRef readPropertyRef(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_PROPERTY_REF);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_PROPERTY_REF);
     PropertyRef propertyRef = new PropertyRef();
-    propertyRef.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
+    propertyRef.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
     propertyRef.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_PROPERTY_REF.equals(reader.getLocalName()))) {
+    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_PROPERTY_REF.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
@@ -560,25 +586,26 @@ public class EdmParser {
   }
 
   private NavigationProperty readNavigationProperty(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_NAVIGATION_PROPERTY);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_NAVIGATION_PROPERTY);
 
     NavigationProperty navProperty = new NavigationProperty();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
-    navProperty.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
-    String relationship = reader.getAttributeValue(null, EdmParserConstants.EDM_NAVIGATION_RELATIONSHIP);
+    navProperty.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
+    String relationship = reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAVIGATION_RELATIONSHIP);
     if (relationship != null) {
       FullQualifiedName fqName = extractFQName(relationship);
       navProperty.setRelationship(fqName);
 
     } else {
       throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE
-          .addContent(EdmParserConstants.EDM_NAVIGATION_RELATIONSHIP).addContent(EdmParserConstants.EDM_NAVIGATION_PROPERTY));
+          .addContent(XmlMetadataConstants.EDM_NAVIGATION_RELATIONSHIP).addContent(XmlMetadataConstants.EDM_NAVIGATION_PROPERTY));
     }
 
-    navProperty.setFromRole(reader.getAttributeValue(null, EdmParserConstants.EDM_NAVIGATION_FROM_ROLE));
-    navProperty.setToRole(reader.getAttributeValue(null, EdmParserConstants.EDM_NAVIGATION_TO_ROLE));
+    navProperty.setFromRole(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAVIGATION_FROM_ROLE));
+    navProperty.setToRole(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAVIGATION_TO_ROLE));
     navProperty.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_NAVIGATION_PROPERTY.equals(reader.getLocalName()))) {
+    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_NAVIGATION_PROPERTY.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
@@ -591,13 +618,13 @@ public class EdmParser {
   }
 
   private Property readProperty(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_PROPERTY);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_PROPERTY);
     Property property;
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
-    String type = reader.getAttributeValue(null, EdmParserConstants.EDM_TYPE);
+    String type = reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE);
     if (type == null) {
       throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE
-          .addContent(EdmParserConstants.EDM_TYPE).addContent(EdmParserConstants.EDM_PROPERTY));
+          .addContent(XmlMetadataConstants.EDM_TYPE).addContent(XmlMetadataConstants.EDM_PROPERTY));
     }
     FullQualifiedName fqName = extractFQName(type);
 
@@ -608,9 +635,10 @@ public class EdmParser {
     }
     property.setFacets(readFacets(reader));
     property.setCustomizableFeedMappings(readCustomizableFeedMappings(reader));
-    property.setMimeType(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, EdmParserConstants.M_MIMETYPE));
+    property.setMimeType(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_MIMETYPE));
     property.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_PROPERTY.equals(reader.getLocalName()))) {
+    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_PROPERTY.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
@@ -623,36 +651,36 @@ public class EdmParser {
 
   private Property readComplexProperty(final XMLStreamReader reader, final FullQualifiedName fqName) throws XMLStreamException {
     ComplexProperty property = new ComplexProperty();
-    property.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
+    property.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
     property.setType(fqName);
     return property;
   }
 
   private Property readSimpleProperty(final XMLStreamReader reader, final FullQualifiedName fqName) throws XMLStreamException {
     SimpleProperty property = new SimpleProperty();
-    property.setName(reader.getAttributeValue(null, EdmParserConstants.EDM_NAME));
+    property.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
     property.setType(EdmSimpleTypeKind.valueOf(fqName.getName()));
     return property;
   }
 
   private Facets readFacets(final XMLStreamReader reader) throws XMLStreamException {
-    String isNullable = reader.getAttributeValue(null, EdmParserConstants.EDM_PROPERTY_NULLABLE);
-    String maxLength = reader.getAttributeValue(null, EdmParserConstants.EDM_PROPERTY_MAX_LENGTH);
-    String precision = reader.getAttributeValue(null, EdmParserConstants.EDM_PROPERTY_PRECISION);
-    String scale = reader.getAttributeValue(null, EdmParserConstants.EDM_PROPERTY_SCALE);
-    String isFixedLength = reader.getAttributeValue(null, EdmParserConstants.EDM_PROPERTY_FIXED_LENGTH);
-    String isUnicode = reader.getAttributeValue(null, EdmParserConstants.EDM_PROPERTY_UNICODE);
-    String concurrencyMode = reader.getAttributeValue(null, EdmParserConstants.EDM_PROPERTY_CONCURRENCY_MODE);
-    String defaultValue = reader.getAttributeValue(null, EdmParserConstants.EDM_PROPERTY_DEFAULT_VALUE);
-    String collation = reader.getAttributeValue(null, EdmParserConstants.EDM_PROPERTY_COLLATION);
-    if (isNullable != null || maxLength != null || precision != null || scale != null || isFixedLength != null || isUnicode != null
-        || concurrencyMode != null || defaultValue != null || collation != null) {
+    String isNullable = reader.getAttributeValue(null, XmlMetadataConstants.EDM_PROPERTY_NULLABLE);
+    String maxLength = reader.getAttributeValue(null, XmlMetadataConstants.EDM_PROPERTY_MAX_LENGTH);
+    String precision = reader.getAttributeValue(null, XmlMetadataConstants.EDM_PROPERTY_PRECISION);
+    String scale = reader.getAttributeValue(null, XmlMetadataConstants.EDM_PROPERTY_SCALE);
+    String isFixedLength = reader.getAttributeValue(null, XmlMetadataConstants.EDM_PROPERTY_FIXED_LENGTH);
+    String isUnicode = reader.getAttributeValue(null, XmlMetadataConstants.EDM_PROPERTY_UNICODE);
+    String concurrencyMode = reader.getAttributeValue(null, XmlMetadataConstants.EDM_PROPERTY_CONCURRENCY_MODE);
+    String defaultValue = reader.getAttributeValue(null, XmlMetadataConstants.EDM_PROPERTY_DEFAULT_VALUE);
+    String collation = reader.getAttributeValue(null, XmlMetadataConstants.EDM_PROPERTY_COLLATION);
+    if (isNullable != null || maxLength != null || precision != null || scale != null || isFixedLength != null
+        || isUnicode != null || concurrencyMode != null || defaultValue != null || collation != null) {
       Facets facets = new Facets();
       if (isNullable != null) {
         facets.setNullable("true".equalsIgnoreCase(isNullable));
       }
       if (maxLength != null) {
-        if (EdmParserConstants.EDM_PROPERTY_MAX_LENGTH_MAX_VALUE.equals(maxLength)) {
+        if (XmlMetadataConstants.EDM_PROPERTY_MAX_LENGTH_MAX_VALUE.equals(maxLength)) {
           facets.setMaxLength(Integer.MAX_VALUE);
         } else {
           facets.setMaxLength(Integer.parseInt(maxLength));
@@ -684,14 +712,15 @@ public class EdmParser {
   }
 
   private CustomizableFeedMappings readCustomizableFeedMappings(final XMLStreamReader reader) {
-    String targetPath = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, EdmParserConstants.M_FC_TARGET_PATH);
-    String sourcePath = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, EdmParserConstants.M_FC_SOURCE_PATH);
-    String nsUri = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, EdmParserConstants.M_FC_NS_URI);
-    String nsPrefix = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, EdmParserConstants.M_FC_PREFIX);
-    String keepInContent = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, EdmParserConstants.M_FC_KEEP_IN_CONTENT);
-    String contentKind = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, EdmParserConstants.M_FC_CONTENT_KIND);
+    String targetPath = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_TARGET_PATH);
+    String sourcePath = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_SOURCE_PATH);
+    String nsUri = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_NS_URI);
+    String nsPrefix = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_PREFIX);
+    String keepInContent = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_KEEP_IN_CONTENT);
+    String contentKind = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_CONTENT_KIND);
 
-    if (targetPath != null || sourcePath != null || nsUri != null || nsPrefix != null || keepInContent != null || contentKind != null) {
+    if (targetPath != null || sourcePath != null || nsUri != null || nsPrefix != null || keepInContent != null
+        || contentKind != null) {
       CustomizableFeedMappings feedMapping = new CustomizableFeedMappings();
       if (keepInContent != null) {
         feedMapping.setFcKeepInContent("true".equals(keepInContent));
@@ -710,28 +739,29 @@ public class EdmParser {
   }
 
   private AssociationEnd readAssociationEnd(final XMLStreamReader reader) throws EntityProviderException, XMLStreamException {
-    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, EdmParserConstants.EDM_ASSOCIATION_END);
+    reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_END);
 
     AssociationEnd associationEnd = new AssociationEnd();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
-    associationEnd.setRole(reader.getAttributeValue(null, EdmParserConstants.EDM_ROLE));
-    associationEnd.setMultiplicity(EdmMultiplicity.fromLiteral(reader.getAttributeValue(null, EdmParserConstants.EDM_ASSOCIATION_MULTIPLICITY)));
-    String type = reader.getAttributeValue(null, EdmParserConstants.EDM_TYPE);
+    associationEnd.setRole(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ROLE));
+    associationEnd.setMultiplicity(EdmMultiplicity.fromLiteral(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ASSOCIATION_MULTIPLICITY)));
+    String type = reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE);
     if (type == null) {
       throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE
-          .addContent(EdmParserConstants.EDM_TYPE).addContent(EdmParserConstants.EDM_ASSOCIATION_END));
+          .addContent(XmlMetadataConstants.EDM_TYPE).addContent(XmlMetadataConstants.EDM_ASSOCIATION_END));
     }
     associationEnd.setType(extractFQName(type));
     associationEnd.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && EdmParserConstants.EDM_ASSOCIATION_END.equals(reader.getLocalName()))) {
+    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_ASSOCIATION_END.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
-        if (EdmParserConstants.EDM_ASSOCIATION_ONDELETE.equals(currentHandledStartTagName)) {
+        if (XmlMetadataConstants.EDM_ASSOCIATION_ONDELETE.equals(currentHandledStartTagName)) {
           OnDelete onDelete = new OnDelete();
           for (int i = 0; i < EdmAction.values().length; i++) {
-            if (EdmAction.values()[i].name().equalsIgnoreCase(reader.getAttributeValue(null, EdmParserConstants.EDM_ONDELETE_ACTION))) {
+            if (EdmAction.values()[i].name().equalsIgnoreCase(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ONDELETE_ACTION))) {
               onDelete.setAction(EdmAction.values()[i]);
             }
           }
@@ -767,7 +797,8 @@ public class EdmParser {
       annotationAttributes.add(annotationAttribute);
     }
     aElement.setAttributes(annotationAttributes);
-    while (reader.hasNext() && !(reader.isEndElement() && aElement.getName() != null && aElement.getName().equals(reader.getLocalName()))) {
+    while (reader.hasNext() && !(reader.isEndElement() && aElement.getName() != null
+        && aElement.getName().equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         annotationElements.add(readAnnotationElement(reader));
@@ -806,13 +837,13 @@ public class EdmParser {
     if (!xmlNamespaceMap.containsValue(Edm.NAMESPACE_EDMX_2007_06)) {
       throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_EDMX_2007_06));
     } else if (!xmlNamespaceMap.containsValue(Edm.NAMESPACE_M_2007_08)) {
-      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_EDMX_2007_06));
+      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_M_2007_08));
     }
   }
 
   private void checkEdmNamespace() throws EntityProviderException {
     if (!edmNamespaces.contains(edmNamespace)) {
-      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(EdmParserConstants.EDM_SCHEMA));
+      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(XmlMetadataConstants.EDM_SCHEMA));
     }
   }
 

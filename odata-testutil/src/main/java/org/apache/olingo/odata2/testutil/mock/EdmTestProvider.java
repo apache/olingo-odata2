@@ -164,7 +164,7 @@ public class EdmTestProvider extends EdmProvider {
     childElements.add(new AnnotationElement().setName("schemaElementTest3").setText("text3").setPrefix("prefix").setNamespace("namespace"));
     final List<AnnotationAttribute> elementAttributes = new ArrayList<AnnotationAttribute>();
     elementAttributes.add(new AnnotationAttribute().setName("rel").setText("self"));
-    elementAttributes.add(new AnnotationAttribute().setName("href").setText("http://google.com").setPrefix("pre").setNamespace("namespaceForAnno"));
+    elementAttributes.add(new AnnotationAttribute().setName("href").setText("http://foo").setPrefix("pre").setNamespace("namespaceForAnno"));
     childElements.add(new AnnotationElement().setName("schemaElementTest4").setText("text4").setAttributes(elementAttributes));
 
     final List<AnnotationElement> schemaElements = new ArrayList<AnnotationElement>();

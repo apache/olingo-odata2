@@ -49,8 +49,8 @@ import org.apache.olingo.odata2.core.batch.BatchRequestWriter;
 import org.apache.olingo.odata2.core.batch.BatchResponseParser;
 import org.apache.olingo.odata2.core.batch.BatchResponseWriter;
 import org.apache.olingo.odata2.core.commons.ContentType;
-import org.apache.olingo.odata2.core.edm.parser.EdmxProvider;
 import org.apache.olingo.odata2.core.edm.provider.EdmImplProv;
+import org.apache.olingo.odata2.core.edm.provider.EdmxProvider;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
