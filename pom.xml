@@ -34,6 +34,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javadoc.phase>package</javadoc.phase>
 
         <!-- required for correct Sonar coverage data reporting (list of artifactIds) -->
         <projectsToInstrument>org.apache.olingo.odata2.api,org.apache.olingo.odata2.core,org.apache.olingo.odata2.ref</projectsToInstrument>
@@ -146,9 +147,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -201,6 +199,37 @@
                     <timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ssZ}</timestampFormat>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>javadoc-jar</id>
+                        <phase>${javadoc.phase}</phase>
+                        <goals>
+                            <goal>aggregate-jar</goal>
+                        </goals>
+                        <configuration>
+                            <tags>
+                                <tag>
+                                    <name>org.apache.olingo.odata2.DoNotImplement</name>
+                                    <placement>a</placement>
+                                    <head>Do not implement this interface or class</head>
+                                </tag>
+                            </tags>
+                            <additionalJOptions>
+                                <additionalJOption>-quiet</additionalJOption>
+                            </additionalJOptions>
+                            <includeDependencySources>false</includeDependencySources>
+                            <dependencySourceIncludes>
+                                <dependencySourceInclude>org.apache.olingo.odata2:api:*</dependencySourceInclude>
+                                <dependencySourceInclude>org.apache.olingo.odata2:jpa.processor.api:*</dependencySourceInclude>
+                                <dependencySourceInclude>org.apache.olingo.odata2:api.annotation:*</dependencySourceInclude>
+                            </dependencySourceIncludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -209,6 +238,7 @@
             <id>build.fast</id>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
+                <javadoc.phase></javadoc.phase>
             </properties>
         </profile>
         <profile>
@@ -225,37 +255,6 @@
             <id>apache-release</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>javadoc-jar</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>aggregate-jar</goal>
-                                </goals>
-                                <configuration>
-                                    <tags>
-                                        <tag>
-                                            <name>org.apache.olingo.odata2.DoNotImplement</name>
-                                            <placement>a</placement>
-                                            <head>Do not implement this interface or class</head>
-                                        </tag>
-                                    </tags>
-                                    <additionalJOptions>
-                                        <additionalJOption>-quiet</additionalJOption>
-                                    </additionalJOptions>
-                                    <includeDependencySources>false</includeDependencySources>
-                                    <dependencySourceIncludes>
-                                        <dependencySourceInclude>org.apache.olingo.odata2:api</dependencySourceInclude>
-                                        <dependencySourceInclude>org.apache.olingo.odata2:jpa.processor.api</dependencySourceInclude>
-                                        <dependencySourceInclude>org.apache.olingo.odata2:api.annotation</dependencySourceInclude>
-                                    </dependencySourceIncludes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -308,31 +307,6 @@
                                         <exclude>**/NOTICE</exclude>
                                         <exclude>**/DEPENDENCIES</exclude>
                                     </excludes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>javadoc-jar</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                                <configuration>
-                                    <tags>
-                                        <tag>
-                                            <name>org.apache.olingo.odata2.DoNotImplement</name>
-                                            <placement>a</placement>
-                                            <head>Do not implement this interface or class</head>
-                                        </tag>
-                                    </tags>
-                                    <additionalJOptions>
-                                        <additionalJOption>-quiet</additionalJOption>
-                                    </additionalJOptions>
                                 </configuration>
                             </execution>
                         </executions>
