@@ -214,18 +214,27 @@
                                 <tag>
                                     <name>org.apache.olingo.odata2.DoNotImplement</name>
                                     <placement>a</placement>
-                                    <head>Do not implement this interface or class</head>
+                                    <head>Do not implement this interface or derive from class. Incompatible changes could occure in future releases.</head>
                                 </tag>
                             </tags>
+                            <excludePackageNames>org.apache.olingo.odata2.core:org.apache.olingo.odata2.core.*:org.apache.olingo.odata2.processor.core:org.apache.olingo.odata2.processor.core.*:org.apache.olingo.odata2.testutil:org.apache.olingo.odata2.testutil.*</excludePackageNames>
                             <additionalJOptions>
                                 <additionalJOption>-quiet</additionalJOption>
                             </additionalJOptions>
-                            <includeDependencySources>false</includeDependencySources>
-                            <dependencySourceIncludes>
-                                <dependencySourceInclude>org.apache.olingo.odata2:api:*</dependencySourceInclude>
-                                <dependencySourceInclude>org.apache.olingo.odata2:jpa.processor.api:*</dependencySourceInclude>
-                                <dependencySourceInclude>org.apache.olingo.odata2:api.annotation:*</dependencySourceInclude>
-                            </dependencySourceIncludes>
+                            <groups>
+                                <group>
+                                    <title>OData Lib</title>
+                                    <packages>org.apache.olingo.odata2.api:org.apache.olingo.odata2.api.*</packages>
+                                </group>
+                                <group>
+                                    <title>OData JPA Processor</title>
+                                    <packages>org.apache.olingo.odata2.processor.api:org.apache.olingo.odata2.processor.api.*</packages>
+                                </group>
+                                <group>
+                                    <title>OData Reference Scenario</title>
+                                    <packages>org.apache.olingo.odata2.ref:org.apache.olingo.odata2.ref.*</packages>
+                                </group>
+                            </groups>
                         </configuration>
                     </execution>
                 </executions>

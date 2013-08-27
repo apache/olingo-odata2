@@ -15,7 +15,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
         <dependencySet>
-        <useProjectArtifact>false</useProjectArtifact>
+            <useProjectArtifact>false</useProjectArtifact>
             <outputDirectory></outputDirectory>
             <outputFileNameMapping>${artifact.groupId}-${artifact.artifactId}-${artifact.version}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
@@ -28,7 +28,7 @@
                 <include>org.apache.olingo.odata2:api.annotation</include>
                 <include>org.apache.olingo.odata2:jpa.processor.api</include>
                 <include>org.apache.olingo.odata2:jpa.processor.core</include>
- 
+
                 <include>org.eclipse.persistence:javax.persistence</include>
             </includes>
         </dependencySet>

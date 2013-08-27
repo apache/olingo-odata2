@@ -15,6 +15,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
+            <outputDirectory>/</outputDirectory>
             <directory>${project.parent.build.directory}/apidocs</directory>
             <includes>
                 <include>**</include>
