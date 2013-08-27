@@ -24,9 +24,11 @@ import org.apache.olingo.odata2.api.edm.EdmAssociation;
 import org.apache.olingo.odata2.api.edm.EdmAssociationEnd;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
+import org.apache.olingo.odata2.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
+import org.apache.olingo.odata2.api.edm.provider.ReferentialConstraint;
 
 public class EdmAssociationImplProv extends EdmNamedImplProv implements EdmAssociation, EdmAnnotatable {
 
@@ -78,6 +80,24 @@ public class EdmAssociationImplProv extends EdmNamedImplProv implements EdmAssoc
     }
 
     return null;
+  }
+
+  @Override
+  public EdmAssociationEnd getEnd1() throws EdmException {
+    AssociationEnd end = association.getEnd1();
+    return new EdmAssociationEndImplProv(edm, end);
+  }
+
+  @Override
+  public EdmAssociationEnd getEnd2() throws EdmException {
+    AssociationEnd end = association.getEnd2();
+    return new EdmAssociationEndImplProv(edm, end);
+  }
+
+  @Override
+  public EdmReferentialConstraint getReferentialConstraint() throws EdmException {
+    ReferentialConstraint refConstraint = association.getReferentialConstraint();
+    return new EdmReferentialConstraintImplProv(refConstraint);
   }
 
 }

@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
 import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmAssociation;
+import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
@@ -35,6 +36,8 @@ import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
+import org.apache.olingo.odata2.api.edm.provider.ReferentialConstraint;
+import org.apache.olingo.odata2.api.edm.provider.ReferentialConstraintRole;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,7 +64,13 @@ public class EdmAssociationImplProvTest extends BaseTest {
     List<PropertyRef> propRef2 = new ArrayList<PropertyRef>();
     propRef2.add(new PropertyRef().setName("prop2"));
 
+    ReferentialConstraintRole dependent = new ReferentialConstraintRole().setRole("end1Role");
+    ReferentialConstraintRole principal = new ReferentialConstraintRole().setRole("end2Role");
+
+    ReferentialConstraint referentialConstraint = new ReferentialConstraint().setDependent(dependent).setPrincipal(principal);
+
     Association association = new Association().setName("association").setEnd1(end1).setEnd2(end2);
+    association.setReferentialConstraint(referentialConstraint);
 
     associationProv = new EdmAssociationImplProv(edmImplProv, association, "namespace");
   }
@@ -75,6 +84,20 @@ public class EdmAssociationImplProvTest extends BaseTest {
     assertEquals("end2Role", association.getEnd("end2Role").getRole());
     assertEquals("namespace", association.getNamespace());
     assertEquals(null, association.getEnd("endWrongRole"));
+  }
+
+  @Test
+  public void testAssociationEnds() throws EdmException {
+    EdmAssociation association = associationProv;
+    assertEquals("end1Role", association.getEnd1().getRole());
+    assertEquals("end2Role", association.getEnd2().getRole());
+  }
+
+  @Test
+  public void testReferentialConstraint() throws EdmException {
+    EdmAssociation association = associationProv;
+    assertEquals("end1Role", association.getReferentialConstraint().getDependent().getRole());
+    assertEquals("end2Role", association.getReferentialConstraint().getPrincipal().getRole());
   }
 
   @Test

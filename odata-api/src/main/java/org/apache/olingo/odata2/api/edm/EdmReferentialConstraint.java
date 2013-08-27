@@ -20,39 +20,22 @@ package org.apache.olingo.odata2.api.edm;
 
 /**
  * @org.apache.olingo.odata2.DoNotImplement
- * A CSDL Association element
+ * A CSDL ReferentialConstraint element
  * 
- * <p>EdmAssociation defines the relationship of two entity types. 
- *  
  */
-public interface EdmAssociation extends EdmType {
+public interface EdmReferentialConstraint {
 
   /**
-   * Get the {@link EdmAssociationEnd} by role
-   * @param role
-   * @return {@link EdmAssociationEnd}
+   * Get the principal end element
+   * @return {@link EdmReferentialConstraintRole}
    * @throws EdmException
    */
-  EdmAssociationEnd getEnd(String role) throws EdmException;
+  public EdmReferentialConstraintRole getPrincipal() throws EdmException;
 
   /**
-   * Get the {@link EdmAssociationEnd} for end1
-   * @return {@link EdmAssociationEnd}
+   * Get the dependent end element
+   * @return {@link EdmReferentialConstraintRole}
    * @throws EdmException
    */
-  EdmAssociationEnd getEnd1() throws EdmException;
-
-  /**
-   * Get the {@link EdmAssociationEnd} for end2
-   * @return {@link EdmAssociationEnd}
-   * @throws EdmException
-   */
-  EdmAssociationEnd getEnd2() throws EdmException;
-
-  /**
-   * Get the {@link EdmReferentialConstraint}
-   * @return {@link EdmReferentialConstraint}
-   * @throws EdmException
-   */
-  EdmReferentialConstraint getReferentialConstraint() throws EdmException;
+  public EdmReferentialConstraintRole getDependent() throws EdmException;
 }
