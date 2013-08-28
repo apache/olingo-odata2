@@ -214,7 +214,7 @@
                                 <tag>
                                     <name>org.apache.olingo.odata2.DoNotImplement</name>
                                     <placement>a</placement>
-                                    <head>Do not implement this interface or derive from class. Incompatible changes could occure in future releases.</head>
+                                    <head>Do not implement this interface or derive from class.</head>
                                 </tag>
                             </tags>
                             <excludePackageNames>org.apache.olingo.odata2.core:org.apache.olingo.odata2.core.*:org.apache.olingo.odata2.processor.core:org.apache.olingo.odata2.processor.core.*:org.apache.olingo.odata2.testutil:org.apache.olingo.odata2.testutil.*</excludePackageNames>
