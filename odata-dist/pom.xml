@@ -55,7 +55,7 @@
                                 <configuration>
                                     <attach>true</attach>
                                     <appendAssemblyId>true</appendAssemblyId>
-                                    <finalName>${project.groupId}-${project.artifactId}-${project.version}</finalName>
+<!--                                     <finalName>${project.groupId}-${project.artifactId}-${project.version}</finalName> -->
                                     <descriptors>
                                         <descriptor>
                                             src/main/assembly/lib-assembly.xml
@@ -68,6 +68,9 @@
                                         </descriptor>
                                         <descriptor>
                                             src/main/assembly/javadoc-assembly.xml
+                                        </descriptor>
+                                       <descriptor>
+                                            src/main/assembly/ref-assembly.xml
                                         </descriptor>
                                     </descriptors>
                                 </configuration>
