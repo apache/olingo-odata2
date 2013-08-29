@@ -82,7 +82,6 @@
 			<groupId>org.apache.olingo.odata2</groupId>
 			<artifactId>api.annotation</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- ########################## -->
@@ -92,7 +91,6 @@
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.persistence</artifactId>
 			<version>${version.javax.persistence}</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- ########################## -->
@@ -102,13 +100,11 @@
 			<groupId>org.apache.olingo.odata2</groupId>
 			<artifactId>api</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.olingo.odata2</groupId>
 			<artifactId>core</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- ########################## -->
@@ -118,7 +114,6 @@
 			<groupId>org.apache.olingo.odata2</groupId>
 			<artifactId>jpa.processor.api</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- ########################## -->
@@ -134,7 +129,7 @@
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
 			<version>3.1</version>
-            <scope>test</scope>
+                        <scope>test</scope>
 		</dependency>
 
 		<!-- ########################## -->

@@ -79,7 +79,6 @@
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.persistence</artifactId>
 			<version>${version.javax.persistence}</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- OData Java Library -->
@@ -87,7 +86,6 @@
 			<groupId>org.apache.olingo.odata2</groupId>
 			<artifactId>api</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
