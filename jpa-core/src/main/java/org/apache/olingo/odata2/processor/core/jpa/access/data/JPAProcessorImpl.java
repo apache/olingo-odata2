@@ -331,7 +331,6 @@ public class JPAProcessorImpl implements JPAProcessor {
         return (List<T>) createList;
       }
     } catch (Exception e) {
-      em.getTransaction().rollback();
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_CREATE_REQUEST, e);
     }
@@ -378,7 +377,6 @@ public class JPAProcessorImpl implements JPAProcessor {
       em.flush();
       em.getTransaction().commit();
     } catch (Exception e) {
-      em.getTransaction().rollback();
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_UPDATE_REQUEST, e);
     }
@@ -416,7 +414,6 @@ public class JPAProcessorImpl implements JPAProcessor {
         em.flush();
         em.getTransaction().commit();
       } catch (Exception e) {
-        em.getTransaction().rollback();
         throw ODataJPARuntimeException.throwException(
             ODataJPARuntimeException.ERROR_JPQL_DELETE_REQUEST, e);
       }

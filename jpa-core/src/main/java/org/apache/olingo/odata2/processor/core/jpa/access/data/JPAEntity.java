@@ -175,26 +175,37 @@ public class JPAEntity {
     }
     Map<String, Object> oDataEntryProperties = oDataEntry.getProperties();
     if (oDataEntry.containsInlineEntry()) {
-      try {
-        for (String navigationPropertyName : oDataEntityType.getNavigationPropertyNames()) {
-          ODataFeed feed = (ODataFeed) oDataEntry.getProperties().get(navigationPropertyName);
-          if (feed == null) {
-            continue;
-          }
-          List<ODataEntry> relatedEntries = feed.getEntries();
-          oDataEntryProperties.put(navigationPropertyName, relatedEntries);
-        }
-      } catch (EdmException e) {
-        throw ODataJPARuntimeException
-            .throwException(ODataJPARuntimeException.GENERAL
-                .addContent(e.getMessage()), e);
-      }
+      normalizeInlineEntries(oDataEntryProperties);
     }
     write(oDataEntryProperties, true);
   }
 
   public void create(final Map<String, Object> oDataEntryProperties) throws ODataJPARuntimeException {
+    normalizeInlineEntries(oDataEntryProperties);
     write(oDataEntryProperties, true);
+  }
+
+  private void normalizeInlineEntries(final Map<String, Object> oDataEntryProperties) throws ODataJPARuntimeException {
+    List<ODataEntry> entries = null;
+    try {
+      for (String navigationPropertyName : oDataEntityType.getNavigationPropertyNames()) {
+        Object inline = oDataEntryProperties.get(navigationPropertyName);
+        if (inline instanceof ODataFeed) {
+          entries = ((ODataFeed) inline).getEntries();
+        } else if (inline instanceof ODataEntry) {
+          entries = new ArrayList<ODataEntry>();
+          entries.add((ODataEntry) inline);
+        }
+        if (entries != null) {
+          oDataEntryProperties.put(navigationPropertyName, entries);
+          entries = null;
+        }
+      }
+    } catch (EdmException e) {
+      throw ODataJPARuntimeException
+          .throwException(ODataJPARuntimeException.GENERAL
+              .addContent(e.getMessage()), e);
+    }
   }
 
   public void update(final ODataEntry oDataEntry) throws ODataJPARuntimeException {
