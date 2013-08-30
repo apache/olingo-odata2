@@ -264,7 +264,21 @@
             <id>apache-release</id>
             <build>
                 <plugins>
-                </plugins>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <!-- this is relative to the pom.xml directory -->
+                                    <directory>${project.build.directory}/maven-shared-archive-resources</directory>
+                                    <includes>
+                                        <include>META-INF/*</include>
+                                    </includes>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                 </plugins>
             </build>
         </profile>
         <profile>
