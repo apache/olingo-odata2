@@ -34,18 +34,20 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
-            <outputDirectory></outputDirectory>
+            <outputDirectory>/</outputDirectory>
             <excludes>
                 <exclude>DEPENDENCIES</exclude>
                 <exclude>NOTICE</exclude>
+                <exclude>readme.txt</exclude>
             </excludes>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/resources</directory>
-            <outputDirectory></outputDirectory>
+            <outputDirectory>/</outputDirectory>
             <includes>
                 <include>DEPENDENCIES</include>
                 <include>NOTICE</include>
+                <include>readme.txt</include>
             </includes>
         </fileSet>
     </fileSets>

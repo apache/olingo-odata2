@@ -32,6 +32,7 @@
             <excludes>
                 <exclude>DEPENDENCIES</exclude>
                 <exclude>NOTICE</exclude>
+                <exclude>readme.txt</exclude>
             </excludes>
         </fileSet>
         <fileSet>
@@ -40,6 +41,7 @@
             <includes>
                 <include>DEPENDENCIES</include>
                 <include>NOTICE</include>
+                <include>readme.txt</include>
             </includes>
         </fileSet>
     </fileSets>
