@@ -21,21 +21,25 @@ package org.apache.olingo.odata2.processor.core.jpa.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
+import javax.persistence.metamodel.Type;
 
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
+import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
@@ -50,8 +54,8 @@ import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEdmMockData.Sim
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEmbeddableTypeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAEntityTypeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAMetaModelMock;
+import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPAPluralAttributeMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPASingularAttributeMock;
-import org.junit.Before;
 import org.junit.Test;
 
 public class JPAEdmPropertyTest extends JPAEdmTestModelView {
@@ -59,10 +63,10 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
   private JPAEdmPropertyTest objJPAEdmPropertyTest;
   private JPAEdmProperty objJPAEdmProperty;
 
-  private static int ATTRIBUTE_TYPE = 1;
+  private static PersistentAttributeType ATTRIBUTE_TYPE = PersistentAttributeType.BASIC;
 
-  @Before
   public void setUp() {
+    ATTRIBUTE_TYPE = PersistentAttributeType.BASIC;
     objJPAEdmPropertyTest = new JPAEdmPropertyTest();
     objJPAEdmProperty = new JPAEdmProperty(objJPAEdmPropertyTest);
     try {
@@ -77,9 +81,49 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
 
   @Test
   public void testGetBuilder() {
+    setUp();
     assertNotNull(objJPAEdmProperty.getBuilder());
+  }
+
+  @Test
+  public void testGetBuilderIdempotent() {
+    setUp();
+    JPAEdmBuilder builder1 = objJPAEdmProperty.getBuilder();
+    JPAEdmBuilder builder2 = objJPAEdmProperty.getBuilder();
+
+    assertEquals(builder1.hashCode(), builder2.hashCode());
+  }
+
+  @Test
+  public void testGetPropertyList() {
+    setUp();
+    assertNotNull(objJPAEdmProperty.getEdmPropertyList());
+    assertTrue(objJPAEdmProperty.getEdmPropertyList().size() > 0);
+  }
+
+  @Test
+  public void testGetJPAEdmKeyView() {
+    setUp();
+    assertNotNull(objJPAEdmProperty.getJPAEdmKeyView());
+  }
+
+  @Test
+  public void testGetSimpleProperty() {
+    setUp();
+    assertNotNull(objJPAEdmProperty.getEdmSimpleProperty());
+  }
+
+  @Test
+  public void testGetJPAAttribute() {
+    setUp();
+    assertNotNull(objJPAEdmProperty.getJPAAttribute());
+  }
+
+  @Test
+  public void testGetEdmComplexProperty() {
 
     // builder for complex type
+    ATTRIBUTE_TYPE = PersistentAttributeType.EMBEDDED;
     objJPAEdmPropertyTest = new JPAEdmPropertyTest();
     objJPAEdmProperty = new JPAEdmProperty(objJPAEdmPropertyTest, objJPAEdmPropertyTest);
     try {
@@ -89,61 +133,32 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
-  }
 
-  @Test
-  public void testGetBuilderIdempotent() {
-    JPAEdmBuilder builder1 = objJPAEdmProperty.getBuilder();
-    JPAEdmBuilder builder2 = objJPAEdmProperty.getBuilder();
-
-    assertEquals(builder1.hashCode(), builder2.hashCode());
-  }
-
-  @Test
-  public void testGetPropertyList() {
-    assertNotNull(objJPAEdmProperty.getEdmPropertyList());
-    assertTrue(objJPAEdmProperty.getEdmPropertyList().size() > 0);
-  }
-
-  @Test
-  public void testGetJPAEdmKeyView() {
-    assertNotNull(objJPAEdmProperty.getJPAEdmKeyView());
-  }
-
-  @Test
-  public void testGetSimpleProperty() {
-    assertNotNull(objJPAEdmProperty.getEdmSimpleProperty());
-  }
-
-  @Test
-  public void testGetJPAAttribute() {
-    assertNotNull(objJPAEdmProperty.getJPAAttribute());
-  }
-
-  @Test
-  public void testGetEdmComplexProperty() {
-    assertNull(objJPAEdmProperty.getEdmComplexProperty());
+    assertNotNull(objJPAEdmProperty.getEdmComplexProperty());
   }
 
   @Test
   public void testGetJPAEdmNavigationPropertyView() {
+    setUp();
     assertNotNull(objJPAEdmProperty.getJPAEdmNavigationPropertyView());
   }
 
   @Test
   public void testIsConsistent() {
+    setUp();
     assertNotNull(objJPAEdmProperty.isConsistent());
   }
 
   @Test
   public void testClean() {
+    setUp();
     objJPAEdmProperty.clean();
     assertFalse(objJPAEdmProperty.isConsistent());
   }
 
   @Test
   public void testBuildManyToOne() {
-    ATTRIBUTE_TYPE = 3;
+    ATTRIBUTE_TYPE = PersistentAttributeType.MANY_TO_ONE;
     objJPAEdmPropertyTest = new JPAEdmPropertyTest();
     objJPAEdmProperty = new JPAEdmProperty(objJPAEdmPropertyTest);
     try {
@@ -154,22 +169,31 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
-    ATTRIBUTE_TYPE = 1;
-    objJPAEdmPropertyTest = new JPAEdmPropertyTest();
-    objJPAEdmProperty = new JPAEdmProperty(objJPAEdmPropertyTest);
-    try {
-      objJPAEdmProperty.getBuilder().build();
-    } catch (ODataJPAModelException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    }
-
+    assertNotNull(objJPAEdmProperty.getJPAEdmNavigationPropertyView().getEdmNavigationProperty());
   }
 
   @Override
   public Metamodel getJPAMetaModel() {
     return new JPAEdmMetaModel();
+  }
+
+  @Override
+  public List<String> getNonKeyComplexTypeList() {
+    return new ArrayList<String>();
+  }
+
+  @Override
+  public Schema getEdmSchema() {
+    Schema schema = new Schema();
+    schema.setNamespace(getpUnitName());
+    return schema;
+  }
+
+  @Override
+  public org.apache.olingo.odata2.api.edm.provider.ComplexType searchEdmComplexType(final String arg0) {
+    org.apache.olingo.odata2.api.edm.provider.ComplexType complexType = new org.apache.olingo.odata2.api.edm.provider.ComplexType();
+    complexType.setName("ComplexTypeA");
+    return complexType;
   }
 
   @Override
@@ -194,9 +218,6 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
 
   @Override
   public org.apache.olingo.odata2.api.edm.provider.EntityType getEdmEntityType() {
-    /*EntityType entityType = new EntityType();
-    entityType.setName("SalesOrderHeader");
-    return entityType;*/
     org.apache.olingo.odata2.api.edm.provider.EntityType entityType = new org.apache.olingo.odata2.api.edm.provider.EntityType();
     entityType.setName("SalesOrderHeader");
 
@@ -267,8 +288,16 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void setValuesToSet() {
-      attributeSet.add((Attribute<? super String, String>) new JPAEdmAttribute(java.lang.String.class, "SOID"));
-      attributeSet.add((Attribute<? super String, String>) new JPAEdmAttribute(java.lang.String.class, "SONAME"));
+      if (JPAEdmPropertyTest.ATTRIBUTE_TYPE.equals(PersistentAttributeType.BASIC)) {
+        attributeSet.add((Attribute<? super String, String>) new JPAEdmAttribute(java.lang.String.class, "SOID"));
+        attributeSet.add((Attribute<? super String, String>) new JPAEdmAttribute(java.lang.String.class, "SONAME"));
+      }
+      else if (JPAEdmPropertyTest.ATTRIBUTE_TYPE.equals(PersistentAttributeType.EMBEDDED)) {
+        attributeSet.add(new JPAEdmAttribute(JPAEdmEmbeddable.class, ComplexType.ComplexTypeA.clazz.getName()));
+      }
+      else if (JPAEdmPropertyTest.ATTRIBUTE_TYPE.equals(PersistentAttributeType.MANY_TO_ONE)) {
+        attributeSet.add(new JPAEdmPluralAttribute());
+      }
     }
 
     @Override
@@ -277,17 +306,45 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
       return attributeSet;
     }
 
+    private class JPAEdmPluralAttribute extends JPAPluralAttributeMock {
+      @Override
+      public java.lang.String getName() {
+        return "salesorderheaderdetails";
+      }
+
+      @Override
+      public javax.persistence.metamodel.Attribute.PersistentAttributeType getPersistentAttributeType() {
+        return ATTRIBUTE_TYPE;
+      }
+
+      @Override
+      public boolean isCollection() {
+        return true;
+      }
+
+      @Override
+      public Type<java.lang.String> getElementType() {
+        return new Type<java.lang.String>() {
+
+          @Override
+          public Class<java.lang.String> getJavaType() {
+            return java.lang.String.class;
+          }
+
+          @Override
+          public javax.persistence.metamodel.Type.PersistenceType getPersistenceType() {
+            return null;
+          }
+
+        };
+      }
+    }
+
     private class JPAEdmAttribute<Object, String> extends JPASingularAttributeMock<Object, String> {
 
       @Override
       public PersistentAttributeType getPersistentAttributeType() {
-        if (ATTRIBUTE_TYPE == 1) {
-          return PersistentAttributeType.BASIC;
-        } else if (ATTRIBUTE_TYPE == 2) {
-          return PersistentAttributeType.EMBEDDED;
-        } else {
-          return PersistentAttributeType.MANY_TO_ONE;
-        }
+        return ATTRIBUTE_TYPE;
       }
 
       Class<String> clazz;
@@ -337,7 +394,7 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
     @Override
     public Class<String> getJavaType() {
       Class<?> clazz = null;
-      if (ATTRIBUTE_TYPE == 1) {
+      if (ATTRIBUTE_TYPE.equals(PersistentAttributeType.BASIC)) {
         clazz = (Class<java.lang.String>) SimpleType.SimpleTypeA.clazz;
       } else {
         clazz = (Class<?>) ComplexType.ComplexTypeA.clazz;
@@ -349,13 +406,7 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
 
       @Override
       public PersistentAttributeType getPersistentAttributeType() {
-        if (ATTRIBUTE_TYPE == 1) {
-          return PersistentAttributeType.BASIC;
-        } else if (ATTRIBUTE_TYPE == 2) {
-          return PersistentAttributeType.EMBEDDED;
-        } else {
-          return PersistentAttributeType.MANY_TO_ONE;
-        }
+        return ATTRIBUTE_TYPE;
       }
 
       Class<String> clazz;

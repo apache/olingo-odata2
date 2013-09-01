@@ -65,7 +65,6 @@ public class JPAPluralAttributeMock implements PluralAttribute<Object, ArrayList
 
   @Override
   public boolean isCollection() {
-    // TODO Auto-generated method stub
     return false;
   }
 
