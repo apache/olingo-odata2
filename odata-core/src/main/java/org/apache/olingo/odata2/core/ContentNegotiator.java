@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotAcceptableException;
+import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.ContentType.ODataFormat;
 import org.apache.olingo.odata2.core.uri.UriInfoImpl;
@@ -39,7 +40,17 @@ public class ContentNegotiator {
   private static final String URI_INFO_FORMAT_ATOM = "atom";
   private static final String URI_INFO_FORMAT_XML = "xml";
   static final String DEFAULT_CHARSET = "utf-8";
-
+  
+  /**
+   * Do the content negotiation based on requested content type (in <code>acceptHeaderContentTypes</code> list) 
+   * and supported content types (in <code>supportedContentTypes</code> list).
+   * 
+   * @param uriInfo additional uri informations especially <code>$format</code> 
+   * @param acceptHeaderContentTypes list of requested content types
+   * @param supportedContentTypes list of supported content types
+   * @return best fitting content type or <code>NULL</code> if content type is not set and for given {@link UriInfo} is ignored
+   * @throws ODataException if no supported content type was found
+   */
   public String doContentNegotiation(final UriInfoImpl uriInfo, final List<String> acceptHeaderContentTypes, final List<String> supportedContentTypes) throws ODataException {
     ContentType contentType;
     if (uriInfo.getFormat() == null) {

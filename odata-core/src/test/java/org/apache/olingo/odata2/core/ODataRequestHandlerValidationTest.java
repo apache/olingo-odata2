@@ -218,6 +218,7 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
       final ODataHttpMethod method,
       final List<String> pathSegments,
       final Map<String, String> queryParameters,
+      final List<String> acceptHeaders,
       final String requestContentType) throws ODataException {
     ODataRequest request = mock(ODataRequest.class);
     when(request.getMethod()).thenReturn(method);
@@ -233,8 +234,20 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
     when(request.getQueryParameters())
         .thenReturn(queryParameters == null ? new HashMap<String, String>() : queryParameters);
     when(request.getContentType()).thenReturn(requestContentType);
+    when(request.getAcceptHeaders()).thenReturn(acceptHeaders);
     return request;
   }
+  
+  private ODataRequest mockODataRequest(
+      final ODataHttpMethod method,
+      final List<String> pathSegments,
+      final Map<String, String> queryParameters,
+      final String requestContentType) throws ODataException {
+
+    List<String> acceptHeaders = new ArrayList<String>(0);
+    return mockODataRequest(method, pathSegments, queryParameters, acceptHeaders, requestContentType);
+  }
+
 
   private ODataService mockODataService(final ODataServiceFactory serviceFactory) throws ODataException {
     ODataService service = DispatcherTest.getMockService();
@@ -312,6 +325,36 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
         response.getStatus());
   }
 
+  private void executeAndValidateGetRequest(
+      final List<String> pathSegments,
+      final Map<String, String> queryParameters,
+      final List<String> acceptHeaders,
+      final HttpStatusCodes expectedStatusCode) throws ODataException {
+
+    executeAndValidateRequest(ODataHttpMethod.GET, pathSegments, queryParameters, acceptHeaders, null, expectedStatusCode);
+  }
+
+  private void executeAndValidateRequest(final ODataHttpMethod method,
+      final List<String> pathSegments,
+      final Map<String, String> queryParameters,
+      final List<String> acceptHeaders,
+      final String requestContentType,
+      final HttpStatusCodes expectedStatusCode) throws ODataException {
+
+    ODataServiceFactory serviceFactory = mock(ODataServiceFactory.class);
+    final ODataService service = mockODataService(serviceFactory);
+    when(serviceFactory.createService(any(ODataContext.class))).thenReturn(service);
+
+    final ODataRequest request = mockODataRequest(method, pathSegments, queryParameters, acceptHeaders, requestContentType);
+    final ODataContextImpl context = new ODataContextImpl(request, serviceFactory);
+
+    final ODataResponse response = new ODataRequestHandler(serviceFactory, service, context).handle(request);
+    assertNotNull(response);
+    assertEquals(expectedStatusCode == null ? HttpStatusCodes.PAYMENT_REQUIRED : expectedStatusCode,
+        response.getStatus());
+  }
+
+  
   private void checkValueContentType(final ODataHttpMethod method, final UriType uriType, final String requestContentType) throws Exception {
     executeAndValidateRequest(method, createPathSegments(uriType, false, true), null, requestContentType, null);
   }
@@ -498,7 +541,15 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
     wrongOptions(ODataHttpMethod.POST, UriType.URI7B, false, false, false, false, false, false, true, false, false);
 
     wrongOptions(ODataHttpMethod.PUT, UriType.URI17, false, true, false, false, false, false, false, false, false);
-    wrongOptions(ODataHttpMethod.DELETE, UriType.URI17, true, false, false, false, false, false, false, false, false);
+    executeAndValidateRequest(ODataHttpMethod.PUT, createPathSegments(UriType.URI17, false, false), 
+        createOptions(true, false, false, false, false, false, false, false, false), 
+        null, HttpStatusCodes.BAD_REQUEST);
+    
+    executeAndValidateRequest(ODataHttpMethod.DELETE, createPathSegments(UriType.URI17, false, false), 
+        createOptions(true, false, false, false, false, false, false, false, false), 
+        null, HttpStatusCodes.BAD_REQUEST);
+//    wrongOptions(ODataHttpMethod.DELETE, UriType.URI17, true, false, false, false, false, false, false, false, false);
+
     wrongOptions(ODataHttpMethod.DELETE, UriType.URI17, false, true, false, false, false, false, false, false, false);
   }
 
@@ -547,6 +598,46 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
     wrongNavigationPath(ODataHttpMethod.DELETE, UriType.URI17, HttpStatusCodes.BAD_REQUEST);
   }
 
+  
+  @Test
+  public void requestAcceptHeader() throws Exception {
+    executeAndValidateGetRequest(createPathSegments(UriType.URI1, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_JSON), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI2, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_JSON), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI3, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_JSON), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI4, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_JSON), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI5, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_JSON), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI6A, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_JSON), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI6B, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_JSON), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI7A, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_JSON), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI7B, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_JSON), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI8, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_XML), null);
+    // in discussion, hence currently not implemented (see ODataRequestHandler#doContentNegotiation(...))
+//    executeAndValidateGetRequest(createPathSegments(UriType.URI8, false, false), null, 
+//        Arrays.asList(HttpContentType.TEXT_PLAIN), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI9, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_XML), HttpStatusCodes.METHOD_NOT_ALLOWED);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI15, false, false), null, 
+        Arrays.asList(HttpContentType.TEXT_PLAIN), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI16, false, false), null, 
+        Arrays.asList(HttpContentType.TEXT_PLAIN), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI17, false, true), null, 
+        Arrays.asList(HttpContentType.APPLICATION_OCTET_STREAM), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI50A, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_XML), null);
+    executeAndValidateGetRequest(createPathSegments(UriType.URI50B, false, false), null, 
+        Arrays.asList(HttpContentType.APPLICATION_XML), null);
+  }
+  
   @Test
   public void requestContentType() throws Exception {
     executeAndValidateRequest(ODataHttpMethod.PUT, createPathSegments(UriType.URI2, false, false), null, HttpContentType.APPLICATION_XML, null);

@@ -100,19 +100,19 @@ public class ODataRequestHandler {
       context.stopRuntimeMeasurement(timingHandle2);
 
       final ODataHttpMethod method = request.getMethod();
-      final UriType uriType = uriInfo.getUriType();
       validateMethodAndUri(method, uriInfo);
 
       if (method == ODataHttpMethod.POST || method == ODataHttpMethod.PUT || method == ODataHttpMethod.PATCH || method == ODataHttpMethod.MERGE) {
         checkRequestContentType(uriInfo, request.getContentType());
       }
 
-      final String acceptContentType = new ContentNegotiator().doContentNegotiation(uriInfo, request.getAcceptHeaders(), getSupportedContentTypes(uriInfo));
+      final String acceptContentType = doContentNegotiation(request, uriInfo);
 
       timingHandle2 = context.startRuntimeMeasurement("Dispatcher", "dispatch");
       odataResponse = dispatcher.dispatch(method, uriInfo, request.getBody(), request.getContentType(), acceptContentType);
       context.stopRuntimeMeasurement(timingHandle2);
 
+      final UriType uriType = uriInfo.getUriType();
       final String location = (method == ODataHttpMethod.POST && (uriType == UriType.URI1 || uriType == UriType.URI6B)) ? odataResponse.getIdLiteral() : null;
       final HttpStatusCodes s = odataResponse.getStatus() == null ? method == ODataHttpMethod.POST ? uriType == UriType.URI9 ? HttpStatusCodes.OK : uriType == UriType.URI7B ? HttpStatusCodes.NO_CONTENT : HttpStatusCodes.CREATED : method == ODataHttpMethod.PUT || method == ODataHttpMethod.PATCH || method == ODataHttpMethod.MERGE || method == ODataHttpMethod.DELETE ? HttpStatusCodes.NO_CONTENT : HttpStatusCodes.OK : odataResponse.getStatus();
 
@@ -131,6 +131,23 @@ public class ODataRequestHandler {
 
     final String debugValue = getDebugValue(context, request.getQueryParameters());
     return debugValue == null ? odataResponse : new ODataDebugResponseWrapper(context, odataResponse, uriInfo, exception, debugValue).wrapResponse();
+  }
+
+  /**
+   * Do the content negotiation based on requested content type (in HTTP accept header) and from {@link ODataService}
+   * supported content types (via {@link ODataService#getSupportedContentTypes(Class)}).
+   * 
+   * @param request with requested content type
+   * @param uriInfo additional uri informations
+   * @return best fitting content type or <code>NULL</code> if content type is not set and for given {@link UriInfo} is ignored
+   * @throws ODataException if no supported content type was found
+   */
+  private String doContentNegotiation(final ODataRequest request, UriInfoImpl uriInfo) throws ODataException {
+    if(uriInfo.isCount() || uriInfo.isValue()) {
+      return request.getRequestHeaderValue("Accept");
+    } else {
+      return new ContentNegotiator().doContentNegotiation(uriInfo, request.getAcceptHeaders(), getSupportedContentTypes(uriInfo));
+    }
   }
 
   private String getServerDataServiceVersion() throws ODataException {
@@ -220,6 +237,11 @@ public class ODataRequestHandler {
     case URI17:
       if (method != ODataHttpMethod.GET && method != ODataHttpMethod.PUT && method != ODataHttpMethod.DELETE) {
         throw new ODataMethodNotAllowedException(ODataMethodNotAllowedException.DISPATCH);
+      } else {
+        if(uriInfo.getFormat() != null) {
+//          throw new ODataMethodNotAllowedException(ODataMethodNotAllowedException.DISPATCH);
+          throw new ODataBadRequestException(ODataBadRequestException.INVALID_SYNTAX);
+        }
       }
       break;
 
