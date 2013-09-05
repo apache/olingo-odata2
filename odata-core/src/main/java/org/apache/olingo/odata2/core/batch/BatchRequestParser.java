@@ -123,7 +123,7 @@ public class BatchRequestParser {
       final String closeDelimiter = "--" + boundary + "--" + REG_EX_ZERO_OR_MORE_WHITESPACES;
       while (scanner.hasNext() && !scanner.hasNext(closeDelimiter)) {
         requests.add(parseMultipart(scanner, boundary, false));
-        parseNewLine(scanner);
+        parseOptionalLine(scanner);
       }
       if (scanner.hasNext(closeDelimiter)) {
         scanner.next(closeDelimiter);
@@ -246,6 +246,8 @@ public class BatchRequestParser {
       InputStream body = new ByteArrayInputStream(new byte[0]);
       if (isChangeSet) {
         body = parseBody(scanner);
+      } else {
+        parseNewLine(scanner);
       }
 
       ODataRequestBuilder requestBuilder = ODataRequest.method(httpMethod)
@@ -500,6 +502,13 @@ public class BatchRequestParser {
         throw new BatchException(BatchException.TRUNCATED_BODY.addContent(currentLineNumber));
 
       }
+    }
+  }
+
+  private void parseOptionalLine(final Scanner scanner) throws BatchException {
+    while (scanner.hasNext() && scanner.hasNext(REG_EX_BLANK_LINE)) {
+      scanner.next();
+      currentLineNumber++;
     }
   }
 
