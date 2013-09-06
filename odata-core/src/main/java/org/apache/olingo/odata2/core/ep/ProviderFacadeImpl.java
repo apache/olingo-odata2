@@ -63,7 +63,7 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   }
 
   private static ContentTypeBasedEntityProvider create(final String contentType) throws EntityProviderException {
-    return create(ContentType.create(contentType));
+    return create(ContentType.createCustom(contentType));
   }
 
   private static ContentTypeBasedEntityProvider create(final ContentType contentType) throws EntityProviderException {

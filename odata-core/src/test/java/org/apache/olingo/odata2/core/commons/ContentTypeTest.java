@@ -79,6 +79,9 @@ public class ContentTypeTest extends BaseTest {
     assertFalse(ContentType.isParseable("app/app/moreapp"));
     //assertFalse(ContentType.isParseable("application/atom+xml; charset   =   UTF-8"));
     assertFalse(ContentType.isParseable(null));
+    assertFalse(ContentType.isParseable(""));
+    assertFalse(ContentType.isParseable("hugo"));
+    assertFalse(ContentType.isParseable("hugo/"));
   }
 
   @Test
@@ -93,6 +96,9 @@ public class ContentTypeTest extends BaseTest {
     assertNull(ContentType.parse("app/app/moreapp"));
     //assertFalse(ContentType.isParseable("application/atom+xml; charset   =   UTF-8"));
     assertNull(ContentType.parse(null));
+    assertNull(ContentType.parse("hugo"));
+    assertNull(ContentType.parse("hugo"));
+    assertNull(ContentType.parse("hugo/"));
   }
 
   @Test
@@ -422,13 +428,29 @@ public class ContentTypeTest extends BaseTest {
     assertEquals("type/subtype;key1=value1;key2=value2", mt.toString());
   }
 
-  @Test
-  public void testFormatParserValidInputType() {
-    ContentType t = ContentType.create("aaa");
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputOnlyType() {
+    ContentType.create("aaa");
+  }
 
-    assertEquals("aaa", t.getType());
-    assertEquals("*", t.getSubtype());
-    assertEquals(0, t.getParameters().size());
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputOnlyTypeWithSepartor() {
+    ContentType.create("aaa/");
+  }
+
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputOnlySubTypeWithSepartor() {
+    ContentType.create("/aaa");
+  }
+
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputOnlySepartor() {
+    ContentType.create("/");
+  }
+
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputEmpty() {
+    ContentType.create("");
   }
 
   @Test
@@ -464,13 +486,9 @@ public class ContentTypeTest extends BaseTest {
     assertEquals(2, t.getParameters().size());
   }
 
-  @Test
-  public void testFormatParserValidInputTypeNullPara() {
-    ContentType t = ContentType.create("aaa;x=y;a");
-
-    assertEquals("aaa", t.getType());
-    assertEquals("*", t.getSubtype());
-    assertEquals(2, t.getParameters().size());
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputTypeNullPara() {
+    ContentType.create("aaa;x=y;a");
   }
 
   @Test(expected = IllegalArgumentException.class)

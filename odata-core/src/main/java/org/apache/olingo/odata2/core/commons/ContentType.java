@@ -123,6 +123,15 @@ public class ContentType {
   private Map<String, String> parameters;
   private ODataFormat odataFormat;
 
+  private ContentType(final String type) {
+    if (type == null) {
+      throw new IllegalArgumentException("Type parameter MUST NOT be null.");
+    }
+    this.odataFormat = ODataFormat.CUSTOM;
+    this.type = validateType(type);
+    this.subtype = null;
+  }
+
   private ContentType(final String type, final String subtype) {
     this(type, subtype, ODataFormat.CUSTOM, null);
   }
@@ -239,15 +248,31 @@ public class ContentType {
     if (types.contains(TYPE_SUBTYPE_SEPARATOR)) {
       String[] tokens = types.split(TYPE_SUBTYPE_SEPARATOR);
       if (tokens.length == 2) {
-        return create(tokens[0], tokens[1], parametersMap);
+        if(tokens[0] == null || tokens[0].isEmpty()) {
+          throw new IllegalArgumentException("No type found in format '" + format + "'.");
+        } else if(tokens[1] == null || tokens[1].isEmpty()) {
+          throw new IllegalArgumentException("No subtype found in format '" + format + "'.");
+        } else {
+          return create(tokens[0], tokens[1], parametersMap);
+        }
       } else {
         throw new IllegalArgumentException("Too many '" + TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
       }
+    } else if(MEDIA_TYPE_WILDCARD.equals(types)) {
+      return ContentType.WILDCARD;
     } else {
-      return create(types, MEDIA_TYPE_WILDCARD, parametersMap);
+      throw new IllegalArgumentException("No separator '" + TYPE_SUBTYPE_SEPARATOR + "' was found in format '" + format + "'.");
     }
   }
 
+  public static ContentType createCustom(final String format) {
+    ContentType parsedContentType = parse(format);
+    if(parsedContentType == null) {
+      return new ContentType(format);
+    }
+    return parsedContentType;
+  }
+  
   /**
    * Create a list of {@link ContentType} based on given input strings (<code>contentTypes</code>).
    * 
@@ -268,6 +293,14 @@ public class ContentType {
     List<ContentType> contentTypes = new ArrayList<ContentType>(contentTypeStrings.size());
     for (String contentTypeString : contentTypeStrings) {
       contentTypes.add(create(contentTypeString));
+    }
+    return contentTypes;
+  }
+
+  public static List<ContentType> createCustom(final List<String> contentTypeStrings) {
+    List<ContentType> contentTypes = new ArrayList<ContentType>(contentTypeStrings.size());
+    for (String contentTypeString : contentTypeStrings) {
+      contentTypes.add(createCustom(contentTypeString));
     }
     return contentTypes;
   }
@@ -529,7 +562,9 @@ public class ContentType {
         return false;
       }
     } else if (!subtype.equals(other.subtype)) {
-      if (!subtype.equals(MEDIA_TYPE_WILDCARD) && !other.subtype.equals(MEDIA_TYPE_WILDCARD)) {
+      if(other.subtype == null) {
+        return false;
+      } else if (!subtype.equals(MEDIA_TYPE_WILDCARD) && !other.subtype.equals(MEDIA_TYPE_WILDCARD)) {
         return false;
       }
     }
@@ -578,7 +613,13 @@ public class ContentType {
    */
   public String toContentTypeString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(type).append(TYPE_SUBTYPE_SEPARATOR).append(subtype);
+    
+    if(odataFormat == ODataFormat.CUSTOM && subtype == null) {
+      sb.append(type);
+    } else {
+      sb.append(type).append(TYPE_SUBTYPE_SEPARATOR).append(subtype);
+    }
+    
     for (String key : parameters.keySet()) {
       if (isParameterAllowed(key)) {
         String value = parameters.get(key);
