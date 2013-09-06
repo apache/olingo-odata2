@@ -56,7 +56,7 @@ public class ContentNegotiator {
     if (uriInfo.getFormat() == null) {
       contentType = doContentNegotiationForAcceptHeader(acceptHeaderContentTypes, ContentType.create(supportedContentTypes));
     } else {
-      contentType = doContentNegotiationForFormat(uriInfo, ContentType.createCustom(supportedContentTypes));
+      contentType = doContentNegotiationForFormat(uriInfo, ContentType.createAsCustom(supportedContentTypes));
     }
 
     if (contentType.getODataFormat() == ODataFormat.CUSTOM) {
@@ -106,7 +106,7 @@ public class ContentNegotiator {
       return ContentType.APPLICATION_JSON;
     }
 
-    return ContentType.createCustom(format);
+    return ContentType.createAsCustom(format);
   }
 
   private ContentType doContentNegotiationForAcceptHeader(final List<String> acceptHeaderContentTypes, final List<ContentType> supportedContentTypes) throws ODataException {

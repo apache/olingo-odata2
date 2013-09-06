@@ -118,10 +118,10 @@ public class ContentType {
   public static final ContentType TEXT_PLAIN_CS_UTF_8 = ContentType.create(TEXT_PLAIN, PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType MULTIPART_MIXED = new ContentType("multipart", "mixed");
 
-  private String type;
-  private String subtype;
-  private Map<String, String> parameters;
-  private ODataFormat odataFormat;
+  private final String type;
+  private final String subtype;
+  private final Map<String, String> parameters;
+  private final ODataFormat odataFormat;
 
   private ContentType(final String type) {
     if (type == null) {
@@ -130,6 +130,7 @@ public class ContentType {
     this.odataFormat = ODataFormat.CUSTOM;
     this.type = validateType(type);
     this.subtype = null;
+    this.parameters = Collections.emptyMap();
   }
 
   private ContentType(final String type, final String subtype) {
@@ -265,7 +266,24 @@ public class ContentType {
     }
   }
 
-  public static ContentType createCustom(final String format) {
+  /**
+   * Create a {@link ContentType} based on given input string (<code>format</code>).
+   * 
+   * Supported format is <code>Media Type</code> format as defined in <code>RFC 2616 chapter 3.7</code>.
+   * and {@link ContentType} with {@link ODataFormat#CUSTOM}.
+   * 
+   * The <code>Media Type</code> format can be used as
+   * <code>HTTP Accept HEADER</code> format as defined in <code>RFC 2616 chapter 14.1</code>
+   * and 
+   * <code>HTTP Content-Type HEADER</code> format as defined in <code>RFC 2616 chapter 14.17</code>.
+   * The {@link ContentType} with {@link ODataFormat#CUSTOM} can only be used as <code>$format</code> system query option 
+   * (as defined http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format).
+   * 
+   * @param format a string in format as defined in <code>RFC 2616 section 3.7</code>
+   * @return a new <code>ContentType</code> object
+   * @throws IllegalArgumentException if input string is not parseable
+   */
+  public static ContentType createAsCustom(final String format) {
     ContentType parsedContentType = parse(format);
     if(parsedContentType == null) {
       return new ContentType(format);
@@ -297,10 +315,28 @@ public class ContentType {
     return contentTypes;
   }
 
-  public static List<ContentType> createCustom(final List<String> contentTypeStrings) {
+  /**
+   * Create a list of {@link ContentType} based on given input strings (<code>contentTypes</code>).
+   * 
+   * Supported format is <code>Media Type</code> format as defined in <code>RFC 2616 chapter 3.7</code>.
+   * and {@link ContentType} with {@link ODataFormat#CUSTOM}.
+   * 
+   * The <code>Media Type</code> format can be used as
+   * <code>HTTP Accept HEADER</code> format as defined in <code>RFC 2616 chapter 14.1</code>
+   * and 
+   * <code>HTTP Content-Type HEADER</code> format as defined in <code>RFC 2616 chapter 14.17</code>.
+   * The {@link ContentType} with {@link ODataFormat#CUSTOM} can only be used as <code>$format</code> system query option 
+   * (as defined http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format).
+   * 
+   * @param contentTypeStrings a list of strings in format as defined in <code>RFC 2616 section 3.7</code> or 
+   * as defined http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format
+   * @return a list of new <code>ContentType</code> object
+   * @throws IllegalArgumentException if one of the given input string is not parseable this exceptions is thrown
+   */
+  public static List<ContentType> createAsCustom(final List<String> contentTypeStrings) {
     List<ContentType> contentTypes = new ArrayList<ContentType>(contentTypeStrings.size());
     for (String contentTypeString : contentTypeStrings) {
-      contentTypes.add(createCustom(contentTypeString));
+      contentTypes.add(createAsCustom(contentTypeString));
     }
     return contentTypes;
   }

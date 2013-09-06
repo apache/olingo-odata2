@@ -422,7 +422,7 @@ public class ODataRequestHandler {
   }
 
   private List<ContentType> getSupportedContentTypes(final Class<? extends ODataProcessor> processorFeature) throws ODataException {
-    return ContentType.createCustom(service.getSupportedContentTypes(processorFeature));
+    return ContentType.createAsCustom(service.getSupportedContentTypes(processorFeature));
   }
 
   private static String getDebugValue(final ODataContext context, final Map<String, String> queryParameters) {

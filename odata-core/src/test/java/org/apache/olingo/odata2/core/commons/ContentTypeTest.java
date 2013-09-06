@@ -102,6 +102,49 @@ public class ContentTypeTest extends BaseTest {
   }
 
   @Test
+  public void creationCustomContentType() {
+    ContentType mt = ContentType.createAsCustom("custom");
+
+    assertEquals("custom", mt.getType());
+    assertNull(mt.getSubtype());
+    assertEquals("custom", mt.toString());
+    assertEquals(ODataFormat.CUSTOM, mt.getODataFormat());
+  }
+
+  @Test
+  public void creationCustomContentTypeImageJpeg() {
+    ContentType mt = ContentType.createAsCustom("image/jpeg");
+
+    assertEquals("image", mt.getType());
+    assertEquals("jpeg", mt.getSubtype());
+    assertEquals("image/jpeg", mt.toString());
+    assertEquals(ODataFormat.MIME, mt.getODataFormat());
+  }
+
+  @Test
+  public void creationCustomContentTypes() {
+    List<ContentType> contentTypes = ContentType.createAsCustom(Arrays.asList("custom", "image/jpeg"));
+
+    Assert.assertEquals(2, contentTypes.size());
+    
+    for (ContentType contentType: contentTypes) {
+      if(contentType.getType().equals("custom")) {
+        assertEquals("custom", contentType.getType());
+        assertNull(contentType.getSubtype());
+        assertEquals("custom", contentType.toString());
+        assertEquals(ODataFormat.CUSTOM, contentType.getODataFormat());
+      } else if(contentType.getType().equals("image")) {
+        assertEquals("image", contentType.getType());
+        assertEquals("jpeg", contentType.getSubtype());
+        assertEquals("image/jpeg", contentType.toString());
+        assertEquals(ODataFormat.MIME, contentType.getODataFormat());
+      } else {
+        Assert.fail("Found unexpected content type with value " + contentType.toContentTypeString());
+      }
+    }
+  }
+
+  @Test
   public void creationContentTypeImageJpeg() {
     ContentType mt = ContentType.create("image/jpeg");
 
