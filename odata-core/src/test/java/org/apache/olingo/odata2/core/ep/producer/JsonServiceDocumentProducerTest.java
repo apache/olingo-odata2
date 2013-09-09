@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.ep.producer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,7 +29,6 @@ import java.net.URI;
 import java.util.Arrays;
 
 import org.apache.olingo.odata2.api.ODataServiceVersion;
-import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
@@ -52,7 +52,7 @@ public class JsonServiceDocumentProducerTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeServiceDocument(edm, "http://host:80/service/");
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
     assertEquals(ODataServiceVersion.V10, response.getHeader(ODataHttpHeaders.DATASERVICEVERSION));
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
@@ -73,7 +73,7 @@ public class JsonServiceDocumentProducerTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeServiceDocument(edm, "http://host:80/service/");
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
     assertEquals(ODataServiceVersion.V10, response.getHeader(ODataHttpHeaders.DATASERVICEVERSION));
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());

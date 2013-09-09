@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.ep.producer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -29,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
@@ -51,7 +51,7 @@ public class JsonFunctionImportTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeFunctionImport(functionImport, 42, null);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -71,7 +71,7 @@ public class JsonFunctionImportTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeFunctionImport(functionImport, locationData, null);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -89,7 +89,7 @@ public class JsonFunctionImportTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeFunctionImport(functionImport, Arrays.asList("1", "2", "3"), null);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -109,7 +109,7 @@ public class JsonFunctionImportTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeFunctionImport(functionImport, locations, null);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -133,7 +133,7 @@ public class JsonFunctionImportTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeFunctionImport(functionImport, employeeData, properties);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);

@@ -261,11 +261,15 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
     when(service.getSupportedContentTypes(EntityProcessor.class)).thenReturn(Arrays.asList(
         HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8,
         HttpContentType.APPLICATION_ATOM_XML_UTF8,
+        HttpContentType.APPLICATION_JSON,
+        HttpContentType.APPLICATION_JSON_VERBOSE,
         HttpContentType.APPLICATION_JSON_UTF8,
         HttpContentType.APPLICATION_JSON_UTF8_VERBOSE,
         HttpContentType.APPLICATION_XML_UTF8));
 
     final List<String> jsonAndXml = Arrays.asList(
+        HttpContentType.APPLICATION_JSON,
+        HttpContentType.APPLICATION_JSON_VERBOSE,
         HttpContentType.APPLICATION_JSON_UTF8,
         HttpContentType.APPLICATION_JSON_UTF8_VERBOSE,
         HttpContentType.APPLICATION_XML_UTF8);
@@ -283,6 +287,8 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
     when(service.getSupportedContentTypes(EntitySetProcessor.class)).thenReturn(Arrays.asList(
         HttpContentType.APPLICATION_ATOM_XML_FEED_UTF8,
         HttpContentType.APPLICATION_ATOM_XML_UTF8,
+        HttpContentType.APPLICATION_JSON,
+        HttpContentType.APPLICATION_JSON_VERBOSE,
         HttpContentType.APPLICATION_JSON_UTF8,
         HttpContentType.APPLICATION_JSON_UTF8_VERBOSE,
         HttpContentType.APPLICATION_XML_UTF8));
@@ -292,6 +298,8 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
 
     when(service.getSupportedContentTypes(ServiceDocumentProcessor.class)).thenReturn(Arrays.asList(
         HttpContentType.APPLICATION_ATOM_SVC_UTF8,
+        HttpContentType.APPLICATION_JSON,
+        HttpContentType.APPLICATION_JSON_VERBOSE,
         HttpContentType.APPLICATION_JSON_UTF8,
         HttpContentType.APPLICATION_JSON_UTF8_VERBOSE,
         HttpContentType.APPLICATION_XML_UTF8));

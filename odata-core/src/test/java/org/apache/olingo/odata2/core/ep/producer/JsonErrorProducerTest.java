@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.ep.producer;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.Locale;
@@ -64,7 +65,7 @@ public class JsonErrorProducerTest {
     ctx.setMessage(message);
 
     ODataResponse response = new ProviderFacadeImpl().writeErrorDocument(ctx);
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
     assertEquals(ODataServiceVersion.V10, response.getHeader(ODataHttpHeaders.DATASERVICEVERSION));
     final String jsonErrorMessage = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertEquals("{\"error\":{\"code\":" + (errorCode == null ? "null" : "\"" + errorCode + "\"") + ","

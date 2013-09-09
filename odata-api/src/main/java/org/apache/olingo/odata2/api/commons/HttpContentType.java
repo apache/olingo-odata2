@@ -38,6 +38,7 @@ public interface HttpContentType {
   public static final String APPLICATION_ATOM_SVC_UTF8 = APPLICATION_ATOM_SVC + ";charset=utf-8";
 
   public static final String APPLICATION_JSON = "application/json";
+  public static final String APPLICATION_JSON_VERBOSE = APPLICATION_JSON + ";odata=verbose";
   public static final String APPLICATION_JSON_UTF8 = APPLICATION_JSON + ";charset=utf-8";
   public static final String APPLICATION_JSON_UTF8_VERBOSE = APPLICATION_JSON_UTF8 + ";odata=verbose";
 

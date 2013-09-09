@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.ep.producer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -28,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
@@ -63,7 +63,7 @@ public class JsonFeedEntityProducerTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeFeed(entitySet, teamsData, DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -87,7 +87,7 @@ public class JsonFeedEntityProducerTest extends BaseTest {
             .build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -108,7 +108,7 @@ public class JsonFeedEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).nextLink("Rooms?$skiptoken=2").build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);

@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.ODataCallback;
-import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
@@ -74,7 +73,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, teamData, DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -114,7 +113,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -136,7 +135,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, photoData, DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -167,7 +166,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -212,7 +211,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     Map<String, Object> roomEntry = new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
     //remove d wrapper
@@ -253,7 +252,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     Map<String, Object> roomEntry = new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
     //remove d wrapper
@@ -295,7 +294,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -325,7 +324,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -390,7 +389,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
@@ -434,7 +433,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     Map<String, Object> buildingEntry = new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
     //remove d wrapper
@@ -477,7 +476,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     Map<String, Object> buildingEntry = new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
     //remove d wrapper
@@ -506,7 +505,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);

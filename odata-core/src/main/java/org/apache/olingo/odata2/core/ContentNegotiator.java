@@ -68,7 +68,7 @@ public class ContentNegotiator {
   private ContentType doContentNegotiationForFormat(final UriInfoImpl uriInfo, final List<ContentType> supportedContentTypes) throws ODataException {
     validateFormatQuery(uriInfo);
     ContentType formatContentType = mapFormat(uriInfo);
-    formatContentType = formatContentType.receiveWithCharsetParameter(DEFAULT_CHARSET);
+    formatContentType = ensureCharset(formatContentType);
 
     for (final ContentType contentType : supportedContentTypes) {
       if (contentType.equals(formatContentType)) {
@@ -138,7 +138,7 @@ public class ContentNegotiator {
       }
     } else {
       for (ContentType contentType : acceptedContentTypes) {
-        contentType = contentType.receiveWithCharsetParameter(DEFAULT_CHARSET);
+        contentType = ensureCharset(contentType);
         final ContentType match = contentType.match(supportedContentTypes);
         if (match != null) {
           return match;
@@ -147,6 +147,15 @@ public class ContentNegotiator {
     }
 
     throw new ODataNotAcceptableException(ODataNotAcceptableException.NOT_SUPPORTED_ACCEPT_HEADER.addContent(acceptedContentTypes.toString()));
+  }
+
+  private ContentType ensureCharset(ContentType contentType) {
+    if(ContentType.APPLICATION_ATOM_XML.isCompatible(contentType) 
+        || ContentType.APPLICATION_ATOM_SVC.isCompatible(contentType) 
+        || ContentType.APPLICATION_XML.isCompatible(contentType)) {
+      return contentType.receiveWithCharsetParameter(DEFAULT_CHARSET);
+    }
+    return contentType;
   }
 
 }

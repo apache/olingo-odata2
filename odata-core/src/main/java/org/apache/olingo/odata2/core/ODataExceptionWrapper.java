@@ -111,6 +111,9 @@ public class ODataExceptionWrapper {
       } else {
         oDataResponse = EntityProvider.writeErrorDocument(errorContext);
       }
+      if(!oDataResponse.containsHeader(org.apache.olingo.odata2.api.commons.HttpHeaders.CONTENT_TYPE)) {
+        oDataResponse = ODataResponse.fromResponse(oDataResponse).contentHeader(contentType).build();
+      }
       return oDataResponse;
     } catch (Exception e) {
       ODataResponse response = ODataResponse.entity("Exception during error handling occured!")

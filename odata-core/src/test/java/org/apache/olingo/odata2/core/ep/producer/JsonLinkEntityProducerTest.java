@@ -26,7 +26,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
@@ -53,7 +52,6 @@ public class JsonLinkEntityProducerTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeLink(entitySet, employeeData, DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);

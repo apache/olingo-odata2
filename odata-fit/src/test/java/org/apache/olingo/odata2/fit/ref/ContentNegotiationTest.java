@@ -22,10 +22,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.junit.Test;
 
 /**
  *  
@@ -47,7 +46,7 @@ public class ContentNegotiationTest extends AbstractRefTest {
   @Test
   public void formatJson() throws Exception {
     final HttpResponse response = callUri("?$format=json");
-    checkMediaType(response, HttpContentType.APPLICATION_JSON_UTF8);
+    checkMediaType(response, HttpContentType.APPLICATION_JSON);
   }
 
   @Test

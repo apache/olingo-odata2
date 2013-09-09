@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.ep.producer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -29,7 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.ODataServiceVersion;
-import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
@@ -51,7 +51,7 @@ public class JsonPropertyProducerTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeProperty(property, "\"Игорь\tНиколаевич\tЛарионов\"");
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
     assertEquals(ODataServiceVersion.V10, response.getHeader(ODataHttpHeaders.DATASERVICEVERSION));
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
@@ -69,7 +69,7 @@ public class JsonPropertyProducerTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeProperty(property, propertyValue);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_JSON, response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
     assertEquals(ODataServiceVersion.V10, response.getHeader(ODataHttpHeaders.DATASERVICEVERSION));
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());

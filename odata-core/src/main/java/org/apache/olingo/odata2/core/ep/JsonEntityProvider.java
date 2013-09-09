@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.ODataServiceVersion;
-import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
@@ -92,7 +91,6 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
 
       return ODataResponse.status(status)
           .entity(buffer.getInputStream())
-          .contentHeader(HttpContentType.APPLICATION_JSON)
           .header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10)
           .build();
     } catch (Exception e) {
@@ -119,7 +117,6 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       buffer.closeWrite();
 
       return ODataResponse.entity(buffer.getInputStream())
-          .contentHeader(HttpContentType.APPLICATION_JSON)
           .header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10)
           .build();
     } catch (Exception e) {
@@ -141,7 +138,6 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       buffer.closeWrite();
 
       return ODataResponse.entity(buffer.getInputStream())
-          .contentHeader(HttpContentType.APPLICATION_JSON)
           .eTag(producer.getETag())
           .idLiteral(producer.getLocation())
           .build();
@@ -170,7 +166,6 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       buffer.closeWrite();
 
       return ODataResponse.entity(buffer.getInputStream())
-          .contentHeader(HttpContentType.APPLICATION_JSON)
           .header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10)
           .build();
     } catch (EntityProviderException e) {
@@ -193,7 +188,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       writer.flush();
       buffer.closeWrite();
 
-      return ODataResponse.entity(buffer.getInputStream()).contentHeader(HttpContentType.APPLICATION_JSON).build();
+      return ODataResponse.entity(buffer.getInputStream()).build();
     } catch (EntityProviderException e) {
       buffer.close();
       throw e;
@@ -215,7 +210,6 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       buffer.closeWrite();
 
       return ODataResponse.entity(buffer.getInputStream())
-          .contentHeader(HttpContentType.APPLICATION_JSON)
           .header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10)
           .build();
     } catch (EntityProviderException e) {
@@ -238,7 +232,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       writer.flush();
       buffer.closeWrite();
 
-      ODataResponseBuilder response = ODataResponse.entity(buffer.getInputStream()).contentHeader(HttpContentType.APPLICATION_JSON);
+      ODataResponseBuilder response = ODataResponse.entity(buffer.getInputStream());
       if (properties.getInlineCountType() != InlineCount.ALLPAGES) {
         response = response.header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10);
       }
@@ -261,7 +255,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       writer.flush();
       buffer.closeWrite();
 
-      return ODataResponse.entity(buffer.getInputStream()).contentHeader(HttpContentType.APPLICATION_JSON).build();
+      return ODataResponse.entity(buffer.getInputStream()).build();
     } catch (EntityProviderException e) {
       buffer.close();
       throw e;

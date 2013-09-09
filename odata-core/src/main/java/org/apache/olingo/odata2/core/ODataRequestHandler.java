@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.ODataServiceVersion;
+import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
@@ -112,15 +113,21 @@ public class ODataRequestHandler {
       odataResponse = dispatcher.dispatch(method, uriInfo, request.getBody(), request.getContentType(), acceptContentType);
       context.stopRuntimeMeasurement(timingHandle2);
 
-      final UriType uriType = uriInfo.getUriType();
-      final String location = (method == ODataHttpMethod.POST && (uriType == UriType.URI1 || uriType == UriType.URI6B)) ? odataResponse.getIdLiteral() : null;
-      final HttpStatusCodes s = odataResponse.getStatus() == null ? method == ODataHttpMethod.POST ? uriType == UriType.URI9 ? HttpStatusCodes.OK : uriType == UriType.URI7B ? HttpStatusCodes.NO_CONTENT : HttpStatusCodes.CREATED : method == ODataHttpMethod.PUT || method == ODataHttpMethod.PATCH || method == ODataHttpMethod.MERGE || method == ODataHttpMethod.DELETE ? HttpStatusCodes.NO_CONTENT : HttpStatusCodes.OK : odataResponse.getStatus();
 
       ODataResponseBuilder extendedResponse = ODataResponse.fromResponse(odataResponse);
       if (!odataResponse.containsHeader(ODataHttpHeaders.DATASERVICEVERSION)) {
         extendedResponse = extendedResponse.header(ODataHttpHeaders.DATASERVICEVERSION, serverDataServiceVersion);
       }
+      if(!odataResponse.containsHeader("Content-Type")) {
+        extendedResponse.header(HttpHeaders.CONTENT_TYPE, acceptContentType);
+      }
+      
+      final UriType uriType = uriInfo.getUriType();
+      final String location = (method == ODataHttpMethod.POST && (uriType == UriType.URI1 || uriType == UriType.URI6B)) ? odataResponse.getIdLiteral() : null;
+      final HttpStatusCodes s = odataResponse.getStatus() == null ? method == ODataHttpMethod.POST ? uriType == UriType.URI9 ? HttpStatusCodes.OK : uriType == UriType.URI7B ? HttpStatusCodes.NO_CONTENT : HttpStatusCodes.CREATED : method == ODataHttpMethod.PUT || method == ODataHttpMethod.PATCH || method == ODataHttpMethod.MERGE || method == ODataHttpMethod.DELETE ? HttpStatusCodes.NO_CONTENT : HttpStatusCodes.OK : odataResponse.getStatus();
       extendedResponse = extendedResponse.idLiteral(location).status(s);
+      
+      
       odataResponse = extendedResponse.build();
 
     } catch (final Exception e) {

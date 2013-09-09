@@ -63,7 +63,7 @@ import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 public class BasicEntityProvider {
 
   /** Default used charset for writer and response content header */
-  private static final String DEFAULT_CHARSET = "UTF-8";
+  private static final String DEFAULT_CHARSET = "utf-8";
 
   /**
    * Reads binary data from an input stream.
@@ -179,7 +179,7 @@ public class BasicEntityProvider {
   }
 
   /**
-   * Write text value as content type <code>text/plain</code>.
+   * Write text value as content type <code>text/plain</code> with charset parameter set to {@value #DEFAULT_CHARSET}.
    * @param value the string that is written to {@link ODataResponse}
    * @return resulting {@link ODataResponse} with written text content
    * @throws EntityProviderException
@@ -195,7 +195,8 @@ public class BasicEntityProvider {
       }
       builder.entity(stream);
     }
-    builder.contentHeader(ContentType.TEXT_PLAIN_CS_UTF_8.toContentTypeString());
+    
+    builder.contentHeader(ContentType.TEXT_PLAIN.receiveWithCharsetParameter(DEFAULT_CHARSET).toContentTypeString());
     return builder.build();
   }
 
