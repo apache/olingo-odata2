@@ -1539,12 +1539,13 @@ public class ListsProcessor extends ODataSingleProcessor {
       if (type instanceof EdmEntityType && ((EdmEntityType) type).getKeyProperties().contains(property)) {
         continue;
       }
-      if (!merge || valueMap.containsKey(propertyName)) {
+      if (!merge || valueMap != null && valueMap.containsKey(propertyName)) {
+        final Object value = valueMap == null ? null : valueMap.get(propertyName);
         if (property.isSimple()) {
-          setPropertyValue(data, property, valueMap.get(propertyName));
+          setPropertyValue(data, property, value);
         } else {
           @SuppressWarnings("unchecked")
-          final Map<String, Object> values = (Map<String, Object>) valueMap.get(propertyName);
+          final Map<String, Object> values = (Map<String, Object>) value;
           setStructuralTypeValuesFromMap(getPropertyValue(data, property), (EdmStructuralType) property.getType(), values, merge);
         }
       }

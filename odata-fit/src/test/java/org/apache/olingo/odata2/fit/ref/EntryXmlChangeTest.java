@@ -236,6 +236,28 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
   }
 
   @Test
+  public void updateIncomplete() throws Exception {
+    final String requestBody = "<entry xmlns=\"" + Edm.NAMESPACE_ATOM_2005 + "\"" + "\n"
+        + "       xmlns:d=\"" + Edm.NAMESPACE_D_2007_08 + "\"" + "\n"
+        + "       xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "\n"
+        + "  <m:properties><d:EmployeeName>Mister X</d:EmployeeName></m:properties>" + "\n"
+        + "</entry>";
+    putUri("Employees('1')", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.NO_CONTENT);
+    final String body = getBody(callUri("Employees('1')"));
+    assertXpathEvaluatesTo("Mister X", "/atom:entry/m:properties/d:EmployeeName", body);
+    assertXpathEvaluatesTo("0", "/atom:entry/m:properties/d:Age", body);
+    assertXpathEvaluatesTo("true", "/atom:entry/m:properties/d:EntryDate/@m:null", body);
+
+    final String requestBody2 = requestBody.replace("<d:EmployeeName>Mister X</d:EmployeeName>",
+        "<d:Location><d:Country>Allemagne</d:Country></d:Location>");
+    putUri("Employees('1')", requestBody2, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.NO_CONTENT);
+    final String body2 = getBody(callUri("Employees('1')"));
+    assertXpathEvaluatesTo("Allemagne", "/atom:entry/m:properties/d:Location/d:Country", body2);
+    assertXpathEvaluatesTo("true", "/atom:entry/m:properties/d:Location/d:City/d:CityName/@m:null", body2);
+    assertXpathEvaluatesTo("true", "/atom:entry/m:properties/d:EmployeeName/@m:null", body2);
+  }
+
+  @Test
   public void updateUnknownProperty() throws Exception {
     final String requestBody = getBody(callUri("Employees('2')"))
         .replace("<d:Age>" + EMPLOYEE_2_AGE + "</d:Age>",
