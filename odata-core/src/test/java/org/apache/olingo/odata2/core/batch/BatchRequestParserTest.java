@@ -128,7 +128,14 @@ public class BatchRequestParserTest {
       throw new IOException("Requested file '" + fileName + "' was not found.");
     }
     String content = StringHelper.inputStreamToString(contentInputStream);
-    String batch = LF
+    String batch = "--batch_8194-cf13-1f56" + LF
+        + MIME_HEADERS
+        + LF
+        + "GET Employees?$filter=Age%20gt%2040 HTTP/1.1" + LF
+        + "Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1" + LF
+        + "MaxDataServiceVersion: 2.0" + LF
+        + LF
+        + LF
         + "--batch_8194-cf13-1f56" + LF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + LF
         + LF
@@ -144,15 +151,6 @@ public class BatchRequestParserTest {
         + content + LF
         + LF
         + "--changeset_f980-1cb6-94dd--" + LF
-        + LF
-        + "--batch_8194-cf13-1f56" + LF
-        + MIME_HEADERS
-        + LF
-        + "GET Employees?$filter=Age%20gt%2040 HTTP/1.1" + LF
-        + "Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1" + LF
-        + "MaxDataServiceVersion: 2.0" + LF
-        + LF
-        + LF
         + "--batch_8194-cf13-1f56--";
     List<BatchRequestPart> BatchRequestParts = parse(batch);
     for (BatchRequestPart object : BatchRequestParts) {

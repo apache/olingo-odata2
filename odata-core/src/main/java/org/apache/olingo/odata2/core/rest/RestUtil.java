@@ -43,6 +43,7 @@ import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
+import org.apache.olingo.odata2.api.exception.ODataUnsupportedMediaTypeException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
@@ -68,7 +69,7 @@ public class RestUtil {
         try {
           odataResponse.close();
         } catch (IOException inner) {
-          // if close throw an exception we ignore these and re-theow our exception
+          // if close throw an exception we ignore these and re-throw our exception
           throw e;
         }
       }
@@ -76,7 +77,7 @@ public class RestUtil {
     }
   }
 
-  public static ContentType extractRequestContentType(final SubLocatorParameter param) throws ODataBadRequestException {
+  public static ContentType extractRequestContentType(final SubLocatorParameter param) throws ODataUnsupportedMediaTypeException {
     final String contentType = param.getHttpHeaders().getHeaderString(HttpHeaders.CONTENT_TYPE);
     if (contentType == null || contentType.isEmpty()) {
       // RFC 2616, 7.2.1:
@@ -88,7 +89,7 @@ public class RestUtil {
     } else if (ContentType.isParseable(contentType)) {
       return ContentType.create(contentType);
     } else {
-      throw new ODataBadRequestException(ODataBadRequestException.INVALID_HEADER.addContent(HttpHeaders.CONTENT_TYPE, contentType));
+      throw new ODataUnsupportedMediaTypeException(ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE.addContent(HttpHeaders.CONTENT_TYPE, contentType));
     }
   }
 

@@ -79,6 +79,9 @@ public class ContentTypeTest extends BaseTest {
     assertFalse(ContentType.isParseable("app/app/moreapp"));
     //assertFalse(ContentType.isParseable("application/atom+xml; charset   =   UTF-8"));
     assertFalse(ContentType.isParseable(null));
+    assertFalse(ContentType.isParseable(""));
+    assertFalse(ContentType.isParseable("hugo"));
+    assertFalse(ContentType.isParseable("hugo/"));
   }
 
   @Test
@@ -93,6 +96,52 @@ public class ContentTypeTest extends BaseTest {
     assertNull(ContentType.parse("app/app/moreapp"));
     //assertFalse(ContentType.isParseable("application/atom+xml; charset   =   UTF-8"));
     assertNull(ContentType.parse(null));
+    assertNull(ContentType.parse("hugo"));
+    assertNull(ContentType.parse("hugo"));
+    assertNull(ContentType.parse("hugo/"));
+  }
+
+  @Test
+  public void creationCustomContentType() {
+    ContentType mt = ContentType.createAsCustom("custom");
+
+    assertEquals("custom", mt.getType());
+    assertNull(mt.getSubtype());
+    assertEquals("custom", mt.toString());
+    assertEquals(ODataFormat.CUSTOM, mt.getODataFormat());
+  }
+
+  @Test
+  public void creationCustomContentTypeImageJpeg() {
+    ContentType mt = ContentType.createAsCustom("image/jpeg");
+
+    assertEquals("image", mt.getType());
+    assertEquals("jpeg", mt.getSubtype());
+    assertEquals("image/jpeg", mt.toString());
+    assertEquals(ODataFormat.MIME, mt.getODataFormat());
+  }
+
+  @Test
+  public void creationCustomContentTypes() {
+    List<ContentType> contentTypes = ContentType.createAsCustom(Arrays.asList("custom", "image/jpeg"));
+
+    Assert.assertEquals(2, contentTypes.size());
+    
+    for (ContentType contentType: contentTypes) {
+      if(contentType.getType().equals("custom")) {
+        assertEquals("custom", contentType.getType());
+        assertNull(contentType.getSubtype());
+        assertEquals("custom", contentType.toString());
+        assertEquals(ODataFormat.CUSTOM, contentType.getODataFormat());
+      } else if(contentType.getType().equals("image")) {
+        assertEquals("image", contentType.getType());
+        assertEquals("jpeg", contentType.getSubtype());
+        assertEquals("image/jpeg", contentType.toString());
+        assertEquals(ODataFormat.MIME, contentType.getODataFormat());
+      } else {
+        Assert.fail("Found unexpected content type with value " + contentType.toContentTypeString());
+      }
+    }
   }
 
   @Test
@@ -422,13 +471,29 @@ public class ContentTypeTest extends BaseTest {
     assertEquals("type/subtype;key1=value1;key2=value2", mt.toString());
   }
 
-  @Test
-  public void testFormatParserValidInputType() {
-    ContentType t = ContentType.create("aaa");
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputOnlyType() {
+    ContentType.create("aaa");
+  }
 
-    assertEquals("aaa", t.getType());
-    assertEquals("*", t.getSubtype());
-    assertEquals(0, t.getParameters().size());
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputOnlyTypeWithSepartor() {
+    ContentType.create("aaa/");
+  }
+
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputOnlySubTypeWithSepartor() {
+    ContentType.create("/aaa");
+  }
+
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputOnlySepartor() {
+    ContentType.create("/");
+  }
+
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputEmpty() {
+    ContentType.create("");
   }
 
   @Test
@@ -464,13 +529,9 @@ public class ContentTypeTest extends BaseTest {
     assertEquals(2, t.getParameters().size());
   }
 
-  @Test
-  public void testFormatParserValidInputTypeNullPara() {
-    ContentType t = ContentType.create("aaa;x=y;a");
-
-    assertEquals("aaa", t.getType());
-    assertEquals("*", t.getSubtype());
-    assertEquals(2, t.getParameters().size());
+  @Test(expected=IllegalArgumentException.class)
+  public void testFormatParserInValidInputTypeNullPara() {
+    ContentType.create("aaa;x=y;a");
   }
 
   @Test(expected = IllegalArgumentException.class)

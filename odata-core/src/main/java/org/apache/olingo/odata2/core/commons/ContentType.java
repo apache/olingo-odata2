@@ -118,10 +118,20 @@ public class ContentType {
   public static final ContentType TEXT_PLAIN_CS_UTF_8 = ContentType.create(TEXT_PLAIN, PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType MULTIPART_MIXED = new ContentType("multipart", "mixed");
 
-  private String type;
-  private String subtype;
-  private Map<String, String> parameters;
-  private ODataFormat odataFormat;
+  private final String type;
+  private final String subtype;
+  private final Map<String, String> parameters;
+  private final ODataFormat odataFormat;
+
+  private ContentType(final String type) {
+    if (type == null) {
+      throw new IllegalArgumentException("Type parameter MUST NOT be null.");
+    }
+    this.odataFormat = ODataFormat.CUSTOM;
+    this.type = validateType(type);
+    this.subtype = null;
+    this.parameters = Collections.emptyMap();
+  }
 
   private ContentType(final String type, final String subtype) {
     this(type, subtype, ODataFormat.CUSTOM, null);
@@ -239,15 +249,48 @@ public class ContentType {
     if (types.contains(TYPE_SUBTYPE_SEPARATOR)) {
       String[] tokens = types.split(TYPE_SUBTYPE_SEPARATOR);
       if (tokens.length == 2) {
-        return create(tokens[0], tokens[1], parametersMap);
+        if(tokens[0] == null || tokens[0].isEmpty()) {
+          throw new IllegalArgumentException("No type found in format '" + format + "'.");
+        } else if(tokens[1] == null || tokens[1].isEmpty()) {
+          throw new IllegalArgumentException("No subtype found in format '" + format + "'.");
+        } else {
+          return create(tokens[0], tokens[1], parametersMap);
+        }
       } else {
         throw new IllegalArgumentException("Too many '" + TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
       }
+    } else if(MEDIA_TYPE_WILDCARD.equals(types)) {
+      return ContentType.WILDCARD;
     } else {
-      return create(types, MEDIA_TYPE_WILDCARD, parametersMap);
+      throw new IllegalArgumentException("No separator '" + TYPE_SUBTYPE_SEPARATOR + "' was found in format '" + format + "'.");
     }
   }
 
+  /**
+   * Create a {@link ContentType} based on given input string (<code>format</code>).
+   * 
+   * Supported format is <code>Media Type</code> format as defined in <code>RFC 2616 chapter 3.7</code>.
+   * and {@link ContentType} with {@link ODataFormat#CUSTOM}.
+   * 
+   * The <code>Media Type</code> format can be used as
+   * <code>HTTP Accept HEADER</code> format as defined in <code>RFC 2616 chapter 14.1</code>
+   * and 
+   * <code>HTTP Content-Type HEADER</code> format as defined in <code>RFC 2616 chapter 14.17</code>.
+   * The {@link ContentType} with {@link ODataFormat#CUSTOM} can only be used as <code>$format</code> system query option 
+   * (as defined http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format).
+   * 
+   * @param format a string in format as defined in <code>RFC 2616 section 3.7</code>
+   * @return a new <code>ContentType</code> object
+   * @throws IllegalArgumentException if input string is not parseable
+   */
+  public static ContentType createAsCustom(final String format) {
+    ContentType parsedContentType = parse(format);
+    if(parsedContentType == null) {
+      return new ContentType(format);
+    }
+    return parsedContentType;
+  }
+  
   /**
    * Create a list of {@link ContentType} based on given input strings (<code>contentTypes</code>).
    * 
@@ -268,6 +311,32 @@ public class ContentType {
     List<ContentType> contentTypes = new ArrayList<ContentType>(contentTypeStrings.size());
     for (String contentTypeString : contentTypeStrings) {
       contentTypes.add(create(contentTypeString));
+    }
+    return contentTypes;
+  }
+
+  /**
+   * Create a list of {@link ContentType} based on given input strings (<code>contentTypes</code>).
+   * 
+   * Supported format is <code>Media Type</code> format as defined in <code>RFC 2616 chapter 3.7</code>.
+   * and {@link ContentType} with {@link ODataFormat#CUSTOM}.
+   * 
+   * The <code>Media Type</code> format can be used as
+   * <code>HTTP Accept HEADER</code> format as defined in <code>RFC 2616 chapter 14.1</code>
+   * and 
+   * <code>HTTP Content-Type HEADER</code> format as defined in <code>RFC 2616 chapter 14.17</code>.
+   * The {@link ContentType} with {@link ODataFormat#CUSTOM} can only be used as <code>$format</code> system query option 
+   * (as defined http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format).
+   * 
+   * @param contentTypeStrings a list of strings in format as defined in <code>RFC 2616 section 3.7</code> or 
+   * as defined http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format
+   * @return a list of new <code>ContentType</code> object
+   * @throws IllegalArgumentException if one of the given input string is not parseable this exceptions is thrown
+   */
+  public static List<ContentType> createAsCustom(final List<String> contentTypeStrings) {
+    List<ContentType> contentTypes = new ArrayList<ContentType>(contentTypeStrings.size());
+    for (String contentTypeString : contentTypeStrings) {
+      contentTypes.add(createAsCustom(contentTypeString));
     }
     return contentTypes;
   }
@@ -529,7 +598,9 @@ public class ContentType {
         return false;
       }
     } else if (!subtype.equals(other.subtype)) {
-      if (!subtype.equals(MEDIA_TYPE_WILDCARD) && !other.subtype.equals(MEDIA_TYPE_WILDCARD)) {
+      if(other.subtype == null) {
+        return false;
+      } else if (!subtype.equals(MEDIA_TYPE_WILDCARD) && !other.subtype.equals(MEDIA_TYPE_WILDCARD)) {
         return false;
       }
     }
@@ -578,7 +649,13 @@ public class ContentType {
    */
   public String toContentTypeString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(type).append(TYPE_SUBTYPE_SEPARATOR).append(subtype);
+    
+    if(odataFormat == ODataFormat.CUSTOM && subtype == null) {
+      sb.append(type);
+    } else {
+      sb.append(type).append(TYPE_SUBTYPE_SEPARATOR).append(subtype);
+    }
+    
     for (String key : parameters.keySet()) {
       if (isParameterAllowed(key)) {
         String value = parameters.get(key);
