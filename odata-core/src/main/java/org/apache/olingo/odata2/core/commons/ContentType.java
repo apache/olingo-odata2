@@ -96,6 +96,7 @@ public class ContentType {
   public static final String PARAMETER_CHARSET = "charset";
   public static final String PARAMETER_ODATA = "odata";
   public static final String PARAMETER_Q = "q";
+  public static final String PARAMETER_TYPE = "type";
   public static final String CHARSET_UTF_8 = "utf-8";
 
   public static final ContentType WILDCARD = new ContentType(MEDIA_TYPE_WILDCARD, MEDIA_TYPE_WILDCARD);
@@ -104,9 +105,9 @@ public class ContentType {
   public static final ContentType APPLICATION_XML_CS_UTF_8 = ContentType.create(APPLICATION_XML, PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_XML = new ContentType("application", "atom+xml", ODataFormat.ATOM);
   public static final ContentType APPLICATION_ATOM_XML_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_XML, PARAMETER_CHARSET, CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_ENTRY = new ContentType("application", "atom+xml", ODataFormat.ATOM, parameterMap("type", "entry"));
+  public static final ContentType APPLICATION_ATOM_XML_ENTRY = new ContentType("application", "atom+xml", ODataFormat.ATOM, parameterMap(PARAMETER_TYPE, "entry"));
   public static final ContentType APPLICATION_ATOM_XML_ENTRY_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_XML_ENTRY, PARAMETER_CHARSET, CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_FEED = new ContentType("application", "atom+xml", ODataFormat.ATOM, parameterMap("type", "feed"));
+  public static final ContentType APPLICATION_ATOM_XML_FEED = new ContentType("application", "atom+xml", ODataFormat.ATOM, parameterMap(PARAMETER_TYPE, "feed"));
   public static final ContentType APPLICATION_ATOM_XML_FEED_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_XML_FEED, PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_SVC = new ContentType("application", "atomsvc+xml", ODataFormat.ATOM);
   public static final ContentType APPLICATION_ATOM_SVC_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_SVC, PARAMETER_CHARSET, CHARSET_UTF_8);

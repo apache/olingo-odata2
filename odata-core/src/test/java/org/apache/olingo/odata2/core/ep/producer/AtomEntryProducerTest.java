@@ -23,6 +23,7 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathNotExists;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -301,7 +302,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
   private String verifyResponse(final ODataResponse response) throws IOException {
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_ATOM_XML_ENTRY_CS_UTF_8.toContentTypeString(), response.getContentHeader());
+    assertNull("EntityProvider should not set content header", response.getContentHeader());
     String xmlString = StringHelper.inputStreamToString((InputStream) response.getEntity());
     return xmlString;
   }
@@ -567,7 +568,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
 
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_ATOM_XML_ENTRY_CS_UTF_8.toContentTypeString(), response.getContentHeader());
+    assertNull("EntityProvider should not set content header", response.getContentHeader());
     assertEquals("W/\"<\">.3\"", response.getETag());
 
     String xmlString = StringHelper.inputStreamToString((InputStream) response.getEntity());

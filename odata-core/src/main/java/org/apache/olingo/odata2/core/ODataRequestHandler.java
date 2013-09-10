@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -119,7 +120,7 @@ public class ODataRequestHandler {
         extendedResponse = extendedResponse.header(ODataHttpHeaders.DATASERVICEVERSION, serverDataServiceVersion);
       }
       if(!odataResponse.containsHeader("Content-Type")) {
-        extendedResponse.header(HttpHeaders.CONTENT_TYPE, acceptContentType);
+        setContentType(extendedResponse, acceptContentType, method, uriInfo.getUriType());
       }
       
       final UriType uriType = uriInfo.getUriType();
@@ -127,9 +128,7 @@ public class ODataRequestHandler {
       final HttpStatusCodes s = odataResponse.getStatus() == null ? method == ODataHttpMethod.POST ? uriType == UriType.URI9 ? HttpStatusCodes.OK : uriType == UriType.URI7B ? HttpStatusCodes.NO_CONTENT : HttpStatusCodes.CREATED : method == ODataHttpMethod.PUT || method == ODataHttpMethod.PATCH || method == ODataHttpMethod.MERGE || method == ODataHttpMethod.DELETE ? HttpStatusCodes.NO_CONTENT : HttpStatusCodes.OK : odataResponse.getStatus();
       extendedResponse = extendedResponse.idLiteral(location).status(s);
       
-      
       odataResponse = extendedResponse.build();
-
     } catch (final Exception e) {
       exception = e;
       odataResponse = new ODataExceptionWrapper(context, request.getQueryParameters(), request.getAcceptHeaders()).wrapInExceptionResponse(e);
@@ -138,6 +137,24 @@ public class ODataRequestHandler {
 
     final String debugValue = getDebugValue(context, request.getQueryParameters());
     return debugValue == null ? odataResponse : new ODataDebugResponseWrapper(context, odataResponse, uriInfo, exception, debugValue).wrapResponse();
+  }
+
+  private void setContentType(ODataResponseBuilder extendedResponse, String acceptContentType, ODataHttpMethod method, UriType uriType) {
+    ContentType contentType = ContentType.parse(acceptContentType);
+    if(contentType != null && contentType.getODataFormat() == ODataFormat.ATOM) {
+      if(uriType == UriType.URI1 || uriType == UriType.URI6B) {
+        if(ODataHttpMethod.GET.equals(method)) {
+          contentType = ContentType.create(contentType, ContentType.PARAMETER_TYPE, "feed");
+        } else {
+          contentType = ContentType.create(contentType, ContentType.PARAMETER_TYPE, "entry");          
+        }
+      } else if(uriType == UriType.URI2 || uriType == UriType.URI6A) {
+        contentType = ContentType.create(contentType, ContentType.PARAMETER_TYPE, "entry");
+      }
+      extendedResponse.header(HttpHeaders.CONTENT_TYPE, contentType.toContentTypeString());
+    } else {
+      extendedResponse.header(HttpHeaders.CONTENT_TYPE, acceptContentType);
+    }
   }
 
   /**
@@ -152,11 +169,21 @@ public class ODataRequestHandler {
   private String doContentNegotiation(final ODataRequest request, UriInfoImpl uriInfo) throws ODataException {
     if(uriInfo.isCount() || uriInfo.isValue()) {
       return request.getRequestHeaderValue("Accept");
+    } else if(ODataHttpMethod.POST.equals(request.getMethod()) && 
+        (uriInfo.getUriType() == UriType.URI1 || uriInfo.getUriType() == UriType.URI6B)) {
+
+      List<String> supportedContentTypes = new LinkedList<String>(getSupportedContentTypes(uriInfo));
+      supportedContentTypes.add(0, ContentType.APPLICATION_ATOM_XML_ENTRY_CS_UTF_8.toContentTypeString());
+      supportedContentTypes.add(1, ContentType.APPLICATION_ATOM_XML_ENTRY.toContentTypeString());
+      supportedContentTypes.remove(ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
+      supportedContentTypes.remove(ContentType.APPLICATION_ATOM_XML_FEED_CS_UTF_8.toContentTypeString());
+      
+      return new ContentNegotiator().doContentNegotiation(uriInfo, request.getAcceptHeaders(), supportedContentTypes);
     } else {
       return new ContentNegotiator().doContentNegotiation(uriInfo, request.getAcceptHeaders(), getSupportedContentTypes(uriInfo));
     }
   }
-
+  
   private String getServerDataServiceVersion() throws ODataException {
     return service.getVersion() == null ? ODataServiceVersion.V20 : service.getVersion();
   }

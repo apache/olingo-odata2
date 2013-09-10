@@ -20,17 +20,15 @@ package org.apache.olingo.odata2.core.ep.producer;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 
-import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
-import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
@@ -56,7 +54,7 @@ public class XmlPropertyProducerTest extends AbstractProviderTest {
     ODataResponse response = s.writeProperty(edmProperty, employeeData.get("EmployeeId"));
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML.toString() + ";charset=utf-8", response.getContentHeader());
+    
 
     String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);
@@ -75,7 +73,7 @@ public class XmlPropertyProducerTest extends AbstractProviderTest {
     ODataResponse response = s.writeProperty(edmProperty, employeeData.get("Age"));
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML.toString() + ";charset=utf-8", response.getContentHeader());
+    
     String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);
 
@@ -93,7 +91,7 @@ public class XmlPropertyProducerTest extends AbstractProviderTest {
     ODataResponse response = s.writeProperty(edmProperty, employeeData.get("ImageUrl"));
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML.toString() + ";charset=utf-8", response.getContentHeader());
+    
     String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);
 
@@ -108,8 +106,8 @@ public class XmlPropertyProducerTest extends AbstractProviderTest {
     ODataResponse response = createAtomEntityProvider().writeProperty(property, photoData.get("Image"));
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_XML_UTF8, response.getContentHeader());
-
+    assertNull("EntityProvider should not set content header", response.getContentHeader());
+    
     final String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);
     assertXpathExists("/d:Image", xml);
@@ -123,8 +121,8 @@ public class XmlPropertyProducerTest extends AbstractProviderTest {
     ODataResponse response = createAtomEntityProvider().writeProperty(property, photoData.get("BinaryData"));
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_XML_UTF8, response.getContentHeader());
-
+    assertNull("EntityProvider should not set content header", response.getContentHeader());
+    
     final String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);
     assertXpathExists("/d:BinaryData", xml);
@@ -143,7 +141,7 @@ public class XmlPropertyProducerTest extends AbstractProviderTest {
     ODataResponse response = s.writeProperty(edmProperty, employeeData.get("Location"));
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML.toString() + ";charset=utf-8", response.getContentHeader());
+    
     String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);
 

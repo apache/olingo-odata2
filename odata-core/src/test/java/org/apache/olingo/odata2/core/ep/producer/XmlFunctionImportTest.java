@@ -20,15 +20,14 @@ package org.apache.olingo.odata2.core.ep.producer;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.Arrays;
 
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
-import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
@@ -50,7 +49,7 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
     final ODataResponse response = createAtomEntityProvider().writeFunctionImport(functionImport, employeeData.get("Age"), DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML.toString() + ";charset=utf-8", response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);
@@ -66,7 +65,7 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
     final ODataResponse response = createAtomEntityProvider().writeFunctionImport(functionImport, employeeData.get("Location"), DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML.toString() + ";charset=utf-8", response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);
@@ -83,7 +82,7 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
     final ODataResponse response = createAtomEntityProvider().writeFunctionImport(functionImport, Arrays.asList("1", "2", "3"), DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML.toString() + ";charset=utf-8", response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);
@@ -101,7 +100,7 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
     final ODataResponse response = createAtomEntityProvider().writeFunctionImport(functionImport, Arrays.asList(employeeData.get("Location")), DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML.toString() + ";charset=utf-8", response.getContentHeader());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
     final String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);
@@ -119,7 +118,7 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
     final ODataResponse response = createAtomEntityProvider().writeFunctionImport(functionImport, employeeData, DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_ATOM_XML_ENTRY_CS_UTF_8.toContentTypeString(), response.getContentHeader());
+    assertNull("EntityProvider should not set content header", response.getContentHeader());
 
     final String xml = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(xml);

@@ -166,7 +166,7 @@ public class ProviderFacadeImplTest {
   public void writeProperty() throws Exception {
     final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
     final ODataResponse result = new ProviderFacadeImpl().writeProperty(HttpContentType.APPLICATION_XML, property, 987654321000L);
-    assertEquals(HttpContentType.APPLICATION_XML_UTF8, result.getContentHeader());
+    assertNull("EntityProvider should not set content header", result.getContentHeader());
     assertTrue(StringHelper.inputStreamToString((InputStream) result.getEntity())
         .endsWith("\">2001-04-19T04:25:21</EntryDate>"));
   }

@@ -25,14 +25,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
 import org.apache.http.HttpResponse;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.junit.Test;
 
 /**
  * Tests employing the reference scenario changing entities in XML format.
@@ -49,6 +48,58 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
         .replace("Team 1", "Team X")
         .replaceAll("<link.+?/>", "");
     HttpResponse response = postUri("Teams()", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
+    checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
+    assertEquals(getEndpoint() + "Teams('4')", response.getFirstHeader(HttpHeaders.LOCATION).getValue());
+    assertNull(response.getFirstHeader(HttpHeaders.ETAG));
+    assertXpathEvaluatesTo("Team X", "/atom:entry/atom:content/m:properties/d:Name", getBody(response));
+
+    // Create an entry for a type that has no media resource.
+    // Add navigation to Employee('4') and Employee('5').
+    requestBody = "<entry xmlns=\"" + Edm.NAMESPACE_ATOM_2005 + "\"" + "\n"
+        + "       xmlns:d=\"" + Edm.NAMESPACE_D_2007_08 + "\"" + "\n"
+        + "       xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "\n"
+        + "  <author><name>no author</name></author>" + "\n"
+        + "  <content type=\"application/xml\">" + "\n"
+        + "    <m:properties>" + "\n"
+        + "      <d:Id>109</d:Id>" + "\n"
+        + "      <d:Name/>" + "\n"
+        + "      <d:Seats>4</d:Seats>" + "\n"
+        + "      <d:Version>2</d:Version>" + "\n"
+        + "    </m:properties>" + "\n"
+        + "  </content>" + "\n"
+        + "  <id>Rooms('104')</id>" + "\n"
+        + "  <title>Room 104</title>" + "\n"
+        + "  <updated>2011-08-10T12:00:23Z</updated>" + "\n"
+        + "  <link href=\"Employees('4')\"" + "\n"
+        + "        rel=\"" + Edm.NAMESPACE_REL_2007_08 + "nr_Employees\"" + "\n"
+        + "        type=\"" + HttpContentType.APPLICATION_ATOM_XML_FEED_UTF8 + "\"/>" + "\n"
+        + "  <link href=\"Employees('5')\"" + "\n"
+        + "        rel=\"" + Edm.NAMESPACE_REL_2007_08 + "nr_Employees\"" + "\n"
+        + "        type=\"" + HttpContentType.APPLICATION_ATOM_XML_FEED_UTF8 + "\"/>" + "\n"
+        + "</entry>";
+    response = postUri("Rooms", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
+    checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
+    assertEquals(getEndpoint() + "Rooms('104')", response.getFirstHeader(HttpHeaders.LOCATION).getValue());
+    checkEtag(response, "W/\"2\"");
+    assertXpathEvaluatesTo("4", "/atom:entry/atom:content/m:properties/d:Seats", getBody(response));
+    checkUri("Rooms('104')/nr_Employees('4')");
+    checkUri("Rooms('104')/nr_Employees('5')");
+  }
+
+  @Test
+  public void createWithAcceptHeaderEntry() throws Exception {
+    // Create an entry for a type that has no media resource.
+    String requestBody = getBody(callUri("Teams('1')"))
+        .replace("'1'", "'9'")
+        .replace("Id>1", "Id>9")
+        .replace("Team 1", "Team X")
+        .replaceAll("<link.+?/>", "");
+    String requestContentType = HttpContentType.APPLICATION_ATOM_XML_ENTRY;
+    HttpStatusCodes expectedStatusCode = HttpStatusCodes.CREATED;
+    String headerName = "Accept";
+    String headerValue = "application/atom+xml;type=entry";
+    HttpResponse response = callUri(ODataHttpMethod.POST, "Teams()", headerName, headerValue, requestBody, requestContentType, expectedStatusCode );
+
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
     assertEquals(getEndpoint() + "Teams('4')", response.getFirstHeader(HttpHeaders.LOCATION).getValue());
     assertNull(response.getFirstHeader(HttpHeaders.ETAG));

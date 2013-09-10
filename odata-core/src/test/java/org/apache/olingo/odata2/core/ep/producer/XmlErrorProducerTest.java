@@ -23,6 +23,7 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathNotExists;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -227,7 +228,7 @@ public class XmlErrorProducerTest extends AbstractXmlProducerTestHelper {
   private String verifyResponse(final ODataResponse response) throws IOException {
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML.toContentTypeString(), response.getContentHeader());
+    assertNull("EntityProvider should not set content header", response.getContentHeader());
     assertEquals(expectedStatus, response.getStatus());
     assertNotNull(response.getHeader(ODataHttpHeaders.DATASERVICEVERSION));
     assertEquals(ODataServiceVersion.V10, response.getHeader(ODataHttpHeaders.DATASERVICEVERSION));
