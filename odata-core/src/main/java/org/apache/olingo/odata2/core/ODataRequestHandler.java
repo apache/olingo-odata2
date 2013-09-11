@@ -19,7 +19,6 @@
 package org.apache.olingo.odata2.core;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -108,10 +107,11 @@ public class ODataRequestHandler {
         checkRequestContentType(uriInfo, request.getContentType());
       }
 
-      final String acceptContentType = doContentNegotiation(request, uriInfo);
+      ContentNegotiator contentNegotiator = new ContentNegotiator(request, uriInfo);
+      final ContentType acceptContentType = contentNegotiator.doAcceptContentNegotiation(getSupportedContentTypes(uriInfo));
 
       timingHandle2 = context.startRuntimeMeasurement("Dispatcher", "dispatch");
-      odataResponse = dispatcher.dispatch(method, uriInfo, request.getBody(), request.getContentType(), acceptContentType);
+      odataResponse = dispatcher.dispatch(method, uriInfo, request.getBody(), request.getContentType(), acceptContentType.toContentTypeString());
       context.stopRuntimeMeasurement(timingHandle2);
 
 
@@ -119,8 +119,9 @@ public class ODataRequestHandler {
       if (!odataResponse.containsHeader(ODataHttpHeaders.DATASERVICEVERSION)) {
         extendedResponse = extendedResponse.header(ODataHttpHeaders.DATASERVICEVERSION, serverDataServiceVersion);
       }
-      if(!odataResponse.containsHeader("Content-Type")) {
-        setContentType(extendedResponse, acceptContentType, method, uriInfo.getUriType());
+      if(!odataResponse.containsHeader(HttpHeaders.CONTENT_TYPE)) {
+        ContentType responseContentType = contentNegotiator.doResponseContentNegotiation(acceptContentType);
+        extendedResponse.header(HttpHeaders.CONTENT_TYPE, responseContentType.toContentTypeString());
       }
       
       final UriType uriType = uriInfo.getUriType();
@@ -139,50 +140,6 @@ public class ODataRequestHandler {
     return debugValue == null ? odataResponse : new ODataDebugResponseWrapper(context, odataResponse, uriInfo, exception, debugValue).wrapResponse();
   }
 
-  private void setContentType(ODataResponseBuilder extendedResponse, String acceptContentType, ODataHttpMethod method, UriType uriType) {
-    ContentType contentType = ContentType.parse(acceptContentType);
-    if(contentType != null && contentType.getODataFormat() == ODataFormat.ATOM) {
-      if(uriType == UriType.URI1 || uriType == UriType.URI6B) {
-        if(ODataHttpMethod.GET.equals(method)) {
-          contentType = ContentType.create(contentType, ContentType.PARAMETER_TYPE, "feed");
-        } else {
-          contentType = ContentType.create(contentType, ContentType.PARAMETER_TYPE, "entry");          
-        }
-      } else if(uriType == UriType.URI2 || uriType == UriType.URI6A) {
-        contentType = ContentType.create(contentType, ContentType.PARAMETER_TYPE, "entry");
-      }
-      extendedResponse.header(HttpHeaders.CONTENT_TYPE, contentType.toContentTypeString());
-    } else {
-      extendedResponse.header(HttpHeaders.CONTENT_TYPE, acceptContentType);
-    }
-  }
-
-  /**
-   * Do the content negotiation based on requested content type (in HTTP accept header) and from {@link ODataService}
-   * supported content types (via {@link ODataService#getSupportedContentTypes(Class)}).
-   * 
-   * @param request with requested content type
-   * @param uriInfo additional uri informations
-   * @return best fitting content type or <code>NULL</code> if content type is not set and for given {@link UriInfo} is ignored
-   * @throws ODataException if no supported content type was found
-   */
-  private String doContentNegotiation(final ODataRequest request, UriInfoImpl uriInfo) throws ODataException {
-    if(uriInfo.isCount() || uriInfo.isValue()) {
-      return request.getRequestHeaderValue("Accept");
-    } else if(ODataHttpMethod.POST.equals(request.getMethod()) && 
-        (uriInfo.getUriType() == UriType.URI1 || uriInfo.getUriType() == UriType.URI6B)) {
-
-      List<String> supportedContentTypes = new LinkedList<String>(getSupportedContentTypes(uriInfo));
-      supportedContentTypes.add(0, ContentType.APPLICATION_ATOM_XML_ENTRY_CS_UTF_8.toContentTypeString());
-      supportedContentTypes.add(1, ContentType.APPLICATION_ATOM_XML_ENTRY.toContentTypeString());
-      supportedContentTypes.remove(ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
-      supportedContentTypes.remove(ContentType.APPLICATION_ATOM_XML_FEED_CS_UTF_8.toContentTypeString());
-      
-      return new ContentNegotiator().doContentNegotiation(uriInfo, request.getAcceptHeaders(), supportedContentTypes);
-    } else {
-      return new ContentNegotiator().doContentNegotiation(uriInfo, request.getAcceptHeaders(), getSupportedContentTypes(uriInfo));
-    }
-  }
   
   private String getServerDataServiceVersion() throws ODataException {
     return service.getVersion() == null ? ODataServiceVersion.V20 : service.getVersion();

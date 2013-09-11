@@ -235,6 +235,15 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
         .thenReturn(queryParameters == null ? new HashMap<String, String>() : queryParameters);
     when(request.getContentType()).thenReturn(requestContentType);
     when(request.getAcceptHeaders()).thenReturn(acceptHeaders);
+    String acceptHeadersAsString = null;
+    for (String string : acceptHeaders) {
+      if(acceptHeadersAsString == null) {
+        acceptHeadersAsString = string;
+      } else {
+        acceptHeadersAsString += ", " + string;
+      }
+    }
+    when(request.getRequestHeaderValue("Accept")).thenReturn(acceptHeadersAsString);
     return request;
   }
   
