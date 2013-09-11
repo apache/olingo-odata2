@@ -20,8 +20,8 @@ package org.apache.olingo.odata2.core.ep.producer;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -179,7 +179,7 @@ public class AtomServiceDocumentProducerTest extends AbstractXmlProducerTestHelp
   private String verifyResponse(final ODataResponse response) throws IOException {
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(HttpContentType.APPLICATION_ATOM_SVC_UTF8, response.getContentHeader());
+    assertNull("EntityProvider should not set content header", response.getContentHeader());
     String xmlString = StringHelper.inputStreamToString((InputStream) response.getEntity());
     return xmlString;
   }

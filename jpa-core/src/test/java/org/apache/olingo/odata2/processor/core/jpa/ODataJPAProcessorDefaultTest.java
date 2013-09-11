@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +53,7 @@ import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.NavigationSegment;
 import org.apache.olingo.odata2.api.uri.PathInfo;
@@ -84,7 +86,6 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   private static final String SO_ID = "SoId";
   private static final String SALES_ORDER = "SalesOrder";
   private static final String SALES_ORDER_HEADERS = "SalesOrderHeaders";
-  private static final String TEXT_PLAIN_CHARSET_UTF_8 = "text/plain;charset=utf-8";
   private static final String STR_CONTENT_TYPE = "Content-Type";
 
   @Before
@@ -111,8 +112,14 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   @Test
   public void testcountEntitySet() {
     try {
-      Assert.assertNotNull(objODataJPAProcessorDefault.countEntitySet(getEntitySetCountUriInfo(), HttpContentType.APPLICATION_XML));
-      Assert.assertEquals(TEXT_PLAIN_CHARSET_UTF_8, objODataJPAProcessorDefault.countEntitySet(getEntitySetCountUriInfo(), HttpContentType.APPLICATION_XML).getHeader(STR_CONTENT_TYPE));
+      ODataResponse countEntitySet = objODataJPAProcessorDefault.countEntitySet(getEntitySetCountUriInfo(), HttpContentType.APPLICATION_XML);
+      Assert.assertNotNull(countEntitySet);
+      Object entity = countEntitySet.getEntity();
+      Assert.assertNotNull(entity);
+      
+      byte[] b = new byte[2];
+      ((ByteArrayInputStream)entity).read(b);
+      Assert.assertEquals("11", new String(b, Charset.forName("utf-8")));
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (Exception e) {
@@ -124,7 +131,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   public void testExistsEntity() {
     try {
       Assert.assertNotNull(objODataJPAProcessorDefault.existsEntity(getEntityCountCountUriInfo(), HttpContentType.APPLICATION_XML));
-      Assert.assertEquals(TEXT_PLAIN_CHARSET_UTF_8, objODataJPAProcessorDefault.existsEntity(getEntityCountCountUriInfo(), HttpContentType.APPLICATION_XML).getHeader(STR_CONTENT_TYPE));
+      Assert.assertNull("ContentType MUST NOT set by entity provider", objODataJPAProcessorDefault.existsEntity(getEntityCountCountUriInfo(), HttpContentType.APPLICATION_XML).getHeader(STR_CONTENT_TYPE));
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (Exception e) {
@@ -136,7 +143,6 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   public void testDeleteEntity() {
     try {
       Assert.assertNotNull(objODataJPAProcessorDefault.deleteEntity(getDeletetUriInfo(), HttpContentType.APPLICATION_XML));
-      Assert.assertEquals(TEXT_PLAIN_CHARSET_UTF_8, objODataJPAProcessorDefault.countEntitySet(getEntitySetCountUriInfo(), HttpContentType.APPLICATION_XML).getHeader(STR_CONTENT_TYPE));
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }

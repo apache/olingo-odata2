@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.core.ep;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -65,7 +66,7 @@ public class BasicProviderTest extends AbstractProviderTest {
     ODataResponse response = provider.writeMetadata(null, predefinedNamespaces);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML_CS_UTF_8.toString(), response.getContentHeader());
+    assertNull("BasicProvider should not set content header", response.getContentHeader());
     String metadata = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertTrue(metadata.contains("xmlns:foo=\"http://foo\""));
     assertTrue(metadata.contains("xmlns:annoPrefix=\"http://annoNamespace\""));
@@ -99,7 +100,7 @@ public class BasicProviderTest extends AbstractProviderTest {
     ODataResponse response = provider.writeMetadata(testProvider.getSchemas(), predefinedNamespaces);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML_CS_UTF_8.toString(), response.getContentHeader());
+    assertNull("BasicProvider should not set content header", response.getContentHeader());
     String metadata = StringHelper.inputStreamToString((InputStream) response.getEntity());
 
     setNamespaces();
@@ -122,7 +123,7 @@ public class BasicProviderTest extends AbstractProviderTest {
     ODataResponse response = provider.writeMetadata(testProvider.getSchemas(), null);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.APPLICATION_XML_CS_UTF_8.toString(), response.getContentHeader());
+    assertNull("BasicProvider should not set content header", response.getContentHeader());
     String metadata = StringHelper.inputStreamToString((InputStream) response.getEntity());
 
     setNamespaces();
@@ -146,7 +147,7 @@ public class BasicProviderTest extends AbstractProviderTest {
     ODataResponse response = provider.writePropertyValue(edmProperty, employeeData.get("Age"));
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertEquals(ContentType.TEXT_PLAIN_CS_UTF_8.toString(), response.getContentHeader());
+    assertNull("BasicProvider should not set content header", response.getContentHeader());
     String value = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertEquals(employeeData.get("Age").toString(), value);
   }

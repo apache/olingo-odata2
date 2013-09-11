@@ -51,7 +51,6 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
-import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.producer.XmlMetadataProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 
@@ -196,7 +195,6 @@ public class BasicEntityProvider {
       builder.entity(stream);
     }
     
-    builder.contentHeader(ContentType.TEXT_PLAIN.receiveWithCharsetParameter(DEFAULT_CHARSET).toContentTypeString());
     return builder.build();
   }
 
@@ -236,7 +234,7 @@ public class BasicEntityProvider {
     OutputStreamWriter writer = null;
     CircleStreamBuffer csb = new CircleStreamBuffer();
     try {
-      writer = new OutputStreamWriter(csb.getOutputStream(), "UTF-8");
+      writer = new OutputStreamWriter(csb.getOutputStream(), DEFAULT_CHARSET);
       XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
       XmlMetadataProducer.writeMetadata(metadata, xmlStreamWriter, predefinedNamespaces);
     } catch (UnsupportedEncodingException e) {
@@ -247,7 +245,6 @@ public class BasicEntityProvider {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
     }
     builder.entity(csb.getInputStream());
-    builder.contentHeader(ContentType.APPLICATION_XML_CS_UTF_8.toContentTypeString());
     builder.header(ODataHttpHeaders.DATASERVICEVERSION, dataServiceVersion);
     return builder.build();
   }

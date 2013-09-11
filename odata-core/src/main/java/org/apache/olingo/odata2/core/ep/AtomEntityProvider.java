@@ -125,7 +125,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
   /**
    * Write service document based on given {@link Edm} and <code>service root</code> as
-   * content type "<code>application/atomsvc+xml; charset=utf-8</code>".
+   * <code>AtomPub Service Document/code> with charset encoding {@value #DEFAULT_CHARSET}.
    * 
    * @param edm the Entity Data Model
    * @param serviceRoot the root URI of the service
@@ -142,11 +142,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       as.writeServiceDocument(writer);
       csb.closeWrite();
 
-      ODataResponse response = ODataResponse.entity(csb.getInputStream())
-          .contentHeader(ContentType.APPLICATION_ATOM_SVC.receiveWithCharsetParameter(DEFAULT_CHARSET).toContentTypeString())
-          .build();
-
-      return response;
+      return ODataResponse.entity(csb.getInputStream()).build();
     } catch (EntityProviderException e) {
       csb.close();
       throw e;

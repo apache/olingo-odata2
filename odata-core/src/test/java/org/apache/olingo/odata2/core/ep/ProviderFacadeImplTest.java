@@ -204,14 +204,15 @@ public class ProviderFacadeImplTest {
   public void writePropertyValue() throws Exception {
     final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
     final ODataResponse result = new ProviderFacadeImpl().writePropertyValue(property, 987654321000L);
-    assertEquals(HttpContentType.TEXT_PLAIN_UTF8, result.getContentHeader());
+    assertNull("BasicProvider should not set content header", result.getContentHeader());
+    
     assertEquals("2001-04-19T04:25:21", StringHelper.inputStreamToString((InputStream) result.getEntity()));
   }
 
   @Test
   public void writeText() throws Exception {
     final ODataResponse result = new ProviderFacadeImpl().writeText("test");
-    assertEquals(HttpContentType.TEXT_PLAIN_UTF8, result.getContentHeader());
+    assertNull("BasicProvider should not set content header", result.getContentHeader());
     assertEquals("test", StringHelper.inputStreamToString((InputStream) result.getEntity()));
   }
 

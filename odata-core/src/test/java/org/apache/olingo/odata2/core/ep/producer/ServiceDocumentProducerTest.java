@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -71,7 +71,6 @@ public class ServiceDocumentProducerTest extends AbstractXmlProducerTestHelper {
   public void testServiceDocumentXml() throws EntityProviderException, ODataException {
     ODataResponse response = EntityProvider.writeServiceDocument(HttpContentType.APPLICATION_ATOM_XML, edm, "http://localhost/");
 
-    assertEquals(HttpContentType.APPLICATION_ATOM_SVC_UTF8, response.getContentHeader());
+    assertNull("EntityProvider should not set content header", response.getContentHeader());
   }
-
 }

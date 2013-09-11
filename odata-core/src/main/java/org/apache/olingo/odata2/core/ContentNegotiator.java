@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
@@ -44,8 +45,8 @@ public class ContentNegotiator {
   private static final String URI_INFO_FORMAT_XML = "xml";
   static final String DEFAULT_CHARSET = "utf-8";
   
-  private UriInfoImpl uriInfo;
-  private ODataRequest odataRequest;
+  private final UriInfoImpl uriInfo;
+  private final ODataRequest odataRequest;
 
   /**
    * Creates a {@link ContentNegotiator} for given {@link ODataRequest} and {@link UriInfoImpl}
@@ -93,10 +94,10 @@ public class ContentNegotiator {
         (uriInfo.getUriType() == UriType.URI1 || uriInfo.getUriType() == UriType.URI6B)) {
 
       usedContentTypes = new LinkedList<String>(supportedContentTypes);
-      usedContentTypes.add(0, ContentType.APPLICATION_ATOM_XML_ENTRY_CS_UTF_8.toContentTypeString());
-      usedContentTypes.add(1, ContentType.APPLICATION_ATOM_XML_ENTRY.toContentTypeString());
-      usedContentTypes.remove(ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
-      usedContentTypes.remove(ContentType.APPLICATION_ATOM_XML_FEED_CS_UTF_8.toContentTypeString());
+      usedContentTypes.add(0, HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8);
+//      usedContentTypes.add(1, HttpContentType.APPLICATION_ATOM_XML_ENTRY);
+//      usedContentTypes.remove(HttpContentType.APPLICATION_ATOM_XML_FEED);
+      usedContentTypes.remove(HttpContentType.APPLICATION_ATOM_XML_FEED_UTF8);
     }
     
     if (uriInfo.getFormat() == null) {
@@ -117,21 +118,23 @@ public class ContentNegotiator {
    * @return best correct response content type based on accepted content type, {@link ODataRequest} and {@link UriInfo} combination 
    */
   public ContentType doResponseContentNegotiation(ContentType acceptContentType) {
-      ContentType contentType = acceptContentType;
-      UriType uriType = uriInfo.getUriType();
-      if(contentType != null && contentType.getODataFormat() == ODataFormat.ATOM) {
-        if(uriType == UriType.URI1 || uriType == UriType.URI6B) {
-          if(ODataHttpMethod.GET.equals(odataRequest.getMethod())) {
-            contentType = ContentType.create(contentType, ContentType.PARAMETER_TYPE, "feed");
-          } else {
-            contentType = ContentType.create(contentType, ContentType.PARAMETER_TYPE, "entry");          
-          }
-        } else if(uriType == UriType.URI2 || uriType == UriType.URI6A) {
-          contentType = ContentType.create(contentType, ContentType.PARAMETER_TYPE, "entry");
+    UriType uriType = uriInfo.getUriType();
+    
+    if(uriInfo.isCount() || uriInfo.isValue()) {
+      return ContentType.TEXT_PLAIN_CS_UTF_8;
+    } else if(acceptContentType != null && acceptContentType.getODataFormat() == ODataFormat.ATOM) {
+      if(uriType == UriType.URI1 || uriType == UriType.URI6B) {
+        if(ODataHttpMethod.GET.equals(odataRequest.getMethod())) {
+          return ContentType.create(acceptContentType, ContentType.PARAMETER_TYPE, "feed");
+        } else {
+          return ContentType.create(acceptContentType, ContentType.PARAMETER_TYPE, "entry");          
         }
-      } 
+      } else if(uriType == UriType.URI2 || uriType == UriType.URI6A) {
+        return ContentType.create(acceptContentType, ContentType.PARAMETER_TYPE, "entry");
+      }
+    } 
 
-    return contentType;
+    return acceptContentType;
   }
 
 

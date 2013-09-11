@@ -25,7 +25,6 @@ import java.util.List;
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.batch.BatchHandler;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
-import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -335,24 +334,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
 
     final ODataResponse response = EntityProvider.writeServiceDocument(contentType, entityDataModel, serviceRoot);
     final ODataResponseBuilder odataResponseBuilder = ODataResponse.fromResponse(response).header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10);
-    if (isContentTypeUpdateNecessary(contentType, response)) {
-      odataResponseBuilder.contentHeader(contentType);
-    }
+
     return odataResponseBuilder.build();
-  }
-
-  /**
-   * Simple check whether the content type for the {@link ODataResponse} needs adapted or not (based on requested content type).
-   * 
-   * @param contentType
-   * @param response
-   * @return true if an update is necessary
-   */
-  private boolean isContentTypeUpdateNecessary(final String contentType, final ODataResponse response) {
-    boolean contentTypeAlreadySet = contentType.equals(response.getContentHeader());
-    boolean requestedAtomAndRespondAtomSvc = contentType.contains("atom") && response.getContentHeader().contains("atomsvc");
-
-    return !(contentTypeAlreadySet || requestedAtomAndRespondAtomSvc);
   }
 
   /**
@@ -362,7 +345,7 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
   public ODataResponse readMetadata(final GetMetadataUriInfo uriInfo, final String contentType) throws ODataException {
     final EdmServiceMetadata edmServiceMetadata = getContext().getService().getEntityDataModel().getServiceMetadata();
 
-    return ODataResponse.status(HttpStatusCodes.OK).header(HttpHeaders.CONTENT_TYPE, contentType).header(ODataHttpHeaders.DATASERVICEVERSION, edmServiceMetadata.getDataServiceVersion()).entity(edmServiceMetadata.getMetadata()).build();
+    return ODataResponse.status(HttpStatusCodes.OK).header(ODataHttpHeaders.DATASERVICEVERSION, edmServiceMetadata.getDataServiceVersion()).entity(edmServiceMetadata.getMetadata()).build();
   }
 
   /**
