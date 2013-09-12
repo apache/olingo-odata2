@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.fit.ref.contentnegotiation;
 
 import static org.apache.olingo.odata2.api.commons.HttpContentType.APPLICATION_ATOM_XML;
-import static org.apache.olingo.odata2.api.commons.HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8;
+import static org.apache.olingo.odata2.api.commons.HttpContentType.APPLICATION_ATOM_XML_UTF8;
 import static org.apache.olingo.odata2.api.commons.HttpContentType.APPLICATION_JSON;
 import static org.apache.olingo.odata2.api.commons.HttpContentType.APPLICATION_JSON_UTF8;
 import static org.apache.olingo.odata2.api.commons.HttpContentType.APPLICATION_XML;
@@ -52,7 +52,7 @@ public class BasicContentNegotiationTest extends AbstractContentNegotiationTest 
   
   @Test
   public void acceptHeaderAppAtomXml() throws Exception {
-    performRequestAndValidateResponseForAcceptHeader("Rooms('1')", APPLICATION_ATOM_XML, APPLICATION_ATOM_XML_ENTRY_UTF8);
+    performRequestAndValidateResponseForAcceptHeader("Rooms('1')", APPLICATION_ATOM_XML, APPLICATION_ATOM_XML_UTF8);
   }
 
   @Test

@@ -107,8 +107,8 @@ public class ODataRequestHandler {
         checkRequestContentType(uriInfo, request.getContentType());
       }
 
-      ContentNegotiator contentNegotiator = new ContentNegotiator(request, uriInfo);
-      final ContentType acceptContentType = contentNegotiator.doAcceptContentNegotiation(getSupportedContentTypes(uriInfo));
+      List<String> supportedContentTypes = getSupportedContentTypes(uriInfo, method);
+      ContentType acceptContentType = new ContentNegotiator().doContentNegotiation(request, uriInfo, supportedContentTypes);
 
       timingHandle2 = context.startRuntimeMeasurement("Dispatcher", "dispatch");
       odataResponse = dispatcher.dispatch(method, uriInfo, request.getBody(), request.getContentType(), acceptContentType.toContentTypeString());
@@ -120,8 +120,7 @@ public class ODataRequestHandler {
         extendedResponse = extendedResponse.header(ODataHttpHeaders.DATASERVICEVERSION, serverDataServiceVersion);
       }
       if(!odataResponse.containsHeader(HttpHeaders.CONTENT_TYPE)) {
-        ContentType responseContentType = contentNegotiator.doResponseContentNegotiation(acceptContentType);
-        extendedResponse.header(HttpHeaders.CONTENT_TYPE, responseContentType.toContentTypeString());
+        extendedResponse.header(HttpHeaders.CONTENT_TYPE, acceptContentType.toContentTypeString());
       }
       
       final UriType uriType = uriInfo.getUriType();
@@ -408,8 +407,15 @@ public class ODataRequestHandler {
     return property.getType() == EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance() ? Arrays.asList(property.getMimeType() == null ? ContentType.WILDCARD : ContentType.create(property.getMimeType())) : Arrays.asList(ContentType.TEXT_PLAIN, ContentType.TEXT_PLAIN_CS_UTF_8);
   }
 
-  private List<String> getSupportedContentTypes(final UriInfoImpl uriInfo) throws ODataException {
-    return service.getSupportedContentTypes(Dispatcher.mapUriTypeToProcessorFeature(uriInfo));
+  private List<String> getSupportedContentTypes(final UriInfoImpl uriInfo, ODataHttpMethod method) throws ODataException {
+    Class<? extends ODataProcessor> processorFeature = Dispatcher.mapUriTypeToProcessorFeature(uriInfo);
+    if (ODataHttpMethod.POST.equals(method)) {
+      UriType uriType = uriInfo.getUriType();
+      if (uriType == UriType.URI1 || uriType == UriType.URI6B) {
+        processorFeature = EntityProcessor.class;
+      }
+    }
+    return service.getSupportedContentTypes(processorFeature);
   }
 
   private List<ContentType> getSupportedContentTypes(final Class<? extends ODataProcessor> processorFeature) throws ODataException {

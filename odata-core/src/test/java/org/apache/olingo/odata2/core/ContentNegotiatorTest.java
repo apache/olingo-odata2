@@ -42,29 +42,35 @@ import org.mockito.Mockito;
 public class ContentNegotiatorTest {
   
   private void negotiateContentType(final List<ContentType> contentTypes, final List<ContentType> supportedTypes, final String expected) throws ODataException {
-    UriInfoImpl uriInfo = Mockito.mock(UriInfoImpl.class);
-    ODataRequest request = Mockito.mock(ODataRequest.class);
-    final ContentType contentType = new ContentNegotiator(request, uriInfo).contentNegotiation(contentTypes, supportedTypes);
+    final ContentType contentType = new ContentNegotiator().contentNegotiation(contentTypes, supportedTypes);
     assertEquals(expected, contentType.toContentTypeString());
   }
 
   @Test(expected=IllegalArgumentException.class)
-  public void invalidContentNegotiatorCreation() {
-    final ContentNegotiator contentType = new ContentNegotiator(null, null);
+  public void invalidContentNegotiatorCreation() throws ODataException {
+    final ContentType contentType = new ContentNegotiator().doContentNegotiation(null, null, null);
     assertNull(contentType);
   }
 
   @Test(expected=IllegalArgumentException.class)
-  public void invalidContentNegotiatorCreationNullRequest() {
+  public void invalidContentNegotiatorCreationNullRequest() throws ODataException {
     UriInfoImpl uriInfo = Mockito.mock(UriInfoImpl.class);
-    final ContentNegotiator contentType = new ContentNegotiator(null, uriInfo);
+    final ContentType contentType = new ContentNegotiator().doContentNegotiation(null, uriInfo, new ArrayList<String>());
     assertNull(contentType);
   }
 
   @Test(expected=IllegalArgumentException.class)
-  public void invalidContentNegotiatorCreationNullUri() {
+  public void invalidContentNegotiatorCreationNullUri() throws ODataException {
     ODataRequest request = Mockito.mock(ODataRequest.class);
-    final ContentNegotiator contentType = new ContentNegotiator(request, null);
+    final ContentType contentType = new ContentNegotiator().doContentNegotiation(request, null, new ArrayList<String>());
+    assertNull(contentType);
+  }
+
+  @Test(expected=IllegalArgumentException.class)
+  public void invalidContentNegotiatorCreationNullSupported() throws ODataException {
+    ODataRequest request = Mockito.mock(ODataRequest.class);
+    UriInfoImpl uriInfo = Mockito.mock(UriInfoImpl.class);
+    final ContentType contentType = new ContentNegotiator().doContentNegotiation(request, uriInfo, null);
     assertNull(contentType);
   }
 
@@ -195,8 +201,8 @@ public class ContentNegotiatorTest {
     
     
     // perform
-    ContentNegotiator negotiator = new ContentNegotiator(request, uriInfo);
-    String negotiatedContentType = negotiator.doAcceptContentNegotiation(supportedContentTypes).toContentTypeString();
+    ContentNegotiator negotiator = new ContentNegotiator();
+    String negotiatedContentType = negotiator.doContentNegotiation(request, uriInfo, supportedContentTypes).toContentTypeString();
 
     // verify
     assertEquals(supportedType, negotiatedContentType);

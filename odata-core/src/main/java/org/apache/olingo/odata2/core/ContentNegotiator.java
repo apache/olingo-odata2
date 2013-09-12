@@ -20,19 +20,15 @@ package org.apache.olingo.odata2.core;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.olingo.odata2.api.commons.HttpContentType;
-import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotAcceptableException;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.core.commons.ContentType;
-import org.apache.olingo.odata2.core.commons.ContentType.ODataFormat;
 import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.core.uri.UriType;
 
@@ -45,96 +41,47 @@ public class ContentNegotiator {
   private static final String URI_INFO_FORMAT_XML = "xml";
   static final String DEFAULT_CHARSET = "utf-8";
   
-  private final UriInfoImpl uriInfo;
-  private final ODataRequest odataRequest;
-
   /**
-   * Creates a {@link ContentNegotiator} for given {@link ODataRequest} and {@link UriInfoImpl}
-   * which then can be used for a <code>accept content type</code> ({@link #doAcceptContentNegotiation(List)})
-   * and <code>response content type</code> ({@link #doResponseContentNegotiation(ContentType)}) negotiation.
+   * Do the content negotiation for <code>accept header value</code> based on 
+   * requested content type (in HTTP accept header from {@link ODataRequest}) 
+   * in combination with uri information from {@link UriInfo}
+   * and from given supported content types (via <code>supportedContentTypes</code>).
    * 
    * @param request specific request
    * @param uriInfo specific uri information
-   * @throws IllegalArgumentException if at least one of both parameters is <code>NULL</code>
-   */
-  public ContentNegotiator(ODataRequest request, UriInfoImpl uriInfo) {
-    if(request == null) {
-      throw new IllegalArgumentException("Parameter ODataRequest MUST NOT be null.");
-    }
-    if(uriInfo == null) {
-      throw new IllegalArgumentException("Parameter UriInfoImpl MUST NOT be null.");
-    }
-    this.odataRequest = request;
-    this.uriInfo = uriInfo;
-  }
-  
-  /**
-   * Do the content negotiation for <code>accept header value</code> based on 
-   * requested content type (in HTTP accept header from {@link ODataRequest} 
-   * set on {@link ContentNegotiator} creation) in combination with uri information 
-   * (from {@link UriInfo} set on {@link ContentNegotiator} creation)
-   * and from given supported content types (via <code>supportedContentTypes</code>).
-   * 
    * @param supportedContentTypes list of supported content types
    * @return best fitting content type or <code>NULL</code> if content type is not set and for given {@link UriInfo} is ignored
    * @throws ODataException if no supported content type was found
+   * @throws IllegalArgumentException if one of the input parameter is <code>NULL</code>
    */
-  public ContentType doAcceptContentNegotiation(List<String> supportedContentTypes) throws ODataException {
+  public ContentType doContentNegotiation(ODataRequest odataRequest, UriInfoImpl uriInfo, List<String> supportedContentTypes) throws ODataException {
+    validateNotNull(odataRequest, uriInfo, supportedContentTypes);
 
-    if(uriInfo.isCount() || uriInfo.isValue()) {
-      String rawAcceptHeader = odataRequest.getRequestHeaderValue("Accept");
-      if(rawAcceptHeader == null) {
-        return ContentType.WILDCARD;
+    if(uriInfo.isCount()) {
+      return ContentType.TEXT_PLAIN_CS_UTF_8;
+    } else if(uriInfo.isValue()) {
+      if(uriInfo.getUriType() == UriType.URI5 || uriInfo.getUriType() == UriType.URI4) {
+        return ContentType.TEXT_PLAIN_CS_UTF_8;        
       }
-      return ContentType.createAsCustom(rawAcceptHeader);
     } 
-
-    List<String> usedContentTypes = supportedContentTypes;
-    if(ODataHttpMethod.POST.equals(odataRequest.getMethod()) && 
-        (uriInfo.getUriType() == UriType.URI1 || uriInfo.getUriType() == UriType.URI6B)) {
-
-      usedContentTypes = new LinkedList<String>(supportedContentTypes);
-      usedContentTypes.add(0, HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8);
-//      usedContentTypes.add(1, HttpContentType.APPLICATION_ATOM_XML_ENTRY);
-//      usedContentTypes.remove(HttpContentType.APPLICATION_ATOM_XML_FEED);
-      usedContentTypes.remove(HttpContentType.APPLICATION_ATOM_XML_FEED_UTF8);
-    }
     
     if (uriInfo.getFormat() == null) {
-      return doContentNegotiationForAcceptHeader(odataRequest.getAcceptHeaders(), ContentType.create(usedContentTypes));
+      return doContentNegotiationForAcceptHeader(odataRequest.getAcceptHeaders(), ContentType.create(supportedContentTypes));
     } else {
-      return doContentNegotiationForFormat(uriInfo, ContentType.createAsCustom(usedContentTypes));
+      return doContentNegotiationForFormat(uriInfo, ContentType.createAsCustom(supportedContentTypes));
     }
   }
 
-  /**
-   * Do the content negotiation for <code>response content type header value</code> based on 
-   * HTTP request method (from {@link ODataRequest} set on {@link ContentNegotiator} creation) 
-   * in combination with uri information (from {@link UriInfo} set on {@link ContentNegotiator} creation)
-   * and from given <code>accepted content type</code> (via <code>acceptContentType</code> parameter).
-   * 
-   * @param acceptContentType accepted content type for {@link ODataRequest} and {@link UriInfo} combination (which both 
-   *                          were set on {@link ContentNegotiator} creation).
-   * @return best correct response content type based on accepted content type, {@link ODataRequest} and {@link UriInfo} combination 
-   */
-  public ContentType doResponseContentNegotiation(ContentType acceptContentType) {
-    UriType uriType = uriInfo.getUriType();
-    
-    if(uriInfo.isCount() || uriInfo.isValue()) {
-      return ContentType.TEXT_PLAIN_CS_UTF_8;
-    } else if(acceptContentType != null && acceptContentType.getODataFormat() == ODataFormat.ATOM) {
-      if(uriType == UriType.URI1 || uriType == UriType.URI6B) {
-        if(ODataHttpMethod.GET.equals(odataRequest.getMethod())) {
-          return ContentType.create(acceptContentType, ContentType.PARAMETER_TYPE, "feed");
-        } else {
-          return ContentType.create(acceptContentType, ContentType.PARAMETER_TYPE, "entry");          
-        }
-      } else if(uriType == UriType.URI2 || uriType == UriType.URI6A) {
-        return ContentType.create(acceptContentType, ContentType.PARAMETER_TYPE, "entry");
-      }
-    } 
-
-    return acceptContentType;
+  private void validateNotNull(ODataRequest odataRequest, UriInfoImpl uriInfo, List<String> supportedContentTypes) {
+    if(uriInfo == null) {
+      throw new IllegalArgumentException("Parameter uriInfo MUST NOT be null.");
+    }
+    if(odataRequest == null) {
+      throw new IllegalArgumentException("Parameter odataRequest MUST NOT be null.");
+    }
+    if(supportedContentTypes == null) {
+      throw new IllegalArgumentException("Parameter supportedContentTypes MUST NOT be null.");
+    }
   }
 
 
@@ -173,8 +120,11 @@ public class ContentNegotiator {
       if (uriInfo.getUriType() == UriType.URI0) {
         // special handling for serviceDocument uris (UriType.URI0)
         return ContentType.APPLICATION_ATOM_SVC;
+      } else if(uriInfo.getUriType() == UriType.URI1) {
+        return ContentType.APPLICATION_ATOM_XML_FEED;        
+      } else if(uriInfo.getUriType()==UriType.URI2) {
+        return ContentType.APPLICATION_ATOM_XML_ENTRY;
       }
-      return ContentType.APPLICATION_ATOM_XML;
     } else if (URI_INFO_FORMAT_JSON.equals(format)) {
       return ContentType.APPLICATION_JSON;
     }

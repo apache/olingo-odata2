@@ -168,8 +168,11 @@ public class ContentType {
     if (type == null || type.isEmpty()) {
       return MEDIA_TYPE_WILDCARD;
     }
-    if (type.charAt(0) == WHITESPACE_CHAR || type.charAt(type.length() - 1) == WHITESPACE_CHAR) {
-      throw new IllegalArgumentException("Illegal leading/trailing whitespace found for type '" + type + "'.");
+    int len = type.length();
+    for (int i = 0; i < len; i++) {
+      if (type.charAt(i) == WHITESPACE_CHAR) {
+        throw new IllegalArgumentException("Illegal whitespace found for type '" + type + "'.");
+      }
     }
     return type;
   }
