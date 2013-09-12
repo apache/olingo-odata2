@@ -131,11 +131,13 @@ public class RestUtil {
     // first validate all accept header content types are 'parseable' and valif from our point of view
     List<String> acceptHeaders = param.getHttpHeaders().getRequestHeader(HttpHeaders.ACCEPT);
 
-    for (String acceptHeader : acceptHeaders) {
-      String[] contentTypes = acceptHeader.split(",");
-      for (String contentType : contentTypes) {
-        if (!ContentType.isParseable(contentType.trim())) {
-          throw new ODataBadRequestException(ODataBadRequestException.INVALID_HEADER.addContent(HttpHeaders.ACCEPT, acceptHeader));
+    if (acceptHeaders != null) {
+      for (String acceptHeader : acceptHeaders) {
+        String[] contentTypes = acceptHeader.split(",");
+        for (String contentType : contentTypes) {
+          if (!ContentType.isParseable(contentType.trim())) {
+            throw new ODataBadRequestException(ODataBadRequestException.INVALID_HEADER.addContent(HttpHeaders.ACCEPT, acceptHeader));
+          }
         }
       }
     }
