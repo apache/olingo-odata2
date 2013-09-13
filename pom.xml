@@ -56,7 +56,7 @@
         <junit.version>4.10</junit.version>
         <xmlunit.version>1.3</xmlunit.version>
 
-        <version.eclipselink>2.1.2</version.eclipselink>
+        <version.eclipselink>2.5.0</version.eclipselink>
         <version.javax.persistence>2.0.5</version.javax.persistence>
     </properties>
 
