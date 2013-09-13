@@ -25,6 +25,13 @@
                 <include>**/*.war</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <directory>${basedir}/../jpa-web/target</directory>
+            <includes>
+                <include>**/*.war</include>
+            </includes>
+        </fileSet>
 
         <fileSet>
             <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
