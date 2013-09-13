@@ -349,6 +349,14 @@ public final class JPAEntityParser {
         propertyValue = (String) String.valueOf((char[]) method.invoke(entity));
       else if (returnType.equals(Character[].class))
         propertyValue = (String) toString((Character[]) method.invoke(entity));
+      else if (returnType.equals(char.class)) {
+        char c = (Character) method.invoke(entity);
+        propertyValue = (String) String.valueOf(c);
+      }
+      else if (returnType.equals(Character.class)) {
+        Character c = (Character) method.invoke(entity);
+        propertyValue = toString(new Character[] { c });
+      }
       else
         propertyValue = method.invoke(entity);
     } catch (IllegalAccessException e) {

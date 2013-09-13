@@ -252,10 +252,18 @@ public class JPAEntity {
         char[] characters = ((String) entityPropertyValue).toCharArray();
         method.invoke(entity, characters);
       }
+      else if (parameterType.equals(char.class)) {
+        char c = ((String) entityPropertyValue).charAt(0);
+        method.invoke(entity, c);
+      }
       else if (parameterType.equals(Character[].class))
       {
         Character[] characters = JPAEntityParser.toCharacterArray((String) entityPropertyValue);
-        method.invoke(entity, (Object)characters);
+        method.invoke(entity, (Object) characters);
+      }
+      else if (parameterType.equals(Character.class)) {
+        Character c = Character.valueOf(((String) entityPropertyValue).charAt(0));
+        method.invoke(entity, c);
       }
       else
         method.invoke(entity, entityPropertyValue);

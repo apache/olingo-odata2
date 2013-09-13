@@ -30,6 +30,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PostPersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,7 +43,7 @@ public class SalesOrderHeader {
 
   public SalesOrderHeader(final Calendar creationDate, final int buyerId, final String buyerName,
       final Address buyerAddress, final String currencyCode, final double netAmount,
-      final String deliveryStatus) {
+      final String deliveryStatus, final char[] shortText, final Character[] longText) {
     super();
     this.creationDate = creationDate;
     this.buyerId = buyerId;
@@ -50,6 +51,8 @@ public class SalesOrderHeader {
     this.buyerAddress = buyerAddress;
     this.currencyCode = currencyCode;
     this.deliveryStatus = deliveryStatus;
+    this.shortText = shortText;
+    this.longText = longText;
   }
 
   @Id
@@ -58,6 +61,23 @@ public class SalesOrderHeader {
 
   @Temporal(TemporalType.TIMESTAMP)
   private Calendar creationDate;
+  
+  @Column
+  private Character status;
+  
+  public Character getStatus() {
+    return status;
+  }
+
+  public void setStatus(Character status) {
+    this.status = status;
+  }
+
+  @Column(name = "SHORT_TEXT", length = 20)
+  private char[] shortText;
+
+  @Column(name = "LONG_TEXT", length = 40)
+  private Character[] longText;
 
   @Column(name = "BUYER_ID")
   private int buyerId;
@@ -104,10 +124,12 @@ public class SalesOrderHeader {
   }
 
   public void setCreationDate(final Calendar creationDate) {
-    if (creationDate == null) {
-      return;
+    long originalTime;
+    if (creationDate != null) {
+      originalTime = creationDate.getTime().getTime();
     }
-    long originalTime = creationDate.getTime().getTime();
+    else
+      originalTime = Calendar.getInstance(TimeZone.getDefault()).getTime().getTime();
     Date newDate = new Date(originalTime - TimeZone.getDefault().getOffset(originalTime));
     Calendar newCalendar = Calendar.getInstance();
     newCalendar.setTime(newDate);
@@ -185,4 +207,26 @@ public class SalesOrderHeader {
   public void setNotes(final List<Note> notes) {
     this.notes = notes;
   }
+
+  public char[] getShortText() {
+    return shortText;
+  }
+
+  public void setShortText(char[] shortText) {
+    this.shortText = shortText;
+  }
+
+  public Character[] getLongText() {
+    return longText;
+  }
+
+  public void setLongText(Character[] longText) {
+    this.longText = longText;
+  }
+
+  @PostPersist
+  public void defaultValues() {
+    if (this.creationDate == null) setCreationDate(this.creationDate);
+  }
+  
 }
