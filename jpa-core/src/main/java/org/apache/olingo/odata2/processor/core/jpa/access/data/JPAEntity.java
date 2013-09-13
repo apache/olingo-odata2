@@ -246,7 +246,19 @@ public class JPAEntity {
   protected void setProperty(final Method method, final Object entity, final Object entityPropertyValue) throws
       IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     if (entityPropertyValue != null) {
-      method.invoke(entity, entityPropertyValue);
+      Class<?> parameterType = method.getParameterTypes()[0];
+      if (parameterType.equals(char[].class))
+      {
+        char[] characters = ((String) entityPropertyValue).toCharArray();
+        method.invoke(entity, characters);
+      }
+      else if (parameterType.equals(Character[].class))
+      {
+        Character[] characters = JPAEntityParser.toCharacterArray((String) entityPropertyValue);
+        method.invoke(entity, (Object)characters);
+      }
+      else
+        method.invoke(entity, entityPropertyValue);
     }
   }
 

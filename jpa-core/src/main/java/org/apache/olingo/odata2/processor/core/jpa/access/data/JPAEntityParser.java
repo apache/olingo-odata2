@@ -93,14 +93,14 @@ public final class JPAEntityParser {
             method = propertyVal.getClass().getMethod(
                 namePart, (Class<?>[]) null);
             method.setAccessible(true);
-            propertyVal = method.invoke(propertyVal);
+            propertyVal = getProperty(method, propertyVal);
           }
           edmEntity.put(property.getName(), propertyVal);
         } else {
           method = jpaEntity.getClass().getMethod(methodName,
               (Class<?>[]) null);
           method.setAccessible(true);
-          propertyValue = method.invoke(jpaEntity);
+          propertyValue = getProperty(method, jpaEntity);
           key = property.getName();
           if (property.getType().getKind()
               .equals(EdmTypeKind.COMPLEX)) {
@@ -127,14 +127,6 @@ public final class JPAEntityParser {
             ODataJPARuntimeException.GENERAL.addContent(e
                 .getMessage()), e);
       } catch (IllegalArgumentException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
-      } catch (IllegalAccessException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
-      } catch (InvocationTargetException e) {
         throw ODataJPARuntimeException.throwException(
             ODataJPARuntimeException.GENERAL.addContent(e
                 .getMessage()), e);
@@ -187,9 +179,8 @@ public final class JPAEntityParser {
 
         if (method != null) {
           getters.get(key).setAccessible(true);
-          propertyValue = getters.get(key).invoke(jpaEntity);
+          propertyValue = getProperty(method, jpaEntity);
         }
-
         if (property.getType().getKind().equals(EdmTypeKind.COMPLEX)) {
           propertyValue = parse2EdmPropertyValueMap(propertyValue,
               (EdmStructuralType) property.getType());
@@ -209,7 +200,7 @@ public final class JPAEntityParser {
             method = propertyValue.getClass().getMethod(
                 namePart, (Class<?>[]) null);
             method.setAccessible(true);
-            propertyValue = method.invoke(propertyValue);
+            propertyValue = getProperty(method, jpaEntity);
           }
           edmEntity.put(key, propertyValue);
         }
@@ -227,14 +218,6 @@ public final class JPAEntityParser {
           .throwException(ODataJPARuntimeException.GENERAL
               .addContent(e.getMessage()), e);
     } catch (IllegalArgumentException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
-    } catch (IllegalAccessException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
-    } catch (InvocationTargetException e) {
       throw ODataJPARuntimeException
           .throwException(ODataJPARuntimeException.GENERAL
               .addContent(e.getMessage()), e);
@@ -260,18 +243,10 @@ public final class JPAEntityParser {
           Method getterMethod = jpaEntity.getClass()
               .getDeclaredMethod(methodName, (Class<?>[]) null);
           getterMethod.setAccessible(true);
-          result = getterMethod.invoke(jpaEntity);
+          result = getProperty(getterMethod, jpaEntity);
           navigationMap.put(navigationProperty.getName(), result);
         }
       } catch (IllegalArgumentException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
-      } catch (IllegalAccessException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
-      } catch (InvocationTargetException e) {
         throw ODataJPARuntimeException.throwException(
             ODataJPARuntimeException.GENERAL.addContent(e
                 .getMessage()), e);
@@ -363,6 +338,49 @@ public final class JPAEntityParser {
           embeddableKey);
     }
     return accessModifierMap;
+  }
+
+  public static Object getProperty(Method method, Object entity) throws ODataJPARuntimeException {
+    Object propertyValue = null;
+    try {
+      Class<?> returnType = method.getReturnType();
+
+      if (returnType.equals(char[].class))
+        propertyValue = (String) String.valueOf((char[]) method.invoke(entity));
+      else if (returnType.equals(Character[].class))
+        propertyValue = (String) toString((Character[]) method.invoke(entity));
+      else
+        propertyValue = method.invoke(entity);
+    } catch (IllegalAccessException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (IllegalArgumentException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (InvocationTargetException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    }
+    return propertyValue;
+  }
+
+  public static String toString(Character[] input) {
+    if (input == null) return null;
+
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < input.length; i++)
+      builder.append(input[i].charValue());
+
+    return builder.toString();
+
+  }
+
+  public static Character[] toCharacterArray(String input) {
+    if (input == null) return null;
+
+    Character[] characters = new Character[input.length()];
+    char[] chars = ((String) input).toCharArray();
+    for (int i = 0; i < input.length(); i++)
+      characters[i] = new Character(chars[i]);
+
+    return characters;
   }
 
   public static String getAccessModifierName(final String propertyName, final EdmMapping mapping, final String accessModifier)
