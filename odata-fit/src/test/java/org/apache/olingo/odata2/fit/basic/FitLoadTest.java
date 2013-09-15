@@ -27,11 +27,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
+import javax.ws.rs.core.HttpHeaders;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.junit.Test;
-
+import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
@@ -40,6 +41,7 @@ import org.apache.olingo.odata2.api.processor.part.MetadataProcessor;
 import org.apache.olingo.odata2.api.processor.part.ServiceDocumentProcessor;
 import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
+import org.junit.Test;
 
 /**
  *  
@@ -76,8 +78,10 @@ public class FitLoadTest extends AbstractBasicTest {
     for (int i = 0; i < LOOP_COUNT; i++) {
       HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
       connection.setRequestMethod("GET");
+      connection.setRequestProperty(HttpHeaders.ACCEPT, HttpContentType.WILDCARD);
       connection.connect();
       assertEquals(HttpStatusCodes.OK.getStatusCode(), connection.getResponseCode());
+      assertEquals(HttpContentType.APPLICATION_XML_UTF8, connection.getContentType());
     }
   }
 

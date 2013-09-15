@@ -971,6 +971,27 @@ public class ContentTypeTest extends BaseTest {
     assertTrue(ContentType.create("*/*").hasWildcard());
   }
 
+  @Test
+  public void testQParameterSort() {
+    validateSort(Arrays.asList("a1/b1;q=0.2", "a2/b2;q=0.5", "a3/b3;q=0.333"), 1,2,0);
+    validateSort(Arrays.asList("a1/b1;q=0", "a2/b2;q=0.5", "a3/b3;q=0.333"), 1,2,0);
+    validateSort(Arrays.asList("a1/b1;q=1", "a2/b2;q=0.5", "a3/b3;q=0.333"), 0,1,2);
+    validateSort(Arrays.asList("a1/b1;q=1", "a2/b2;q=0.5", "a3/b3;q=1.333"), 0,1,2);
+    validateSort(Arrays.asList("a1/b1;q=0.2", "a2/b2;q=0.9", "a3/b3"), 2,1,0);
+  }
+
+  private void validateSort(List<String> toSort, int ... expectedSequence) {
+    List<String> expected = new ArrayList<String>();
+    for (int i : expectedSequence) {
+      expected.add(toSort.get(i));
+    }
+
+    ContentType.sortForQParameter(toSort);
+    for (int i = 0; i < expectedSequence.length; i++) {
+      assertEquals(expected.get(i), toSort.get(i));
+    }
+  }
+  
   private Map<String, String> addParameters(final String... content) {
     Map<String, String> map = new HashMap<String, String>();
     for (int i = 0; i < content.length - 1; i += 2) {

@@ -27,12 +27,12 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -128,29 +128,22 @@ public class RestUtil {
   }
 
   public static List<String> extractAcceptHeaders(final SubLocatorParameter param) throws ODataBadRequestException {
-    // first validate all accept header content types are 'parseable' and valif from our point of view
     List<String> acceptHeaders = param.getHttpHeaders().getRequestHeader(HttpHeaders.ACCEPT);
 
+    List<String> toSort = new LinkedList<String>();
     if (acceptHeaders != null) {
       for (String acceptHeader : acceptHeaders) {
         String[] contentTypes = acceptHeader.split(",");
         for (String contentType : contentTypes) {
-          if (!ContentType.isParseable(contentType.trim())) {
-            throw new ODataBadRequestException(ODataBadRequestException.INVALID_HEADER.addContent(HttpHeaders.ACCEPT, acceptHeader));
-          }
+          toSort.add(contentType.trim());
         }
       }
     }
 
-    // then get sorted list of acceptable media type from jax-rs
-    final List<String> mediaTypes = new ArrayList<String>();
-    final List<MediaType> acceptableMediaTypes = param.getHttpHeaders().getAcceptableMediaTypes();
-    for (final MediaType mediaType : acceptableMediaTypes) {
-      mediaTypes.add(mediaType.toString());
-    }
-
-    return mediaTypes;
+    ContentType.sortForQParameter(toSort);
+    return toSort;
   }
+  
 
   public static Map<String, String> extractRequestHeaders(final javax.ws.rs.core.HttpHeaders httpHeaders) {
     final MultivaluedMap<String, String> headers = httpHeaders.getRequestHeaders();

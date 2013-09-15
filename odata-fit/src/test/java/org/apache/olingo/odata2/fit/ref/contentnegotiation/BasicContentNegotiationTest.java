@@ -72,8 +72,6 @@ public class BasicContentNegotiationTest extends AbstractContentNegotiationTest 
     final String parameter = ";odata=verbose";
     performRequestAndValidateResponseForAcceptHeader("Employees('1')", APPLICATION_JSON + parameter, APPLICATION_JSON + parameter);
     performRequestAndValidateResponseForAcceptHeader("Employees('1')", APPLICATION_JSON_UTF8 + parameter, APPLICATION_JSON_UTF8 + parameter);
-//    performRequestAndValidateResponseForAcceptHeader("Rooms('1')", APPLICATION_XML + parameter, APPLICATION_XML_UTF8 + parameter);
-//    performRequestAndValidateResponseForAcceptHeader("Employees('1')", APPLICATION_XML_UTF8 + parameter, APPLICATION_XML_UTF8 + parameter);
     performRequestAndValidateResponseForAcceptHeader("Employees('1')/$count", APPLICATION_XML_UTF8 + parameter, TEXT_PLAIN_UTF8);
     performRequestAndValidateResponseForAcceptHeader("Employees('1')/$count", APPLICATION_JSON + parameter, TEXT_PLAIN_UTF8 );
     performRequestAndValidateResponseForAcceptHeader("Buildings('1')/$count", APPLICATION_XML_UTF8 + parameter, TEXT_PLAIN_UTF8);
@@ -113,6 +111,17 @@ public class BasicContentNegotiationTest extends AbstractContentNegotiationTest 
     performRequestAndValidateResponseForAcceptHeader("Buildings/$count", APPLICATION_JSON + parameter, TEXT_PLAIN_UTF8);
   }
 
+  @Test
+  public void acceptHeaderToContentTypeIgnoredAcceptHeadersValue() throws Exception {
+    final String expectedImageContentType = "image/jpeg";
+    performRequestAndValidateResponseForAcceptHeader("Employees('1')/$value", APPLICATION_XML_UTF8, expectedImageContentType);
+    performRequestAndValidateResponseForAcceptHeader("Employees('1')/$value", APPLICATION_JSON, expectedImageContentType);
+
+    final String expectedTextContentType = "text/plain;charset=utf-8";
+    performRequestAndValidateResponseForAcceptHeader("Employees('1')/Age/$value", APPLICATION_XML_UTF8, expectedTextContentType);
+    performRequestAndValidateResponseForAcceptHeader("Employees('1')/Age/$value", APPLICATION_JSON, expectedTextContentType);
+  }
+  
   @Test
   public void acceptHeaderToContentTypeNotAcceptable() throws Exception {
     final String parameterUnknown = ";someUnknownParameter=withAValue";

@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 /**
  * Internally used {@link ContentType} for OData library.
@@ -86,9 +87,20 @@ public class ContentType {
     KNOWN_MIME_TYPES.add("multipart");
     KNOWN_MIME_TYPES.add("text");
   }
+  
+  private static final Comparator<String> Q_PARAMETER_COMPARATOR = new Comparator<String>() {
+    @Override
+    public int compare(String o1, String o2) {
+      Float f1 = parseQParameterValue(o1);
+      Float f2 = parseQParameterValue(o2);
+      return f2.compareTo(f1);
+    }
+  };
+
 
   private static final char WHITESPACE_CHAR = ' ';
   private static final String PARAMETER_SEPARATOR = ";";
+  private static final String PARAMETER_KEY_VALUE_SEPARATOR = "=";
   private static final String TYPE_SUBTYPE_SEPARATOR = "/";
   private static final String MEDIA_TYPE_WILDCARD = "*";
   private static final String VERBOSE = "verbose";
@@ -98,6 +110,8 @@ public class ContentType {
   public static final String PARAMETER_Q = "q";
   public static final String PARAMETER_TYPE = "type";
   public static final String CHARSET_UTF_8 = "utf-8";
+
+  private static final Pattern Q_PARAMETER_VALUE_PATTERN = Pattern.compile("1|0|1\\.0{1,3}|0\\.\\d{1,3}");
 
   public static final ContentType WILDCARD = new ContentType(MEDIA_TYPE_WILDCARD, MEDIA_TYPE_WILDCARD);
 
@@ -184,6 +198,20 @@ public class ContentType {
    * @return <code>true</code> if format is parseable otherwise <code>false</code>
    */
   public static boolean isParseable(final String format) {
+    try {
+      return ContentType.create(format) != null;
+    } catch (IllegalArgumentException e) {
+      return false;
+    }
+  }
+
+  /**
+   * Validates if given <code>format</code> is parseable and can be used as input for
+   * {@link #create(String)} method.
+   * @param format to be validated string
+   * @return <code>true</code> if format is parseable otherwise <code>false</code>
+   */
+  public static boolean isParseableAsCustom(final String format) {
     try {
       return ContentType.create(format) != null;
     } catch (IllegalArgumentException e) {
@@ -364,6 +392,19 @@ public class ContentType {
   }
 
   /**
+   * Sort given list (which must contains content type formated string) for their {@value #PARAMETER_Q} value
+   * as defined in <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1">RFC 2616 section 4.1</a> and 
+   * <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.9">RFC 2616 Section 3.9</a>.
+   * 
+   * <b>Attention:</b> For invalid values a {@value #PARAMETER_Q} value from <code>-1</code> is used for sorting.
+   * 
+   * @param toSort list which is sorted and hence re-arranged
+   */
+  public static void sortForQParameter(List<String> toSort) {
+    Collections.sort(toSort, ContentType.Q_PARAMETER_COMPARATOR);
+  }
+  
+  /**
    * Map combination of type/subtype to corresponding {@link ODataFormat}.
    * 
    * @param type type which is used for mapping
@@ -406,6 +447,7 @@ public class ContentType {
   /**
    * Valid input are <code>;</code> separated <code>key=value</code> pairs 
    * without spaces between key and value.
+   * <b>Attention:</b> <code>q</code> parameter is validated but not added to result map
    * 
    * <p>
    * See RFC 2616:
@@ -423,18 +465,60 @@ public class ContentType {
     if (parameters != null) {
       String[] splittedParameters = parameters.split(PARAMETER_SEPARATOR);
       for (String parameter : splittedParameters) {
-        String[] keyValue = parameter.split("=");
+        String[] keyValue = parameter.split(PARAMETER_KEY_VALUE_SEPARATOR);
         String key = keyValue[0].trim().toLowerCase(Locale.ENGLISH);
-        if (isParameterAllowed(key)) {
-          String value = keyValue.length > 1 ? keyValue[1] : null;
-          if (value != null && isLws(value.charAt(0))) {
-            throw new IllegalArgumentException("Value of parameter '" + key + "' starts with a LWS ('" + parameters + "').");
+        String value = keyValue.length > 1 ? keyValue[1] : null;
+        if (value != null && isLws(value.charAt(0))) {
+          throw new IllegalArgumentException("Value of parameter '" + key + "' starts with a LWS ('" + parameters + "').");
+        }
+        if(PARAMETER_Q.equals(key.toLowerCase(Locale.US))) {
+          // q parameter is only validated but not added
+          if(!Q_PARAMETER_VALUE_PATTERN.matcher(value).matches()) {
+            throw new IllegalArgumentException("Value of 'q' parameter is not valid (q='" + value + "').");            
           }
+        } else {
           parameterMap.put(key, value);
         }
       }
     }
     return parameterMap;
+  }
+
+  /**
+   * Parse value of {@value #PARAMETER_Q} <code>parameter</code> out of content type/parameters.
+   * If no {@value #PARAMETER_Q} <code>parameter</code> is in <code>content type/parameters</code> parameter found
+   * <code>1</code> is returned.
+   * If {@value #PARAMETER_Q} <code>parameter</code> is invalid <code>-1</code> is returned.
+   * 
+   * @param contentType parameter which is parsed for {@value #PARAMETER_Q} <code>parameter</code> value
+   * @return value of {@value #PARAMETER_Q} <code>parameter</code> or <code>1</code> or <code>-1</code>
+   */
+  private static Float parseQParameterValue(final String contentType) {
+    if (contentType != null) {
+      String[] splittedParameters = contentType.split(PARAMETER_SEPARATOR);
+      for (String parameter : splittedParameters) {
+        String[] keyValue = parameter.split(PARAMETER_KEY_VALUE_SEPARATOR);
+        String key = keyValue[0].trim().toLowerCase(Locale.ENGLISH);
+        if(PARAMETER_Q.equalsIgnoreCase(key)) {
+          String value = keyValue.length > 1 ? keyValue[1] : null;
+          if (Q_PARAMETER_VALUE_PATTERN.matcher(value).matches()) {
+            return Float.valueOf(value);
+          }
+          return Float.valueOf(-1);
+        }
+      }
+    }
+    return Float.valueOf(1);
+  }
+
+  /**
+   * Check if parameter with key value is a allowed parameter.
+   * 
+   * @param key
+   * @return
+   */
+  private static boolean isParameterAllowed(final String key) {
+    return key != null && !PARAMETER_Q.equals(key.toLowerCase(Locale.US));
   }
 
   /** 
@@ -455,9 +539,6 @@ public class ContentType {
     }
   }
 
-  private static boolean isParameterAllowed(final String key) {
-    return key != null && !PARAMETER_Q.equals(key.toLowerCase(Locale.US));
-  }
 
   /**
    * Ensure that charset parameter ({@link #PARAMETER_CHARSET}) is set on returned content type

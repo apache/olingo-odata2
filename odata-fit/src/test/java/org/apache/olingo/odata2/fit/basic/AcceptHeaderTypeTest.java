@@ -31,8 +31,6 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.exception.ODataException;
@@ -42,6 +40,7 @@ import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
+import org.junit.Test;
 
 /**
  *  
@@ -128,8 +127,13 @@ public class AcceptHeaderTypeTest extends AbstractBasicTest {
   }
 
   @Test
+  public void illegalQParameterInContentType() throws Exception {
+    testGetRequest("Rooms('1')", "application/json;q=2", HttpStatusCodes.BAD_REQUEST, "application/xml");
+  }
+
+  @Test
   public void illegalSpaceInContentType() throws Exception {
-    testGetRequest("Rooms('1')", "application    /json", HttpStatusCodes.BAD_REQUEST, "application/json");
+    testGetRequest("Rooms('1')", "application    /json", HttpStatusCodes.BAD_REQUEST, "application/xml");
   }
 
   @Test

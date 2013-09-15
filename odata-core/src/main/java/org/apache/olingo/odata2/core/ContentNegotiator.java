@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +64,7 @@ public class ContentNegotiator {
       if(uriInfo.getUriType() == UriType.URI5 || uriInfo.getUriType() == UriType.URI4) {
         return ContentType.TEXT_PLAIN_CS_UTF_8;        
       }
+      return doContentNegotiationForAcceptHeader(Arrays.asList("*/*"), ContentType.create(supportedContentTypes));
     } 
     
     if (uriInfo.getFormat() == null) {
