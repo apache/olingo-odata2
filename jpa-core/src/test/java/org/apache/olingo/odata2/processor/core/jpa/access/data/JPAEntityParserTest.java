@@ -16,7 +16,7 @@
  *        specific language governing permissions and limitations
  *        under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.processor.core.jpa;
+package org.apache.olingo.odata2.processor.core.jpa.access.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

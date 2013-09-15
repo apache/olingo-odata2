@@ -115,21 +115,13 @@ public final class JPAEntityParser {
           edmEntity.put(key, propertyValue);
         }
       } catch (EdmException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       } catch (SecurityException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       } catch (NoSuchMethodException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       } catch (IllegalArgumentException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       }
     }
 
@@ -206,21 +198,13 @@ public final class JPAEntityParser {
         }
       }
     } catch (EdmException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (SecurityException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (NoSuchMethodException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (IllegalArgumentException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     }
     return edmEntity;
   }
@@ -247,21 +231,13 @@ public final class JPAEntityParser {
           navigationMap.put(navigationProperty.getName(), result);
         }
       } catch (IllegalArgumentException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       } catch (EdmException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       } catch (SecurityException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       } catch (NoSuchMethodException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.GENERAL.addContent(e
-                .getMessage()), e);
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       }
     }
     return navigationMap;
@@ -277,13 +253,9 @@ public final class JPAEntityParser {
       Class<?> parameterType = method.getReturnType();
       method = jpaType.getMethod(methodName, new Class<?>[] { parameterType });
     } catch (NoSuchMethodException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (SecurityException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     }
 
     return method;
@@ -320,17 +292,11 @@ public final class JPAEntityParser {
         }
       }
     } catch (NoSuchMethodException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (SecurityException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (EdmException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     }
 
     if (!embeddableKey.isEmpty()) {
@@ -346,16 +312,22 @@ public final class JPAEntityParser {
       Class<?> returnType = method.getReturnType();
 
       if (returnType.equals(char[].class))
-        propertyValue = (String) String.valueOf((char[]) method.invoke(entity));
+      {
+        char[] ch = (char[]) method.invoke(entity);
+        if (ch != null)
+          propertyValue = (String) String.valueOf((char[]) method.invoke(entity));
+      }
       else if (returnType.equals(Character[].class))
         propertyValue = (String) toString((Character[]) method.invoke(entity));
       else if (returnType.equals(char.class)) {
         char c = (Character) method.invoke(entity);
-        propertyValue = (String) String.valueOf(c);
+        if (c != '\u0000')
+          propertyValue = (String) String.valueOf(c);
       }
       else if (returnType.equals(Character.class)) {
         Character c = (Character) method.invoke(entity);
-        propertyValue = toString(new Character[] { c });
+        if (c != null)
+          propertyValue = toString(new Character[] { c });
       }
       else
         propertyValue = method.invoke(entity);
@@ -373,9 +345,10 @@ public final class JPAEntityParser {
     if (input == null) return null;
 
     StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < input.length; i++)
+    for (int i = 0; i < input.length; i++) {
+      if (input[i] == null) continue;
       builder.append(input[i].charValue());
-
+    }
     return builder.toString();
 
   }
@@ -460,17 +433,11 @@ public final class JPAEntityParser {
           params);
 
     } catch (NoSuchMethodException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (SecurityException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (EdmException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     }
 
   }
