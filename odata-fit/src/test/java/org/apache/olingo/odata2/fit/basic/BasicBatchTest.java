@@ -120,11 +120,35 @@ public class BasicBatchTest extends AbstractBasicTest {
     assertTrue(response.getEntity().getContentType().getValue().matches(REG_EX));
     assertNotNull(response.getEntity().getContent());
 
-    String body = StringHelper.inputStreamToString(response.getEntity().getContent());
+    String body = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
     assertTrue(body.contains("Content-Id: mimeHeaderContentId1"));
     assertTrue(body.contains("Content-Id: requestHeaderContentId1"));
     assertTrue(body.contains("Content-Id: mimeHeaderContentId2"));
     assertTrue(body.contains("Content-Id: requestHeaderContentId2"));
+  }
+
+  @Test
+  public void testBatchInvalidContentTypeForPut() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=batch_98c1-8b13-36bb");
+    String replacedEntity = REQUEST_PAYLOAD.replace("Content-Type: application/json;odata=verbose" + LF, "");
+    HttpEntity entity = new StringEntity(replacedEntity);
+    post.setEntity(entity);
+    HttpResponse response = getHttpClient().execute(post);
+
+    assertNotNull(response);
+    assertEquals(202, response.getStatusLine().getStatusCode());
+    assertEquals("HTTP/1.1", response.getProtocolVersion().toString());
+    assertTrue(response.containsHeader("Content-Length"));
+    assertTrue(response.containsHeader("Content-Type"));
+    assertTrue(response.containsHeader("DataServiceVersion"));
+    assertTrue(response.getEntity().getContentType().getValue().matches(REG_EX));
+    assertNotNull(response.getEntity().getContent());
+
+    String body = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId1"));
+    assertTrue(body.contains("HTTP/1.1 415 Unsupported Media Type"));
   }
 
   static class TestSingleProc extends ODataSingleProcessor {

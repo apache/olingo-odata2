@@ -35,7 +35,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
-
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
@@ -179,6 +178,16 @@ public class AbstractRefTest extends AbstractFitTest {
       final String requestBody, final String requestContentType,
       final HttpStatusCodes expectedStatusCode) throws Exception {
     final HttpResponse response = callUri(ODataHttpMethod.PUT, uri, null, null, requestBody, requestContentType, expectedStatusCode);
+    if (expectedStatusCode != HttpStatusCodes.NO_CONTENT) {
+      response.getEntity().getContent().close();
+    }
+  }
+
+  protected void putUri(final String uri, final String acceptHeader,
+      final String requestBody, final String requestContentType,
+      final HttpStatusCodes expectedStatusCode) throws Exception {
+    final HttpResponse response = callUri(ODataHttpMethod.PUT, uri, 
+        org.apache.olingo.odata2.api.commons.HttpHeaders.ACCEPT, acceptHeader, requestBody, requestContentType, expectedStatusCode);
     if (expectedStatusCode != HttpStatusCodes.NO_CONTENT) {
       response.getEntity().getContent().close();
     }

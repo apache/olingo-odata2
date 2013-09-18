@@ -23,15 +23,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+
+import junit.framework.Assert;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.junit.Test;
 
 /**
  * 
@@ -74,14 +78,60 @@ public class BatchTest extends AbstractRefTest {
   }
 
   @Test
+  public void testGPPG() throws Exception {
+    HttpResponse response = execute("/batchWithContentIdPart2.batch", "batch_cf90-46e5-1246");
+    String responseBody = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
+
+    assertContentContainValues(responseBody, 
+      "{\"d\":{\"EmployeeName\":\"Frederic Fall\"}}",
+      "HTTP/1.1 201 Created",
+      "Content-Id: employee",
+      "Content-Type: application/json;odata=verbose",
+      "\"EmployeeId\":\"7\",\"EmployeeName\":\"Employee 7\",",
+      "HTTP/1.1 204 No Content",
+      "Content-Id: AAA",
+      "{\"d\":{\"EmployeeName\":\"Robert Fall\"}}"
+      );
+    
+    // validate that response for PUT does not contains a Content Type
+    int indexNoContent = responseBody.indexOf("HTTP/1.1 204 No Content");
+    int indexBoundary = responseBody.indexOf("--changeset_", indexNoContent);
+    
+    int indexContentType = responseBody.indexOf("Content-Type:", indexNoContent);
+    Assert.assertTrue(indexBoundary < indexContentType);
+  }
+  
+  @Test
   public void testErrorBatch() throws Exception {
     String responseBody = execute("/error.batch");
     assertTrue(responseBody.contains("HTTP/1.1 404 Not Found"));
   }
 
+  /**
+   * Validate that given <code>content</code> contains all <code>values</code> in the given order. 
+   * 
+   * @param content
+   * @param containingValues
+   */
+  private void assertContentContainValues(String content, String ... containingValues) {
+    int index = -1;
+    for (String value : containingValues) {
+      int newIndex = content.indexOf(value, index);
+      Assert.assertTrue("Value '" + value + "' not found after index position '" + index + "'.", newIndex >= 0);
+      index = newIndex;
+    }
+  }
+
   private String execute(final String batchResource) throws Exception {
+    HttpResponse response = execute(batchResource, "batch_123");
+
+    String responseBody = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
+    return responseBody;
+  }
+
+  private HttpResponse execute(final String batchResource, String boundary) throws IOException, UnsupportedEncodingException, ClientProtocolException {
     final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
-    post.setHeader("Content-Type", "multipart/mixed;boundary=batch_123");
+    post.setHeader("Content-Type", "multipart/mixed;boundary=" + boundary);
 
     String body = StringHelper.inputStreamToString(this.getClass().getResourceAsStream(batchResource), true);
     HttpEntity entity = new StringEntity(body);
@@ -90,9 +140,6 @@ public class BatchTest extends AbstractRefTest {
 
     assertNotNull(response);
     assertEquals(202, response.getStatusLine().getStatusCode());
-
-    String responseBody = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
-    return responseBody;
+    return response;
   }
-
 }

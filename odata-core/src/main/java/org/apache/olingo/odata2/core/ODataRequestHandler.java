@@ -116,17 +116,18 @@ public class ODataRequestHandler {
 
 
       ODataResponseBuilder extendedResponse = ODataResponse.fromResponse(odataResponse);
+      final UriType uriType = uriInfo.getUriType();
+      final String location = (method == ODataHttpMethod.POST && (uriType == UriType.URI1 || uriType == UriType.URI6B)) ? odataResponse.getIdLiteral() : null;
+      final HttpStatusCodes s = getStatusCode(odataResponse, method, uriType);
+      extendedResponse = extendedResponse.idLiteral(location).status(s);
+      
       if (!odataResponse.containsHeader(ODataHttpHeaders.DATASERVICEVERSION)) {
         extendedResponse = extendedResponse.header(ODataHttpHeaders.DATASERVICEVERSION, serverDataServiceVersion);
       }
-      if(!odataResponse.containsHeader(HttpHeaders.CONTENT_TYPE)) {
+      if(!HttpStatusCodes.NO_CONTENT.equals(s) && !odataResponse.containsHeader(HttpHeaders.CONTENT_TYPE)) {
         extendedResponse.header(HttpHeaders.CONTENT_TYPE, acceptContentType.toContentTypeString());
       }
       
-      final UriType uriType = uriInfo.getUriType();
-      final String location = (method == ODataHttpMethod.POST && (uriType == UriType.URI1 || uriType == UriType.URI6B)) ? odataResponse.getIdLiteral() : null;
-      final HttpStatusCodes s = odataResponse.getStatus() == null ? method == ODataHttpMethod.POST ? uriType == UriType.URI9 ? HttpStatusCodes.OK : uriType == UriType.URI7B ? HttpStatusCodes.NO_CONTENT : HttpStatusCodes.CREATED : method == ODataHttpMethod.PUT || method == ODataHttpMethod.PATCH || method == ODataHttpMethod.MERGE || method == ODataHttpMethod.DELETE ? HttpStatusCodes.NO_CONTENT : HttpStatusCodes.OK : odataResponse.getStatus();
-      extendedResponse = extendedResponse.idLiteral(location).status(s);
       
       odataResponse = extendedResponse.build();
     } catch (final Exception e) {
@@ -139,6 +140,25 @@ public class ODataRequestHandler {
     return debugValue == null ? odataResponse : new ODataDebugResponseWrapper(context, odataResponse, uriInfo, exception, debugValue).wrapResponse();
   }
 
+  private HttpStatusCodes getStatusCode(ODataResponse odataResponse, final ODataHttpMethod method, final UriType uriType) {
+    if (odataResponse.getStatus() == null) {
+      if (method == ODataHttpMethod.POST) {
+        if (uriType == UriType.URI9) {
+          return HttpStatusCodes.OK;
+        } else if (uriType == UriType.URI7B) {
+          return HttpStatusCodes.NO_CONTENT;
+        }
+        return HttpStatusCodes.CREATED;
+      } else if (method == ODataHttpMethod.PUT
+          || method == ODataHttpMethod.PATCH
+          || method == ODataHttpMethod.MERGE
+          || method == ODataHttpMethod.DELETE) {
+        return HttpStatusCodes.NO_CONTENT;
+      }
+      return HttpStatusCodes.OK;
+    }
+    return odataResponse.getStatus();
+  }
   
   private String getServerDataServiceVersion() throws ODataException {
     return service.getVersion() == null ? ODataServiceVersion.V20 : service.getVersion();

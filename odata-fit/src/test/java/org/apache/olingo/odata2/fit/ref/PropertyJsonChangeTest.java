@@ -21,10 +21,9 @@ package org.apache.olingo.odata2.fit.ref;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.junit.Test;
 
 /**
  * Tests employing the reference scenario changing properties in JSON format.
@@ -33,13 +32,42 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 public class PropertyJsonChangeTest extends AbstractRefTest {
 
   @Test
-  public void simpleProperty() throws Exception {
+  public void simplePropertyWithoutAcceptHeader() throws Exception {
     final String url = "Employees('2')/Age";
     putUri(url, "{\"Age\":17}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NO_CONTENT);
     assertEquals("{\"d\":{\"Age\":17}}", getBody(callUri(url + "?$format=json")));
-
     putUri(url, "{\"Age\":\"17\"}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.BAD_REQUEST);
+
+    final String urlForName = "Employees('2')/EmployeeName";
+    putUri(urlForName, "{\"EmployeeName\":\"NewName\"}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NO_CONTENT);
+    assertEquals("{\"d\":{\"EmployeeName\":\"NewName\"}}", getBody(callUri(urlForName + "?$format=json")));
+    putUri(urlForName, "{\"EmployeeName\":NewName}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.BAD_REQUEST);
   }
+
+  @Test
+  public void simplePropertyWithAcceptHeader() throws Exception {
+    final String url = "Employees('2')/Age";
+    putUri(url, HttpContentType.WILDCARD, "{\"Age\":17}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NO_CONTENT);
+    assertEquals("{\"d\":{\"Age\":17}}", getBody(callUri(url + "?$format=json")));
+    putUri(url, "{\"Age\":\"17\"}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.BAD_REQUEST);
+
+    final String urlForName = "Employees('2')/EmployeeName";
+    putUri(urlForName, HttpContentType.APPLICATION_JSON, "{\"EmployeeName\":\"NewName\"}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NO_CONTENT);
+    assertEquals("{\"d\":{\"EmployeeName\":\"NewName\"}}", getBody(callUri(urlForName + "?$format=json")));
+    putUri(urlForName, "{\"EmployeeName\":NewName}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.BAD_REQUEST);
+  }
+
+  @Test
+  public void simplePropertyWithInvalidAcceptHeader() throws Exception {
+    final String url = "Employees('2')/Age";
+    putUri(url, "", "{\"Age\":17}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NOT_ACCEPTABLE);
+    putUri(url, null, "{\"Age\":17}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NOT_ACCEPTABLE);
+    
+    final String urlForName = "Employees('2')/EmployeeName";
+    putUri(urlForName, "", "{\"EmployeeName\":\"NewName\"}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NOT_ACCEPTABLE);
+    putUri(urlForName, null, "{\"EmployeeName\":\"NewName\"}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NOT_ACCEPTABLE);
+  }
+
 
   @Test
   public void complexProperty() throws Exception {
