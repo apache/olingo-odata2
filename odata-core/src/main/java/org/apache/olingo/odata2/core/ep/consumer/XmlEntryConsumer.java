@@ -65,7 +65,6 @@ import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
  */
 public class XmlEntryConsumer {
 
-  private Map<String, String> foundPrefix2NamespaceUri;
   private ODataEntryImpl readEntryResult;
   private Map<String, Object> properties;
   private MediaMetadataImpl mediaMetadata;
@@ -109,11 +108,9 @@ public class XmlEntryConsumer {
     mediaMetadata = new MediaMetadataImpl();
     entryMetadata = new EntryMetadataImpl();
     expandSelectTree = new ExpandSelectTreeNodeImpl();
-    foundPrefix2NamespaceUri = new HashMap<String, String>();
 
     readEntryResult = new ODataEntryImpl(properties, mediaMetadata, entryMetadata, expandSelectTree);
     typeMappings = EntityTypeMapping.create(readProperties.getTypeMappings());
-    foundPrefix2NamespaceUri.putAll(readProperties.getValidatedPrefixNamespaceUris());
   }
 
   private void handleStartedTag(final XMLStreamReader reader, final EntityInfoAggregator eia, final EntityProviderReadProperties readProperties)
@@ -205,30 +202,8 @@ public class XmlEntryConsumer {
   private void readEntry(final XMLStreamReader reader) throws EntityProviderException, XMLStreamException {
     reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_ENTRY);
 
-    extractNamespacesFromTag(reader);
     final String etag = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, FormatXml.M_ETAG);
     entryMetadata.setEtag(etag);
-  }
-
-  private void extractNamespacesFromTag(final XMLStreamReader reader) throws EntityProviderException {
-    // collect namespaces
-    int namespaceCount = reader.getNamespaceCount();
-    for (int i = 0; i < namespaceCount; i++) {
-      String namespacePrefix = reader.getNamespacePrefix(i);
-      String namespaceUri = reader.getNamespaceURI(i);
-
-      foundPrefix2NamespaceUri.put(namespacePrefix, namespaceUri);
-    }
-  }
-
-  private void checkAllMandatoryNamespacesAvailable() throws EntityProviderException {
-    if (!foundPrefix2NamespaceUri.containsValue(Edm.NAMESPACE_D_2007_08)) {
-      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_D_2007_08));
-    } else if (!foundPrefix2NamespaceUri.containsValue(Edm.NAMESPACE_M_2007_08)) {
-      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_M_2007_08));
-    } else if (!foundPrefix2NamespaceUri.containsValue(Edm.NAMESPACE_ATOM_2005)) {
-      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_ATOM_2005));
-    }
   }
 
   /**
@@ -431,7 +406,7 @@ public class XmlEntryConsumer {
   private EntityProviderReadProperties createInlineProperties(final EntityProviderReadProperties readProperties, final EdmNavigationProperty navigationProperty) throws EntityProviderException {
     final OnReadInlineContent callback = readProperties.getCallback();
 
-    EntityProviderReadProperties currentReadProperties = EntityProviderReadProperties.initFrom(readProperties).addValidatedPrefixes(foundPrefix2NamespaceUri).build();
+    EntityProviderReadProperties currentReadProperties = EntityProviderReadProperties.initFrom(readProperties).build();
     if (callback == null) {
       return currentReadProperties;
     } else {
@@ -528,10 +503,6 @@ public class XmlEntryConsumer {
   private void readContent(final XMLStreamReader reader, final EntityInfoAggregator eia) throws EntityProviderException, XMLStreamException, EdmException {
     reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_CONTENT);
 
-    extractNamespacesFromTag(reader);
-
-    checkAllMandatoryNamespacesAvailable();
-
     final String contentType = reader.getAttributeValue(null, FormatXml.ATOM_TYPE);
     final String sourceLink = reader.getAttributeValue(null, FormatXml.ATOM_SRC);
 
@@ -562,7 +533,6 @@ public class XmlEntryConsumer {
 
   private void readProperties(final XMLStreamReader reader, final EntityInfoAggregator entitySet) throws XMLStreamException, EdmException, EntityProviderException {
     // validate namespace
-    checkAllMandatoryNamespacesAvailable();
     reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_M_2007_08, FormatXml.M_PROPERTIES);
     if (entitySet.getEntityType().hasStream()) {
       // external properties

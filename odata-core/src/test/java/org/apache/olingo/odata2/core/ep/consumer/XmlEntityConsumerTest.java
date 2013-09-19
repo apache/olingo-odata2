@@ -100,7 +100,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
           "    </d:Location>" +
           "    <d:Age>52</d:Age>" +
           "    <d:EntryDate>1999-01-01T00:00:00</d:EntryDate>" +
-          "    <d:ImageUrl>/male_1_WinterW.jpg</d:ImageUrl>" +
+          "    <d:ImageUrl>/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg</d:ImageUrl>" +
           "  </m:properties>" +
           "</entry>";
 
@@ -708,7 +708,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   }
 
   /**
-   * Reads an inline Room at an Employee with specially formatted XML (see issue 92).
+   * Reads an inline Room at an Employee with specially formatted XML (see issue ODATAFORSAP-92).
    */
   @Test
   public void readWithInlineContentEmployeeRoomEntrySpecialXml() throws Exception {
@@ -736,7 +736,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
   /**
    * Reads an employee with inlined but <code>NULL</code> room navigation property
-   * (which has {@link org.apache.olingo.odata2.api.edm.EdmMultiplicity#ONE EdmMultiplicity#ONE}).
+   * (which has {@link com.sap.core.odata.api.edm.EdmMultiplicity#ONE EdmMultiplicity#ONE}).
    */
   @Test
   public void readWithInlineContentEmployeeNullRoomEntry() throws Exception {
@@ -759,7 +759,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
   /**
    * Reads an employee with inlined but <code>NULL</code> room navigation property
-   * (which has {@link org.apache.olingo.odata2.api.edm.EdmMultiplicity#ONE EdmMultiplicity#ONE}).
+   * (which has {@link com.sap.core.odata.api.edm.EdmMultiplicity#ONE EdmMultiplicity#ONE}).
    */
   @Test
   public void readWithInlineContentEmployeeNullRoomEntrySpecialXmlFormat() throws Exception {
@@ -782,7 +782,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
   /**
    * Reads a room with inlined but <code>NULL</code> employees navigation property
-   * (which has {@link org.apache.olingo.odata2.api.edm.EdmMultiplicity#MANY EdmMultiplicity#MANY}).
+   * (which has {@link com.sap.core.odata.api.edm.EdmMultiplicity#MANY EdmMultiplicity#MANY}).
    */
   @Test
   public void readWithInlineContentRoomNullEmployeesEntry() throws Exception {
@@ -1021,6 +1021,49 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     XmlEntityConsumer xec = new XmlEntityConsumer();
     ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
     assertNotNull(result);
+  }
+
+  
+  @Test
+  public void validationOfNamespaceAtPropertiesSuccess() throws Exception {
+    String roomWithValidNamespaces =
+        "<?xml version='1.0' encoding='UTF-8'?>" +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xml:base=\"http://localhost:19000/test/\">" +
+            "  <id>http://localhost:19000/test/Rooms('1')</id>" +
+            "  <title type=\"text\">Room 1</title>" +
+            "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
+            "  <content type=\"application/xml\">" +
+            "    <m:properties xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">" +
+            "      <d:Id xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\">1</d:Id>" +
+            "    </m:properties>" +
+            "  </content>" +
+            "</entry>";
+
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
+    XmlEntityConsumer xec = new XmlEntityConsumer();
+    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    assertNotNull(result);
+  }
+
+  @Test(expected=EntityProviderException.class)
+  public void validationOfNamespaceAtTagsMissing() throws Exception {
+    String roomWithValidNamespaces =
+        "<?xml version='1.0' encoding='UTF-8'?>" +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xml:base=\"http://localhost:19000/test/\">" +
+            "  <id>http://localhost:19000/test/Rooms('1')</id>" +
+            "  <title type=\"text\">Room 1</title>" +
+            "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
+            "  <content type=\"application/xml\">" +
+            "    <m:properties>" +
+            "      <d:Id>1</d:Id>" +
+            "    </m:properties>" +
+            "  </content>" +
+            "</entry>";
+
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
+    readAndExpectException(entitySet, reqContent, EntityProviderException.EXCEPTION_OCCURRED.addContent("WstxParsingException"));
   }
 
   /**
@@ -1604,7 +1647,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
   }
 
   @SuppressWarnings("unchecked")
@@ -1639,7 +1682,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
   }
 
   /**
@@ -1677,7 +1720,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
   }
 
   @Test
@@ -1749,7 +1792,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
   }
 
   @SuppressWarnings("unchecked")
@@ -1789,7 +1832,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(new Date(915148800000l), properties.get("EntryDate"));
-    assertEquals("/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
   }
 
   @SuppressWarnings("unchecked")
@@ -1821,7 +1864,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
   }
 
   @SuppressWarnings("unchecked")
@@ -1853,7 +1896,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
   }
 
   @SuppressWarnings("unchecked")
@@ -1885,7 +1928,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
   }
 
   @Test(expected = EntityProviderException.class)
@@ -1954,7 +1997,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Short.valueOf("52"), properties.get("Age"));
     assertEquals(Long.valueOf(915148800000L), properties.get("EntryDate"));
-    assertEquals("/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
   }
 
   @Test
