@@ -153,10 +153,7 @@ public class XmlEntryConsumer {
           if (customNamespaceURI.equals(xmlNamespaceUri) && customPrefix.equals(xmlPrefix)) {
             skipTag = false;
             reader.require(XMLStreamConstants.START_ELEMENT, customNamespaceURI, tagName);
-            reader.next();
-            reader.require(XMLStreamConstants.CHARACTERS, null, null);
-            final String text = reader.getText();
-            reader.nextTag();
+            final String text = reader.getElementText();
             reader.require(XMLStreamConstants.END_ELEMENT, customNamespaceURI, tagName);
 
             final EntityPropertyInfo propertyInfo = getValidatedPropertyInfo(eia, tagName);
