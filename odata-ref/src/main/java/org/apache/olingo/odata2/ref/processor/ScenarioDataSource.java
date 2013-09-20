@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.ref.processor;
 
@@ -45,7 +45,7 @@ import org.apache.olingo.odata2.ref.model.Team;
 
 /**
  * Data for the reference scenario
- *  
+ * 
  */
 public class ScenarioDataSource implements ListsDataSource {
 
@@ -63,7 +63,8 @@ public class ScenarioDataSource implements ListsDataSource {
   }
 
   @Override
-  public List<?> readData(final EdmEntitySet entitySet) throws ODataNotImplementedException, ODataNotFoundException, EdmException {
+  public List<?> readData(final EdmEntitySet entitySet) throws ODataNotImplementedException, ODataNotFoundException,
+      EdmException {
     if (ENTITYSET_1_1.equals(entitySet.getName())) {
       return Arrays.asList(dataContainer.getEmployees().toArray());
     } else if (ENTITYSET_1_2.equals(entitySet.getName())) {
@@ -82,7 +83,8 @@ public class ScenarioDataSource implements ListsDataSource {
   }
 
   @Override
-  public Object readData(final EdmEntitySet entitySet, final Map<String, Object> keys) throws ODataNotImplementedException, ODataNotFoundException, EdmException {
+  public Object readData(final EdmEntitySet entitySet, final Map<String, Object> keys)
+      throws ODataNotImplementedException, ODataNotFoundException, EdmException {
     if (ENTITYSET_1_1.equals(entitySet.getName())) {
       for (final Employee employee : dataContainer.getEmployees()) {
         if (employee.getId().equals(keys.get("EmployeeId"))) {
@@ -137,7 +139,9 @@ public class ScenarioDataSource implements ListsDataSource {
   }
 
   @Override
-  public Object readRelatedData(final EdmEntitySet sourceEntitySet, final Object sourceData, final EdmEntitySet targetEntitySet, final Map<String, Object> targetKeys) throws ODataNotImplementedException, ODataNotFoundException, EdmException {
+  public Object readRelatedData(final EdmEntitySet sourceEntitySet, final Object sourceData,
+      final EdmEntitySet targetEntitySet, final Map<String, Object> targetKeys) throws ODataNotImplementedException,
+      ODataNotFoundException, EdmException {
     if (ENTITYSET_1_1.equals(targetEntitySet.getName())) {
       List<?> data = Collections.emptyList();
       if (ENTITYSET_1_2.equals(sourceEntitySet.getName())) {
@@ -214,7 +218,8 @@ public class ScenarioDataSource implements ListsDataSource {
   }
 
   @Override
-  public Object readData(final EdmFunctionImport function, final Map<String, Object> parameters, final Map<String, Object> keys) throws ODataNotImplementedException, ODataNotFoundException, EdmException {
+  public Object readData(final EdmFunctionImport function, final Map<String, Object> parameters,
+      final Map<String, Object> keys) throws ODataNotImplementedException, ODataNotFoundException, EdmException {
     if (function.getName().equals("EmployeeSearch")) {
       if (parameters.get("q") == null) {
         throw new ODataNotFoundException(null);
@@ -335,7 +340,8 @@ public class ScenarioDataSource implements ListsDataSource {
   }
 
   @Override
-  public BinaryData readBinaryData(final EdmEntitySet entitySet, final Object mediaLinkEntryData) throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+  public BinaryData readBinaryData(final EdmEntitySet entitySet, final Object mediaLinkEntryData)
+      throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     if (mediaLinkEntryData == null) {
       throw new ODataNotFoundException(null);
     }
@@ -355,7 +361,9 @@ public class ScenarioDataSource implements ListsDataSource {
   }
 
   @Override
-  public void writeBinaryData(final EdmEntitySet entitySet, final Object mediaLinkEntryData, final BinaryData binaryData) throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+  public void
+      writeBinaryData(final EdmEntitySet entitySet, final Object mediaLinkEntryData, final BinaryData binaryData)
+          throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     if (mediaLinkEntryData == null) {
       throw new ODataNotFoundException(null);
     }
@@ -402,7 +410,8 @@ public class ScenarioDataSource implements ListsDataSource {
   }
 
   @Override
-  public void deleteData(final EdmEntitySet entitySet, final Map<String, Object> keys) throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+  public void deleteData(final EdmEntitySet entitySet, final Map<String, Object> keys)
+      throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     final Object data = readData(entitySet, keys);
 
     if (ENTITYSET_1_1.equals(entitySet.getName()) || ENTITYSET_1_4.equals(entitySet.getName())) {
@@ -456,7 +465,8 @@ public class ScenarioDataSource implements ListsDataSource {
   }
 
   @Override
-  public void createData(final EdmEntitySet entitySet, final Object data) throws ODataNotImplementedException, EdmException, ODataApplicationException {
+  public void createData(final EdmEntitySet entitySet, final Object data) throws ODataNotImplementedException,
+      EdmException, ODataApplicationException {
     if (ENTITYSET_1_1.equals(entitySet.getName())) {
       dataContainer.getEmployees().add((Employee) data);
     } else if (ENTITYSET_1_2.equals(entitySet.getName())) {
@@ -475,7 +485,9 @@ public class ScenarioDataSource implements ListsDataSource {
   }
 
   @Override
-  public void deleteRelation(final EdmEntitySet sourceEntitySet, final Object sourceData, final EdmEntitySet targetEntitySet, final Map<String, Object> targetKeys) throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+  public void deleteRelation(final EdmEntitySet sourceEntitySet, final Object sourceData,
+      final EdmEntitySet targetEntitySet, final Map<String, Object> targetKeys) throws ODataNotImplementedException,
+      ODataNotFoundException, EdmException, ODataApplicationException {
     if (ENTITYSET_1_1.equals(targetEntitySet.getName())) {
       if (ENTITYSET_1_2.equals(sourceEntitySet.getName())) {
         for (Iterator<Employee> iterator = ((Team) sourceData).getEmployees().iterator(); iterator.hasNext();) {
@@ -535,7 +547,9 @@ public class ScenarioDataSource implements ListsDataSource {
   }
 
   @Override
-  public void writeRelation(final EdmEntitySet sourceEntitySet, final Object sourceData, final EdmEntitySet targetEntitySet, final Map<String, Object> targetKeys) throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+  public void writeRelation(final EdmEntitySet sourceEntitySet, final Object sourceData,
+      final EdmEntitySet targetEntitySet, final Map<String, Object> targetKeys) throws ODataNotImplementedException,
+      ODataNotFoundException, EdmException, ODataApplicationException {
     if (ENTITYSET_1_1.equals(targetEntitySet.getName())) {
       final Employee employee = (Employee) readData(targetEntitySet, targetKeys);
       if (ENTITYSET_1_2.equals(sourceEntitySet.getName())) {

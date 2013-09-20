@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.ref.edm;
 
@@ -54,7 +54,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 
 /**
  * Provider for the entity data model used in the reference scenario
- *  
+ * 
  */
 public class ScenarioEdmProvider extends EdmProvider {
 
@@ -271,8 +271,9 @@ public class ScenarioEdmProvider extends EdmProvider {
         List<Property> properties = new ArrayList<Property>();
         properties.add(new SimpleProperty().setName("Id").setType(EdmSimpleTypeKind.String)
             .setFacets(new Facets().setNullable(false)));
-        properties.add(new SimpleProperty().setName("Name").setType(EdmSimpleTypeKind.String).setCustomizableFeedMappings(new CustomizableFeedMappings()
-            .setFcTargetPath(EdmTargetPath.SYNDICATION_AUTHORNAME)));
+        properties.add(new SimpleProperty().setName("Name").setType(EdmSimpleTypeKind.String)
+            .setCustomizableFeedMappings(new CustomizableFeedMappings()
+                .setFcTargetPath(EdmTargetPath.SYNDICATION_AUTHORNAME)));
         properties.add(new SimpleProperty().setName("Image").setType(EdmSimpleTypeKind.Binary));
         List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
         navigationProperties.add(new NavigationProperty().setName("nb_Rooms")
@@ -326,7 +327,8 @@ public class ScenarioEdmProvider extends EdmProvider {
     if (NAMESPACE_1.equals(edmFQName.getNamespace())) {
       if (COMPLEX_TYPE_1.getName().equals(edmFQName.getName())) {
         List<Property> properties = new ArrayList<Property>();
-        properties.add(new ComplexProperty().setName("City").setType(COMPLEX_TYPE_2).setFacets(new Facets().setNullable(false)));
+        properties.add(new ComplexProperty().setName("City").setType(COMPLEX_TYPE_2).setFacets(
+            new Facets().setNullable(false)));
         properties.add(new SimpleProperty().setName("Country").setType(EdmSimpleTypeKind.String));
         return new ComplexType().setName(COMPLEX_TYPE_1.getName()).setProperties(properties);
 
@@ -346,20 +348,28 @@ public class ScenarioEdmProvider extends EdmProvider {
     if (NAMESPACE_1.equals(edmFQName.getNamespace())) {
       if (ASSOCIATION_1_1.getName().equals(edmFQName.getName())) {
         return new Association().setName(ASSOCIATION_1_1.getName())
-            .setEnd1(new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
-            .setEnd2(new AssociationEnd().setType(ENTITY_TYPE_1_4).setRole(ROLE_1_4).setMultiplicity(EdmMultiplicity.ONE));
+            .setEnd1(
+                new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
+            .setEnd2(
+                new AssociationEnd().setType(ENTITY_TYPE_1_4).setRole(ROLE_1_4).setMultiplicity(EdmMultiplicity.ONE));
       } else if (ASSOCIATION_1_2.getName().equals(edmFQName.getName())) {
         return new Association().setName(ASSOCIATION_1_2.getName())
-            .setEnd1(new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
-            .setEnd2(new AssociationEnd().setType(ENTITY_TYPE_1_2).setRole(ROLE_1_2).setMultiplicity(EdmMultiplicity.ONE));
+            .setEnd1(
+                new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
+            .setEnd2(
+                new AssociationEnd().setType(ENTITY_TYPE_1_2).setRole(ROLE_1_2).setMultiplicity(EdmMultiplicity.ONE));
       } else if (ASSOCIATION_1_3.getName().equals(edmFQName.getName())) {
         return new Association().setName(ASSOCIATION_1_3.getName())
-            .setEnd1(new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
-            .setEnd2(new AssociationEnd().setType(ENTITY_TYPE_1_3).setRole(ROLE_1_3).setMultiplicity(EdmMultiplicity.ONE));
+            .setEnd1(
+                new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
+            .setEnd2(
+                new AssociationEnd().setType(ENTITY_TYPE_1_3).setRole(ROLE_1_3).setMultiplicity(EdmMultiplicity.ONE));
       } else if (ASSOCIATION_1_4.getName().equals(edmFQName.getName())) {
         return new Association().setName(ASSOCIATION_1_4.getName())
-            .setEnd1(new AssociationEnd().setType(ENTITY_TYPE_1_5).setRole(ROLE_1_5).setMultiplicity(EdmMultiplicity.ONE))
-            .setEnd2(new AssociationEnd().setType(ENTITY_TYPE_1_3).setRole(ROLE_1_3).setMultiplicity(EdmMultiplicity.MANY));
+            .setEnd1(
+                new AssociationEnd().setType(ENTITY_TYPE_1_5).setRole(ROLE_1_5).setMultiplicity(EdmMultiplicity.ONE))
+            .setEnd2(
+                new AssociationEnd().setType(ENTITY_TYPE_1_3).setRole(ROLE_1_3).setMultiplicity(EdmMultiplicity.MANY));
       }
     }
 
@@ -420,12 +430,16 @@ public class ScenarioEdmProvider extends EdmProvider {
 
       } else if (FUNCTION_IMPORT_3.equals(name)) {
         return new FunctionImport().setName(name)
-            .setReturnType(new ReturnType().setTypeName(EdmSimpleTypeKind.String.getFullQualifiedName()).setMultiplicity(EdmMultiplicity.MANY))
+            .setReturnType(
+                new ReturnType().setTypeName(EdmSimpleTypeKind.String.getFullQualifiedName()).setMultiplicity(
+                    EdmMultiplicity.MANY))
             .setHttpMethod("GET");
 
       } else if (FUNCTION_IMPORT_4.equals(name)) {
         return new FunctionImport().setName(name)
-            .setReturnType(new ReturnType().setTypeName(EdmSimpleTypeKind.Int16.getFullQualifiedName()).setMultiplicity(EdmMultiplicity.ONE))
+            .setReturnType(
+                new ReturnType().setTypeName(EdmSimpleTypeKind.Int16.getFullQualifiedName()).setMultiplicity(
+                    EdmMultiplicity.ONE))
             .setHttpMethod("GET");
 
       } else if (FUNCTION_IMPORT_5.equals(name)) {
@@ -435,7 +449,9 @@ public class ScenarioEdmProvider extends EdmProvider {
 
       } else if (FUNCTION_IMPORT_6.equals(name)) {
         return new FunctionImport().setName(name)
-            .setReturnType(new ReturnType().setTypeName(EdmSimpleTypeKind.Binary.getFullQualifiedName()).setMultiplicity(EdmMultiplicity.ONE))
+            .setReturnType(
+                new ReturnType().setTypeName(EdmSimpleTypeKind.Binary.getFullQualifiedName()).setMultiplicity(
+                    EdmMultiplicity.ONE))
             .setHttpMethod("GET")
             .setParameters(Arrays.asList(
                 new FunctionImportParameter().setName("Id").setType(EdmSimpleTypeKind.String)
@@ -453,7 +469,8 @@ public class ScenarioEdmProvider extends EdmProvider {
   }
 
   @Override
-  public AssociationSet getAssociationSet(final String entityContainer, final FullQualifiedName association, final String sourceEntitySetName, final String sourceEntitySetRole) throws ODataException {
+  public AssociationSet getAssociationSet(final String entityContainer, final FullQualifiedName association,
+      final String sourceEntitySetName, final String sourceEntitySetRole) throws ODataException {
     if (ENTITY_CONTAINER_1.equals(entityContainer)) {
       if (ASSOCIATION_1_1.equals(association)) {
         return new AssociationSet().setName(ASSOCIATION_1_1.getName())

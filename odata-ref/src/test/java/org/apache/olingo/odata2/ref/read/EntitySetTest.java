@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.ref.read;
 
@@ -30,10 +30,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.CharBuffer;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
@@ -47,6 +43,9 @@ import org.apache.olingo.odata2.ref.model.DataContainer;
 import org.apache.olingo.odata2.ref.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *  
@@ -104,7 +103,8 @@ public class EntitySetTest extends BaseTest {
   public void readEmployees() throws Exception {
     final UriInfo uriResult = mockUriResult("Employees");
 
-    ODataResponse response = processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
+    ODataResponse response =
+        processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
     assertNotNull(response);
     assertTrue(readContent(response).contains("Employee"));
   }
@@ -113,7 +113,8 @@ public class EntitySetTest extends BaseTest {
   public void readTeams() throws Exception {
     final UriInfo uriResult = mockUriResult("Teams");
 
-    ODataResponse response = processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
+    ODataResponse response =
+        processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
     assertNotNull(response);
     assertTrue(readContent(response).contains("Team"));
   }
@@ -122,7 +123,8 @@ public class EntitySetTest extends BaseTest {
   public void readRooms() throws Exception {
     final UriInfo uriResult = mockUriResult("Rooms");
 
-    ODataResponse response = processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
+    ODataResponse response =
+        processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
     assertNotNull(response);
     assertTrue(readContent(response).contains("Room"));
   }
@@ -131,7 +133,8 @@ public class EntitySetTest extends BaseTest {
   public void readManagers() throws Exception {
     final UriInfo uriResult = mockUriResult("Managers");
 
-    ODataResponse response = processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
+    ODataResponse response =
+        processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
     assertNotNull(response);
     assertTrue(readContent(response).contains("Manager"));
   }
@@ -140,7 +143,8 @@ public class EntitySetTest extends BaseTest {
   public void readBuildings() throws Exception {
     final UriInfo uriResult = mockUriResult("Buildings");
 
-    ODataResponse response = processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
+    ODataResponse response =
+        processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
     assertNotNull(response);
     assertTrue(readContent(response).contains("Building"));
   }
@@ -149,7 +153,8 @@ public class EntitySetTest extends BaseTest {
   public void readPhotos() throws Exception {
     final UriInfo uriResult = mockUriResult("Photos");
 
-    ODataResponse response = processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
+    ODataResponse response =
+        processor.readEntitySet(uriResult, ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString());
     assertNotNull(response);
     assertTrue(readContent(response).contains("Photo"));
   }
