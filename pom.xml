@@ -245,6 +245,8 @@
             <artifactId>maven-checkstyle-plugin</artifactId>
             <executions>
               <execution>
+				<id>checkstyle</id>
+                        <phase>verify</phase>
                 <goals>
                   <goal>check</goal>
                 </goals>
@@ -258,7 +260,8 @@
               <configLocation>src/checkstyle/config.xml</configLocation>
               <sourceDirectory>${basedir}/src</sourceDirectory>
               <encoding>UTF-8</encoding>
-              <failOnViolation>false</failOnViolation>
+              <failOnViolation>true</failOnViolation>
+			  <violationSeverity>warning</violationSeverity>
             </configuration>
           </plugin>
         </plugins>
