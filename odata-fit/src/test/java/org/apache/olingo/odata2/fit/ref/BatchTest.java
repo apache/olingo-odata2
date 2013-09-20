@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.ref;
 
@@ -46,7 +46,8 @@ public class BatchTest extends AbstractRefTest {
   @Test
   public void testSimpleBatch() throws Exception {
     String responseBody = execute("/simple.batch");
-    assertFalse(responseBody.contains("<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"));
+    assertFalse(responseBody
+        .contains("<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"));
     assertTrue(responseBody.contains("<edmx:Edmx Version=\"1.0\""));
   }
 
@@ -82,25 +83,24 @@ public class BatchTest extends AbstractRefTest {
     HttpResponse response = execute("/batchWithContentIdPart2.batch", "batch_cf90-46e5-1246");
     String responseBody = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
 
-    assertContentContainValues(responseBody, 
-      "{\"d\":{\"EmployeeName\":\"Frederic Fall\"}}",
-      "HTTP/1.1 201 Created",
-      "Content-Id: employee",
-      "Content-Type: application/json;odata=verbose",
-      "\"EmployeeId\":\"7\",\"EmployeeName\":\"Employee 7\",",
-      "HTTP/1.1 204 No Content",
-      "Content-Id: AAA",
-      "{\"d\":{\"EmployeeName\":\"Robert Fall\"}}"
-      );
-    
+    assertContentContainValues(responseBody,
+        "{\"d\":{\"EmployeeName\":\"Frederic Fall\"}}",
+        "HTTP/1.1 201 Created",
+        "Content-Id: employee",
+        "Content-Type: application/json;odata=verbose",
+        "\"EmployeeId\":\"7\",\"EmployeeName\":\"Employee 7\",",
+        "HTTP/1.1 204 No Content",
+        "Content-Id: AAA",
+        "{\"d\":{\"EmployeeName\":\"Robert Fall\"}}");
+
     // validate that response for PUT does not contains a Content Type
     int indexNoContent = responseBody.indexOf("HTTP/1.1 204 No Content");
     int indexBoundary = responseBody.indexOf("--changeset_", indexNoContent);
-    
+
     int indexContentType = responseBody.indexOf("Content-Type:", indexNoContent);
     Assert.assertTrue(indexBoundary < indexContentType);
   }
-  
+
   @Test
   public void testErrorBatch() throws Exception {
     String responseBody = execute("/error.batch");
@@ -108,12 +108,12 @@ public class BatchTest extends AbstractRefTest {
   }
 
   /**
-   * Validate that given <code>content</code> contains all <code>values</code> in the given order. 
+   * Validate that given <code>content</code> contains all <code>values</code> in the given order.
    * 
    * @param content
    * @param containingValues
    */
-  private void assertContentContainValues(String content, String ... containingValues) {
+  private void assertContentContainValues(final String content, final String... containingValues) {
     int index = -1;
     for (String value : containingValues) {
       int newIndex = content.indexOf(value, index);
@@ -129,7 +129,8 @@ public class BatchTest extends AbstractRefTest {
     return responseBody;
   }
 
-  private HttpResponse execute(final String batchResource, String boundary) throws IOException, UnsupportedEncodingException, ClientProtocolException {
+  private HttpResponse execute(final String batchResource, final String boundary) throws IOException,
+      UnsupportedEncodingException, ClientProtocolException {
     final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
     post.setHeader("Content-Type", "multipart/mixed;boundary=" + boundary);
 

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.ref;
 
@@ -35,7 +35,7 @@ import org.junit.Test;
 
 /**
  * Tests employing the reference scenario changing entities in XML format.
- *  
+ * 
  */
 public class EntryXmlChangeTest extends AbstractRefXmlTest {
 
@@ -47,7 +47,8 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
         .replace("Id>1", "Id>9")
         .replace("Team 1", "Team X")
         .replaceAll("<link.+?/>", "");
-    HttpResponse response = postUri("Teams()", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
+    HttpResponse response =
+        postUri("Teams()", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
     assertEquals(getEndpoint() + "Teams('4')", response.getFirstHeader(HttpHeaders.LOCATION).getValue());
     assertNull(response.getFirstHeader(HttpHeaders.ETAG));
@@ -98,7 +99,9 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
     HttpStatusCodes expectedStatusCode = HttpStatusCodes.CREATED;
     String headerName = "Accept";
     String headerValue = "application/atom+xml;type=entry";
-    HttpResponse response = callUri(ODataHttpMethod.POST, "Teams()", headerName, headerValue, requestBody, requestContentType, expectedStatusCode );
+    HttpResponse response =
+        callUri(ODataHttpMethod.POST, "Teams()", headerName, headerValue, requestBody, requestContentType,
+            expectedStatusCode);
 
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
     assertEquals(getEndpoint() + "Teams('4')", response.getFirstHeader(HttpHeaders.LOCATION).getValue());
@@ -148,7 +151,8 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
         .replace("Team 1", largeTeamName)
         .replaceAll("<link.+?/>", "");
 
-    HttpResponse response = postUri("Teams()", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
+    HttpResponse response =
+        postUri("Teams()", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
     assertEquals(getEndpoint() + "Teams('4')", response.getFirstHeader(HttpHeaders.LOCATION).getValue());
     assertNull(response.getFirstHeader(HttpHeaders.ETAG));
@@ -163,7 +167,8 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
         + "  <content><m:properties><d:Id>99</d:Id></m:properties></content>" + "\n"
         + "</entry>";
 
-    final HttpResponse response = postUri("Teams()", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
+    final HttpResponse response =
+        postUri("Teams()", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
     assertEquals(getEndpoint() + "Teams('4')", response.getFirstHeader(HttpHeaders.LOCATION).getValue());
   }
@@ -173,7 +178,8 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
     getBody(callUri("Employees('7')", HttpStatusCodes.NOT_FOUND));
 
     final String updateBody = "<invalidXml></invalid>";
-    final HttpResponse postResult = postUri("Employees", updateBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
+    final HttpResponse postResult =
+        postUri("Employees", updateBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
     checkMediaType(postResult, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
     assertXpathEvaluatesTo("7", "/atom:entry/m:properties/d:EmployeeId", getBody(postResult));
 
@@ -194,7 +200,8 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
 
     response = postUri("Container2.Photos", "dummy", HttpContentType.TEXT_PLAIN, HttpStatusCodes.CREATED);
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
-    assertEquals(getEndpoint() + "Container2.Photos(Id=5,Type='application%2Foctet-stream')", response.getFirstHeader(HttpHeaders.LOCATION).getValue());
+    assertEquals(getEndpoint() + "Container2.Photos(Id=5,Type='application%2Foctet-stream')", response.getFirstHeader(
+        HttpHeaders.LOCATION).getValue());
     checkEtag(response, "W/\"5\"");
     assertXpathEvaluatesTo("Photo 5", "/atom:entry/m:properties/d:Name", getBody(response));
     response = callUri("Container2.Photos(Id=5,Type='application%2Foctet-stream')/$value");
@@ -204,7 +211,8 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
 
   @Test
   public void createMediaResourceWithNavigation() throws Exception {
-    HttpResponse response = postUri("Teams('1')/nt_Employees", "X", HttpContentType.TEXT_PLAIN, HttpStatusCodes.CREATED);
+    HttpResponse response =
+        postUri("Teams('1')/nt_Employees", "X", HttpContentType.TEXT_PLAIN, HttpStatusCodes.CREATED);
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
     assertEquals(getEndpoint() + "Employees('7')", response.getFirstHeader(HttpHeaders.LOCATION).getValue());
     assertXpathEvaluatesTo("7", "/atom:entry/m:properties/d:EmployeeId", getBody(response));
@@ -253,12 +261,14 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
         + "<atom:updated>2012-02-29T11:59:59Z</atom:updated>"
         + "</atom:entry>";
 
-    HttpResponse response = postUri("Buildings", buildingWithRooms, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
+    HttpResponse response =
+        postUri("Buildings", buildingWithRooms, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
     assertEquals(getEndpoint() + "Buildings('4')", response.getFirstHeader(HttpHeaders.LOCATION).getValue());
     final String body = getBody(response);
     assertXpathEvaluatesTo("4", "/atom:entry/atom:content/m:properties/d:Id", body);
-    assertXpathEvaluatesTo("105", "/atom:entry/atom:link[@rel='" + Edm.NAMESPACE_REL_2007_08 + "nb_Rooms']/m:inline/atom:feed/atom:entry[2]/atom:content/m:properties/d:Id", body);
+    assertXpathEvaluatesTo("105", "/atom:entry/atom:link[@rel='" + Edm.NAMESPACE_REL_2007_08
+        + "nb_Rooms']/m:inline/atom:feed/atom:entry[2]/atom:content/m:properties/d:Id", body);
     checkUri("Buildings('4')");
     checkUri("Rooms('104')");
     checkUri("Buildings('4')/nb_Rooms('104')");
@@ -278,7 +288,9 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
         .replace("<d:Age>" + EMPLOYEE_2_AGE + "</d:Age>", "")
         .replace(">2003-07-01T00:00:00", " m:null='true'>")
         .replaceAll("<link.+?/>", "");
-    final HttpResponse response = callUri(ODataHttpMethod.PUT, "Employees('1')", null, null, requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.NO_CONTENT);
+    final HttpResponse response =
+        callUri(ODataHttpMethod.PUT, "Employees('1')", null, null, requestBody,
+            HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.NO_CONTENT);
     assertFalse(response.containsHeader(HttpHeaders.LOCATION));
     final String body = getBody(callUri("Employees('1')"));
     assertXpathEvaluatesTo("Mister X", "/atom:entry/m:properties/d:EmployeeName", body);
@@ -323,7 +335,8 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
   public void updateInvalidXml() throws Exception {
     final String requestBodyBefore = getBody(callUri("Employees('2')"));
 
-    putUri("Employees('2')", "<invalidXml></invalid>", HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.BAD_REQUEST);
+    putUri("Employees('2')", "<invalidXml></invalid>", HttpContentType.APPLICATION_ATOM_XML_ENTRY,
+        HttpStatusCodes.BAD_REQUEST);
 
     assertEquals(requestBodyBefore, getBody(callUri("Employees('2')")));
   }
@@ -345,7 +358,8 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
         + "    <d:EntryDate m:null=\"true\"/>" + "\n"
         + "  </m:properties>" + "\n"
         + "</entry>";
-    callUri(ODataHttpMethod.PATCH, "Employees('2')", null, null, requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.NO_CONTENT);
+    callUri(ODataHttpMethod.PATCH, "Employees('2')", null, null, requestBody,
+        HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.NO_CONTENT);
     final String body = getBody(callUri("Employees('2')"));
     assertXpathEvaluatesTo(CITY_1_NAME, "/atom:entry/m:properties/d:Location/d:City/d:CityName", body);
     assertXpathEvaluatesTo(EMPLOYEE_2_AGE, "/atom:entry/m:properties/d:Age", body);
@@ -357,7 +371,9 @@ public class EntryXmlChangeTest extends AbstractRefXmlTest {
         + "    <m:properties><d:Name>Room X</d:Name></m:properties>" + "\n"
         + "  </content>" + "\n"
         + "</entry>";
-    HttpResponse response = callUri(ODataHttpMethod.MERGE, "Rooms('3')", HttpHeaders.IF_MATCH, "W/\"3\"", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.NO_CONTENT);
+    HttpResponse response =
+        callUri(ODataHttpMethod.MERGE, "Rooms('3')", HttpHeaders.IF_MATCH, "W/\"3\"", requestBody,
+            HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.NO_CONTENT);
     checkEtag(response, "W/\"3\"");
     assertXpathEvaluatesTo("Room X", "/atom:entry/atom:content/m:properties/d:Name", getBody(callUri("Rooms('3')")));
   }

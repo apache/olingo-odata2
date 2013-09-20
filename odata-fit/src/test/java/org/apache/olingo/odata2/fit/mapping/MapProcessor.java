@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.mapping;
 
@@ -61,8 +61,10 @@ public class MapProcessor extends ODataSingleProcessor {
   }
 
   @Override
-  public ODataResponse readEntitySet(final GetEntitySetUriInfo uriInfo, final String contentType) throws ODataException {
-    final EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).build();
+  public ODataResponse readEntitySet(final GetEntitySetUriInfo uriInfo, final String contentType) 
+      throws ODataException {
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).build();
 
     final List<Map<String, Object>> values = new ArrayList<Map<String, Object>>();
 
@@ -78,17 +80,20 @@ public class MapProcessor extends ODataSingleProcessor {
       values.add(data);
     }
 
-    final ODataResponse response = EntityProvider.writeFeed(contentType, uriInfo.getTargetEntitySet(), values, properties);
+    final ODataResponse response =
+        EntityProvider.writeFeed(contentType, uriInfo.getTargetEntitySet(), values, properties);
 
     return response;
   }
 
   @Override
   public ODataResponse readEntity(final GetEntityUriInfo uriInfo, final String contentType) throws ODataException {
-    final EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).build();
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).build();
 
     // query
-    final String mappedKeyName = (String) uriInfo.getTargetEntitySet().getEntityType().getKeyProperties().get(0).getMapping().getObject();
+    final String mappedKeyName =
+        (String) uriInfo.getTargetEntitySet().getEntityType().getKeyProperties().get(0).getMapping().getObject();
     final String keyValue = uriInfo.getKeyPredicates().get(0).getLiteral();
     final int index = indexOf(mappedKeyName, keyValue);
     if ((index < 0) || (index > records.size())) {
@@ -103,16 +108,19 @@ public class MapProcessor extends ODataSingleProcessor {
       data.put(pName, record.get(mappedPropertyName));
     }
 
-    final ODataResponse response = EntityProvider.writeEntry(contentType, uriInfo.getTargetEntitySet(), data, properties);
+    final ODataResponse response =
+        EntityProvider.writeEntry(contentType, uriInfo.getTargetEntitySet(), data, properties);
     return response;
   }
 
   @Override
-  public ODataResponse readEntitySimplePropertyValue(final GetSimplePropertyUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse readEntitySimplePropertyValue(final GetSimplePropertyUriInfo uriInfo, final String contentType)
+      throws ODataException {
     final List<EdmProperty> propertyPath = uriInfo.getPropertyPath();
     final EdmProperty property = propertyPath.get(propertyPath.size() - 1);
 
-    final String mappedKeyName = (String) uriInfo.getTargetEntitySet().getEntityType().getKeyProperties().get(0).getMapping().getObject();
+    final String mappedKeyName =
+        (String) uriInfo.getTargetEntitySet().getEntityType().getKeyProperties().get(0).getMapping().getObject();
     final String keyValue = uriInfo.getKeyPredicates().get(0).getLiteral();
 
     final int index = indexOf(mappedKeyName, keyValue);

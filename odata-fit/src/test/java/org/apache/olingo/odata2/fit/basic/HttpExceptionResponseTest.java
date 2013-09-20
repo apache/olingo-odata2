@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.basic;
 
@@ -31,14 +31,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
-import org.custommonkey.xmlunit.SimpleNamespaceContext;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.junit.Test;
-import org.mockito.Matchers;
-
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
@@ -54,6 +46,13 @@ import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.testutil.helper.ClassHelper;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.junit.Test;
+import org.mockito.Matchers;
 
 /**
  *  
@@ -77,7 +76,8 @@ public class HttpExceptionResponseTest extends AbstractBasicTest {
 
   @Test
   public void test404HttpNotFound() throws Exception {
-    when(processor.readEntity(any(GetEntityUriInfo.class), any(String.class))).thenThrow(new ODataNotFoundException(ODataNotFoundException.ENTITY));
+    when(processor.readEntity(any(GetEntityUriInfo.class), any(String.class))).thenThrow(
+        new ODataNotFoundException(ODataNotFoundException.ENTITY));
 
     final HttpResponse response = executeGetRequest("Managers('199')");
     assertEquals(HttpStatusCodes.NOT_FOUND.getStatusCode(), response.getStatusLine().getStatusCode());
@@ -87,7 +87,8 @@ public class HttpExceptionResponseTest extends AbstractBasicTest {
     prefixMap.put("a", Edm.NAMESPACE_M_2007_08);
     XMLUnit.setXpathNamespaceContext(new SimpleNamespaceContext(prefixMap));
     assertXpathExists("/a:error/a:code", content);
-    assertXpathValuesEqual("\"" + MessageService.getMessage(Locale.ENGLISH, ODataNotFoundException.ENTITY).getText() + "\"", "/a:error/a:message", content);
+    assertXpathValuesEqual("\"" + MessageService.getMessage(Locale.ENGLISH, ODataNotFoundException.ENTITY).getText()
+        + "\"", "/a:error/a:message", content);
   }
 
   @Test
@@ -104,7 +105,8 @@ public class HttpExceptionResponseTest extends AbstractBasicTest {
 
       final HttpResponse response = executeGetRequest("Managers('" + key + "')");
 
-      assertEquals("Expected status code does not match for exception type '" + oDataException.getClass().getSimpleName() + "'.",
+      assertEquals("Expected status code does not match for exception type '"
+          + oDataException.getClass().getSimpleName() + "'.",
           oDataException.getHttpStatus().getStatusCode(), response.getStatusLine().getStatusCode());
 
       final String content = StringHelper.inputStreamToString(response.getEntity().getContent());
@@ -117,7 +119,8 @@ public class HttpExceptionResponseTest extends AbstractBasicTest {
   }
 
   private List<ODataHttpException> getHttpExceptionsForTest() throws Exception {
-    final List<Class<ODataHttpException>> exClasses = ClassHelper.getAssignableClasses("org.apache.olingo.odata2.api.exception", ODataHttpException.class);
+    final List<Class<ODataHttpException>> exClasses =
+        ClassHelper.getAssignableClasses("org.apache.olingo.odata2.api.exception", ODataHttpException.class);
 
     final MessageReference mr = MessageReference.create(ODataHttpException.class, "SIMPLE FOR TEST");
     return ClassHelper.getClassInstances(exClasses, new Class<?>[] { MessageReference.class }, new Object[] { mr });
@@ -150,7 +153,7 @@ public class HttpExceptionResponseTest extends AbstractBasicTest {
 
     @Override
     public void describeTo(final Description description) {
-      //      description.appendText("");
+      // description.appendText("");
     }
 
   }

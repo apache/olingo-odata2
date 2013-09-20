@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.basic;
 
@@ -36,12 +36,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.exception.ODataException;
@@ -56,6 +50,11 @@ import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.server.TestServer;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  *  
@@ -74,7 +73,7 @@ public class ServiceResolutionTest extends BaseTest {
       final EdmProvider provider = mock(EdmProvider.class);
 
       service = new ODataSingleProcessorService(provider, processor) {};
-      //      FitStaticServiceFactory.setService(service);
+      // FitStaticServiceFactory.setService(service);
 
       // science fiction (return context after setContext)
       // see http://www.planetgeek.ch/2010/07/20/mockito-answer-vs-return/
@@ -94,8 +93,12 @@ public class ServiceResolutionTest extends BaseTest {
         }
       });
 
-      when(((MetadataProcessor) processor).readMetadata(any(GetMetadataUriInfo.class), any(String.class))).thenReturn(ODataResponse.entity("metadata").status(HttpStatusCodes.OK).build());
-      when(((ServiceDocumentProcessor) processor).readServiceDocument(any(GetServiceDocumentUriInfo.class), any(String.class))).thenReturn(ODataResponse.entity("servicedocument").status(HttpStatusCodes.OK).build());
+      when(((MetadataProcessor) processor).readMetadata(any(GetMetadataUriInfo.class), any(String.class))).thenReturn(
+          ODataResponse.entity("metadata").status(HttpStatusCodes.OK).build());
+      when(
+          ((ServiceDocumentProcessor) processor).readServiceDocument(any(GetServiceDocumentUriInfo.class),
+              any(String.class)))
+          .thenReturn(ODataResponse.entity("servicedocument").status(HttpStatusCodes.OK).build());
     } catch (final ODataException e) {
       throw new RuntimeException(e);
     }
@@ -234,7 +237,8 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testBaseUriWithMatrixParameter() throws ClientProtocolException, IOException, ODataException, URISyntaxException {
+  public void testBaseUriWithMatrixParameter() throws ClientProtocolException, IOException, ODataException,
+      URISyntaxException {
     server.setPathSplit(3);
     startServer();
 
@@ -250,11 +254,14 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testBaseUriWithEncoding() throws ClientProtocolException, IOException, ODataException, URISyntaxException {
+  public void testBaseUriWithEncoding() throws ClientProtocolException, IOException, ODataException, 
+  URISyntaxException {
     server.setPathSplit(3);
     startServer();
 
-    final URI uri = new URI(server.getEndpoint().getScheme(), null, server.getEndpoint().getHost(), server.getEndpoint().getPort(), server.getEndpoint().getPath() + "/aaa/äдержb;n=2, 3;m=1/c c/", null, null);
+    final URI uri =
+        new URI(server.getEndpoint().getScheme(), null, server.getEndpoint().getHost(), server.getEndpoint().getPort(),
+            server.getEndpoint().getPath() + "/aaa/äдержb;n=2, 3;m=1/c c/", null, null);
 
     final HttpGet get = new HttpGet(uri);
     final HttpResponse response = httpClient.execute(get);
@@ -263,7 +270,8 @@ public class ServiceResolutionTest extends BaseTest {
 
     final ODataContext context = service.getProcessor().getContext();
     assertNotNull(context);
-    assertEquals(server.getEndpoint() + "aaa/%C3%A4%D0%B4%D0%B5%D1%80%D0%B6b;n=2,%203;m=1/c%20c/", context.getPathInfo().getServiceRoot().toASCIIString());
+    assertEquals(server.getEndpoint() + "aaa/%C3%A4%D0%B4%D0%B5%D1%80%D0%B6b;n=2,%203;m=1/c%20c/", context
+        .getPathInfo().getServiceRoot().toASCIIString());
   }
 
 }

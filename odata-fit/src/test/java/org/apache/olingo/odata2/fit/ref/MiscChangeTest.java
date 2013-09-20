@@ -1,37 +1,36 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.ref;
 
 import static org.junit.Assert.assertEquals;
 
 import org.apache.http.HttpResponse;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
+import org.junit.Test;
 
 /**
  * Tests employing the reference scenario that use neither XML nor JSON
  * and that change data in some way
- *  
+ * 
  */
 public class MiscChangeTest extends AbstractRefTest {
 
@@ -40,7 +39,8 @@ public class MiscChangeTest extends AbstractRefTest {
     deleteUriOk("Employees('2')");
     deleteUriOk("Managers('3')");
     deleteUriOk("Teams('2')");
-    callUri(ODataHttpMethod.DELETE, "Rooms('1')", HttpHeaders.IF_MATCH, "W/\"1\"", null, null, HttpStatusCodes.NO_CONTENT);
+    callUri(ODataHttpMethod.DELETE, "Rooms('1')", HttpHeaders.IF_MATCH, "W/\"1\"", null, null,
+        HttpStatusCodes.NO_CONTENT);
     callUri(ODataHttpMethod.DELETE, "Container2.Photos(Id=1,Type='image%2Fpng')",
         HttpHeaders.IF_MATCH, "W/\"1\"", null, null, HttpStatusCodes.NO_CONTENT);
 
@@ -87,7 +87,9 @@ public class MiscChangeTest extends AbstractRefTest {
     checkMediaType(response, HttpContentType.APPLICATION_OCTET_STREAM);
     assertEquals("00", getBody(response));
 
-    response = callUri(ODataHttpMethod.PUT, "Container2.Photos(Id=2,Type='image%2Fbmp')/$value", null, null, "00", IMAGE_GIF, HttpStatusCodes.NO_CONTENT);
+    response =
+        callUri(ODataHttpMethod.PUT, "Container2.Photos(Id=2,Type='image%2Fbmp')/$value", null, null, "00", IMAGE_GIF,
+            HttpStatusCodes.NO_CONTENT);
     checkEtag(response, "W/\"2\"");
   }
 
@@ -96,11 +98,13 @@ public class MiscChangeTest extends AbstractRefTest {
     putUri("Employees('2')/Age/$value", "42", HttpContentType.TEXT_PLAIN, HttpStatusCodes.NO_CONTENT);
 
     String url = "Container2.Photos(Id=3,Type='image%2Fjpeg')/Image/$value";
-    callUri(ODataHttpMethod.PUT, url, HttpHeaders.ETAG, "W/\"3\"", "4711", HttpContentType.APPLICATION_OCTET_STREAM, HttpStatusCodes.NO_CONTENT);
+    callUri(ODataHttpMethod.PUT, url, HttpHeaders.ETAG, "W/\"3\"", "4711", HttpContentType.APPLICATION_OCTET_STREAM,
+        HttpStatusCodes.NO_CONTENT);
     assertEquals("4711", getBody(callUri(url)));
 
     url = "Container2.Photos(Id=4,Type='foo')/BinaryData/$value";
-    HttpResponse response = callUri(ODataHttpMethod.PUT, url, HttpHeaders.ETAG, "W/\"4\"", "4711", IMAGE_JPEG, HttpStatusCodes.NO_CONTENT);
+    HttpResponse response =
+        callUri(ODataHttpMethod.PUT, url, HttpHeaders.ETAG, "W/\"4\"", "4711", IMAGE_JPEG, HttpStatusCodes.NO_CONTENT);
     checkEtag(response, "W/\"4\"");
     assertEquals("4711", getBody(callUri(url)));
 

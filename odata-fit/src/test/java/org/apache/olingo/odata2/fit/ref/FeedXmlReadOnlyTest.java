@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.ref;
 
@@ -24,14 +24,13 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathNotExists;
 import static org.junit.Assert.assertFalse;
 
 import org.apache.http.HttpResponse;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.junit.Test;
 
 /**
  * Tests employing the reference scenario reading entity sets in XML format.
- *  
+ * 
  */
 public class FeedXmlReadOnlyTest extends AbstractRefXmlTest {
 
@@ -173,7 +172,9 @@ public class FeedXmlReadOnlyTest extends AbstractRefXmlTest {
     assertXpathEvaluatesTo("1", "count(/atom:feed/atom:entry)", body);
     assertXpathEvaluatesTo(EMPLOYEE_2_NAME, "/atom:feed/atom:entry[1]/atom:title", body);
 
-    response = callUri("Employees?$filter=indexof(ImageUrl,EmployeeId)%20mod%20(Age%20sub%2028)%20eq%20month(EntryDate)%20mul%203%20div%2027%20sub%201");
+    response =
+        callUri("Employees?$filter=indexof(ImageUrl,EmployeeId)%20mod%20(Age%20sub%2028)%20eq%20month" +
+        		"(EntryDate)%20mul%203%20div%2027%20sub%201");
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=feed");
     body = getBody(response);
     assertXpathEvaluatesTo("1", "count(/atom:feed/atom:entry)", body);
@@ -208,7 +209,8 @@ public class FeedXmlReadOnlyTest extends AbstractRefXmlTest {
     assertXpathEvaluatesTo(EMPLOYEE_2_NAME, "/atom:entry/atom:title", getBody(response));
 
     checkUri("Employees('1')/ne_Room/nr_Employees('1')?$filter=EmployeeId%20eq%20'1'");
-    checkUri("Container2.Photos(Id=4,Type='foo')?$filter=%D0%A1%D0%BE%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D0%BD%D0%B8%D0%B5%20eq%20'%D0%9F%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%82'");
+    checkUri("Container2.Photos(Id=4,Type='foo')?$filter=%D0%A1%D0%BE%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D0%BD%" +
+    		"D0%B8%D0%B5%20eq%20'%D0%9F%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%82'");
 
     notFound("Employees('4')?$filter=Age%20eq%2099");
     notFound("Rooms('1')/nr_Employees('1')?$filter=Age%20eq%2099");
@@ -245,17 +247,24 @@ public class FeedXmlReadOnlyTest extends AbstractRefXmlTest {
 
   @Test
   public void nextLinkQueryOptions() throws Exception {
-    final HttpResponse response = callUri("Rooms?$format=atom&$filter=true&$inlinecount=none&$orderby=Name&$skiptoken=1&$skip=0&$top=200&$expand=nr_Building&$select=Seats");
+    final HttpResponse response =
+        callUri("Rooms?$format=atom&$filter=true&$inlinecount=none&$orderby=Name&$skiptoken=1&$skip=0&$top=200" +
+        		"&$expand=nr_Building&$select=Seats");
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=feed");
     final String body = getBody(response);
-    assertXpathEvaluatesTo("Rooms?$format=atom&$filter=true&$inlinecount=none&$orderby=Name&$top=200&$expand=nr_Building&$select=Seats&$skiptoken=97", "/atom:feed/atom:link[@rel='next']/@href", body);
+    assertXpathEvaluatesTo(
+        "Rooms?$format=atom&$filter=true&$inlinecount=none&$orderby=Name&$top=200&$expand=nr_Building" +
+        "&$select=Seats&$skiptoken=97",
+        "/atom:feed/atom:link[@rel='next']/@href", body);
   }
 
   @Test
   public void nextLinkNavigation() throws Exception {
     // We have to create one entry to have one more than the paging size.
     final String requestBody = getBody(callUri("Rooms('1')")).replaceAll("<link.+?/>", "");
-    HttpResponse response = postUri("Buildings('3')/nb_Rooms", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.CREATED);
+    HttpResponse response =
+        postUri("Buildings('3')/nb_Rooms", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY,
+            HttpStatusCodes.CREATED);
     getBody(response);
 
     response = callUri("Buildings('3')/nb_Rooms");

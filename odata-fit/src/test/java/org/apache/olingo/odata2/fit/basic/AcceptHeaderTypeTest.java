@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.basic;
 
@@ -52,7 +52,8 @@ public class AcceptHeaderTypeTest extends AbstractBasicTest {
   @Override
   protected ODataSingleProcessor createProcessor() throws ODataException {
     String contentType = "application/atom+xml";
-    ODataResponse response = ODataResponse.status(HttpStatusCodes.OK).contentHeader(contentType).entity("Test passed.").build();
+    ODataResponse response =
+        ODataResponse.status(HttpStatusCodes.OK).contentHeader(contentType).entity("Test passed.").build();
     when(processor.readEntity(any(GetEntityUriInfo.class), any(String.class))).thenReturn(response);
     when(processor.readEntitySet(any(GetEntitySetUriInfo.class), any(String.class))).thenReturn(response);
 
@@ -64,7 +65,8 @@ public class AcceptHeaderTypeTest extends AbstractBasicTest {
     return new EdmTestProvider();
   }
 
-  private HttpResponse testGetRequest(final String uriExtension, final String acceptHeader, final HttpStatusCodes expectedStatus, final String expectedContentType)
+  private HttpResponse testGetRequest(final String uriExtension, final String acceptHeader,
+      final HttpStatusCodes expectedStatus, final String expectedContentType)
       throws ClientProtocolException, IOException, ODataException {
     // prepare
     ODataResponse expectedResponse = ODataResponse.contentHeader(expectedContentType).entity("Test passed.").build();
@@ -82,8 +84,10 @@ public class AcceptHeaderTypeTest extends AbstractBasicTest {
     assertEquals(expectedStatus.getStatusCode(), response.getStatusLine().getStatusCode());
     Header[] contentTypeHeaders = response.getHeaders("Content-Type");
     assertEquals("Found more then one content type header in response.", 1, contentTypeHeaders.length);
-    assertEquals("Received content type does not match expected.", expectedContentType, contentTypeHeaders[0].getValue());
-    assertEquals("Received status code does not match expected.", expectedStatus.getStatusCode(), response.getStatusLine().getStatusCode());
+    assertEquals("Received content type does not match expected.", expectedContentType, contentTypeHeaders[0]
+        .getValue());
+    assertEquals("Received status code does not match expected.", expectedStatus.getStatusCode(), response
+        .getStatusLine().getStatusCode());
     //
     return response;
   }
@@ -123,7 +127,8 @@ public class AcceptHeaderTypeTest extends AbstractBasicTest {
 
   @Test
   public void contentTypeApplicationXmlOnMetadataMultiAccept() throws Exception {
-    testGetRequest("$metadata", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", HttpStatusCodes.OK, "application/xml");
+    testGetRequest("$metadata", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", HttpStatusCodes.OK,
+        "application/xml");
   }
 
   @Test
@@ -158,16 +163,19 @@ public class AcceptHeaderTypeTest extends AbstractBasicTest {
 
   @Test
   public void illegalLwsInAcceptHeaderParameter() throws Exception {
-    testGetRequest("Employees('1')", "application/xml; param=\talskdf;", HttpStatusCodes.BAD_REQUEST, "application/xml");
+    testGetRequest("Employees('1')", "application/xml; param=\talskdf;", HttpStatusCodes.BAD_REQUEST, 
+        "application/xml");
   }
 
   @Test
   public void illegalSpacesBetweenAcceptHeaderParameterOnSet() throws Exception {
-    testGetRequest("Employees", "application/xml; another=  test ; param=alskdf", HttpStatusCodes.BAD_REQUEST, "application/xml");
+    testGetRequest("Employees", "application/xml; another=  test ; param=alskdf", HttpStatusCodes.BAD_REQUEST,
+        "application/xml");
   }
 
   @Test
   public void legalSpacesBetweenAcceptHeaderParameterOnSet() throws Exception {
-    testGetRequest("Employees", "application/xml; another=test   ;   param=alskdf", HttpStatusCodes.NOT_ACCEPTABLE, "application/xml");
+    testGetRequest("Employees", "application/xml; another=test   ;   param=alskdf", HttpStatusCodes.NOT_ACCEPTABLE,
+        "application/xml");
   }
 }

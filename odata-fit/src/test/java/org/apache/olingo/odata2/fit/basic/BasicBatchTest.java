@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.basic;
 
@@ -66,7 +66,9 @@ import org.junit.Test;
 public class BasicBatchTest extends AbstractBasicTest {
 
   private static final String LF = "\n";
-  private static final String REG_EX_BOUNDARY = "(([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\")";
+  private static final String REG_EX_BOUNDARY =
+      "(([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\(\\),/:=\\?]" +
+      "{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\")";
   private static final String REG_EX = "multipart/mixed;\\s*boundary=" + REG_EX_BOUNDARY + "\\s*";
 
   private static final String REQUEST_PAYLOAD =
@@ -153,7 +155,8 @@ public class BasicBatchTest extends AbstractBasicTest {
 
   static class TestSingleProc extends ODataSingleProcessor {
     @Override
-    public ODataResponse executeBatch(final BatchHandler handler, final String requestContentType, final InputStream content) {
+    public ODataResponse executeBatch(final BatchHandler handler, final String requestContentType,
+        final InputStream content) {
 
       assertFalse(getContext().isInBatchMode());
 
@@ -164,7 +167,8 @@ public class BasicBatchTest extends AbstractBasicTest {
         pathInfo.setServiceRoot(new URI("http://localhost:19000/odata"));
 
         EntityProviderBatchProperties batchProperties = EntityProviderBatchProperties.init().pathInfo(pathInfo).build();
-        List<BatchRequestPart> batchParts = EntityProvider.parseBatchRequest(requestContentType, content, batchProperties);
+        List<BatchRequestPart> batchParts =
+            EntityProvider.parseBatchRequest(requestContentType, content, batchProperties);
         for (BatchRequestPart batchPart : batchParts) {
           batchResponseParts.add(handler.handleBatchPart(batchPart));
         }
@@ -178,7 +182,8 @@ public class BasicBatchTest extends AbstractBasicTest {
     }
 
     @Override
-    public BatchResponsePart executeChangeSet(final BatchHandler handler, final List<ODataRequest> requests) throws ODataException {
+    public BatchResponsePart executeChangeSet(final BatchHandler handler, final List<ODataRequest> requests)
+        throws ODataException {
       assertTrue(getContext().isInBatchMode());
 
       List<ODataResponse> responses = new ArrayList<ODataResponse>();
@@ -196,7 +201,8 @@ public class BasicBatchTest extends AbstractBasicTest {
     }
 
     @Override
-    public ODataResponse readEntitySimpleProperty(final GetSimplePropertyUriInfo uriInfo, final String contentType) throws ODataException {
+    public ODataResponse readEntitySimpleProperty(final GetSimplePropertyUriInfo uriInfo, final String contentType)
+        throws ODataException {
       assertTrue(getContext().isInBatchMode());
 
       CircleStreamBuffer buffer = new CircleStreamBuffer();
@@ -216,12 +222,15 @@ public class BasicBatchTest extends AbstractBasicTest {
         throw new RuntimeException(e);
       }
 
-      ODataResponse oDataResponse = ODataResponse.entity(buffer.getInputStream()).status(HttpStatusCodes.OK).contentHeader("application/json").build();
+      ODataResponse oDataResponse =
+          ODataResponse.entity(buffer.getInputStream()).status(HttpStatusCodes.OK).contentHeader("application/json")
+              .build();
       return oDataResponse;
     }
 
     @Override
-    public ODataResponse updateEntitySimpleProperty(final PutMergePatchUriInfo uriInfo, final InputStream content, final String requestContentType, final String contentType) throws ODataException {
+    public ODataResponse updateEntitySimpleProperty(final PutMergePatchUriInfo uriInfo, final InputStream content,
+        final String requestContentType, final String contentType) throws ODataException {
       assertTrue(getContext().isInBatchMode());
 
       ODataResponse oDataResponse = ODataResponse.status(HttpStatusCodes.NO_CONTENT).build();

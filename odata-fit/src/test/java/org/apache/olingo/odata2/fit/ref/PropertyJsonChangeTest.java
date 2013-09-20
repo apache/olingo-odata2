@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.ref;
 
@@ -27,7 +27,7 @@ import org.junit.Test;
 
 /**
  * Tests employing the reference scenario changing properties in JSON format.
- *  
+ * 
  */
 public class PropertyJsonChangeTest extends AbstractRefTest {
 
@@ -52,7 +52,8 @@ public class PropertyJsonChangeTest extends AbstractRefTest {
     putUri(url, "{\"Age\":\"17\"}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.BAD_REQUEST);
 
     final String urlForName = "Employees('2')/EmployeeName";
-    putUri(urlForName, HttpContentType.APPLICATION_JSON, "{\"EmployeeName\":\"NewName\"}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NO_CONTENT);
+    putUri(urlForName, HttpContentType.APPLICATION_JSON, "{\"EmployeeName\":\"NewName\"}",
+        HttpContentType.APPLICATION_JSON, HttpStatusCodes.NO_CONTENT);
     assertEquals("{\"d\":{\"EmployeeName\":\"NewName\"}}", getBody(callUri(urlForName + "?$format=json")));
     putUri(urlForName, "{\"EmployeeName\":NewName}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.BAD_REQUEST);
   }
@@ -62,12 +63,13 @@ public class PropertyJsonChangeTest extends AbstractRefTest {
     final String url = "Employees('2')/Age";
     putUri(url, "", "{\"Age\":17}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NOT_ACCEPTABLE);
     putUri(url, null, "{\"Age\":17}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NOT_ACCEPTABLE);
-    
-    final String urlForName = "Employees('2')/EmployeeName";
-    putUri(urlForName, "", "{\"EmployeeName\":\"NewName\"}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NOT_ACCEPTABLE);
-    putUri(urlForName, null, "{\"EmployeeName\":\"NewName\"}", HttpContentType.APPLICATION_JSON, HttpStatusCodes.NOT_ACCEPTABLE);
-  }
 
+    final String urlForName = "Employees('2')/EmployeeName";
+    putUri(urlForName, "", "{\"EmployeeName\":\"NewName\"}", HttpContentType.APPLICATION_JSON,
+        HttpStatusCodes.NOT_ACCEPTABLE);
+    putUri(urlForName, null, "{\"EmployeeName\":\"NewName\"}", HttpContentType.APPLICATION_JSON,
+        HttpStatusCodes.NOT_ACCEPTABLE);
+  }
 
   @Test
   public void complexProperty() throws Exception {

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.ref;
 
@@ -22,13 +22,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.http.HttpResponse;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
+import org.junit.Test;
 
 /**
  * Tests employing the reference scenario reading entity sets in JSON format.
- *  
+ * 
  */
 public class FeedJsonReadOnlyTest extends AbstractRefTest {
 
@@ -122,7 +121,9 @@ public class FeedJsonReadOnlyTest extends AbstractRefTest {
 
   @Test
   public void feedWithTwoLevelInline() throws Exception {
-    final HttpResponse response = callUri("Employees()?$expand=ne_Room/nr_Building&$select=Age,ne_Room/Seats,ne_Room/nr_Building/Name&$top=2&$format=json");
+    final HttpResponse response =
+        callUri("Employees()?$expand=ne_Room/nr_Building&$select=Age,ne_Room/Seats,ne_Room/nr_Building/Name&" +
+        		"$top=2&$format=json");
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
     assertEquals("{\"d\":{\"results\":[{\"__metadata\":{"
         + "\"id\":\"" + getEndpoint() + "Employees('1')\","

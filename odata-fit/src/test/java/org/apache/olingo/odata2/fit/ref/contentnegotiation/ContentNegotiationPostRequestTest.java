@@ -1,31 +1,30 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.ref.contentnegotiation;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.core.uri.UriType;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  *  
@@ -33,17 +32,38 @@ import org.apache.olingo.odata2.core.uri.UriType;
 public class ContentNegotiationPostRequestTest extends AbstractContentNegotiationTest {
 
   public static final String EMPLOYEE_1_XML =
-      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-          "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/\"  m:etag=\"W/&quot;1&quot;\">" +
-          "<id>http://localhost:19000/Employees('1')</id>" +
-          "<title type=\"text\">Walter Winter</title>" +
-          "<updated>1999-01-01T00:00:00Z</updated>" +
-          "<category term=\"RefScenario.Employee\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>" +
-          "<link href=\"Employees('1')\" rel=\"edit\" title=\"Employee\"/>" +
-          "<link href=\"Employees('1')/$value\" rel=\"edit-media\" type=\"application/octet-stream\" etag=\"mmEtag\"/>" +
-          "<link href=\"Employees('1')/ne_Room\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room\" type=\"application/atom+xml; type=entry\" title=\"ne_Room\"/>" +
-          "<link href=\"Employees('1')/ne_Manager\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager\" type=\"application/atom+xml; type=entry\" title=\"ne_Manager\"/>" +
-          "<link href=\"Employees('1')/ne_Team\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team\" type=\"application/atom+xml; type=entry\" title=\"ne_Team\"/>" +
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+          +
+          "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+          "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+          "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/\"  " +
+          "m:etag=\"W/&quot;1&quot;\">"
+          +
+          "<id>http://localhost:19000/Employees('1')</id>"
+          +
+          "<title type=\"text\">Walter Winter</title>"
+          +
+          "<updated>1999-01-01T00:00:00Z</updated>"
+          +
+          "<category term=\"RefScenario.Employee\" " +
+          "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>"
+          +
+          "<link href=\"Employees('1')\" rel=\"edit\" title=\"Employee\"/>"
+          +
+          "<link href=\"Employees('1')/$value\" rel=\"edit-media\" type=\"application/octet-stream\" etag=\"mmEtag\"/>"
+          +
+          "<link href=\"Employees('1')/ne_Room\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room\" " +
+          "type=\"application/atom+xml; type=entry\" title=\"ne_Room\"/>"
+          +
+          "<link href=\"Employees('1')/ne_Manager\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager\" " +
+          "type=\"application/atom+xml; type=entry\" title=\"ne_Manager\"/>"
+          +
+          "<link href=\"Employees('1')/ne_Team\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team\" " +
+          "type=\"application/atom+xml; type=entry\" title=\"ne_Team\"/>"
+          +
           "<content type=\"application/octet-stream\" src=\"Employees('1')/$value\"/>" +
           "<m:properties>" +
           "<d:EmployeeId>1</d:EmployeeId>" +
@@ -65,15 +85,32 @@ public class ContentNegotiationPostRequestTest extends AbstractContentNegotiatio
           "</entry>";
 
   private static final String ROOM_1_XML =
-      "<?xml version='1.0' encoding='UTF-8'?>" +
-          "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
-          "<id>http://localhost:19000/test/Rooms('1')</id>" +
-          "<title type=\"text\">Room 1</title>" +
-          "<updated>2013-01-11T13:50:50.541+01:00</updated>" +
-          "<category term=\"RefScenario.Room\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>" +
-          "<link href=\"Rooms('1')\" rel=\"edit\" title=\"Room\"/>" +
-          "<link href=\"Rooms('1')/nr_Employees\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees\" type=\"application/atom+xml; type=feed\" title=\"nr_Employees\"/>" +
-          "<link href=\"Rooms('1')/nr_Building\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building\" type=\"application/atom+xml; type=entry\" title=\"nr_Building\"/>" +
+      "<?xml version='1.0' encoding='UTF-8'?>"
+          +
+          "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+          "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+          "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+          "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+          +
+          "<id>http://localhost:19000/test/Rooms('1')</id>"
+          +
+          "<title type=\"text\">Room 1</title>"
+          +
+          "<updated>2013-01-11T13:50:50.541+01:00</updated>"
+          +
+          "<category term=\"RefScenario.Room\" " +
+          "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>"
+          +
+          "<link href=\"Rooms('1')\" rel=\"edit\" title=\"Room\"/>"
+          +
+          "<link href=\"Rooms('1')/nr_Employees\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees\" " +
+          "type=\"application/atom+xml; type=feed\" title=\"nr_Employees\"/>"
+          +
+          "<link href=\"Rooms('1')/nr_Building\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building\" " +
+          "type=\"application/atom+xml; type=entry\" title=\"nr_Building\"/>"
+          +
           "<content type=\"application/xml\">" +
           "<m:properties>" +
           "<d:Id>1</d:Id>" +
@@ -91,7 +128,8 @@ public class ContentNegotiationPostRequestTest extends AbstractContentNegotiatio
     FitTestSet testSet = FitTestSet.create(UriType.URI1, "/Employees", false, true, false).init();
 
     // set specific response 'Content-Type's for '$format'
-    testSet.setTestParam(Arrays.asList("application/xml", "application/xml; charset=utf-8"), HttpStatusCodes.OK, "application/xml; charset=utf-8");
+    testSet.setTestParam(Arrays.asList("application/xml", "application/xml; charset=utf-8"), HttpStatusCodes.OK,
+        "application/xml; charset=utf-8");
     testSet.setTestParam(Arrays.asList("", "application/atom+xml", "application/atom+xml; charset=utf-8"),
         HttpStatusCodes.OK, "application/atom+xml; type=feed; charset=utf-8");
 
@@ -126,7 +164,7 @@ public class ContentNegotiationPostRequestTest extends AbstractContentNegotiatio
         .acceptHeader(Arrays.asList("", "application/xml"))
         .content(ROOM_1_XML)
         .requestContentTypes(CONTENT_TYPE_VALUES)
-        //        .requestContentTypes(Arrays.asList("application/xml; charset=utf-8", "application/xml"))
+        // .requestContentTypes(Arrays.asList("application/xml; charset=utf-8", "application/xml"))
         .expectedStatusCode(HttpStatusCodes.CREATED)
         .init();
 
@@ -137,13 +175,15 @@ public class ContentNegotiationPostRequestTest extends AbstractContentNegotiatio
     final List<String> unsupportedRequestContentTypes = Arrays.asList(
         "text/plain",
         "text/plain; charset=utf-8",
-        //        "application/json",
-        //        "application/json; charset=utf-8",
+        // "application/json",
+        // "application/json; charset=utf-8",
         "application/atomsvc+xml",
         "application/atomsvc+xml; charset=utf-8"
         );
-    testSet.modifyRequestContentTypes(unsupportedRequestContentTypes, HttpStatusCodes.UNSUPPORTED_MEDIA_TYPE, "application/xml");
-    testSet.modifyRequestContentTypes(Arrays.asList("application/json", "application/json; charset=utf-8"), HttpStatusCodes.BAD_REQUEST, "application/xml");
+    testSet.modifyRequestContentTypes(unsupportedRequestContentTypes, HttpStatusCodes.UNSUPPORTED_MEDIA_TYPE,
+        "application/xml");
+    testSet.modifyRequestContentTypes(Arrays.asList("application/json", "application/json; charset=utf-8"),
+        HttpStatusCodes.BAD_REQUEST, "application/xml");
 
     // execute all defined tests
     testSet.execute(getEndpoint());
@@ -162,7 +202,9 @@ public class ContentNegotiationPostRequestTest extends AbstractContentNegotiatio
     HttpStatusCodes expectedStatusCode = HttpStatusCodes.CREATED;
     String expectedContentType = "application/atom+xml; charset=utf-8; type=entry";
 
-    FitTest test = FitTest.create(uriType, httpMethod, path, queryOption, acceptHeader, content, requestContentType, expectedStatusCode, expectedContentType);
+    FitTest test =
+        FitTest.create(uriType, httpMethod, path, queryOption, acceptHeader, content, requestContentType,
+            expectedStatusCode, expectedContentType);
 
     test.execute(getEndpoint());
   }
@@ -181,7 +223,9 @@ public class ContentNegotiationPostRequestTest extends AbstractContentNegotiatio
     HttpStatusCodes expectedStatusCode = HttpStatusCodes.CREATED;
     String expectedContentType = "image/jpeg";
 
-    FitTest test = FitTest.create(uriType, httpMethod, path, queryOption, acceptHeader, content, requestContentType, expectedStatusCode, expectedContentType);
+    FitTest test =
+        FitTest.create(uriType, httpMethod, path, queryOption, acceptHeader, content, requestContentType,
+            expectedStatusCode, expectedContentType);
 
     test.execute(getEndpoint());
   }
@@ -210,7 +254,8 @@ public class ContentNegotiationPostRequestTest extends AbstractContentNegotiatio
         "application/atomsvc+xml",
         "application/atomsvc+xml; charset=utf-8"
         );
-    testSet.modifyRequestContentTypes(unsupportedRequestContentTypes, HttpStatusCodes.UNSUPPORTED_MEDIA_TYPE, "application/xml");
+    testSet.modifyRequestContentTypes(unsupportedRequestContentTypes, HttpStatusCodes.UNSUPPORTED_MEDIA_TYPE,
+        "application/xml");
 
     // execute all defined tests
     testSet.execute(getEndpoint());
@@ -238,7 +283,8 @@ public class ContentNegotiationPostRequestTest extends AbstractContentNegotiatio
         "application/atomsvc+xml",
         "application/atomsvc+xml; charset=utf-8"
         );
-    testSet.modifyRequestContentTypes(unsupportedRequestContentTypes, HttpStatusCodes.UNSUPPORTED_MEDIA_TYPE, "application/xml");
+    testSet.modifyRequestContentTypes(unsupportedRequestContentTypes, HttpStatusCodes.UNSUPPORTED_MEDIA_TYPE,
+        "application/xml");
 
     // execute all defined tests
     testSet.execute(getEndpoint());

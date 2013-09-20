@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.ref;
 
@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.testutil.helper.StringHelper;
 
 /**
  * Abstract base class for tests employing the reference scenario.
- *  
+ * 
  */
 public class AbstractRefTest extends AbstractFitTest {
 
@@ -125,11 +125,13 @@ public class AbstractRefTest extends AbstractFitTest {
     return response;
   }
 
-  protected HttpResponse callUri(final String uri, final String additionalHeader, final String additionalHeaderValue, final HttpStatusCodes expectedStatusCode) throws Exception {
+  protected HttpResponse callUri(final String uri, final String additionalHeader, final String additionalHeaderValue,
+      final HttpStatusCodes expectedStatusCode) throws Exception {
     return callUri(ODataHttpMethod.GET, uri, additionalHeader, additionalHeaderValue, null, null, expectedStatusCode);
   }
 
-  protected HttpResponse callUri(final String uri, final String additionalHeader, final String additionalHeaderValue) throws Exception {
+  protected HttpResponse callUri(final String uri, final String additionalHeader, final String additionalHeaderValue)
+      throws Exception {
     return callUri(ODataHttpMethod.GET, uri, additionalHeader, additionalHeaderValue, null, null, HttpStatusCodes.OK);
   }
 
@@ -155,7 +157,8 @@ public class AbstractRefTest extends AbstractFitTest {
     assertNotNull(getBody(response));
   }
 
-  protected void deleteUri(final String uri, final HttpStatusCodes expectedStatusCode) throws Exception, AssertionError {
+  protected void deleteUri(final String uri, final HttpStatusCodes expectedStatusCode) 
+      throws Exception, AssertionError {
     final HttpResponse response = callUri(ODataHttpMethod.DELETE, uri, null, null, null, null, expectedStatusCode);
     if (expectedStatusCode != HttpStatusCodes.NO_CONTENT) {
       response.getEntity().getContent().close();
@@ -166,18 +169,23 @@ public class AbstractRefTest extends AbstractFitTest {
     deleteUri(uri, HttpStatusCodes.NO_CONTENT);
   }
 
-  protected HttpResponse postUri(final String uri, final String requestBody, final String requestContentType, final HttpStatusCodes expectedStatusCode) throws Exception {
+  protected HttpResponse postUri(final String uri, final String requestBody, final String requestContentType,
+      final HttpStatusCodes expectedStatusCode) throws Exception {
     return callUri(ODataHttpMethod.POST, uri, null, null, requestBody, requestContentType, expectedStatusCode);
   }
 
-  protected HttpResponse postUri(final String uri, final String requestBody, final String requestContentType, final String additionalHeader, final String additionalHeaderValue, final HttpStatusCodes expectedStatusCode) throws Exception {
-    return callUri(ODataHttpMethod.POST, uri, additionalHeader, additionalHeaderValue, requestBody, requestContentType, expectedStatusCode);
+  protected HttpResponse postUri(final String uri, final String requestBody, final String requestContentType,
+      final String additionalHeader, final String additionalHeaderValue, final HttpStatusCodes expectedStatusCode)
+      throws Exception {
+    return callUri(ODataHttpMethod.POST, uri, additionalHeader, additionalHeaderValue, requestBody, requestContentType,
+        expectedStatusCode);
   }
 
   protected void putUri(final String uri,
       final String requestBody, final String requestContentType,
       final HttpStatusCodes expectedStatusCode) throws Exception {
-    final HttpResponse response = callUri(ODataHttpMethod.PUT, uri, null, null, requestBody, requestContentType, expectedStatusCode);
+    final HttpResponse response =
+        callUri(ODataHttpMethod.PUT, uri, null, null, requestBody, requestContentType, expectedStatusCode);
     if (expectedStatusCode != HttpStatusCodes.NO_CONTENT) {
       response.getEntity().getContent().close();
     }
@@ -186,8 +194,10 @@ public class AbstractRefTest extends AbstractFitTest {
   protected void putUri(final String uri, final String acceptHeader,
       final String requestBody, final String requestContentType,
       final HttpStatusCodes expectedStatusCode) throws Exception {
-    final HttpResponse response = callUri(ODataHttpMethod.PUT, uri, 
-        org.apache.olingo.odata2.api.commons.HttpHeaders.ACCEPT, acceptHeader, requestBody, requestContentType, expectedStatusCode);
+    final HttpResponse response =
+        callUri(ODataHttpMethod.PUT, uri,
+            org.apache.olingo.odata2.api.commons.HttpHeaders.ACCEPT, acceptHeader, requestBody, requestContentType,
+            expectedStatusCode);
     if (expectedStatusCode != HttpStatusCodes.NO_CONTENT) {
       response.getEntity().getContent().close();
     }

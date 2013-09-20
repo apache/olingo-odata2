@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.ref;
 
@@ -29,7 +29,7 @@ import org.junit.Test;
 
 /**
  * Tests employing the reference scenario changing entities in JSON format.
- *  
+ * 
  */
 public class EntryJsonChangeTest extends AbstractRefTest {
 
@@ -37,9 +37,11 @@ public class EntryJsonChangeTest extends AbstractRefTest {
   public void createEntry() throws Exception {
     final String requestBody = "{\"Id\":\"99\",\"Name\":\"Building 4\",\"Image\":\"" + PHOTO_DEFAULT_IMAGE + "\","
         + "\"nb_Rooms\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Rooms('101')\"}}}";
-    final HttpResponse response = postUri("Buildings()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
+    final HttpResponse response =
+        postUri("Buildings()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
     assertFalse(getBody(response).isEmpty());
-    assertEquals("{\"d\":{\"Image\":\"" + PHOTO_DEFAULT_IMAGE + "\"}}", getBody(callUri("Buildings('4')/Image?$format=json")));
+    assertEquals("{\"d\":{\"Image\":\"" + PHOTO_DEFAULT_IMAGE + "\"}}",
+        getBody(callUri("Buildings('4')/Image?$format=json")));
     checkUri("Buildings('4')/nb_Rooms('101')?$format=json");
 
     postUri("Buildings()", requestBody, HttpContentType.APPLICATION_ATOM_XML_ENTRY, HttpStatusCodes.BAD_REQUEST);
@@ -48,7 +50,8 @@ public class EntryJsonChangeTest extends AbstractRefTest {
   @Test
   public void createEntryMinimal() throws Exception {
     final String requestBody = "{\"Id\":\"99\"}";
-    final HttpResponse response = postUri("Teams()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
+    final HttpResponse response =
+        postUri("Teams()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
     assertFalse(getBody(response).isEmpty());
     checkUri("Teams('4')?$format=json");
   }
@@ -56,7 +59,8 @@ public class EntryJsonChangeTest extends AbstractRefTest {
   @Test
   public void createEntryWithNavigation() throws Exception {
     final String requestBody = "{\"Id\":\"199\",\"Name\":\"Room 199\"}";
-    final HttpResponse response = postUri("Buildings('1')/nb_Rooms()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
+    final HttpResponse response =
+        postUri("Buildings('1')/nb_Rooms()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
     assertFalse(getBody(response).isEmpty());
     checkUri("Rooms('104')?$format=json");
     assertEquals("1", getBody(callUri("Rooms('104')/nr_Building/Id/$value")));
@@ -67,7 +71,8 @@ public class EntryJsonChangeTest extends AbstractRefTest {
   public void createEntryWithLink() throws Exception {
     final String requestBody = "{\"Id\":\"99\",\"Name\":\"new room\",\"Seats\":19,\"Version\":42,"
         + "\"nr_Building\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Buildings('1')\"}}}";
-    final HttpResponse response = postUri("Rooms()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
+    final HttpResponse response =
+        postUri("Rooms()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
     assertFalse(getBody(response).isEmpty());
     checkUri("Rooms('104')/nr_Building?$format=json");
     assertEquals("{\"d\":{\"Name\":\"Building 1\"}}", getBody(callUri("Rooms('104')/nr_Building/Name?$format=json")));
@@ -77,7 +82,8 @@ public class EntryJsonChangeTest extends AbstractRefTest {
   public void createEntryWithInlineEntry() throws Exception {
     final String requestBody = "{\"Id\":\"99\",\"Name\":\"new room\",\"Seats\":19,\"Version\":42,"
         + "\"nr_Building\":{\"Id\":\"9\",\"Name\":\"new building\"}}";
-    final HttpResponse response = postUri("Rooms()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
+    final HttpResponse response =
+        postUri("Rooms()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
     assertFalse(getBody(response).isEmpty());
     checkUri("Rooms('104')/nr_Building?$format=json");
     assertEquals("{\"d\":{\"Name\":\"new building\"}}", getBody(callUri("Rooms('104')/nr_Building/Name?$format=json")));
@@ -90,14 +96,18 @@ public class EntryJsonChangeTest extends AbstractRefTest {
         + "              {\"Id\":\"202\",\"Name\":\"Room 202\",\"Seats\":6,\"Version\":3,"
         + "               \"nr_Employees\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Employees('5')\"}},"
         + "               \"nr_Employees\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Employees('6')\"}}}]}";
-    final HttpResponse response = postUri("Buildings()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
+    final HttpResponse response =
+        postUri("Buildings()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
     assertFalse(getBody(response).isEmpty());
     checkUri("Buildings('4')?$format=json");
     checkUri("Buildings('4')/nb_Rooms('104')?$format=json");
-    assertEquals("{\"d\":{\"results\":[]}}", getBody(callUri("Buildings('4')/nb_Rooms('104')/nr_Employees?$format=json")));
+    assertEquals("{\"d\":{\"results\":[]}}",
+        getBody(callUri("Buildings('4')/nb_Rooms('104')/nr_Employees?$format=json")));
     assertEquals("{\"d\":{\"Seats\":6}}", getBody(callUri("Buildings('4')/nb_Rooms('105')/Seats?$format=json")));
-    assertEquals("{\"d\":{\"EmployeeName\":\"" + EMPLOYEE_5_NAME + "\"}}", getBody(callUri("Buildings('4')/nb_Rooms('105')/nr_Employees('5')/EmployeeName?$format=json")));
-    assertEquals("{\"d\":{\"Age\":" + EMPLOYEE_6_AGE + "}}", getBody(callUri("Buildings('4')/nb_Rooms('105')/nr_Employees('6')/Age?$format=json")));
+    assertEquals("{\"d\":{\"EmployeeName\":\"" + EMPLOYEE_5_NAME + "\"}}",
+        getBody(callUri("Buildings('4')/nb_Rooms('105')/nr_Employees('5')/EmployeeName?$format=json")));
+    assertEquals("{\"d\":{\"Age\":" + EMPLOYEE_6_AGE + "}}",
+        getBody(callUri("Buildings('4')/nb_Rooms('105')/nr_Employees('6')/Age?$format=json")));
   }
 
   @Test
@@ -108,12 +118,15 @@ public class EntryJsonChangeTest extends AbstractRefTest {
         + "\"Location\":{\"City\":{\"PostalCode\":null,\"CityName\":null},\"Country\":null},"
         + "\"EntryDate\":\"\\/Date(1424242424242)\\/\","
         + "\"ne_Manager\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Managers('1')\"}}}]}]}";
-    final HttpResponse response = postUri("Buildings()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
+    final HttpResponse response =
+        postUri("Buildings()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
     assertFalse(getBody(response).isEmpty());
     checkUri("Buildings('4')");
     assertEquals("1", getBody(callUri("Buildings('4')/nb_Rooms('104')/Seats/$value")));
-    assertEquals("2015-02-18T06:53:44.242", getBody(callUri("Buildings('4')/nb_Rooms('104')/nr_Employees('7')/EntryDate/$value")));
-    assertEquals(MANAGER_NAME, getBody(callUri("Buildings('4')/nb_Rooms('104')/nr_Employees('7')/ne_Manager/EmployeeName/$value")));
+    assertEquals("2015-02-18T06:53:44.242",
+        getBody(callUri("Buildings('4')/nb_Rooms('104')/nr_Employees('7')/EntryDate/$value")));
+    assertEquals(MANAGER_NAME,
+        getBody(callUri("Buildings('4')/nb_Rooms('104')/nr_Employees('7')/ne_Manager/EmployeeName/$value")));
   }
 
   @Test
@@ -134,7 +147,8 @@ public class EntryJsonChangeTest extends AbstractRefTest {
     final String requestBody = "{\"Location\":"
         + "{\"City\":{\"PostalCode\":\"69124\",\"CityName\":\"" + CITY_1_NAME + "\"},"
         + " \"Country\":\"Germany\"},\"EntryDate\":null}";
-    callUri(ODataHttpMethod.PATCH, "Employees('2')", null, null, requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.NO_CONTENT);
+    callUri(ODataHttpMethod.PATCH, "Employees('2')", null, null, requestBody, HttpContentType.APPLICATION_JSON,
+        HttpStatusCodes.NO_CONTENT);
     assertEquals(CITY_1_NAME, getBody(callUri("Employees('2')/Location/City/CityName/$value")));
     assertEquals("{\"d\":{\"EntryDate\":null}}", getBody(callUri("Employees('2')/EntryDate?$format=json")));
     assertEquals(EMPLOYEE_2_NAME, getBody(callUri("Employees('2')/EmployeeName/$value")));
