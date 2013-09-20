@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.testutil.mock;
 
@@ -48,7 +48,7 @@ import org.apache.olingo.odata2.api.exception.ODataMessageException;
 
 /**
  * Provider for the entity data model used as technical reference scenario
- *  
+ * 
  */
 public class TechnicalScenarioEdmProvider extends EdmProvider {
 
@@ -113,9 +113,11 @@ public class TechnicalScenarioEdmProvider extends EdmProvider {
 
         final List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
 
-        navigationProperties.add(new NavigationProperty().setName("navProperty").setFromRole(ROLE_1).setToRole(ROLE_2).setRelationship(ASSOCIATION_ET1_ET2));
+        navigationProperties.add(new NavigationProperty().setName("navProperty").setFromRole(ROLE_1).setToRole(ROLE_2)
+            .setRelationship(ASSOCIATION_ET1_ET2));
 
-        return new EntityType().setName(ET_KEY_IS_STRING.getName()).setProperties(properties).setNavigationProperties(navigationProperties).setKey(createKey("KeyString"));
+        return new EntityType().setName(ET_KEY_IS_STRING.getName()).setProperties(properties).setNavigationProperties(
+            navigationProperties).setKey(createKey("KeyString"));
       } else if (ET_KEY_IS_INTEGER.getName().equals(edmFQName.getName())) {
         final List<Property> properties = new ArrayList<Property>();
         properties.add(new SimpleProperty().setName("KeyInteger")
@@ -123,9 +125,11 @@ public class TechnicalScenarioEdmProvider extends EdmProvider {
             .setFacets(new Facets().setNullable(false)));
 
         final List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
-        navigationProperties.add(new NavigationProperty().setName("navProperty").setFromRole(ROLE_2).setToRole(ROLE_1).setRelationship(ASSOCIATION_ET1_ET2));
+        navigationProperties.add(new NavigationProperty().setName("navProperty").setFromRole(ROLE_2).setToRole(ROLE_1)
+            .setRelationship(ASSOCIATION_ET1_ET2));
 
-        return new EntityType().setName(ET_KEY_IS_INTEGER.getName()).setProperties(properties).setNavigationProperties(navigationProperties).setKey(createKey("KeyInteger"));
+        return new EntityType().setName(ET_KEY_IS_INTEGER.getName()).setProperties(properties).setNavigationProperties(
+            navigationProperties).setKey(createKey("KeyInteger"));
 
       } else if (ET_COMPLEX_KEY.getName().equals(edmFQName.getName())) {
         final List<Property> properties = new ArrayList<Property>();
@@ -136,7 +140,8 @@ public class TechnicalScenarioEdmProvider extends EdmProvider {
             .setType(EdmSimpleTypeKind.String)
             .setFacets(new Facets().setNullable(false)));
 
-        return new EntityType().setName(ET_COMPLEX_KEY.getName()).setProperties(properties).setKey(createKey("KeyInteger", "KeyString"));
+        return new EntityType().setName(ET_COMPLEX_KEY.getName()).setProperties(properties).setKey(
+            createKey("KeyInteger", "KeyString"));
       } else if (ET_ALL_TYPES.getName().equals(edmFQName.getName())) {
         final List<Property> properties = new ArrayList<Property>();
         properties.add(new SimpleProperty().setName("Boolean").setType(EdmSimpleTypeKind.Boolean));
@@ -221,8 +226,10 @@ public class TechnicalScenarioEdmProvider extends EdmProvider {
   public Association getAssociation(final FullQualifiedName edmFQName) throws ODataMessageException {
     if (NAMESPACE_1.equals(edmFQName.getNamespace())) {
       if (ASSOCIATION_ET1_ET2.getName().equals(edmFQName.getName())) {
-        final AssociationEnd end1 = new AssociationEnd().setMultiplicity(EdmMultiplicity.ONE).setRole(ROLE_1).setType(ET_KEY_IS_STRING);
-        final AssociationEnd end2 = new AssociationEnd().setMultiplicity(EdmMultiplicity.ONE).setRole(ROLE_2).setType(ET_KEY_IS_INTEGER);
+        final AssociationEnd end1 =
+            new AssociationEnd().setMultiplicity(EdmMultiplicity.ONE).setRole(ROLE_1).setType(ET_KEY_IS_STRING);
+        final AssociationEnd end2 =
+            new AssociationEnd().setMultiplicity(EdmMultiplicity.ONE).setRole(ROLE_2).setType(ET_KEY_IS_INTEGER);
         return new Association().setName("Association").setEnd1(end1).setEnd2(end2);
       }
     }
@@ -259,12 +266,14 @@ public class TechnicalScenarioEdmProvider extends EdmProvider {
   }
 
   @Override
-  public FunctionImport getFunctionImport(final String entityContainer, final String name) throws ODataMessageException {
+  public FunctionImport getFunctionImport(final String entityContainer, final String name) 
+      throws ODataMessageException {
     return null;
   }
 
   @Override
-  public AssociationSet getAssociationSet(final String entityContainer, final FullQualifiedName association, final String sourceEntitySetName, final String sourceEntitySetRole) throws ODataMessageException {
+  public AssociationSet getAssociationSet(final String entityContainer, final FullQualifiedName association,
+      final String sourceEntitySetName, final String sourceEntitySetRole) throws ODataMessageException {
     if (ENTITY_CONTAINER_1.equals(entityContainer)) {
       if (ASSOCIATION_ET1_ET2.equals(association)) {
         final AssociationSetEnd end1 = new AssociationSetEnd().setRole(ROLE_1).setEntitySet(ES_KEY_IS_STRING);

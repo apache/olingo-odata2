@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.testutil.helper;
 
@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.api.exception.MessageReference;
  * test whether all fields of type {@link MessageReference} of
  * the tested (Exception) class are provided in the <b>i18n.properties</b> file.
  * 
- *  
+ * 
  */
 public class ODataMessageTextVerifier {
 
@@ -103,15 +103,18 @@ public class ODataMessageTextVerifier {
         try {
           msgRef = (MessageReference) field.get(null);
         } catch (final IllegalArgumentException e) {
-          failCollector("MsgRef Error--> Error: MsgRef " + field.getName() + " of class \"" + testClass.getSimpleName() + "\"");
+          failCollector("MsgRef Error--> Error: MsgRef " + field.getName() + " of class \"" + testClass.getSimpleName()
+              + "\"");
           break;
         } catch (final IllegalAccessException e) {
-          failCollector("MsgRef Error--> Not public: MsgRef " + field.getName() + " of class \"" + testClass.getSimpleName() + "\"");
+          failCollector("MsgRef Error--> Not public: MsgRef " + field.getName() + " of class \""
+              + testClass.getSimpleName() + "\"");
           break;
         }
 
         if (msgRef == null) {
-          failCollector("MsgRef Error--> Not assigned: MsgRef " + field.getName() + " of class \"" + testClass.getSimpleName() + "\"");
+          failCollector("MsgRef Error--> Not assigned: MsgRef " + field.getName() + " of class \""
+              + testClass.getSimpleName() + "\"");
           break;
         }
 

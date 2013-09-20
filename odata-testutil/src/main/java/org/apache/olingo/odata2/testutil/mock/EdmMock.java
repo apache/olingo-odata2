@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.testutil.mock;
 
@@ -22,8 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-
-import org.mockito.Mockito;
 
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -50,10 +48,11 @@ import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.edm.provider.CustomizableFeedMappings;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.mockito.Mockito;
 
 /**
  * Mocked Entity Data Model, more or less aligned to the Reference Scenario.
- *  
+ * 
  */
 class EdmMock {
 
@@ -61,11 +60,14 @@ class EdmMock {
     EdmEntityContainer defaultContainer = mock(EdmEntityContainer.class);
     when(defaultContainer.isDefaultEntityContainer()).thenReturn(true);
 
-    final EdmEntitySet employeeEntitySet = createEntitySetMock(defaultContainer, "Employees", EdmSimpleTypeKind.String, "EmployeeId");
+    final EdmEntitySet employeeEntitySet =
+        createEntitySetMock(defaultContainer, "Employees", EdmSimpleTypeKind.String, "EmployeeId");
     final EdmEntitySet teamEntitySet = createEntitySetMock(defaultContainer, "Teams", EdmSimpleTypeKind.String, "Id");
     final EdmEntitySet roomEntitySet = createEntitySetMock(defaultContainer, "Rooms", EdmSimpleTypeKind.String, "Id");
-    final EdmEntitySet managerEntitySet = createEntitySetMock(defaultContainer, "Managers", EdmSimpleTypeKind.String, "EmployeeId");
-    final EdmEntitySet buildingEntitySet = createEntitySetMock(defaultContainer, "Buildings", EdmSimpleTypeKind.String, "Id");
+    final EdmEntitySet managerEntitySet =
+        createEntitySetMock(defaultContainer, "Managers", EdmSimpleTypeKind.String, "EmployeeId");
+    final EdmEntitySet buildingEntitySet =
+        createEntitySetMock(defaultContainer, "Buildings", EdmSimpleTypeKind.String, "Id");
 
     EdmEntityType employeeType = employeeEntitySet.getEntityType();
     when(employeeType.hasStream()).thenReturn(true);
@@ -166,17 +168,22 @@ class EdmMock {
     when(buildingType.getNavigationPropertyNames()).thenReturn(Arrays.asList("nb_Rooms"));
     createNavigationProperty("nb_Rooms", EdmMultiplicity.MANY, buildingEntitySet, roomEntitySet);
 
-    EdmFunctionImport employeeSearchFunctionImport = createFunctionImportMock(defaultContainer, "EmployeeSearch", employeeType, EdmMultiplicity.MANY);
+    EdmFunctionImport employeeSearchFunctionImport =
+        createFunctionImportMock(defaultContainer, "EmployeeSearch", employeeType, EdmMultiplicity.MANY);
     when(employeeSearchFunctionImport.getEntitySet()).thenReturn(employeeEntitySet);
     EdmParameter employeeSearchParameter = mock(EdmParameter.class);
     when(employeeSearchParameter.getType()).thenReturn(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance());
     when(employeeSearchFunctionImport.getParameterNames()).thenReturn(Arrays.asList("q"));
     when(employeeSearchFunctionImport.getParameter("q")).thenReturn(employeeSearchParameter);
     createFunctionImportMock(defaultContainer, "AllLocations", locationComplexType, EdmMultiplicity.MANY);
-    createFunctionImportMock(defaultContainer, "AllUsedRoomIds", EdmSimpleTypeKind.String.getEdmSimpleTypeInstance(), EdmMultiplicity.MANY);
-    createFunctionImportMock(defaultContainer, "MaximalAge", EdmSimpleTypeKind.Int16.getEdmSimpleTypeInstance(), EdmMultiplicity.ONE);
+    createFunctionImportMock(defaultContainer, "AllUsedRoomIds", EdmSimpleTypeKind.String.getEdmSimpleTypeInstance(),
+        EdmMultiplicity.MANY);
+    createFunctionImportMock(defaultContainer, "MaximalAge", EdmSimpleTypeKind.Int16.getEdmSimpleTypeInstance(),
+        EdmMultiplicity.ONE);
     createFunctionImportMock(defaultContainer, "MostCommonLocation", locationComplexType, EdmMultiplicity.ONE);
-    EdmFunctionImport managerPhotoFunctionImport = createFunctionImportMock(defaultContainer, "ManagerPhoto", EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance(), EdmMultiplicity.ONE);
+    EdmFunctionImport managerPhotoFunctionImport =
+        createFunctionImportMock(defaultContainer, "ManagerPhoto", EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance(),
+            EdmMultiplicity.ONE);
     EdmParameter managerPhotoParameter = mock(EdmParameter.class);
     when(managerPhotoParameter.getType()).thenReturn(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance());
     EdmFacets managerPhotoParameterFacets = mock(EdmFacets.class);
@@ -184,7 +191,8 @@ class EdmMock {
     when(managerPhotoParameter.getFacets()).thenReturn(managerPhotoParameterFacets);
     when(managerPhotoFunctionImport.getParameterNames()).thenReturn(Arrays.asList("Id"));
     when(managerPhotoFunctionImport.getParameter("Id")).thenReturn(managerPhotoParameter);
-    EdmFunctionImport oldestEmployeeFunctionImport = createFunctionImportMock(defaultContainer, "OldestEmployee", employeeType, EdmMultiplicity.ONE);
+    EdmFunctionImport oldestEmployeeFunctionImport =
+        createFunctionImportMock(defaultContainer, "OldestEmployee", employeeType, EdmMultiplicity.ONE);
     when(oldestEmployeeFunctionImport.getEntitySet()).thenReturn(employeeEntitySet);
 
     EdmEntityContainer specificContainer = mock(EdmEntityContainer.class);
@@ -266,7 +274,8 @@ class EdmMock {
     return edm;
   }
 
-  private static EdmNavigationProperty createNavigationProperty(final String name, final EdmMultiplicity multiplicity, final EdmEntitySet entitySet, final EdmEntitySet targetEntitySet) throws EdmException {
+  private static EdmNavigationProperty createNavigationProperty(final String name, final EdmMultiplicity multiplicity,
+      final EdmEntitySet entitySet, final EdmEntitySet targetEntitySet) throws EdmException {
     EdmType navigationType = mock(EdmType.class);
     when(navigationType.getKind()).thenReturn(EdmTypeKind.ENTITY);
 
@@ -281,7 +290,8 @@ class EdmMock {
     return navigationProperty;
   }
 
-  private static EdmProperty createProperty(final String name, final EdmSimpleTypeKind kind, final EdmStructuralType entityType) throws EdmException {
+  private static EdmProperty createProperty(final String name, final EdmSimpleTypeKind kind,
+      final EdmStructuralType entityType) throws EdmException {
     EdmProperty property = mock(EdmProperty.class);
     when(property.getType()).thenReturn(kind.getEdmSimpleTypeInstance());
     when(property.getName()).thenReturn(name);
@@ -289,7 +299,8 @@ class EdmMock {
     return property;
   }
 
-  private static EdmEntitySet createEntitySetMock(final EdmEntityContainer container, final String name, final EdmSimpleTypeKind kind, final String keyPropertyId) throws EdmException {
+  private static EdmEntitySet createEntitySetMock(final EdmEntityContainer container, final String name,
+      final EdmSimpleTypeKind kind, final String keyPropertyId) throws EdmException {
     final EdmEntityType entityType = createEntityTypeMock(name.substring(0, name.length() - 1), kind, keyPropertyId);
 
     EdmEntitySet entitySet = mock(EdmEntitySet.class);
@@ -303,7 +314,8 @@ class EdmMock {
     return entitySet;
   }
 
-  private static EdmEntityType createEntityTypeMock(final String name, final EdmSimpleTypeKind kind, final String keyPropertyId) throws EdmException {
+  private static EdmEntityType createEntityTypeMock(final String name, final EdmSimpleTypeKind kind,
+      final String keyPropertyId) throws EdmException {
     EdmEntityType entityType = mock(EdmEntityType.class);
     when(entityType.getName()).thenReturn(name);
     when(entityType.getNamespace()).thenReturn("RefScenario");
@@ -322,7 +334,8 @@ class EdmMock {
     return entityType;
   }
 
-  private static EdmFunctionImport createFunctionImportMock(final EdmEntityContainer container, final String name, final EdmType type, final EdmMultiplicity multiplicity) throws EdmException {
+  private static EdmFunctionImport createFunctionImportMock(final EdmEntityContainer container, final String name,
+      final EdmType type, final EdmMultiplicity multiplicity) throws EdmException {
     EdmTyped returnType = mock(EdmTyped.class);
     when(returnType.getType()).thenReturn(type);
     when(returnType.getMultiplicity()).thenReturn(multiplicity);

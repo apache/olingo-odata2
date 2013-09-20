@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.testutil.mock;
 
@@ -161,14 +161,18 @@ public class EdmTestProvider extends EdmProvider {
 
     final List<AnnotationElement> childElements = new ArrayList<AnnotationElement>();
     childElements.add(new AnnotationElement().setName("schemaElementTest2").setText("text2").setNamespace(NAMESPACE_1));
-    childElements.add(new AnnotationElement().setName("schemaElementTest3").setText("text3").setPrefix("prefix").setNamespace("namespace"));
+    childElements.add(new AnnotationElement().setName("schemaElementTest3").setText("text3").setPrefix("prefix")
+        .setNamespace("namespace"));
     final List<AnnotationAttribute> elementAttributes = new ArrayList<AnnotationAttribute>();
     elementAttributes.add(new AnnotationAttribute().setName("rel").setText("self"));
-    elementAttributes.add(new AnnotationAttribute().setName("href").setText("http://foo").setPrefix("pre").setNamespace("namespaceForAnno"));
-    childElements.add(new AnnotationElement().setName("schemaElementTest4").setText("text4").setAttributes(elementAttributes));
+    elementAttributes.add(new AnnotationAttribute().setName("href").setText("http://foo").setPrefix("pre")
+        .setNamespace("namespaceForAnno"));
+    childElements.add(new AnnotationElement().setName("schemaElementTest4").setText("text4").setAttributes(
+        elementAttributes));
 
     final List<AnnotationElement> schemaElements = new ArrayList<AnnotationElement>();
-    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setText("text1").setChildElements(childElements));
+    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setText("text1").setChildElements(
+        childElements));
 
     schema.setAnnotationElements(schemaElements);
     schemas.add(schema);
@@ -194,24 +198,30 @@ public class EdmTestProvider extends EdmProvider {
       if (ENTITY_TYPE_1_1.getName().equals(edmFQName.getName())) {
         final List<Property> properties = new ArrayList<Property>();
         final ArrayList<AnnotationAttribute> annoList = new ArrayList<AnnotationAttribute>();
-        annoList.add(new AnnotationAttribute().setName("annoName").setNamespace("http://annoNamespace").setPrefix("annoPrefix").setText("annoText"));
-        annoList.add(new AnnotationAttribute().setName("annoName2").setNamespace("http://annoNamespace").setPrefix("annoPrefix").setText("annoText2"));
+        annoList.add(new AnnotationAttribute().setName("annoName").setNamespace("http://annoNamespace").setPrefix(
+            "annoPrefix").setText("annoText"));
+        annoList.add(new AnnotationAttribute().setName("annoName2").setNamespace("http://annoNamespace").setPrefix(
+            "annoPrefix").setText("annoText2"));
         properties.add(new SimpleProperty().setName("EmployeeId").setType(EdmSimpleTypeKind.String)
             .setFacets(new Facets().setNullable(false))
             .setMapping(new Mapping().setInternalName("getId")).setAnnotationAttributes(annoList));
         final ArrayList<AnnotationAttribute> annoList2 = new ArrayList<AnnotationAttribute>();
-        annoList2.add(new AnnotationAttribute().setName("annoName").setNamespace("http://annoNamespace").setPrefix("annoPrefix").setText("annoText"));
+        annoList2.add(new AnnotationAttribute().setName("annoName").setNamespace("http://annoNamespace").setPrefix(
+            "annoPrefix").setText("annoText"));
 
         final List<AnnotationElement> annoElementsForSimpleProp = new ArrayList<AnnotationElement>();
         annoElementsForSimpleProp.add(new AnnotationElement().setName("propertyAnnoElement").setText("text"));
         annoElementsForSimpleProp.add(new AnnotationElement().setName("propertyAnnoElement2"));
-        final SimpleProperty simpleProp = new SimpleProperty().setName("EmployeeName").setType(EdmSimpleTypeKind.String)
-            .setCustomizableFeedMappings(new CustomizableFeedMappings()
-                .setFcTargetPath(EdmTargetPath.SYNDICATION_TITLE)).setAnnotationAttributes(annoList2).setAnnotationElements(annoElementsForSimpleProp);
+        final SimpleProperty simpleProp =
+            new SimpleProperty().setName("EmployeeName").setType(EdmSimpleTypeKind.String)
+                .setCustomizableFeedMappings(new CustomizableFeedMappings()
+                    .setFcTargetPath(EdmTargetPath.SYNDICATION_TITLE)).setAnnotationAttributes(annoList2)
+                .setAnnotationElements(annoElementsForSimpleProp);
 
         properties.add(simpleProp);
         final ArrayList<AnnotationAttribute> annoList3 = new ArrayList<AnnotationAttribute>();
-        annoList3.add(new AnnotationAttribute().setName("annoName").setNamespace("http://annoNamespaceNew").setPrefix("annoPrefix").setText("annoTextNew"));
+        annoList3.add(new AnnotationAttribute().setName("annoName").setNamespace("http://annoNamespaceNew").setPrefix(
+            "annoPrefix").setText("annoTextNew"));
         properties.add(new SimpleProperty().setName("ManagerId").setType(EdmSimpleTypeKind.String)
             .setMapping(new Mapping().setInternalName("getManager.getId")).setAnnotationAttributes(annoList3));
         properties.add(new SimpleProperty().setName("RoomId").setType(EdmSimpleTypeKind.String)
@@ -223,7 +233,8 @@ public class EdmTestProvider extends EdmProvider {
         properties.add(new SimpleProperty().setName("Age").setType(EdmSimpleTypeKind.Int16));
         properties.add(new SimpleProperty().setName("EntryDate").setType(EdmSimpleTypeKind.DateTime)
             .setFacets(new Facets().setNullable(true))
-            .setCustomizableFeedMappings(new CustomizableFeedMappings().setFcTargetPath(EdmTargetPath.SYNDICATION_UPDATED)));
+            .setCustomizableFeedMappings(
+                new CustomizableFeedMappings().setFcTargetPath(EdmTargetPath.SYNDICATION_UPDATED)));
         properties.add(new SimpleProperty().setName("ImageUrl").setType(EdmSimpleTypeKind.String)
             .setMapping(new Mapping().setInternalName("getImageUri")));
         final List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
@@ -245,7 +256,8 @@ public class EdmTestProvider extends EdmProvider {
         properties.add(new SimpleProperty().setName("Id").setType(EdmSimpleTypeKind.String)
             .setFacets(new Facets().setNullable(false).setDefaultValue("1")));
         properties.add(new SimpleProperty().setName("Name").setType(EdmSimpleTypeKind.String)
-            .setCustomizableFeedMappings(new CustomizableFeedMappings().setFcTargetPath(EdmTargetPath.SYNDICATION_TITLE)));
+            .setCustomizableFeedMappings(
+                new CustomizableFeedMappings().setFcTargetPath(EdmTargetPath.SYNDICATION_TITLE)));
         return new EntityType().setName(ENTITY_TYPE_1_BASE.getName())
             .setAbstract(true)
             .setProperties(properties)
@@ -312,11 +324,13 @@ public class EdmTestProvider extends EdmProvider {
         properties.add(new SimpleProperty().setName("Id").setType(EdmSimpleTypeKind.Int32)
             .setFacets(new Facets().setNullable(false).setConcurrencyMode(EdmConcurrencyMode.Fixed)));
         properties.add(new SimpleProperty().setName("Name").setType(EdmSimpleTypeKind.String)
-            .setCustomizableFeedMappings(new CustomizableFeedMappings().setFcTargetPath(EdmTargetPath.SYNDICATION_TITLE)));
+            .setCustomizableFeedMappings(
+                new CustomizableFeedMappings().setFcTargetPath(EdmTargetPath.SYNDICATION_TITLE)));
         properties.add(new SimpleProperty().setName("Type").setType(EdmSimpleTypeKind.String)
             .setFacets(new Facets().setNullable(false)));
         properties.add(new SimpleProperty().setName("ImageUrl").setType(EdmSimpleTypeKind.String)
-            .setCustomizableFeedMappings(new CustomizableFeedMappings().setFcTargetPath(EdmTargetPath.SYNDICATION_AUTHORURI))
+            .setCustomizableFeedMappings(
+                new CustomizableFeedMappings().setFcTargetPath(EdmTargetPath.SYNDICATION_AUTHORURI))
             .setMapping(new Mapping().setInternalName("getImageUri")));
         properties.add(new SimpleProperty().setName("Image").setType(EdmSimpleTypeKind.Binary)
             .setMapping(new Mapping().setMimeType("getType")));
@@ -367,16 +381,22 @@ public class EdmTestProvider extends EdmProvider {
     if (NAMESPACE_1.equals(edmFQName.getNamespace())) {
       if (ASSOCIATION_1_1.getName().equals(edmFQName.getName())) {
         return new Association().setName(ASSOCIATION_1_1.getName())
-            .setEnd1(new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
-            .setEnd2(new AssociationEnd().setType(ENTITY_TYPE_1_4).setRole(ROLE_1_4).setMultiplicity(EdmMultiplicity.ONE));
+            .setEnd1(
+                new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
+            .setEnd2(
+                new AssociationEnd().setType(ENTITY_TYPE_1_4).setRole(ROLE_1_4).setMultiplicity(EdmMultiplicity.ONE));
       } else if (ASSOCIATION_1_2.getName().equals(edmFQName.getName())) {
         return new Association().setName(ASSOCIATION_1_2.getName())
-            .setEnd1(new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
-            .setEnd2(new AssociationEnd().setType(ENTITY_TYPE_1_2).setRole(ROLE_1_2).setMultiplicity(EdmMultiplicity.ONE));
+            .setEnd1(
+                new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
+            .setEnd2(
+                new AssociationEnd().setType(ENTITY_TYPE_1_2).setRole(ROLE_1_2).setMultiplicity(EdmMultiplicity.ONE));
       } else if (ASSOCIATION_1_3.getName().equals(edmFQName.getName())) {
         return new Association().setName(ASSOCIATION_1_3.getName())
-            .setEnd1(new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
-            .setEnd2(new AssociationEnd().setType(ENTITY_TYPE_1_3).setRole(ROLE_1_3).setMultiplicity(EdmMultiplicity.ONE));
+            .setEnd1(
+                new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
+            .setEnd2(
+                new AssociationEnd().setType(ENTITY_TYPE_1_3).setRole(ROLE_1_3).setMultiplicity(EdmMultiplicity.ONE));
       } else if (ASSOCIATION_1_4.getName().equals(edmFQName.getName())) {
         final List<PropertyRef> propertyRefsPrincipal = new ArrayList<PropertyRef>();
         propertyRefsPrincipal.add(new PropertyRef().setName("Id"));
@@ -385,10 +405,16 @@ public class EdmTestProvider extends EdmProvider {
         propertyRefsDependent.add(new PropertyRef().setName("Id"));
         propertyRefsDependent.add(new PropertyRef().setName("Id2"));
         return new Association().setName(ASSOCIATION_1_4.getName())
-            .setEnd1(new AssociationEnd().setType(ENTITY_TYPE_1_5).setRole(ROLE_1_5).setMultiplicity(EdmMultiplicity.ONE))
-            .setEnd2(new AssociationEnd().setType(ENTITY_TYPE_1_3).setRole(ROLE_1_3).setMultiplicity(EdmMultiplicity.MANY))
-            .setReferentialConstraint(new ReferentialConstraint().setPrincipal(new ReferentialConstraintRole().setRole("BuildingToRoom").setPropertyRefs(propertyRefsPrincipal))
-                .setDependent(new ReferentialConstraintRole().setRole("RoomToBuilding").setPropertyRefs(propertyRefsDependent)));
+            .setEnd1(
+                new AssociationEnd().setType(ENTITY_TYPE_1_5).setRole(ROLE_1_5).setMultiplicity(EdmMultiplicity.ONE))
+            .setEnd2(
+                new AssociationEnd().setType(ENTITY_TYPE_1_3).setRole(ROLE_1_3).setMultiplicity(EdmMultiplicity.MANY))
+            .setReferentialConstraint(
+                new ReferentialConstraint().setPrincipal(
+                    new ReferentialConstraintRole().setRole("BuildingToRoom").setPropertyRefs(propertyRefsPrincipal))
+                    .setDependent(
+                        new ReferentialConstraintRole().setRole("RoomToBuilding")
+                            .setPropertyRefs(propertyRefsDependent)));
       }
     }
     return null;
@@ -449,12 +475,16 @@ public class EdmTestProvider extends EdmProvider {
 
       } else if (FUNCTION_IMPORT_3.equals(name)) {
         return new FunctionImport().setName(name)
-            .setReturnType(new ReturnType().setTypeName(EdmSimpleTypeKind.String.getFullQualifiedName()).setMultiplicity(EdmMultiplicity.MANY))
+            .setReturnType(
+                new ReturnType().setTypeName(EdmSimpleTypeKind.String.getFullQualifiedName()).setMultiplicity(
+                    EdmMultiplicity.MANY))
             .setHttpMethod("GET");
 
       } else if (FUNCTION_IMPORT_4.equals(name)) {
         return new FunctionImport().setName(name)
-            .setReturnType(new ReturnType().setTypeName(EdmSimpleTypeKind.Int16.getFullQualifiedName()).setMultiplicity(EdmMultiplicity.ONE))
+            .setReturnType(
+                new ReturnType().setTypeName(EdmSimpleTypeKind.Int16.getFullQualifiedName()).setMultiplicity(
+                    EdmMultiplicity.ONE))
             .setHttpMethod("GET");
 
       } else if (FUNCTION_IMPORT_5.equals(name)) {
@@ -467,13 +497,17 @@ public class EdmTestProvider extends EdmProvider {
         parameters.add(new FunctionImportParameter().setName("Id").setType(EdmSimpleTypeKind.String)
             .setFacets(new Facets().setNullable(false)));
         return new FunctionImport().setName(name)
-            .setReturnType(new ReturnType().setTypeName(EdmSimpleTypeKind.Binary.getFullQualifiedName()).setMultiplicity(EdmMultiplicity.ONE))
+            .setReturnType(
+                new ReturnType().setTypeName(EdmSimpleTypeKind.Binary.getFullQualifiedName()).setMultiplicity(
+                    EdmMultiplicity.ONE))
             .setHttpMethod("GET")
             .setParameters(parameters);
 
       } else if (FUNCTION_IMPORT_7.equals(name)) {
         return new FunctionImport().setName(name)
-            .setReturnType(new ReturnType().setTypeName(new FullQualifiedName(NAMESPACE_1, "Employee")).setMultiplicity(EdmMultiplicity.ZERO_TO_ONE))
+            .setReturnType(
+                new ReturnType().setTypeName(new FullQualifiedName(NAMESPACE_1, "Employee")).setMultiplicity(
+                    EdmMultiplicity.ZERO_TO_ONE))
             .setEntitySet(ENTITY_SET_1_1)
             .setHttpMethod("GET");
 
@@ -484,7 +518,8 @@ public class EdmTestProvider extends EdmProvider {
   }
 
   @Override
-  public AssociationSet getAssociationSet(final String entityContainer, final FullQualifiedName association, final String sourceEntitySetName, final String sourceEntitySetRole) throws ODataException {
+  public AssociationSet getAssociationSet(final String entityContainer, final FullQualifiedName association,
+      final String sourceEntitySetName, final String sourceEntitySetRole) throws ODataException {
     if (ENTITY_CONTAINER_1.equals(entityContainer)) {
       if (ASSOCIATION_1_1.equals(association)) {
         return new AssociationSet().setName(ASSOCIATION_1_1.getName())
