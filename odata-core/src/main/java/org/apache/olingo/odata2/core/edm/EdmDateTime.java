@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the EDM simple type DateTime.
- *  
+ * 
  */
 public class EdmDateTime extends AbstractSimpleType {
 
@@ -50,7 +50,8 @@ public class EdmDateTime extends AbstractSimpleType {
   }
 
   @Override
-  protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets, final Class<T> returnType) throws EdmSimpleTypeException {
+  protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
+      final Class<T> returnType) throws EdmSimpleTypeException {
     // In JSON, we allow also the XML literal form, so there is on purpose
     // no exception if the JSON pattern does not match.
     if (literalKind == EdmLiteralKind.JSON) {
@@ -102,14 +103,14 @@ public class EdmDateTime extends AbstractSimpleType {
   }
 
   /**
-   * Parses a formatted date/time value and sets the values of a
-   * {@link Calendar} object accordingly. 
-   * @param value         the formatted date/time value as String
-   * @param facets        additional constraints for parsing (optional)
+   * Parses a formatted date/time value and sets the values of a {@link Calendar} object accordingly.
+   * @param value the formatted date/time value as String
+   * @param facets additional constraints for parsing (optional)
    * @param dateTimeValue the Calendar object to be set to the parsed value
    * @throws EdmSimpleTypeException
    */
-  protected static void parseLiteral(final String value, final EdmFacets facets, final Calendar dateTimeValue) throws EdmSimpleTypeException {
+  protected static void parseLiteral(final String value, final EdmFacets facets, final Calendar dateTimeValue)
+      throws EdmSimpleTypeException {
     final Matcher matcher = PATTERN.matcher(value);
     if (!matcher.matches()) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
@@ -137,7 +138,7 @@ public class EdmDateTime extends AbstractSimpleType {
 
     // The Calendar class does not check any values until a get method is called,
     // so we do just that to validate the fields set above, not because we want
-    // to return something else.  For strict checks, the lenient mode is switched
+    // to return something else. For strict checks, the lenient mode is switched
     // off temporarily.
     dateTimeValue.setLenient(false);
     try {
@@ -149,7 +150,8 @@ public class EdmDateTime extends AbstractSimpleType {
   }
 
   @Override
-  protected <T> String internalValueToString(final T value, final EdmLiteralKind literalKind, final EdmFacets facets) throws EdmSimpleTypeException {
+  protected <T> String internalValueToString(final T value, final EdmLiteralKind literalKind, final EdmFacets facets)
+      throws EdmSimpleTypeException {
     long timeInMillis;
     if (value instanceof Date) {
       timeInMillis = ((Date) value).getTime();
@@ -203,7 +205,8 @@ public class EdmDateTime extends AbstractSimpleType {
     result.append((char) ('0' + number % 10));
   }
 
-  protected static void appendMilliseconds(final StringBuilder result, final long milliseconds, final EdmFacets facets) throws IllegalArgumentException {
+  protected static void appendMilliseconds(final StringBuilder result, final long milliseconds, final EdmFacets facets)
+      throws IllegalArgumentException {
     final int digits = milliseconds % 1000 == 0 ? 0 : milliseconds % 100 == 0 ? 1 : milliseconds % 10 == 0 ? 2 : 3;
     if (digits > 0) {
       result.append('.');

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep;
 
@@ -65,7 +65,8 @@ public abstract class AbstractProviderTest extends AbstractXmlProducerTestHelper
       throw new RuntimeException(e);
     }
   }
-  protected static final EntityProviderWriteProperties DEFAULT_PROPERTIES = EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
+  protected static final EntityProviderWriteProperties DEFAULT_PROPERTIES = EntityProviderWriteProperties.serviceRoot(
+      BASE_URI).build();
 
   protected Map<String, Object> employeeData;
 
@@ -131,7 +132,11 @@ public abstract class AbstractProviderTest extends AbstractXmlProducerTestHelper
     photoData.put("Id", Integer.valueOf(1));
     photoData.put("Name", "Mona Lisa");
     photoData.put("Type", "image/png");
-    photoData.put("ImageUrl", "http://www.mopo.de/image/view/2012/6/4/16548086,13385561,medRes,maxh,234,maxw,234,Parodia_Mona_Lisa_Lego_Hamburger_Morgenpost.jpg");
+    photoData
+        .put(
+            "ImageUrl",
+            "http://www.mopo.de/image/view/2012/6/4/16548086,13385561,medRes,maxh,234,maxw,234," +
+            "Parodia_Mona_Lisa_Lego_Hamburger_Morgenpost.jpg");
     Map<String, Object> imageData = new HashMap<String, Object>();
     imageData.put("Image", new byte[] { 1, 2, 3, 4 });
     imageData.put("getImageType", "image/png");
@@ -184,7 +189,8 @@ public abstract class AbstractProviderTest extends AbstractXmlProducerTestHelper
     return ctx;
   }
 
-  protected EntityProviderInterface createEntityProvider() throws ODataException, EdmException, EntityProviderException {
+  protected EntityProviderInterface createEntityProvider() throws ODataException, EdmException, 
+  EntityProviderException {
     return new ProviderFacadeImpl();
   }
 

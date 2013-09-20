@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
@@ -31,9 +31,10 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 /**
  * Implementation of the EDM simple type DateTimeOffset.
  * 
- * Details about parsing of time strings to {@link EdmDateTimeOffset} objects can be found in {@link org.apache.olingo.odata2.api.edm.EdmSimpleType} documentation.
+ * Details about parsing of time strings to {@link EdmDateTimeOffset} objects can be found in
+ * {@link org.apache.olingo.odata2.api.edm.EdmSimpleType} documentation.
  * 
- *  
+ * 
  */
 public class EdmDateTimeOffset extends AbstractSimpleType {
 
@@ -55,10 +56,12 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
   }
 
   @Override
-  protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets, final Class<T> returnType) throws EdmSimpleTypeException {
+  protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
+      final Class<T> returnType) throws EdmSimpleTypeException {
     if (literalKind == EdmLiteralKind.URI) {
       if (value.length() > 16 && value.startsWith("datetimeoffset'") && value.endsWith("'")) {
-        return internalValueOfString(value.substring(15, value.length() - 1), EdmLiteralKind.DEFAULT, facets, returnType);
+        return internalValueOfString(value.substring(15, value.length() - 1), EdmLiteralKind.DEFAULT, facets,
+            returnType);
       } else {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
       }
@@ -100,13 +103,16 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
       }
 
-      final String timeZoneOffset = matcher.group(1) != null && matcher.group(2) != null && !matcher.group(2).matches("[-+]0+:0+") ? matcher.group(2) : null;
+      final String timeZoneOffset =
+          matcher.group(1) != null && matcher.group(2) != null && !matcher.group(2).matches("[-+]0+:0+") ? matcher
+              .group(2) : null;
       dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT" + timeZoneOffset));
       if (dateTimeValue.get(Calendar.ZONE_OFFSET) == 0 && timeZoneOffset != null) {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
       }
       dateTimeValue.clear();
-      EdmDateTime.parseLiteral(value.substring(0, matcher.group(1) == null ? value.length() : matcher.start(1)), facets, dateTimeValue);
+      EdmDateTime.parseLiteral(value.substring(0, matcher.group(1) == null ? value.length() : matcher.start(1)),
+          facets, dateTimeValue);
     }
 
     if (returnType.isAssignableFrom(Calendar.class)) {
@@ -121,7 +127,8 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
   }
 
   @Override
-  protected <T> String internalValueToString(final T value, final EdmLiteralKind literalKind, final EdmFacets facets) throws EdmSimpleTypeException {
+  protected <T> String internalValueToString(final T value, final EdmLiteralKind literalKind, final EdmFacets facets)
+      throws EdmSimpleTypeException {
     Long milliSeconds; // number of milliseconds since 1970-01-01T00:00:00Z
     int offset; // offset in milliseconds from GMT to the requested time zone
     if (value instanceof Date) {
@@ -150,7 +157,8 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
       return "/Date(" + milliSeconds + (offset == 0 ? "" : String.format("%+05d", offsetInMinutes)) + ")/";
 
     } else {
-      final String localTimeString = EdmDateTime.getInstance().valueToString(milliSeconds, EdmLiteralKind.DEFAULT, facets);
+      final String localTimeString =
+          EdmDateTime.getInstance().valueToString(milliSeconds, EdmLiteralKind.DEFAULT, facets);
       final int offsetHours = offsetInMinutes / 60;
       final int offsetMinutes = Math.abs(offsetInMinutes % 60);
       final String offsetString = offset == 0 ? "Z" : String.format("%+03d:%02d", offsetHours, offsetMinutes);

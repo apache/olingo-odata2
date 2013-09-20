@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
@@ -30,13 +30,16 @@ import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 
 /**
  * Expression tokenizer
- *  
+ * 
  */
 public class Tokenizer {
 
-  //Pattern OTHER_LIT = Pattern.compile("^([[A-Za-z0-9]._~%!$&*+;:@-]+)");
+  // Pattern OTHER_LIT = Pattern.compile("^([[A-Za-z0-9]._~%!$&*+;:@-]+)");
   private static final Pattern OTHER_LIT = Pattern.compile("(?:\\p{L}|\\p{Digit}|[-._~%!$&*+;:@])+");
-  private static final Pattern FUNK = Pattern.compile("^(startswith|endswith|substring|substring|substringof|indexof|replace|tolower|toupper|trim|concat|length|year|mounth|day|hour|minute|second|round|ceiling|floor)( *)\\(");
+  private static final Pattern FUNK =
+      Pattern
+          .compile("^(startswith|endswith|substring|substring|substringof|indexof|replace|tolower|toupper" +
+          		"|trim|concat|length|year|mounth|day|hour|minute|second|round|ceiling|floor)( *)\\(");
   private static final Pattern AND_SUB1 = Pattern.compile("^(add|sub|mul|div|mod|not) ");
   private static final Pattern AND_SUB = Pattern.compile("^(and|or|eq|ne|lt|gt|le|ge) ");
   private static final Pattern prefix = Pattern.compile("^(X|binary|guid|datetime|datetimeoffset|time)'");
@@ -66,8 +69,8 @@ public class Tokenizer {
   }
 
   /**
-   * Tokenizes an expression as defined per OData specification 
-   * @return Token list 
+   * Tokenizes an expression as defined per OData specification
+   * @return Token list
    */
   public TokenList tokenize() throws TokenizerException, ExpressionParserException {
     curPosition = 0;
@@ -81,7 +84,7 @@ public class Tokenizer {
       curCharacter = expression.charAt(curPosition);
       switch (curCharacter) {
       case ' ':
-        //count whitespace and move pointer to next non-whitespace char
+        // count whitespace and move pointer to next non-whitespace char
         eatWhiteSpaces(curPosition, curCharacter);
         break;
 
@@ -117,26 +120,26 @@ public class Tokenizer {
         break;
 
       default:
-        String rem_expr = expression.substring(curPosition); //remaining expression
+        String rem_expr = expression.substring(curPosition); // remaining expression
 
         boolean isBinary = checkForBinary(oldPosition, rem_expr);
         if (isBinary) {
           break;
         }
 
-        //check for prefixes like X, binary, guid, datetime
+        // check for prefixes like X, binary, guid, datetime
         boolean isPrefix = checkForPrefix(rem_expr);
         if (isPrefix) {
           break;
         }
 
-        //check for math
+        // check for math
         boolean isMath = checkForMath(oldPosition, rem_expr);
         if (isMath) {
           break;
         }
 
-        //check for function
+        // check for function
         boolean isFunction = checkForMethod(oldPosition, rem_expr);
         if (isFunction) {
           break;
@@ -171,7 +174,7 @@ public class Tokenizer {
         tokens.appendEdmTypedToken(oldPosition, TokenKind.SIMPLE_TYPE, token, edmLiteral);
         isLiteral = true;
       } catch (EdmLiteralException e) {
-        // We treat it as normal untyped literal. 
+        // We treat it as normal untyped literal.
 
         // The '-' is checked here (and not in the switch statement) because it may be
         // part of a negative number.
@@ -193,7 +196,8 @@ public class Tokenizer {
     boolean isBoolean = false;
     if (rem_expr.equals("true") || rem_expr.equals("false")) {
       curPosition = curPosition + rem_expr.length();
-      tokens.appendEdmTypedToken(oldPosition, TokenKind.SIMPLE_TYPE, rem_expr, new EdmLiteral(EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Boolean), rem_expr));
+      tokens.appendEdmTypedToken(oldPosition, TokenKind.SIMPLE_TYPE, rem_expr, new EdmLiteral(EdmSimpleTypeFacadeImpl
+          .getEdmSimpleType(EdmSimpleTypeKind.Boolean), rem_expr));
       isBoolean = true;
     }
     return isBoolean;
@@ -262,7 +266,7 @@ public class Tokenizer {
     if (matcher.find()) {
       token = matcher.group(1);
       curPosition = curPosition + token.length();
-      curCharacter = expression.charAt(curPosition); //"should  be '
+      curCharacter = expression.charAt(curPosition); // "should be '
       readLiteral(curCharacter, token);
       isPrefix = true;
     }
@@ -286,7 +290,7 @@ public class Tokenizer {
     token = token + Character.toString(curCharacter);
     curPosition = curPosition + 1;
 
-    boolean wasApostroph = false; //leading ' does not count
+    boolean wasApostroph = false; // leading ' does not count
     while (curPosition < expressionLength) {
       curCharacter = expression.charAt(curPosition);
 
@@ -299,7 +303,7 @@ public class Tokenizer {
         wasApostroph = false;
       } else {
         if (wasApostroph) {
-          wasApostroph = false; //a double ' is a normal character '
+          wasApostroph = false; // a double ' is a normal character '
         } else {
           wasApostroph = true;
           token = token + curCharacter;
@@ -309,7 +313,7 @@ public class Tokenizer {
     }
 
     if (!wasApostroph) {
-      //Exception tested within TestPMparseFilterString
+      // Exception tested within TestPMparseFilterString
       throw FilterParserExceptionImpl.createTOKEN_UNDETERMINATED_STRING(oldPosition, expression);
     }
 

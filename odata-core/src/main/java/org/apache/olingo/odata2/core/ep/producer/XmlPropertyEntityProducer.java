@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -36,21 +36,22 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
  * Internal EntityProvider for simple and complex EDM properties which are pre-analyzed as {@link EntityPropertyInfo}.
- *  
+ * 
  */
 public class XmlPropertyEntityProducer {
 
   /**
-   * Append {@link Object} <code>value</code> based on {@link EntityPropertyInfo} to {@link XMLStreamWriter}
-   * in an already existing XML structure inside the d namespace.
+   * Append {@link Object} <code>value</code> based on {@link EntityPropertyInfo} to {@link XMLStreamWriter} in an
+   * already existing XML structure inside the d namespace.
    * 
    * @param writer
-   * @param name  Name of the outer XML tag
+   * @param name Name of the outer XML tag
    * @param propertyInfo
    * @param value
    * @throws EntityProviderException
    */
-  public void append(final XMLStreamWriter writer, final String name, final EntityPropertyInfo propertyInfo, final Object value) throws EntityProviderException {
+  public void append(final XMLStreamWriter writer, final String name, final EntityPropertyInfo propertyInfo,
+      final Object value) throws EntityProviderException {
     try {
       writer.writeStartElement(Edm.NAMESPACE_D_2007_08, name);
 
@@ -68,7 +69,8 @@ public class XmlPropertyEntityProducer {
     }
   }
 
-  public void appendCustomProperty(final XMLStreamWriter writer, final String name, final EntityPropertyInfo propertyInfo, final Object value) throws EntityProviderException {
+  public void appendCustomProperty(final XMLStreamWriter writer, final String name,
+      final EntityPropertyInfo propertyInfo, final Object value) throws EntityProviderException {
     try {
       if (!propertyInfo.isComplex()) {
         writeStartElementWithCustomNamespace(writer, propertyInfo, name);
@@ -83,8 +85,8 @@ public class XmlPropertyEntityProducer {
   }
 
   /**
-   * Append {@link Object} <code>value</code> based on {@link EntityPropertyInfo} to {@link XMLStreamWriter}
-   * as a stand-alone XML structure, including writing of default namespace declarations.
+   * Append {@link Object} <code>value</code> based on {@link EntityPropertyInfo} to {@link XMLStreamWriter} as a
+   * stand-alone XML structure, including writing of default namespace declarations.
    * The name of the outermost XML element comes from the {@link EntityPropertyInfo}.
    * 
    * @param writer
@@ -92,7 +94,8 @@ public class XmlPropertyEntityProducer {
    * @param value
    * @throws EntityProviderException
    */
-  public void append(final XMLStreamWriter writer, final EntityPropertyInfo propertyInfo, final Object value) throws EntityProviderException {
+  public void append(final XMLStreamWriter writer, final EntityPropertyInfo propertyInfo, final Object value)
+      throws EntityProviderException {
     try {
       writer.writeStartElement(propertyInfo.getName());
       writer.writeDefaultNamespace(Edm.NAMESPACE_D_2007_08);
@@ -121,7 +124,8 @@ public class XmlPropertyEntityProducer {
    * @throws EdmException
    * @throws EntityProviderException
    */
-  private void appendProperty(final XMLStreamWriter writer, final EntityComplexPropertyInfo propertyInfo, final Object value) throws XMLStreamException, EdmException, EntityProviderException {
+  private void appendProperty(final XMLStreamWriter writer, final EntityComplexPropertyInfo propertyInfo,
+      final Object value) throws XMLStreamException, EdmException, EntityProviderException {
 
     if (value == null) {
       writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.ATOM_NULL, FormatXml.ATOM_VALUE_TRUE);
@@ -167,7 +171,8 @@ public class XmlPropertyEntityProducer {
    * @throws XMLStreamException
    * @throws EdmException
    */
-  private void appendProperty(final XMLStreamWriter writer, final EntityPropertyInfo prop, final Object value) throws XMLStreamException, EdmException {
+  private void appendProperty(final XMLStreamWriter writer, final EntityPropertyInfo prop, final Object value)
+      throws XMLStreamException, EdmException {
     Object contentValue = value;
     String mimeType = null;
     if (prop.getMimeType() != null) {
@@ -198,7 +203,8 @@ public class XmlPropertyEntityProducer {
    * @throws XMLStreamException
    * @throws EntityProviderException
    */
-  private void writeStartElementWithCustomNamespace(final XMLStreamWriter writer, final EntityPropertyInfo prop, final String name) throws XMLStreamException, EntityProviderException {
+  private void writeStartElementWithCustomNamespace(final XMLStreamWriter writer, final EntityPropertyInfo prop,
+      final String name) throws XMLStreamException, EntityProviderException {
     EdmCustomizableFeedMappings mapping = prop.getCustomMapping();
     String nsPrefix = mapping.getFcNsPrefix();
     String nsUri = mapping.getFcNsUri();

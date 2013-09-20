@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -62,7 +62,7 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
  * Serializes an ATOM entry.
- *  
+ * 
  */
 public class AtomEntryEntityProducer {
 
@@ -74,7 +74,8 @@ public class AtomEntryEntityProducer {
     this.properties = properties == null ? EntityProviderWriteProperties.serviceRoot(null).build() : properties;
   }
 
-  public void append(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data, final boolean isRootElement, final boolean isFeedPart) throws EntityProviderException {
+  public void append(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data,
+      final boolean isRootElement, final boolean isFeedPart) throws EntityProviderException {
     try {
       writer.writeStartElement(FormatXml.ATOM_ENTRY);
 
@@ -84,7 +85,8 @@ public class AtomEntryEntityProducer {
         writer.writeNamespace(Edm.PREFIX_D, Edm.NAMESPACE_D_2007_08);
       }
       if (!isFeedPart) {
-        writer.writeAttribute(Edm.PREFIX_XML, Edm.NAMESPACE_XML_1998, FormatXml.XML_BASE, properties.getServiceRoot().toASCIIString());
+        writer.writeAttribute(Edm.PREFIX_XML, Edm.NAMESPACE_XML_1998, FormatXml.XML_BASE, properties.getServiceRoot()
+            .toASCIIString());
       }
 
       etag = createETag(eia, data);
@@ -129,7 +131,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendCustomProperties(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data) throws EntityProviderException {
+  private void appendCustomProperties(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data) throws EntityProviderException {
     List<String> noneSyndicationTargetPaths = eia.getNoneSyndicationTargetPathNames();
     for (String tpName : noneSyndicationTargetPaths) {
       EntityPropertyInfo info = eia.getTargetPathInfo(tpName);
@@ -139,7 +142,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  protected static String createETag(final EntityInfoAggregator eia, final Map<String, Object> data) throws EntityProviderException {
+  protected static String createETag(final EntityInfoAggregator eia, final Map<String, Object> data)
+      throws EntityProviderException {
     try {
       String etag = null;
 
@@ -149,9 +153,15 @@ public class AtomEntryEntityProducer {
         if (edmType instanceof EdmSimpleType) {
           EdmSimpleType edmSimpleType = (EdmSimpleType) edmType;
           if (etag == null) {
-            etag = edmSimpleType.valueToString(data.get(propertyInfo.getName()), EdmLiteralKind.DEFAULT, propertyInfo.getFacets());
+            etag =
+                edmSimpleType.valueToString(data.get(propertyInfo.getName()), EdmLiteralKind.DEFAULT, propertyInfo
+                    .getFacets());
           } else {
-            etag = etag + Edm.DELIMITER + edmSimpleType.valueToString(data.get(propertyInfo.getName()), EdmLiteralKind.DEFAULT, propertyInfo.getFacets());
+            etag =
+                etag
+                    + Edm.DELIMITER
+                    + edmSimpleType.valueToString(data.get(propertyInfo.getName()), EdmLiteralKind.DEFAULT,
+                        propertyInfo.getFacets());
           }
         }
       }
@@ -166,7 +176,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendAtomNavigationLinks(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data) throws EntityProviderException, EdmException, URISyntaxException {
+  private void appendAtomNavigationLinks(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data) throws EntityProviderException, EdmException, URISyntaxException {
     for (String name : eia.getSelectedNavigationPropertyNames()) {
       NavigationPropertyInfo info = eia.getNavigationPropertyInfo(name);
       boolean isFeed = (info.getMultiplicity() == EdmMultiplicity.MANY);
@@ -175,7 +186,9 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendAtomNavigationLink(final XMLStreamWriter writer, final String self, final String navigationPropertyName, final boolean isFeed, final EntityInfoAggregator eia, final Map<String, Object> data) throws EntityProviderException, EdmException, URISyntaxException {
+  private void appendAtomNavigationLink(final XMLStreamWriter writer, final String self,
+      final String navigationPropertyName, final boolean isFeed, final EntityInfoAggregator eia,
+      final Map<String, Object> data) throws EntityProviderException, EdmException, URISyntaxException {
     try {
       writer.writeStartElement(FormatXml.ATOM_LINK);
       writer.writeAttribute(FormatXml.ATOM_HREF, self);
@@ -195,7 +208,9 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendInlineFeed(final XMLStreamWriter writer, final String navigationPropertyName, final EntityInfoAggregator eia, final Map<String, Object> data, final String self) throws EntityProviderException, XMLStreamException, EdmException, URISyntaxException {
+  private void appendInlineFeed(final XMLStreamWriter writer, final String navigationPropertyName,
+      final EntityInfoAggregator eia, final Map<String, Object> data, final String self)
+      throws EntityProviderException, XMLStreamException, EdmException, URISyntaxException {
 
     if (eia.getExpandedNavigationPropertyNames().contains(navigationPropertyName)) {
       if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
@@ -228,7 +243,8 @@ public class AtomEntryEntityProducer {
         EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
         EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navProp);
         AtomFeedProducer inlineFeedProducer = new AtomFeedProducer(inlineProperties);
-        EntityInfoAggregator inlineEia = EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
+        EntityInfoAggregator inlineEia =
+            EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
         inlineFeedProducer.append(writer, inlineEia, inlineData, true);
 
         writer.writeEndElement();
@@ -236,7 +252,9 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendInlineEntry(final XMLStreamWriter writer, final String navigationPropertyName, final EntityInfoAggregator eia, final Map<String, Object> data) throws EntityProviderException, XMLStreamException, EdmException {
+  private void appendInlineEntry(final XMLStreamWriter writer, final String navigationPropertyName,
+      final EntityInfoAggregator eia, final Map<String, Object> data) throws EntityProviderException,
+      XMLStreamException, EdmException {
 
     if (eia.getExpandedNavigationPropertyNames().contains(navigationPropertyName)) {
       if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
@@ -265,7 +283,8 @@ public class AtomEntryEntityProducer {
           EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
           EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navProp);
           AtomEntryEntityProducer inlineProducer = new AtomEntryEntityProducer(inlineProperties);
-          EntityInfoAggregator inlineEia = EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
+          EntityInfoAggregator inlineEia =
+              EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
           inlineProducer.append(writer, inlineEia, inlineData, false, false);
         }
 
@@ -275,7 +294,8 @@ public class AtomEntryEntityProducer {
 
   }
 
-  private void appendAtomEditLink(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data) throws EntityProviderException {
+  private void appendAtomEditLink(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data) throws EntityProviderException {
     try {
       String self = createSelfLink(eia, data, null);
 
@@ -291,7 +311,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendAtomContentLink(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data, String mediaResourceMimeType) throws EntityProviderException {
+  private void appendAtomContentLink(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data, String mediaResourceMimeType) throws EntityProviderException {
     try {
       String self = createSelfLink(eia, data, "$value");
 
@@ -309,7 +330,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendAtomContentPart(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data, String mediaResourceMimeType) throws EntityProviderException {
+  private void appendAtomContentPart(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data, String mediaResourceMimeType) throws EntityProviderException {
     try {
       String self = createSelfLink(eia, data, "$value");
 
@@ -326,7 +348,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendAtomMandatoryParts(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data) throws EntityProviderException {
+  private void appendAtomMandatoryParts(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data) throws EntityProviderException {
     try {
       writer.writeStartElement(FormatXml.ATOM_ID);
       location = properties.getServiceRoot().toASCIIString() + createSelfLink(eia, data, null);
@@ -360,7 +383,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  String getUpdatedString(final EntityInfoAggregator eia, final Map<String, Object> data) throws EdmSimpleTypeException {
+  String getUpdatedString(final EntityInfoAggregator eia, final Map<String, Object> data) 
+      throws EdmSimpleTypeException {
     Object updateDate = null;
     EdmFacets updateFacets = null;
     EntityPropertyInfo updatedInfo = eia.getTargetPathInfo(EdmTargetPath.SYNDICATION_UPDATED);
@@ -373,11 +397,13 @@ public class AtomEntryEntityProducer {
     if (updateDate == null) {
       updateDate = new Date();
     }
-    String valueToString = EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets);
+    String valueToString =
+        EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets);
     return valueToString;
   }
 
-  private String getTargetPathValue(final EntityInfoAggregator eia, final String targetPath, final Map<String, Object> data) throws EntityProviderException {
+  private String getTargetPathValue(final EntityInfoAggregator eia, final String targetPath,
+      final Map<String, Object> data) throws EntityProviderException {
     try {
       EntityPropertyInfo info = eia.getTargetPathInfo(targetPath);
       if (info != null) {
@@ -391,7 +417,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendAtomOptionalParts(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data) throws EntityProviderException {
+  private void appendAtomOptionalParts(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data) throws EntityProviderException {
     try {
       String authorEmail = getTargetPathValue(eia, EdmTargetPath.SYNDICATION_AUTHOREMAIL, data);
       String authorName = getTargetPathValue(eia, EdmTargetPath.SYNDICATION_AUTHORNAME, data);
@@ -435,7 +462,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendAtomOptionalPart(final XMLStreamWriter writer, final String name, final String value, final boolean writeType) throws EntityProviderException {
+  private void appendAtomOptionalPart(final XMLStreamWriter writer, final String name, final String value,
+      final boolean writeType) throws EntityProviderException {
     try {
       if (value != null) {
         writer.writeStartElement(name);
@@ -450,7 +478,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  static String createSelfLink(final EntityInfoAggregator eia, final Map<String, Object> data, final String extension) throws EntityProviderException {
+  static String createSelfLink(final EntityInfoAggregator eia, final Map<String, Object> data, final String extension)
+      throws EntityProviderException {
     StringBuilder sb = new StringBuilder();
     if (!eia.isDefaultEntityContainer()) {
       sb.append(Encoder.encode(eia.getEntityContainerName())).append(Edm.DELIMITER);
@@ -461,7 +490,8 @@ public class AtomEntryEntityProducer {
     return sb.toString();
   }
 
-  private static String createEntryKey(final EntityInfoAggregator entityInfo, final Map<String, Object> data) throws EntityProviderException {
+  private static String createEntryKey(final EntityInfoAggregator entityInfo, final Map<String, Object> data)
+      throws EntityProviderException {
     final List<EntityPropertyInfo> keyPropertyInfos = entityInfo.getKeyPropertyInfos();
 
     StringBuilder keys = new StringBuilder();
@@ -477,7 +507,8 @@ public class AtomEntryEntityProducer {
 
       final EdmSimpleType type = (EdmSimpleType) keyPropertyInfo.getType();
       try {
-        keys.append(Encoder.encode(type.valueToString(data.get(name), EdmLiteralKind.URI, keyPropertyInfo.getFacets())));
+        keys.append(Encoder.encode(type.valueToString(data.get(name), EdmLiteralKind.URI, 
+            keyPropertyInfo.getFacets())));
       } catch (final EdmSimpleTypeException e) {
         throw new EntityProviderException(EntityProviderException.COMMON, e);
       }
@@ -486,7 +517,8 @@ public class AtomEntryEntityProducer {
     return keys.toString();
   }
 
-  private void appendProperties(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data) throws EntityProviderException {
+  private void appendProperties(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data) throws EntityProviderException {
     try {
       List<String> propertyNames = eia.getSelectedPropertyNames();
       if (!propertyNames.isEmpty()) {

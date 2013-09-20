@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.commons;
 
@@ -77,7 +77,7 @@ public class ContentTypeTest extends BaseTest {
     assertFalse(ContentType.isParseable("application   /atom+xml; charset=UTF-8"));
     //
     assertFalse(ContentType.isParseable("app/app/moreapp"));
-    //assertFalse(ContentType.isParseable("application/atom+xml; charset   =   UTF-8"));
+    // assertFalse(ContentType.isParseable("application/atom+xml; charset   =   UTF-8"));
     assertFalse(ContentType.isParseable(null));
     assertFalse(ContentType.isParseable(""));
     assertFalse(ContentType.isParseable("hugo"));
@@ -94,7 +94,7 @@ public class ContentTypeTest extends BaseTest {
     assertFalse(ContentType.isParseable("application   /atom+xml; charset=UTF-8"));
     //
     assertNull(ContentType.parse("app/app/moreapp"));
-    //assertFalse(ContentType.isParseable("application/atom+xml; charset   =   UTF-8"));
+    // assertFalse(ContentType.isParseable("application/atom+xml; charset   =   UTF-8"));
     assertNull(ContentType.parse(null));
     assertNull(ContentType.parse("hugo"));
     assertNull(ContentType.parse("hugo"));
@@ -126,14 +126,14 @@ public class ContentTypeTest extends BaseTest {
     List<ContentType> contentTypes = ContentType.createAsCustom(Arrays.asList("custom", "image/jpeg"));
 
     Assert.assertEquals(2, contentTypes.size());
-    
-    for (ContentType contentType: contentTypes) {
-      if(contentType.getType().equals("custom")) {
+
+    for (ContentType contentType : contentTypes) {
+      if (contentType.getType().equals("custom")) {
         assertEquals("custom", contentType.getType());
         assertNull(contentType.getSubtype());
         assertEquals("custom", contentType.toString());
         assertEquals(ODataFormat.CUSTOM, contentType.getODataFormat());
-      } else if(contentType.getType().equals("image")) {
+      } else if (contentType.getType().equals("image")) {
         assertEquals("image", contentType.getType());
         assertEquals("jpeg", contentType.getSubtype());
         assertEquals("image/jpeg", contentType.toString());
@@ -241,11 +241,13 @@ public class ContentTypeTest extends BaseTest {
 
   /**
    * See: RFC 2616:
-   * The type, subtype, and parameter attribute names are case-insensitive. Parameter values might or might not be case-sensitive,
-   * depending on the semantics of the parameter name. Linear white space (LWS) MUST NOT be used between the type and subtype, 
+   * The type, subtype, and parameter attribute names are case-insensitive. Parameter values might or might not be
+   * case-sensitive,
+   * depending on the semantics of the parameter name. Linear white space (LWS) MUST NOT be used between the type and
+   * subtype,
    * nor between an attribute and its value.
    * </p>
-   * @throws Throwable 
+   * @throws Throwable
    */
   @Test
   public void testContentTypeCreationInvalidWithSpaces() throws Throwable {
@@ -254,7 +256,9 @@ public class ContentTypeTest extends BaseTest {
     failContentTypeCreation("app    /   space", IllegalArgumentException.class);
   }
 
-  private void failContentTypeCreation(final String contentType, final Class<? extends Exception> expectedExceptionClass) throws Exception {
+  private void
+      failContentTypeCreation(final String contentType, final Class<? extends Exception> expectedExceptionClass)
+          throws Exception {
     try {
       ContentType.create(contentType);
       Assert.fail("Expected exception class " + expectedExceptionClass +
@@ -366,7 +370,8 @@ public class ContentTypeTest extends BaseTest {
 
   @Test
   public void testContentTypeCreationFromStrings() {
-    List<ContentType> types = ContentType.create(Arrays.asList("type/subtype", "application/xml", "application/json;key=value"));
+    List<ContentType> types =
+        ContentType.create(Arrays.asList("type/subtype", "application/xml", "application/json;key=value"));
 
     assertEquals(3, types.size());
 
@@ -392,7 +397,8 @@ public class ContentTypeTest extends BaseTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testContentTypeCreationFromStringsFail() {
-    List<ContentType> types = ContentType.create(Arrays.asList("type/subtype", "application/xml", "application/json/FAIL;key=value"));
+    List<ContentType> types =
+        ContentType.create(Arrays.asList("type/subtype", "application/xml", "application/json/FAIL;key=value"));
 
     assertEquals(3, types.size());
   }
@@ -471,27 +477,27 @@ public class ContentTypeTest extends BaseTest {
     assertEquals("type/subtype;key1=value1;key2=value2", mt.toString());
   }
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testFormatParserInValidInputOnlyType() {
     ContentType.create("aaa");
   }
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testFormatParserInValidInputOnlyTypeWithSepartor() {
     ContentType.create("aaa/");
   }
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testFormatParserInValidInputOnlySubTypeWithSepartor() {
     ContentType.create("/aaa");
   }
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testFormatParserInValidInputOnlySepartor() {
     ContentType.create("/");
   }
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testFormatParserInValidInputEmpty() {
     ContentType.create("");
   }
@@ -529,7 +535,7 @@ public class ContentTypeTest extends BaseTest {
     assertEquals(2, t.getParameters().size());
   }
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testFormatParserInValidInputTypeNullPara() {
     ContentType.create("aaa;x=y;a");
   }
@@ -973,14 +979,14 @@ public class ContentTypeTest extends BaseTest {
 
   @Test
   public void testQParameterSort() {
-    validateSort(Arrays.asList("a1/b1;q=0.2", "a2/b2;q=0.5", "a3/b3;q=0.333"), 1,2,0);
-    validateSort(Arrays.asList("a1/b1;q=0", "a2/b2;q=0.5", "a3/b3;q=0.333"), 1,2,0);
-    validateSort(Arrays.asList("a1/b1;q=1", "a2/b2;q=0.5", "a3/b3;q=0.333"), 0,1,2);
-    validateSort(Arrays.asList("a1/b1;q=1", "a2/b2;q=0.5", "a3/b3;q=1.333"), 0,1,2);
-    validateSort(Arrays.asList("a1/b1;q=0.2", "a2/b2;q=0.9", "a3/b3"), 2,1,0);
+    validateSort(Arrays.asList("a1/b1;q=0.2", "a2/b2;q=0.5", "a3/b3;q=0.333"), 1, 2, 0);
+    validateSort(Arrays.asList("a1/b1;q=0", "a2/b2;q=0.5", "a3/b3;q=0.333"), 1, 2, 0);
+    validateSort(Arrays.asList("a1/b1;q=1", "a2/b2;q=0.5", "a3/b3;q=0.333"), 0, 1, 2);
+    validateSort(Arrays.asList("a1/b1;q=1", "a2/b2;q=0.5", "a3/b3;q=1.333"), 0, 1, 2);
+    validateSort(Arrays.asList("a1/b1;q=0.2", "a2/b2;q=0.9", "a3/b3"), 2, 1, 0);
   }
 
-  private void validateSort(List<String> toSort, int ... expectedSequence) {
+  private void validateSort(final List<String> toSort, final int... expectedSequence) {
     List<String> expected = new ArrayList<String>();
     for (int i : expectedSequence) {
       expected.add(toSort.get(i));
@@ -991,7 +997,7 @@ public class ContentTypeTest extends BaseTest {
       assertEquals(expected.get(i), toSort.get(i));
     }
   }
-  
+
   private Map<String, String> addParameters(final String... content) {
     Map<String, String> map = new HashMap<String, String>();
     for (int i = 0; i < content.length - 1; i += 2) {

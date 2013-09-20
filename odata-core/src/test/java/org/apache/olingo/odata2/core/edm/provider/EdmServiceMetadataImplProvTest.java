@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
@@ -102,7 +102,8 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
     entitySets.add(entitySet);
 
     List<EntityContainer> entityContainers = new ArrayList<EntityContainer>();
-    EntityContainer container = new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets);
+    EntityContainer container =
+        new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets);
     entityContainers.add(container);
 
     List<Schema> schemas = new ArrayList<Schema>();
@@ -131,7 +132,8 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
     entitySets.add(entitySet);
 
     List<EntityContainer> entityContainers = new ArrayList<EntityContainer>();
-    EntityContainer container = new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets);
+    EntityContainer container =
+        new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets);
     entityContainers.add(container);
 
     List<Schema> schemas = new ArrayList<Schema>();
@@ -157,10 +159,12 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
     entitySets.add(entitySet);
 
     List<EntityContainer> entityContainers = new ArrayList<EntityContainer>();
-    EntityContainer container = new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets);
+    EntityContainer container =
+        new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets);
     entityContainers.add(container);
 
-    EntityContainer container2 = new EntityContainer().setDefaultEntityContainer(false).setName("Container2").setEntitySets(entitySets);
+    EntityContainer container2 =
+        new EntityContainer().setDefaultEntityContainer(false).setName("Container2").setEntitySets(entitySets);
     entityContainers.add(container2);
 
     List<Schema> schemas = new ArrayList<Schema>();
@@ -193,7 +197,8 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
     entitySets.add(entitySet);
 
     List<EntityContainer> entityContainers = new ArrayList<EntityContainer>();
-    EntityContainer container = new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets);
+    EntityContainer container =
+        new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets);
     entityContainers.add(container);
 
     List<Schema> schemas = new ArrayList<Schema>();
@@ -233,18 +238,31 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
   @Test
   public void testEntityTypeStructure() throws Exception {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType[@Name and @m:HasStream]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType[@Name and @BaseType and @m:HasStream]", metadata);
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType[@Name and @BaseType and @m:HasStream]",
+        metadata);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Key", metadata);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Key/a:PropertyRef[@Name]", metadata);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @Nullable and @m:FC_TargetPath]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:NavigationProperty[@Name and @Relationship and @FromRole and @ToRole]", metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @Nullable and" +
+        " @m:FC_TargetPath]",
+        metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:NavigationProperty[@Name and " +
+        "@Relationship and @FromRole and @ToRole]",
+        metadata);
   }
 
   @Test
   public void testAnnotations() throws Exception {
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @Nullable and @annoPrefix:annoName]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @m:FC_TargetPath and @annoPrefix:annoName]", metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @Nullable and " +
+        "@annoPrefix:annoName]",
+        metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @m:FC_TargetPath and " +
+        "@annoPrefix:annoName]",
+        metadata);
   }
 
   @Test
@@ -256,21 +274,39 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
   @Test
   public void testEntityContainerStructure() throws Exception {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer[@Name]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer/a:EntitySet[@Name and @EntityType]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer/a:AssociationSet[@Name and @Association]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer//a:AssociationSet/a:End[@EntitySet and @Role]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer/a:FunctionImport[@Name and @ReturnType and @EntitySet and @m:HttpMethod]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer/a:FunctionImport/a:Parameter[@Name and @Type]", metadata);
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer/a:EntitySet[@Name and @EntityType]",
+        metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer/a:AssociationSet[@Name and @Association]", metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer//a:AssociationSet/a:End[@EntitySet and @Role]",
+        metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer/a:FunctionImport[@Name and @ReturnType and " +
+        "@EntitySet and @m:HttpMethod]",
+        metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer/a:FunctionImport/a:Parameter[@Name and @Type]",
+        metadata);
   }
 
   @Test
   public void testAssociationStructure() throws Exception {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:Association[@Name]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:End[@Type and @Multiplicity and @Role]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:Principal[@Role]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:Principal[@Role]/a:PropertyRef[@Name]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:Dependent[@Role]", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:Dependent[@Role]/a:PropertyRef[@Name]", metadata);
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:End[@Type and @Multiplicity and @Role]",
+        metadata);
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:Principal[@Role]",
+        metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:" +
+        "Principal[@Role]/a:PropertyRef[@Name]",
+        metadata);
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:Dependent[@Role]",
+        metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:Dependent" +
+        "[@Role]/a:PropertyRef[@Name]",
+        metadata);
   }
 
   @Test

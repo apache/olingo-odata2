@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -47,11 +47,14 @@ public class XmlPropertyConsumer {
   protected static final String TRUE = "true";
   protected static final String FALSE = "false";
 
-  public Map<String, Object> readProperty(final XMLStreamReader reader, final EdmProperty property, final boolean merge) throws EntityProviderException {
+  public Map<String, Object>
+      readProperty(final XMLStreamReader reader, final EdmProperty property, final boolean merge)
+          throws EntityProviderException {
     return readProperty(reader, property, merge, null);
   }
 
-  public Map<String, Object> readProperty(final XMLStreamReader reader, final EdmProperty property, final boolean merge, final Map<String, Object> typeMappings) throws EntityProviderException {
+  public Map<String, Object> readProperty(final XMLStreamReader reader, final EdmProperty property,
+      final boolean merge, final Map<String, Object> typeMappings) throws EntityProviderException {
     EntityPropertyInfo eia = EntityInfoAggregator.create(property);
 
     try {
@@ -67,9 +70,11 @@ public class XmlPropertyConsumer {
       result.put(eia.getName(), value);
       return result;
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
@@ -85,7 +90,8 @@ public class XmlPropertyConsumer {
     mergeComplexWithDefaultValues((Map<String, Object>) value, (EntityComplexPropertyInfo) epi);
   }
 
-  private void mergeComplexWithDefaultValues(final Map<String, Object> complexValue, final EntityComplexPropertyInfo ecpi) {
+  private void mergeComplexWithDefaultValues(final Map<String, Object> complexValue,
+      final EntityComplexPropertyInfo ecpi) {
     for (EntityPropertyInfo info : ecpi.getPropertyInfos()) {
       Object obj = complexValue.get(info.getName());
       if (obj == null) {
@@ -103,7 +109,8 @@ public class XmlPropertyConsumer {
     }
   }
 
-  protected Object readStartedElement(final XMLStreamReader reader, final EntityPropertyInfo propertyInfo, final EntityTypeMapping typeMappings) throws EntityProviderException, EdmException {
+  protected Object readStartedElement(final XMLStreamReader reader, final EntityPropertyInfo propertyInfo,
+      final EntityTypeMapping typeMappings) throws EntityProviderException, EdmException {
     final String name = propertyInfo.getName();
     Object result = null;
 
@@ -123,9 +130,11 @@ public class XmlPropertyConsumer {
       } else if (propertyInfo.isComplex()) {
         final String typeAttribute = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, FormatXml.M_TYPE);
         if (typeAttribute != null) {
-          final String expectedTypeAttributeValue = propertyInfo.getType().getNamespace() + Edm.DELIMITER + propertyInfo.getType().getName();
+          final String expectedTypeAttributeValue =
+              propertyInfo.getType().getNamespace() + Edm.DELIMITER + propertyInfo.getType().getName();
           if (!expectedTypeAttributeValue.equals(typeAttribute)) {
-            throw new EntityProviderException(EntityProviderException.INVALID_COMPLEX_TYPE.addContent(expectedTypeAttributeValue).addContent(typeAttribute));
+            throw new EntityProviderException(EntityProviderException.INVALID_COMPLEX_TYPE.addContent(
+                expectedTypeAttributeValue).addContent(typeAttribute));
           }
         }
 
@@ -133,7 +142,8 @@ public class XmlPropertyConsumer {
         Map<String, Object> name2Value = new HashMap<String, Object>();
         while (reader.hasNext() && !reader.isEndElement()) {
           final String childName = reader.getLocalName();
-          final EntityPropertyInfo childProperty = ((EntityComplexPropertyInfo) propertyInfo).getPropertyInfo(childName);
+          final EntityPropertyInfo childProperty =
+              ((EntityComplexPropertyInfo) propertyInfo).getPropertyInfo(childName);
           if (childProperty == null) {
             throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY.addContent(childName));
           }
@@ -149,11 +159,13 @@ public class XmlPropertyConsumer {
 
       return result;
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
-  private Object convert(final EntityPropertyInfo property, final String value, final Class<?> typeMapping) throws EdmSimpleTypeException {
+  private Object convert(final EntityPropertyInfo property, final String value, final Class<?> typeMapping)
+      throws EdmSimpleTypeException {
     final EdmSimpleType type = (EdmSimpleType) property.getType();
     return type.valueOfString(value, EdmLiteralKind.DEFAULT, property.getFacets(),
         typeMapping == null ? type.getDefaultType() : typeMapping);

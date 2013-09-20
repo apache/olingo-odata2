@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -83,17 +83,89 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   private final String[] propertyNames = { "EmployeeId", "EmployeeName", "Location" };
 
-  private final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+  private final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+      + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+      + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+      + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+      + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\""
+      + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\""
+      + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>"
+      + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>"
+      + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
 
-  private final String xml2 = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\" xmlns:prefix=\"namespace\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_01 + "\">" + "<prefix:schemaElement>text3</prefix:schemaElement>" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+  private final String xml2 = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06
+      + "\" xmlns:prefix=\"namespace\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+      + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\""
+      + Edm.NAMESPACE_EDM_2008_01 + "\">" + "<prefix:schemaElement>text3</prefix:schemaElement>"
+      + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+      + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\""
+      + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\""
+      + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>"
+      + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>"
+      + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
 
-  private final String xmlWithBaseType = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+  private final String xmlWithBaseType = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06
+      + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+      + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+      + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\""
+      + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1]
+      + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\"" + propertyNames[2]
+      + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>"
+      + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "</EntityType>"
+      + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>"
+      + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
 
-  private final String xmlWithAssociation = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Employees\" ToRole=\"r_Manager\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Manager\" ToRole=\"r_Employees\" />" + "</EntityType>" + "<Association Name=\"" + ASSOCIATION + "\">"
-      + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\">" + "<OnDelete Action=\"Cascade\"/>" + "</End>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association>" + "</Schema>" + "<Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "<EntitySet Name=\"Managers\" EntityType=\"RefScenario.Manager\"/>" + "<AssociationSet Name=\"" + ASSOCIATION + "\" Association=\"RefScenario." + ASSOCIATION + "\">" + "<End EntitySet=\"Managers\" Role=\"r_Manager\"/>" + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>" + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+  private final String xmlWithAssociation =
+      "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+          + Edm.NAMESPACE_EDMX_2007_06
+          + "\">"
+          + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+          + Edm.NAMESPACE_M_2007_08
+          + "\">"
+          + "<Schema Namespace=\""
+          + NAMESPACE
+          + "\" xmlns=\""
+          + Edm.NAMESPACE_EDM_2008_09
+          + "\">"
+          + "<EntityType Name= \"Employee\">"
+          + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+          + "<Property Name=\""
+          + propertyNames[0]
+          + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+          + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" " +
+          "FromRole=\"r_Employees\" ToRole=\"r_Manager\" />"
+          + "</EntityType>"
+          + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
+          + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" " +
+          "FromRole=\"r_Manager\" ToRole=\"r_Employees\" />"
+          + "</EntityType>" + "<Association Name=\"" + ASSOCIATION + "\">"
+          + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\">"
+          + "<OnDelete Action=\"Cascade\"/>" + "</End>"
+          + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association>"
+          + "</Schema>" + "<Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+          + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+          + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+          + "<EntitySet Name=\"Managers\" EntityType=\"RefScenario.Manager\"/>" + "<AssociationSet Name=\""
+          + ASSOCIATION + "\" Association=\"RefScenario." + ASSOCIATION + "\">"
+          + "<End EntitySet=\"Managers\" Role=\"r_Manager\"/>" + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>"
+          + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
 
-  private final String xmlWithTwoSchemas = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\"/>" + "</EntityType>" + "</Schema>" + "<Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Photo\">" + "<Key><PropertyRef Name=\"Id\"/></Key>" + "<Property Name=\"Id\" Type=\"Edm.Int32\" Nullable=\"false\" ConcurrencyMode=\"Fixed\" MaxLength=\"" + MAX_LENGTH + "\"/>" + "<Property Name=\"Name\" Type=\"Edm.String\" Unicode=\"true\" DefaultValue=\"" + DEFAULT_VALUE
-      + "\" FixedLength=\"false\"/>" + "<Property Name=\"BinaryData\" Type=\"Edm.Binary\" m:MimeType=\"" + MIME_TYPE + "\"/>" + "<Property Name=\"Содержание\" Type=\"Edm.String\" m:FC_TargetPath=\"" + FC_TARGET_PATH + "\" m:FC_NsUri=\"" + FC_NS_URI + "\"" + " m:FC_NsPrefix=\"" + FC_NS_PREFIX + "\" m:FC_KeepInContent=\"" + FC_KEEP_IN_CONTENT + "\" m:FC_ContentKind=\"text\" >" + "</Property>" + "</EntityType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+  private final String xmlWithTwoSchemas = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06
+      + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+      + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+      + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\""
+      + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1]
+      + "\" Type=\"Edm.String\"/>" + "</EntityType>" + "</Schema>" + "<Schema Namespace=\"" + NAMESPACE2
+      + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Photo\">"
+      + "<Key><PropertyRef Name=\"Id\"/></Key>"
+      + "<Property Name=\"Id\" Type=\"Edm.Int32\" Nullable=\"false\" ConcurrencyMode=\"Fixed\" MaxLength=\""
+      + MAX_LENGTH + "\"/>" + "<Property Name=\"Name\" Type=\"Edm.String\" Unicode=\"true\" DefaultValue=\""
+      + DEFAULT_VALUE
+      + "\" FixedLength=\"false\"/>" + "<Property Name=\"BinaryData\" Type=\"Edm.Binary\" m:MimeType=\"" + MIME_TYPE
+      + "\"/>" + "<Property Name=\"Содержание\" Type=\"Edm.String\" m:FC_TargetPath=\"" + FC_TARGET_PATH
+      + "\" m:FC_NsUri=\"" + FC_NS_URI + "\"" + " m:FC_NsPrefix=\"" + FC_NS_PREFIX + "\" m:FC_KeepInContent=\""
+      + FC_KEEP_IN_CONTENT + "\" m:FC_ContentKind=\"text\" >" + "</Property>" + "</EntityType>" + "</Schema>"
+      + "</edmx:DataServices>" + "</edmx:Edmx>";
 
   @Test
   public void test() throws XMLStreamException, EntityProviderException {
@@ -185,8 +257,19 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test
   public void testComplexTypeWithBaseType() throws XMLStreamException, EntityProviderException {
-    final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" Alias=\"RS\"  xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<ComplexType Name=\"c_BaseType_for_Location\" Abstract=\"true\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "<ComplexType Name=\"c_Location\" BaseType=\"RefScenario.c_BaseType_for_Location\">" + "</ComplexType>" + "<ComplexType Name=\"c_Other_Location\" BaseType=\"RS.c_BaseType_for_Location\">" + "</ComplexType>" + "</Schema>"
-        + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xml =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" Alias=\"RS\"  xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>"
+            + "</EntityType>" + "<ComplexType Name=\"c_BaseType_for_Location\" Abstract=\"true\">"
+            + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>"
+            + "<ComplexType Name=\"c_Location\" BaseType=\"RefScenario.c_BaseType_for_Location\">" + "</ComplexType>"
+            + "<ComplexType Name=\"c_Other_Location\" BaseType=\"RS.c_BaseType_for_Location\">" + "</ComplexType>"
+            + "</Schema>"
+            + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xml);
     DataServices result = parser.readMetadata(reader, true);
@@ -216,7 +299,17 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testComplexTypeWithInvalidBaseType() throws XMLStreamException, EntityProviderException {
-    final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<ComplexType Name=\"c_BaseType_for_Location\" Abstract=\"true\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "<ComplexType Name=\"c_Location\" BaseType=\"RefScenario.Employee\">" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xml =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>"
+            + "</EntityType>" + "<ComplexType Name=\"c_BaseType_for_Location\" Abstract=\"true\">"
+            + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>"
+            + "<ComplexType Name=\"c_Location\" BaseType=\"RefScenario.Employee\">" + "</ComplexType>" + "</Schema>"
+            + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xml);
     parser.readMetadata(reader, true);
@@ -224,7 +317,17 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testComplexTypeWithInvalidBaseType2() throws XMLStreamException, EntityProviderException {
-    final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>" + "<ComplexType Name=\"c_BaseType_for_Location\" Abstract=\"true\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "<ComplexType Name=\"c_Location\" BaseType=\"c_BaseType_for_Location\">" + "</ComplexType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xml =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>"
+            + "</EntityType>" + "<ComplexType Name=\"c_BaseType_for_Location\" Abstract=\"true\">"
+            + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>"
+            + "<ComplexType Name=\"c_Location\" BaseType=\"c_BaseType_for_Location\">" + "</ComplexType>" + "</Schema>"
+            + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xml);
     parser.readMetadata(reader, true);
@@ -340,7 +443,16 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test
   public void testEntitySet() throws XMLStreamException, EntityProviderException {
-    final String xmWithEntityContainer = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "</EntityContainer>"
+            + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmWithEntityContainer);
     DataServices result = parser.readMetadata(reader, true);
@@ -385,8 +497,33 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test
   public void testFunctionImport() throws XMLStreamException, EntityProviderException {
-    final String xmWithEntityContainer = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "<FunctionImport Name=\"EmployeeSearch\" ReturnType=\"Collection(RefScenario.Employee)\" EntitySet=\"Employees\" m:HttpMethod=\"GET\">" + "<Parameter Name=\"q\" Type=\"Edm.String\" Nullable=\"true\" />"
-        + "</FunctionImport>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\""
+            + propertyNames[1]
+            + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<FunctionImport Name=\"EmployeeSearch\" ReturnType=\"Collection(RefScenario.Employee)\" " +
+            "EntitySet=\"Employees\" m:HttpMethod=\"GET\">"
+            + "<Parameter Name=\"q\" Type=\"Edm.String\" Nullable=\"true\" />"
+            + "</FunctionImport>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmWithEntityContainer);
     DataServices result = parser.readMetadata(reader, true);
@@ -414,7 +551,14 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test()
   public void testAlias() throws XMLStreamException, EntityProviderException {
-    final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" Alias=\"RS\"  xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RS.Employee\" m:HasStream=\"true\">" + "</EntityType>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xml =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" Alias=\"RS\"  xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\""
+            + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "</EntityType>"
+            + "<EntityType Name=\"Manager\" BaseType=\"RS.Employee\" m:HasStream=\"true\">" + "</EntityType>"
+            + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xml);
     DataServices result = parser.readMetadata(reader, true);
@@ -432,7 +576,10 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testEntityTypeWithoutKeys() throws XMLStreamException, EntityProviderException {
-    final String xmlWithoutKeys = "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "</EntityType>" + "</Schema>";
+    final String xmlWithoutKeys =
+        "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\">" + "<Property Name=\"" + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "</EntityType>" + "</Schema>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithoutKeys);
     parser.readMetadata(reader, true);
@@ -440,7 +587,10 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testInvalidBaseType() throws XMLStreamException, EntityProviderException {
-    final String xmlWithInvalidBaseType = "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Manager\" BaseType=\"Employee\" m:HasStream=\"true\">" + "</EntityType>" + "</Schema>";
+    final String xmlWithInvalidBaseType =
+        "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Manager\" BaseType=\"Employee\" m:HasStream=\"true\">" + "</EntityType>"
+            + "</Schema>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithInvalidBaseType);
     parser.readMetadata(reader, true);
@@ -448,8 +598,32 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testInvalidRole() throws XMLStreamException, EntityProviderException {
-    final String xmlWithInvalidAssociation = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"Manager\" ToRole=\"Employees\" />" + "</EntityType>" + "<Association Name=\"ManagerEmployees\">" + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association>" + "</Schema>"
-        + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xmlWithInvalidAssociation =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "</EntityType>"
+            + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
+            + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" " +
+            "FromRole=\"Manager\" ToRole=\"Employees\" />"
+            + "</EntityType>" + "<Association Name=\"ManagerEmployees\">"
+            + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>"
+            + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association>"
+            + "</Schema>"
+            + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithInvalidAssociation);
     parser.readMetadata(reader, true);
@@ -457,8 +631,31 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testInvalidRelationship() throws XMLStreamException, EntityProviderException {
-    final String xmlWithInvalidAssociation = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployee\" FromRole=\"r_Employees\" ToRole=\"r_Manager\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "</EntityType>" + "<Association Name=\"ManagerEmployees\">" + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association>" + "</Schema>"
-        + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xmlWithInvalidAssociation =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployee\" " +
+            "FromRole=\"r_Employees\" ToRole=\"r_Manager\" />"
+            + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
+            + "</EntityType>" + "<Association Name=\"ManagerEmployees\">"
+            + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>"
+            + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association>"
+            + "</Schema>"
+            + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithInvalidAssociation);
     parser.readMetadata(reader, true);
@@ -466,7 +663,18 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testMissingRelationship() throws Exception {
-    final String xmlWithInvalidAssociation = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "</EntityType>" + "<Association Name=\"ManagerEmployees\">" + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association></Schema></edmx:DataServices></edmx:Edmx>";
+    final String xmlWithInvalidAssociation =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\""
+            + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<NavigationProperty Name=\"ne_Manager\" />" + "</EntityType>"
+            + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "</EntityType>"
+            + "<Association Name=\"ManagerEmployees\">"
+            + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>"
+            + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>"
+            + "</Association></Schema></edmx:DataServices></edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithInvalidAssociation);
     try {
@@ -482,8 +690,31 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testMissingEntityType() throws Exception {
-    final String xmlWithInvalidAssociation = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Employees\" ToRole=\"r_Manager\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" />" + "</EntityContainer>" + "<Association Name=\"ManagerEmployees\">"
-        + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association></Schema></edmx:DataServices></edmx:Edmx>";
+    final String xmlWithInvalidAssociation =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" " +
+            "FromRole=\"r_Employees\" ToRole=\"r_Manager\" />"
+            + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
+            + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" />" + "</EntityContainer>" + "<Association Name=\"ManagerEmployees\">"
+            + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>"
+            + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>"
+            + "</Association></Schema></edmx:DataServices></edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithInvalidAssociation);
     try {
@@ -499,7 +730,30 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testMissingType() throws Exception {
-    final String xmlWithInvalidAssociation = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Employees\" ToRole=\"r_Manager\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "</EntityType>" + "<Association Name=\"ManagerEmployees\">" + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association></Schema></edmx:DataServices></edmx:Edmx>";
+    final String xmlWithInvalidAssociation =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Nullable=\"false\"/>"
+            + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" " +
+            "FromRole=\"r_Employees\" ToRole=\"r_Manager\" />"
+            + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
+            + "</EntityType>" + "<Association Name=\"ManagerEmployees\">"
+            + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>"
+            + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>"
+            + "</Association></Schema></edmx:DataServices></edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithInvalidAssociation);
     try {
@@ -515,7 +769,30 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testMissingTypeAtAssociation() throws Exception {
-    final String xmlWithInvalidAssociation = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Employees\" ToRole=\"r_Manager\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "</EntityType>" + "<Association Name=\"ManagerEmployees\">" + "<End Multiplicity=\"*\" Role=\"r_Employees\"/>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association></Schema></edmx:DataServices></edmx:Edmx>";
+    final String xmlWithInvalidAssociation =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" " +
+            "FromRole=\"r_Employees\" ToRole=\"r_Manager\" />"
+            + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
+            + "</EntityType>" + "<Association Name=\"ManagerEmployees\">"
+            + "<End Multiplicity=\"*\" Role=\"r_Employees\"/>"
+            + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>"
+            + "</Association></Schema></edmx:DataServices></edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithInvalidAssociation);
     try {
@@ -531,8 +808,33 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testMissingTypeAtFunctionImport() throws Exception {
-    final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "<FunctionImport Name=\"EmployeeSearch\" ReturnType=\"Collection(RefScenario.Employee)\" EntitySet=\"Employees\" m:HttpMethod=\"GET\">" + "<Parameter Name=\"q\" Nullable=\"true\" />" + "</FunctionImport>"
-        + "</EntityContainer></Schema></edmx:DataServices></edmx:Edmx>";
+    final String xml =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\""
+            + propertyNames[1]
+            + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<FunctionImport Name=\"EmployeeSearch\" ReturnType=\"Collection(RefScenario.Employee)\" " +
+            "EntitySet=\"Employees\" m:HttpMethod=\"GET\">"
+            + "<Parameter Name=\"q\" Nullable=\"true\" />" + "</FunctionImport>"
+            + "</EntityContainer></Schema></edmx:DataServices></edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xml);
     try {
@@ -548,9 +850,31 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testMissingAssociation() throws Exception {
-    final String xmlWithAssociation = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Employees\" ToRole=\"r_Manager\" />" + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "<AssociationSet Name=\"" + ASSOCIATION
-        //        + "\" Association=\"RefScenario." + ASSOCIATION 
-        + "\">" + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>" + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices></edmx:Edmx>";
+    final String xmlWithAssociation =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" " +
+            "FromRole=\"r_Employees\" ToRole=\"r_Manager\" />"
+            + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "<AssociationSet Name=\""
+            + ASSOCIATION
+            // + "\" Association=\"RefScenario." + ASSOCIATION
+            + "\">" + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>" + "</AssociationSet>"
+            + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices></edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithAssociation);
     try {
@@ -566,8 +890,40 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testInvalidAssociation() throws XMLStreamException, EntityProviderException {
-    final String xmlWithInvalidAssociationSet = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Employees\" ToRole=\"r_Manager\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Manager\" ToRole=\"r_Employees\" />" + "</EntityType>" + "<Association Name=\"" + ASSOCIATION + "\">"
-        + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\">" + "<OnDelete Action=\"Cascade\"/>" + "</End>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "<EntitySet Name=\"Managers\" EntityType=\"RefScenario.Manager\"/>" + "<AssociationSet Name=\"" + ASSOCIATION + "\" Association=\"RefScenario2." + ASSOCIATION + "\">" + "<End EntitySet=\"Managers\" Role=\"r_Manager\"/>" + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>" + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xmlWithInvalidAssociationSet =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" " +
+            "FromRole=\"r_Employees\" ToRole=\"r_Manager\" />"
+            + "</EntityType>"
+            + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
+            + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" " +
+            "FromRole=\"r_Manager\" ToRole=\"r_Employees\" />"
+            + "</EntityType>" + "<Association Name=\"" + ASSOCIATION + "\">"
+            + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\">"
+            + "<OnDelete Action=\"Cascade\"/>" + "</End>"
+            + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<EntitySet Name=\"Managers\" EntityType=\"RefScenario.Manager\"/>" + "<AssociationSet Name=\""
+            + ASSOCIATION + "\" Association=\"RefScenario2." + ASSOCIATION + "\">"
+            + "<End EntitySet=\"Managers\" Role=\"r_Manager\"/>"
+            + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>" + "</AssociationSet>" + "</EntityContainer>"
+            + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithInvalidAssociationSet);
     parser.readMetadata(reader, true);
@@ -578,8 +934,27 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
   public void testInvalidAssociationEnd() throws XMLStreamException, EntityProviderException {
     final String employees = "r_Employees";
     final String manager = "r_Manager";
-    final String xmlWithInvalidAssociationSetEnd = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"" + employees + "\" ToRole=\"" + manager + "\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"" + manager + "\" ToRole=\"" + employees + "\" />" + "</EntityType>" + "<Association Name=\"" + ASSOCIATION + "\">"
-        + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"" + employees + "1" + "\"/>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"" + manager + "\"/>" + "</Association>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "<EntitySet Name=\"Managers\" EntityType=\"RefScenario.Manager\"/>" + "<AssociationSet Name=\"" + ASSOCIATION + "\" Association=\"RefScenario2." + ASSOCIATION + "\">" + "<End EntitySet=\"Managers\" Role=\"" + manager + "\"/>" + "<End EntitySet=\"Employees\" Role=\"" + employees + "\"/>" + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xmlWithInvalidAssociationSetEnd =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\""
+            + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\""
+            + employees + "\" ToRole=\"" + manager + "\" />" + "</EntityType>"
+            + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
+            + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\""
+            + manager + "\" ToRole=\"" + employees + "\" />" + "</EntityType>" + "<Association Name=\"" + ASSOCIATION
+            + "\">"
+            + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"" + employees + "1" + "\"/>"
+            + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"" + manager + "\"/>" + "</Association>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<EntitySet Name=\"Managers\" EntityType=\"RefScenario.Manager\"/>" + "<AssociationSet Name=\""
+            + ASSOCIATION + "\" Association=\"RefScenario2." + ASSOCIATION + "\">"
+            + "<End EntitySet=\"Managers\" Role=\"" + manager + "\"/>" + "<End EntitySet=\"Employees\" Role=\""
+            + employees + "\"/>" + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>"
+            + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithInvalidAssociationSetEnd);
     parser.readMetadata(reader, true);
@@ -590,8 +965,27 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
   public void testInvalidAssociationEnd2() throws XMLStreamException, EntityProviderException {
     final String employees = "r_Employees";
     final String manager = "r_Manager";
-    final String xmlWithInvalidAssociationSetEnd = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"" + employees + "\" ToRole=\"" + manager + "\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">" + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"" + manager + "\" ToRole=\"" + employees + "\" />" + "</EntityType>" + "<Association Name=\"" + ASSOCIATION + "\">"
-        + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"" + employees + "\"/>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"" + manager + "\"/>" + "</Association>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "<EntitySet Name=\"Managers\" EntityType=\"RefScenario.Manager\"/>" + "<AssociationSet Name=\"" + ASSOCIATION + "\" Association=\"RefScenario2." + ASSOCIATION + "\">" + "<End EntitySet=\"Managers\" Role=\"" + manager + "\"/>" + "<End EntitySet=\"Managers\" Role=\"" + manager + "\"/>" + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xmlWithInvalidAssociationSetEnd =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\""
+            + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\""
+            + employees + "\" ToRole=\"" + manager + "\" />" + "</EntityType>"
+            + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
+            + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\""
+            + manager + "\" ToRole=\"" + employees + "\" />" + "</EntityType>" + "<Association Name=\"" + ASSOCIATION
+            + "\">"
+            + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"" + employees + "\"/>"
+            + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"" + manager + "\"/>" + "</Association>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<EntitySet Name=\"Managers\" EntityType=\"RefScenario.Manager\"/>" + "<AssociationSet Name=\""
+            + ASSOCIATION + "\" Association=\"RefScenario2." + ASSOCIATION + "\">"
+            + "<End EntitySet=\"Managers\" Role=\"" + manager + "\"/>" + "<End EntitySet=\"Managers\" Role=\""
+            + manager + "\"/>" + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>"
+            + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithInvalidAssociationSetEnd);
     parser.readMetadata(reader, true);
@@ -600,7 +994,16 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test(expected = EntityProviderException.class)
   public void testInvalidEntitySet() throws XMLStreamException, EntityProviderException {
-    final String xmWithEntityContainer = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Mitarbeiter\"/>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Mitarbeiter\"/>" + "</EntityContainer>"
+            + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmWithEntityContainer);
     parser.readMetadata(reader, true);
@@ -609,8 +1012,19 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test
   public void testEntityTypeInOtherSchema() throws XMLStreamException, EntityProviderException {
-    final String xmWithEntityContainer = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Photos\" EntityType=\"" + NAMESPACE2 + ".Photo\"/>" + "</EntityContainer>" + "</Schema>" + "<Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Photo\">" + "<Key><PropertyRef Name=\"Id\"/></Key>" + "<Property Name=\"Id\" Type=\"Edm.Int32\" Nullable=\"false\"/>" + "</EntityType>" + "</Schema>" + "</edmx:DataServices>"
-        + "</edmx:Edmx>";
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "</EntityType>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Photos\" EntityType=\"" + NAMESPACE2 + ".Photo\"/>" + "</EntityContainer>"
+            + "</Schema>" + "<Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Photo\">" + "<Key><PropertyRef Name=\"Id\"/></Key>"
+            + "<Property Name=\"Id\" Type=\"Edm.Int32\" Nullable=\"false\"/>" + "</EntityType>" + "</Schema>"
+            + "</edmx:DataServices>"
+            + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmWithEntityContainer);
     DataServices result = parser.readMetadata(reader, true);
@@ -629,10 +1043,71 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
   @Test
   public void scenarioTest() throws XMLStreamException, EntityProviderException {
     final String ASSOCIATION2 = "TeamEmployees";
-    final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" Alias=\"RS\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"" + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Employees\" ToRole=\"r_Manager\" />" + "<NavigationProperty Name=\"ne_Team\" Relationship=\"RefScenario.TeamEmployees\" FromRole=\"r_Employees\" ToRole=\"r_Team\" />" + "</EntityType>" + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
-        + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" FromRole=\"r_Manager\" ToRole=\"r_Employees\" />" + "</EntityType>" + "<EntityType Name=\"Team\">" + "<Key>" + "<PropertyRef Name=\"Id\"/>" + "</Key>" + "<NavigationProperty Name=\"nt_Employees\" Relationship=\"RefScenario.TeamEmployees\" FromRole=\"r_Team\" ToRole=\"r_Employees\" />" + "</EntityType>" + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "<Association Name=\"" + ASSOCIATION + "\">" + "<End Type=\"RS.Employee\" Multiplicity=\"*\" Role=\"r_Employees\">" + "<OnDelete Action=\"Cascade\"/>" + "</End>" + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association>" + "<Association Name=\"" + ASSOCIATION2 + "\">" + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>" + "<End Type=\"RefScenario.Team\" Multiplicity=\"1\" Role=\"r_Team\"/>" + "</Association>"
-        + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Employees\" EntityType=\"RS.Employee\"/>" + "<EntitySet Name=\"Managers\" EntityType=\"RefScenario.Manager\"/>" + "<EntitySet Name=\"Teams\" EntityType=\"RefScenario.Team\"/>" + "<AssociationSet Name=\"" + ASSOCIATION + "\" Association=\"RefScenario." + ASSOCIATION + "\">" + "<End EntitySet=\"Managers\" Role=\"r_Manager\"/>" + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>" + "</AssociationSet>" + "<AssociationSet Name=\"" + ASSOCIATION2 + "\" Association=\"RefScenario." + ASSOCIATION2 + "\">" + "<End EntitySet=\"Teams\" Role=\"r_Team\"/>" + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>" + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "<Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Photo\">" + "<Key>" + "<PropertyRef Name=\"Id\"/>" + "<PropertyRef Name=\"Name\"/>" + "</Key>"
-        + "<Property Name=\"Id\" Type=\"Edm.Int32\" Nullable=\"false\" ConcurrencyMode=\"Fixed\" MaxLength=\"" + MAX_LENGTH + "\"/>" + "<Property Name=\"Name\" Type=\"Edm.String\" Unicode=\"true\" DefaultValue=\"" + DEFAULT_VALUE + "\" FixedLength=\"false\"/>" + "<Property Name=\"BinaryData\" Type=\"Edm.Binary\" m:MimeType=\"" + MIME_TYPE + "\"/>" + "<Property Name=\"Содержание\" Type=\"Edm.String\" m:FC_TargetPath=\"" + FC_TARGET_PATH + "\" m:FC_NsUri=\"" + FC_NS_URI + "\"" + " m:FC_NsPrefix=\"" + FC_NS_PREFIX + "\" m:FC_KeepInContent=\"" + FC_KEEP_IN_CONTENT + "\" m:FC_ContentKind=\"text\" >" + "</Property>" + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">" + "<EntitySet Name=\"Photos\" EntityType=\"RefScenario2.Photo\"/>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xml =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" Alias=\"RS\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\""
+            + propertyNames[2]
+            + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>"
+            + "<NavigationProperty Name=\"ne_Manager\" Relationship=\"RefScenario.ManagerEmployees\" " +
+            "FromRole=\"r_Employees\" ToRole=\"r_Manager\" />"
+            + "<NavigationProperty Name=\"ne_Team\" Relationship=\"RefScenario.TeamEmployees\" " +
+            "FromRole=\"r_Employees\" ToRole=\"r_Team\" />"
+            + "</EntityType>"
+            + "<EntityType Name=\"Manager\" BaseType=\"RefScenario.Employee\" m:HasStream=\"true\">"
+            + "<NavigationProperty Name=\"nm_Employees\" Relationship=\"RefScenario.ManagerEmployees\" " +
+            "FromRole=\"r_Manager\" ToRole=\"r_Employees\" />"
+            + "</EntityType>"
+            + "<EntityType Name=\"Team\">"
+            + "<Key>"
+            + "<PropertyRef Name=\"Id\"/>"
+            + "</Key>"
+            + "<NavigationProperty Name=\"nt_Employees\" Relationship=\"RefScenario.TeamEmployees\"" +
+            " FromRole=\"r_Team\" ToRole=\"r_Employees\" />"
+            + "</EntityType>" + "<ComplexType Name=\"c_Location\">"
+            + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>" + "<Association Name=\""
+            + ASSOCIATION + "\">" + "<End Type=\"RS.Employee\" Multiplicity=\"*\" Role=\"r_Employees\">"
+            + "<OnDelete Action=\"Cascade\"/>" + "</End>"
+            + "<End Type=\"RefScenario.Manager\" Multiplicity=\"1\" Role=\"r_Manager\"/>" + "</Association>"
+            + "<Association Name=\"" + ASSOCIATION2 + "\">"
+            + "<End Type=\"RefScenario.Employee\" Multiplicity=\"*\" Role=\"r_Employees\"/>"
+            + "<End Type=\"RefScenario.Team\" Multiplicity=\"1\" Role=\"r_Team\"/>" + "</Association>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RS.Employee\"/>"
+            + "<EntitySet Name=\"Managers\" EntityType=\"RefScenario.Manager\"/>"
+            + "<EntitySet Name=\"Teams\" EntityType=\"RefScenario.Team\"/>" + "<AssociationSet Name=\"" + ASSOCIATION
+            + "\" Association=\"RefScenario." + ASSOCIATION + "\">"
+            + "<End EntitySet=\"Managers\" Role=\"r_Manager\"/>"
+            + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>" + "</AssociationSet>" + "<AssociationSet Name=\""
+            + ASSOCIATION2 + "\" Association=\"RefScenario." + ASSOCIATION2 + "\">"
+            + "<End EntitySet=\"Teams\" Role=\"r_Team\"/>" + "<End EntitySet=\"Employees\" Role=\"r_Employees\"/>"
+            + "</AssociationSet>" + "</EntityContainer>" + "</Schema>" + "<Schema Namespace=\"" + NAMESPACE2
+            + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Photo\">" + "<Key>"
+            + "<PropertyRef Name=\"Id\"/>" + "<PropertyRef Name=\"Name\"/>" + "</Key>"
+            + "<Property Name=\"Id\" Type=\"Edm.Int32\" Nullable=\"false\" ConcurrencyMode=\"Fixed\" MaxLength=\""
+            + MAX_LENGTH + "\"/>" + "<Property Name=\"Name\" Type=\"Edm.String\" Unicode=\"true\" DefaultValue=\""
+            + DEFAULT_VALUE + "\" FixedLength=\"false\"/>"
+            + "<Property Name=\"BinaryData\" Type=\"Edm.Binary\" m:MimeType=\"" + MIME_TYPE + "\"/>"
+            + "<Property Name=\"Содержание\" Type=\"Edm.String\" m:FC_TargetPath=\"" + FC_TARGET_PATH
+            + "\" m:FC_NsUri=\"" + FC_NS_URI + "\"" + " m:FC_NsPrefix=\"" + FC_NS_PREFIX + "\" m:FC_KeepInContent=\""
+            + FC_KEEP_IN_CONTENT + "\" m:FC_ContentKind=\"text\" >" + "</Property>" + "</EntityType>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Photos\" EntityType=\"RefScenario2.Photo\"/>" + "</EntityContainer>" + "</Schema>"
+            + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xml);
     DataServices result = parser.readMetadata(reader, true);
@@ -671,9 +1146,34 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test
   public void testAnnotations() throws XMLStreamException, EntityProviderException {
-    final String xmlWithAnnotations = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\" xmlns:annoPrefix=\"http://annoNamespace\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">" + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">" + "<EntityType Name= \"Employee\" prefix1:href=\"http://foo\" xmlns:prefix1=\"namespaceForAnno\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>" + "<Property Name=\"EmployeeId\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\"EmployeeName\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\" annoPrefix:annoName=\"annoText\">" + "<annoPrefix:propertyAnnoElement>text</annoPrefix:propertyAnnoElement>" + "<annoPrefix:propertyAnnoElement2 />" + "</Property>" + "</EntityType>" + "<annoPrefix:schemaElementTest1>" + "<prefix:schemaElementTest2 xmlns:prefix=\"namespace\">text3" + "</prefix:schemaElementTest2>"
-        + "<annoPrefix:schemaElementTest3 rel=\"self\" pre:href=\"http://foo\" xmlns:pre=\"namespaceForAnno\">text4</annoPrefix:schemaElementTest3>" + " </annoPrefix:schemaElementTest1>" + "</Schema>"
-        + "</edmx:DataServices>" + "</edmx:Edmx>";
+    final String xmlWithAnnotations =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\" xmlns:annoPrefix=\"http://annoNamespace\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\" prefix1:href=\"http://foo\" xmlns:prefix1=\"namespaceForAnno\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\"EmployeeId\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\"EmployeeName\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\" " +
+            "annoPrefix:annoName=\"annoText\">"
+            + "<annoPrefix:propertyAnnoElement>text</annoPrefix:propertyAnnoElement>"
+            + "<annoPrefix:propertyAnnoElement2 />"
+            + "</Property>"
+            + "</EntityType>"
+            + "<annoPrefix:schemaElementTest1>"
+            + "<prefix:schemaElementTest2 xmlns:prefix=\"namespace\">text3"
+            + "</prefix:schemaElementTest2>"
+            + "<annoPrefix:schemaElementTest3 rel=\"self\" pre:href=\"http://foo\" " +
+            "xmlns:pre=\"namespaceForAnno\">text4</annoPrefix:schemaElementTest3>"
+            + " </annoPrefix:schemaElementTest1>" + "</Schema>"
+            + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmlWithAnnotations);
     DataServices result = parser.readMetadata(reader, false);

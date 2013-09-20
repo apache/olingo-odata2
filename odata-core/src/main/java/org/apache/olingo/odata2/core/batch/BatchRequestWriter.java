@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
@@ -31,7 +31,10 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 
 public class BatchRequestWriter {
-  private static final String REG_EX_BOUNDARY = "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\""; // See RFC 2046
+  private static final String REG_EX_BOUNDARY =
+      "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\" +
+          "(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\""; // See RFC 2046
+
   private static final String COLON = ":";
   private static final String SP = " ";
   private static final String LF = "\r\n";
@@ -50,8 +53,8 @@ public class BatchRequestWriter {
         appendChangeSet((BatchChangeSet) batchPart);
       } else if (batchPart instanceof BatchQueryPart) {
         BatchQueryPart request = (BatchQueryPart) batchPart;
-        appendRequestBodyPart(request.getMethod(), request.getUri(), null, request.getHeaders(), request.getContentId());
-
+        appendRequestBodyPart(request.getMethod(), request.getUri(), null, request.getHeaders(),
+            request.getContentId());
       }
     }
     writer.append("--").append(boundary).append("--").append(LF).append(LF);
@@ -65,17 +68,21 @@ public class BatchRequestWriter {
     while (boundary.equals(batchBoundary) || !boundary.matches(REG_EX_BOUNDARY)) {
       boundary = BatchHelper.generateBoundary("changeset");
     }
-    writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(HttpContentType.MULTIPART_MIXED + "; boundary=" + boundary).append(LF).append(LF);
+    writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(
+        HttpContentType.MULTIPART_MIXED + "; boundary=" + boundary).append(LF).append(LF);
     for (BatchChangeSetPart request : batchChangeSet.getChangeSetParts()) {
       writer.append("--").append(boundary).append(LF);
-      appendRequestBodyPart(request.getMethod(), request.getUri(), request.getBody(), request.getHeaders(), request.getContentId());
+      appendRequestBodyPart(request.getMethod(), request.getUri(), request.getBody(), request.getHeaders(), request
+          .getContentId());
     }
     writer.append("--").append(boundary).append("--").append(LF).append(LF);
   }
 
-  private void appendRequestBodyPart(final String method, final String uri, final String body, final Map<String, String> headers, final String contentId) {
+  private void appendRequestBodyPart(final String method, final String uri, final String body,
+      final Map<String, String> headers, final String contentId) {
     boolean isContentLengthPresent = false;
-    writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(HttpContentType.APPLICATION_HTTP).append(LF);
+    writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(HttpContentType.APPLICATION_HTTP)
+        .append(LF);
     writer.append(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING).append(COLON).append(SP).append("binary").append(LF);
     if (contentId != null) {
       writer.append(BatchHelper.HTTP_CONTENT_ID).append(COLON).append(SP).append(contentId).append(LF);
@@ -89,7 +96,8 @@ public class BatchRequestWriter {
     writer.append(LF);
 
     if (!isContentLengthPresent && body != null && !body.isEmpty()) {
-      writer.append(HttpHeaders.CONTENT_LENGTH).append(COLON).append(SP).append(BatchHelper.getBytes(body).length).append(LF);
+      writer.append(HttpHeaders.CONTENT_LENGTH).append(COLON).append(SP).append(BatchHelper.getBytes(body).length)
+          .append(LF);
 
     }
     appendHeader(headers);

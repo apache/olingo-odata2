@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -37,11 +37,12 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 /**
  * Producer for writing a single simple or complex property in JSON, also usable
  * for function imports returning a single instance of a simple or complex type.
- *  
+ * 
  */
 public class JsonPropertyEntityProducer {
 
-  public void append(final Writer writer, final EntityPropertyInfo propertyInfo, final Object value) throws EntityProviderException {
+  public void append(final Writer writer, final EntityPropertyInfo propertyInfo, final Object value)
+      throws EntityProviderException {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
 
     try {
@@ -50,31 +51,39 @@ public class JsonPropertyEntityProducer {
           .beginObject();
 
       jsonStreamWriter.name(propertyInfo.getName());
-      appendPropertyValue(jsonStreamWriter, propertyInfo.isComplex() ? (EntityComplexPropertyInfo) propertyInfo : propertyInfo, value);
+      appendPropertyValue(jsonStreamWriter, propertyInfo.isComplex() ? (EntityComplexPropertyInfo) propertyInfo
+          : propertyInfo, value);
 
       jsonStreamWriter.endObject()
           .endObject();
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
-  protected static void appendPropertyValue(final JsonStreamWriter jsonStreamWriter, final EntityPropertyInfo propertyInfo, final Object value) throws IOException, EdmException, EntityProviderException {
+  protected static void appendPropertyValue(final JsonStreamWriter jsonStreamWriter,
+      final EntityPropertyInfo propertyInfo, final Object value) throws IOException, EdmException,
+      EntityProviderException {
     if (propertyInfo.isComplex()) {
       if (value == null || value instanceof Map<?, ?>) {
         jsonStreamWriter.beginObject();
         appendPropertyMetadata(jsonStreamWriter, propertyInfo.getType());
-        for (final EntityPropertyInfo childPropertyInfo : ((EntityComplexPropertyInfo) propertyInfo).getPropertyInfos()) {
+        for (final EntityPropertyInfo childPropertyInfo : ((EntityComplexPropertyInfo) propertyInfo).getPropertyInfos())
+        {
           jsonStreamWriter.separator();
           final String name = childPropertyInfo.getName();
           jsonStreamWriter.name(name);
-          appendPropertyValue(jsonStreamWriter, childPropertyInfo, value == null ? null : ((Map<?, ?>) value).get(name));
+          appendPropertyValue(jsonStreamWriter, childPropertyInfo, 
+              value == null ? null : ((Map<?, ?>) value).get(name));
         }
         jsonStreamWriter.endObject();
       } else {
-        throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("A complex property must have a Map as data"));
+        throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+            .addContent("A complex property must have a Map as data"));
       }
     } else {
       final EdmSimpleType type = (EdmSimpleType) propertyInfo.getType();
@@ -105,7 +114,8 @@ public class JsonPropertyEntityProducer {
     }
   }
 
-  protected static void appendPropertyMetadata(final JsonStreamWriter jsonStreamWriter, final EdmType type) throws IOException, EdmException {
+  protected static void appendPropertyMetadata(final JsonStreamWriter jsonStreamWriter, final EdmType type)
+      throws IOException, EdmException {
     jsonStreamWriter.name(FormatJson.METADATA)
         .beginObject()
         .namedStringValueRaw(FormatJson.TYPE, type.getNamespace() + Edm.DELIMITER + type.getName())

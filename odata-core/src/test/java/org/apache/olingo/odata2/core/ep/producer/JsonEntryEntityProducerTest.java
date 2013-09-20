@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -196,7 +196,8 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     class EntryCallback implements OnWriteEntryContent {
       @Override
-      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context) throws ODataApplicationException {
+      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context)
+          throws ODataApplicationException {
         WriteEntryCallbackResult result = new WriteEntryCallbackResult();
         result.setEntryData(null);
         result.setInlineProperties(DEFAULT_PROPERTIES);
@@ -207,14 +208,17 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
     callbacks.put("nr_Building", callback);
 
-    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, roomData,
-        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, roomData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
-    Map<String, Object> roomEntry = new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
-    //remove d wrapper
+    Map<String, Object> roomEntry =
+        new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+    // remove d wrapper
     roomEntry = (Map<String, Object>) roomEntry.get("d");
     assertEquals(2, roomEntry.size());
     assertTrue(roomEntry.containsKey("nr_Building"));
@@ -237,7 +241,8 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     class EntryCallback implements OnWriteEntryContent {
       @Override
-      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context) throws ODataApplicationException {
+      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context)
+          throws ODataApplicationException {
         WriteEntryCallbackResult result = new WriteEntryCallbackResult();
         result.setEntryData(new HashMap<String, Object>());
         result.setInlineProperties(DEFAULT_PROPERTIES);
@@ -248,14 +253,17 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
     callbacks.put("nr_Building", callback);
 
-    ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, roomData,
-        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
+    ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, roomData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
-    Map<String, Object> roomEntry = new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
-    //remove d wrapper
+    Map<String, Object> roomEntry =
+        new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+    // remove d wrapper
     roomEntry = (Map<String, Object>) roomEntry.get("d");
     assertEquals(2, roomEntry.size());
     assertTrue(roomEntry.containsKey("nr_Building"));
@@ -277,7 +285,8 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     class EntryCallback implements OnWriteEntryContent {
       @Override
-      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context) throws ODataApplicationException {
+      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context)
+          throws ODataApplicationException {
         Map<String, Object> buildingData = new HashMap<String, Object>();
         buildingData.put("Id", "1");
         WriteEntryCallbackResult result = new WriteEntryCallbackResult();
@@ -290,8 +299,10 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
     callbacks.put("nr_Building", callback);
 
-    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, roomData,
-        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, roomData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
@@ -351,7 +362,8 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     callbacks.put("nr_Building", null);
 
     new JsonEntityProvider().writeEntry(entitySet, roomData,
-        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks)
+            .build());
 
   }
 
@@ -369,7 +381,8 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     class FeedCallback implements OnWriteFeedContent {
       @Override
-      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context) throws ODataApplicationException {
+      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+          throws ODataApplicationException {
         Map<String, Object> roomData = new HashMap<String, Object>();
         roomData.put("Id", "1");
         roomData.put("Version", 1);
@@ -385,8 +398,10 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
     callbacks.put("nb_Rooms", callback);
 
-    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, buildingData,
-        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, buildingData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
@@ -418,7 +433,8 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     class FeedCallback implements OnWriteFeedContent {
       @Override
-      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context) throws ODataApplicationException {
+      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+          throws ODataApplicationException {
         WriteFeedCallbackResult result = new WriteFeedCallbackResult();
         result.setFeedData(null);
         result.setInlineProperties(DEFAULT_PROPERTIES);
@@ -429,14 +445,17 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
     callbacks.put("nb_Rooms", callback);
 
-    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, buildingData,
-        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, buildingData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
-    Map<String, Object> buildingEntry = new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
-    //remove d wrapper
+    Map<String, Object> buildingEntry =
+        new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+    // remove d wrapper
     buildingEntry = (Map<String, Object>) buildingEntry.get("d");
     assertEquals(2, buildingEntry.size());
     assertTrue(buildingEntry.containsKey("nb_Rooms"));
@@ -461,7 +480,8 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     class FeedCallback implements OnWriteFeedContent {
       @Override
-      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context) throws ODataApplicationException {
+      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+          throws ODataApplicationException {
         WriteFeedCallbackResult result = new WriteFeedCallbackResult();
         result.setFeedData(new ArrayList<Map<String, Object>>());
         result.setInlineProperties(DEFAULT_PROPERTIES);
@@ -472,14 +492,17 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
     callbacks.put("nb_Rooms", callback);
 
-    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, buildingData,
-        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, buildingData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
 
-    Map<String, Object> buildingEntry = new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
-    //remove d wrapper
+    Map<String, Object> buildingEntry =
+        new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+    // remove d wrapper
     buildingEntry = (Map<String, Object>) buildingEntry.get("d");
     assertEquals(2, buildingEntry.size());
     assertTrue(buildingEntry.containsKey("nb_Rooms"));
@@ -531,7 +554,8 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     callbacks.put("nb_Rooms", null);
 
     new JsonEntityProvider().writeEntry(entitySet, buildingData,
-        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks).build());
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks)
+            .build());
 
   }
 }

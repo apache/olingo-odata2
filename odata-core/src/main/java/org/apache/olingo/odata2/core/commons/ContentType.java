@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.commons;
 
@@ -36,42 +36,43 @@ import java.util.regex.Pattern;
 /**
  * Internally used {@link ContentType} for OData library.
  * 
- * For more details on format and content of a {@link ContentType} see    
- * <code>Media Type</code> format as defined in <code>RFC 2616 chapter 3.7 (http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html)</code>.
+ * For more details on format and content of a {@link ContentType} see
+ * <code>Media Type</code> format as defined in <code>RFC 2616 chapter 3.7
+ * (http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html)</code>.
  * <pre>
  * <code>
- *   media-type     = type "/" subtype *( ";" parameter )
- *   type           = token
- *   subtype        = token
+ * media-type = type "/" subtype *( ";" parameter )
+ * type = token
+ * subtype = token
  * </code>
  * </pre>
  * 
- * Especially for <code>Accept</code> Header as defined in 
+ * Especially for <code>Accept</code> Header as defined in
  * <code>RFC 2616 chapter 14.1 (http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html)</code>:
  * <pre>
  * <code>
  * Accept = "Accept" ":"
- *          #( media-range [ accept-params ] )
- *  media-range = ( "* /*"
- *                | ( type "/" "*" )
- *                | ( type "/" subtype )
- *                ) *( ";" parameter )
- *  accept-params  = ";" "q" "=" qvalue *( accept-extension )
- *  accept-extension = ";" token [ "=" ( token | quoted-string ) ]
+ * #( media-range [ accept-params ] )
+ * media-range = ( "* /*"
+ * | ( type "/" "*" )
+ * | ( type "/" subtype )
+ * ) *( ";" parameter )
+ * accept-params = ";" "q" "=" qvalue *( accept-extension )
+ * accept-extension = ";" token [ "=" ( token | quoted-string ) ]
  * </code>
  * </pre>
  * 
- * Especially for <code>Content-Type</code> Header as defined in 
+ * Especially for <code>Content-Type</code> Header as defined in
  * <code>RFC 2616 chapter 14.7 (http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html)</code>:
  * <pre>
  * <code>
- * Content-Type   = "Content-Type" ":" media-type
+ * Content-Type = "Content-Type" ":" media-type
  * </code>
  * </pre>
  * 
  * Once created a {@link ContentType} is <b>IMMUTABLE</b>.
  * 
- *  
+ * 
  */
 public class ContentType {
 
@@ -87,16 +88,15 @@ public class ContentType {
     KNOWN_MIME_TYPES.add("multipart");
     KNOWN_MIME_TYPES.add("text");
   }
-  
+
   private static final Comparator<String> Q_PARAMETER_COMPARATOR = new Comparator<String>() {
     @Override
-    public int compare(String o1, String o2) {
+    public int compare(final String o1, final String o2) {
       Float f1 = parseQParameterValue(o1);
       Float f2 = parseQParameterValue(o2);
       return f2.compareTo(f1);
     }
   };
-
 
   private static final char WHITESPACE_CHAR = ' ';
   private static final String PARAMETER_SEPARATOR = ";";
@@ -116,21 +116,32 @@ public class ContentType {
   public static final ContentType WILDCARD = new ContentType(MEDIA_TYPE_WILDCARD, MEDIA_TYPE_WILDCARD);
 
   public static final ContentType APPLICATION_XML = new ContentType("application", "xml", ODataFormat.XML);
-  public static final ContentType APPLICATION_XML_CS_UTF_8 = ContentType.create(APPLICATION_XML, PARAMETER_CHARSET, CHARSET_UTF_8);
+  public static final ContentType APPLICATION_XML_CS_UTF_8 = ContentType.create(APPLICATION_XML, PARAMETER_CHARSET,
+      CHARSET_UTF_8);
   public static final ContentType APPLICATION_ATOM_XML = new ContentType("application", "atom+xml", ODataFormat.ATOM);
-  public static final ContentType APPLICATION_ATOM_XML_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_XML, PARAMETER_CHARSET, CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_ENTRY = new ContentType("application", "atom+xml", ODataFormat.ATOM, parameterMap(PARAMETER_TYPE, "entry"));
-  public static final ContentType APPLICATION_ATOM_XML_ENTRY_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_XML_ENTRY, PARAMETER_CHARSET, CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_XML_FEED = new ContentType("application", "atom+xml", ODataFormat.ATOM, parameterMap(PARAMETER_TYPE, "feed"));
-  public static final ContentType APPLICATION_ATOM_XML_FEED_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_XML_FEED, PARAMETER_CHARSET, CHARSET_UTF_8);
-  public static final ContentType APPLICATION_ATOM_SVC = new ContentType("application", "atomsvc+xml", ODataFormat.ATOM);
-  public static final ContentType APPLICATION_ATOM_SVC_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_SVC, PARAMETER_CHARSET, CHARSET_UTF_8);
+  public static final ContentType APPLICATION_ATOM_XML_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_XML,
+      PARAMETER_CHARSET, CHARSET_UTF_8);
+  public static final ContentType APPLICATION_ATOM_XML_ENTRY = new ContentType("application", "atom+xml",
+      ODataFormat.ATOM, parameterMap(PARAMETER_TYPE, "entry"));
+  public static final ContentType APPLICATION_ATOM_XML_ENTRY_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_XML_ENTRY,
+      PARAMETER_CHARSET, CHARSET_UTF_8);
+  public static final ContentType APPLICATION_ATOM_XML_FEED = new ContentType("application", "atom+xml",
+      ODataFormat.ATOM, parameterMap(PARAMETER_TYPE, "feed"));
+  public static final ContentType APPLICATION_ATOM_XML_FEED_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_XML_FEED,
+      PARAMETER_CHARSET, CHARSET_UTF_8);
+  public static final ContentType APPLICATION_ATOM_SVC =
+      new ContentType("application", "atomsvc+xml", ODataFormat.ATOM);
+  public static final ContentType APPLICATION_ATOM_SVC_CS_UTF_8 = ContentType.create(APPLICATION_ATOM_SVC,
+      PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType APPLICATION_JSON = new ContentType("application", "json", ODataFormat.JSON);
-  public static final ContentType APPLICATION_JSON_ODATA_VERBOSE = ContentType.create(APPLICATION_JSON, PARAMETER_ODATA, VERBOSE);
-  public static final ContentType APPLICATION_JSON_CS_UTF_8 = ContentType.create(APPLICATION_JSON, PARAMETER_CHARSET, CHARSET_UTF_8);
+  public static final ContentType APPLICATION_JSON_ODATA_VERBOSE = ContentType.create(APPLICATION_JSON,
+      PARAMETER_ODATA, VERBOSE);
+  public static final ContentType APPLICATION_JSON_CS_UTF_8 = ContentType.create(APPLICATION_JSON, PARAMETER_CHARSET,
+      CHARSET_UTF_8);
   public static final ContentType APPLICATION_OCTET_STREAM = new ContentType("application", "octet-stream");
   public static final ContentType TEXT_PLAIN = new ContentType("text", "plain");
-  public static final ContentType TEXT_PLAIN_CS_UTF_8 = ContentType.create(TEXT_PLAIN, PARAMETER_CHARSET, CHARSET_UTF_8);
+  public static final ContentType TEXT_PLAIN_CS_UTF_8 = ContentType
+      .create(TEXT_PLAIN, PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType MULTIPART_MIXED = new ContentType("multipart", "mixed");
 
   private final String type;
@@ -142,10 +153,10 @@ public class ContentType {
     if (type == null) {
       throw new IllegalArgumentException("Type parameter MUST NOT be null.");
     }
-    this.odataFormat = ODataFormat.CUSTOM;
+    odataFormat = ODataFormat.CUSTOM;
     this.type = validateType(type);
-    this.subtype = null;
-    this.parameters = Collections.emptyMap();
+    subtype = null;
+    parameters = Collections.emptyMap();
   }
 
   private ContentType(final String type, final String subtype) {
@@ -156,7 +167,8 @@ public class ContentType {
     this(type, subtype, odataFormat, null);
   }
 
-  private ContentType(final String type, final String subtype, final ODataFormat odataFormat, final Map<String, String> parameters) {
+  private ContentType(final String type, final String subtype, final ODataFormat odataFormat,
+      final Map<String, String> parameters) {
     if ((type == null || MEDIA_TYPE_WILDCARD.equals(type)) && !MEDIA_TYPE_WILDCARD.equals(subtype)) {
       throw new IllegalArgumentException("Illegal combination of WILDCARD type with NONE WILDCARD subtype.");
     }
@@ -192,8 +204,7 @@ public class ContentType {
   }
 
   /**
-   * Validates if given <code>format</code> is parseable and can be used as input for
-   * {@link #create(String)} method.
+   * Validates if given <code>format</code> is parseable and can be used as input for {@link #create(String)} method.
    * @param format to be validated string
    * @return <code>true</code> if format is parseable otherwise <code>false</code>
    */
@@ -206,8 +217,7 @@ public class ContentType {
   }
 
   /**
-   * Validates if given <code>format</code> is parseable and can be used as input for
-   * {@link #create(String)} method.
+   * Validates if given <code>format</code> is parseable and can be used as input for {@link #create(String)} method.
    * @param format to be validated string
    * @return <code>true</code> if format is parseable otherwise <code>false</code>
    */
@@ -247,8 +257,10 @@ public class ContentType {
    * @param parameterValue
    * @return a new <code>ContentType</code> object
    */
-  public static ContentType create(final ContentType contentType, final String parameterKey, final String parameterValue) {
-    ContentType ct = new ContentType(contentType.type, contentType.subtype, contentType.odataFormat, contentType.parameters);
+  public static ContentType
+      create(final ContentType contentType, final String parameterKey, final String parameterValue) {
+    ContentType ct =
+        new ContentType(contentType.type, contentType.subtype, contentType.odataFormat, contentType.parameters);
     ct.parameters.put(parameterKey, parameterValue);
     return ct;
   }
@@ -259,7 +271,7 @@ public class ContentType {
    * Supported format is <code>Media Type</code> format as defined in <code>RFC 2616 chapter 3.7</code>.
    * This format is used as
    * <code>HTTP Accept HEADER</code> format as defined in <code>RFC 2616 chapter 14.1</code>
-   * and 
+   * and
    * <code>HTTP Content-Type HEADER</code> format as defined in <code>RFC 2616 chapter 14.17</code>
    * 
    * @param format a string in format as defined in <code>RFC 2616 section 3.7</code>
@@ -281,9 +293,9 @@ public class ContentType {
     if (types.contains(TYPE_SUBTYPE_SEPARATOR)) {
       String[] tokens = types.split(TYPE_SUBTYPE_SEPARATOR);
       if (tokens.length == 2) {
-        if(tokens[0] == null || tokens[0].isEmpty()) {
+        if (tokens[0] == null || tokens[0].isEmpty()) {
           throw new IllegalArgumentException("No type found in format '" + format + "'.");
-        } else if(tokens[1] == null || tokens[1].isEmpty()) {
+        } else if (tokens[1] == null || tokens[1].isEmpty()) {
           throw new IllegalArgumentException("No subtype found in format '" + format + "'.");
         } else {
           return create(tokens[0], tokens[1], parametersMap);
@@ -291,10 +303,11 @@ public class ContentType {
       } else {
         throw new IllegalArgumentException("Too many '" + TYPE_SUBTYPE_SEPARATOR + "' in format '" + format + "'.");
       }
-    } else if(MEDIA_TYPE_WILDCARD.equals(types)) {
+    } else if (MEDIA_TYPE_WILDCARD.equals(types)) {
       return ContentType.WILDCARD;
     } else {
-      throw new IllegalArgumentException("No separator '" + TYPE_SUBTYPE_SEPARATOR + "' was found in format '" + format + "'.");
+      throw new IllegalArgumentException("No separator '" + TYPE_SUBTYPE_SEPARATOR + "' was found in format '" + format
+          + "'.");
     }
   }
 
@@ -306,10 +319,12 @@ public class ContentType {
    * 
    * The <code>Media Type</code> format can be used as
    * <code>HTTP Accept HEADER</code> format as defined in <code>RFC 2616 chapter 14.1</code>
-   * and 
+   * and
    * <code>HTTP Content-Type HEADER</code> format as defined in <code>RFC 2616 chapter 14.17</code>.
-   * The {@link ContentType} with {@link ODataFormat#CUSTOM} can only be used as <code>$format</code> system query option 
-   * (as defined http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format).
+   * The {@link ContentType} with {@link ODataFormat#CUSTOM} can only be used as <code>$format</code> system query
+   * option
+   * (as defined
+   * http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format).
    * 
    * @param format a string in format as defined in <code>RFC 2616 section 3.7</code>
    * @return a new <code>ContentType</code> object
@@ -317,22 +332,23 @@ public class ContentType {
    */
   public static ContentType createAsCustom(final String format) {
     ContentType parsedContentType = parse(format);
-    if(parsedContentType == null) {
+    if (parsedContentType == null) {
       return new ContentType(format);
     }
     return parsedContentType;
   }
-  
+
   /**
    * Create a list of {@link ContentType} based on given input strings (<code>contentTypes</code>).
    * 
    * Supported format is <code>Media Type</code> format as defined in <code>RFC 2616 chapter 3.7</code>.
    * This format is used as
    * <code>HTTP Accept HEADER</code> format as defined in <code>RFC 2616 chapter 14.1</code>
-   * and 
+   * and
    * <code>HTTP Content-Type HEADER</code> format as defined in <code>RFC 2616 chapter 14.17</code>.
    * <p>
-   * If one of the given strings can not be parsed an exception is thrown (hence no list is returned with the parseable strings).
+   * If one of the given strings can not be parsed an exception is thrown (hence no list is returned with the parseable
+   * strings).
    * </p>
    * 
    * @param contentTypeStrings a list of strings in format as defined in <code>RFC 2616 section 3.7</code>
@@ -355,13 +371,16 @@ public class ContentType {
    * 
    * The <code>Media Type</code> format can be used as
    * <code>HTTP Accept HEADER</code> format as defined in <code>RFC 2616 chapter 14.1</code>
-   * and 
+   * and
    * <code>HTTP Content-Type HEADER</code> format as defined in <code>RFC 2616 chapter 14.17</code>.
-   * The {@link ContentType} with {@link ODataFormat#CUSTOM} can only be used as <code>$format</code> system query option 
-   * (as defined http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format).
+   * The {@link ContentType} with {@link ODataFormat#CUSTOM} can only be used as <code>$format</code> system query
+   * option
+   * (as defined
+   * http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format).
    * 
-   * @param contentTypeStrings a list of strings in format as defined in <code>RFC 2616 section 3.7</code> or 
-   * as defined http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format
+   * @param contentTypeStrings a list of strings in format as defined in <code>RFC 2616 section 3.7</code> or
+   * as defined
+   * http://www.odata.org/documentation/odata-v2-documentation/uri-conventions/#47_Format_System_Query_Option_format
    * @return a list of new <code>ContentType</code> object
    * @throws IllegalArgumentException if one of the given input string is not parseable this exceptions is thrown
    */
@@ -374,8 +393,8 @@ public class ContentType {
   }
 
   /**
-   * Parses the given input string (<code>format</code>) and returns created
-   * {@link ContentType} if input was valid or return <code>NULL</code> if
+   * Parses the given input string (<code>format</code>) and returns created {@link ContentType} if input was valid or
+   * return <code>NULL</code> if
    * input was not parseable.
    * 
    * For the definition of the supported format see {@link #create(String)}.
@@ -393,17 +412,17 @@ public class ContentType {
 
   /**
    * Sort given list (which must contains content type formated string) for their {@value #PARAMETER_Q} value
-   * as defined in <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1">RFC 2616 section 4.1</a> and 
+   * as defined in <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.1">RFC 2616 section 4.1</a> and
    * <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.9">RFC 2616 Section 3.9</a>.
    * 
    * <b>Attention:</b> For invalid values a {@value #PARAMETER_Q} value from <code>-1</code> is used for sorting.
    * 
    * @param toSort list which is sorted and hence re-arranged
    */
-  public static void sortForQParameter(List<String> toSort) {
+  public static void sortForQParameter(final List<String> toSort) {
     Collections.sort(toSort, ContentType.Q_PARAMETER_COMPARATOR);
   }
-  
+
   /**
    * Map combination of type/subtype to corresponding {@link ODataFormat}.
    * 
@@ -428,10 +447,10 @@ public class ContentType {
   }
 
   /**
-   * Maps content of array into map. 
+   * Maps content of array into map.
    * Therefore it must be an combination of <code>key</code> followed by the <code>value</code> in the array.
    * 
-   * @param content content which is added to {@link Map}. 
+   * @param content content which is added to {@link Map}.
    * @return a new <code>ContentType</code> object
    */
   private static Map<String, String> parameterMap(final String... content) {
@@ -445,16 +464,16 @@ public class ContentType {
   }
 
   /**
-   * Valid input are <code>;</code> separated <code>key=value</code> pairs 
+   * Valid input are <code>;</code> separated <code>key=value</code> pairs
    * without spaces between key and value.
    * <b>Attention:</b> <code>q</code> parameter is validated but not added to result map
    * 
    * <p>
    * See RFC 2616:
-   * The type, subtype, and parameter attribute names are case-insensitive. 
-   * Parameter values might or might not be case-sensitive, depending on the 
-   * semantics of the parameter name. <b>Linear white space (LWS) MUST NOT be used 
-   * between the type and subtype, nor between an attribute and its value</b>. 
+   * The type, subtype, and parameter attribute names are case-insensitive.
+   * Parameter values might or might not be case-sensitive, depending on the
+   * semantics of the parameter name. <b>Linear white space (LWS) MUST NOT be used
+   * between the type and subtype, nor between an attribute and its value</b>.
    * </p>
    * 
    * @param parameters
@@ -469,12 +488,13 @@ public class ContentType {
         String key = keyValue[0].trim().toLowerCase(Locale.ENGLISH);
         String value = keyValue.length > 1 ? keyValue[1] : null;
         if (value != null && isLws(value.charAt(0))) {
-          throw new IllegalArgumentException("Value of parameter '" + key + "' starts with a LWS ('" + parameters + "').");
+          throw new IllegalArgumentException("Value of parameter '" + key + "' starts with a LWS ('" + parameters
+              + "').");
         }
-        if(PARAMETER_Q.equals(key.toLowerCase(Locale.US))) {
+        if (PARAMETER_Q.equals(key.toLowerCase(Locale.US))) {
           // q parameter is only validated but not added
-          if(!Q_PARAMETER_VALUE_PATTERN.matcher(value).matches()) {
-            throw new IllegalArgumentException("Value of 'q' parameter is not valid (q='" + value + "').");            
+          if (!Q_PARAMETER_VALUE_PATTERN.matcher(value).matches()) {
+            throw new IllegalArgumentException("Value of 'q' parameter is not valid (q='" + value + "').");
           }
         } else {
           parameterMap.put(key, value);
@@ -499,7 +519,7 @@ public class ContentType {
       for (String parameter : splittedParameters) {
         String[] keyValue = parameter.split(PARAMETER_KEY_VALUE_SEPARATOR);
         String key = keyValue[0].trim().toLowerCase(Locale.ENGLISH);
-        if(PARAMETER_Q.equalsIgnoreCase(key)) {
+        if (PARAMETER_Q.equalsIgnoreCase(key)) {
           String value = keyValue.length > 1 ? keyValue[1] : null;
           if (Q_PARAMETER_VALUE_PATTERN.matcher(value).matches()) {
             return Float.valueOf(value);
@@ -521,8 +541,9 @@ public class ContentType {
     return key != null && !PARAMETER_Q.equals(key.toLowerCase(Locale.US));
   }
 
-  /** 
-   * Validate if given character is a linear whitepace (includes <code>horizontal-tab, linefeed, carriage return and space</code>).
+  /**
+   * Validate if given character is a linear whitepace (includes <code>horizontal-tab, linefeed, carriage return and
+   * space</code>).
    * 
    * @param character to be checked
    * @return <code>true</code> if character is a LWS, otherwise <code>false</code>.
@@ -539,12 +560,12 @@ public class ContentType {
     }
   }
 
-
   /**
    * Ensure that charset parameter ({@link #PARAMETER_CHARSET}) is set on returned content type
-   * if this {@link ContentType} is a <code>odata text related</code> content type (@see {@link #isContentTypeODataTextRelated()}).
-   * If <code>this</code> {@link ContentType} has no charset parameter set a new {@link ContentType}
-   * with given <code>defaultCharset</code> is created.
+   * if this {@link ContentType} is a <code>odata text related</code> content type (@see
+   * {@link #isContentTypeODataTextRelated()}).
+   * If <code>this</code> {@link ContentType} has no charset parameter set a new {@link ContentType} with given
+   * <code>defaultCharset</code> is created.
    * Otherwise if charset parameter is already set nothing is done.
    * 
    * @param defaultCharset
@@ -592,10 +613,11 @@ public class ContentType {
   }
 
   /**
-   * {@link ContentType}s are equal 
+   * {@link ContentType}s are equal
    * <ul>
    * <li>if <code>type</code>, <code>subtype</code> and all <code>parameters</code> have the same value.</li>
-   * <li>if <code>type</code> and/or <code>subtype</code> is set to "*" (in such a case the <code>parameters</code> are ignored).</li>
+   * <li>if <code>type</code> and/or <code>subtype</code> is set to "*" (in such a case the <code>parameters</code> are
+   * ignored).</li>
    * </ul>
    * 
    * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>.
@@ -638,12 +660,13 @@ public class ContentType {
   }
 
   /**
-   * {@link ContentType}s are <b>compatible</b> 
+   * {@link ContentType}s are <b>compatible</b>
    * <ul>
    * <li>if <code>type</code>, <code>subtype</code> have the same value.</li>
    * <li>if <code>type</code> and/or <code>subtype</code> is set to "*"</li>
    * </ul>
-   * The set <code>parameters</code> are <b>always</b> ignored (for compare with parameters see {@link #equals(Object)}).
+   * The set <code>parameters</code> are <b>always</b> ignored (for compare with parameters see {@link #equals(Object)}
+   * ).
    * 
    * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>.
    */
@@ -657,11 +680,12 @@ public class ContentType {
 
   /**
    * Check equal without parameters.
-   * It is possible that no decision about <code>equal/none equal</code> can be determined a <code>NULL</code> is returned.
+   * It is possible that no decision about <code>equal/none equal</code> can be determined a <code>NULL</code> is
+   * returned.
    * 
    * @param obj to checked object
-   * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code> 
-   *          or <code>NULL</code> if no decision about <code>equal/none equal</code> could be determined.
+   * @return <code>true</code> if both instances are equal (see definition above), otherwise <code>false</code>
+   * or <code>NULL</code> if no decision about <code>equal/none equal</code> could be determined.
    */
   private Boolean isEqualWithoutParameters(final Object obj) {
     // basic checks
@@ -683,7 +707,7 @@ public class ContentType {
         return false;
       }
     } else if (!subtype.equals(other.subtype)) {
-      if(other.subtype == null) {
+      if (other.subtype == null) {
         return false;
       } else if (!subtype.equals(MEDIA_TYPE_WILDCARD) && !other.subtype.equals(MEDIA_TYPE_WILDCARD)) {
         return false;
@@ -714,7 +738,8 @@ public class ContentType {
    * 
    * @param first first string
    * @param second second string
-   * @return <code>true</code> if both strings are equal (by ignoring the case), otherwise <code>false</code> is returned
+   * @return <code>true</code> if both strings are equal (by ignoring the case), otherwise <code>false</code> is
+   * returned
    */
   private static boolean areEqual(final String first, final String second) {
     if (first == null) {
@@ -728,19 +753,20 @@ public class ContentType {
   }
 
   /**
-   * Get {@link ContentType} as string as defined in RFC 2616 (http://www.ietf.org/rfc/rfc2616.txt - chapter 14.17: Content-Type)
+   * Get {@link ContentType} as string as defined in RFC 2616 (http://www.ietf.org/rfc/rfc2616.txt - chapter 14.17:
+   * Content-Type)
    * 
    * @return string representation of <code>ContentType</code> object
    */
   public String toContentTypeString() {
     StringBuilder sb = new StringBuilder();
-    
-    if(odataFormat == ODataFormat.CUSTOM && subtype == null) {
+
+    if (odataFormat == ODataFormat.CUSTOM && subtype == null) {
       sb.append(type);
     } else {
       sb.append(type).append(TYPE_SUBTYPE_SEPARATOR).append(subtype);
     }
-    
+
     for (String key : parameters.keySet()) {
       if (isParameterAllowed(key)) {
         String value = parameters.get(key);
@@ -761,13 +787,15 @@ public class ContentType {
 
   /**
    * Find best match between this {@link ContentType} and the {@link ContentType} in the list.
-   * If a match (this {@link ContentType} is equal to a {@link ContentType} in list) is found either this or the {@link ContentType}
-   * from the list is returned based on which {@link ContentType} has less "**" characters set 
+   * If a match (this {@link ContentType} is equal to a {@link ContentType} in list) is found either this or the
+   * {@link ContentType} from the list is returned based on which {@link ContentType} has less "**" characters set
    * (checked with {@link #compareWildcardCounts(ContentType)}.
-   * If no match (none {@link ContentType} in list is equal to this {@link ContentType}) is found <code>NULL</code> is returned.
+   * If no match (none {@link ContentType} in list is equal to this {@link ContentType}) is found <code>NULL</code> is
+   * returned.
    * 
    * @param toMatchContentTypes list of {@link ContentType}s which are matches against this {@link ContentType}
-   * @return best matched content type in list or <code>NULL</code> if none content type match to this content type instance
+   * @return best matched content type in list or <code>NULL</code> if none content type match to this content type
+   * instance
    */
   public ContentType match(final List<ContentType> toMatchContentTypes) {
     for (ContentType supportedContentType : toMatchContentTypes) {
@@ -783,14 +811,17 @@ public class ContentType {
   }
 
   /**
-   * Find best match between this {@link ContentType} and the {@link ContentType} in the list ignoring all set parameters.
-   * If a match (this {@link ContentType} is equal to a {@link ContentType} in list) is found either this or the {@link ContentType}
-   * from the list is returned based on which {@link ContentType} has less "**" characters set 
+   * Find best match between this {@link ContentType} and the {@link ContentType} in the list ignoring all set
+   * parameters.
+   * If a match (this {@link ContentType} is equal to a {@link ContentType} in list) is found either this or the
+   * {@link ContentType} from the list is returned based on which {@link ContentType} has less "**" characters set
    * (checked with {@link #compareWildcardCounts(ContentType)}.
-   * If no match (none {@link ContentType} in list is equal to this {@link ContentType}) is found <code>NULL</code> is returned.
+   * If no match (none {@link ContentType} in list is equal to this {@link ContentType}) is found <code>NULL</code> is
+   * returned.
    * 
    * @param toMatchContentTypes list of {@link ContentType}s which are matches against this {@link ContentType}
-   * @return best matched content type in list or <code>NULL</code> if none content type match to this content type instance
+   * @return best matched content type in list or <code>NULL</code> if none content type match to this content type
+   * instance
    */
   public ContentType matchCompatible(final List<ContentType> toMatchContentTypes) {
     for (ContentType supportedContentType : toMatchContentTypes) {
@@ -811,8 +842,8 @@ public class ContentType {
    * For more detail what a valid match is see {@link #matchCompatible(List)}.
    * 
    * @param toMatchContentTypes list of {@link ContentType}s which are matches against this {@link ContentType}
-   * @return <code>true</code> if a compatible content type was found in given list 
-   *          or <code>false</code> if none compatible content type match was found
+   * @return <code>true</code> if a compatible content type was found in given list
+   * or <code>false</code> if none compatible content type match was found
    */
   public boolean hasCompatible(final List<ContentType> toMatchContentTypes) {
     return matchCompatible(toMatchContentTypes) != null;
@@ -823,8 +854,8 @@ public class ContentType {
    * For more detail what a valid match is see {@link #match(List)}.
    * 
    * @param toMatchContentTypes list of {@link ContentType}s which are matches against this {@link ContentType}
-   * @return <code>true</code> if a matching content type was found in given list 
-   *          or <code>false</code> if none matching content type match was found
+   * @return <code>true</code> if a matching content type was found in given list
+   * or <code>false</code> if none matching content type match was found
    */
   public boolean hasMatch(final List<ContentType> toMatchContentTypes) {
     return match(toMatchContentTypes) != null;
@@ -887,10 +918,12 @@ public class ContentType {
    * 
    * For more detail in general see {@link #hasMatch(List)} and for what a valid match is see {@link #match(List)}.
    * 
-   * @param toMatch content type formated string (<code>toMatch</code>) for which is checked if a match exists in given list
-   * @param matchExamples list of {@link ContentType}s which are matches against content type formated string (<code>toMatch</code>)
-   * @return <code>true</code> if a matching content type was found in given list 
-   *          or <code>false</code> if none matching content type match was found
+   * @param toMatch content type formated string (<code>toMatch</code>) for which is checked if a match exists in given
+   * list
+   * @param matchExamples list of {@link ContentType}s which are matches against content type formated string
+   * (<code>toMatch</code>)
+   * @return <code>true</code> if a matching content type was found in given list
+   * or <code>false</code> if none matching content type match was found
    */
   public static boolean match(final String toMatch, final ContentType... matchExamples) {
     ContentType toMatchContentType = ContentType.create(toMatch);

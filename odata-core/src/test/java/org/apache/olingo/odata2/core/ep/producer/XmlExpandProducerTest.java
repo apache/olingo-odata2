@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -89,9 +89,13 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     ExpandSelectTreeNode selectTree = getSelectExpandTree("Rooms('1')", "nr_Employees", "nr_Employees");
 
     HashMap<String, ODataCallback> callbacksRoom = createCallbacks("Rooms");
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
 
     String xmlString = verifyResponse(response);
     assertXpathNotExists("/a:entry/m:properties", xmlString);
@@ -107,7 +111,8 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     ODataCallback employeeCallback = new OnWriteFeedContent() {
 
       @Override
-      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context) throws ODataApplicationException {
+      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+          throws ODataApplicationException {
         WriteFeedCallbackResult writeFeedCallbackResult = new WriteFeedCallbackResult();
         writeFeedCallbackResult.setInlineProperties(DEFAULT_PROPERTIES);
         writeFeedCallbackResult.setFeedData(null);
@@ -115,9 +120,13 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
       }
     };
     callbacksRoom.put("nr_Employees", employeeCallback);
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
 
     String xmlString = verifyResponse(response);
     assertXpathNotExists("/a:entry/m:properties", xmlString);
@@ -135,7 +144,8 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     ODataCallback employeeCallback = new OnWriteFeedContent() {
 
       @Override
-      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context) throws ODataApplicationException {
+      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+          throws ODataApplicationException {
         WriteFeedCallbackResult writeFeedCallbackResult = new WriteFeedCallbackResult();
         writeFeedCallbackResult.setInlineProperties(DEFAULT_PROPERTIES);
         writeFeedCallbackResult.setFeedData(new ArrayList<Map<String, Object>>());
@@ -143,9 +153,13 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
       }
     };
     callbacksRoom.put("nr_Employees", employeeCallback);
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
 
     String xmlString = verifyResponse(response);
     assertXpathNotExists("/a:entry/m:properties", xmlString);
@@ -159,9 +173,13 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     ExpandSelectTreeNode selectTree = getSelectExpandTree("Rooms('1')", "nr_Employees", "nr_Employees");
 
     HashMap<String, ODataCallback> callbacksRoom = createCallbacks("Rooms");
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
 
     String xmlString = verifyResponse(response);
     assertXpathNotExists("/a:entry/m:properties", xmlString);
@@ -175,25 +193,35 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     ExpandSelectTreeNode selectTree = getSelectExpandTree("Rooms('1')", "nr_Employees/ne_Room", "nr_Employees/ne_Room");
 
     HashMap<String, ODataCallback> callbacksRoom = createCallbacks("Rooms");
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
 
     String xmlString = verifyResponse(response);
     assertXpathNotExists("/a:entry/m:properties", xmlString);
     assertXpathExists(employeeXPathString, xmlString);
     assertXpathExists(employeeXPathString + "/m:inline/a:feed" + roomXPathString, xmlString);
-    assertXpathExists(employeeXPathString + "/m:inline/a:feed" + roomXPathString + "/m:inline/a:entry/a:content/m:properties", xmlString);
+    assertXpathExists(employeeXPathString + "/m:inline/a:feed" + roomXPathString
+        + "/m:inline/a:entry/a:content/m:properties", xmlString);
   }
 
   @Test
   public void deepExpandSelectedEmployeesWithRoomId() throws Exception {
-    ExpandSelectTreeNode selectTree = getSelectExpandTree("Rooms('1')", "nr_Employees/ne_Room/Id", "nr_Employees/ne_Room");
+    ExpandSelectTreeNode selectTree =
+        getSelectExpandTree("Rooms('1')", "nr_Employees/ne_Room/Id", "nr_Employees/ne_Room");
 
     HashMap<String, ODataCallback> callbacksRoom = createCallbacks("Rooms");
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
 
     String xmlString = verifyResponse(response);
     assertXpathNotExists("/a:entry/m:properties", xmlString);
@@ -201,7 +229,8 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     assertXpathExists(employeeXPathString + "/m:inline/a:feed" + roomXPathString, xmlString);
     assertXpathExists(employeeXPathString + "/m:inline/a:feed" + roomXPathString + "/m:inline", xmlString);
     assertXpathExists(employeeXPathString + "/m:inline/a:feed" + roomXPathString + "/m:inline/a:entry", xmlString);
-    assertXpathExists(employeeXPathString + "/m:inline/a:feed" + roomXPathString + "/m:inline/a:entry/a:content/m:properties/d:Id", xmlString);
+    assertXpathExists(employeeXPathString + "/m:inline/a:feed" + roomXPathString
+        + "/m:inline/a:entry/a:content/m:properties/d:Id", xmlString);
   }
 
   @Test
@@ -209,9 +238,13 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     ExpandSelectTreeNode selectTree = getSelectExpandTree("Employees('1')", "ne_Room", "ne_Room");
 
     HashMap<String, ODataCallback> callbacksEmployee = createCallbacks("Employees");
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            employeeData, properties);
 
     String xmlString = verifyResponse(response);
     verifyNavigationProperties(xmlString, F, T, F);
@@ -224,9 +257,13 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     ExpandSelectTreeNode selectTree = getSelectExpandTree("Employees('1')", "ne_Team", "ne_Team");
 
     HashMap<String, ODataCallback> callbacksEmployee = createCallbacks("Employees");
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            employeeData, properties);
 
     String xmlString = verifyResponse(response);
     verifyNavigationProperties(xmlString, F, F, T);
@@ -243,7 +280,8 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     OnWriteEntryContent callback = new OnWriteEntryContent() {
 
       @Override
-      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context) throws ODataApplicationException {
+      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context)
+          throws ODataApplicationException {
         WriteEntryCallbackResult result = new WriteEntryCallbackResult();
         result.setInlineProperties(DEFAULT_PROPERTIES);
         result.setEntryData(new HashMap<String, Object>());
@@ -251,9 +289,13 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
       }
     };
     callbacksEmployee.put("ne_Team", callback);
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            employeeData, properties);
 
     String xmlString = verifyResponse(response);
     verifyNavigationProperties(xmlString, F, F, T);
@@ -267,9 +309,13 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     ExpandSelectTreeNode selectTree = getSelectExpandTree("Buildings('1')", "nb_Rooms", "nb_Rooms");
 
     HashMap<String, ODataCallback> callbacksEmployee = createCallbacks("Buildings");
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings"), buildingData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings"),
+            buildingData, properties);
 
     String xmlString = verifyResponse(response);
     assertXpathNotExists("/a:entry/m:properties", xmlString);
@@ -291,15 +337,20 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
 
     HashMap<String, ODataCallback> callbacksBuilding = new HashMap<String, ODataCallback>();
     callbacksBuilding.put("nb_Rooms", null);
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksBuilding).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksBuilding)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings"), buildingData, properties);
+    provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings"), buildingData,
+        properties);
   }
 
-  private HashMap<String, ODataCallback> createCallbacks(final String entitySetName) throws EdmException, ODataException {
+  private HashMap<String, ODataCallback> createCallbacks(final String entitySetName) throws EdmException,
+      ODataException {
     HashMap<String, ODataCallback> callbacksEmployee = new HashMap<String, ODataCallback>();
     MyCallback callback = new MyCallback(this, inlineBaseUri);
-    for (String navPropName : MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet(entitySetName).getEntityType().getNavigationPropertyNames()) {
+    for (String navPropName : MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet(entitySetName)
+        .getEntityType().getNavigationPropertyNames()) {
       callbacksEmployee.put(navPropName, callback);
     }
     return callbacksEmployee;
@@ -309,9 +360,12 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
   public void expandSelectedRoomWithoutCallback() throws Exception {
     ExpandSelectTreeNode selectTree = getSelectExpandTree("Employees('1')", "ne_Room", "ne_Room");
 
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    ODataResponse response = provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData, properties);
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            employeeData, properties);
 
     String xmlString = verifyResponse(response);
     verifyNavigationProperties(xmlString, F, T, F);
@@ -325,12 +379,16 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     HashMap<String, ODataCallback> callbacksEmployee = new HashMap<String, ODataCallback>();
     callbacksEmployee.put("ne_Room", null);
 
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee)
+            .build();
     AtomEntityProvider provider = createAtomEntityProvider();
-    provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData, properties);
+    provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData,
+        properties);
   }
 
-  private void verifyEmployees(final String path, final String xmlString) throws XpathException, IOException, SAXException {
+  private void verifyEmployees(final String path, final String xmlString) throws XpathException, IOException,
+      SAXException {
     assertXpathExists(path, xmlString);
     assertXpathExists(path + "/m:inline", xmlString);
 
@@ -377,7 +435,8 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     assertXpathExists(path + "/m:inline/a:entry/a:content/m:properties/d:Version", xmlString);
   }
 
-  private void verifyNavigationProperties(final String xmlString, final boolean neManager, final boolean neRoom, final boolean neTeam) throws IOException, SAXException, XpathException {
+  private void verifyNavigationProperties(final String xmlString, final boolean neManager, final boolean neRoom,
+      final boolean neTeam) throws IOException, SAXException, XpathException {
     if (neManager) {
       assertXpathExists("/a:entry/a:link[@href=\"Employees('1')/ne_Manager\" and @title='ne_Manager']", xmlString);
     } else {
@@ -403,7 +462,8 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     return xmlString;
   }
 
-  private ExpandSelectTreeNode getSelectExpandTree(final String pathSegment, final String selectString, final String expandString) throws Exception {
+  private ExpandSelectTreeNode getSelectExpandTree(final String pathSegment, final String selectString,
+      final String expandString) throws Exception {
 
     Edm edm = RuntimeDelegate.createEdm(new EdmTestProvider());
     UriParserImpl uriParser = new UriParserImpl(edm);
@@ -420,7 +480,8 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     }
     UriInfo uriInfo = uriParser.parse(pathSegments, queryParameters);
 
-    ExpandSelectTreeCreator expandSelectTreeCreator = new ExpandSelectTreeCreator(uriInfo.getSelect(), uriInfo.getExpand());
+    ExpandSelectTreeCreator expandSelectTreeCreator =
+        new ExpandSelectTreeCreator(uriInfo.getSelect(), uriInfo.getExpand());
     ExpandSelectTreeNode expandSelectTree = expandSelectTreeCreator.create();
     assertNotNull(expandSelectTree);
     return expandSelectTree;

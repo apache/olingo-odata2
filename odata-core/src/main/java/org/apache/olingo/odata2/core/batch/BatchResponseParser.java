@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
@@ -44,14 +44,21 @@ public class BatchResponseParser {
   private static final String ANY_CHARACTERS = ".*";
 
   private static final Pattern REG_EX_BLANK_LINE = Pattern.compile("(|" + REG_EX_ZERO_OR_MORE_WHITESPACES + ")");
-  private static final Pattern REG_EX_HEADER = Pattern.compile("([a-zA-Z\\-]+):" + REG_EX_OPTIONAL_WHITESPACE + "(.*)" + REG_EX_ZERO_OR_MORE_WHITESPACES);
+  private static final Pattern REG_EX_HEADER = Pattern.compile("([a-zA-Z\\-]+):" + REG_EX_OPTIONAL_WHITESPACE + "(.*)"
+      + REG_EX_ZERO_OR_MORE_WHITESPACES);
   private static final Pattern REG_EX_VERSION = Pattern.compile("(?:HTTP/[0-9]\\.[0-9])");
-  private static final Pattern REG_EX_ANY_BOUNDARY_STRING = Pattern.compile("--" + ANY_CHARACTERS + REG_EX_ZERO_OR_MORE_WHITESPACES);
-  private static final Pattern REG_EX_STATUS_LINE = Pattern.compile(REG_EX_VERSION + "\\s" + "([0-9]{3})\\s([\\S ]+)" + REG_EX_ZERO_OR_MORE_WHITESPACES);
-  private static final Pattern REG_EX_BOUNDARY_PARAMETER = Pattern.compile(REG_EX_OPTIONAL_WHITESPACE + "boundary=(\".*\"|.*)" + REG_EX_ZERO_OR_MORE_WHITESPACES);
-  private static final Pattern REG_EX_CONTENT_TYPE = Pattern.compile(REG_EX_OPTIONAL_WHITESPACE + HttpContentType.MULTIPART_MIXED);
+  private static final Pattern REG_EX_ANY_BOUNDARY_STRING = Pattern.compile("--" + ANY_CHARACTERS
+      + REG_EX_ZERO_OR_MORE_WHITESPACES);
+  private static final Pattern REG_EX_STATUS_LINE = Pattern.compile(REG_EX_VERSION + "\\s" + "([0-9]{3})\\s([\\S ]+)"
+      + REG_EX_ZERO_OR_MORE_WHITESPACES);
+  private static final Pattern REG_EX_BOUNDARY_PARAMETER = Pattern.compile(REG_EX_OPTIONAL_WHITESPACE
+      + "boundary=(\".*\"|.*)" + REG_EX_ZERO_OR_MORE_WHITESPACES);
+  private static final Pattern REG_EX_CONTENT_TYPE = Pattern.compile(REG_EX_OPTIONAL_WHITESPACE
+      + HttpContentType.MULTIPART_MIXED);
 
-  private static final String REG_EX_BOUNDARY = "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+ \\(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\""; // See RFC 2046
+  private static final String REG_EX_BOUNDARY =
+      "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+ \\(\\)" +
+          ",/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\""; // See RFC 2046
 
   private String contentTypeMime;
   private String boundary;
@@ -100,7 +107,7 @@ public class BatchResponseParser {
 
   }
 
-  //The method parses additional information prior to the first boundary delimiter line
+  // The method parses additional information prior to the first boundary delimiter line
   private void parsePreamble(final Scanner scanner) {
     while (scanner.hasNext() && !scanner.hasNext(REG_EX_ANY_BOUNDARY_STRING)) {
       scanner.next();
@@ -108,7 +115,8 @@ public class BatchResponseParser {
     }
   }
 
-  private List<BatchSingleResponse> parseMultipart(final Scanner scanner, final String boundary, final boolean isChangeSet) throws BatchException {
+  private List<BatchSingleResponse> parseMultipart(final Scanner scanner, final String boundary,
+      final boolean isChangeSet) throws BatchException {
     Map<String, String> mimeHeaders = new HashMap<String, String>();
     List<BatchSingleResponse> responses = new ArrayList<BatchSingleResponse>();
     if (scanner.hasNext("--" + boundary + REG_EX_ZERO_OR_MORE_WHITESPACES)) {
@@ -142,7 +150,8 @@ public class BatchResponseParser {
             throw new BatchException(BatchException.INVALID_CHANGESET_BOUNDARY.addContent(currentLineNumber));
           }
           parseNewLine(scanner);// mandatory
-          Pattern changeSetCloseDelimiter = Pattern.compile("--" + changeSetBoundary + "--" + REG_EX_ZERO_OR_MORE_WHITESPACES);
+          Pattern changeSetCloseDelimiter =
+              Pattern.compile("--" + changeSetBoundary + "--" + REG_EX_ZERO_OR_MORE_WHITESPACES);
           while (!scanner.hasNext(changeSetCloseDelimiter)) {
             responses.addAll(parseMultipart(scanner, changeSetBoundary, true));
           }
@@ -150,7 +159,8 @@ public class BatchResponseParser {
           currentLineNumber++;
           parseNewLine(scanner);
         } else {
-          throw new BatchException(BatchException.INVALID_CONTENT_TYPE.addContent(HttpContentType.MULTIPART_MIXED + " or " + HttpContentType.APPLICATION_HTTP));
+          throw new BatchException(BatchException.INVALID_CONTENT_TYPE.addContent(HttpContentType.MULTIPART_MIXED
+              + " or " + HttpContentType.APPLICATION_HTTP));
         }
       }
     } else if (scanner.hasNext(boundary + REG_EX_ZERO_OR_MORE_WHITESPACES)) {
@@ -158,7 +168,8 @@ public class BatchResponseParser {
       throw new BatchException(BatchException.INVALID_BOUNDARY_DELIMITER.addContent(currentLineNumber));
     } else if (scanner.hasNext(REG_EX_ANY_BOUNDARY_STRING)) {
       currentLineNumber++;
-      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING.addContent(boundary).addContent(currentLineNumber));
+      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING.addContent(boundary).addContent(
+          currentLineNumber));
     } else {
       currentLineNumber++;
       throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER.addContent(currentLineNumber));
@@ -167,7 +178,8 @@ public class BatchResponseParser {
 
   }
 
-  private BatchSingleResponseImpl parseResponse(final Scanner scanner, final boolean isChangeSet) throws BatchException {
+  private BatchSingleResponseImpl parseResponse(final Scanner scanner, final boolean isChangeSet)
+      throws BatchException {
     BatchSingleResponseImpl response = new BatchSingleResponseImpl();
     if (scanner.hasNext(REG_EX_STATUS_LINE)) {
       scanner.next(REG_EX_STATUS_LINE);
@@ -180,13 +192,16 @@ public class BatchResponseParser {
         statusInfo = result.group(2);
       } else {
         currentLineNumber++;
-        throw new BatchException(BatchException.INVALID_STATUS_LINE.addContent(scanner.next()).addContent(currentLineNumber));
+        throw new BatchException(BatchException.INVALID_STATUS_LINE.addContent(scanner.next()).addContent(
+            currentLineNumber));
       }
 
       Map<String, String> headers = parseResponseHeaders(scanner);
       parseNewLine(scanner);
       String contentLengthHeader = getHeaderValue(headers, HttpHeaders.CONTENT_LENGTH);
-      String body = (contentLengthHeader != null) ? parseBody(scanner, Integer.parseInt(contentLengthHeader)) : parseBody(scanner);
+      String body =
+          (contentLengthHeader != null) ? parseBody(scanner, Integer.parseInt(contentLengthHeader))
+              : parseBody(scanner);
       response.setStatusCode(statusCode);
       response.setStatusInfo(statusInfo);
       response.setHeaders(headers);
@@ -194,7 +209,8 @@ public class BatchResponseParser {
       response.setBody(body);
     } else {
       currentLineNumber++;
-      throw new BatchException(BatchException.INVALID_STATUS_LINE.addContent(scanner.next()).addContent(currentLineNumber));
+      throw new BatchException(BatchException.INVALID_STATUS_LINE.addContent(scanner.next()).addContent(
+          currentLineNumber));
     }
     return response;
   }
@@ -244,7 +260,8 @@ public class BatchResponseParser {
         }
       } else {
         currentLineNumber++;
-        throw new BatchException(BatchException.INVALID_HEADER.addContent(scanner.next()).addContent(currentLineNumber));
+        throw new BatchException(BatchException.INVALID_HEADER.addContent(scanner.next())
+            .addContent(currentLineNumber));
       }
     }
     return headers;
@@ -332,7 +349,8 @@ public class BatchResponseParser {
     } else {
       currentLineNumber++;
       if (scanner.hasNext()) {
-        throw new BatchException(BatchException.MISSING_BLANK_LINE.addContent(scanner.next()).addContent(currentLineNumber));
+        throw new BatchException(BatchException.MISSING_BLANK_LINE.addContent(scanner.next()).addContent(
+            currentLineNumber));
       } else {
         throw new BatchException(BatchException.TRUNCATED_BODY.addContent(currentLineNumber));
 

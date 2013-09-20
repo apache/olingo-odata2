@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri;
 
@@ -67,11 +67,12 @@ import org.apache.olingo.odata2.core.uri.expression.OrderByParserImpl;
 
 /**
  * Parser for the OData part of the URL.
- *  
+ * 
  */
 public class UriParserImpl extends UriParser {
 
-  private static final Pattern INITIAL_SEGMENT_PATTERN = Pattern.compile("(?:([^.()]+)\\.)?([^.()]+)(?:\\((.+)\\)|(\\(\\)))?");
+  private static final Pattern INITIAL_SEGMENT_PATTERN = Pattern
+      .compile("(?:([^.()]+)\\.)?([^.()]+)(?:\\((.+)\\)|(\\(\\)))?");
   private static final Pattern NAVIGATION_SEGMENT_PATTERN = Pattern.compile("([^()]+)(?:\\((.+)\\)|(\\(\\)))?");
   private static final Pattern NAMED_VALUE_PATTERN = Pattern.compile("(?:([^=]+)=)?([^=]+)");
 
@@ -91,13 +92,14 @@ public class UriParserImpl extends UriParser {
   /**
    * Parse the URI part after an OData service root,
    * already splitted into path segments and query parameters.
-   * @param pathSegments    the {@link PathSegment}s of the resource path,
-   *                        potentially percent-encoded
+   * @param pathSegments the {@link PathSegment}s of the resource path,
+   * potentially percent-encoded
    * @param queryParameters the query parameters, already percent-decoded
    * @return a {@link UriInfoImpl} instance containing the parsed information
    */
   @Override
-  public UriInfo parse(final List<PathSegment> pathSegments, final Map<String, String> queryParameters) throws UriSyntaxException, UriNotMatchingException, EdmException {
+  public UriInfo parse(final List<PathSegment> pathSegments, final Map<String, String> queryParameters)
+      throws UriSyntaxException, UriNotMatchingException, EdmException {
     this.pathSegments = copyPathSegmentList(pathSegments);
     systemQueryOptions = new HashMap<SystemQueryOption, String>();
     otherQueryParameters = new HashMap<String, String>();
@@ -188,7 +190,8 @@ public class UriParserImpl extends UriParser {
     }
   }
 
-  private void handleEntitySet(final EdmEntitySet entitySet, final String keyPredicate) throws UriSyntaxException, UriNotMatchingException, EdmException {
+  private void handleEntitySet(final EdmEntitySet entitySet, final String keyPredicate) throws UriSyntaxException,
+      UriNotMatchingException, EdmException {
     final EdmEntityType entityType = entitySet.getEntityType();
 
     uriResult.setTargetType(entityType);
@@ -326,7 +329,8 @@ public class UriParserImpl extends UriParser {
     }
   }
 
-  private void addNavigationSegment(final String keyPredicateName, final EdmNavigationProperty navigationProperty) throws UriSyntaxException, EdmException {
+  private void addNavigationSegment(final String keyPredicateName, final EdmNavigationProperty navigationProperty)
+      throws UriSyntaxException, EdmException {
     final EdmEntitySet targetEntitySet = uriResult.getTargetEntitySet().getRelatedEntitySet(navigationProperty);
     final EdmEntityType targetEntityType = targetEntitySet.getEntityType();
     uriResult.setTargetEntitySet(targetEntitySet);
@@ -341,7 +345,8 @@ public class UriParserImpl extends UriParser {
     uriResult.addNavigationSegment(navigationSegment);
   }
 
-  private void handlePropertyPath(final EdmProperty property) throws UriSyntaxException, UriNotMatchingException, EdmException {
+  private void handlePropertyPath(final EdmProperty property) throws UriSyntaxException, UriNotMatchingException,
+      EdmException {
     uriResult.addProperty(property);
     final EdmType type = property.getType();
 
@@ -408,7 +413,8 @@ public class UriParserImpl extends UriParser {
     }
   }
 
-  private ArrayList<KeyPredicate> parseKey(final String keyPredicate, final EdmEntityType entityType) throws UriSyntaxException, EdmException {
+  private ArrayList<KeyPredicate> parseKey(final String keyPredicate, final EdmEntityType entityType)
+      throws UriSyntaxException, EdmException {
     final List<EdmProperty> keyProperties = entityType.getKeyProperties();
     ArrayList<EdmProperty> parsedKeyProperties = new ArrayList<EdmProperty>();
     ArrayList<KeyPredicate> keyPredicates = new ArrayList<KeyPredicate>();
@@ -457,7 +463,8 @@ public class UriParserImpl extends UriParser {
     return keyPredicates;
   }
 
-  private void handleFunctionImport(final EdmFunctionImport functionImport, final String emptyParentheses, final String keyPredicate) throws UriSyntaxException, UriNotMatchingException, EdmException {
+  private void handleFunctionImport(final EdmFunctionImport functionImport, final String emptyParentheses,
+      final String keyPredicate) throws UriSyntaxException, UriNotMatchingException, EdmException {
     final EdmTyped returnType = functionImport.getReturnType();
     final EdmType type = returnType.getType();
     final boolean isCollection = returnType.getMultiplicity() == EdmMultiplicity.MANY;
@@ -525,7 +532,8 @@ public class UriParserImpl extends UriParser {
 
     for (SystemQueryOption queryOption : systemQueryOptions.keySet()) {
 
-      if (queryOption == SystemQueryOption.$format && (uriType == UriType.URI4 || uriType == UriType.URI5) && uriResult.isValue()) {
+      if (queryOption == SystemQueryOption.$format && (uriType == UriType.URI4 || uriType == UriType.URI5)
+          && uriResult.isValue()) {
         throw new UriSyntaxException(UriSyntaxException.INCOMPATIBLESYSTEMQUERYOPTION.addContent(queryOption));
       }
 
@@ -644,7 +652,8 @@ public class UriParserImpl extends UriParser {
     }
   }
 
-  private void handleSystemQueryOptionExpand(final String expandStatement) throws UriSyntaxException, UriNotMatchingException, EdmException {
+  private void handleSystemQueryOptionExpand(final String expandStatement) throws UriSyntaxException,
+      UriNotMatchingException, EdmException {
     ArrayList<ArrayList<NavigationPropertySegment>> expand = new ArrayList<ArrayList<NavigationPropertySegment>>();
 
     if (expandStatement.startsWith(",") || expandStatement.endsWith(",")) {
@@ -688,7 +697,8 @@ public class UriParserImpl extends UriParser {
     uriResult.setExpand(expand);
   }
 
-  private void handleSystemQueryOptionSelect(final String selectStatement) throws UriSyntaxException, UriNotMatchingException, EdmException {
+  private void handleSystemQueryOptionSelect(final String selectStatement) throws UriSyntaxException,
+      UriNotMatchingException, EdmException {
     ArrayList<SelectItem> select = new ArrayList<SelectItem>();
 
     if (selectStatement.startsWith(",") || selectStatement.endsWith(",")) {
@@ -827,17 +837,20 @@ public class UriParserImpl extends UriParser {
   }
 
   @Override
-  public FilterExpression parseFilterString(final EdmEntityType entityType, final String expression) throws ExpressionParserException, ODataMessageException {
+  public FilterExpression parseFilterString(final EdmEntityType entityType, final String expression)
+      throws ExpressionParserException, ODataMessageException {
     return new FilterParserImpl(entityType).parseFilterString(expression);
   }
 
   @Override
-  public OrderByExpression parseOrderByString(final EdmEntityType entityType, final String expression) throws ExpressionParserException, ODataMessageException {
+  public OrderByExpression parseOrderByString(final EdmEntityType entityType, final String expression)
+      throws ExpressionParserException, ODataMessageException {
     return new OrderByParserImpl(entityType).parseOrderByString(expression);
   }
 
   @Override
-  public ExpandSelectTreeNode buildExpandSelectTree(final List<SelectItem> select, final List<ArrayList<NavigationPropertySegment>> expand) throws EdmException {
+  public ExpandSelectTreeNode buildExpandSelectTree(final List<SelectItem> select,
+      final List<ArrayList<NavigationPropertySegment>> expand) throws EdmException {
     return new ExpandSelectTreeCreator(select, expand).create();
   }
 }

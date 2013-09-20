@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep;
 
@@ -65,9 +65,12 @@ public class ProviderFacadeImplTest {
           "<category term=\"RefScenario.Employee\" scheme=\"" + Edm.NAMESPACE_SCHEME_2007_08 + "\"/>" +
           "<link href=\"Employees('1')\" rel=\"edit\" title=\"Employee\"/>" +
           "<link href=\"Employees('1')/$value\" rel=\"edit-media\" type=\"application/octet-stream\"/>" +
-          "<link href=\"Employees('1')/ne_Room\" rel=\"" + Edm.NAMESPACE_REL_2007_08 + "ne_Room\" type=\"application/atom+xml; type=entry\" title=\"ne_Room\"/>" +
-          "<link href=\"Employees('1')/ne_Manager\" rel=\"" + Edm.NAMESPACE_REL_2007_08 + "ne_Manager\" type=\"application/atom+xml; type=entry\" title=\"ne_Manager\"/>" +
-          "<link href=\"Employees('1')/ne_Team\" rel=\"" + Edm.NAMESPACE_REL_2007_08 + "ne_Team\" type=\"application/atom+xml; type=entry\" title=\"ne_Team\"/>" +
+          "<link href=\"Employees('1')/ne_Room\" rel=\"" + Edm.NAMESPACE_REL_2007_08
+          + "ne_Room\" type=\"application/atom+xml; type=entry\" title=\"ne_Room\"/>" +
+          "<link href=\"Employees('1')/ne_Manager\" rel=\"" + Edm.NAMESPACE_REL_2007_08
+          + "ne_Manager\" type=\"application/atom+xml; type=entry\" title=\"ne_Manager\"/>" +
+          "<link href=\"Employees('1')/ne_Team\" rel=\"" + Edm.NAMESPACE_REL_2007_08
+          + "ne_Team\" type=\"application/atom+xml; type=entry\" title=\"ne_Team\"/>" +
           "<content type=\"application/octet-stream\" src=\"Employees('1')/$value\"/>" +
           "<m:properties>" +
           "<d:EmployeeId>1</d:EmployeeId>" +
@@ -94,7 +97,9 @@ public class ProviderFacadeImplTest {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     InputStream content = new ByteArrayInputStream(EMPLOYEE_1_XML.getBytes("UTF-8"));
 
-    final ODataEntry result = new ProviderFacadeImpl().readEntry(contentType, entitySet, content, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    final ODataEntry result =
+        new ProviderFacadeImpl().readEntry(contentType, entitySet, content, EntityProviderReadProperties.init()
+            .mergeSemantic(true).build());
     assertNotNull(result);
     assertFalse(result.containsInlineEntry());
     assertNotNull(result.getExpandSelectTree());
@@ -109,7 +114,8 @@ public class ProviderFacadeImplTest {
 
   @Test
   public void readPropertyValue() throws Exception {
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
     InputStream content = new ByteArrayInputStream("2012-02-29T01:02:03".getBytes("UTF-8"));
     final Object result = new ProviderFacadeImpl().readPropertyValue(property, content, Long.class);
     assertEquals(1330477323000L, result);
@@ -117,10 +123,13 @@ public class ProviderFacadeImplTest {
 
   @Test
   public void readProperty() throws Exception {
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
     final String xml = "<Age xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">42</Age>";
     InputStream content = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-    final Map<String, Object> result = new ProviderFacadeImpl().readProperty(HttpContentType.APPLICATION_XML, property, content, EntityProviderReadProperties.init().build());
+    final Map<String, Object> result =
+        new ProviderFacadeImpl().readProperty(HttpContentType.APPLICATION_XML, property, content,
+            EntityProviderReadProperties.init().build());
     assertFalse(result.isEmpty());
     assertEquals(42, result.get("Age"));
   }
@@ -136,8 +145,11 @@ public class ProviderFacadeImplTest {
   @Test
   public void readLinks() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
-    InputStream content = new ByteArrayInputStream("{\"d\":{\"__count\":\"42\",\"results\":[{\"uri\":\"http://somelink\"}]}}".getBytes("UTF-8"));
-    final List<String> result = new ProviderFacadeImpl().readLinks(HttpContentType.APPLICATION_JSON, entitySet, content);
+    InputStream content =
+        new ByteArrayInputStream("{\"d\":{\"__count\":\"42\",\"results\":[{\"uri\":\"http://somelink\"}]}}"
+            .getBytes("UTF-8"));
+    final List<String> result =
+        new ProviderFacadeImpl().readLinks(HttpContentType.APPLICATION_JSON, entitySet, content);
     assertEquals(Arrays.asList("http://somelink"), result);
   }
 
@@ -145,7 +157,9 @@ public class ProviderFacadeImplTest {
   public void writeFeed() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     List<Map<String, Object>> propertiesList = new ArrayList<Map<String, Object>>();
-    final ODataResponse result = new ProviderFacadeImpl().writeFeed(HttpContentType.APPLICATION_JSON, entitySet, propertiesList, EntityProviderWriteProperties.serviceRoot(URI.create("http://root/")).build());
+    final ODataResponse result =
+        new ProviderFacadeImpl().writeFeed(HttpContentType.APPLICATION_JSON, entitySet, propertiesList,
+            EntityProviderWriteProperties.serviceRoot(URI.create("http://root/")).build());
     assertEquals("{\"d\":{\"results\":[]}}", StringHelper.inputStreamToString((InputStream) result.getEntity()));
   }
 
@@ -154,7 +168,9 @@ public class ProviderFacadeImplTest {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put("Id", "42");
-    final ODataResponse result = new ProviderFacadeImpl().writeEntry(HttpContentType.APPLICATION_JSON, entitySet, properties, EntityProviderWriteProperties.serviceRoot(URI.create("http://root/")).build());
+    final ODataResponse result =
+        new ProviderFacadeImpl().writeEntry(HttpContentType.APPLICATION_JSON, entitySet, properties,
+            EntityProviderWriteProperties.serviceRoot(URI.create("http://root/")).build());
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"http://root/Teams('42')\","
         + "\"uri\":\"http://root/Teams('42')\",\"type\":\"RefScenario.Team\"},"
         + "\"Id\":\"42\",\"Name\":null,\"isScrumTeam\":null,"
@@ -164,8 +180,10 @@ public class ProviderFacadeImplTest {
 
   @Test
   public void writeProperty() throws Exception {
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
-    final ODataResponse result = new ProviderFacadeImpl().writeProperty(HttpContentType.APPLICATION_XML, property, 987654321000L);
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
+    final ODataResponse result =
+        new ProviderFacadeImpl().writeProperty(HttpContentType.APPLICATION_XML, property, 987654321000L);
     assertNull("EntityProvider should not set content header", result.getContentHeader());
     assertTrue(StringHelper.inputStreamToString((InputStream) result.getEntity())
         .endsWith("\">2001-04-19T04:25:21</EntryDate>"));
@@ -176,7 +194,9 @@ public class ProviderFacadeImplTest {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put("Id", "42");
-    final ODataResponse result = new ProviderFacadeImpl().writeLink(HttpContentType.APPLICATION_JSON, entitySet, properties, EntityProviderWriteProperties.serviceRoot(URI.create("http://root/")).build());
+    final ODataResponse result =
+        new ProviderFacadeImpl().writeLink(HttpContentType.APPLICATION_JSON, entitySet, properties,
+            EntityProviderWriteProperties.serviceRoot(URI.create("http://root/")).build());
     assertEquals("{\"d\":{\"uri\":\"http://root/Rooms('42')\"}}",
         StringHelper.inputStreamToString((InputStream) result.getEntity()));
   }
@@ -189,23 +209,28 @@ public class ProviderFacadeImplTest {
     List<Map<String, Object>> propertiesList = new ArrayList<Map<String, Object>>();
     propertiesList.add(properties);
     propertiesList.add(properties);
-    final ODataResponse result = new ProviderFacadeImpl().writeLinks(HttpContentType.APPLICATION_JSON, entitySet, propertiesList, EntityProviderWriteProperties.serviceRoot(URI.create("http://root/")).build());
+    final ODataResponse result =
+        new ProviderFacadeImpl().writeLinks(HttpContentType.APPLICATION_JSON, entitySet, propertiesList,
+            EntityProviderWriteProperties.serviceRoot(URI.create("http://root/")).build());
     assertEquals("{\"d\":[{\"uri\":\"http://root/Rooms('42')\"},{\"uri\":\"http://root/Rooms('42')\"}]}",
         StringHelper.inputStreamToString((InputStream) result.getEntity()));
   }
 
   @Test
   public void writeServiceDocument() throws Exception {
-    final ODataResponse result = new ProviderFacadeImpl().writeServiceDocument(HttpContentType.APPLICATION_JSON, MockFacade.getMockEdm(), "root");
+    final ODataResponse result =
+        new ProviderFacadeImpl()
+            .writeServiceDocument(HttpContentType.APPLICATION_JSON, MockFacade.getMockEdm(), "root");
     assertEquals("{\"d\":{\"EntitySets\":[]}}", StringHelper.inputStreamToString((InputStream) result.getEntity()));
   }
 
   @Test
   public void writePropertyValue() throws Exception {
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
     final ODataResponse result = new ProviderFacadeImpl().writePropertyValue(property, 987654321000L);
     assertNull("BasicProvider should not set content header", result.getContentHeader());
-    
+
     assertEquals("2001-04-19T04:25:21", StringHelper.inputStreamToString((InputStream) result.getEntity()));
   }
 
@@ -218,7 +243,8 @@ public class ProviderFacadeImplTest {
 
   @Test
   public void writeBinary() throws Exception {
-    final ODataResponse result = new ProviderFacadeImpl().writeBinary(HttpContentType.APPLICATION_OCTET_STREAM, new byte[] { 102, 111, 111 });
+    final ODataResponse result =
+        new ProviderFacadeImpl().writeBinary(HttpContentType.APPLICATION_OCTET_STREAM, new byte[] { 102, 111, 111 });
     assertEquals(HttpContentType.APPLICATION_OCTET_STREAM, result.getContentHeader());
     assertEquals("foo", StringHelper.inputStreamToString((InputStream) result.getEntity()));
   }
@@ -233,10 +259,12 @@ public class ProviderFacadeImplTest {
 
   @Test
   public void writeFunctionImport() throws Exception {
-    final EdmFunctionImport function = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("MaximalAge");
+    final EdmFunctionImport function =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("MaximalAge");
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put("MaximalAge", 99);
-    final ODataResponse result = new ProviderFacadeImpl().writeFunctionImport(HttpContentType.APPLICATION_JSON, function, properties, null);
+    final ODataResponse result =
+        new ProviderFacadeImpl().writeFunctionImport(HttpContentType.APPLICATION_JSON, function, properties, null);
     assertEquals("{\"d\":{\"MaximalAge\":99}}", StringHelper.inputStreamToString((InputStream) result.getEntity()));
   }
 

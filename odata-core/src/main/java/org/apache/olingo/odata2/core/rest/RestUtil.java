@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.rest;
 
@@ -57,7 +57,8 @@ import org.apache.olingo.odata2.core.commons.Decoder;
 public class RestUtil {
   public static Response convertResponse(final ODataResponse odataResponse) {
     try {
-      ResponseBuilder responseBuilder = Response.noContent().status(odataResponse.getStatus().getStatusCode()).entity(odataResponse.getEntity());
+      ResponseBuilder responseBuilder =
+          Response.noContent().status(odataResponse.getStatus().getStatusCode()).entity(odataResponse.getEntity());
 
       for (final String name : odataResponse.getHeaderNames()) {
         responseBuilder = responseBuilder.header(name, odataResponse.getHeader(name));
@@ -77,7 +78,8 @@ public class RestUtil {
     }
   }
 
-  public static ContentType extractRequestContentType(final SubLocatorParameter param) throws ODataUnsupportedMediaTypeException {
+  public static ContentType extractRequestContentType(final SubLocatorParameter param)
+      throws ODataUnsupportedMediaTypeException {
     final String contentType = param.getHttpHeaders().getHeaderString(HttpHeaders.CONTENT_TYPE);
     if (contentType == null || contentType.isEmpty()) {
       // RFC 2616, 7.2.1:
@@ -89,7 +91,8 @@ public class RestUtil {
     } else if (ContentType.isParseable(contentType)) {
       return ContentType.create(contentType);
     } else {
-      throw new ODataUnsupportedMediaTypeException(ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE.addContent(HttpHeaders.CONTENT_TYPE, contentType));
+      throw new ODataUnsupportedMediaTypeException(ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE
+          .addContent(HttpHeaders.CONTENT_TYPE, contentType));
     }
   }
 
@@ -143,7 +146,6 @@ public class RestUtil {
     ContentType.sortForQParameter(toSort);
     return toSort;
   }
-  
 
   public static Map<String, String> extractRequestHeaders(final javax.ws.rs.core.HttpHeaders httpHeaders) {
     final MultivaluedMap<String, String> headers = httpHeaders.getRequestHeaders();
@@ -204,7 +206,8 @@ public class RestUtil {
         odataSegments.add(new ODataPathSegmentImpl(segment.getPath(), null));
       } else {
         // post condition: we do not allow matrix parameters in OData path segments
-        throw new ODataNotFoundException(ODataNotFoundException.MATRIX.addContent(segment.getMatrixParameters().keySet(), segment.getPath()));
+        throw new ODataNotFoundException(ODataNotFoundException.MATRIX.addContent(segment.getMatrixParameters()
+            .keySet(), segment.getPath()));
       }
     }
     pathInfo.setODataPathSegment(odataSegments);
@@ -212,7 +215,8 @@ public class RestUtil {
     return pathInfo;
   }
 
-  private static URI buildBaseUri(final HttpServletRequest request, final javax.ws.rs.core.UriInfo uriInfo, final List<PathSegment> precedingPathSegments) throws ODataException {
+  private static URI buildBaseUri(final HttpServletRequest request, final javax.ws.rs.core.UriInfo uriInfo,
+      final List<PathSegment> precedingPathSegments) throws ODataException {
     try {
       UriBuilder uriBuilder = uriInfo.getBaseUriBuilder();
       for (final PathSegment ps : precedingPathSegments) {
@@ -242,7 +246,8 @@ public class RestUtil {
   private static List<PathSegment> convertPathSegmentList(final List<javax.ws.rs.core.PathSegment> pathSegments) {
     ArrayList<PathSegment> converted = new ArrayList<PathSegment>();
     for (final javax.ws.rs.core.PathSegment pathSegment : pathSegments) {
-      final PathSegment segment = new ODataPathSegmentImpl(Decoder.decode(pathSegment.getPath()), pathSegment.getMatrixParameters());
+      final PathSegment segment =
+          new ODataPathSegmentImpl(Decoder.decode(pathSegment.getPath()), pathSegment.getMatrixParameters());
       converted.add(segment);
     }
     return converted;

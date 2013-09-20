@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.aggregator;
 
@@ -46,9 +46,10 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 
 /**
- * Aggregator to get easy and fast access to all for serialization and de-serialization necessary {@link EdmEntitySet} informations.
+ * Aggregator to get easy and fast access to all for serialization and de-serialization necessary {@link EdmEntitySet}
+ * informations.
  * 
- *  
+ * 
  */
 public class EntityInfoAggregator {
 
@@ -100,15 +101,16 @@ public class EntityInfoAggregator {
    * Create an {@link EntityInfoAggregator} based on given {@link EdmEntitySet}
    * 
    * @param entitySet
-   *          with which the {@link EntityInfoAggregator} is initialized.
-   * @param expandSelectTree 
+   * with which the {@link EntityInfoAggregator} is initialized.
+   * @param expandSelectTree
    * @return created and initialized {@link EntityInfoAggregator}
    * @throws EntityProviderException
-   *           if during initialization of {@link EntityInfoAggregator} something goes wrong (e.g. exceptions during
-   *           access
-   *           of {@link EdmEntitySet}).
+   * if during initialization of {@link EntityInfoAggregator} something goes wrong (e.g. exceptions during
+   * access
+   * of {@link EdmEntitySet}).
    */
-  public static EntityInfoAggregator create(final EdmEntitySet entitySet, final ExpandSelectTreeNode expandSelectTree) throws EntityProviderException {
+  public static EntityInfoAggregator create(final EdmEntitySet entitySet, final ExpandSelectTreeNode expandSelectTree)
+      throws EntityProviderException {
     EntityInfoAggregator eia = new EntityInfoAggregator();
     eia.initialize(entitySet, expandSelectTree);
     return eia;
@@ -118,12 +120,12 @@ public class EntityInfoAggregator {
    * Create an {@link EntityInfoAggregator} based on given {@link EdmEntitySet}
    * 
    * @param entitySet
-   *          with which the {@link EntityInfoAggregator} is initialized.
+   * with which the {@link EntityInfoAggregator} is initialized.
    * @return created and initialized {@link EntityInfoAggregator}
    * @throws EntityProviderException
-   *           if during initialization of {@link EntityInfoAggregator} something goes wrong (e.g. exceptions during
-   *           access
-   *           of {@link EdmEntitySet}).
+   * if during initialization of {@link EntityInfoAggregator} something goes wrong (e.g. exceptions during
+   * access
+   * of {@link EdmEntitySet}).
    */
   public static EntityInfoAggregator create(final EdmEntitySet entitySet) throws EntityProviderException {
     EntityInfoAggregator eia = new EntityInfoAggregator();
@@ -135,11 +137,11 @@ public class EntityInfoAggregator {
    * Create an {@link EntityPropertyInfo} based on given {@link EdmProperty}
    * 
    * @param property
-   *          for which the {@link EntityPropertyInfo} is created.
+   * for which the {@link EntityPropertyInfo} is created.
    * @return created {@link EntityPropertyInfo}
    * @throws EntityProviderException
-   *           if create of {@link EntityPropertyInfo} something goes wrong (e.g. exceptions during
-   *           access of {@link EdmProperty}).
+   * if create of {@link EntityPropertyInfo} something goes wrong (e.g. exceptions during
+   * access of {@link EdmProperty}).
    */
   public static EntityPropertyInfo create(final EdmProperty property) throws EntityProviderException {
     try {
@@ -151,16 +153,18 @@ public class EntityInfoAggregator {
   }
 
   /**
-   * Create an map of <code>complex type property name</code> to {@link EntityPropertyInfo} based on given {@link EdmComplexType}
+   * Create an map of <code>complex type property name</code> to {@link EntityPropertyInfo} based on given
+   * {@link EdmComplexType}
    * 
    * @param complexType
-   *          for which the {@link EntityPropertyInfo} is created.
+   * for which the {@link EntityPropertyInfo} is created.
    * @return created map of <code>complex type property name</code> to {@link EntityPropertyInfo}
    * @throws EntityProviderException
-   *           if create of {@link EntityPropertyInfo} something goes wrong (e.g. exceptions during
-   *           access of {@link EntityPropertyInfo}).
+   * if create of {@link EntityPropertyInfo} something goes wrong (e.g. exceptions during
+   * access of {@link EntityPropertyInfo}).
    */
-  public static Map<String, EntityPropertyInfo> create(final EdmComplexType complexType) throws EntityProviderException {
+  public static Map<String, EntityPropertyInfo> create(final EdmComplexType complexType) 
+      throws EntityProviderException {
     try {
       EntityInfoAggregator entityInfo = new EntityInfoAggregator();
       return entityInfo.createPropertyInfoObjects(complexType, complexType.getPropertyNames());
@@ -173,11 +177,11 @@ public class EntityInfoAggregator {
    * Create an {@link EntityPropertyInfo} based on given {@link EdmFunctionImport}
    * 
    * @param functionImport
-   *          for which the {@link EntityPropertyInfo} is created.
+   * for which the {@link EntityPropertyInfo} is created.
    * @return created {@link EntityPropertyInfo}
    * @throws EntityProviderException
-   *           if create of {@link EntityPropertyInfo} something goes wrong (e.g. exceptions during
-   *           access of {@link EdmFunctionImport}).
+   * if create of {@link EntityPropertyInfo} something goes wrong (e.g. exceptions during
+   * access of {@link EdmFunctionImport}).
    */
   public static EntityPropertyInfo create(final EdmFunctionImport functionImport) throws EntityProviderException {
     try {
@@ -204,7 +208,7 @@ public class EntityInfoAggregator {
 
   /**
    * @return <code>true</code> if the entity container of {@link EdmEntitySet} is the default container,
-   *         otherwise <code>false</code>.
+   * otherwise <code>false</code>.
    */
   public boolean isDefaultEntityContainer() {
     return isDefaultEntityContainer;
@@ -231,7 +235,7 @@ public class EntityInfoAggregator {
 
   /**
    * @return unmodifiable set of found <code>none syndication target path names</code> (all target path names which are
-   *         not pre-defined).
+   * not pre-defined).
    */
   public List<String> getNoneSyndicationTargetPathNames() {
     return Collections.unmodifiableList(noneSyndicationTargetPaths);
@@ -246,7 +250,7 @@ public class EntityInfoAggregator {
 
   /**
    * @return unmodifiable set of all property names.
-    */
+   */
   public List<String> getPropertyNames() throws EntityProviderException {
     return Collections.unmodifiableList(propertyNames);
   }
@@ -284,7 +288,7 @@ public class EntityInfoAggregator {
 
   /**
    * @return list of all key property infos
-   * @throws EntityProviderException 
+   * @throws EntityProviderException
    */
   public List<EntityPropertyInfo> getKeyPropertyInfos() throws EntityProviderException {
 
@@ -305,7 +309,8 @@ public class EntityInfoAggregator {
     return navigationPropertyInfos.get(name);
   }
 
-  private void initialize(final EdmEntitySet entitySet, final ExpandSelectTreeNode expandSelectTree) throws EntityProviderException {
+  private void initialize(final EdmEntitySet entitySet, final ExpandSelectTreeNode expandSelectTree)
+      throws EntityProviderException {
     try {
       this.entitySet = entitySet;
       entityType = entitySet.getEntityType();
@@ -348,7 +353,8 @@ public class EntityInfoAggregator {
     }
   }
 
-  private Map<String, EntityPropertyInfo> createPropertyInfoObjects(final EdmStructuralType type, final List<String> propertyNames) throws EntityProviderException {
+  private Map<String, EntityPropertyInfo> createPropertyInfoObjects(final EdmStructuralType type,
+      final List<String> propertyNames) throws EntityProviderException {
     try {
       Map<String, EntityPropertyInfo> infos = new HashMap<String, EntityPropertyInfo>();
 
@@ -368,7 +374,8 @@ public class EntityInfoAggregator {
     }
   }
 
-  private Map<String, NavigationPropertyInfo> createNavigationInfoObjects(final EdmStructuralType type, final List<String> propertyNames) throws EntityProviderException {
+  private Map<String, NavigationPropertyInfo> createNavigationInfoObjects(final EdmStructuralType type,
+      final List<String> propertyNames) throws EntityProviderException {
     try {
       Map<String, NavigationPropertyInfo> infos = new HashMap<String, NavigationPropertyInfo>();
 
@@ -384,7 +391,8 @@ public class EntityInfoAggregator {
     }
   }
 
-  private EntityPropertyInfo createEntityPropertyInfo(final EdmProperty property) throws EdmException, EntityProviderException {
+  private EntityPropertyInfo createEntityPropertyInfo(final EdmProperty property) throws EdmException,
+      EntityProviderException {
     EdmType type = property.getType();
     if (type instanceof EdmSimpleType) {
       return EntityPropertyInfo.create(property);
@@ -397,7 +405,8 @@ public class EntityInfoAggregator {
     }
   }
 
-  private EntityPropertyInfo createEntityPropertyInfo(final EdmFunctionImport functionImport, final EdmType type) throws EdmException, EntityProviderException {
+  private EntityPropertyInfo createEntityPropertyInfo(final EdmFunctionImport functionImport, final EdmType type)
+      throws EdmException, EntityProviderException {
     EntityPropertyInfo epi;
 
     if (type.getKind() == EdmTypeKind.COMPLEX) {
@@ -430,7 +439,8 @@ public class EntityInfoAggregator {
     }
   }
 
-  private void checkTargetPathInfo(final EdmProperty property, final EntityPropertyInfo propertyInfo) throws EntityProviderException {
+  private void checkTargetPathInfo(final EdmProperty property, final EntityPropertyInfo propertyInfo)
+      throws EntityProviderException {
     try {
       EdmCustomizableFeedMappings customizableFeedMappings = property.getCustomizableFeedMappings();
       if (customizableFeedMappings != null) {

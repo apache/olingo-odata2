@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -73,17 +73,39 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   }
 
   public static final String EMPLOYEE_1_XML =
-      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-          "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/\"  m:etag=\"W/&quot;1&quot;\">" +
-          "  <id>http://localhost:19000/Employees('1')</id>" +
-          "  <title type=\"text\">Walter Winter</title>" +
-          "  <updated>1999-01-01T00:00:00Z</updated>" +
-          "  <category term=\"RefScenario.Employee\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>" +
-          "  <link href=\"Employees('1')\" rel=\"edit\" title=\"Employee\"/>" +
-          "  <link href=\"Employees('1')/$value\" rel=\"edit-media\" type=\"application/octet-stream\" m:etag=\"mmEtag\"/>" +
-          "  <link href=\"Employees('1')/ne_Room\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room\" type=\"application/atom+xml; type=entry\" title=\"ne_Room\"/>" +
-          "  <link href=\"Employees('1')/ne_Manager\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager\" type=\"application/atom+xml; type=entry\" title=\"ne_Manager\"/>" +
-          "  <link href=\"Employees('1')/ne_Team\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team\" type=\"application/atom+xml; type=entry\" title=\"ne_Team\"/>" +
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+          +
+          "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+          "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+          "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/\"  " +
+          "m:etag=\"W/&quot;1&quot;\">"
+          +
+          "  <id>http://localhost:19000/Employees('1')</id>"
+          +
+          "  <title type=\"text\">Walter Winter</title>"
+          +
+          "  <updated>1999-01-01T00:00:00Z</updated>"
+          +
+          "  <category term=\"RefScenario.Employee\" " +
+          "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>"
+          +
+          "  <link href=\"Employees('1')\" rel=\"edit\" title=\"Employee\"/>"
+          +
+          "  <link href=\"Employees('1')/$value\" rel=\"edit-media\" " +
+          "type=\"application/octet-stream\" m:etag=\"mmEtag\"/>"
+          +
+          "  <link href=\"Employees('1')/ne_Room\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room\" " +
+          "type=\"application/atom+xml; type=entry\" title=\"ne_Room\"/>"
+          +
+          "  <link href=\"Employees('1')/ne_Manager\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Manager\" " +
+          "type=\"application/atom+xml; type=entry\" title=\"ne_Manager\"/>"
+          +
+          "  <link href=\"Employees('1')/ne_Team\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Team\" " +
+          "type=\"application/atom+xml; type=entry\" title=\"ne_Team\"/>"
+          +
           "  <content type=\"application/octet-stream\" src=\"Employees('1')/$value\"/>" +
           "  <m:properties>" +
           "    <d:EmployeeId>1</d:EmployeeId>" +
@@ -105,20 +127,40 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
           "</entry>";
 
   public static final String EMPLOYEE_1_ROOM_XML =
-      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-          "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/\"  m:etag=\"W/&quot;1&quot;\">" +
-          "  <id>http://localhost:19000/Employees('1')</id>" +
-          "  <title type=\"text\">Walter Winter</title>" +
-          "  <updated>1999-01-01T00:00:00Z</updated>" +
-          "  <category term=\"RefScenario.Employee\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>" +
-          "  <link href=\"Employees('1')\" rel=\"edit\" title=\"Employee\"/>" +
-          "  <link href=\"Employees('1')/$value\" rel=\"edit-media\" type=\"application/octet-stream\" m:etag=\"mmEtag\"/>" +
-          "  <link href=\"Employees('1')/ne_Room\" " +
-          "       rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room\" " +
-          "       type=\"application/atom+xml; type=entry\" title=\"ne_Room\">" +
-          "  <m:inline>" +
-          "  <entry m:etag=\"W/1\" xml:base=\"http://some.host.com/service.root/\">" +
-          "  <id>http://some.host.com/service.root/Rooms('1')</id><title type=\"text\">Room 1</title><updated>2013-04-10T10:19:12Z</updated>" +
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+          +
+          "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+          "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+          "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/\"  " +
+          "m:etag=\"W/&quot;1&quot;\">"
+          +
+          "  <id>http://localhost:19000/Employees('1')</id>"
+          +
+          "  <title type=\"text\">Walter Winter</title>"
+          +
+          "  <updated>1999-01-01T00:00:00Z</updated>"
+          +
+          "  <category term=\"RefScenario.Employee\" " +
+          "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>"
+          +
+          "  <link href=\"Employees('1')\" rel=\"edit\" title=\"Employee\"/>"
+          +
+          "  <link href=\"Employees('1')/$value\" rel=\"edit-media\" type=\"application/octet-stream\" " +
+          "m:etag=\"mmEtag\"/>"
+          +
+          "  <link href=\"Employees('1')/ne_Room\" "
+          +
+          "       rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room\" "
+          +
+          "       type=\"application/atom+xml; type=entry\" title=\"ne_Room\">"
+          +
+          "  <m:inline>"
+          +
+          "  <entry m:etag=\"W/1\" xml:base=\"http://some.host.com/service.root/\">"
+          +
+          "  <id>http://some.host.com/service.root/Rooms('1')</id><title " +
+          "type=\"text\">Room 1</title><updated>2013-04-10T10:19:12Z</updated>"
+          +
           "  <content type=\"application/xml\">" +
           "    <m:properties>" +
           "    <d:Id>1</d:Id>" +
@@ -138,14 +180,27 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
           "</entry>";
 
   public static final String EMPLOYEE_1_NULL_ROOM_XML =
-      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-          "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/\"  m:etag=\"W/&quot;1&quot;\">" +
-          "  <id>http://localhost:19000/Employees('1')</id>" +
-          "  <title type=\"text\">Walter Winter</title>" +
-          "  <updated>1999-01-01T00:00:00Z</updated>" +
-          "  <category term=\"RefScenario.Employee\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>" +
-          "  <link href=\"Employees('1')\" rel=\"edit\" title=\"Employee\"/>" +
-          "  <link href=\"Employees('1')/$value\" rel=\"edit-media\" type=\"application/octet-stream\" m:etag=\"mmEtag\"/>" +
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+          +
+          "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+          "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+          "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/\"  " +
+          "m:etag=\"W/&quot;1&quot;\">"
+          +
+          "  <id>http://localhost:19000/Employees('1')</id>"
+          +
+          "  <title type=\"text\">Walter Winter</title>"
+          +
+          "  <updated>1999-01-01T00:00:00Z</updated>"
+          +
+          "  <category term=\"RefScenario.Employee\" " +
+          "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>"
+          +
+          "  <link href=\"Employees('1')\" rel=\"edit\" title=\"Employee\"/>"
+          +
+          "  <link href=\"Employees('1')/$value\" rel=\"edit-media\" type=\"application/octet-stream\" " +
+          "m:etag=\"mmEtag\"/>"
+          +
           "  <link href=\"Employees('1')/ne_Room\" " +
           "       rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/ne_Room\" " +
           "       type=\"application/atom+xml; type=entry\" title=\"ne_Room\">" +
@@ -159,15 +214,32 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
           "</entry>";
 
   private static final String ROOM_1_XML =
-      "<?xml version='1.0' encoding='UTF-8'?>" +
-          "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
-          "  <id>http://localhost:19000/test/Rooms('1')</id>" +
-          "  <title type=\"text\">Room 1</title>" +
-          "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
-          "  <category term=\"RefScenario.Room\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>" +
-          "  <link href=\"Rooms('1')\" rel=\"edit\" title=\"Room\"/>" +
-          "  <link href=\"Rooms('1')/nr_Employees\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees\" type=\"application/atom+xml; type=feed\" title=\"nr_Employees\"/>" +
-          "  <link href=\"Rooms('1')/nr_Building\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building\" type=\"application/atom+xml; type=entry\" title=\"nr_Building\"/>" +
+      "<?xml version='1.0' encoding='UTF-8'?>"
+          +
+          "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+          "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+          "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+          "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+          +
+          "  <id>http://localhost:19000/test/Rooms('1')</id>"
+          +
+          "  <title type=\"text\">Room 1</title>"
+          +
+          "  <updated>2013-01-11T13:50:50.541+01:00</updated>"
+          +
+          "  <category term=\"RefScenario.Room\" " +
+          "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>"
+          +
+          "  <link href=\"Rooms('1')\" rel=\"edit\" title=\"Room\"/>"
+          +
+          "  <link href=\"Rooms('1')/nr_Employees\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees\" " +
+          "type=\"application/atom+xml; type=feed\" title=\"nr_Employees\"/>"
+          +
+          "  <link href=\"Rooms('1')/nr_Building\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building\" " +
+          "type=\"application/atom+xml; type=entry\" title=\"nr_Building\"/>"
+          +
           "  <content type=\"application/xml\">" +
           "    <m:properties>" +
           "      <d:Id>1</d:Id>" +
@@ -176,17 +248,35 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
           "</entry>";
 
   private static final String ROOM_1_NULL_EMPLOYEE_XML =
-      "<?xml version='1.0' encoding='UTF-8'?>" +
-          "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
-          "  <id>http://localhost:19000/test/Rooms('1')</id>" +
-          "  <title type=\"text\">Room 1</title>" +
-          "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
-          "  <category term=\"RefScenario.Room\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>" +
-          "  <link href=\"Rooms('1')\" rel=\"edit\" title=\"Room\"/>" +
-          "  <link href=\"Rooms('1')/nr_Employees\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees\" " +
-          "        type=\"application/atom+xml; type=feed\" title=\"nr_Employees\">" +
-          " <m:inline/> </link> " +
-          "  <link href=\"Rooms('1')/nr_Building\" rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building\" type=\"application/atom+xml; type=entry\" title=\"nr_Building\"/>" +
+      "<?xml version='1.0' encoding='UTF-8'?>"
+          +
+          "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+          "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+          "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+          "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+          +
+          "  <id>http://localhost:19000/test/Rooms('1')</id>"
+          +
+          "  <title type=\"text\">Room 1</title>"
+          +
+          "  <updated>2013-01-11T13:50:50.541+01:00</updated>"
+          +
+          "  <category term=\"RefScenario.Room\" " +
+          "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>"
+          +
+          "  <link href=\"Rooms('1')\" rel=\"edit\" title=\"Room\"/>"
+          +
+          "  <link href=\"Rooms('1')/nr_Employees\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Employees\" "
+          +
+          "        type=\"application/atom+xml; type=feed\" title=\"nr_Employees\">"
+          +
+          " <m:inline/> </link> "
+          +
+          "  <link href=\"Rooms('1')/nr_Building\" " +
+          "rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/nr_Building\" " +
+          "type=\"application/atom+xml; type=entry\" title=\"nr_Building\"/>"
+          +
           "  <content type=\"application/xml\">" +
           "    <m:properties>" +
           "      <d:Id>1</d:Id>" +
@@ -194,49 +284,69 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
           "  </content>" +
           "</entry>";
 
-  private static final String PHOTO_XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-      "<entry m:etag=\"W/&quot;1&quot;\" xml:base=\"http://localhost:19000/test\" " +
-      "xmlns=\"http://www.w3.org/2005/Atom\" " +
-      "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
-      "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\">" +
-      "  <id>http://localhost:19000/test/Container2.Photos(Id=1,Type='image%2Fpng')</id>" +
-      "  <title type=\"text\">Photo1</title><updated>2013-01-16T12:57:43Z</updated>" +
-      "  <category term=\"RefScenario2.Photo\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>" +
-      "  <link href=\"Container2.Photos(Id=1,Type='image%2Fpng')\" rel=\"edit\" title=\"Photo\"/>" +
-      "  <link href=\"Container2.Photos(Id=1,Type='image%2Fpng')/$value\" rel=\"edit-media\" type=\"image/png\"/>" +
-      "  <ру:Содержание xmlns:ру=\"http://localhost\">Образ</ру:Содержание>" +
-      "  <content type=\"image/png\" src=\"Container2.Photos(Id=1,Type='image%2Fpng')/$value\"/>" +
-      "  <m:properties>" +
-      "    <d:Id>1</d:Id>" +
-      "    <d:Name>Photo1</d:Name>" +
-      "    <d:Type>image/png</d:Type>" +
-      "  </m:properties>" +
-      "</entry>";
+  private static final String PHOTO_XML =
+      "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+          +
+          "<entry m:etag=\"W/&quot;1&quot;\" xml:base=\"http://localhost:19000/test\" "
+          +
+          "xmlns=\"http://www.w3.org/2005/Atom\" "
+          +
+          "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" "
+          +
+          "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\">"
+          +
+          "  <id>http://localhost:19000/test/Container2.Photos(Id=1,Type='image%2Fpng')</id>"
+          +
+          "  <title type=\"text\">Photo1</title><updated>2013-01-16T12:57:43Z</updated>"
+          +
+          "  <category term=\"RefScenario2.Photo\" " +
+          "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>"
+          +
+          "  <link href=\"Container2.Photos(Id=1,Type='image%2Fpng')\" rel=\"edit\" title=\"Photo\"/>" +
+          "  <link href=\"Container2.Photos(Id=1,Type='image%2Fpng')/$value\" rel=\"edit-media\" type=\"image/png\"/>" +
+          "  <ру:Содержание xmlns:ру=\"http://localhost\">Образ</ру:Содержание>" +
+          "  <content type=\"image/png\" src=\"Container2.Photos(Id=1,Type='image%2Fpng')/$value\"/>" +
+          "  <m:properties>" +
+          "    <d:Id>1</d:Id>" +
+          "    <d:Name>Photo1</d:Name>" +
+          "    <d:Type>image/png</d:Type>" +
+          "  </m:properties>" +
+          "</entry>";
 
-  private static final String PHOTO_XML_INVALID_MAPPING = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-      "<entry m:etag=\"W/&quot;1&quot;\" xml:base=\"http://localhost:19000/test\" " +
-      "xmlns=\"http://www.w3.org/2005/Atom\" " +
-      "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
-      "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\">" +
-      "  <id>http://localhost:19000/test/Container2.Photos(Id=1,Type='image%2Fpng')</id>" +
-      "  <title type=\"text\">Photo1</title><updated>2013-01-16T12:57:43Z</updated>" +
-      "  <category term=\"RefScenario2.Photo\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>" +
-      "  <link href=\"Container2.Photos(Id=1,Type='image%2Fpng')\" rel=\"edit\" title=\"Photo\"/>" +
-      "  <link href=\"Container2.Photos(Id=1,Type='image%2Fpng')/$value\" rel=\"edit-media\" type=\"image/png\"/>" +
-      "  <ру:Содержание xmlns:ру=\"http://localhost\">Образ</ру:Содержание>" +
-      "  <ig:ignore xmlns:ig=\"http://localhost\">ignore</ig:ignore>" + // 406 Bad Request
-      "  <content type=\"image/png\" src=\"Container2.Photos(Id=1,Type='image%2Fpng')/$value\"/>" +
-      "  <m:properties>" +
-      "    <d:Id>1</d:Id>" +
-      "    <d:Name>Photo1</d:Name>" +
-      "    <d:Type>image/png</d:Type>" +
-      "  </m:properties>" +
-      "</entry>";
+  private static final String PHOTO_XML_INVALID_MAPPING =
+      "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+          +
+          "<entry m:etag=\"W/&quot;1&quot;\" xml:base=\"http://localhost:19000/test\" "
+          +
+          "xmlns=\"http://www.w3.org/2005/Atom\" "
+          +
+          "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" "
+          +
+          "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\">"
+          +
+          "  <id>http://localhost:19000/test/Container2.Photos(Id=1,Type='image%2Fpng')</id>"
+          +
+          "  <title type=\"text\">Photo1</title><updated>2013-01-16T12:57:43Z</updated>"
+          +
+          "  <category term=\"RefScenario2.Photo\" " +
+          "scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>"
+          +
+          "  <link href=\"Container2.Photos(Id=1,Type='image%2Fpng')\" rel=\"edit\" title=\"Photo\"/>" +
+          "  <link href=\"Container2.Photos(Id=1,Type='image%2Fpng')/$value\" rel=\"edit-media\" type=\"image/png\"/>" +
+          "  <ру:Содержание xmlns:ру=\"http://localhost\">Образ</ру:Содержание>" +
+          "  <ig:ignore xmlns:ig=\"http://localhost\">ignore</ig:ignore>" + // 406 Bad Request
+          "  <content type=\"image/png\" src=\"Container2.Photos(Id=1,Type='image%2Fpng')/$value\"/>" +
+          "  <m:properties>" +
+          "    <d:Id>1</d:Id>" +
+          "    <d:Name>Photo1</d:Name>" +
+          "    <d:Type>image/png</d:Type>" +
+          "  </m:properties>" +
+          "</entry>";
 
   public XmlEntityConsumerTest() {
     // CHECKSTYLE:OFF:Regexp
-    System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory"); //NOSONAR
-    System.setProperty("javax.xml.stream.XMLOutputFactory", "com.ctc.wstx.stax.WstxOutputFactory"); //NOSONAR
+    System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory"); // NOSONAR
+    System.setProperty("javax.xml.stream.XMLOutputFactory", "com.ctc.wstx.stax.WstxOutputFactory"); // NOSONAR
     // CHECKSTYLE:ON
   }
 
@@ -267,7 +377,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     }
 
     @Override
-    public EntityProviderReadProperties receiveReadProperties(final EntityProviderReadProperties readProperties, final EdmNavigationProperty navString) {
+    public EntityProviderReadProperties receiveReadProperties(final EntityProviderReadProperties readProperties,
+        final EdmNavigationProperty navString) {
       Map<String, Object> typeMappings = new HashMap<String, Object>();
       typeMappings.put("EmployeeName", String.class);
       return EntityProviderReadProperties.initFrom(readProperties).addTypeMappings(typeMappings).build();
@@ -318,7 +429,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     }
 
     @Override
-    public EntityProviderReadProperties receiveReadProperties(final EntityProviderReadProperties readProperties, final EdmNavigationProperty navigationProperty) {
+    public EntityProviderReadProperties receiveReadProperties(final EntityProviderReadProperties readProperties,
+        final EdmNavigationProperty navigationProperty) {
       return readProperties;
     }
   }
@@ -344,7 +456,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     assertNotNull(feedMetadata);
 
     String deltaLink = feedMetadata.getDeltaLink();
-    //Null means no deltaLink found
+    // Null means no deltaLink found
     assertNotNull(deltaLink);
 
     assertEquals("http://thisisadeltalink", deltaLink);
@@ -668,7 +780,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry entry = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry entry =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
 
     // validate
     assertNotNull(entry);
@@ -691,7 +804,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry entry = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry entry =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // validate
     assertNotNull(entry);
@@ -718,7 +832,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry entry = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry entry =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // validate
     assertNotNull(entry);
@@ -746,7 +861,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry entry = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry entry =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // validate
     assertNotNull(entry);
@@ -769,7 +885,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry entry = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry entry =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // validate
     assertNotNull(entry);
@@ -792,7 +909,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry entry = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry entry =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // validate
     assertNotNull(entry);
@@ -820,7 +938,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     InputStream reqContent = createContentAsStream(content);
 
     // execute
-    readAndExpectException(entitySet, reqContent, EntityProviderException.INVALID_INLINE_CONTENT.addContent("xml data"));
+    readAndExpectException(entitySet, reqContent, 
+        EntityProviderException.INVALID_INLINE_CONTENT.addContent("xml data"));
   }
 
   /**
@@ -840,7 +959,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     InputStream reqContent = createContentAsStream(content);
 
     // execute
-    readAndExpectException(entitySet, reqContent, EntityProviderException.INVALID_INLINE_CONTENT.addContent("xml data"));
+    readAndExpectException(entitySet, reqContent, 
+        EntityProviderException.INVALID_INLINE_CONTENT.addContent("xml data"));
   }
 
   /**
@@ -891,13 +1011,19 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   @Test(expected = EntityProviderException.class)
   public void validationOfWrongXmlEncodingUtf32() throws Exception {
     String roomWithValidNamespaces =
-        "<?xml version='1.0' encoding='UTF-32'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
+        "<?xml version='1.0' encoding='UTF-32'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+            "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+            "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+            +
             "</entry>";
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
-    readAndExpectException(entitySet, reqContent, EntityProviderException.UNSUPPORTED_CHARACTER_ENCODING.addContent("UTF-32"));
+    readAndExpectException(entitySet, reqContent, EntityProviderException.UNSUPPORTED_CHARACTER_ENCODING
+        .addContent("UTF-32"));
   }
 
   /**
@@ -908,13 +1034,19 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   @Test(expected = EntityProviderException.class)
   public void validationOfWrongXmlEncodingIso8859_1() throws Exception {
     String roomWithValidNamespaces =
-        "<?xml version='1.0' encoding='iso-8859-1'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
+        "<?xml version='1.0' encoding='iso-8859-1'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+            "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+            "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+            +
             "</entry>";
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
-    readAndExpectException(entitySet, reqContent, EntityProviderException.UNSUPPORTED_CHARACTER_ENCODING.addContent("iso-8859-1"));
+    readAndExpectException(entitySet, reqContent, EntityProviderException.UNSUPPORTED_CHARACTER_ENCODING
+        .addContent("iso-8859-1"));
   }
 
   /**
@@ -926,8 +1058,13 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   @Test
   public void validationCaseInsensitiveXmlEncodingUtf8() throws Exception {
     String room =
-        "<?xml version='1.0' encoding='uTf-8'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
+        "<?xml version='1.0' encoding='uTf-8'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+            "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+            "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+            +
             "  <id>http://localhost:19000/test/Rooms('1')</id>" +
             "  <title type=\"text\">Room 1</title>" +
             "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
@@ -941,14 +1078,16 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(room);
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     assertNotNull(result);
     assertEquals("1", result.getProperties().get("Id"));
   }
 
   /**
-   * For none media resource if <code>properties</code> tag is not within <code>content</code> tag it results in an exception.
+   * For none media resource if <code>properties</code> tag is not within <code>content</code> tag it results in an
+   * exception.
    * 
    * OData specification v2: 2.2.6.2.2 Entity Type (as an Atom Entry Element)
    * 
@@ -957,8 +1096,13 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   @Test(expected = EntityProviderException.class)
   public void validationOfWrongPropertiesTagPositionForNoneMediaLinkEntry() throws Exception {
     String roomWithValidNamespaces =
-        "<?xml version='1.0' encoding='UTF-8'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
+        "<?xml version='1.0' encoding='UTF-8'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+            "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\"" +
+            " xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+            +
             "  <id>http://localhost:19000/test/Rooms('1')</id>" +
             "  <title type=\"text\">Room 1</title>" +
             "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
@@ -970,7 +1114,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
-    readAndExpectException(entitySet, reqContent, EntityProviderException.INVALID_PARENT_TAG.addContent("content").addContent("properties"));
+    readAndExpectException(entitySet, reqContent, EntityProviderException.INVALID_PARENT_TAG.addContent("content")
+        .addContent("properties"));
   }
 
   /**
@@ -984,8 +1129,13 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   @Test(expected = EntityProviderException.class)
   public void validationOfWrongPropertiesTagPositionForMediaLinkEntry() throws Exception {
     String roomWithValidNamespaces =
-        "<?xml version='1.0' encoding='UTF-8'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
+        "<?xml version='1.0' encoding='UTF-8'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+            "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+            "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+            +
             "  <id>http://localhost:19000/test/Employees('1')</id>" +
             "  <title type=\"text\">Walter Winter</title>" +
             "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
@@ -998,14 +1148,20 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
-    readAndExpectException(entitySet, reqContent, EntityProviderException.INVALID_PARENT_TAG.addContent("properties").addContent("content"));
+    readAndExpectException(entitySet, reqContent, EntityProviderException.INVALID_PARENT_TAG.addContent("properties")
+        .addContent("content"));
   }
 
   @Test
   public void validationOfNamespacesSuccess() throws Exception {
     String roomWithValidNamespaces =
-        "<?xml version='1.0' encoding='UTF-8'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
+        "<?xml version='1.0' encoding='UTF-8'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+            "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+            "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+            +
             "  <id>http://localhost:19000/test/Rooms('1')</id>" +
             "  <title type=\"text\">Room 1</title>" +
             "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
@@ -1019,11 +1175,11 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
     assertNotNull(result);
   }
 
-  
   @Test
   public void validationOfNamespaceAtPropertiesSuccess() throws Exception {
     String roomWithValidNamespaces =
@@ -1042,11 +1198,12 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
     assertNotNull(result);
   }
 
-  @Test(expected=EntityProviderException.class)
+  @Test(expected = EntityProviderException.class)
   public void validationOfNamespaceAtTagsMissing() throws Exception {
     String roomWithValidNamespaces =
         "<?xml version='1.0' encoding='UTF-8'?>" +
@@ -1063,7 +1220,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
-    readAndExpectException(entitySet, reqContent, EntityProviderException.EXCEPTION_OCCURRED.addContent("WstxParsingException"));
+    readAndExpectException(entitySet, reqContent, EntityProviderException.EXCEPTION_OCCURRED
+        .addContent("WstxParsingException"));
   }
 
   /**
@@ -1097,13 +1255,14 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
     assertNotNull(result);
   }
 
   /**
    * Add <code>unknown property</code> in own namespace which is defined in entry tag.
-   *  
+   * 
    * @throws Exception
    */
   @Test
@@ -1134,7 +1293,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
     assertNotNull(result);
   }
 
@@ -1146,8 +1306,13 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   @Test
   public void validationOfUnknownPropertyDefaultNamespaceSuccess() throws Exception {
     String roomWithValidNamespaces =
-        "<?xml version='1.0' encoding='UTF-8'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
+        "<?xml version='1.0' encoding='UTF-8'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+            "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+            "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+            +
             "  <id>http://localhost:19000/test/Rooms('1')</id>" +
             "  <title type=\"text\">Room 1</title>" +
             "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
@@ -1162,32 +1327,48 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
 
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
     assertNotNull(result);
   }
 
   /**
    * Add <code>unknown property</code> in own namespace which is defined directly in unknown tag.
-   *  
+   * 
    * @throws Exception
    */
   @Test
   public void validationOfUnknownPropertyInlineNamespaceSuccess() throws Exception {
     String roomWithValidNamespaces =
-        "<?xml version='1.0' encoding='UTF-8'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
-            "    xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
-            "    xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
-            "    xml:base=\"http://localhost:19000/test/\" " +
-            "    m:etag=\"W/&quot;1&quot;\">" +
-            "" +
-            "  <id>http://localhost:19000/test/Rooms('1')</id>" +
-            "  <title type=\"text\">Room 1</title>" +
-            "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
-            "  <content type=\"application/xml\">" +
-            "    <m:properties>" +
-            "      <d:Id>1</d:Id>" +
-            "      <more:somePropertyToBeIgnored xmlns:more=\"http://sample.com/more\">ignore me</more:somePropertyToBeIgnored>" +
+        "<?xml version='1.0' encoding='UTF-8'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" "
+            +
+            "    xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" "
+            +
+            "    xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" "
+            +
+            "    xml:base=\"http://localhost:19000/test/\" "
+            +
+            "    m:etag=\"W/&quot;1&quot;\">"
+            +
+            ""
+            +
+            "  <id>http://localhost:19000/test/Rooms('1')</id>"
+            +
+            "  <title type=\"text\">Room 1</title>"
+            +
+            "  <updated>2013-01-11T13:50:50.541+01:00</updated>"
+            +
+            "  <content type=\"application/xml\">"
+            +
+            "    <m:properties>"
+            +
+            "      <d:Id>1</d:Id>"
+            +
+            "      <more:somePropertyToBeIgnored " +
+            "xmlns:more=\"http://sample.com/more\">ignore me</more:somePropertyToBeIgnored>"
+            +
             "      <d:Seats>11</d:Seats>" +
             "      <d:Name>Room 42</d:Name>" +
             "      <d:Version>4711</d:Version>" +
@@ -1198,7 +1379,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
     assertNotNull(result);
   }
 
@@ -1217,7 +1399,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
-    readAndExpectException(entitySet, reqContent, EntityProviderException.EXCEPTION_OCCURRED.addContent("WstxParsingException"));
+    readAndExpectException(entitySet, reqContent, EntityProviderException.EXCEPTION_OCCURRED
+        .addContent("WstxParsingException"));
   }
 
   /**
@@ -1286,7 +1469,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(room);
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
     assertNotNull(result);
   }
 
@@ -1324,7 +1508,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(room);
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
     assertNotNull(result);
   }
 
@@ -1362,15 +1547,21 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(room);
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
     assertNotNull(result);
   }
 
   @Test(expected = EntityProviderException.class)
   public void validationOfNamespacesMissingM_NamespaceAtProperties() throws Exception {
     String roomWithValidNamespaces =
-        "<?xml version='1.0' encoding='UTF-8'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
+        "<?xml version='1.0' encoding='UTF-8'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+            "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+            "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+            +
             "  <id>http://localhost:19000/test/Rooms('1')</id>" +
             "  <title type=\"text\">Room 1</title>" +
             "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
@@ -1383,7 +1574,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
-    readAndExpectException(entitySet, reqContent, EntityProviderException.EXCEPTION_OCCURRED.addContent("WstxParsingException"));
+    readAndExpectException(entitySet, reqContent, EntityProviderException.EXCEPTION_OCCURRED
+        .addContent("WstxParsingException"));
   }
 
   /**
@@ -1394,8 +1586,13 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   @Test
   public void validationOfNamespacesMissingD_NamespaceAtKeyPropertyTag() throws Exception {
     String roomWithValidNamespaces =
-        "<?xml version='1.0' encoding='UTF-8'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
+        "<?xml version='1.0' encoding='UTF-8'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+            "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+            "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+            +
             "  <id>http://localhost:19000/test/Rooms('1')</id>" +
             "  <title type=\"text\">Room 1</title>" +
             "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
@@ -1412,7 +1609,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
     assertNotNull(result);
   }
 
@@ -1422,8 +1620,13 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
    */
   public void validationOfNamespacesMissingD_NamespaceAtNonNullableTag() throws Exception {
     String roomWithValidNamespaces =
-        "<?xml version='1.0' encoding='UTF-8'?>" +
-            "<entry xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">" +
+        "<?xml version='1.0' encoding='UTF-8'?>"
+            +
+            "<entry xmlns=\"http://www.w3.org/2005/Atom\" " +
+            "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" " +
+            "xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" " +
+            "xml:base=\"http://localhost:19000/test/\" m:etag=\"W/&quot;1&quot;\">"
+            +
             "  <id>http://localhost:19000/test/Rooms('1')</id>" +
             "  <title type=\"text\">Room 1</title>" +
             "  <updated>2013-01-11T13:50:50.541+01:00</updated>" +
@@ -1442,18 +1645,23 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Mockito.when(facets.isNullable()).thenReturn(false);
 
     InputStream reqContent = createContentAsStream(roomWithValidNamespaces);
-    final ODataEntry result = new XmlEntityConsumer().readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    final ODataEntry result =
+        new XmlEntityConsumer().readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(
+            false).build());
     assertNotNull(result);
   }
 
-  private void readAndExpectException(final EdmEntitySet entitySet, final InputStream reqContent, final MessageReference messageReference) throws ODataMessageException {
+  private void readAndExpectException(final EdmEntitySet entitySet, final InputStream reqContent,
+      final MessageReference messageReference) throws ODataMessageException {
     readAndExpectException(entitySet, reqContent, true, messageReference);
   }
 
-  private void readAndExpectException(final EdmEntitySet entitySet, final InputStream reqContent, final boolean merge, final MessageReference messageReference) throws ODataMessageException {
+  private void readAndExpectException(final EdmEntitySet entitySet, final InputStream reqContent, final boolean merge,
+      final MessageReference messageReference) throws ODataMessageException {
     try {
       XmlEntityConsumer xec = new XmlEntityConsumer();
-      ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(merge).build());
+      ODataEntry result =
+          xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(merge).build());
       assertNotNull(result);
       Assert.fail("Expected exception with MessageReference '" + messageReference.getKey() + "' was not thrown.");
     } catch (ODataMessageException e) {
@@ -1471,7 +1679,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // verify
     EntryMetadata metadata = result.getMetadata();
@@ -1512,7 +1721,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // verify
     List<String> associationUris = result.getMetadata().getAssociationUris("ne_Room");
@@ -1536,7 +1746,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataFeed feedResult = xec.readFeed(entitySet, contentAsStream, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataFeed feedResult =
+        xec.readFeed(entitySet, contentAsStream, EntityProviderReadProperties.init().mergeSemantic(false).build());
 
     // verify feed result
     // metadata
@@ -1581,7 +1792,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataFeed feedResult = xec.readFeed(entitySet, contentAsStream, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataFeed feedResult =
+        xec.readFeed(entitySet, contentAsStream, EntityProviderReadProperties.init().mergeSemantic(false).build());
 
     // verify feed result
     // metadata
@@ -1625,7 +1837,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(false).build());
 
     // verify
     Map<String, Object> properties = result.getProperties();
@@ -1660,7 +1873,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(false).build());
 
     // verify
     Map<String, Object> properties = result.getProperties();
@@ -1698,7 +1912,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(false).build());
 
     // verify
     Map<String, Object> properties = result.getProperties();
@@ -1730,7 +1945,9 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
         "<d:EntryDate m:null='true' />");
     InputStream contentBody = createContentAsStream(content);
 
-    final ODataEntry result = new XmlEntityConsumer().readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    final ODataEntry result =
+        new XmlEntityConsumer().readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(
+            true).build());
 
     final Map<String, Object> properties = result.getProperties();
     assertEquals(9, properties.size());
@@ -1742,12 +1959,15 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   public void readEntryTooManyValues() throws Exception {
     // prepare
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
-    String content = EMPLOYEE_1_XML.replace("<d:Age>52</d:Age>", "<d:Age>52</d:Age><d:SomeUnknownTag>SomeUnknownValue</d:SomeUnknownTag>");
+    String content =
+        EMPLOYEE_1_XML.replace("<d:Age>52</d:Age>",
+            "<d:Age>52</d:Age><d:SomeUnknownTag>SomeUnknownValue</d:SomeUnknownTag>");
     InputStream contentBody = createContentAsStream(content);
 
     // execute
     try {
-      new XmlEntityConsumer().readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(false).build());
+      new XmlEntityConsumer().readEntry(entitySet, contentBody, EntityProviderReadProperties.init()
+          .mergeSemantic(false).build());
     } catch (EntityProviderException e) {
       // do some assertions...
       assertEquals(EntityProviderException.INVALID_PROPERTY.getKey(), e.getMessageReference().getKey());
@@ -1767,7 +1987,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // verify
     Map<String, Object> properties = result.getProperties();
@@ -1807,7 +2028,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     XmlEntityConsumer xec = new XmlEntityConsumer();
     ODataEntry result = xec.readEntry(entitySet, contentBody,
         EntityProviderReadProperties.init().mergeSemantic(true).addTypeMappings(
-            createTypeMappings("Age", Long.class, // test unused type mapping 
+            createTypeMappings("Age", Long.class, // test unused type mapping
                 "EntryDate", Date.class))
             .build());
 
@@ -1842,7 +2063,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     InputStream content = createContentAsStream(EMPLOYEE_1_XML);
-    ODataEntry result = xec.readEntry(entitySet, content, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, content, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // verify
     Map<String, Object> properties = result.getProperties();
@@ -1874,7 +2096,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     InputStream content = createContentAsStream(EMPLOYEE_1_XML);
-    ODataEntry result = xec.readEntry(entitySet, content, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, content, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // verify
     Map<String, Object> properties = result.getProperties();
@@ -1937,8 +2160,10 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     InputStream content = createContentAsStream(EMPLOYEE_1_XML);
-    ODataEntry result = xec.readEntry(entitySet, content,
-        EntityProviderReadProperties.init().mergeSemantic(true).addTypeMappings(createTypeMappings("EmployeeName", Integer.class)).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, content,
+            EntityProviderReadProperties.init().mergeSemantic(true).addTypeMappings(
+                createTypeMappings("EmployeeName", Integer.class)).build());
 
     // verify
     Map<String, Object> properties = result.getProperties();
@@ -1951,8 +2176,10 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     InputStream content = createContentAsStream(EMPLOYEE_1_XML);
-    ODataEntry result = xec.readEntry(entitySet, content,
-        EntityProviderReadProperties.init().mergeSemantic(true).addTypeMappings(createTypeMappings("EmployeeName", Object.class)).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, content,
+            EntityProviderReadProperties.init().mergeSemantic(true).addTypeMappings(
+                createTypeMappings("EmployeeName", Object.class)).build());
 
     // verify
     Map<String, Object> properties = result.getProperties();
@@ -1974,10 +2201,11 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     InputStream content = createContentAsStream(EMPLOYEE_1_XML);
-    ODataEntry result = xec.readEntry(entitySet, content, EntityProviderReadProperties.init().mergeSemantic(true).addTypeMappings(
-        createTypeMappings("Age", Short.class,
-            "Heidelberg", String.class,
-            "EntryDate", Long.class)).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, content, EntityProviderReadProperties.init().mergeSemantic(true).addTypeMappings(
+            createTypeMappings("Age", Short.class,
+                "Heidelberg", String.class,
+                "EntryDate", Long.class)).build());
 
     // verify
     Map<String, Object> properties = result.getProperties();
@@ -2006,7 +2234,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getEntityContainer("Container2").getEntitySet("Photos");
     InputStream reqContent = createContentAsStream(PHOTO_XML);
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(false).build());
 
     // verify
     EntryMetadata entryMetadata = result.getMetadata();
@@ -2025,7 +2254,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getEntityContainer("Container2").getEntitySet("Photos");
     InputStream reqContent = createContentAsStream(PHOTO_XML);
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // verify
     EntryMetadata entryMetadata = result.getMetadata();
@@ -2051,7 +2281,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   public void readIncompleteEntry() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(ROOM_1_XML);
-    final ODataEntry result = new XmlEntityConsumer().readEntry(entitySet, reqContent, EntityProviderReadProperties.init().build());
+    final ODataEntry result =
+        new XmlEntityConsumer().readEntry(entitySet, reqContent, EntityProviderReadProperties.init().build());
 
     final EntryMetadata entryMetadata = result.getMetadata();
     assertEquals("http://localhost:19000/test/Rooms('1')", entryMetadata.getId());
@@ -2076,7 +2307,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream reqContent = createContentAsStream(ROOM_1_XML);
-    ODataEntry result = xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // verify
     EntryMetadata entryMetadata = result.getMetadata();
@@ -2097,11 +2329,14 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
   @Test
   public void readProperty() throws Exception {
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
 
     String xml = "<Age xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">67</Age>";
     InputStream content = createContentAsStream(xml);
-    Map<String, Object> value = new XmlEntityConsumer().readProperty(property, content, EntityProviderReadProperties.init().mergeSemantic(true).build());
+    Map<String, Object> value =
+        new XmlEntityConsumer().readProperty(property, content, EntityProviderReadProperties.init().mergeSemantic(true)
+            .build());
 
     assertEquals(Integer.valueOf(67), value.get("Age"));
   }
@@ -2110,7 +2345,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   public void readStringPropertyValue() throws Exception {
     String xml = "<EmployeeName xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">Max Mustermann</EmployeeName>";
     InputStream content = createContentAsStream(xml);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EmployeeName");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EmployeeName");
 
     Object result = new XmlEntityConsumer().readPropertyValue(property, content, String.class);
 
@@ -2122,7 +2358,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     String name = StringHelper.generateData(77777);
     String xml = "<EmployeeName xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">" + name + "</EmployeeName>";
     InputStream content = createContentAsStream(xml);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EmployeeName");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EmployeeName");
 
     Object result = new XmlEntityConsumer().readPropertyValue(property, content, String.class);
 
@@ -2131,12 +2368,15 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
 
   @Test
   public void testReadIntegerPropertyAsLong() throws Exception {
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
 
     String xml = "<Age xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">42</Age>";
     InputStream content = createContentAsStream(xml);
-    Map<String, Object> value = new XmlEntityConsumer().readProperty(property, content,
-        EntityProviderReadProperties.init().mergeSemantic(true).addTypeMappings(createTypeMappings("Age", Long.class)).build());
+    Map<String, Object> value =
+        new XmlEntityConsumer().readProperty(property, content,
+            EntityProviderReadProperties.init().mergeSemantic(true).addTypeMappings(
+                createTypeMappings("Age", Long.class)).build());
 
     assertEquals(Long.valueOf(42), value.get("Age"));
   }
@@ -2145,7 +2385,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   public void readStringPropertyValueWithInvalidMapping() throws Exception {
     String xml = "<EmployeeName xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">Max Mustermann</EmployeeName>";
     InputStream content = createContentAsStream(xml);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EmployeeName");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EmployeeName");
 
     new XmlEntityConsumer().readPropertyValue(property, content, Integer.class);
   }
@@ -2154,16 +2395,19 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
   public void readPropertyWrongNamespace() throws Exception {
     String xml = "<Age xmlns=\"" + Edm.NAMESPACE_M_2007_08 + "\">1</Age>";
     InputStream content = createContentAsStream(xml);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
 
     new XmlEntityConsumer().readPropertyValue(property, content, Integer.class);
   }
 
   @Test(expected = EntityProviderException.class)
   public void readPropertyWrongClosingNamespace() throws Exception {
-    String xml = "<d:Age xmlns:d=\"" + Edm.NAMESPACE_D_2007_08 + "\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">1</m:Age>";
+    String xml =
+        "<d:Age xmlns:d=\"" + Edm.NAMESPACE_D_2007_08 + "\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">1</m:Age>";
     InputStream content = createContentAsStream(xml);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
 
     new XmlEntityConsumer().readPropertyValue(property, content, Integer.class);
   }
@@ -2177,7 +2421,8 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
             "<title type=\"text\"><title>Walter Winter</title></title>"));
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry result = xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(false).build());
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(false).build());
 
     // verify
     String id = result.getMetadata().getId();

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -113,7 +113,8 @@ public class XmlMetadataConsumer {
       reader.close();
       return dataServices;
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
 
   }
@@ -206,7 +207,8 @@ public class XmlMetadataConsumer {
 
     container.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
     if (reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.EDM_CONTAINER_IS_DEFAULT) != null) {
-      container.setDefaultEntityContainer("true".equalsIgnoreCase(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, "IsDefaultEntityContainer")));
+      container.setDefaultEntityContainer("true".equalsIgnoreCase(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08,
+          "IsDefaultEntityContainer")));
     }
     container.setExtendz(reader.getAttributeValue(null, XmlMetadataConstants.EDM_CONTAINER_EXTENDZ));
     container.setAnnotationAttributes(readAnnotationAttribute(reader));
@@ -229,7 +231,8 @@ public class XmlMetadataConsumer {
         }
       }
     }
-    container.setEntitySets(entitySets).setAssociationSets(associationSets).setFunctionImports(functionImports).setAnnotationElements(annotationElements);
+    container.setEntitySets(entitySets).setAssociationSets(associationSets).setFunctionImports(functionImports)
+        .setAnnotationElements(annotationElements);
 
     containerMap.put(new FullQualifiedName(currentNamespace, container.getName()), container);
     return container;
@@ -243,7 +246,8 @@ public class XmlMetadataConsumer {
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
 
     function.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
-    function.setHttpMethod(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.EDM_FUNCTION_IMPORT_HTTP_METHOD));
+    function.setHttpMethod(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08,
+        XmlMetadataConstants.EDM_FUNCTION_IMPORT_HTTP_METHOD));
     function.setEntitySet(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ENTITY_SET));
     ReturnType returnType = new ReturnType();
     String returnTypeString = reader.getAttributeValue(null, XmlMetadataConstants.EDM_FUNCTION_IMPORT_RETURN);
@@ -319,7 +323,9 @@ public class XmlMetadataConsumer {
           .addContent(XmlMetadataConstants.EDM_ASSOCIATION).addContent(XmlMetadataConstants.EDM_ASSOCIATION_SET));
     }
     associationSet.setAnnotationAttributes(readAnnotationAttribute(reader));
-    while (reader.hasNext() && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) && XmlMetadataConstants.EDM_ASSOCIATION_SET.equals(reader.getLocalName()))) {
+    while (reader.hasNext()
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) 
+            && XmlMetadataConstants.EDM_ASSOCIATION_SET.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
@@ -335,7 +341,8 @@ public class XmlMetadataConsumer {
       }
     }
     if (ends.size() != 2) {
-      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("Count of AssociationSet ends should be 2"));
+      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+          .addContent("Count of AssociationSet ends should be 2"));
     } else {
       associationSet.setEnd1(ends.get(0)).setEnd2(ends.get(1));
     }
@@ -395,15 +402,18 @@ public class XmlMetadataConsumer {
       }
     }
     if (associationEnds.size() < 2 && associationEnds.size() > 2) {
-      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("Count of association ends should be 2"));
+      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+          .addContent("Count of association ends should be 2"));
     }
 
-    association.setEnd1(associationEnds.get(0)).setEnd2(associationEnds.get(1)).setAnnotationElements(annotationElements);
+    association.setEnd1(associationEnds.get(0)).setEnd2(associationEnds.get(1)).setAnnotationElements(
+        annotationElements);
     associationsMap.put(new FullQualifiedName(currentNamespace, association.getName()), association);
     return association;
   }
 
-  private ReferentialConstraint readReferentialConstraint(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
+  private ReferentialConstraint readReferentialConstraint(final XMLStreamReader reader) throws XMLStreamException,
+      EntityProviderException {
     reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_CONSTRAINT);
     ReferentialConstraint refConstraint = new ReferentialConstraint();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
@@ -416,10 +426,12 @@ public class XmlMetadataConsumer {
         extractNamespaces(reader);
         currentHandledStartTagName = reader.getLocalName();
         if (XmlMetadataConstants.EDM_ASSOCIATION_PRINCIPAL.equals(currentHandledStartTagName)) {
-          reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_PRINCIPAL);
+          reader
+              .require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_PRINCIPAL);
           refConstraint.setPrincipal(readReferentialConstraintRole(reader));
         } else if (XmlMetadataConstants.EDM_ASSOCIATION_DEPENDENT.equals(currentHandledStartTagName)) {
-          reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_DEPENDENT);
+          reader
+              .require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_DEPENDENT);
           refConstraint.setDependent(readReferentialConstraintRole(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
@@ -430,7 +442,8 @@ public class XmlMetadataConsumer {
     return refConstraint;
   }
 
-  private ReferentialConstraintRole readReferentialConstraintRole(final XMLStreamReader reader) throws EntityProviderException, XMLStreamException {
+  private ReferentialConstraintRole readReferentialConstraintRole(final XMLStreamReader reader)
+      throws EntityProviderException, XMLStreamException {
     ReferentialConstraintRole rcRole = new ReferentialConstraintRole();
     rcRole.setRole(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ROLE));
     List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();
@@ -466,7 +479,8 @@ public class XmlMetadataConsumer {
       complexType.setBaseType(extractFQName(baseType));
     }
     if (reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE_ABSTRACT) != null) {
-      complexType.setAbstract("true".equalsIgnoreCase(reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE_ABSTRACT)));
+      complexType.setAbstract("true".equalsIgnoreCase(reader.getAttributeValue(null,
+          XmlMetadataConstants.EDM_TYPE_ABSTRACT)));
     }
     complexType.setAnnotationAttributes(readAnnotationAttribute(reader));
     while (reader.hasNext()
@@ -509,7 +523,8 @@ public class XmlMetadataConsumer {
     }
 
     if (reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE_ABSTRACT) != null) {
-      entityType.setAbstract("true".equalsIgnoreCase(reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE_ABSTRACT)));
+      entityType.setAbstract("true".equalsIgnoreCase(reader.getAttributeValue(null,
+          XmlMetadataConstants.EDM_TYPE_ABSTRACT)));
     }
     String baseType = reader.getAttributeValue(null, XmlMetadataConstants.EDM_BASE_TYPE);
     if (baseType != null) {
@@ -535,7 +550,8 @@ public class XmlMetadataConsumer {
         extractNamespaces(reader);
       }
     }
-    entityType.setKey(key).setProperties(properties).setNavigationProperties(navProperties).setAnnotationElements(annotationElements);
+    entityType.setKey(key).setProperties(properties).setNavigationProperties(navProperties).setAnnotationElements(
+        annotationElements);
     if (entityType.getName() != null) {
       FullQualifiedName fqName = new FullQualifiedName(currentNamespace, entityType.getName());
       entityTypesMap.put(fqName, entityType);
@@ -565,7 +581,8 @@ public class XmlMetadataConsumer {
         }
       }
     }
-    return new Key().setKeys(keys).setAnnotationElements(annotationElements).setAnnotationAttributes(annotationAttributes);
+    return new Key().setKeys(keys).setAnnotationElements(annotationElements).setAnnotationAttributes(
+        annotationAttributes);
   }
 
   private PropertyRef readPropertyRef(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
@@ -585,7 +602,8 @@ public class XmlMetadataConsumer {
     return propertyRef.setAnnotationElements(annotationElements);
   }
 
-  private NavigationProperty readNavigationProperty(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
+  private NavigationProperty readNavigationProperty(final XMLStreamReader reader) throws XMLStreamException,
+      EntityProviderException {
     reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_NAVIGATION_PROPERTY);
 
     NavigationProperty navProperty = new NavigationProperty();
@@ -598,7 +616,8 @@ public class XmlMetadataConsumer {
 
     } else {
       throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE
-          .addContent(XmlMetadataConstants.EDM_NAVIGATION_RELATIONSHIP).addContent(XmlMetadataConstants.EDM_NAVIGATION_PROPERTY));
+          .addContent(XmlMetadataConstants.EDM_NAVIGATION_RELATIONSHIP).addContent(
+              XmlMetadataConstants.EDM_NAVIGATION_PROPERTY));
     }
 
     navProperty.setFromRole(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAVIGATION_FROM_ROLE));
@@ -649,14 +668,16 @@ public class XmlMetadataConsumer {
     return property;
   }
 
-  private Property readComplexProperty(final XMLStreamReader reader, final FullQualifiedName fqName) throws XMLStreamException {
+  private Property readComplexProperty(final XMLStreamReader reader, final FullQualifiedName fqName)
+      throws XMLStreamException {
     ComplexProperty property = new ComplexProperty();
     property.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
     property.setType(fqName);
     return property;
   }
 
-  private Property readSimpleProperty(final XMLStreamReader reader, final FullQualifiedName fqName) throws XMLStreamException {
+  private Property readSimpleProperty(final XMLStreamReader reader, final FullQualifiedName fqName)
+      throws XMLStreamException {
     SimpleProperty property = new SimpleProperty();
     property.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
     property.setType(EdmSimpleTypeKind.valueOf(fqName.getName()));
@@ -738,13 +759,15 @@ public class XmlMetadataConsumer {
 
   }
 
-  private AssociationEnd readAssociationEnd(final XMLStreamReader reader) throws EntityProviderException, XMLStreamException {
+  private AssociationEnd readAssociationEnd(final XMLStreamReader reader) throws EntityProviderException,
+      XMLStreamException {
     reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ASSOCIATION_END);
 
     AssociationEnd associationEnd = new AssociationEnd();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
     associationEnd.setRole(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ROLE));
-    associationEnd.setMultiplicity(EdmMultiplicity.fromLiteral(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ASSOCIATION_MULTIPLICITY)));
+    associationEnd.setMultiplicity(EdmMultiplicity.fromLiteral(reader.getAttributeValue(null,
+        XmlMetadataConstants.EDM_ASSOCIATION_MULTIPLICITY)));
     String type = reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE);
     if (type == null) {
       throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE
@@ -761,7 +784,8 @@ public class XmlMetadataConsumer {
         if (XmlMetadataConstants.EDM_ASSOCIATION_ONDELETE.equals(currentHandledStartTagName)) {
           OnDelete onDelete = new OnDelete();
           for (int i = 0; i < EdmAction.values().length; i++) {
-            if (EdmAction.values()[i].name().equalsIgnoreCase(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ONDELETE_ACTION))) {
+            if (EdmAction.values()[i].name().equalsIgnoreCase(
+                reader.getAttributeValue(null, XmlMetadataConstants.EDM_ONDELETE_ACTION))) {
               onDelete.setAction(EdmAction.values()[i]);
             }
           }
@@ -820,7 +844,8 @@ public class XmlMetadataConsumer {
           && !mandatoryNamespaces.containsValue(attributeNamespace)
           && !edmNamespaces.contains(attributeNamespace)) {
         annotationAttributes.add(new AnnotationAttribute().setName(reader.getAttributeLocalName(i)).
-            setPrefix(reader.getAttributePrefix(i)).setNamespace(attributeNamespace).setText(reader.getAttributeValue(i)));
+            setPrefix(reader.getAttributePrefix(i)).setNamespace(attributeNamespace).setText(
+                reader.getAttributeValue(i)));
       }
     }
     if (annotationAttributes.isEmpty()) {
@@ -835,7 +860,8 @@ public class XmlMetadataConsumer {
 
   private void checkMandatoryNamespacesAvailable() throws EntityProviderException {
     if (!xmlNamespaceMap.containsValue(Edm.NAMESPACE_EDMX_2007_06)) {
-      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_EDMX_2007_06));
+      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE
+          .addContent(Edm.NAMESPACE_EDMX_2007_06));
     } else if (!xmlNamespaceMap.containsValue(Edm.NAMESPACE_M_2007_08)) {
       throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_M_2007_08));
     }
@@ -843,7 +869,8 @@ public class XmlMetadataConsumer {
 
   private void checkEdmNamespace() throws EntityProviderException {
     if (!edmNamespaces.contains(edmNamespace)) {
-      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(XmlMetadataConstants.EDM_SCHEMA));
+      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE
+          .addContent(XmlMetadataConstants.EDM_SCHEMA));
     }
   }
 
@@ -864,13 +891,15 @@ public class XmlMetadataConsumer {
     // Looking for the last dot
     String[] names = name.split("\\" + Edm.DELIMITER + "(?=[^\\" + Edm.DELIMITER + "]+$)");
     if (names.length != 2) {
-      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("Attribute should specify a namespace qualified name or an alias qualified name"));
+      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+          .addContent("Attribute should specify a namespace qualified name or an alias qualified name"));
     } else {
       return new FullQualifiedName(names[0], names[1]);
     }
   }
 
-  private FullQualifiedName validateEntityTypeWithAlias(final FullQualifiedName aliasName) throws EntityProviderException {
+  private FullQualifiedName validateEntityTypeWithAlias(final FullQualifiedName aliasName)
+      throws EntityProviderException {
     String namespace = aliasNamespaceMap.get(aliasName.getNamespace());
     FullQualifiedName fqName = new FullQualifiedName(namespace, aliasName.getName());
     if (!entityTypesMap.containsKey(fqName)) {
@@ -893,20 +922,24 @@ public class XmlMetadataConsumer {
             baseEntityType = entityTypesMap.get(baseTypeFQName);
           }
           if (baseEntityType.getKey() == null) {
-            throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("Missing key for EntityType " + baseEntityType.getName()));
+            throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+                .addContent("Missing key for EntityType " + baseEntityType.getName()));
           }
         } else if (entityType.getKey() == null) {
-          throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("Missing key for EntityType " + entityType.getName()));
+          throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+              .addContent("Missing key for EntityType " + entityType.getName()));
         }
       }
     }
   }
 
-  private FullQualifiedName validateComplexTypeWithAlias(final FullQualifiedName aliasName) throws EntityProviderException {
+  private FullQualifiedName validateComplexTypeWithAlias(final FullQualifiedName aliasName)
+      throws EntityProviderException {
     String namespace = aliasNamespaceMap.get(aliasName.getNamespace());
     FullQualifiedName fqName = new FullQualifiedName(namespace, aliasName.getName());
     if (!complexTypesMap.containsKey(fqName)) {
-      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("Invalid BaseType").addContent(fqName));
+      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("Invalid BaseType")
+          .addContent(fqName));
     }
     return fqName;
   }
@@ -929,9 +962,12 @@ public class XmlMetadataConsumer {
     for (NavigationProperty navProperty : navProperties) {
       if (associationsMap.containsKey(navProperty.getRelationship())) {
         Association assoc = associationsMap.get(navProperty.getRelationship());
-        if (!(assoc.getEnd1().getRole().equals(navProperty.getFromRole()) ^ assoc.getEnd1().getRole().equals(navProperty.getToRole())
-        && (assoc.getEnd2().getRole().equals(navProperty.getFromRole()) ^ assoc.getEnd2().getRole().equals(navProperty.getToRole())))) {
-          throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("Invalid end of association"));
+        if (!(assoc.getEnd1().getRole().equals(navProperty.getFromRole())
+            ^ assoc.getEnd1().getRole().equals(navProperty.getToRole())
+            && (assoc.getEnd2().getRole().equals(navProperty.getFromRole()) ^ assoc.getEnd2().getRole().equals(
+            navProperty.getToRole())))) {
+          throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+              .addContent("Invalid end of association"));
         }
         if (!entityTypesMap.containsKey(assoc.getEnd1().getType())) {
           validateEntityTypeWithAlias(assoc.getEnd1().getType());
@@ -964,18 +1000,22 @@ public class XmlMetadataConsumer {
             }
           }
           if (!(end1 && end2)) {
-            throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("Invalid AssociationSet"));
+            throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+                .addContent("Invalid AssociationSet"));
           }
         } else {
-          throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent("Invalid AssociationSet"));
+          throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+              .addContent("Invalid AssociationSet"));
         }
       }
     }
 
   }
 
-  private void validateAssociationEnd(final AssociationSetEnd end, final Association association) throws EntityProviderException {
-    if (!(association.getEnd1().getRole().equals(end.getRole()) ^ association.getEnd2().getRole().equals(end.getRole()))) {
+  private void validateAssociationEnd(final AssociationSetEnd end, final Association association)
+      throws EntityProviderException {
+    if (!(association.getEnd1().getRole().equals(end.getRole()) ^ 
+        association.getEnd2().getRole().equals(end.getRole()))) {
       throw new EntityProviderException(EntityProviderException.COMMON.addContent("Invalid Association"));
     }
   }

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep;
 
@@ -75,7 +75,8 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
       case JSON:
         return new JsonEntityProvider();
       default:
-        throw new ODataNotAcceptableException(ODataNotAcceptableException.NOT_SUPPORTED_CONTENT_TYPE.addContent(contentType));
+        throw new ODataNotAcceptableException(ODataNotAcceptableException.NOT_SUPPORTED_CONTENT_TYPE
+            .addContent(contentType));
       }
     } catch (final ODataNotAcceptableException e) {
       throw new EntityProviderException(EntityProviderException.COMMON, e);
@@ -85,19 +86,22 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   @Override
   public ODataResponse writeErrorDocument(final ODataErrorContext context) {
     try {
-      return create(context.getContentType()).writeErrorDocument(context.getHttpStatus(), context.getErrorCode(), context.getMessage(), context.getLocale(), context.getInnerError());
+      return create(context.getContentType()).writeErrorDocument(context.getHttpStatus(), context.getErrorCode(),
+          context.getMessage(), context.getLocale(), context.getInnerError());
     } catch (EntityProviderException e) {
       throw new ODataRuntimeException(e);
     }
   }
 
   @Override
-  public ODataResponse writeServiceDocument(final String contentType, final Edm edm, final String serviceRoot) throws EntityProviderException {
+  public ODataResponse writeServiceDocument(final String contentType, final Edm edm, final String serviceRoot)
+      throws EntityProviderException {
     return create(contentType).writeServiceDocument(edm, serviceRoot);
   }
 
   @Override
-  public ODataResponse writePropertyValue(final EdmProperty edmProperty, final Object value) throws EntityProviderException {
+  public ODataResponse writePropertyValue(final EdmProperty edmProperty, final Object value)
+      throws EntityProviderException {
     return create().writePropertyValue(edmProperty, value);
   }
 
@@ -112,62 +116,76 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   }
 
   @Override
-  public ODataResponse writeFeed(final String contentType, final EdmEntitySet entitySet, final List<Map<String, Object>> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public ODataResponse writeFeed(final String contentType, final EdmEntitySet entitySet,
+      final List<Map<String, Object>> data, final EntityProviderWriteProperties properties)
+      throws EntityProviderException {
     return create(contentType).writeFeed(entitySet, data, properties);
   }
 
   @Override
-  public ODataResponse writeEntry(final String contentType, final EdmEntitySet entitySet, final Map<String, Object> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public ODataResponse writeEntry(final String contentType, final EdmEntitySet entitySet,
+      final Map<String, Object> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
     return create(contentType).writeEntry(entitySet, data, properties);
   }
 
   @Override
-  public ODataResponse writeProperty(final String contentType, final EdmProperty edmProperty, final Object value) throws EntityProviderException {
+  public ODataResponse writeProperty(final String contentType, final EdmProperty edmProperty, final Object value)
+      throws EntityProviderException {
     return create(contentType).writeProperty(edmProperty, value);
   }
 
   @Override
-  public ODataResponse writeLink(final String contentType, final EdmEntitySet entitySet, final Map<String, Object> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public ODataResponse writeLink(final String contentType, final EdmEntitySet entitySet,
+      final Map<String, Object> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
     return create(contentType).writeLink(entitySet, data, properties);
   }
 
   @Override
-  public ODataResponse writeLinks(final String contentType, final EdmEntitySet entitySet, final List<Map<String, Object>> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public ODataResponse writeLinks(final String contentType, final EdmEntitySet entitySet,
+      final List<Map<String, Object>> data, final EntityProviderWriteProperties properties)
+      throws EntityProviderException {
     return create(contentType).writeLinks(entitySet, data, properties);
   }
 
   @Override
-  public ODataResponse writeFunctionImport(final String contentType, final EdmFunctionImport functionImport, final Object data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public ODataResponse writeFunctionImport(final String contentType, final EdmFunctionImport functionImport,
+      final Object data, final EntityProviderWriteProperties properties) throws EntityProviderException {
     return create(contentType).writeFunctionImport(functionImport, data, properties);
   }
 
   @Override
-  public ODataFeed readFeed(final String contentType, final EdmEntitySet entitySet, final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+  public ODataFeed readFeed(final String contentType, final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     return create(contentType).readFeed(entitySet, content, properties);
   }
 
   @Override
-  public ODataEntry readEntry(final String contentType, final EdmEntitySet entitySet, final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+  public ODataEntry readEntry(final String contentType, final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     return create(contentType).readEntry(entitySet, content, properties);
   }
 
   @Override
-  public Map<String, Object> readProperty(final String contentType, final EdmProperty edmProperty, final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+  public Map<String, Object> readProperty(final String contentType, final EdmProperty edmProperty,
+      final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
     return create(contentType).readProperty(edmProperty, content, properties);
   }
 
   @Override
-  public Object readPropertyValue(final EdmProperty edmProperty, final InputStream content, final Class<?> typeMapping) throws EntityProviderException {
+  public Object readPropertyValue(final EdmProperty edmProperty, final InputStream content, final Class<?> typeMapping)
+      throws EntityProviderException {
     return create().readPropertyValue(edmProperty, content, typeMapping);
   }
 
   @Override
-  public List<String> readLinks(final String contentType, final EdmEntitySet entitySet, final InputStream content) throws EntityProviderException {
+  public List<String> readLinks(final String contentType, final EdmEntitySet entitySet, final InputStream content)
+      throws EntityProviderException {
     return create(contentType).readLinks(entitySet, content);
   }
 
   @Override
-  public String readLink(final String contentType, final EdmEntitySet entitySet, final InputStream content) throws EntityProviderException {
+  public String readLink(final String contentType, final EdmEntitySet entitySet, final InputStream content)
+      throws EntityProviderException {
     return create(contentType).readLink(entitySet, content);
   }
 
@@ -177,7 +195,8 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   }
 
   @Override
-  public ODataResponse writeMetadata(final List<Schema> schemas, final Map<String, String> predefinedNamespaces) throws EntityProviderException {
+  public ODataResponse writeMetadata(final List<Schema> schemas, final Map<String, String> predefinedNamespaces)
+      throws EntityProviderException {
     return create().writeMetadata(schemas, predefinedNamespaces);
   }
 
@@ -188,12 +207,14 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   }
 
   @Override
-  public ServiceDocument readServiceDocument(final InputStream serviceDocument, final String contentType) throws EntityProviderException {
+  public ServiceDocument readServiceDocument(final InputStream serviceDocument, final String contentType)
+      throws EntityProviderException {
     return create(contentType).readServiceDocument(serviceDocument);
   }
 
   @Override
-  public List<BatchRequestPart> parseBatchRequest(final String contentType, final InputStream content, final EntityProviderBatchProperties properties) throws BatchException {
+  public List<BatchRequestPart> parseBatchRequest(final String contentType, final InputStream content,
+      final EntityProviderBatchProperties properties) throws BatchException {
     List<BatchRequestPart> batchParts = new BatchRequestParser(contentType, properties).parse(content);
     return batchParts;
   }
@@ -211,7 +232,8 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   }
 
   @Override
-  public List<BatchSingleResponse> parseBatchResponse(final String contentType, final InputStream content) throws BatchException {
+  public List<BatchSingleResponse> parseBatchResponse(final String contentType, final InputStream content)
+      throws BatchException {
     List<BatchSingleResponse> responses = new BatchResponseParser(contentType).parse(content);
     return responses;
   }

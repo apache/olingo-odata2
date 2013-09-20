@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
@@ -89,7 +89,7 @@ public class TestSpec extends TestBase {
   @Test
   public void testMinimumSpecReq() {
 
-    //ADD
+    // ADD
     GetPTF(aDecimal + " add " + aDecimal).aEdmType(decimalInst).aSerialized("{" + aDecimal + " add " + aDecimal + "}");
     GetPTF(aDouble + " add " + aDouble).aEdmType(doubleInst).aSerialized("{" + aDouble + " add " + aDouble + "}");
     ;
@@ -97,48 +97,48 @@ public class TestSpec extends TestBase {
     GetPTF(aInt64 + " add " + aInt64).aEdmType(int64Inst).aSerialized("{" + aInt64 + " add " + aInt64 + "}");
     GetPTF(aInt32 + " add " + aInt32).aEdmType(int32Inst).aSerialized("{" + aInt32 + " add " + aInt32 + "}");
 
-    //ADD
+    // ADD
     GetPTF(aDecimal + " sub " + aDecimal).aEdmType(decimalInst).aSerialized("{" + aDecimal + " sub " + aDecimal + "}");
     GetPTF(aDouble + " sub " + aDouble).aEdmType(doubleInst).aSerialized("{" + aDouble + " sub " + aDouble + "}");
     GetPTF(aSingle + " sub " + aSingle).aEdmType(singleInst).aSerialized("{" + aSingle + " sub " + aSingle + "}");
     GetPTF(aInt64 + " sub " + aInt64).aEdmType(int64Inst).aSerialized("{" + aInt64 + " sub " + aInt64 + "}");
     GetPTF(aInt32 + " sub " + aInt32).aEdmType(int32Inst).aSerialized("{" + aInt32 + " sub " + aInt32 + "}");
 
-    //MUL
+    // MUL
     GetPTF(aDecimal + " mul " + aDecimal).aEdmType(decimalInst).aSerialized("{" + aDecimal + " mul " + aDecimal + "}");
     GetPTF(aDouble + " mul " + aDouble).aEdmType(doubleInst).aSerialized("{" + aDouble + " mul " + aDouble + "}");
     GetPTF(aSingle + " mul " + aSingle).aEdmType(singleInst).aSerialized("{" + aSingle + " mul " + aSingle + "}");
     GetPTF(aInt64 + " mul " + aInt64).aEdmType(int64Inst).aSerialized("{" + aInt64 + " mul " + aInt64 + "}");
     GetPTF(aInt32 + " mul " + aInt32).aEdmType(int32Inst).aSerialized("{" + aInt32 + " mul " + aInt32 + "}");
 
-    //DIV
+    // DIV
     GetPTF(aDecimal + " div " + aDecimal).aEdmType(decimalInst).aSerialized("{" + aDecimal + " div " + aDecimal + "}");
     GetPTF(aDouble + " div " + aDouble).aEdmType(doubleInst).aSerialized("{" + aDouble + " div " + aDouble + "}");
     GetPTF(aSingle + " div " + aSingle).aEdmType(singleInst).aSerialized("{" + aSingle + " div " + aSingle + "}");
     GetPTF(aInt64 + " div " + aInt64).aEdmType(int64Inst).aSerialized("{" + aInt64 + " div " + aInt64 + "}");
     GetPTF(aInt32 + " div " + aInt32).aEdmType(int32Inst).aSerialized("{" + aInt32 + " div " + aInt32 + "}");
 
-    //MOD
+    // MOD
     GetPTF(aDecimal + " mod " + aDecimal).aEdmType(decimalInst).aSerialized("{" + aDecimal + " mod " + aDecimal + "}");
     GetPTF(aDouble + " mod " + aDouble).aEdmType(doubleInst).aSerialized("{" + aDouble + " mod " + aDouble + "}");
     GetPTF(aSingle + " mod " + aSingle).aEdmType(singleInst).aSerialized("{" + aSingle + " mod " + aSingle + "}");
     GetPTF(aInt64 + " mod " + aInt64).aEdmType(int64Inst).aSerialized("{" + aInt64 + " mod " + aInt64 + "}");
     GetPTF(aInt32 + " mod " + aInt32).aEdmType(int32Inst).aSerialized("{" + aInt32 + " mod " + aInt32 + "}");
 
-    //NEGATE
+    // NEGATE
     GetPTF(" - " + aDecimal).aEdmType(decimalInst).aSerialized("{- " + aDecimal + "}");
     GetPTF(" - " + aDouble).aEdmType(doubleInst).aSerialized("{- " + aDouble + "}");
     GetPTF(" - " + aSingle).aEdmType(singleInst).aSerialized("{- " + aSingle + "}");
     GetPTF(" - " + aInt64).aEdmType(int64Inst).aSerialized("{- " + aInt64 + "}");
     GetPTF(" - " + aInt32).aEdmType(int32Inst).aSerialized("{- " + aInt32 + "}");
 
-    //AND
+    // AND
     GetPTF(aBoolean + " and " + aBoolean).aEdmType(boolInst).aSerialized("{" + aBoolean + " and " + aBoolean + "}");
 
-    //OR
+    // OR
     GetPTF(aBoolean + " or " + aBoolean).aEdmType(boolInst).aSerialized("{" + aBoolean + " or " + aBoolean + "}");
 
-    //EQ
+    // EQ
     GetPTF(aDecimal + " eq " + aDecimal).aEdmType(boolInst).aSerialized("{" + aDecimal + " eq " + aDecimal + "}");
     GetPTF(aDouble + " eq " + aDouble).aEdmType(boolInst).aSerialized("{" + aDouble + " eq " + aDouble + "}");
     GetPTF(aSingle + " eq " + aSingle).aEdmType(boolInst).aSerialized("{" + aSingle + " eq " + aSingle + "}");
@@ -149,7 +149,7 @@ public class TestSpec extends TestBase {
     GetPTF(aGuid + " eq " + aGuid).aEdmType(boolInst).aSerialized("{" + aGuid + " eq " + aGuid + "}");
     GetPTF(aBinary + " eq " + aBinary).aEdmType(boolInst).aSerialized("{" + aBinary + " eq " + aBinary + "}");
 
-    //NE
+    // NE
     GetPTF(aDecimal + " ne " + aDecimal).aEdmType(boolInst).aSerialized("{" + aDecimal + " ne " + aDecimal + "}");
     GetPTF(aDouble + " ne " + aDouble).aEdmType(boolInst).aSerialized("{" + aDouble + " ne " + aDouble + "}");
     GetPTF(aSingle + " ne " + aSingle).aEdmType(boolInst).aSerialized("{" + aSingle + " ne " + aSingle + "}");
@@ -160,7 +160,7 @@ public class TestSpec extends TestBase {
     GetPTF(aGuid + " ne " + aGuid).aEdmType(boolInst).aSerialized("{" + aGuid + " ne " + aGuid + "}");
     GetPTF(aBinary + " ne " + aBinary).aEdmType(boolInst).aSerialized("{" + aBinary + " ne " + aBinary + "}");
 
-    //LT
+    // LT
     GetPTF(aDecimal + " lt " + aDecimal).aEdmType(boolInst).aSerialized("{" + aDecimal + " lt " + aDecimal + "}");
     GetPTF(aDouble + " lt " + aDouble).aEdmType(boolInst).aSerialized("{" + aDouble + " lt " + aDouble + "}");
     GetPTF(aSingle + " lt " + aSingle).aEdmType(boolInst).aSerialized("{" + aSingle + " lt " + aSingle + "}");
@@ -171,7 +171,7 @@ public class TestSpec extends TestBase {
     GetPTF(aGuid + " lt " + aGuid).aEdmType(boolInst).aSerialized("{" + aGuid + " lt " + aGuid + "}");
     GetPTF(aBinary + " lt " + aBinary).aEdmType(boolInst).aSerialized("{" + aBinary + " lt " + aBinary + "}");
 
-    //LE
+    // LE
     GetPTF(aDecimal + " le " + aDecimal).aEdmType(boolInst).aSerialized("{" + aDecimal + " le " + aDecimal + "}");
     GetPTF(aDouble + " le " + aDouble).aEdmType(boolInst).aSerialized("{" + aDouble + " le " + aDouble + "}");
     GetPTF(aSingle + " le " + aSingle).aEdmType(boolInst).aSerialized("{" + aSingle + " le " + aSingle + "}");
@@ -182,7 +182,7 @@ public class TestSpec extends TestBase {
     GetPTF(aGuid + " le " + aGuid).aEdmType(boolInst).aSerialized("{" + aGuid + " le " + aGuid + "}");
     GetPTF(aBinary + " le " + aBinary).aEdmType(boolInst).aSerialized("{" + aBinary + " le " + aBinary + "}");
 
-    //GT
+    // GT
     GetPTF(aDecimal + " gt " + aDecimal).aEdmType(boolInst).aSerialized("{" + aDecimal + " gt " + aDecimal + "}");
     GetPTF(aDouble + " gt " + aDouble).aEdmType(boolInst).aSerialized("{" + aDouble + " gt " + aDouble + "}");
     GetPTF(aSingle + " gt " + aSingle).aEdmType(boolInst).aSerialized("{" + aSingle + " gt " + aSingle + "}");
@@ -193,7 +193,7 @@ public class TestSpec extends TestBase {
     GetPTF(aGuid + " gt " + aGuid).aEdmType(boolInst).aSerialized("{" + aGuid + " gt " + aGuid + "}");
     GetPTF(aBinary + " gt " + aBinary).aEdmType(boolInst).aSerialized("{" + aBinary + " gt " + aBinary + "}");
 
-    //GE
+    // GE
     GetPTF(aDecimal + " ge " + aDecimal).aEdmType(boolInst).aSerialized("{" + aDecimal + " ge " + aDecimal + "}");
     GetPTF(aDouble + " ge " + aDouble).aEdmType(boolInst).aSerialized("{" + aDouble + " ge " + aDouble + "}");
     GetPTF(aSingle + " ge " + aSingle).aEdmType(boolInst).aSerialized("{" + aSingle + " ge " + aSingle + "}");
@@ -204,77 +204,77 @@ public class TestSpec extends TestBase {
     GetPTF(aGuid + " ge " + aGuid).aEdmType(boolInst).aSerialized("{" + aGuid + " ge " + aGuid + "}");
     GetPTF(aBinary + " ge " + aBinary).aEdmType(boolInst).aSerialized("{" + aBinary + " ge " + aBinary + "}");
 
-    //NOT
+    // NOT
     GetPTF(" not " + aBoolean).aEdmType(boolInst);
 
-    //ISOF is not supported
+    // ISOF is not supported
 
-    //CAST is not supported
+    // CAST is not supported
 
-    //BOOL lit
+    // BOOL lit
     GetPTF("true").aEdmType(boolInst);
     GetPTF("false").aEdmType(boolInst);
 
-    //endsWith
+    // endsWith
     GetPTF("endswith('ABC','C')").aEdmType(boolInst);
 
-    //indexOf
+    // indexOf
     GetPTF("indexof('ABC','B')").aEdmType(int32Inst);
 
-    //replace not supported
+    // replace not supported
 
-    //startsWith
+    // startsWith
     GetPTF("startswith('ABC','C')").aEdmType(boolInst);
 
-    //toLower
+    // toLower
     GetPTF("tolower('ABC')").aEdmType(stringInst);
 
-    //toUpper
+    // toUpper
     GetPTF("toupper('ABC')").aEdmType(stringInst);
 
-    //trim
+    // trim
     GetPTF("trim('ABC')").aEdmType(stringInst);
 
-    //substring
+    // substring
     GetPTF("substring('ABC'," + aInt32 + ',' + aInt32 + ")").aEdmType(stringInst);
 
-    //subStringOf
+    // subStringOf
     GetPTF("substringof('ABC','BC')").aEdmType(boolInst);
 
-    //concat
+    // concat
     GetPTF("concat('ABC','BC')").aEdmType(stringInst);
-    //tested more in deep in other testcases
+    // tested more in deep in other testcases
 
-    //length
+    // length
     GetPTF("length('ABC')").aEdmType(int32Inst);
 
-    //year
+    // year
     GetPTF("year(" + aDatetime + ")").aEdmType(int32Inst);
 
-    //month
+    // month
     GetPTF("month(" + aDatetime + ")").aEdmType(int32Inst);
 
-    //day
+    // day
     GetPTF("day(" + aDatetime + ")").aEdmType(int32Inst);
 
-    //hour
+    // hour
     GetPTF("hour(" + aDatetime + ")").aEdmType(int32Inst);
 
-    //minute
+    // minute
     GetPTF("minute(" + aDatetime + ")").aEdmType(int32Inst);
 
-    //second
+    // second
     GetPTF("second(" + aDatetime + ")").aEdmType(int32Inst);
 
-    //round
+    // round
     GetPTF("round(" + aDecimal + ")").aEdmType(decimalInst);
     GetPTF("round(" + aDouble + ")").aEdmType(doubleInst);
 
-    //floor
+    // floor
     GetPTF("floor(" + aDecimal + ")").aEdmType(decimalInst);
     GetPTF("floor(" + aDouble + ")").aEdmType(doubleInst);
 
-    //ceiling
+    // ceiling
     GetPTF("ceiling(" + aDecimal + ")").aEdmType(decimalInst);
     GetPTF("ceiling(" + aDouble + ")").aEdmType(doubleInst);
 
@@ -299,14 +299,21 @@ public class TestSpec extends TestBase {
 
       GetPTF(edmEtAllTypes, "'text' eq String").root().aKind(ExpressionKind.BINARY);
 
-      GetPTF(edmEtAllTypes, "Complex/String").root().left().aEdmProperty(complex).aEdmType(complexType).root().right().aEdmProperty(complexString).aEdmType(complexStringType).root().aKind(ExpressionKind.MEMBER).aEdmType(complexStringType);
+      GetPTF(edmEtAllTypes, "Complex/String").root().left().aEdmProperty(complex).aEdmType(complexType).root().right()
+          .aEdmProperty(complexString).aEdmType(complexStringType).root().aKind(ExpressionKind.MEMBER).aEdmType(
+              complexStringType);
 
-      GetPTF(edmEtAllTypes, "Complex/Address/City").root().aKind(ExpressionKind.MEMBER).root().left().aKind(ExpressionKind.MEMBER).root().left().left().aKind(ExpressionKind.PROPERTY).aEdmProperty(complex).aEdmType(complexType).root().left().right().aKind(ExpressionKind.PROPERTY).aEdmProperty(complexAddress).aEdmType(complexAddressType).root().left().aEdmType(complexAddressType).root().right().aKind(ExpressionKind.PROPERTY).aEdmProperty(complexAddressCity).aEdmType(complexAddressCityType).root().aEdmType(complexAddressCityType);
+      GetPTF(edmEtAllTypes, "Complex/Address/City").root().aKind(ExpressionKind.MEMBER).root().left().aKind(
+          ExpressionKind.MEMBER).root().left().left().aKind(ExpressionKind.PROPERTY).aEdmProperty(complex).aEdmType(
+          complexType).root().left().right().aKind(ExpressionKind.PROPERTY).aEdmProperty(complexAddress).aEdmType(
+          complexAddressType).root().left().aEdmType(complexAddressType).root().right().aKind(ExpressionKind.PROPERTY)
+          .aEdmProperty(complexAddressCity).aEdmType(complexAddressCityType).root().aEdmType(complexAddressCityType);
 
       EdmProperty boolean_ = (EdmProperty) edmEtAllTypes.getProperty("Boolean");
       EdmSimpleType boolean_Type = (EdmSimpleType) boolean_.getType();
 
-      GetPTF(edmEtAllTypes, "not Boolean").aKind(ExpressionKind.UNARY).aEdmType(boolean_Type).right().aEdmProperty(boolean_).aEdmType(boolean_Type);
+      GetPTF(edmEtAllTypes, "not Boolean").aKind(ExpressionKind.UNARY).aEdmType(boolean_Type).right().aEdmProperty(
+          boolean_).aEdmType(boolean_Type);
 
     } catch (EdmException e) {
       fail("Error in testPropertiesWithEdm:" + e.getLocalizedMessage());

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -82,7 +82,8 @@ public class AtomServiceDocumentProducerTest extends AbstractXmlProducerTestHelp
 
   @Test
   public void writeEmptyServiceDocumentOverRuntimeDelegate() throws Exception {
-    ODataResponse response = EntityProvider.writeServiceDocument(HttpContentType.APPLICATION_ATOM_XML, edm, "http://localhost");
+    ODataResponse response =
+        EntityProvider.writeServiceDocument(HttpContentType.APPLICATION_ATOM_XML, edm, "http://localhost");
     String xmlString = verifyResponse(response);
 
     assertXpathExists("/a:service", xmlString);
@@ -108,7 +109,8 @@ public class AtomServiceDocumentProducerTest extends AbstractXmlProducerTestHelp
     entitySets.add(new EntitySet().setName("Employees"));
 
     List<EntityContainer> entityContainers = new ArrayList<EntityContainer>();
-    entityContainers.add(new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets));
+    entityContainers.add(new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(
+        entitySets));
 
     schemas.add(new Schema().setEntityContainers(entityContainers));
 
@@ -125,8 +127,10 @@ public class AtomServiceDocumentProducerTest extends AbstractXmlProducerTestHelp
     entitySets.add(new EntitySet().setName("Employees"));
 
     List<EntityContainer> entityContainers = new ArrayList<EntityContainer>();
-    entityContainers.add(new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets));
-    entityContainers.add(new EntityContainer().setDefaultEntityContainer(false).setName("Container2").setEntitySets(entitySets));
+    entityContainers.add(new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(
+        entitySets));
+    entityContainers.add(new EntityContainer().setDefaultEntityContainer(false).setName("Container2").setEntitySets(
+        entitySets));
 
     schemas.add(new Schema().setEntityContainers(entityContainers));
 
@@ -138,7 +142,8 @@ public class AtomServiceDocumentProducerTest extends AbstractXmlProducerTestHelp
 
     assertXpathExists("/a:service/a:workspace/a:collection[@href='Employees']", xmlString);
     assertXpathExists("/a:service/a:workspace/a:collection[@href='Employees']/atom:title", xmlString);
-    assertXpathEvaluatesTo("Employees", "/a:service/a:workspace/a:collection[@href='Container2.Employees']/atom:title", xmlString);
+    assertXpathEvaluatesTo("Employees", "/a:service/a:workspace/a:collection[@href='Container2.Employees']/atom:title",
+        xmlString);
   }
 
   @Test
@@ -147,12 +152,16 @@ public class AtomServiceDocumentProducerTest extends AbstractXmlProducerTestHelp
     entitySets.add(new EntitySet().setName("Employees"));
 
     List<EntityContainer> entityContainers = new ArrayList<EntityContainer>();
-    entityContainers.add(new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(entitySets));
-    entityContainers.add(new EntityContainer().setDefaultEntityContainer(false).setName("Container2").setEntitySets(entitySets));
+    entityContainers.add(new EntityContainer().setDefaultEntityContainer(true).setName("Container").setEntitySets(
+        entitySets));
+    entityContainers.add(new EntityContainer().setDefaultEntityContainer(false).setName("Container2").setEntitySets(
+        entitySets));
 
     List<EntityContainer> entityContainers2 = new ArrayList<EntityContainer>();
-    entityContainers2.add(new EntityContainer().setDefaultEntityContainer(false).setName("Container3").setEntitySets(entitySets));
-    entityContainers2.add(new EntityContainer().setDefaultEntityContainer(false).setName("Container4").setEntitySets(entitySets));
+    entityContainers2.add(new EntityContainer().setDefaultEntityContainer(false).setName("Container3").setEntitySets(
+        entitySets));
+    entityContainers2.add(new EntityContainer().setDefaultEntityContainer(false).setName("Container4").setEntitySets(
+        entitySets));
 
     schemas.add(new Schema().setEntityContainers(entityContainers));
     schemas.add(new Schema().setEntityContainers(entityContainers2));
@@ -165,15 +174,18 @@ public class AtomServiceDocumentProducerTest extends AbstractXmlProducerTestHelp
 
     assertXpathExists("/a:service/a:workspace/a:collection[@href='Employees']", xmlString);
     assertXpathExists("/a:service/a:workspace/a:collection[@href='Employees']/atom:title", xmlString);
-    assertXpathEvaluatesTo("Employees", "/a:service/a:workspace/a:collection[@href='Container2.Employees']/atom:title", xmlString);
+    assertXpathEvaluatesTo("Employees", "/a:service/a:workspace/a:collection[@href='Container2.Employees']/atom:title",
+        xmlString);
 
     assertXpathExists("/a:service/a:workspace/a:collection[@href='Employees']", xmlString);
     assertXpathExists("/a:service/a:workspace/a:collection[@href='Employees']/atom:title", xmlString);
-    assertXpathEvaluatesTo("Employees", "/a:service/a:workspace/a:collection[@href='Container3.Employees']/atom:title", xmlString);
+    assertXpathEvaluatesTo("Employees", "/a:service/a:workspace/a:collection[@href='Container3.Employees']/atom:title",
+        xmlString);
 
     assertXpathExists("/a:service/a:workspace/a:collection[@href='Employees']", xmlString);
     assertXpathExists("/a:service/a:workspace/a:collection[@href='Employees']/atom:title", xmlString);
-    assertXpathEvaluatesTo("Employees", "/a:service/a:workspace/a:collection[@href='Container4.Employees']/atom:title", xmlString);
+    assertXpathEvaluatesTo("Employees", "/a:service/a:workspace/a:collection[@href='Container4.Employees']/atom:title",
+        xmlString);
   }
 
   private String verifyResponse(final ODataResponse response) throws IOException {

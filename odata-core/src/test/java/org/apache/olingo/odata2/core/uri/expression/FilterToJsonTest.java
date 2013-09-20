@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
@@ -183,7 +183,8 @@ public class FilterToJsonTest {
     checkProperty(path, null, "PostalCode");
   }
 
-  private void checkUnary(final StringMap<Object> unary, final UnaryOperator expectedOperator, final String expectedType) {
+  private void
+      checkUnary(final StringMap<Object> unary, final UnaryOperator expectedOperator, final String expectedType) {
     assertEquals(ExpressionKind.UNARY.toString(), unary.get(NODETYPE));
     assertEquals(expectedOperator.toString(), unary.get(OPERATOR));
     assertEquals(expectedType, unary.get(TYPE));
@@ -197,7 +198,8 @@ public class FilterToJsonTest {
     assertNotNull(member.get(PATH));
   }
 
-  private void checkMethod(final StringMap<Object> method, final MethodOperator expectedOperator, final String expectedType) {
+  private void checkMethod(final StringMap<Object> method, final MethodOperator expectedOperator,
+      final String expectedType) {
     assertEquals(ExpressionKind.METHOD.toString(), method.get(NODETYPE));
     assertEquals(expectedOperator.toString(), method.get(OPERATOR));
     assertEquals(expectedType, method.get(TYPE));
@@ -216,7 +218,8 @@ public class FilterToJsonTest {
     assertEquals(expectedValue, literal.get(VALUE));
   }
 
-  private void checkBinary(final StringMap<Object> binary, final String expectedOperator, final String expectedType) throws Exception {
+  private void checkBinary(final StringMap<Object> binary, final String expectedOperator, final String expectedType)
+      throws Exception {
     assertEquals(ExpressionKind.BINARY.toString(), binary.get(NODETYPE));
     assertEquals(expectedOperator, binary.get(OPERATOR));
     assertEquals(expectedType, binary.get(TYPE));
@@ -224,7 +227,8 @@ public class FilterToJsonTest {
     assertNotNull(binary.get(RIGHT));
   }
 
-  private static String toJson(final FilterExpression expression) throws ExceptionVisitExpression, ODataApplicationException {
+  private static String toJson(final FilterExpression expression) throws ExceptionVisitExpression,
+      ODataApplicationException {
     return (String) expression.accept(new JsonVisitor());
   }
 }

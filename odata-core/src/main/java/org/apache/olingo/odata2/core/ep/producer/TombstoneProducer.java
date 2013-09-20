@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -47,13 +47,15 @@ public class TombstoneProducer {
   /**
    * Appends tombstones to an already started feed.
    * If the list is empty no elements will be appended.
-   * @param writer         same as in feed
-   * @param eia            same as in feed
-   * @param properties     same as in feed
+   * @param writer same as in feed
+   * @param eia same as in feed
+   * @param properties same as in feed
    * @param deletedEntries data to be appended
    * @throws EntityProviderException
    */
-  public void appendTombstones(final XMLStreamWriter writer, final EntityInfoAggregator eia, final EntityProviderWriteProperties properties, final List<Map<String, Object>> deletedEntries) throws EntityProviderException {
+  public void appendTombstones(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final EntityProviderWriteProperties properties, final List<Map<String, Object>> deletedEntries)
+      throws EntityProviderException {
     try {
       for (Map<String, Object> deletedEntry : deletedEntries) {
         writer.writeStartElement(TombstoneCallback.NAMESPACE_TOMBSTONE, FormatXml.ATOM_TOMBSTONE_DELETED_ENTRY);
@@ -70,7 +72,8 @@ public class TombstoneProducer {
     }
   }
 
-  private void appendWhenAttribute(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> deletedEntry) throws XMLStreamException, EdmSimpleTypeException {
+  private void appendWhenAttribute(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> deletedEntry) throws XMLStreamException, EdmSimpleTypeException {
     Object updateDate = null;
     EntityPropertyInfo updatedInfo = eia.getTargetPathInfo(EdmTargetPath.SYNDICATION_UPDATED);
     if (updatedInfo != null) {
@@ -84,17 +87,23 @@ public class TombstoneProducer {
     }
   }
 
-  private void appendCustomWhenAttribute(final XMLStreamWriter writer, final Object updateDate, final EntityPropertyInfo updatedInfo) throws XMLStreamException, EdmSimpleTypeException {
+  private void appendCustomWhenAttribute(final XMLStreamWriter writer, final Object updateDate,
+      final EntityPropertyInfo updatedInfo) throws XMLStreamException, EdmSimpleTypeException {
     EdmFacets updateFacets = updatedInfo.getFacets();
-    writer.writeAttribute(FormatXml.ATOM_TOMBSTONE_WHEN, EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets));
+    writer.writeAttribute(FormatXml.ATOM_TOMBSTONE_WHEN, EdmDateTimeOffset.getInstance().valueToString(updateDate,
+        EdmLiteralKind.DEFAULT, updateFacets));
   }
 
-  private void appendRefAttribute(final XMLStreamWriter writer, final EntityInfoAggregator eia, final EntityProviderWriteProperties properties, final Map<String, Object> deletedEntry) throws XMLStreamException, EntityProviderException {
-    String ref = properties.getServiceRoot().toASCIIString() + AtomEntryEntityProducer.createSelfLink(eia, deletedEntry, null);
+  private void appendRefAttribute(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final EntityProviderWriteProperties properties, final Map<String, Object> deletedEntry)
+      throws XMLStreamException, EntityProviderException {
+    String ref =
+        properties.getServiceRoot().toASCIIString() + AtomEntryEntityProducer.createSelfLink(eia, deletedEntry, null);
     writer.writeAttribute(FormatXml.ATOM_TOMBSTONE_REF, ref);
   }
 
-  private void appendDefaultWhenAttribute(final XMLStreamWriter writer) throws XMLStreamException, EdmSimpleTypeException {
+  private void appendDefaultWhenAttribute(final XMLStreamWriter writer) throws XMLStreamException,
+      EdmSimpleTypeException {
     if (defaultDateString == null) {
       Object defaultDate = new Date();
       defaultDateString = EdmDateTimeOffset.getInstance().valueToString(defaultDate, EdmLiteralKind.DEFAULT, null);

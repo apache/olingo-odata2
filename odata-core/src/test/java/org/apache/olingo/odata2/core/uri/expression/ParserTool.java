@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
@@ -72,7 +72,8 @@ public class ParserTool {
     ParserTool.log.debug(out);
   }
 
-  public ParserTool(final String expression, final boolean isOrder, final boolean addTestfunctions, final boolean allowOnlyBinary) {
+  public ParserTool(final String expression, final boolean isOrder, final boolean addTestfunctions,
+      final boolean allowOnlyBinary) {
     dout("ParserTool - Testing: " + expression);
     this.expression = expression;
 
@@ -96,7 +97,8 @@ public class ParserTool {
     curNode = tree;
   }
 
-  public ParserTool(final String expression, final boolean isOrder, final boolean addTestfunctions, final boolean allowOnlyBinary, final EdmEntityType resourceEntityType) {
+  public ParserTool(final String expression, final boolean isOrder, final boolean addTestfunctions,
+      final boolean allowOnlyBinary, final EdmEntityType resourceEntityType) {
     dout("ParserTool - Testing: " + expression);
     this.expression = expression;
 
@@ -140,7 +142,7 @@ public class ParserTool {
    * Verifies that the thrown exception is of {@paramref expected}
    * 
    * @param expected
-   *            Expected Exception class
+   * Expected Exception class
    * @return ParserTool
    */
   public ParserTool aExType(final Class<? extends Exception> expected) {
@@ -159,11 +161,10 @@ public class ParserTool {
   }
 
   /**
-   * Verifies that the message text of the thrown exception serialized is
-   * {@paramref messageText}
+   * Verifies that the message text of the thrown exception serialized is {@paramref messageText}
    * 
    * @param messageText
-   *            Expected message text
+   * Expected message text
    * @return this
    */
   public ParserTool aExMsgText(final String messageText) {
@@ -384,7 +385,9 @@ public class ParserTool {
     String info = "GetExpr(" + expression + ")-->";
 
     if ((curNode.getKind() != ExpressionKind.ORDER) && (curNode.getKind() != ExpressionKind.FILTER)) {
-      String out = info + "Expected: " + ExpressionKind.ORDER + " or " + ExpressionKind.FILTER + " Actual: " + curNode.getKind().toString();
+      String out =
+          info + "Expected: " + ExpressionKind.ORDER + " or " + ExpressionKind.FILTER + " Actual: "
+              + curNode.getKind().toString();
       dout("  " + out);
       fail(out);
     }
@@ -411,7 +414,8 @@ public class ParserTool {
 
     PropertyExpressionImpl propertyExpression = (PropertyExpressionImpl) curNode;
     try {
-      dout("  " + info + "Expected: Property'" + string.getName() + "' Actual: " + propertyExpression.getEdmProperty().getName());
+      dout("  " + info + "Expected: Property'" + string.getName() + "' Actual: "
+          + propertyExpression.getEdmProperty().getName());
     } catch (EdmException e) {
       fail("Error in aEdmProperty:" + e.getLocalizedMessage());
     }
@@ -457,7 +461,9 @@ public class ParserTool {
     case METHOD:
     case PROPERTY:
       String info = "param(" + expression + ")-->";
-      info = "  " + info + "Expected: " + ExpressionKind.BINARY.toString() + " or " + ExpressionKind.MEMBER.toString() + " Actual: " + curNode.getKind();
+      info =
+          "  " + info + "Expected: " + ExpressionKind.BINARY.toString() + " or " + ExpressionKind.MEMBER.toString()
+              + " Actual: " + curNode.getKind();
       dout(info);
       fail(info);
       break;
@@ -482,7 +488,9 @@ public class ParserTool {
     case METHOD:
     case PROPERTY:
       String info = "param(" + expression + ")-->";
-      info = "  " + info + "Expected: " + ExpressionKind.BINARY.toString() + " or " + ExpressionKind.MEMBER.toString() + " Actual: " + curNode.getKind();
+      info =
+          "  " + info + "Expected: " + ExpressionKind.BINARY.toString() + " or " + ExpressionKind.MEMBER.toString()
+              + " Actual: " + curNode.getKind();
       dout(info);
       fail(info);
       break;
@@ -527,7 +535,8 @@ public class ParserTool {
     MethodExpressionImpl methodExpressionImpl = (MethodExpressionImpl) curNode;
     if (i >= methodExpressionImpl.getParameterCount()) {
       String info = "param(" + expression + ")-->";
-      info = "  " + info + "Too wrong index! Expected max: " + methodExpressionImpl.getParameterCount() + " Actual: " + i;
+      info =
+          "  " + info + "Too wrong index! Expected max: " + methodExpressionImpl.getParameterCount() + " Actual: " + i;
       dout(info);
       fail(info);
     }

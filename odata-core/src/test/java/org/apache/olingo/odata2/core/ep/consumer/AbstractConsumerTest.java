@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -47,13 +47,15 @@ import org.apache.olingo.odata2.testutil.mock.MockFacade;
  */
 public abstract class AbstractConsumerTest extends BaseTest {
 
-  protected static final EntityProviderReadProperties DEFAULT_PROPERTIES = EntityProviderReadProperties.init().mergeSemantic(false).build();
+  protected static final EntityProviderReadProperties DEFAULT_PROPERTIES = EntityProviderReadProperties.init()
+      .mergeSemantic(false).build();
 
   protected XMLStreamReader createReaderForTest(final String input) throws XMLStreamException {
     return createReaderForTest(input, false);
   }
 
-  protected XMLStreamReader createReaderForTest(final String input, final boolean namespaceAware) throws XMLStreamException {
+  protected XMLStreamReader createReaderForTest(final String input, final boolean namespaceAware)
+      throws XMLStreamException {
     XMLInputFactory factory = XMLInputFactory.newInstance();
     factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
     factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, namespaceAware);
@@ -97,7 +99,7 @@ public abstract class AbstractConsumerTest extends BaseTest {
    * As example an correct method call would be:
    * <p>
    * <code>
-   *    createTypeMappings("someKey", Integer.class, "anotherKey", Long.class);
+   * createTypeMappings("someKey", Integer.class, "anotherKey", Long.class);
    * </code>
    * </p>
    * 
@@ -128,7 +130,8 @@ public abstract class AbstractConsumerTest extends BaseTest {
    * @return
    * @throws UnsupportedEncodingException
    */
-  protected InputStream createContentAsStream(final String content, final boolean replaceWhitespaces) throws UnsupportedEncodingException {
+  protected InputStream createContentAsStream(final String content, final boolean replaceWhitespaces)
+      throws UnsupportedEncodingException {
     String contentForStream = content;
     if (replaceWhitespaces) {
       contentForStream = content.replaceAll(">\\s.<", "><");
@@ -137,8 +140,10 @@ public abstract class AbstractConsumerTest extends BaseTest {
     return new ByteArrayInputStream(contentForStream.getBytes("UTF-8"));
   }
 
-  protected ODataEntry prepareAndExecuteEntry(final String fileName, final String entitySetName, final EntityProviderReadProperties readProperties) throws IOException, EdmException, ODataException, UnsupportedEncodingException, EntityProviderException {
-    //prepare
+  protected ODataEntry prepareAndExecuteEntry(final String fileName, final String entitySetName,
+      final EntityProviderReadProperties readProperties) throws IOException, EdmException, ODataException,
+      UnsupportedEncodingException, EntityProviderException {
+    // prepare
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet(entitySetName);
     String content = readFile(fileName);
     assertNotNull(content);
@@ -151,8 +156,10 @@ public abstract class AbstractConsumerTest extends BaseTest {
     return result;
   }
 
-  protected ODataFeed prepareAndExecuteFeed(final String fileName, final String entitySetName, final EntityProviderReadProperties readProperties) throws IOException, EdmException, ODataException, UnsupportedEncodingException, EntityProviderException {
-    //prepare
+  protected ODataFeed prepareAndExecuteFeed(final String fileName, final String entitySetName,
+      final EntityProviderReadProperties readProperties) throws IOException, EdmException, ODataException,
+      UnsupportedEncodingException, EntityProviderException {
+    // prepare
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet(entitySetName);
     String content = readFile(fileName);
     assertNotNull(content);

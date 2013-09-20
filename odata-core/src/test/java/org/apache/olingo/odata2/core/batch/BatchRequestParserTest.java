@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
@@ -95,7 +95,8 @@ public class BatchRequestParserTest {
         if (retrieveRequest.getQueryParameters().get("$format") != null) {
           assertEquals("json", retrieveRequest.getQueryParameters().get("$format"));
         }
-        assertEquals(SERVICE_ROOT + "Employees('2')/EmployeeName?$format=json", retrieveRequest.getPathInfo().getRequestUri().toASCIIString());
+        assertEquals(SERVICE_ROOT + "Employees('2')/EmployeeName?$format=json", retrieveRequest.getPathInfo()
+            .getRequestUri().toASCIIString());
       } else {
         List<ODataRequest> requests = object.getRequests();
         for (ODataRequest request : requests) {
@@ -108,7 +109,8 @@ public class BatchRequestParserTest {
           assertTrue(request.getAcceptableLanguages().isEmpty());
           assertEquals("*/*", request.getAcceptHeaders().get(2));
           assertEquals("application/atomsvc+xml", request.getAcceptHeaders().get(0));
-          assertEquals(new URI(SERVICE_ROOT + "Employees('2')/EmployeeName").toASCIIString(), request.getPathInfo().getRequestUri().toASCIIString());
+          assertEquals(new URI(SERVICE_ROOT + "Employees('2')/EmployeeName").toASCIIString(), request.getPathInfo()
+              .getRequestUri().toASCIIString());
 
           ODataPathSegmentImpl pathSegment = new ODataPathSegmentImpl("Employees('2')", null);
           assertEquals(pathSegment.getPath(), request.getPathInfo().getODataSegments().get(0).getPath());
@@ -159,7 +161,8 @@ public class BatchRequestParserTest {
         ODataRequest retrieveRequest = object.getRequests().get(0);
         assertEquals(ODataHttpMethod.GET, retrieveRequest.getMethod());
         assertEquals("Age gt 40", retrieveRequest.getQueryParameters().get("$filter"));
-        assertEquals(new URI("http://localhost/odata/Employees?$filter=Age%20gt%2040"), retrieveRequest.getPathInfo().getRequestUri());
+        assertEquals(new URI("http://localhost/odata/Employees?$filter=Age%20gt%2040"), retrieveRequest.getPathInfo()
+            .getRequestUri());
       } else {
         List<ODataRequest> requests = object.getRequests();
         for (ODataRequest request : requests) {
@@ -283,7 +286,7 @@ public class BatchRequestParserTest {
   public void testNoBoundaryString() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + LF
         + GET_REQUEST
-        //+ no boundary string
+        // + no boundary string
         + GET_REQUEST
         + "--batch_8194-cf13-1f56--";
     parseInvalidBatchBody(batch);
@@ -371,7 +374,7 @@ public class BatchRequestParserTest {
     String batch = "--batch_8194-cf13-1f56" + LF
         + MIME_HEADERS
         + LF
-        + /*GET*/"Employees('1')/EmployeeName HTTP/1.1" + LF
+        + /* GET */"Employees('1')/EmployeeName HTTP/1.1" + LF
         + LF
         + "--batch_8194-cf13-1f56--";
     parseInvalidBatchBody(batch);
@@ -398,7 +401,7 @@ public class BatchRequestParserTest {
     String batch = "--batch_8194-cf13-1f56" + LF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + LF
         + LF
-        + "--changeset_f980-1cb6-94d"/*+"d"*/+ LF
+        + "--changeset_f980-1cb6-94d"/* +"d" */+ LF
         + MIME_HEADERS
         + LF
         + "POST Employees('2') HTTP/1.1" + LF
@@ -451,22 +454,29 @@ public class BatchRequestParserTest {
 
   @Test(expected = BatchException.class)
   public void testNoCloseDelimiter3() throws BatchException {
-    String batch = "--batch_8194-cf13-1f56" + LF + GET_REQUEST + "--batch_8194-cf13-1f56-"/*no hash*/;
+    String batch = "--batch_8194-cf13-1f56" + LF + GET_REQUEST + "--batch_8194-cf13-1f56-"/* no hash */;
     parseInvalidBatchBody(batch);
   }
 
   @Test
   public void testAcceptHeaders() throws BatchException, URISyntaxException {
-    String batch = "--batch_8194-cf13-1f56" + LF
-        + MIME_HEADERS
-        + LF
-        + "GET Employees('2')/EmployeeName HTTP/1.1" + LF
-        + "Content-Length: 100000" + LF
-        + "Content-Type: application/json;odata=verbose" + LF
-        + "Accept: application/xml;q=0.3, application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.001" + LF
-        + LF
-        + LF
-        + "--batch_8194-cf13-1f56--";
+    String batch =
+        "--batch_8194-cf13-1f56"
+            + LF
+            + MIME_HEADERS
+            + LF
+            + "GET Employees('2')/EmployeeName HTTP/1.1"
+            + LF
+            + "Content-Length: 100000"
+            + LF
+            + "Content-Type: application/json;odata=verbose"
+            + LF
+            + "Accept: application/xml;q=0.3, application/atomsvc+xml;q=0.8, " +
+            "application/json;odata=verbose;q=0.5, */*;q=0.001"
+            + LF
+            + LF
+            + LF
+            + "--batch_8194-cf13-1f56--";
     List<BatchRequestPart> batchRequestParts = parse(batch);
     for (BatchRequestPart multipart : batchRequestParts) {
       if (!multipart.isChangeSet()) {
@@ -585,10 +595,13 @@ public class BatchRequestParserTest {
       } else {
         for (ODataRequest request : multipart.getRequests()) {
           if (ODataHttpMethod.POST.equals(request.getMethod())) {
-            assertEquals(CONTENT_ID_REFERENCE, request.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID.toLowerCase()));
+            assertEquals(CONTENT_ID_REFERENCE, request.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID
+                .toLowerCase()));
           } else if (ODataHttpMethod.PUT.equals(request.getMethod())) {
-            assertEquals(PUT_MIME_HEADER_CONTENT_ID, request.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID.toLowerCase()));
-            assertEquals(PUT_REQUEST_HEADER_CONTENT_ID, request.getRequestHeaderValue(BatchHelper.REQUEST_HEADER_CONTENT_ID.toLowerCase()));
+            assertEquals(PUT_MIME_HEADER_CONTENT_ID, request.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID
+                .toLowerCase()));
+            assertEquals(PUT_REQUEST_HEADER_CONTENT_ID, request
+                .getRequestHeaderValue(BatchHelper.REQUEST_HEADER_CONTENT_ID.toLowerCase()));
             assertNull(request.getPathInfo().getRequestUri());
             assertEquals("$" + CONTENT_ID_REFERENCE, request.getPathInfo().getODataSegments().get(0).getPath());
           }

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -49,7 +49,7 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
   private static final String INVALID_ENTRY_TEAM_DOUBLE_NAME_PROPERTY = "JsonInvalidTeamDoubleNameProperty.json";
   private static final String SIMPLE_ENTRY_BUILDING_WITHOUT_D = "JsonBuildingWithoutD.json";
 
-  //Negative Test jsonStart
+  // Negative Test jsonStart
   private static final String negativeJsonStart_1 = "{ \"abc\": {";
   private static final String negativeJsonStart_2 = "{ \"d\": [a: 1, b: 2] }";
 
@@ -131,7 +131,7 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
   @Test
   public void readSimpleBuildingEntry() throws Exception {
     ODataEntry result = prepareAndExecuteEntry(SIMPLE_ENTRY_BUILDING, "Buildings", DEFAULT_PROPERTIES);
-    //verify
+    // verify
     Map<String, Object> properties = result.getProperties();
     assertNotNull(properties);
     assertEquals("1", properties.get("Id"));
@@ -149,7 +149,7 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
   @Test
   public void readSimpleBuildingEntryWithoutD() throws Exception {
     ODataEntry result = prepareAndExecuteEntry(SIMPLE_ENTRY_BUILDING_WITHOUT_D, "Buildings", DEFAULT_PROPERTIES);
-    //verify
+    // verify
     Map<String, Object> properties = result.getProperties();
     assertNotNull(properties);
     assertEquals("1", properties.get("Id"));
@@ -167,7 +167,8 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
   @Test
   public void readMinimalEntry() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
-    final ODataEntry result = new JsonEntityConsumer().readEntry(entitySet, createContentAsStream("{\"Id\":\"99\"}"), DEFAULT_PROPERTIES);
+    final ODataEntry result =
+        new JsonEntityConsumer().readEntry(entitySet, createContentAsStream("{\"Id\":\"99\"}"), DEFAULT_PROPERTIES);
 
     final Map<String, Object> properties = result.getProperties();
     assertNotNull(properties);
@@ -201,7 +202,7 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
 
   @Test
   public void readWithDoublePropertyOnTeam() throws Exception {
-    //The file contains the name property two times
+    // The file contains the name property two times
     try {
       prepareAndExecuteEntry(INVALID_ENTRY_TEAM_DOUBLE_NAME_PROPERTY, "Teams", DEFAULT_PROPERTIES);
       fail("Exception has to be thrown");

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
@@ -67,10 +67,13 @@ public class EdmFunctionImportImplProvTest extends BaseTest {
     EntitySet fooEntitySet = new EntitySet().setName("fooEntitySet");
     when(edmProvider.getEntitySet("Container", "fooEntitySet")).thenReturn(fooEntitySet);
 
-    ReturnType fooReturnType = new ReturnType().setTypeName(EdmSimpleTypeKind.String.getFullQualifiedName()).setMultiplicity(EdmMultiplicity.ONE);
+    ReturnType fooReturnType =
+        new ReturnType().setTypeName(EdmSimpleTypeKind.String.getFullQualifiedName()).setMultiplicity(
+            EdmMultiplicity.ONE);
 
     List<FunctionImportParameter> parameters = new ArrayList<FunctionImportParameter>();
-    FunctionImportParameter parameter = new FunctionImportParameter().setName("fooParameter1").setType(EdmSimpleTypeKind.String);
+    FunctionImportParameter parameter =
+        new FunctionImportParameter().setName("fooParameter1").setType(EdmSimpleTypeKind.String);
     parameters.add(parameter);
 
     parameter = new FunctionImportParameter().setName("fooParameter2").setType(EdmSimpleTypeKind.String);
@@ -79,13 +82,16 @@ public class EdmFunctionImportImplProvTest extends BaseTest {
     parameter = new FunctionImportParameter().setName("fooParameter3").setType(EdmSimpleTypeKind.String);
     parameters.add(parameter);
 
-    FunctionImport functionImportFoo = new FunctionImport().setName("foo").setHttpMethod(HttpMethods.GET).setReturnType(fooReturnType).setEntitySet("fooEntitySet").setParameters(parameters);
+    FunctionImport functionImportFoo =
+        new FunctionImport().setName("foo").setHttpMethod(HttpMethods.GET).setReturnType(fooReturnType).setEntitySet(
+            "fooEntitySet").setParameters(parameters);
     when(edmProvider.getFunctionImport("Container", "foo")).thenReturn(functionImportFoo);
     edmFunctionImport = new EdmFunctionImportImplProv(edmImplProv, functionImportFoo, edmEntityContainer);
 
     FunctionImport functionImportBar = new FunctionImport().setName("bar").setHttpMethod(HttpMethods.GET);
     when(edmProvider.getFunctionImport("Container", "bar")).thenReturn(functionImportBar);
-    edmFunctionImportWithoutParameters = new EdmFunctionImportImplProv(edmImplProv, functionImportBar, edmEntityContainer);
+    edmFunctionImportWithoutParameters =
+        new EdmFunctionImportImplProv(edmImplProv, functionImportBar, edmEntityContainer);
 
   }
 

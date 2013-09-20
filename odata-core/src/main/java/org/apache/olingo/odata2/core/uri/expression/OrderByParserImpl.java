@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
@@ -30,12 +30,13 @@ public class OrderByParserImpl extends FilterParserImpl implements OrderByParser
   }
 
   @Override
-  public OrderByExpression parseOrderByString(final String orderByExpression) throws ExpressionParserException, ExpressionParserInternalError {
+  public OrderByExpression parseOrderByString(final String orderByExpression) throws ExpressionParserException,
+      ExpressionParserInternalError {
     curExpression = orderByExpression;
     OrderByExpressionImpl orderCollection = new OrderByExpressionImpl(curExpression);
 
     try {
-      tokenList = new Tokenizer(orderByExpression).tokenize(); //throws TokenizerMessage
+      tokenList = new Tokenizer(orderByExpression).tokenize(); // throws TokenizerMessage
     } catch (TokenizerException tokenizerException) {
       throw FilterParserExceptionImpl.createERROR_IN_TOKENIZER(tokenizerException, curExpression);
     }
@@ -52,7 +53,7 @@ public class OrderByParserImpl extends FilterParserImpl implements OrderByParser
 
       OrderExpressionImpl orderNode = new OrderExpressionImpl(node);
 
-      //read the sort order
+      // read the sort order
       Token token = tokenList.lookToken();
       if (token == null) {
         orderNode.setSortOrder(SortOrder.asc);
@@ -73,7 +74,7 @@ public class OrderByParserImpl extends FilterParserImpl implements OrderByParser
 
       orderCollection.addOrder(orderNode);
 
-      //ls_token may be a ',' or  empty.
+      // ls_token may be a ',' or empty.
       if (token == null) {
         break;
       } else if (token.getKind() == TokenKind.COMMA) {
@@ -85,7 +86,7 @@ public class OrderByParserImpl extends FilterParserImpl implements OrderByParser
           // Tested with TestParserExceptions.TestOPMparseOrderByString CASE 2
           throw FilterParserExceptionImpl.createEXPRESSION_EXPECTED_AFTER_POS(oldToken, curExpression);
         }
-      } else { //e.g. in case $orderby=String asc a
+      } else { // e.g. in case $orderby=String asc a
 
         throw FilterParserExceptionImpl.createCOMMA_OR_END_EXPECTED_AT_POS(token, curExpression);
       }

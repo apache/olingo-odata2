@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core;
 
@@ -40,33 +40,36 @@ import org.mockito.Mockito;
  *  
  */
 public class ContentNegotiatorTest {
-  
-  private void negotiateContentType(final List<ContentType> contentTypes, final List<ContentType> supportedTypes, final String expected) throws ODataException {
+
+  private void negotiateContentType(final List<ContentType> contentTypes, final List<ContentType> supportedTypes,
+      final String expected) throws ODataException {
     final ContentType contentType = new ContentNegotiator().contentNegotiation(contentTypes, supportedTypes);
     assertEquals(expected, contentType.toContentTypeString());
   }
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void invalidContentNegotiatorCreation() throws ODataException {
     final ContentType contentType = new ContentNegotiator().doContentNegotiation(null, null, null);
     assertNull(contentType);
   }
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void invalidContentNegotiatorCreationNullRequest() throws ODataException {
     UriInfoImpl uriInfo = Mockito.mock(UriInfoImpl.class);
-    final ContentType contentType = new ContentNegotiator().doContentNegotiation(null, uriInfo, new ArrayList<String>());
+    final ContentType contentType =
+        new ContentNegotiator().doContentNegotiation(null, uriInfo, new ArrayList<String>());
     assertNull(contentType);
   }
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void invalidContentNegotiatorCreationNullUri() throws ODataException {
     ODataRequest request = Mockito.mock(ODataRequest.class);
-    final ContentType contentType = new ContentNegotiator().doContentNegotiation(request, null, new ArrayList<String>());
+    final ContentType contentType =
+        new ContentNegotiator().doContentNegotiation(request, null, new ArrayList<String>());
     assertNull(contentType);
   }
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void invalidContentNegotiatorCreationNullSupported() throws ODataException {
     ODataRequest request = Mockito.mock(ODataRequest.class);
     UriInfoImpl uriInfo = Mockito.mock(UriInfoImpl.class);
@@ -184,7 +187,9 @@ public class ContentNegotiatorTest {
     negotiateContentTypeCharset("application/xml; charset=utf-8", "application/xml;charset=utf-8", true);
   }
 
-  private void negotiateContentTypeCharset(final String requestType, final String supportedType, final boolean asFormat) throws ODataException {
+  private void
+      negotiateContentTypeCharset(final String requestType, final String supportedType, final boolean asFormat)
+          throws ODataException {
     UriInfoImpl uriInfo = Mockito.mock(UriInfoImpl.class);
     Mockito.when(uriInfo.getUriType()).thenReturn(UriType.URI1);
     if (asFormat) {
@@ -198,11 +203,11 @@ public class ContentNegotiatorTest {
     Mockito.when(request.getMethod()).thenReturn(ODataHttpMethod.GET);
     Mockito.when(request.getRequestHeaderValue(HttpHeaders.ACCEPT)).thenReturn(requestType);
     Mockito.when(request.getAcceptHeaders()).thenReturn(acceptedContentTypes);
-    
-    
+
     // perform
     ContentNegotiator negotiator = new ContentNegotiator();
-    String negotiatedContentType = negotiator.doContentNegotiation(request, uriInfo, supportedContentTypes).toContentTypeString();
+    String negotiatedContentType =
+        negotiator.doContentNegotiation(request, uriInfo, supportedContentTypes).toContentTypeString();
 
     // verify
     assertEquals(supportedType, negotiatedContentType);

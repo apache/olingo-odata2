@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -44,9 +44,11 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
 
   @Test
   public void singleSimpleType() throws Exception {
-    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("MaximalAge");
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("MaximalAge");
 
-    final ODataResponse response = createAtomEntityProvider().writeFunctionImport(functionImport, employeeData.get("Age"), DEFAULT_PROPERTIES);
+    final ODataResponse response =
+        createAtomEntityProvider().writeFunctionImport(functionImport, employeeData.get("Age"), DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
@@ -60,9 +62,12 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
 
   @Test
   public void singleComplexType() throws Exception {
-    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("MostCommonLocation");
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("MostCommonLocation");
 
-    final ODataResponse response = createAtomEntityProvider().writeFunctionImport(functionImport, employeeData.get("Location"), DEFAULT_PROPERTIES);
+    final ODataResponse response =
+        createAtomEntityProvider()
+            .writeFunctionImport(functionImport, employeeData.get("Location"), DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
@@ -77,9 +82,12 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
 
   @Test
   public void collectionOfSimpleTypes() throws Exception {
-    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds");
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds");
 
-    final ODataResponse response = createAtomEntityProvider().writeFunctionImport(functionImport, Arrays.asList("1", "2", "3"), DEFAULT_PROPERTIES);
+    final ODataResponse response =
+        createAtomEntityProvider()
+            .writeFunctionImport(functionImport, Arrays.asList("1", "2", "3"), DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
@@ -95,9 +103,12 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
 
   @Test
   public void collectionOfComplexTypes() throws Exception {
-    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllLocations");
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllLocations");
 
-    final ODataResponse response = createAtomEntityProvider().writeFunctionImport(functionImport, Arrays.asList(employeeData.get("Location")), DEFAULT_PROPERTIES);
+    final ODataResponse response =
+        createAtomEntityProvider().writeFunctionImport(functionImport, Arrays.asList(employeeData.get("Location")),
+            DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
@@ -113,9 +124,11 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
 
   @Test
   public void singleEntityType() throws Exception {
-    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("OldestEmployee");
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("OldestEmployee");
 
-    final ODataResponse response = createAtomEntityProvider().writeFunctionImport(functionImport, employeeData, DEFAULT_PROPERTIES);
+    final ODataResponse response =
+        createAtomEntityProvider().writeFunctionImport(functionImport, employeeData, DEFAULT_PROPERTIES);
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntityProvider should not set content header", response.getContentHeader());

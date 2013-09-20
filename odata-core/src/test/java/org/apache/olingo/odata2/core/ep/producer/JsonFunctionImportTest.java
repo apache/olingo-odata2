@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -46,7 +46,8 @@ public class JsonFunctionImportTest extends BaseTest {
 
   @Test
   public void singleSimpleType() throws Exception {
-    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("MaximalAge");
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("MaximalAge");
 
     final ODataResponse response = new JsonEntityProvider().writeFunctionImport(functionImport, 42, null);
     assertNotNull(response);
@@ -60,7 +61,8 @@ public class JsonFunctionImportTest extends BaseTest {
 
   @Test
   public void singleComplexType() throws Exception {
-    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("MostCommonLocation");
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("MostCommonLocation");
     Map<String, Object> cityData = new HashMap<String, Object>();
     cityData.put("PostalCode", "8392");
     cityData.put("CityName", "Å");
@@ -84,9 +86,11 @@ public class JsonFunctionImportTest extends BaseTest {
 
   @Test
   public void collectionOfSimpleTypes() throws Exception {
-    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds");
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds");
 
-    final ODataResponse response = new JsonEntityProvider().writeFunctionImport(functionImport, Arrays.asList("1", "2", "3"), null);
+    final ODataResponse response =
+        new JsonEntityProvider().writeFunctionImport(functionImport, Arrays.asList("1", "2", "3"), null);
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
@@ -100,7 +104,8 @@ public class JsonFunctionImportTest extends BaseTest {
 
   @Test
   public void collectionOfComplexTypes() throws Exception {
-    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllLocations");
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllLocations");
     Map<String, Object> locationData = new HashMap<String, Object>();
     locationData.put("Country", "NO");
     List<Map<String, Object>> locations = new ArrayList<Map<String, Object>>();
@@ -122,7 +127,8 @@ public class JsonFunctionImportTest extends BaseTest {
 
   @Test
   public void singleEntityType() throws Exception {
-    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("OldestEmployee");
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("OldestEmployee");
     final String uri = "http://host:80/service/";
     final EntityProviderWriteProperties properties =
         EntityProviderWriteProperties.serviceRoot(URI.create(uri)).build();
@@ -130,7 +136,8 @@ public class JsonFunctionImportTest extends BaseTest {
     employeeData.put("EmployeeId", "1");
     employeeData.put("getImageType", "image/jpeg");
 
-    final ODataResponse response = new JsonEntityProvider().writeFunctionImport(functionImport, employeeData, properties);
+    final ODataResponse response =
+        new JsonEntityProvider().writeFunctionImport(functionImport, employeeData, properties);
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());

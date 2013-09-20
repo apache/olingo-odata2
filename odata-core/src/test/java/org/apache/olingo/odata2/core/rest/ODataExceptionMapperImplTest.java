@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.rest;
 
@@ -101,7 +101,8 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     value.putSingle("Accept", "AcceptValue");
     value.put("AcceptMulti", Arrays.asList("AcceptValue_1", "AcceptValue_2"));
     when(exceptionMapper.httpHeaders.getRequestHeaders()).thenReturn(value);
-    when(exceptionMapper.servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(ODataServiceFactoryImpl.class.getName());
+    when(exceptionMapper.servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(
+        ODataServiceFactoryImpl.class.getName());
     when(exceptionMapper.servletRequest.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL)).thenReturn(null);
     Response response = exceptionMapper.toResponse(new Exception());
 
@@ -124,8 +125,10 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     value.putSingle("Accept", "AcceptValue");
     value.put("AcceptMulti", Arrays.asList("AcceptValue_1", "AcceptValue_2"));
     when(exceptionMapper.httpHeaders.getRequestHeaders()).thenReturn(value);
-    when(exceptionMapper.servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(ODataServiceFactoryImpl.class.getName());
-    when(exceptionMapper.servletRequest.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL)).thenReturn(ODataServiceFactoryImpl.class.getClassLoader());
+    when(exceptionMapper.servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(
+        ODataServiceFactoryImpl.class.getName());
+    when(exceptionMapper.servletRequest.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL)).thenReturn(
+        ODataServiceFactoryImpl.class.getClassLoader());
     Response response = exceptionMapper.toResponse(new Exception());
 
     // verify
@@ -203,7 +206,8 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     Response response = exceptionMapper.toResponse(exception);
 
     // verify
-    verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, ODataNotFoundException.ENTITY).getText(), HttpStatusCodes.NOT_FOUND);
+    verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, ODataNotFoundException.ENTITY).getText(),
+        HttpStatusCodes.NOT_FOUND);
   }
 
   @Test
@@ -215,7 +219,8 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     Response response = exceptionMapper.toResponse(exception);
 
     // verify
-    verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, EntityProviderException.INVALID_PROPERTY.addContent("unknown")).getText(), HttpStatusCodes.BAD_REQUEST);
+    verifyResponse(response, MessageService.getMessage(Locale.ENGLISH,
+        EntityProviderException.INVALID_PROPERTY.addContent("unknown")).getText(), HttpStatusCodes.BAD_REQUEST);
   }
 
   @Test
@@ -229,7 +234,8 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     Response response = exceptionMapper.toResponse(exception);
 
     // verify
-    verifyResponse(response, MessageService.getMessage(Locale.GERMAN, ODataNotFoundException.ENTITY).getText(), HttpStatusCodes.NOT_FOUND);
+    verifyResponse(response, MessageService.getMessage(Locale.GERMAN, ODataNotFoundException.ENTITY).getText(),
+        HttpStatusCodes.NOT_FOUND);
   }
 
   @Test
@@ -243,7 +249,8 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     Response response = exceptionMapper.toResponse(exception);
 
     // verify
-    verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, ODataNotFoundException.ENTITY).getText(), HttpStatusCodes.NOT_FOUND);
+    verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, ODataNotFoundException.ENTITY).getText(),
+        HttpStatusCodes.NOT_FOUND);
   }
 
   @Test
@@ -309,19 +316,22 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     Response response = exceptionMapper.toResponse(exception);
 
     // verify
-    verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, UriSyntaxException.EMPTYSEGMENT).getText(), HttpStatusCodes.BAD_REQUEST);
+    verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, UriSyntaxException.EMPTYSEGMENT).getText(),
+        HttpStatusCodes.BAD_REQUEST);
   }
 
   @Test
   public void testUriParserExceptionWrapped() throws Exception {
     // prepare
-    Exception exception = new ODataException("outer exception", new UriSyntaxException(UriSyntaxException.EMPTYSEGMENT));
+    Exception exception =
+        new ODataException("outer exception", new UriSyntaxException(UriSyntaxException.EMPTYSEGMENT));
 
     // execute
     Response response = exceptionMapper.toResponse(exception);
 
     // verify
-    verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, UriSyntaxException.EMPTYSEGMENT).getText(), HttpStatusCodes.BAD_REQUEST);
+    verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, UriSyntaxException.EMPTYSEGMENT).getText(),
+        HttpStatusCodes.BAD_REQUEST);
   }
 
   @Test
@@ -354,7 +364,9 @@ public class ODataExceptionMapperImplTest extends BaseTest {
   public void testNotAllowedJaxRsException() throws Exception {
     // prepare
     String message = "The request dispatcher does not allow the HTTP method used for the request.";
-    Exception exception = new NotAllowedException(Response.status(Response.Status.METHOD_NOT_ALLOWED).header(HttpHeaders.ALLOW, "GET").build());
+    Exception exception =
+        new NotAllowedException(Response.status(Response.Status.METHOD_NOT_ALLOWED).header(HttpHeaders.ALLOW, "GET")
+            .build());
 
     // execute
     Response response = exceptionMapper.toResponse(exception);
@@ -393,7 +405,8 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     // prepare
     String errorCode = "ErrorCode";
     String message = "expected exception message";
-    Exception exception = new ODataApplicationException(message, Locale.ENGLISH, HttpStatusCodes.INTERNAL_SERVER_ERROR, errorCode);
+    Exception exception =
+        new ODataApplicationException(message, Locale.ENGLISH, HttpStatusCodes.INTERNAL_SERVER_ERROR, errorCode);
 
     // execute
     Response response = exceptionMapper.toResponse(exception);
@@ -413,13 +426,16 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     Response response = exceptionMapper.toResponse(exception);
 
     // verify
-    String errorMessage = verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, ODataNotFoundException.ENTITY).getText(), HttpStatusCodes.NOT_FOUND);
+    String errorMessage =
+        verifyResponse(response, MessageService.getMessage(Locale.ENGLISH, ODataNotFoundException.ENTITY).getText(),
+            HttpStatusCodes.NOT_FOUND);
     assertXpathEvaluatesTo(errorCode, "/a:error/a:code", errorMessage);
   }
 
   @Test
   public void testCallback() throws Exception {
-    when(exceptionMapper.servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(ODataServiceFactoryImpl.class.getName());
+    when(exceptionMapper.servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(
+        ODataServiceFactoryImpl.class.getName());
     Response response = exceptionMapper.toResponse(new Exception());
 
     // verify
@@ -431,7 +447,8 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     assertEquals("text/html", contentTypeHeader);
   }
 
-  private String verifyResponse(final Response response, final String message, final HttpStatusCodes statusCode) throws Exception {
+  private String verifyResponse(final Response response, final String message, final HttpStatusCodes statusCode)
+      throws Exception {
     assertNotNull(response);
     assertEquals(statusCode.getStatusCode(), response.getStatus());
     String errorXml = StringHelper.inputStreamToString((InputStream) response.getEntity());

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -40,10 +40,11 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
 /**
  * Atom/XML format reader/consumer for feeds.
  * 
- * {@link XmlFeedConsumer} instance use {@link XmlEntryConsumer#readEntry(XMLStreamReader, EntityInfoAggregator, EntityProviderReadProperties)} 
- * for read/consume of several entries.
+ * {@link XmlFeedConsumer} instance use
+ * {@link XmlEntryConsumer#readEntry(XMLStreamReader, EntityInfoAggregator, EntityProviderReadProperties)} for
+ * read/consume of several entries.
  * 
- *  
+ * 
  */
 public class XmlFeedConsumer {
 
@@ -55,7 +56,8 @@ public class XmlFeedConsumer {
    * @return {@link ODataFeed} object
    * @throws EntityProviderException
    */
-  public ODataFeed readFeed(final XMLStreamReader reader, final EntityInfoAggregator eia, final EntityProviderReadProperties readProperties) throws EntityProviderException {
+  public ODataFeed readFeed(final XMLStreamReader reader, final EntityInfoAggregator eia,
+      final EntityProviderReadProperties readProperties) throws EntityProviderException {
     try {
       // read xml tag
       reader.require(XMLStreamConstants.START_DOCUMENT, null, null);
@@ -72,21 +74,25 @@ public class XmlFeedConsumer {
       // read feed data (metadata and entries)
       return readFeedData(reader, eia, entryReadProperties);
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
   /**
-   * Read all feed specific data (like <code>inline count</code> and <code>next link</code>) as well as all feed entries (<code>entry</code>).
+   * Read all feed specific data (like <code>inline count</code> and <code>next link</code>) as well as all feed entries
+   * (<code>entry</code>).
    * 
    * @param reader xml stream reader with xml content to be read
    * @param eia entity infos for validation and mapping
    * @param entryReadProperties properties which are used for read of feed.
-   * @return all feed specific data (like <code>inline count</code> and <code>next link</code>) as well as all feed entries (<code>entry</code>).
+   * @return all feed specific data (like <code>inline count</code> and <code>next link</code>) as well as all feed
+   * entries (<code>entry</code>).
    * @throws XMLStreamException if malformed xml is read in stream
    * @throws EntityProviderException if xml contains invalid data (based on odata specification and edm definition)
    */
-  private ODataFeed readFeedData(final XMLStreamReader reader, final EntityInfoAggregator eia, final EntityProviderReadProperties entryReadProperties) throws XMLStreamException, EntityProviderException {
+  private ODataFeed readFeedData(final XMLStreamReader reader, final EntityInfoAggregator eia,
+      final EntityProviderReadProperties entryReadProperties) throws XMLStreamException, EntityProviderException {
     FeedMetadataImpl metadata = new FeedMetadataImpl();
     XmlEntryConsumer xec = new XmlEntryConsumer();
     List<ODataEntry> results = new ArrayList<ODataEntry>();
@@ -106,7 +112,8 @@ public class XmlFeedConsumer {
             if (inlineCountNumber >= 0) {
               metadata.setInlineCount(inlineCountNumber);
             } else {
-              throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID.addContent(inlineCountNumber));
+              throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID
+                  .addContent(inlineCountNumber));
             }
           } catch (NumberFormatException e) {
             throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID.addContent(""), e);
@@ -166,10 +173,11 @@ public class XmlFeedConsumer {
 
   /**
    * 
-   * @param foundPrefix2NamespaceUri 
+   * @param foundPrefix2NamespaceUri
    * @throws EntityProviderException
    */
-  private void checkAllMandatoryNamespacesAvailable(final Map<String, String> foundPrefix2NamespaceUri) throws EntityProviderException {
+  private void checkAllMandatoryNamespacesAvailable(final Map<String, String> foundPrefix2NamespaceUri)
+      throws EntityProviderException {
     if (!foundPrefix2NamespaceUri.containsValue(Edm.NAMESPACE_D_2007_08)) {
       throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(Edm.NAMESPACE_D_2007_08));
     } else if (!foundPrefix2NamespaceUri.containsValue(Edm.NAMESPACE_M_2007_08)) {

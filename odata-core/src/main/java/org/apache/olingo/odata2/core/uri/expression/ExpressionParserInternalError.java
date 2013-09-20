@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
@@ -25,17 +25,23 @@ import org.apache.olingo.odata2.api.uri.expression.CommonExpression;
 
 /**
  * Internal error in the expression parser.
- *  
+ * 
  */
 public class ExpressionParserInternalError extends ODataMessageException {
 
   static final long serialVersionUID = 77L;
-  public static final MessageReference ERROR_PARSING_METHOD = createMessageReference(ExpressionParserInternalError.class, "ERROR_PARSING_METHOD");
-  public static final MessageReference ERROR_PARSING_PARENTHESIS = createMessageReference(ExpressionParserInternalError.class, "ERROR_PARSING_PARENTHESIS");
-  public static final MessageReference ERROR_ACCESSING_EDM = createMessageReference(ExpressionParserInternalError.class, "ERROR_ACCESSING_EDM");
-  public static final MessageReference INVALID_TYPE_COUNT = createMessageReference(ExpressionParserInternalError.class, "INVALID_TYPE_COUNT");;
-  public static final MessageReference INVALID_TOKEN_AT = createMessageReference(ExpressionParserInternalError.class, "INVALID_TOKEN_AT");
-  public static final MessageReference INVALID_TOKENKIND_AT = createMessageReference(ExpressionParserInternalError.class, "INVALID_TOKENKIND_AT");
+  public static final MessageReference ERROR_PARSING_METHOD = createMessageReference(
+      ExpressionParserInternalError.class, "ERROR_PARSING_METHOD");
+  public static final MessageReference ERROR_PARSING_PARENTHESIS = createMessageReference(
+      ExpressionParserInternalError.class, "ERROR_PARSING_PARENTHESIS");
+  public static final MessageReference ERROR_ACCESSING_EDM = createMessageReference(
+      ExpressionParserInternalError.class, "ERROR_ACCESSING_EDM");
+  public static final MessageReference INVALID_TYPE_COUNT = createMessageReference(ExpressionParserInternalError.class,
+      "INVALID_TYPE_COUNT");;
+  public static final MessageReference INVALID_TOKEN_AT = createMessageReference(ExpressionParserInternalError.class,
+      "INVALID_TOKEN_AT");
+  public static final MessageReference INVALID_TOKENKIND_AT = createMessageReference(
+      ExpressionParserInternalError.class, "INVALID_TOKENKIND_AT");
 
   CommonExpression parenthesisExpression = null;
 
@@ -68,7 +74,8 @@ public class ExpressionParserInternalError extends ODataMessageException {
     return new ExpressionParserInternalError(ERROR_PARSING_PARENTHESIS, cause);
   }
 
-  public static ExpressionParserInternalError createERROR_PARSING_PARENTHESIS(final CommonExpression parenthesisExpression, final TokenizerExpectError cause) {
+  public static ExpressionParserInternalError createERROR_PARSING_PARENTHESIS(
+      final CommonExpression parenthesisExpression, final TokenizerExpectError cause) {
     return new ExpressionParserInternalError(ERROR_PARSING_PARENTHESIS, cause).setExpression(parenthesisExpression);
   }
 
@@ -92,7 +99,8 @@ public class ExpressionParserInternalError extends ODataMessageException {
     return new ExpressionParserInternalError(ERROR_ACCESSING_EDM);
   }
 
-  public static ExpressionParserInternalError createINVALID_TOKEN_AT(final String expectedToken, final Token actualToken) {
+  public static ExpressionParserInternalError
+      createINVALID_TOKEN_AT(final String expectedToken, final Token actualToken) {
     MessageReference msgRef = ExpressionParserInternalError.INVALID_TOKEN_AT.create();
 
     msgRef.addContent(expectedToken);
@@ -102,7 +110,8 @@ public class ExpressionParserInternalError extends ODataMessageException {
     return new ExpressionParserInternalError(msgRef);
   }
 
-  public static ExpressionParserInternalError createINVALID_TOKENKIND_AT(final TokenKind expectedTokenKind, final Token actualToken) {
+  public static ExpressionParserInternalError createINVALID_TOKENKIND_AT(final TokenKind expectedTokenKind,
+      final Token actualToken) {
     MessageReference msgRef = ExpressionParserInternalError.INVALID_TOKEN_AT.create();
 
     msgRef.addContent(expectedTokenKind.toString());

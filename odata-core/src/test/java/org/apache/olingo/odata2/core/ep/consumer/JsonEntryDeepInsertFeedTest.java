@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -46,7 +46,8 @@ public class JsonEntryDeepInsertFeedTest extends AbstractConsumerTest {
 
   private static final String BUILDING_WITH_INLINE_ROOMS = "JsonBuildingWithInlineRooms.json";
   private static final String TEAM_WITH_INLINE_EMPLOYEES = "JsonTeamsWithInlineEmployees.json";
-  private static final String BUILDING_WITH_INLINE_ROOMS_NEXTLINK_AND_COUNT = "JsonBuildingWithInlineRoomsAndNextLinkAndCount.json";
+  private static final String BUILDING_WITH_INLINE_ROOMS_NEXTLINK_AND_COUNT =
+      "JsonBuildingWithInlineRoomsAndNextLinkAndCount.json";
 
   @Test
   public void innerFeedNoMediaResourceWithoutCallback() throws Exception {
@@ -79,7 +80,8 @@ public class JsonEntryDeepInsertFeedTest extends AbstractConsumerTest {
 
   @Test
   public void innerFeedNoMediaResourceWithoutCallbackContainsNextLinkAndCount() throws Exception {
-    ODataEntry outerEntry = prepareAndExecuteEntry(BUILDING_WITH_INLINE_ROOMS_NEXTLINK_AND_COUNT, "Buildings", DEFAULT_PROPERTIES);
+    ODataEntry outerEntry =
+        prepareAndExecuteEntry(BUILDING_WITH_INLINE_ROOMS_NEXTLINK_AND_COUNT, "Buildings", DEFAULT_PROPERTIES);
 
     ODataFeed innerRoomFeed = (ODataFeed) outerEntry.getProperties().get("nb_Rooms");
     assertNotNull(innerRoomFeed);
@@ -124,7 +126,8 @@ public class JsonEntryDeepInsertFeedTest extends AbstractConsumerTest {
   @Test
   public void innerFeedNoMediaResourceWithCallback() throws Exception {
     FeedCallback callback = new FeedCallback();
-    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init().mergeSemantic(false).callback(callback).build();
+    EntityProviderReadProperties readProperties =
+        EntityProviderReadProperties.init().mergeSemantic(false).callback(callback).build();
     ODataEntry outerEntry = prepareAndExecuteEntry(BUILDING_WITH_INLINE_ROOMS, "Buildings", readProperties);
 
     ODataFeed innerRoomFeed = (ODataFeed) outerEntry.getProperties().get("nb_Rooms");
@@ -156,7 +159,8 @@ public class JsonEntryDeepInsertFeedTest extends AbstractConsumerTest {
 
   @Test
   public void innerFeedNoMediaResourceWithCallbackContainsNextLinkAndCount() throws Exception {
-    ODataEntry outerEntry = prepareAndExecuteEntry(BUILDING_WITH_INLINE_ROOMS_NEXTLINK_AND_COUNT, "Buildings", DEFAULT_PROPERTIES);
+    ODataEntry outerEntry =
+        prepareAndExecuteEntry(BUILDING_WITH_INLINE_ROOMS_NEXTLINK_AND_COUNT, "Buildings", DEFAULT_PROPERTIES);
 
     ODataFeed innerRoomFeed = (ODataFeed) outerEntry.getProperties().get("nb_Rooms");
     assertNotNull(innerRoomFeed);
@@ -206,7 +210,8 @@ public class JsonEntryDeepInsertFeedTest extends AbstractConsumerTest {
     }
 
     @Override
-    public EntityProviderReadProperties receiveReadProperties(final EntityProviderReadProperties readProperties, final EdmNavigationProperty navString) {
+    public EntityProviderReadProperties receiveReadProperties(final EntityProviderReadProperties readProperties,
+        final EdmNavigationProperty navString) {
       return EntityProviderReadProperties.init().mergeSemantic(false).callback(innerCallback).build();
     }
   }

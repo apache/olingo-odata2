@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -42,7 +42,7 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
  * Serializes an ATOM feed.
- *  
+ * 
  */
 public class AtomFeedProducer {
 
@@ -52,7 +52,8 @@ public class AtomFeedProducer {
     this.properties = properties == null ? EntityProviderWriteProperties.serviceRoot(null).build() : properties;
   }
 
-  public void append(final XMLStreamWriter writer, final EntityInfoAggregator eia, final List<Map<String, Object>> data, final boolean isInline) throws EntityProviderException {
+  public void append(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final List<Map<String, Object>> data, final boolean isInline) throws EntityProviderException {
     try {
       writer.writeStartElement(FormatXml.ATOM_FEED);
       TombstoneCallback callback = null;
@@ -65,7 +66,8 @@ public class AtomFeedProducer {
           writer.writeNamespace(TombstoneCallback.PREFIX_TOMBSTONE, TombstoneCallback.NAMESPACE_TOMBSTONE);
         }
       }
-      writer.writeAttribute(Edm.PREFIX_XML, Edm.NAMESPACE_XML_1998, FormatXml.XML_BASE, properties.getServiceRoot().toASCIIString());
+      writer.writeAttribute(Edm.PREFIX_XML, Edm.NAMESPACE_XML_1998, FormatXml.XML_BASE, properties.getServiceRoot()
+          .toASCIIString());
 
       // write all atom infos (mandatory and optional)
       appendAtomMandatoryParts(writer, eia);
@@ -91,15 +93,18 @@ public class AtomFeedProducer {
   }
 
   private TombstoneCallback getTombstoneCallback() {
-    if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(TombstoneCallback.CALLBACK_KEY_TOMBSTONE)) {
-      TombstoneCallback callback = (TombstoneCallback) properties.getCallbacks().get(TombstoneCallback.CALLBACK_KEY_TOMBSTONE);
+    if (properties.getCallbacks() != null
+        && properties.getCallbacks().containsKey(TombstoneCallback.CALLBACK_KEY_TOMBSTONE)) {
+      TombstoneCallback callback =
+          (TombstoneCallback) properties.getCallbacks().get(TombstoneCallback.CALLBACK_KEY_TOMBSTONE);
       return callback;
     } else {
       return null;
     }
   }
 
-  private void appendDeletedEntries(final XMLStreamWriter writer, final EntityInfoAggregator eia, final TombstoneCallback callback) throws EntityProviderException {
+  private void appendDeletedEntries(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final TombstoneCallback callback) throws EntityProviderException {
     TombstoneCallbackResult callbackResult = callback.getTombstoneCallbackResult();
     List<Map<String, Object>> tombstoneData = callbackResult.getDeletedEntriesData();
     if (tombstoneData != null) {
@@ -131,14 +136,16 @@ public class AtomFeedProducer {
     }
   }
 
-  private void appendEntries(final XMLStreamWriter writer, final EntityInfoAggregator eia, final List<Map<String, Object>> data) throws EntityProviderException {
+  private void appendEntries(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final List<Map<String, Object>> data) throws EntityProviderException {
     AtomEntryEntityProducer entryProvider = new AtomEntryEntityProducer(properties);
     for (Map<String, Object> singleEntryData : data) {
       entryProvider.append(writer, eia, singleEntryData, false, true);
     }
   }
 
-  private void appendInlineCount(final XMLStreamWriter writer, final Integer inlineCount) throws EntityProviderException {
+  private void appendInlineCount(final XMLStreamWriter writer, final Integer inlineCount)
+      throws EntityProviderException {
     if (inlineCount == null || inlineCount < 0) {
       throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID);
     }
@@ -151,7 +158,8 @@ public class AtomFeedProducer {
     }
   }
 
-  private void appendAtomSelfLink(final XMLStreamWriter writer, final EntityInfoAggregator eia) throws EntityProviderException {
+  private void appendAtomSelfLink(final XMLStreamWriter writer, final EntityInfoAggregator eia)
+      throws EntityProviderException {
 
     URI self = properties.getSelfLink();
     String selfLink = "";
@@ -182,7 +190,8 @@ public class AtomFeedProducer {
     return sb.toString();
   }
 
-  private void appendAtomMandatoryParts(final XMLStreamWriter writer, final EntityInfoAggregator eia) throws EntityProviderException {
+  private void appendAtomMandatoryParts(final XMLStreamWriter writer, final EntityInfoAggregator eia)
+      throws EntityProviderException {
     try {
       writer.writeStartElement(FormatXml.ATOM_ID);
       writer.writeCharacters(createAtomId(eia));
@@ -198,7 +207,8 @@ public class AtomFeedProducer {
       Object updateDate = null;
       EdmFacets updateFacets = null;
       updateDate = new Date();
-      writer.writeCharacters(EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets));
+      writer.writeCharacters(EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT,
+          updateFacets));
       writer.writeEndElement();
 
       writer.writeStartElement(FormatXml.ATOM_AUTHOR);

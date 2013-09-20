@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
@@ -84,7 +84,8 @@ public class TestParser extends TestBase {
     GetPTO("sven desc, test desc").aSerialized("{oc({o(sven, desc)},{o(test, desc)})}");
 
     GetPTO("'sven', 77").order(1).aSortOrder(SortOrder.asc);
-    GetPTO("'sven', 77 desc").root().order(0).aSortOrder(SortOrder.asc).aExpr().aEdmType(EdmString.getInstance()).root().order(1).aSortOrder(SortOrder.desc).aExpr().aEdmType(Uint7.getInstance());
+    GetPTO("'sven', 77 desc").root().order(0).aSortOrder(SortOrder.asc).aExpr().aEdmType(EdmString.getInstance())
+        .root().order(1).aSortOrder(SortOrder.desc).aExpr().aEdmType(Uint7.getInstance());
 
   }
 
@@ -129,13 +130,18 @@ public class TestParser extends TestBase {
   @Test
   public void testProperties() {
     // GetPTF("sven").aSerialized("sven").aKind(ExpressionKind.PROPERTY);
-    GetPTF("sven1 add sven2").aSerialized("{sven1 add sven2}").aKind(ExpressionKind.BINARY).root().left().aKind(ExpressionKind.PROPERTY).aUriLiteral("sven1").root().right().aKind(ExpressionKind.PROPERTY).aUriLiteral("sven2");
+    GetPTF("sven1 add sven2").aSerialized("{sven1 add sven2}").aKind(ExpressionKind.BINARY).root().left().aKind(
+        ExpressionKind.PROPERTY).aUriLiteral("sven1").root().right().aKind(ExpressionKind.PROPERTY)
+        .aUriLiteral("sven2");
   }
 
   @Test
   public void testDeepProperties() {
     GetPTF("a/b").aSerialized("{a/b}").aKind(ExpressionKind.MEMBER);
-    GetPTF("a/b/c").aSerialized("{{a/b}/c}").root().aKind(ExpressionKind.MEMBER).root().left().aKind(ExpressionKind.MEMBER).root().left().left().aKind(ExpressionKind.PROPERTY).aUriLiteral("a").root().left().right().aKind(ExpressionKind.PROPERTY).aUriLiteral("b").root().right().aKind(ExpressionKind.PROPERTY).aUriLiteral("c");
+    GetPTF("a/b/c").aSerialized("{{a/b}/c}").root().aKind(ExpressionKind.MEMBER).root().left().aKind(
+        ExpressionKind.MEMBER).root().left().left().aKind(ExpressionKind.PROPERTY).aUriLiteral("a").root().left()
+        .right().aKind(ExpressionKind.PROPERTY).aUriLiteral("b").root().right().aKind(ExpressionKind.PROPERTY)
+        .aUriLiteral("c");
   }
 
   @Test
@@ -157,14 +163,21 @@ public class TestParser extends TestBase {
 
       GetPTF(edmEtAllTypes, "'text' eq String").root().aKind(ExpressionKind.BINARY);
 
-      GetPTF(edmEtAllTypes, "Complex/String").root().left().aEdmProperty(complex).aEdmType(complexType).root().right().aEdmProperty(complexString).aEdmType(complexStringType).root().aKind(ExpressionKind.MEMBER).aEdmType(complexStringType);
+      GetPTF(edmEtAllTypes, "Complex/String").root().left().aEdmProperty(complex).aEdmType(complexType).root().right()
+          .aEdmProperty(complexString).aEdmType(complexStringType).root().aKind(ExpressionKind.MEMBER).aEdmType(
+              complexStringType);
 
-      GetPTF(edmEtAllTypes, "Complex/Address/City").root().aKind(ExpressionKind.MEMBER).root().left().aKind(ExpressionKind.MEMBER).root().left().left().aKind(ExpressionKind.PROPERTY).aEdmProperty(complex).aEdmType(complexType).root().left().right().aKind(ExpressionKind.PROPERTY).aEdmProperty(complexAddress).aEdmType(complexAddressType).root().left().aEdmType(complexAddressType).root().right().aKind(ExpressionKind.PROPERTY).aEdmProperty(complexAddressCity).aEdmType(complexAddressCityType).root().aEdmType(complexAddressCityType);
+      GetPTF(edmEtAllTypes, "Complex/Address/City").root().aKind(ExpressionKind.MEMBER).root().left().aKind(
+          ExpressionKind.MEMBER).root().left().left().aKind(ExpressionKind.PROPERTY).aEdmProperty(complex).aEdmType(
+          complexType).root().left().right().aKind(ExpressionKind.PROPERTY).aEdmProperty(complexAddress).aEdmType(
+          complexAddressType).root().left().aEdmType(complexAddressType).root().right().aKind(ExpressionKind.PROPERTY)
+          .aEdmProperty(complexAddressCity).aEdmType(complexAddressCityType).root().aEdmType(complexAddressCityType);
 
       EdmProperty boolean_ = (EdmProperty) edmEtAllTypes.getProperty("Boolean");
       EdmSimpleType boolean_Type = (EdmSimpleType) boolean_.getType();
 
-      GetPTF(edmEtAllTypes, "not Boolean").aKind(ExpressionKind.UNARY).aEdmType(boolean_Type).right().aEdmProperty(boolean_).aEdmType(boolean_Type);
+      GetPTF(edmEtAllTypes, "not Boolean").aKind(ExpressionKind.UNARY).aEdmType(boolean_Type).right().aEdmProperty(
+          boolean_).aEdmType(boolean_Type);
 
     } catch (EdmException e) {
       fail("Error in testPropertiesWithEdm:" + e.getLocalizedMessage());
@@ -195,7 +208,8 @@ public class TestParser extends TestBase {
     GetPTF("1d add 2d").aSerialized("{1d add 2d}");
     GetPTF("1d div 2d").aSerialized("{1d div 2d}");
 
-    GetPTF("1d add 2d").aSerialized("{1d add 2d}").aKind(ExpressionKind.BINARY).root().left().aKind(ExpressionKind.LITERAL).root().right().aKind(ExpressionKind.LITERAL);
+    GetPTF("1d add 2d").aSerialized("{1d add 2d}").aKind(ExpressionKind.BINARY).root().left().aKind(
+        ExpressionKind.LITERAL).root().right().aKind(ExpressionKind.LITERAL);
 
   }
 
@@ -344,11 +358,15 @@ public class TestParser extends TestBase {
 
     GetPTF("123").aUriLiteral("123").aKind(ExpressionKind.LITERAL).aEdmType(Uint7Inst);
 
-    GetPTF("datetime'2009-12-26T21:23:38'").aUriLiteral("datetime'2009-12-26T21:23:38'").aKind(ExpressionKind.LITERAL).aEdmType(datetimeInst);
-    GetPTF("datetime'2009-12-26T21:23:38'").aUriLiteral("datetime'2009-12-26T21:23:38'").aKind(ExpressionKind.LITERAL).aEdmType(datetimeInst);
+    GetPTF("datetime'2009-12-26T21:23:38'").aUriLiteral("datetime'2009-12-26T21:23:38'").aKind(ExpressionKind.LITERAL)
+        .aEdmType(datetimeInst);
+    GetPTF("datetime'2009-12-26T21:23:38'").aUriLiteral("datetime'2009-12-26T21:23:38'").aKind(ExpressionKind.LITERAL)
+        .aEdmType(datetimeInst);
 
-    GetPTF("datetimeoffset'2009-12-26T21:23:38Z'").aUriLiteral("datetimeoffset'2009-12-26T21:23:38Z'").aKind(ExpressionKind.LITERAL).aEdmType(datetimeOffsetInst);
-    GetPTF("datetimeoffset'2002-10-10T12:00:00-05:00'").aUriLiteral("datetimeoffset'2002-10-10T12:00:00-05:00'").aKind(ExpressionKind.LITERAL).aEdmType(datetimeOffsetInst);
+    GetPTF("datetimeoffset'2009-12-26T21:23:38Z'").aUriLiteral("datetimeoffset'2009-12-26T21:23:38Z'").aKind(
+        ExpressionKind.LITERAL).aEdmType(datetimeOffsetInst);
+    GetPTF("datetimeoffset'2002-10-10T12:00:00-05:00'").aUriLiteral("datetimeoffset'2002-10-10T12:00:00-05:00'").aKind(
+        ExpressionKind.LITERAL).aEdmType(datetimeOffsetInst);
 
     GetPTF("4.5m").aUriLiteral("4.5m").aKind(ExpressionKind.LITERAL).aEdmType(decimalInst);
     GetPTF("4.5M").aUriLiteral("4.5M").aKind(ExpressionKind.LITERAL).aEdmType(decimalInst);
@@ -356,7 +374,8 @@ public class TestParser extends TestBase {
     GetPTF("4.5d").aUriLiteral("4.5d").aKind(ExpressionKind.LITERAL).aEdmType(doubleInst);
     GetPTF("4.5D").aUriLiteral("4.5D").aKind(ExpressionKind.LITERAL).aEdmType(doubleInst);
 
-    GetPTF("guid'1225c695-cfb8-4ebb-aaaa-80da344efa6a'").aUriLiteral("guid'1225c695-cfb8-4ebb-aaaa-80da344efa6a'").aKind(ExpressionKind.LITERAL).aEdmType(guidInst);
+    GetPTF("guid'1225c695-cfb8-4ebb-aaaa-80da344efa6a'").aUriLiteral("guid'1225c695-cfb8-4ebb-aaaa-80da344efa6a'")
+        .aKind(ExpressionKind.LITERAL).aEdmType(guidInst);
 
     GetPTF("-32768").aUriLiteral("-32768").aKind(ExpressionKind.LITERAL).aEdmType(int16Inst);
     GetPTF("3276").aUriLiteral("3276").aKind(ExpressionKind.LITERAL).aEdmType(int16Inst);

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -50,7 +50,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
   public void readIntegerProperty() throws Exception {
     String xml = "<Age xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">67</Age>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
 
     Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false);
 
@@ -61,7 +62,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
   public void readIntegerPropertyAsLong() throws Exception {
     String xml = "<Age xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">67</Age>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
 
     Map<String, Object> typeMappings = createTypeMappings("Age", Long.class);
     Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false, typeMappings);
@@ -73,7 +75,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
   public void readIntegerPropertyWithNullMapping() throws Exception {
     String xml = "<Age xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">67</Age>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
 
     Map<String, Object> typeMappings = null;
     Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false, typeMappings);
@@ -85,7 +88,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
   public void readIntegerPropertyWithEmptyMapping() throws Exception {
     String xml = "<Age xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">67</Age>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
 
     Map<String, Object> typeMappings = new HashMap<String, Object>();
     Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false, typeMappings);
@@ -97,7 +101,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
   public void readStringProperty() throws Exception {
     String xml = "<EmployeeName xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">Max Mustermann</EmployeeName>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EmployeeName");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EmployeeName");
 
     Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false);
 
@@ -108,7 +113,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
   public void readStringPropertyEmpty() throws Exception {
     final String xml = "<EmployeeName xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\" />";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EmployeeName");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EmployeeName");
 
     final Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false);
 
@@ -121,7 +127,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
     final String xml = "<EntryDate xmlns=\"" + Edm.NAMESPACE_D_2007_08
         + "\" m:null=\"true\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\" />";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
 
     final Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false);
 
@@ -134,7 +141,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
     final String xml = "<EntryDate xmlns=\"" + Edm.NAMESPACE_D_2007_08
         + "\" m:null=\"false\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">1970-01-02T00:00:00</EntryDate>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("EntryDate");
 
     final Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false);
 
@@ -145,7 +153,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
   public void invalidSimplePropertyName() throws Exception {
     final String xml = "<Invalid xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">67</Invalid>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
 
     new XmlPropertyConsumer().readProperty(reader, property, false);
   }
@@ -155,7 +164,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
     final String xml = "<Age xmlns=\"" + Edm.NAMESPACE_D_2007_08
         + "\" m:null=\"wrong\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\" />";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
 
     new XmlPropertyConsumer().readProperty(reader, property, false);
   }
@@ -165,7 +175,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
     final String xml = "<Age xmlns=\"" + Edm.NAMESPACE_D_2007_08
         + "\" m:null=\"true\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\" />";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
+    EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Age");
     EdmFacets facets = mock(EdmFacets.class);
     when(facets.isNullable()).thenReturn(false);
     when(property.getFacets()).thenReturn(facets);
@@ -186,7 +197,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
             "</City>" +
             "</Location>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false);
 
@@ -213,7 +225,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
             "</Location>" +
             "\n        \n ";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false);
 
@@ -236,7 +249,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
             "</City>" +
             "</Location>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     try {
       Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false,
@@ -262,7 +276,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
             "</Location>";
     XMLStreamReader reader = createReaderForTest(xml, true);
 
-    EdmProperty locationComplexProperty = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    EdmProperty locationComplexProperty =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
     EdmProperty cityProperty = (EdmProperty) ((EdmComplexType) locationComplexProperty.getType()).getProperty("City");
     EdmProperty postalCodeProperty = (EdmProperty) ((EdmComplexType) cityProperty.getType()).getProperty("PostalCode");
     // Change the type of the PostalCode property to one that allows different Java types.
@@ -273,7 +288,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
         createTypeMappings("Location",
             createTypeMappings("City",
                 createTypeMappings("CityName", String.class, "PostalCode", Long.class)));
-    Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, locationComplexProperty, false, typeMappings);
+    Map<String, Object> resultMap =
+        new XmlPropertyConsumer().readProperty(reader, locationComplexProperty, false, typeMappings);
 
     // verify
     Map<String, Object> locationMap = (Map<String, Object>) resultMap.get("Location");
@@ -297,7 +313,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
             "  </d:City>" +
             "</d:Location>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     Object prop = new XmlPropertyConsumer().readProperty(reader, property, false);
     Map<String, Object> resultMap = (Map<String, Object>) prop;
@@ -321,7 +338,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
             "</City>" +
             "</Location>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     new XmlPropertyConsumer().readProperty(reader, property, false);
   }
@@ -338,7 +356,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
             "</City>" +
             "</Location>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     new XmlPropertyConsumer().readProperty(reader, property, false);
   }
@@ -355,7 +374,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
             "</City>" +
             "</Invalid>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     new XmlPropertyConsumer().readProperty(reader, property, false);
   }
@@ -372,7 +392,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
             "</City>" +
             "</Location>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     new XmlPropertyConsumer().readProperty(reader, property, false);
   }
@@ -390,7 +411,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
             "</City>" +
             "</Location>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false);
 
@@ -406,7 +428,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
     String xml = "<Location xmlns=\"" + Edm.NAMESPACE_D_2007_08
         + "\" m:null=\"true\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\" />";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     final Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false);
 
@@ -419,7 +442,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
     final String xml = "<Location xmlns=\"" + Edm.NAMESPACE_D_2007_08
         + "\" m:null=\"true\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\" />";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
     EdmFacets facets = mock(EdmFacets.class);
     when(facets.isNullable()).thenReturn(false);
     when(property.getFacets()).thenReturn(facets);
@@ -434,7 +458,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
         + "<City><PostalCode/><CityName/></City><Country>Germany</Country>"
         + "</Location>";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     new XmlPropertyConsumer().readProperty(reader, property, false);
   }
@@ -443,7 +468,8 @@ public class XmlPropertyConsumerTest extends AbstractConsumerTest {
   public void complexPropertyEmpty() throws Exception {
     final String xml = "<Location xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\" />";
     XMLStreamReader reader = createReaderForTest(xml, true);
-    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Employee").getProperty("Location");
 
     final Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, false);
 

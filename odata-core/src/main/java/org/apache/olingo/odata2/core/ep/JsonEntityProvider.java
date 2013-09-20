@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep;
 
@@ -71,16 +71,17 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
    * <p>Serializes an error message according to the OData standard.</p>
    * <p>In case an error occurs, it is logged.
    * An exception is not thrown because this method is used in exception handling.</p>
-   * @param status      the {@link HttpStatusCodes status code} associated with this error  
-   * @param errorCode   a String that serves as a substatus to the HTTP response code
-   * @param message     a human-readable message describing the error
-   * @param locale      the {@link Locale} that should be used to format the error message
-   * @param innerError  the inner error for this message; if it is null or an empty String
-   *                    no inner error tag is shown inside the response structure
-   * @return            an {@link ODataResponse} containing the serialized error message
+   * @param status the {@link HttpStatusCodes status code} associated with this error
+   * @param errorCode a String that serves as a substatus to the HTTP response code
+   * @param message a human-readable message describing the error
+   * @param locale the {@link Locale} that should be used to format the error message
+   * @param innerError the inner error for this message; if it is null or an empty String
+   * no inner error tag is shown inside the response structure
+   * @return an {@link ODataResponse} containing the serialized error message
    */
   @Override
-  public ODataResponse writeErrorDocument(final HttpStatusCodes status, final String errorCode, final String message, final Locale locale, final String innerError) {
+  public ODataResponse writeErrorDocument(final HttpStatusCodes status, final String errorCode, final String message,
+      final Locale locale, final String innerError) {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
 
     try {
@@ -126,7 +127,8 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
   }
 
   @Override
-  public ODataResponse writeEntry(final EdmEntitySet entitySet, final Map<String, Object> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public ODataResponse writeEntry(final EdmEntitySet entitySet, final Map<String, Object> data,
+      final EntityProviderWriteProperties properties) throws EntityProviderException {
     final EntityInfoAggregator entityInfo = EntityInfoAggregator.create(entitySet, properties.getExpandSelectTree());
     CircleStreamBuffer buffer = new CircleStreamBuffer();
 
@@ -146,7 +148,8 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
@@ -155,7 +158,8 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
     return writeSingleTypedElement(EntityInfoAggregator.create(edmProperty), value);
   }
 
-  private ODataResponse writeSingleTypedElement(final EntityPropertyInfo propertyInfo, final Object value) throws EntityProviderException {
+  private ODataResponse writeSingleTypedElement(final EntityPropertyInfo propertyInfo, final Object value)
+      throws EntityProviderException {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
 
     try {
@@ -173,12 +177,14 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
   @Override
-  public ODataResponse writeFeed(final EdmEntitySet entitySet, final List<Map<String, Object>> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public ODataResponse writeFeed(final EdmEntitySet entitySet, final List<Map<String, Object>> data,
+      final EntityProviderWriteProperties properties) throws EntityProviderException {
     final EntityInfoAggregator entityInfo = EntityInfoAggregator.create(entitySet, properties.getExpandSelectTree());
     CircleStreamBuffer buffer = new CircleStreamBuffer();
 
@@ -194,12 +200,14 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
   @Override
-  public ODataResponse writeLink(final EdmEntitySet entitySet, final Map<String, Object> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public ODataResponse writeLink(final EdmEntitySet entitySet, final Map<String, Object> data,
+      final EntityProviderWriteProperties properties) throws EntityProviderException {
     final EntityInfoAggregator entityInfo = EntityInfoAggregator.create(entitySet, properties.getExpandSelectTree());
     CircleStreamBuffer buffer = new CircleStreamBuffer();
 
@@ -217,12 +225,14 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
   @Override
-  public ODataResponse writeLinks(final EdmEntitySet entitySet, final List<Map<String, Object>> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public ODataResponse writeLinks(final EdmEntitySet entitySet, final List<Map<String, Object>> data,
+      final EntityProviderWriteProperties properties) throws EntityProviderException {
     final EntityInfoAggregator entityInfo = EntityInfoAggregator.create(entitySet, properties.getExpandSelectTree());
     CircleStreamBuffer buffer = new CircleStreamBuffer();
 
@@ -242,11 +252,13 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
-  private ODataResponse writeCollection(final EntityPropertyInfo propertyInfo, final List<?> data) throws EntityProviderException {
+  private ODataResponse writeCollection(final EntityPropertyInfo propertyInfo, final List<?> data)
+      throws EntityProviderException {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
 
     try {
@@ -261,12 +273,14 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
   @Override
-  public ODataResponse writeFunctionImport(final EdmFunctionImport functionImport, final Object data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public ODataResponse writeFunctionImport(final EdmFunctionImport functionImport, final Object data,
+      final EntityProviderWriteProperties properties) throws EntityProviderException {
     try {
       if (functionImport.getReturnType().getType().getKind() == EdmTypeKind.ENTITY) {
         @SuppressWarnings("unchecked")
@@ -281,22 +295,26 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
         return writeSingleTypedElement(info, data);
       }
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
   @Override
-  public ODataFeed readFeed(final EdmEntitySet entitySet, final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+  public ODataFeed readFeed(final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     return new JsonEntityConsumer().readFeed(entitySet, content, properties);
   }
 
   @Override
-  public ODataEntry readEntry(final EdmEntitySet entitySet, final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+  public ODataEntry readEntry(final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     return new JsonEntityConsumer().readEntry(entitySet, content, properties);
   }
 
   @Override
-  public Map<String, Object> readProperty(final EdmProperty edmProperty, final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+  public Map<String, Object> readProperty(final EdmProperty edmProperty, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     return new JsonEntityConsumer().readProperty(edmProperty, content, properties);
   }
 
@@ -306,7 +324,8 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
   }
 
   @Override
-  public List<String> readLinks(final EdmEntitySet entitySet, final InputStream content) throws EntityProviderException {
+  public List<String> readLinks(final EdmEntitySet entitySet, final InputStream content) 
+      throws EntityProviderException {
     return new JsonEntityConsumer().readLinks(entitySet, content);
   }
 

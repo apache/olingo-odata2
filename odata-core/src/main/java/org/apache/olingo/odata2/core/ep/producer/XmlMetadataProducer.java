@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -62,7 +62,8 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class XmlMetadataProducer {
 
-  public static void writeMetadata(final DataServices metadata, final XMLStreamWriter xmlStreamWriter, Map<String, String> predefinedNamespaces) throws EntityProviderException {
+  public static void writeMetadata(final DataServices metadata, final XMLStreamWriter xmlStreamWriter,
+      Map<String, String> predefinedNamespaces) throws EntityProviderException {
 
     try {
       xmlStreamWriter.writeStartDocument();
@@ -75,7 +76,8 @@ public class XmlMetadataProducer {
       xmlStreamWriter.writeNamespace(Edm.PREFIX_EDMX, Edm.NAMESPACE_EDMX_2007_06);
 
       xmlStreamWriter.writeStartElement(Edm.NAMESPACE_EDMX_2007_06, XmlMetadataConstants.EDM_DATA_SERVICES);
-      xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.EDM_DATA_SERVICE_VERSION, metadata.getDataServiceVersion());
+      xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08,
+          XmlMetadataConstants.EDM_DATA_SERVICE_VERSION, metadata.getDataServiceVersion());
       xmlStreamWriter.writeNamespace(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08);
 
       if (predefinedNamespaces != null) {
@@ -123,12 +125,14 @@ public class XmlMetadataProducer {
                 xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_TYPE_ABSTRACT, "true");
               }
               if (entityType.isHasStream()) {
-                xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_ENTITY_TYPE_HAS_STREAM, "true");
+                xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08,
+                    XmlMetadataConstants.M_ENTITY_TYPE_HAS_STREAM, "true");
               }
 
               writeCustomizableFeedMappings(entityType.getCustomizableFeedMappings(), xmlStreamWriter);
 
-              writeAnnotationAttributes(entityType.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+              writeAnnotationAttributes(entityType.getAnnotationAttributes(), predefinedNamespaces, null,
+                  xmlStreamWriter);
 
               writeDocumentation(entityType.getDocumentation(), predefinedNamespaces, xmlStreamWriter);
 
@@ -142,7 +146,8 @@ public class XmlMetadataProducer {
                 for (PropertyRef propertyRef : propertyRefs) {
                   xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_PROPERTY_REF);
 
-                  writeAnnotationAttributes(propertyRef.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+                  writeAnnotationAttributes(propertyRef.getAnnotationAttributes(), predefinedNamespaces, null,
+                      xmlStreamWriter);
 
                   xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAME, propertyRef.getName());
 
@@ -166,15 +171,20 @@ public class XmlMetadataProducer {
                 for (NavigationProperty navigationProperty : navigationProperties) {
                   xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_NAVIGATION_PROPERTY);
                   xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAME, navigationProperty.getName());
-                  xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAVIGATION_RELATIONSHIP, navigationProperty.getRelationship().toString());
-                  xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAVIGATION_FROM_ROLE, navigationProperty.getFromRole());
-                  xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAVIGATION_TO_ROLE, navigationProperty.getToRole());
+                  xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAVIGATION_RELATIONSHIP, navigationProperty
+                      .getRelationship().toString());
+                  xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAVIGATION_FROM_ROLE, navigationProperty
+                      .getFromRole());
+                  xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAVIGATION_TO_ROLE, navigationProperty
+                      .getToRole());
 
-                  writeAnnotationAttributes(navigationProperty.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+                  writeAnnotationAttributes(navigationProperty.getAnnotationAttributes(), predefinedNamespaces, null,
+                      xmlStreamWriter);
 
                   writeDocumentation(navigationProperty.getDocumentation(), predefinedNamespaces, xmlStreamWriter);
 
-                  writeAnnotationElements(navigationProperty.getAnnotationElements(), predefinedNamespaces, xmlStreamWriter);
+                  writeAnnotationElements(navigationProperty.getAnnotationElements(), predefinedNamespaces,
+                      xmlStreamWriter);
 
                   xmlStreamWriter.writeEndElement();
                 }
@@ -192,13 +202,15 @@ public class XmlMetadataProducer {
               xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_COMPLEX_TYPE);
               xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAME, complexType.getName());
               if (complexType.getBaseType() != null) {
-                xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_BASE_TYPE, complexType.getBaseType().toString());
+                xmlStreamWriter
+                    .writeAttribute(XmlMetadataConstants.EDM_BASE_TYPE, complexType.getBaseType().toString());
               }
               if (complexType.isAbstract()) {
                 xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_TYPE_ABSTRACT, "true");
               }
 
-              writeAnnotationAttributes(complexType.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+              writeAnnotationAttributes(complexType.getAnnotationAttributes(), predefinedNamespaces, null,
+                  xmlStreamWriter);
 
               writeDocumentation(complexType.getDocumentation(), predefinedNamespaces, xmlStreamWriter);
 
@@ -219,7 +231,8 @@ public class XmlMetadataProducer {
               xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_ASSOCIATION);
               xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAME, association.getName());
 
-              writeAnnotationAttributes(association.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+              writeAnnotationAttributes(association.getAnnotationAttributes(), predefinedNamespaces, null,
+                  xmlStreamWriter);
 
               writeDocumentation(association.getDocumentation(), predefinedNamespaces, xmlStreamWriter);
 
@@ -229,13 +242,15 @@ public class XmlMetadataProducer {
               ReferentialConstraint referentialConstraint = association.getReferentialConstraint();
               if (referentialConstraint != null) {
                 xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_ASSOCIATION_CONSTRAINT);
-                writeAnnotationAttributes(referentialConstraint.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+                writeAnnotationAttributes(referentialConstraint.getAnnotationAttributes(), predefinedNamespaces, null,
+                    xmlStreamWriter);
                 writeDocumentation(referentialConstraint.getDocumentation(), predefinedNamespaces, xmlStreamWriter);
 
                 ReferentialConstraintRole principal = referentialConstraint.getPrincipal();
                 xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_ASSOCIATION_PRINCIPAL);
                 xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_ROLE, principal.getRole());
-                writeAnnotationAttributes(principal.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+                writeAnnotationAttributes(principal.getAnnotationAttributes(), predefinedNamespaces, null,
+                    xmlStreamWriter);
 
                 for (PropertyRef propertyRef : principal.getPropertyRefs()) {
                   xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_PROPERTY_REF);
@@ -248,7 +263,8 @@ public class XmlMetadataProducer {
                 ReferentialConstraintRole dependent = referentialConstraint.getDependent();
                 xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_ASSOCIATION_DEPENDENT);
                 xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_ROLE, dependent.getRole());
-                writeAnnotationAttributes(dependent.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+                writeAnnotationAttributes(dependent.getAnnotationAttributes(), predefinedNamespaces, null,
+                    xmlStreamWriter);
 
                 for (PropertyRef propertyRef : dependent.getPropertyRefs()) {
                   xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_PROPERTY_REF);
@@ -258,7 +274,8 @@ public class XmlMetadataProducer {
                 writeAnnotationElements(dependent.getAnnotationElements(), predefinedNamespaces, xmlStreamWriter);
                 xmlStreamWriter.writeEndElement();
 
-                writeAnnotationElements(referentialConstraint.getAnnotationElements(), predefinedNamespaces, xmlStreamWriter);
+                writeAnnotationElements(referentialConstraint.getAnnotationElements(), predefinedNamespaces,
+                    xmlStreamWriter);
                 xmlStreamWriter.writeEndElement();
               }
 
@@ -274,13 +291,16 @@ public class XmlMetadataProducer {
               xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_ENTITY_CONTAINER);
               xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAME, entityContainer.getName());
               if (entityContainer.getExtendz() != null) {
-                xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_CONTAINER_EXTENDZ, entityContainer.getExtendz());
+                xmlStreamWriter
+                    .writeAttribute(XmlMetadataConstants.EDM_CONTAINER_EXTENDZ, entityContainer.getExtendz());
               }
               if (entityContainer.isDefaultEntityContainer()) {
-                xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.EDM_CONTAINER_IS_DEFAULT, "true");
+                xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08,
+                    XmlMetadataConstants.EDM_CONTAINER_IS_DEFAULT, "true");
               }
 
-              writeAnnotationAttributes(entityContainer.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+              writeAnnotationAttributes(entityContainer.getAnnotationAttributes(), predefinedNamespaces, null,
+                  xmlStreamWriter);
 
               writeDocumentation(entityContainer.getDocumentation(), predefinedNamespaces, xmlStreamWriter);
 
@@ -289,9 +309,11 @@ public class XmlMetadataProducer {
                 for (EntitySet entitySet : entitySets) {
                   xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_ENTITY_SET);
                   xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAME, entitySet.getName());
-                  xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_ENTITY_TYPE, entitySet.getEntityType().toString());
+                  xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_ENTITY_TYPE, entitySet.getEntityType()
+                      .toString());
 
-                  writeAnnotationAttributes(entitySet.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+                  writeAnnotationAttributes(entitySet.getAnnotationAttributes(), predefinedNamespaces, null,
+                      xmlStreamWriter);
 
                   writeDocumentation(entitySet.getDocumentation(), predefinedNamespaces, xmlStreamWriter);
 
@@ -306,16 +328,19 @@ public class XmlMetadataProducer {
                 for (AssociationSet associationSet : associationSets) {
                   xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_ASSOCIATION_SET);
                   xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAME, associationSet.getName());
-                  xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_ASSOCIATION, associationSet.getAssociation().toString());
+                  xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_ASSOCIATION, associationSet.getAssociation()
+                      .toString());
 
-                  writeAnnotationAttributes(associationSet.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+                  writeAnnotationAttributes(associationSet.getAnnotationAttributes(), predefinedNamespaces, null,
+                      xmlStreamWriter);
 
                   writeDocumentation(associationSet.getDocumentation(), predefinedNamespaces, xmlStreamWriter);
 
                   writeAssociationSetEnd(associationSet.getEnd1(), predefinedNamespaces, xmlStreamWriter);
                   writeAssociationSetEnd(associationSet.getEnd2(), predefinedNamespaces, xmlStreamWriter);
 
-                  writeAnnotationElements(associationSet.getAnnotationElements(), predefinedNamespaces, xmlStreamWriter);
+                  writeAnnotationElements(associationSet.getAnnotationElements(), predefinedNamespaces, 
+                      xmlStreamWriter);
 
                   xmlStreamWriter.writeEndElement();
                 }
@@ -327,16 +352,19 @@ public class XmlMetadataProducer {
                   xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_FUNCTION_IMPORT);
                   xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAME, functionImport.getName());
                   if (functionImport.getReturnType() != null) {
-                    xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_FUNCTION_IMPORT_RETURN, functionImport.getReturnType().toString());
+                    xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_FUNCTION_IMPORT_RETURN, functionImport
+                        .getReturnType().toString());
                   }
                   if (functionImport.getEntitySet() != null) {
                     xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_ENTITY_SET, functionImport.getEntitySet());
                   }
                   if (functionImport.getHttpMethod() != null) {
-                    xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.EDM_FUNCTION_IMPORT_HTTP_METHOD, functionImport.getHttpMethod());
+                    xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08,
+                        XmlMetadataConstants.EDM_FUNCTION_IMPORT_HTTP_METHOD, functionImport.getHttpMethod());
                   }
 
-                  writeAnnotationAttributes(functionImport.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+                  writeAnnotationAttributes(functionImport.getAnnotationAttributes(), predefinedNamespaces, null,
+                      xmlStreamWriter);
 
                   writeDocumentation(functionImport.getDocumentation(), predefinedNamespaces, xmlStreamWriter);
 
@@ -345,24 +373,30 @@ public class XmlMetadataProducer {
                     for (FunctionImportParameter functionImportParameter : functionImportParameters) {
                       xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_FUNCTION_PARAMETER);
                       xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAME, functionImportParameter.getName());
-                      xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_TYPE, functionImportParameter.getType().getFullQualifiedName().toString());
+                      xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_TYPE, functionImportParameter.getType()
+                          .getFullQualifiedName().toString());
                       if (functionImportParameter.getMode() != null) {
-                        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_FUNCTION_PARAMETER_MODE, functionImportParameter.getMode());
+                        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_FUNCTION_PARAMETER_MODE,
+                            functionImportParameter.getMode());
                       }
 
                       writeFacets(xmlStreamWriter, functionImportParameter.getFacets());
 
-                      writeAnnotationAttributes(functionImportParameter.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
+                      writeAnnotationAttributes(functionImportParameter.getAnnotationAttributes(),
+                          predefinedNamespaces, null, xmlStreamWriter);
 
-                      writeDocumentation(functionImportParameter.getDocumentation(), predefinedNamespaces, xmlStreamWriter);
+                      writeDocumentation(functionImportParameter.getDocumentation(), predefinedNamespaces,
+                          xmlStreamWriter);
 
-                      writeAnnotationElements(functionImportParameter.getAnnotationElements(), predefinedNamespaces, xmlStreamWriter);
+                      writeAnnotationElements(functionImportParameter.getAnnotationElements(), predefinedNamespaces,
+                          xmlStreamWriter);
 
                       xmlStreamWriter.writeEndElement();
                     }
                   }
 
-                  writeAnnotationElements(functionImport.getAnnotationElements(), predefinedNamespaces, xmlStreamWriter);
+                  writeAnnotationElements(functionImport.getAnnotationElements(), predefinedNamespaces, 
+                      xmlStreamWriter);
 
                   xmlStreamWriter.writeEndElement();
                 }
@@ -392,37 +426,48 @@ public class XmlMetadataProducer {
     }
   }
 
-  private static void writeCustomizableFeedMappings(final CustomizableFeedMappings customizableFeedMappings, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
+  private static void writeCustomizableFeedMappings(final CustomizableFeedMappings customizableFeedMappings,
+      final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
     if (customizableFeedMappings != null) {
       if (customizableFeedMappings.getFcKeepInContent() != null) {
-        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_KEEP_IN_CONTENT, customizableFeedMappings.getFcKeepInContent().toString().toLowerCase(Locale.ROOT));
+        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08,
+            XmlMetadataConstants.M_FC_KEEP_IN_CONTENT, customizableFeedMappings.getFcKeepInContent().toString()
+                .toLowerCase(Locale.ROOT));
       }
       if (customizableFeedMappings.getFcContentKind() != null) {
-        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_CONTENT_KIND, customizableFeedMappings.getFcContentKind().toString());
+        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_CONTENT_KIND,
+            customizableFeedMappings.getFcContentKind().toString());
       }
       if (customizableFeedMappings.getFcNsPrefix() != null) {
-        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_PREFIX, customizableFeedMappings.getFcNsPrefix());
+        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_PREFIX,
+            customizableFeedMappings.getFcNsPrefix());
       }
       if (customizableFeedMappings.getFcNsUri() != null) {
-        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_NS_URI, customizableFeedMappings.getFcNsUri());
+        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_NS_URI,
+            customizableFeedMappings.getFcNsUri());
       }
       if (customizableFeedMappings.getFcSourcePath() != null) {
-        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_SOURCE_PATH, customizableFeedMappings.getFcSourcePath());
+        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_SOURCE_PATH,
+            customizableFeedMappings.getFcSourcePath());
       }
       if (customizableFeedMappings.getFcTargetPath() != null) {
-        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_TARGET_PATH, customizableFeedMappings.getFcTargetPath().toString());
+        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_TARGET_PATH,
+            customizableFeedMappings.getFcTargetPath().toString());
       }
     }
   }
 
-  private static void writeProperties(final Collection<Property> properties, final Map<String, String> predefinedNamespaces, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
+  private static void writeProperties(final Collection<Property> properties,
+      final Map<String, String> predefinedNamespaces, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
     for (Property property : properties) {
       xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_PROPERTY);
       xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_NAME, property.getName());
       if (property instanceof SimpleProperty) {
-        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_TYPE, ((SimpleProperty) property).getType().getFullQualifiedName().toString());
+        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_TYPE, ((SimpleProperty) property).getType()
+            .getFullQualifiedName().toString());
       } else if (property instanceof ComplexProperty) {
-        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_TYPE, ((ComplexProperty) property).getType().toString());
+        xmlStreamWriter
+            .writeAttribute(XmlMetadataConstants.EDM_TYPE, ((ComplexProperty) property).getType().toString());
       } else {
         throw new ODataRuntimeException();
       }
@@ -430,7 +475,8 @@ public class XmlMetadataProducer {
       writeFacets(xmlStreamWriter, property.getFacets());
 
       if (property.getMimeType() != null) {
-        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_MIMETYPE, property.getMimeType());
+        xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_MIMETYPE, property
+            .getMimeType());
       }
 
       writeCustomizableFeedMappings(property.getCustomizableFeedMappings(), xmlStreamWriter);
@@ -445,10 +491,12 @@ public class XmlMetadataProducer {
     }
   }
 
-  private static void writeFacets(final XMLStreamWriter xmlStreamWriter, final EdmFacets facets) throws XMLStreamException {
+  private static void writeFacets(final XMLStreamWriter xmlStreamWriter, final EdmFacets facets)
+      throws XMLStreamException {
     if (facets != null) {
       if (facets.isNullable() != null) {
-        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_PROPERTY_NULLABLE, facets.isNullable().toString().toLowerCase(Locale.ROOT));
+        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_PROPERTY_NULLABLE, facets.isNullable().toString()
+            .toLowerCase(Locale.ROOT));
       }
       if (facets.getDefaultValue() != null) {
         xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_PROPERTY_DEFAULT_VALUE, facets.getDefaultValue());
@@ -457,7 +505,8 @@ public class XmlMetadataProducer {
         xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_PROPERTY_MAX_LENGTH, facets.getMaxLength().toString());
       }
       if (facets.isFixedLength() != null) {
-        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_PROPERTY_FIXED_LENGTH, facets.isFixedLength().toString().toLowerCase(Locale.ROOT));
+        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_PROPERTY_FIXED_LENGTH, facets.isFixedLength()
+            .toString().toLowerCase(Locale.ROOT));
       }
       if (facets.getPrecision() != null) {
         xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_PROPERTY_PRECISION, facets.getPrecision().toString());
@@ -472,12 +521,14 @@ public class XmlMetadataProducer {
         xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_PROPERTY_COLLATION, facets.getCollation());
       }
       if (facets.getConcurrencyMode() != null) {
-        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_PROPERTY_CONCURRENCY_MODE, facets.getConcurrencyMode().toString());
+        xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_PROPERTY_CONCURRENCY_MODE, facets.getConcurrencyMode()
+            .toString());
       }
     }
   }
 
-  private static void writeAssociationEnd(final AssociationEnd end, final Map<String, String> predefinedNamespaces, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
+  private static void writeAssociationEnd(final AssociationEnd end, final Map<String, String> predefinedNamespaces,
+      final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
     xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_ASSOCIATION_END);
     xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_TYPE, end.getType().toString());
     xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_ASSOCIATION_MULTIPLICITY, end.getMultiplicity().toString());
@@ -504,7 +555,8 @@ public class XmlMetadataProducer {
     xmlStreamWriter.writeEndElement();
   }
 
-  private static void writeAssociationSetEnd(final AssociationSetEnd end, final Map<String, String> predefinedNamespaces, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
+  private static void writeAssociationSetEnd(final AssociationSetEnd end,
+      final Map<String, String> predefinedNamespaces, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
     xmlStreamWriter.writeStartElement(XmlMetadataConstants.EDM_ASSOCIATION_END);
     xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_ENTITY_SET, end.getEntitySet().toString());
     if (end.getRole() != null) {
@@ -516,7 +568,8 @@ public class XmlMetadataProducer {
     xmlStreamWriter.writeEndElement();
   }
 
-  private static void writeDocumentation(final Documentation documentation, final Map<String, String> predefinedNamespaces, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
+  private static void writeDocumentation(final Documentation documentation,
+      final Map<String, String> predefinedNamespaces, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
     if (documentation != null) {
       xmlStreamWriter.writeStartElement(XmlMetadataConstants.DOCUMENTATION);
       writeAnnotationAttributes(documentation.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
@@ -534,15 +587,19 @@ public class XmlMetadataProducer {
     }
   }
 
-  private static void writeAnnotationAttributes(final Collection<AnnotationAttribute> annotationAttributes, final Map<String, String> predefinedNamespaces, ArrayList<String> setNamespaces, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
+  private static void writeAnnotationAttributes(final Collection<AnnotationAttribute> annotationAttributes,
+      final Map<String, String> predefinedNamespaces, ArrayList<String> setNamespaces,
+      final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
     if (annotationAttributes != null) {
       if (setNamespaces == null) {
         setNamespaces = new ArrayList<String>();
       }
       for (AnnotationAttribute annotationAttribute : annotationAttributes) {
         if (annotationAttribute.getNamespace() != null) {
-          xmlStreamWriter.writeAttribute(annotationAttribute.getPrefix(), annotationAttribute.getNamespace(), annotationAttribute.getName(), annotationAttribute.getText());
-          if (setNamespaces.contains(annotationAttribute.getNamespace()) == false && predefinedNamespaces.containsValue(annotationAttribute.getNamespace()) == false) {
+          xmlStreamWriter.writeAttribute(annotationAttribute.getPrefix(), annotationAttribute.getNamespace(),
+              annotationAttribute.getName(), annotationAttribute.getText());
+          if (setNamespaces.contains(annotationAttribute.getNamespace()) == false
+              && predefinedNamespaces.containsValue(annotationAttribute.getNamespace()) == false) {
             xmlStreamWriter.writeNamespace(annotationAttribute.getPrefix(), annotationAttribute.getNamespace());
             setNamespaces.add(annotationAttribute.getNamespace());
           }
@@ -553,13 +610,15 @@ public class XmlMetadataProducer {
     }
   }
 
-  private static void writeAnnotationElements(final Collection<AnnotationElement> annotationElements, final Map<String, String> predefinedNamespaces, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
+  private static void writeAnnotationElements(final Collection<AnnotationElement> annotationElements,
+      final Map<String, String> predefinedNamespaces, final XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
     if (annotationElements != null) {
       for (AnnotationElement annotationElement : annotationElements) {
         ArrayList<String> setNamespaces = new ArrayList<String>();
         if (annotationElement.getNamespace() != null) {
           if (annotationElement.getPrefix() != null) {
-            xmlStreamWriter.writeStartElement(annotationElement.getPrefix(), annotationElement.getName(), annotationElement.getNamespace());
+            xmlStreamWriter.writeStartElement(annotationElement.getPrefix(), annotationElement.getName(),
+                annotationElement.getNamespace());
             if (!predefinedNamespaces.containsValue(annotationElement.getNamespace())) {
               xmlStreamWriter.writeNamespace(annotationElement.getPrefix(), annotationElement.getNamespace());
               setNamespaces.add(annotationElement.getNamespace());
@@ -575,7 +634,8 @@ public class XmlMetadataProducer {
           xmlStreamWriter.writeStartElement(annotationElement.getName());
         }
 
-        writeAnnotationAttributes(annotationElement.getAttributes(), predefinedNamespaces, setNamespaces, xmlStreamWriter);
+        writeAnnotationAttributes(annotationElement.getAttributes(), predefinedNamespaces, setNamespaces,
+            xmlStreamWriter);
 
         if (annotationElement.getChildElements() != null) {
           writeAnnotationElements(annotationElement.getChildElements(), predefinedNamespaces, xmlStreamWriter);

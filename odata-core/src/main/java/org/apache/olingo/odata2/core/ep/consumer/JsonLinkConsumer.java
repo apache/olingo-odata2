@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -56,7 +56,8 @@ public class JsonLinkConsumer {
       if (FormatJson.URI.equals(nextName) && reader.peek() == JsonToken.STRING) {
         result = reader.nextString();
       } else {
-        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(FormatJson.D + " or " + FormatJson.URI).addContent(nextName));
+        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(
+            FormatJson.D + " or " + FormatJson.URI).addContent(nextName));
       }
       reader.endObject();
       if (wrapped) {
@@ -67,9 +68,11 @@ public class JsonLinkConsumer {
 
       return result;
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (final IllegalStateException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
@@ -112,13 +115,15 @@ public class JsonLinkConsumer {
       if (FormatJson.RESULTS.equals(nextName)) {
         links = readLinksArray(reader);
       } else {
-        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(FormatJson.RESULTS).addContent(nextName));
+        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(FormatJson.RESULTS)
+            .addContent(nextName));
       }
       if (reader.hasNext() && reader.peek() == JsonToken.NAME) {
         if (FormatJson.COUNT.equals(reader.nextName())) {
           JsonFeedConsumer.readInlineCount(reader, feedMetadata);
         } else {
-          throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(FormatJson.COUNT).addContent(nextName));
+          throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(FormatJson.COUNT)
+              .addContent(nextName));
         }
       }
       for (; openedObjects > 0; openedObjects--) {
@@ -127,9 +132,11 @@ public class JsonLinkConsumer {
 
       reader.peek(); // to assert end of document
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (final IllegalStateException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
 
     return links;
@@ -145,7 +152,8 @@ public class JsonLinkConsumer {
       if (FormatJson.URI.equals(nextName) && reader.peek() == JsonToken.STRING) {
         links.add(reader.nextString());
       } else {
-        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(FormatJson.URI).addContent(nextName));
+        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(FormatJson.URI)
+            .addContent(nextName));
       }
       reader.endObject();
     }

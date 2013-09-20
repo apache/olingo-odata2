@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
@@ -33,7 +33,7 @@ public class TokenList implements Iterator<Token> {
 
   /**
    * Append StringValue Token to tokens parameter
-   * @param position Position of parsed token 
+   * @param position Position of parsed token
    * @param kind Kind of parsed token
    * @param uriLiteral String value of parsed token
    */
@@ -45,7 +45,7 @@ public class TokenList implements Iterator<Token> {
 
   /**
    * Append CharValue Token to tokens parameter
-   * @param position Position of parsed token 
+   * @param position Position of parsed token
    * @param kind Kind of parsed token
    * @param charValue Char value of parsed token
    */
@@ -57,11 +57,12 @@ public class TokenList implements Iterator<Token> {
 
   /**
    * Append UriLiteral Token to tokens parameter
-   * @param position Position of parsed token 
+   * @param position Position of parsed token
    * @param kind Kind of parsed token
-   * @param javaLiteral EdmLiteral of parsed token containing type and value of UriLiteral 
+   * @param javaLiteral EdmLiteral of parsed token containing type and value of UriLiteral
    */
-  public void appendEdmTypedToken(final int position, final TokenKind kind, final String uriLiteral, final EdmLiteral javaLiteral) {
+  public void appendEdmTypedToken(final int position, final TokenKind kind, final String uriLiteral,
+      final EdmLiteral javaLiteral) {
     Token token = new Token(kind, position, uriLiteral, javaLiteral);
     tokens.add(token);
     return;
@@ -105,7 +106,8 @@ public class TokenList implements Iterator<Token> {
     return actual;
   }
 
-  public Token expectToken(final TokenKind comma, final boolean throwFilterExpression) throws ExpressionParserInternalError {
+  public Token expectToken(final TokenKind comma, final boolean throwFilterExpression)
+      throws ExpressionParserInternalError {
     Token actual = next();
     if (actual == null) {
       throw ExpressionParserInternalError.createNO_TOKEN_AVAILABLE(comma.toString());

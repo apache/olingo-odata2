@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep;
 
@@ -57,7 +57,7 @@ import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 /**
  * Provider for all basic (content type independent) entity provider methods.
  * 
- *  
+ * 
  */
 public class BasicEntityProvider {
 
@@ -82,7 +82,8 @@ public class BasicEntityProvider {
       buffer.flush();
       return buffer.toByteArray();
     } catch (IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
@@ -93,7 +94,8 @@ public class BasicEntityProvider {
    * @throws EntityProviderException
    */
   public String readText(final InputStream content) throws EntityProviderException {
-    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content, Charset.forName(DEFAULT_CHARSET)));
+    BufferedReader bufferedReader =
+        new BufferedReader(new InputStreamReader(content, Charset.forName(DEFAULT_CHARSET)));
     StringBuilder stringBuilder = new StringBuilder();
     try {
       String line = null;
@@ -102,7 +104,8 @@ public class BasicEntityProvider {
       }
       bufferedReader.close();
     } catch (IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
     return stringBuilder.toString();
   }
@@ -111,16 +114,18 @@ public class BasicEntityProvider {
    * Reads an unformatted value of an EDM property as binary or as content type <code>text/plain</code>.
    * @param edmProperty the EDM property
    * @param content the content input stream
-   * @param typeMapping 
+   * @param typeMapping
    * @return the value as the proper system data type
    * @throws EntityProviderException
    */
-  public Object readPropertyValue(final EdmProperty edmProperty, final InputStream content, final Class<?> typeMapping) throws EntityProviderException {
+  public Object readPropertyValue(final EdmProperty edmProperty, final InputStream content, final Class<?> typeMapping)
+      throws EntityProviderException {
     EdmSimpleType type;
     try {
       type = (EdmSimpleType) edmProperty.getType();
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
 
     if (type == EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance()) {
@@ -128,12 +133,14 @@ public class BasicEntityProvider {
     } else {
       try {
         if (typeMapping == null) {
-          return type.valueOfString(readText(content), EdmLiteralKind.DEFAULT, edmProperty.getFacets(), type.getDefaultType());
+          return type.valueOfString(readText(content), EdmLiteralKind.DEFAULT, edmProperty.getFacets(), type
+              .getDefaultType());
         } else {
           return type.valueOfString(readText(content), EdmLiteralKind.DEFAULT, edmProperty.getFacets(), typeMapping);
         }
       } catch (EdmException e) {
-        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+            .getSimpleName()), e);
       }
     }
   }
@@ -145,7 +152,8 @@ public class BasicEntityProvider {
    * @return resulting {@link ODataResponse} with written content
    * @throws EntityProviderException
    */
-  public ODataResponse writePropertyValue(final EdmProperty edmProperty, final Object value) throws EntityProviderException {
+  public ODataResponse writePropertyValue(final EdmProperty edmProperty, final Object value)
+      throws EntityProviderException {
     try {
       final EdmSimpleType type = (EdmSimpleType) edmProperty.getType();
 
@@ -173,7 +181,8 @@ public class BasicEntityProvider {
       }
 
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
@@ -190,11 +199,12 @@ public class BasicEntityProvider {
       try {
         stream = new ByteArrayInputStream(value.getBytes(DEFAULT_CHARSET));
       } catch (UnsupportedEncodingException e) {
-        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+            .getSimpleName()), e);
       }
       builder.entity(stream);
     }
-    
+
     return builder.build();
   }
 
@@ -218,13 +228,15 @@ public class BasicEntityProvider {
   }
 
   /**
-   * Writes the metadata in XML format. Predefined namespaces is of type Map{@literal <}prefix,namespace{@literal >} and may be null or an empty Map.
+   * Writes the metadata in XML format. Predefined namespaces is of type Map{@literal <}prefix,namespace{@literal >} and
+   * may be null or an empty Map.
    * @param schemas
    * @param predefinedNamespaces
    * @return resulting {@link ODataResponse} with written metadata content
    * @throws EntityProviderException
    */
-  public ODataResponse writeMetadata(final List<Schema> schemas, final Map<String, String> predefinedNamespaces) throws EntityProviderException {
+  public ODataResponse writeMetadata(final List<Schema> schemas, final Map<String, String> predefinedNamespaces)
+      throws EntityProviderException {
     ODataResponseBuilder builder = ODataResponse.newBuilder();
     String dataServiceVersion = ODataServiceVersion.V10;
     if (schemas != null) {
@@ -238,11 +250,14 @@ public class BasicEntityProvider {
       XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
       XmlMetadataProducer.writeMetadata(metadata, xmlStreamWriter, predefinedNamespaces);
     } catch (UnsupportedEncodingException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (FactoryConfigurationError e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
     builder.entity(csb.getInputStream());
     builder.header(ODataHttpHeaders.DATASERVICEVERSION, dataServiceVersion);

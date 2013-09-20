@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -43,7 +43,8 @@ public class JsonEntityConsumer {
   /** Default used charset for reader */
   private static final String DEFAULT_CHARSET = "UTF-8";
 
-  public ODataEntry readEntry(final EdmEntitySet entitySet, final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+  public ODataEntry readEntry(final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     JsonReader reader = null;
     EntityProviderException cachedException = null;
 
@@ -53,7 +54,9 @@ public class JsonEntityConsumer {
 
       return new JsonEntryConsumer(reader, eia, properties).readSingleEntry();
     } catch (UnsupportedEncodingException e) {
-      cachedException = new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      cachedException =
+          new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+              .getSimpleName()), e);
       throw cachedException;
     } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
       if (reader != null) {
@@ -63,14 +66,16 @@ public class JsonEntityConsumer {
           if (cachedException != null) {
             throw cachedException;
           } else {
-            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+                .getSimpleName()), e);
           }
         }
       }
     }
   }
 
-  public ODataFeed readFeed(final EdmEntitySet entitySet, final InputStream content, final EntityProviderReadProperties readProperties) throws EntityProviderException {
+  public ODataFeed readFeed(final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties readProperties) throws EntityProviderException {
     JsonReader reader = null;
     EntityProviderException cachedException = null;
 
@@ -83,7 +88,9 @@ public class JsonEntityConsumer {
 
       return result;
     } catch (UnsupportedEncodingException e) {
-      cachedException = new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      cachedException =
+          new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+              .getSimpleName()), e);
       throw cachedException;
     } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
       if (reader != null) {
@@ -93,14 +100,16 @@ public class JsonEntityConsumer {
           if (cachedException != null) {
             throw cachedException;
           } else {
-            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+                .getSimpleName()), e);
           }
         }
       }
     }
   }
 
-  public Map<String, Object> readProperty(final EdmProperty property, final InputStream content, final EntityProviderReadProperties readProperties) throws EntityProviderException {
+  public Map<String, Object> readProperty(final EdmProperty property, final InputStream content,
+      final EntityProviderReadProperties readProperties) throws EntityProviderException {
     JsonReader reader = null;
     EntityProviderException cachedException = null;
 
@@ -108,7 +117,9 @@ public class JsonEntityConsumer {
       reader = createJsonReader(content);
       return new JsonPropertyConsumer().readPropertyStandalone(reader, property, readProperties);
     } catch (final UnsupportedEncodingException e) {
-      cachedException = new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      cachedException =
+          new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+              .getSimpleName()), e);
       throw cachedException;
     } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
       if (reader != null) {
@@ -118,7 +129,8 @@ public class JsonEntityConsumer {
           if (cachedException != null) {
             throw cachedException;
           } else {
-            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+                .getSimpleName()), e);
           }
         }
       }
@@ -133,7 +145,9 @@ public class JsonEntityConsumer {
       reader = createJsonReader(content);
       return new JsonLinkConsumer().readLink(reader, entitySet);
     } catch (final UnsupportedEncodingException e) {
-      cachedException = new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      cachedException =
+          new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+              .getSimpleName()), e);
       throw cachedException;
     } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
       if (reader != null) {
@@ -143,7 +157,8 @@ public class JsonEntityConsumer {
           if (cachedException != null) {
             throw cachedException;
           } else {
-            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+                .getSimpleName()), e);
           }
         }
       }
@@ -158,7 +173,9 @@ public class JsonEntityConsumer {
       reader = createJsonReader(content);
       return new JsonLinkConsumer().readLinks(reader, entitySet);
     } catch (final UnsupportedEncodingException e) {
-      cachedException = new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      cachedException =
+          new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+              .getSimpleName()), e);
       throw cachedException;
     } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
       if (reader != null) {
@@ -168,14 +185,16 @@ public class JsonEntityConsumer {
           if (cachedException != null) {
             throw cachedException;
           } else {
-            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+                .getSimpleName()), e);
           }
         }
       }
     }
   }
 
-  private JsonReader createJsonReader(final Object content) throws EntityProviderException, UnsupportedEncodingException {
+  private JsonReader createJsonReader(final Object content) throws EntityProviderException,
+      UnsupportedEncodingException {
 
     if (content == null) {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT

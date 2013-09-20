@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core;
 
@@ -70,7 +70,8 @@ public class ODataExceptionWrapper {
   private final ODataErrorContext errorContext = new ODataErrorContext();
   private final URI requestUri;
 
-  public ODataExceptionWrapper(final ODataContext context, final Map<String, String> queryParameters, final List<String> acceptHeaderContentTypes) {
+  public ODataExceptionWrapper(final ODataContext context, final Map<String, String> queryParameters,
+      final List<String> acceptHeaderContentTypes) {
     contentType = getContentType(queryParameters, acceptHeaderContentTypes).toContentTypeString();
     messageLocale = MessageService.getSupportedLocale(getLanguages(context), DEFAULT_RESPONSE_LOCALE);
     httpRequestHeaders = context.getRequestHeaders();
@@ -83,7 +84,8 @@ public class ODataExceptionWrapper {
     }
   }
 
-  public ODataExceptionWrapper(final UriInfo uriInfo, final HttpHeaders httpHeaders, final ServletConfig servletConfig, final HttpServletRequest servletRequest) {
+  public ODataExceptionWrapper(final UriInfo uriInfo, final HttpHeaders httpHeaders, final ServletConfig servletConfig,
+      final HttpServletRequest servletRequest) {
     contentType = getContentType(uriInfo, httpHeaders).toContentTypeString();
     messageLocale = MessageService.getSupportedLocale(getLanguages(httpHeaders), DEFAULT_RESPONSE_LOCALE);
     httpRequestHeaders = httpHeaders.getRequestHeaders();
@@ -111,7 +113,7 @@ public class ODataExceptionWrapper {
       } else {
         oDataResponse = EntityProvider.writeErrorDocument(errorContext);
       }
-      if(!oDataResponse.containsHeader(org.apache.olingo.odata2.api.commons.HttpHeaders.CONTENT_TYPE)) {
+      if (!oDataResponse.containsHeader(org.apache.olingo.odata2.api.commons.HttpHeaders.CONTENT_TYPE)) {
         oDataResponse = ODataResponse.fromResponse(oDataResponse).contentHeader(contentType).build();
       }
       return oDataResponse;
@@ -231,7 +233,8 @@ public class ODataExceptionWrapper {
     }
   }
 
-  private ContentType getContentType(final Map<String, String> queryParameters, final List<String> acceptHeaderContentTypes) {
+  private ContentType getContentType(final Map<String, String> queryParameters,
+      final List<String> acceptHeaderContentTypes) {
     ContentType contentType = getContentTypeByUriInfo(queryParameters);
     if (contentType == null) {
       contentType = getContentTypeByAcceptHeader(acceptHeaderContentTypes);
@@ -247,8 +250,9 @@ public class ODataExceptionWrapper {
         if (DOLLAR_FORMAT_JSON.equals(contentTypeString)) {
           contentType = ContentType.APPLICATION_JSON;
         } else {
-          //Any format mentioned in the $format parameter other than json results in an application/xml content type for error messages
-          //due to the OData V2 Specification
+          // Any format mentioned in the $format parameter other than json results in an application/xml content type
+          // for error messages
+          // due to the OData V2 Specification
           contentType = ContentType.APPLICATION_XML;
         }
       }
@@ -261,10 +265,13 @@ public class ODataExceptionWrapper {
       if (ContentType.isParseable(acceptContentType)) {
         ContentType convertedContentType = ContentType.create(acceptContentType);
         if (convertedContentType.isWildcard()
-            || ContentType.APPLICATION_XML.equals(convertedContentType) || ContentType.APPLICATION_XML_CS_UTF_8.equals(convertedContentType)
-            || ContentType.APPLICATION_ATOM_XML.equals(convertedContentType) || ContentType.APPLICATION_ATOM_XML_CS_UTF_8.equals(convertedContentType)) {
+            || ContentType.APPLICATION_XML.equals(convertedContentType)
+            || ContentType.APPLICATION_XML_CS_UTF_8.equals(convertedContentType)
+            || ContentType.APPLICATION_ATOM_XML.equals(convertedContentType)
+            || ContentType.APPLICATION_ATOM_XML_CS_UTF_8.equals(convertedContentType)) {
           return ContentType.APPLICATION_XML;
-        } else if (ContentType.APPLICATION_JSON.equals(convertedContentType) || ContentType.APPLICATION_JSON_CS_UTF_8.equals(convertedContentType)) {
+        } else if (ContentType.APPLICATION_JSON.equals(convertedContentType)
+            || ContentType.APPLICATION_JSON_CS_UTF_8.equals(convertedContentType)) {
           return ContentType.APPLICATION_JSON;
         }
       }
@@ -289,8 +296,8 @@ public class ODataExceptionWrapper {
         if (DOLLAR_FORMAT_JSON.equals(contentTypeString)) {
           contentType = ContentType.APPLICATION_JSON;
         } else {
-          //Any format mentioned in the $format parameter other than json results in an application/xml content type 
-          //for error messages due to the OData V2 Specification.
+          // Any format mentioned in the $format parameter other than json results in an application/xml content type
+          // for error messages due to the OData V2 Specification.
           contentType = ContentType.APPLICATION_XML;
         }
       }
@@ -303,10 +310,13 @@ public class ODataExceptionWrapper {
       if (ContentType.isParseable(type.toString())) {
         ContentType convertedContentType = ContentType.create(type.toString());
         if (convertedContentType.isWildcard()
-            || ContentType.APPLICATION_XML.equals(convertedContentType) || ContentType.APPLICATION_XML_CS_UTF_8.equals(convertedContentType)
-            || ContentType.APPLICATION_ATOM_XML.equals(convertedContentType) || ContentType.APPLICATION_ATOM_XML_CS_UTF_8.equals(convertedContentType)) {
+            || ContentType.APPLICATION_XML.equals(convertedContentType)
+            || ContentType.APPLICATION_XML_CS_UTF_8.equals(convertedContentType)
+            || ContentType.APPLICATION_ATOM_XML.equals(convertedContentType)
+            || ContentType.APPLICATION_ATOM_XML_CS_UTF_8.equals(convertedContentType)) {
           return ContentType.APPLICATION_XML;
-        } else if (ContentType.APPLICATION_JSON.equals(convertedContentType) || ContentType.APPLICATION_JSON_CS_UTF_8.equals(convertedContentType)) {
+        } else if (ContentType.APPLICATION_JSON.equals(convertedContentType)
+            || ContentType.APPLICATION_JSON_CS_UTF_8.equals(convertedContentType)) {
           return ContentType.APPLICATION_JSON;
         }
       }
@@ -314,14 +324,17 @@ public class ODataExceptionWrapper {
     return ContentType.APPLICATION_XML;
   }
 
-  private ODataErrorCallback getErrorHandlerCallbackFromContext(final ODataContext context) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+  private ODataErrorCallback getErrorHandlerCallbackFromContext(final ODataContext context)
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException {
     ODataErrorCallback callback = null;
     ODataServiceFactory serviceFactory = context.getServiceFactory();
     callback = serviceFactory.getCallback(ODataErrorCallback.class);
     return callback;
   }
 
-  private ODataErrorCallback getErrorHandlerCallbackFromServletConfig(final ServletConfig servletConfig, final HttpServletRequest servletRequest) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+  private ODataErrorCallback getErrorHandlerCallbackFromServletConfig(final ServletConfig servletConfig,
+      final HttpServletRequest servletRequest) throws InstantiationException, IllegalAccessException,
+      ClassNotFoundException {
     ODataErrorCallback callback = null;
     final String factoryClassName = servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL);
     if (factoryClassName != null) {

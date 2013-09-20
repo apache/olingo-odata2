@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the EDM simple type Double.
- *  
+ * 
  */
 public class EdmDouble extends AbstractSimpleType {
 
@@ -65,7 +65,8 @@ public class EdmDouble extends AbstractSimpleType {
   }
 
   @Override
-  protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets, final Class<T> returnType) throws EdmSimpleTypeException {
+  protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
+      final Class<T> returnType) throws EdmSimpleTypeException {
     String valueString = value;
     Double result = null;
     // Handle special values first.
@@ -102,10 +103,12 @@ public class EdmDouble extends AbstractSimpleType {
       if (result.floatValue() == result) {
         return returnType.cast(result.floatValue());
       } else {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType));
+        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value,
+            returnType));
       }
     } else if (result.isInfinite() || result.isNaN()) {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType));
+      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value,
+          returnType));
     } else {
       try {
         final BigDecimal valueBigDecimal = new BigDecimal(valueString);
@@ -124,13 +127,15 @@ public class EdmDouble extends AbstractSimpleType {
         }
 
       } catch (final ArithmeticException e) {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e);
+        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value,
+            returnType), e);
       }
     }
   }
 
   @Override
-  protected <T> String internalValueToString(final T value, final EdmLiteralKind literalKind, final EdmFacets facets) throws EdmSimpleTypeException {
+  protected <T> String internalValueToString(final T value, final EdmLiteralKind literalKind, final EdmFacets facets)
+      throws EdmSimpleTypeException {
     if (value instanceof Long) {
       if (Math.abs((Long) value) < Math.pow(10, MAX_PRECISION)) {
         return value.toString();
@@ -141,10 +146,12 @@ public class EdmDouble extends AbstractSimpleType {
       return value.toString();
     } else if (value instanceof Double) {
       final String result = value.toString();
-      return ((Double) value).isInfinite() ? result.toUpperCase(Locale.ROOT).substring(0, value.toString().length() - 5) : result;
+      return ((Double) value).isInfinite() ? result.toUpperCase(Locale.ROOT)
+          .substring(0, value.toString().length() - 5) : result;
     } else if (value instanceof Float) {
       final String result = value.toString();
-      return ((Float) value).isInfinite() ? result.toUpperCase(Locale.ROOT).substring(0, value.toString().length() - 5) : result;
+      return ((Float) value).isInfinite() ? result.toUpperCase(Locale.ROOT).substring(0, value.toString().length() - 5)
+          : result;
     } else if (value instanceof BigDecimal) {
       if (((BigDecimal) value).precision() <= MAX_PRECISION && Math.abs(((BigDecimal) value).scale()) <= MAX_SCALE) {
         return ((BigDecimal) value).toString();

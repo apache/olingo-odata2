@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -76,7 +76,8 @@ public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
   @Test
   public void innerEntryNoMediaResourceWithCallback() throws Exception {
     EntryCallback callback = new EntryCallback();
-    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init().mergeSemantic(false).callback(callback).build();
+    EntityProviderReadProperties readProperties =
+        EntityProviderReadProperties.init().mergeSemantic(false).callback(callback).build();
     ODataEntry outerEntry = prepareAndExecuteEntry(EMPLOYEE_WITH_INLINE_TEAM, "Employees", readProperties);
 
     assertThat(outerEntry.getProperties().get("ne_Team"), nullValue());
@@ -96,9 +97,10 @@ public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
 
   @Test
   public void innerEntryWithOptionalNavigationProperty() throws Exception {
-    //prepare
+    // prepare
     EntryCallback callback = new EntryCallback();
-    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init().mergeSemantic(false).callback(callback).build();
+    EntityProviderReadProperties readProperties =
+        EntityProviderReadProperties.init().mergeSemantic(false).callback(callback).build();
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     // modify edm for test case (change multiplicity to ZERO_TO_ONE)
     EdmType navigationType = mock(EdmType.class);
@@ -178,7 +180,8 @@ public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
   @Test
   public void inlineRoomWithInlineBuildingWithRoomCallback() throws Exception {
     EntryCallback callback = new EntryCallback();
-    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init().mergeSemantic(false).callback(callback).build();
+    EntityProviderReadProperties readProperties =
+        EntityProviderReadProperties.init().mergeSemantic(false).callback(callback).build();
     ODataEntry outerEntry = prepareAndExecuteEntry(INLINE_ROOM_WITH_INLINE_BUILDING, "Employees", readProperties);
 
     ODataEntry innerRoom = (ODataEntry) outerEntry.getProperties().get("ne_Room");
@@ -221,7 +224,8 @@ public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
   public void inlineRoomWithInlineBuildingWithCallbacks() throws Exception {
     EntryCallback buildingCallback = new EntryCallback();
     EntryCallback roomCallback = new EntryCallback(buildingCallback);
-    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init().mergeSemantic(false).callback(roomCallback).build();
+    EntityProviderReadProperties readProperties =
+        EntityProviderReadProperties.init().mergeSemantic(false).callback(roomCallback).build();
     ODataEntry outerEntry = prepareAndExecuteEntry(INLINE_ROOM_WITH_INLINE_BUILDING, "Employees", readProperties);
 
     ODataEntry innerRoom = (ODataEntry) outerEntry.getProperties().get("ne_Room");
@@ -289,7 +293,8 @@ public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
     }
 
     @Override
-    public EntityProviderReadProperties receiveReadProperties(final EntityProviderReadProperties readProperties, final EdmNavigationProperty navString) {
+    public EntityProviderReadProperties receiveReadProperties(final EntityProviderReadProperties readProperties,
+        final EdmNavigationProperty navString) {
       return EntityProviderReadProperties.init().mergeSemantic(false).callback(innerCallback).build();
     }
   }

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
@@ -66,8 +66,10 @@ public class BatchHandlerImpl implements BatchHandler {
       }
       ODataRequest request = batchPart.getRequests().get(0);
       ODataRequestHandler handler = createHandler(request);
-      String mimeHeaderContentId = request.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH));
-      String requestHeaderContentId = request.getRequestHeaderValue(BatchHelper.REQUEST_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH));
+      String mimeHeaderContentId =
+          request.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH));
+      String requestHeaderContentId =
+          request.getRequestHeaderValue(BatchHelper.REQUEST_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH));
       ODataResponse response = setContentIdHeader(handler.handle(request), mimeHeaderContentId, requestHeaderContentId);
       List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
       responses.add(response);
@@ -78,8 +80,10 @@ public class BatchHandlerImpl implements BatchHandler {
   @Override
   public ODataResponse handleRequest(final ODataRequest suppliedRequest) throws ODataException {
     ODataRequest request;
-    String mimeHeaderContentId = suppliedRequest.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH));
-    String requestHeaderContentId = suppliedRequest.getRequestHeaderValue(BatchHelper.REQUEST_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH));
+    String mimeHeaderContentId =
+        suppliedRequest.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH));
+    String requestHeaderContentId =
+        suppliedRequest.getRequestHeaderValue(BatchHelper.REQUEST_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH));
 
     List<PathSegment> odataSegments = suppliedRequest.getPathInfo().getODataSegments();
     if (!odataSegments.isEmpty() && odataSegments.get(0).getPath().matches("\\$.*")) {
@@ -109,7 +113,8 @@ public class BatchHandlerImpl implements BatchHandler {
     contentIdMap.put("$" + contentId, relLocation);
   }
 
-  private ODataRequest modifyRequest(final ODataRequest request, final List<PathSegment> odataSegments) throws ODataException {
+  private ODataRequest modifyRequest(final ODataRequest request, final List<PathSegment> odataSegments)
+      throws ODataException {
     String contentId = contentIdMap.get(odataSegments.get(0).getPath());
     PathInfoImpl pathInfo = new PathInfoImpl();
     try {
@@ -139,15 +144,20 @@ public class BatchHandlerImpl implements BatchHandler {
     return modifiedRequest;
   }
 
-  private ODataResponse setContentIdHeader(final ODataResponse response, final String mimeHeaderContentId, final String requestHeaderContentId) {
+  private ODataResponse setContentIdHeader(final ODataResponse response, final String mimeHeaderContentId,
+      final String requestHeaderContentId) {
     ODataResponse modifiedResponse;
     if (requestHeaderContentId != null && mimeHeaderContentId != null) {
-      modifiedResponse = ODataResponse.fromResponse(response).header(BatchHelper.REQUEST_HEADER_CONTENT_ID, requestHeaderContentId)
-          .header(BatchHelper.MIME_HEADER_CONTENT_ID, mimeHeaderContentId).build();
+      modifiedResponse =
+          ODataResponse.fromResponse(response).header(BatchHelper.REQUEST_HEADER_CONTENT_ID, requestHeaderContentId)
+              .header(BatchHelper.MIME_HEADER_CONTENT_ID, mimeHeaderContentId).build();
     } else if (requestHeaderContentId != null) {
-      modifiedResponse = ODataResponse.fromResponse(response).header(BatchHelper.REQUEST_HEADER_CONTENT_ID, requestHeaderContentId).build();
+      modifiedResponse =
+          ODataResponse.fromResponse(response).header(BatchHelper.REQUEST_HEADER_CONTENT_ID, requestHeaderContentId)
+              .build();
     } else if (mimeHeaderContentId != null) {
-      modifiedResponse = ODataResponse.fromResponse(response).header(BatchHelper.MIME_HEADER_CONTENT_ID, mimeHeaderContentId).build();
+      modifiedResponse =
+          ODataResponse.fromResponse(response).header(BatchHelper.MIME_HEADER_CONTENT_ID, mimeHeaderContentId).build();
     } else {
       return response;
     }

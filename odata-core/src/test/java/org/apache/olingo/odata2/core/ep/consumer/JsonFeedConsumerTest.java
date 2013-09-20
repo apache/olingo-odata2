@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -48,7 +48,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
     assertNotNull(entries);
     assertEquals(2, entries.size());
 
-    //Team1
+    // Team1
     ODataEntry entry = entries.get(0);
     Map<String, Object> properties = entry.getProperties();
     assertNotNull(properties);
@@ -63,7 +63,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
 
     checkMediaDataInitial(entry.getMediaMetadata());
 
-    //Team2
+    // Team2
     entry = entries.get(1);
     properties = entry.getProperties();
     assertNotNull(properties);
@@ -78,7 +78,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
 
     checkMediaDataInitial(entry.getMediaMetadata());
 
-    //Check FeedMetadata
+    // Check FeedMetadata
     FeedMetadata feedMetadata = feed.getFeedMetadata();
     assertNotNull(feedMetadata);
     assertNull(feedMetadata.getInlineCount());
@@ -93,7 +93,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
     assertNotNull(entries);
     assertEquals(2, entries.size());
 
-    //Team1
+    // Team1
     ODataEntry entry = entries.get(0);
     Map<String, Object> properties = entry.getProperties();
     assertNotNull(properties);
@@ -108,7 +108,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
 
     checkMediaDataInitial(entry.getMediaMetadata());
 
-    //Team2
+    // Team2
     entry = entries.get(1);
     properties = entry.getProperties();
     assertNotNull(properties);
@@ -123,7 +123,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
 
     checkMediaDataInitial(entry.getMediaMetadata());
 
-    //Check FeedMetadata
+    // Check FeedMetadata
     FeedMetadata feedMetadata = feed.getFeedMetadata();
     assertNotNull(feedMetadata);
     assertNull(feedMetadata.getInlineCount());
@@ -277,7 +277,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
     assertNotNull(entries);
     assertEquals(2, entries.size());
 
-    //Check FeedMetadata
+    // Check FeedMetadata
     FeedMetadata feedMetadata = feed.getFeedMetadata();
     assertNotNull(feedMetadata);
     assertEquals(Integer.valueOf(3), feedMetadata.getInlineCount());
@@ -292,7 +292,7 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
     assertNotNull(entries);
     assertEquals(2, entries.size());
 
-    //Check FeedMetadata
+    // Check FeedMetadata
     FeedMetadata feedMetadata = feed.getFeedMetadata();
     assertNotNull(feedMetadata);
     assertEquals(Integer.valueOf(3), feedMetadata.getInlineCount());
@@ -302,7 +302,13 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
   @Test
   public void feedWithInlineCountAndNextAndDelta() throws Exception {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
-    String content = "{\"d\":{\"__count\":\"3\",\"results\":[{\"__metadata\":{\"id\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\",\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\",\"type\":\"RefScenario.Team\"},\"Id\":\"1\",\"Name\":\"Team 1\",\"isScrumTeam\":false,\"nt_Employees\":{\"__deferred\":{\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')/nt_Employees\"}}}],\"__next\":\"Rooms?$skiptoken=98&$inlinecount=allpages\",\"__delta\":\"deltalink\"}}";
+    String content =
+        "{\"d\":{\"__count\":\"3\",\"results\":[{" +
+        "\"__metadata\":{\"id\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\"," +
+        "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\",\"type\":\"RefScenario.Team\"}," +
+        "\"Id\":\"1\",\"Name\":\"Team 1\",\"isScrumTeam\":false,\"nt_Employees\":{\"__deferred\":{" +
+        "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')/nt_Employees\"}}}]," +
+        "\"__next\":\"Rooms?$skiptoken=98&$inlinecount=allpages\",\"__delta\":\"deltalink\"}}";
     assertNotNull(content);
     InputStream contentBody = createContentAsStream(content);
 

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -55,7 +55,8 @@ public class XmlFeedWithTombstonesProducerTest extends AbstractProviderTest {
     initializeRoomData(2);
     initializeCallbacks();
 
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
 
     String xmlString = execute(properties, entitySet);
@@ -68,7 +69,8 @@ public class XmlFeedWithTombstonesProducerTest extends AbstractProviderTest {
     initializeRoomData(4);
     initializeCallbacks();
 
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
 
     String xmlString = execute(properties, entitySet);
@@ -83,7 +85,8 @@ public class XmlFeedWithTombstonesProducerTest extends AbstractProviderTest {
     callbacks = new HashMap<String, ODataCallback>();
     callbacks.put(TombstoneCallback.CALLBACK_KEY_TOMBSTONE, tombstoneCallback);
 
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
 
     String xmlString = execute(properties, entitySet);
@@ -94,16 +97,19 @@ public class XmlFeedWithTombstonesProducerTest extends AbstractProviderTest {
   public void deltaLinkPresent() throws Exception {
     initializeRoomData(2);
     initializeDeletedRoomData();
-    TombstoneCallback tombstoneCallback = new TombstoneCallbackImpl(deletedRoomsData, BASE_URI.toASCIIString() + "Rooms?!deltatoken=1234");
+    TombstoneCallback tombstoneCallback =
+        new TombstoneCallbackImpl(deletedRoomsData, BASE_URI.toASCIIString() + "Rooms?!deltatoken=1234");
     callbacks = new HashMap<String, ODataCallback>();
     callbacks.put(TombstoneCallback.CALLBACK_KEY_TOMBSTONE, tombstoneCallback);
 
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
 
     String xmlString = execute(properties, entitySet);
     assertXpathExists("/a:feed/at:deleted-entry", xmlString);
-    assertXpathExists("/a:feed/a:link[@rel=\"delta\" and @href=\"" + BASE_URI.toASCIIString() + "Rooms?!deltatoken=1234" + "\"]", xmlString);
+    assertXpathExists("/a:feed/a:link[@rel=\"delta\" and @href=\"" + BASE_URI.toASCIIString()
+        + "Rooms?!deltatoken=1234" + "\"]", xmlString);
   }
 
   @Test
@@ -114,7 +120,8 @@ public class XmlFeedWithTombstonesProducerTest extends AbstractProviderTest {
     callbacks = new HashMap<String, ODataCallback>();
     callbacks.put(TombstoneCallback.CALLBACK_KEY_TOMBSTONE, tombstoneCallback);
 
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
 
     String xmlString = execute(properties, entitySet);
@@ -122,7 +129,8 @@ public class XmlFeedWithTombstonesProducerTest extends AbstractProviderTest {
     assertXpathNotExists("/a:feed/a:link[@rel=\"http://odata.org/delta\" and @href]", xmlString);
   }
 
-  private String execute(final EntityProviderWriteProperties properties, final EdmEntitySet entitySet) throws EntityProviderException, IOException {
+  private String execute(final EntityProviderWriteProperties properties, final EdmEntitySet entitySet)
+      throws EntityProviderException, IOException {
     ODataResponse response = EntityProvider.writeFeed("application/atom+xml", entitySet, roomsData, properties);
     assertNotNull(response);
     String xmlString = StringHelper.inputStreamToString((InputStream) response.getEntity());
@@ -134,7 +142,8 @@ public class XmlFeedWithTombstonesProducerTest extends AbstractProviderTest {
     initializeRoomData(1);
     initializeCallbacks();
 
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).callbacks(callbacks).build();
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
 
     String xmlString = execute(properties, entitySet);

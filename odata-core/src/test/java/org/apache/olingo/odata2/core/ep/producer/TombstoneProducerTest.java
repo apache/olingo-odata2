@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -67,12 +67,14 @@ public class TombstoneProducerTest extends AbstractProviderTest {
     OutputStream outStream = csb.getOutputStream();
     writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
     defaultProperties = EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
-    defaultEia = EntityInfoAggregator.create(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), defaultProperties.getExpandSelectTree());
+    defaultEia =
+        EntityInfoAggregator.create(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
+            defaultProperties.getExpandSelectTree());
   }
 
   @Test
   public void oneDeletedEntryWithAllProperties() throws Exception {
-    //Prepare Data
+    // Prepare Data
     List<Map<String, Object>> deletedEntries = new ArrayList<Map<String, Object>>();
     Map<String, Object> data = new HashMap<String, Object>();
     data.put("Id", "1");
@@ -80,9 +82,9 @@ public class TombstoneProducerTest extends AbstractProviderTest {
     data.put("Seats", new Integer(20));
     data.put("Version", new Integer(3));
     deletedEntries.add(data);
-    //Execute producer
+    // Execute producer
     execute(deletedEntries);
-    //Verify
+    // Verify
     String xml = getXML();
     assertXpathExists("/a:feed/at:deleted-entry[@ref and @when]", xml);
     assertXpathEvaluatesTo("http://host:80/service/Rooms('1')", "/a:feed/at:deleted-entry/@ref", xml);
@@ -90,7 +92,7 @@ public class TombstoneProducerTest extends AbstractProviderTest {
 
   @Test
   public void twoDeletedEntriesWithAllProperties() throws Exception {
-    //Prepare Data
+    // Prepare Data
     List<Map<String, Object>> deletedEntries = new ArrayList<Map<String, Object>>();
     Map<String, Object> data = new HashMap<String, Object>();
     data.put("Id", "1");
@@ -105,9 +107,9 @@ public class TombstoneProducerTest extends AbstractProviderTest {
     data2.put("Seats", new Integer(20));
     data2.put("Version", new Integer(3));
     deletedEntries.add(data2);
-    //Execute producer
+    // Execute producer
     execute(deletedEntries);
-    //Verify
+    // Verify
     String xml = getXML();
     assertXpathExists("/a:feed/at:deleted-entry[@ref and @when]", xml);
     assertXpathExists("/a:feed/at:deleted-entry[@ref=\"http://host:80/service/Rooms('1')\"]", xml);
@@ -116,14 +118,14 @@ public class TombstoneProducerTest extends AbstractProviderTest {
 
   @Test
   public void oneDeletedEntryWithKeyProperties() throws Exception {
-    //Prepare Data
+    // Prepare Data
     List<Map<String, Object>> deletedEntries = new ArrayList<Map<String, Object>>();
     Map<String, Object> data = new HashMap<String, Object>();
     data.put("Id", "1");
     deletedEntries.add(data);
-    //Execute producer
+    // Execute producer
     execute(deletedEntries);
-    //Verify
+    // Verify
     String xml = getXML();
     assertXpathExists("/a:feed/at:deleted-entry[@ref and @when]", xml);
     assertXpathEvaluatesTo("http://host:80/service/Rooms('1')", "/a:feed/at:deleted-entry/@ref", xml);
@@ -131,21 +133,21 @@ public class TombstoneProducerTest extends AbstractProviderTest {
 
   @Test(expected = EntityProviderException.class)
   public void oneDeletedEntryWithoutProperties() throws Exception {
-    //Prepare Data
+    // Prepare Data
     List<Map<String, Object>> deletedEntries = new ArrayList<Map<String, Object>>();
     Map<String, Object> data = new HashMap<String, Object>();
     deletedEntries.add(data);
-    //Execute producer
+    // Execute producer
     execute(deletedEntries);
   }
 
   @Test
   public void emptyEntryList() throws Exception {
-    //Prepare Data
+    // Prepare Data
     List<Map<String, Object>> deletedEntries = new ArrayList<Map<String, Object>>();
-    //Execute producer
+    // Execute producer
     execute(deletedEntries);
-    //Verify
+    // Verify
     String xml = getXML();
     assertXpathExists("/a:feed", xml);
     assertXpathNotExists("/a:feed/at:deleted-entry[@ref and @when]", xml);
@@ -153,13 +155,15 @@ public class TombstoneProducerTest extends AbstractProviderTest {
 
   @Test
   public void entryWithSyndicatedUpdatedMappingPresent() throws Exception {
-    //Prepare Data
+    // Prepare Data
     List<Map<String, Object>> deletedEntries = new ArrayList<Map<String, Object>>();
     deletedEntries.add(employeeData);
-    defaultEia = EntityInfoAggregator.create(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), defaultProperties.getExpandSelectTree());
-    //Execute producer
+    defaultEia =
+        EntityInfoAggregator.create(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            defaultProperties.getExpandSelectTree());
+    // Execute producer
     execute(deletedEntries);
-    //Verify
+    // Verify
     String xml = getXML();
     assertXpathExists("/a:feed/at:deleted-entry[@ref and @when]", xml);
     assertXpathEvaluatesTo("http://host:80/service/Employees('1')", "/a:feed/at:deleted-entry/@ref", xml);
@@ -168,15 +172,17 @@ public class TombstoneProducerTest extends AbstractProviderTest {
 
   @Test
   public void entryWithSyndicatedUpdatedMappingNotPresent() throws Exception {
-    //Prepare Data
+    // Prepare Data
     List<Map<String, Object>> deletedEntries = new ArrayList<Map<String, Object>>();
     Map<String, Object> data = new HashMap<String, Object>();
     data.put("EmployeeId", "1");
     deletedEntries.add(data);
-    defaultEia = EntityInfoAggregator.create(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), defaultProperties.getExpandSelectTree());
-    //Execute producer
+    defaultEia =
+        EntityInfoAggregator.create(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            defaultProperties.getExpandSelectTree());
+    // Execute producer
     execute(deletedEntries);
-    //Verify
+    // Verify
     String xml = getXML();
     assertXpathExists("/a:feed/at:deleted-entry[@ref and @when]", xml);
     assertXpathEvaluatesTo("http://host:80/service/Employees('1')", "/a:feed/at:deleted-entry/@ref", xml);
@@ -185,14 +191,16 @@ public class TombstoneProducerTest extends AbstractProviderTest {
 
   @Test
   public void entryWithSyndicatedUpdatedMappingNull() throws Exception {
-    //Prepare Data
+    // Prepare Data
     List<Map<String, Object>> deletedEntries = new ArrayList<Map<String, Object>>();
     employeeData.put("EntryDate", null);
     deletedEntries.add(employeeData);
-    defaultEia = EntityInfoAggregator.create(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), defaultProperties.getExpandSelectTree());
-    //Execute producer
+    defaultEia =
+        EntityInfoAggregator.create(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            defaultProperties.getExpandSelectTree());
+    // Execute producer
     execute(deletedEntries);
-    //Verify
+    // Verify
     String xml = getXML();
     assertXpathExists("/a:feed/at:deleted-entry[@ref and @when]", xml);
     assertXpathEvaluatesTo("http://host:80/service/Employees('1')", "/a:feed/at:deleted-entry/@ref", xml);

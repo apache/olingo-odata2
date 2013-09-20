@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri;
 
@@ -54,7 +54,7 @@ import org.junit.Test;
 
 /**
  * Tests for OData URI parsing.
- *  
+ * 
  */
 public class UriParserTest extends BaseTest {
 
@@ -66,11 +66,11 @@ public class UriParserTest extends BaseTest {
   }
 
   /**
-    * Parse the URI part after an OData service root, given as string.
-    * Query parameters can be included.
-    * @param uri  the URI part
-    * @return a {@link UriInfoImpl} instance containing the parsed information
-    */
+   * Parse the URI part after an OData service root, given as string.
+   * Query parameters can be included.
+   * @param uri the URI part
+   * @return a {@link UriInfoImpl} instance containing the parsed information
+   */
   private UriInfoImpl parse(final String uri) throws UriSyntaxException, UriNotMatchingException, EdmException {
     final String[] path = uri.split("\\?", -1);
     if (path.length > 2) {
@@ -135,7 +135,9 @@ public class UriParserTest extends BaseTest {
     result = parse("");
     assertEquals(UriType.URI0, result.getUriType());
 
-    result = (UriInfoImpl) new UriParserImpl(edm).parse(Collections.<PathSegment> emptyList(), Collections.<String, String> emptyMap());
+    result =
+        (UriInfoImpl) new UriParserImpl(edm).parse(Collections.<PathSegment> emptyList(), Collections
+            .<String, String> emptyMap());
     assertEquals(UriType.URI0, result.getUriType());
   }
 
@@ -599,7 +601,8 @@ public class UriParserTest extends BaseTest {
     UriInfoImpl result = parse("EmployeeSearch?q='Hugo'&notaparameter=2");
     assertEquals("EmployeeSearch", result.getFunctionImport().getName());
     assertEquals(1, result.getFunctionImportParameters().size());
-    assertEquals(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance(), result.getFunctionImportParameters().get("q").getType());
+    assertEquals(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance(), result.getFunctionImportParameters().get("q")
+        .getType());
     assertEquals("Hugo", result.getFunctionImportParameters().get("q").getLiteral());
   }
 
@@ -773,8 +776,10 @@ public class UriParserTest extends BaseTest {
   @Test
   public void parseInCompatibleSystemQueryOptions() throws Exception {
     parseWrongUri("$metadata?$top=1", UriSyntaxException.INCOMPATIBLESYSTEMQUERYOPTION);
-    parseWrongUri("Employees('1')?$format=json&$inlinecount=allpages&$skiptoken=abc&$skip=2&$top=1", UriSyntaxException.INCOMPATIBLESYSTEMQUERYOPTION);
-    parseWrongUri("/Employees('1')/Location/Country/$value?$format=json", UriSyntaxException.INCOMPATIBLESYSTEMQUERYOPTION);
+    parseWrongUri("Employees('1')?$format=json&$inlinecount=allpages&$skiptoken=abc&$skip=2&$top=1",
+        UriSyntaxException.INCOMPATIBLESYSTEMQUERYOPTION);
+    parseWrongUri("/Employees('1')/Location/Country/$value?$format=json",
+        UriSyntaxException.INCOMPATIBLESYSTEMQUERYOPTION);
     parseWrongUri("/Employees('1')/Location/Country/$value?$skip=2", UriSyntaxException.INCOMPATIBLESYSTEMQUERYOPTION);
     parseWrongUri("/Employees('1')/EmployeeName/$value?$format=json", UriSyntaxException.INCOMPATIBLESYSTEMQUERYOPTION);
     parseWrongUri("/Employees('1')/EmployeeName/$value?$skip=2", UriSyntaxException.INCOMPATIBLESYSTEMQUERYOPTION);
@@ -813,7 +818,8 @@ public class UriParserTest extends BaseTest {
     assertEquals(UriType.URI1, result.getUriType());
     assertEquals(1, result.getSelect().size());
     assertEquals(1, result.getSelect().get(0).getNavigationPropertySegments().size());
-    assertEquals("Managers", result.getSelect().get(0).getNavigationPropertySegments().get(0).getTargetEntitySet().getName());
+    assertEquals("Managers", result.getSelect().get(0).getNavigationPropertySegments().get(0).getTargetEntitySet()
+        .getName());
     assertNull(result.getSelect().get(0).getProperty());
 
     result = parse("Teams?$select=nt_Employees/ne_Manager/*");
@@ -839,7 +845,8 @@ public class UriParserTest extends BaseTest {
     assertEquals("EmployeeName", result.getSelect().get(1).getProperty().getName());
     assertEquals("Location", result.getSelect().get(2).getProperty().getName());
     assertEquals(1, result.getSelect().get(0).getNavigationPropertySegments().size());
-    assertEquals("Managers", result.getSelect().get(0).getNavigationPropertySegments().get(0).getTargetEntitySet().getName());
+    assertEquals("Managers", result.getSelect().get(0).getNavigationPropertySegments().get(0).getTargetEntitySet()
+        .getName());
 
     result = parse("Managers('1')?$select=nm_Employees/EmployeeName,nm_Employees/Location");
     assertEquals("Managers", result.getTargetEntitySet().getName());
@@ -848,7 +855,8 @@ public class UriParserTest extends BaseTest {
     assertEquals("EmployeeName", result.getSelect().get(0).getProperty().getName());
     assertEquals("Location", result.getSelect().get(1).getProperty().getName());
     assertEquals(1, result.getSelect().get(0).getNavigationPropertySegments().size());
-    assertEquals("Employees", result.getSelect().get(0).getNavigationPropertySegments().get(0).getTargetEntitySet().getName());
+    assertEquals("Employees", result.getSelect().get(0).getNavigationPropertySegments().get(0).getTargetEntitySet()
+        .getName());
   }
 
   @Test
@@ -876,7 +884,8 @@ public class UriParserTest extends BaseTest {
     assertEquals(1, result.getExpand().size());
     assertEquals(1, result.getExpand().get(0).size());
     assertEquals("Employees", result.getExpand().get(0).get(0).getTargetEntitySet().getName());
-    assertEquals(result.getTargetEntitySet().getEntityType().getProperty("nm_Employees"), result.getExpand().get(0).get(0).getNavigationProperty());
+    assertEquals(result.getTargetEntitySet().getEntityType().getProperty("nm_Employees"), result.getExpand().get(0)
+        .get(0).getNavigationProperty());
   }
 
   @Test

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -95,18 +95,23 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
     List<Schema> schemas = new ArrayList<Schema>();
 
     List<AnnotationElement> childElements = new ArrayList<AnnotationElement>();
-    childElements.add(new AnnotationElement().setName("schemaElementTest2").setText("text2").setNamespace("namespace1"));
+    childElements
+        .add(new AnnotationElement().setName("schemaElementTest2").setText("text2").setNamespace("namespace1"));
 
     List<AnnotationAttribute> elementAttributes = new ArrayList<AnnotationAttribute>();
     elementAttributes.add(new AnnotationAttribute().setName("rel").setText("self"));
-    elementAttributes.add(new AnnotationAttribute().setName("href").setText("http://google.com").setPrefix("pre").setNamespace("namespaceForAnno"));
+    elementAttributes.add(new AnnotationAttribute().setName("href").setText("http://google.com").setPrefix("pre")
+        .setNamespace("namespaceForAnno"));
 
     List<AnnotationElement> element3List = new ArrayList<AnnotationElement>();
-    element3List.add(new AnnotationElement().setName("schemaElementTest4").setText("text4").setAttributes(elementAttributes));
-    childElements.add(new AnnotationElement().setName("schemaElementTest3").setText("text3").setPrefix("prefix").setNamespace("namespace2").setChildElements(element3List));
+    element3List.add(new AnnotationElement().setName("schemaElementTest4").setText("text4").setAttributes(
+        elementAttributes));
+    childElements.add(new AnnotationElement().setName("schemaElementTest3").setText("text3").setPrefix("prefix")
+        .setNamespace("namespace2").setChildElements(element3List));
 
     List<AnnotationElement> schemaElements = new ArrayList<AnnotationElement>();
-    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setText("text1").setChildElements(childElements));
+    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setText("text1").setChildElements(
+        childElements));
 
     schemaElements.add(new AnnotationElement().setName("test"));
     Schema schema = new Schema().setAnnotationElements(schemaElements);
@@ -135,7 +140,10 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:schemaElementTest1", metadata);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:schemaElementTest1/b:schemaElementTest2", metadata);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:schemaElementTest1/prefix:schemaElementTest3", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:schemaElementTest1/prefix:schemaElementTest3/a:schemaElementTest4[@rel=\"self\" and @pre:href=\"http://google.com\"]", metadata);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/a:Schema/a:schemaElementTest1/prefix:schemaElementTest3/" +
+            "a:schemaElementTest4[@rel=\"self\" and @pre:href=\"http://google.com\"]",
+        metadata);
 
   }
 
@@ -177,7 +185,7 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:test", metadata);
   }
 
-  //Elements with namespace and attributes without namespace
+  // Elements with namespace and attributes without namespace
   @Test
   public void writeValidMetadata4() throws Exception {
 
@@ -188,8 +196,10 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
     attributesElement1.add(new AnnotationAttribute().setName("href").setText("link"));
 
     List<AnnotationElement> schemaElements = new ArrayList<AnnotationElement>();
-    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
-    schemaElements.add(new AnnotationElement().setName("schemaElementTest2").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
+    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
+    schemaElements.add(new AnnotationElement().setName("schemaElementTest2").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
 
     Schema schema = new Schema().setAnnotationElements(schemaElements);
     schema.setNamespace("http://namespace.com");
@@ -215,19 +225,23 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/atom:schemaElementTest2", metadata);
   }
 
-  //Element with namespace and attributes with same namespace
+  // Element with namespace and attributes with same namespace
   @Test
   public void writeValidMetadata5() throws Exception {
 
     List<Schema> schemas = new ArrayList<Schema>();
 
     List<AnnotationAttribute> attributesElement1 = new ArrayList<AnnotationAttribute>();
-    attributesElement1.add(new AnnotationAttribute().setName("rel").setText("self").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom"));
-    attributesElement1.add(new AnnotationAttribute().setName("href").setText("link").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom"));
+    attributesElement1.add(new AnnotationAttribute().setName("rel").setText("self").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom"));
+    attributesElement1.add(new AnnotationAttribute().setName("href").setText("link").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom"));
 
     List<AnnotationElement> schemaElements = new ArrayList<AnnotationElement>();
-    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
-    schemaElements.add(new AnnotationElement().setName("schemaElementTest2").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
+    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
+    schemaElements.add(new AnnotationElement().setName("schemaElementTest2").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
 
     Schema schema = new Schema().setAnnotationElements(schemaElements);
     schema.setNamespace("http://namespace.com");
@@ -253,22 +267,27 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/atom:schemaElementTest2", metadata);
   }
 
-  //Element with namespace childelements with same namespace
+  // Element with namespace childelements with same namespace
   @Test
   public void writeValidMetadata6() throws Exception {
 
     List<Schema> schemas = new ArrayList<Schema>();
 
     List<AnnotationAttribute> attributesElement1 = new ArrayList<AnnotationAttribute>();
-    attributesElement1.add(new AnnotationAttribute().setName("rel").setText("self").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom"));
-    attributesElement1.add(new AnnotationAttribute().setName("href").setText("link").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom"));
+    attributesElement1.add(new AnnotationAttribute().setName("rel").setText("self").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom"));
+    attributesElement1.add(new AnnotationAttribute().setName("href").setText("link").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom"));
 
     List<AnnotationElement> elementElements = new ArrayList<AnnotationElement>();
-    elementElements.add(new AnnotationElement().setName("schemaElementTest2").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
-    elementElements.add(new AnnotationElement().setName("schemaElementTest3").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
+    elementElements.add(new AnnotationElement().setName("schemaElementTest2").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
+    elementElements.add(new AnnotationElement().setName("schemaElementTest3").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom").setAttributes(attributesElement1));
 
     List<AnnotationElement> schemaElements = new ArrayList<AnnotationElement>();
-    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setPrefix("atom").setNamespace("http://www.w3.org/2005/Atom").setAttributes(attributesElement1).setChildElements(elementElements));
+    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setPrefix("atom").setNamespace(
+        "http://www.w3.org/2005/Atom").setAttributes(attributesElement1).setChildElements(elementElements));
 
     Schema schema = new Schema().setAnnotationElements(schemaElements);
     schema.setNamespace("http://namespace.com");
@@ -291,11 +310,13 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
     XMLUnit.setXpathNamespaceContext(ctx);
 
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/atom:schemaElementTest1", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/atom:schemaElementTest1/atom:schemaElementTest2", metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/atom:schemaElementTest1/atom:schemaElementTest3", metadata);
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/atom:schemaElementTest1/atom:schemaElementTest2",
+        metadata);
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/atom:schemaElementTest1/atom:schemaElementTest3",
+        metadata);
   }
 
-  //If no name for an AnnotationAttribute is set this has to result in an Exception
+  // If no name for an AnnotationAttribute is set this has to result in an Exception
   @Test(expected = Exception.class)
   public void writeInvalidMetadata() throws Exception {
     disableLogging(this.getClass());
@@ -315,28 +336,33 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
     XmlMetadataProducer.writeMetadata(data, xmlStreamWriter, null);
   }
 
-  //Element with predefined namespace
+  // Element with predefined namespace
   @Test
   public void writeWithPredefinedNamespaces() throws Exception {
-    //prepare
+    // prepare
     List<Schema> schemas = new ArrayList<Schema>();
 
     List<AnnotationAttribute> attributesElement1 = new ArrayList<AnnotationAttribute>();
-    attributesElement1.add(new AnnotationAttribute().setName("rel").setText("self").setPrefix("foo").setNamespace("http://www.foo.bar/Protocols/Data"));
-    attributesElement1.add(new AnnotationAttribute().setName("href").setText("link").setPrefix("foo").setNamespace("http://www.foo.bar/Protocols/Data"));
+    attributesElement1.add(new AnnotationAttribute().setName("rel").setText("self").setPrefix("foo").setNamespace(
+        "http://www.foo.bar/Protocols/Data"));
+    attributesElement1.add(new AnnotationAttribute().setName("href").setText("link").setPrefix("foo").setNamespace(
+        "http://www.foo.bar/Protocols/Data"));
 
     List<AnnotationElement> elementElements = new ArrayList<AnnotationElement>();
-    elementElements.add(new AnnotationElement().setName("schemaElementTest2").setPrefix("foo").setNamespace("http://www.foo.bar/Protocols/Data").setAttributes(attributesElement1));
-    elementElements.add(new AnnotationElement().setName("schemaElementTest3").setPrefix("foo").setNamespace("http://www.foo.bar/Protocols/Data").setAttributes(attributesElement1));
+    elementElements.add(new AnnotationElement().setName("schemaElementTest2").setPrefix("foo").setNamespace(
+        "http://www.foo.bar/Protocols/Data").setAttributes(attributesElement1));
+    elementElements.add(new AnnotationElement().setName("schemaElementTest3").setPrefix("foo").setNamespace(
+        "http://www.foo.bar/Protocols/Data").setAttributes(attributesElement1));
 
     List<AnnotationElement> schemaElements = new ArrayList<AnnotationElement>();
-    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setPrefix("foo").setNamespace("http://www.foo.bar/Protocols/Data").setAttributes(attributesElement1).setChildElements(elementElements));
+    schemaElements.add(new AnnotationElement().setName("schemaElementTest1").setPrefix("foo").setNamespace(
+        "http://www.foo.bar/Protocols/Data").setAttributes(attributesElement1).setChildElements(elementElements));
 
     Schema schema = new Schema().setAnnotationElements(schemaElements);
     schema.setNamespace("http://namespace.com");
     schemas.add(schema);
 
-    //Execute
+    // Execute
     Map<String, String> predefinedNamespaces = new HashMap<String, String>();
     predefinedNamespaces.put("foo", "http://www.foo.bar/Protocols/Data");
     DataServices data = new DataServices().setSchemas(schemas).setDataServiceVersion(ODataServiceVersion.V20);
@@ -347,7 +373,7 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
     XmlMetadataProducer.writeMetadata(data, xmlStreamWriter, predefinedNamespaces);
     String metadata = StringHelper.inputStreamToString(csb.getInputStream());
 
-    //Verify
+    // Verify
     Map<String, String> prefixMap = new HashMap<String, String>();
     prefixMap.put("edmx", "http://schemas.microsoft.com/ado/2007/06/edmx");
     prefixMap.put("a", "http://schemas.microsoft.com/ado/2008/09/edm");

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
@@ -30,14 +30,15 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 
 /**
  * Implementation of the EDM simple type Decimal.
- *  
+ * 
  */
 public class EdmDecimal extends AbstractSimpleType {
 
   // value-range limitation according to the CSDL document
   private static final int MAX_DIGITS = 29;
 
-  private static final Pattern PATTERN = Pattern.compile("(?:\\+|-)?(?:0*(\\p{Digit}{1,29}?))(?:\\.(\\p{Digit}{1,29}?)0*)?(M|m)?");
+  private static final Pattern PATTERN = Pattern
+      .compile("(?:\\+|-)?(?:0*(\\p{Digit}{1,29}?))(?:\\.(\\p{Digit}{1,29}?)0*)?(M|m)?");
   private static final EdmDecimal instance = new EdmDecimal();
 
   public static EdmDecimal getInstance() {
@@ -96,7 +97,8 @@ public class EdmDecimal extends AbstractSimpleType {
   }
 
   @Override
-  protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets, final Class<T> returnType) throws EdmSimpleTypeException {
+  protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
+      final Class<T> returnType) throws EdmSimpleTypeException {
     if (!validateLiteral(value, literalKind)) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
     }
@@ -113,13 +115,15 @@ public class EdmDecimal extends AbstractSimpleType {
       if (BigDecimal.valueOf(valueBigDecimal.doubleValue()).compareTo(valueBigDecimal) == 0) {
         return returnType.cast(valueBigDecimal.doubleValue());
       } else {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType));
+        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value,
+            returnType));
       }
     } else if (returnType.isAssignableFrom(Float.class)) {
       if (BigDecimal.valueOf(valueBigDecimal.floatValue()).compareTo(valueBigDecimal) == 0) {
         return returnType.cast(valueBigDecimal.floatValue());
       } else {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType));
+        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value,
+            returnType));
       }
     } else {
       try {
@@ -137,15 +141,18 @@ public class EdmDecimal extends AbstractSimpleType {
           throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType));
         }
       } catch (final ArithmeticException e) {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value, returnType), e);
+        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_UNCONVERTIBLE_TO_VALUE_TYPE.addContent(value,
+            returnType), e);
       }
     }
   }
 
   @Override
-  protected <T> String internalValueToString(final T value, final EdmLiteralKind literalKind, final EdmFacets facets) throws EdmSimpleTypeException {
+  protected <T> String internalValueToString(final T value, final EdmLiteralKind literalKind, final EdmFacets facets)
+      throws EdmSimpleTypeException {
     String result;
-    if (value instanceof Long || value instanceof Integer || value instanceof Short || value instanceof Byte || value instanceof BigInteger) {
+    if (value instanceof Long || value instanceof Integer || value instanceof Short || value instanceof Byte
+        || value instanceof BigInteger) {
       result = value.toString();
       final int digits = result.startsWith("-") ? result.length() - 1 : result.length();
       if (digits > MAX_DIGITS) {

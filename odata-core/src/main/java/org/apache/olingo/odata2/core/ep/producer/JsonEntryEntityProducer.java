@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 /**
  * Producer for writing an entity in JSON, also usable for function imports
  * returning a single instance of an entity type.
- *  
+ * 
  */
 public class JsonEntryEntityProducer {
 
@@ -63,7 +63,8 @@ public class JsonEntryEntityProducer {
     this.properties = properties == null ? EntityProviderWriteProperties.serviceRoot(null).build() : properties;
   }
 
-  public void append(final Writer writer, final EntityInfoAggregator entityInfo, final Map<String, Object> data, final boolean isRootElement) throws EntityProviderException {
+  public void append(final Writer writer, final EntityInfoAggregator entityInfo, final Map<String, Object> data,
+      final boolean isRootElement) throws EntityProviderException {
     final EdmEntityType type = entityInfo.getEntityType();
 
     try {
@@ -89,10 +90,13 @@ public class JsonEntryEntityProducer {
       }
       if (type.hasStream()) {
         jsonStreamWriter.separator()
-            .namedStringValueRaw(FormatJson.CONTENT_TYPE,
+            .namedStringValueRaw(
+                FormatJson.CONTENT_TYPE,
                 properties.getMediaResourceMimeType() == null ?
-                    type.getMapping() == null || type.getMapping().getMimeType() == null || data.get(type.getMapping().getMimeType()) == null ?
-                        HttpContentType.APPLICATION_OCTET_STREAM : data.get(type.getMapping().getMimeType()).toString() :
+                    type.getMapping() == null || type.getMapping().getMimeType() == null
+                        || data.get(type.getMapping().getMimeType()) == null ?
+                        HttpContentType.APPLICATION_OCTET_STREAM : data.get(type.getMapping().getMimeType()).toString()
+                    :
                     properties.getMediaResourceMimeType())
             .separator()
             .namedStringValue(FormatJson.MEDIA_SRC, self + "/$value").separator()
@@ -104,7 +108,8 @@ public class JsonEntryEntityProducer {
         if (entityInfo.getSelectedPropertyNames().contains(propertyName)) {
           jsonStreamWriter.separator()
               .name(propertyName);
-          JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, entityInfo.getPropertyInfo(propertyName), data.get(propertyName));
+          JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, entityInfo.getPropertyInfo(propertyName),
+              data.get(propertyName));
         }
       }
 
@@ -114,7 +119,8 @@ public class JsonEntryEntityProducer {
               .name(navigationPropertyName);
           if (entityInfo.getExpandedNavigationPropertyNames().contains(navigationPropertyName)) {
             if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
-              final EdmNavigationProperty navigationProperty = (EdmNavigationProperty) type.getProperty(navigationPropertyName);
+              final EdmNavigationProperty navigationProperty =
+                  (EdmNavigationProperty) type.getProperty(navigationPropertyName);
               final boolean isFeed = navigationProperty.getMultiplicity() == EdmMultiplicity.MANY;
               final EdmEntitySet entitySet = entityInfo.getEntitySet();
               final EdmEntitySet inlineEntitySet = entitySet.getRelatedEntitySet(navigationProperty);
@@ -123,7 +129,8 @@ public class JsonEntryEntityProducer {
               context.setSourceEntitySet(entitySet);
               context.setNavigationProperty(navigationProperty);
               context.setEntryData(data);
-              context.setCurrentExpandSelectTreeNode(properties.getExpandSelectTree().getLinks().get(navigationPropertyName));
+              context.setCurrentExpandSelectTreeNode(properties.getExpandSelectTree().getLinks().get(
+                  navigationPropertyName));
 
               ODataCallback callback = properties.getCallbacks().get(navigationPropertyName);
               if (callback == null) {
@@ -131,28 +138,33 @@ public class JsonEntryEntityProducer {
               }
               try {
                 if (isFeed) {
-                  final WriteFeedCallbackResult result = ((OnWriteFeedContent) callback).retrieveFeedResult((WriteFeedCallbackContext) context);
+                  final WriteFeedCallbackResult result =
+                      ((OnWriteFeedContent) callback).retrieveFeedResult((WriteFeedCallbackContext) context);
                   List<Map<String, Object>> inlineData = result.getFeedData();
                   if (inlineData == null) {
                     inlineData = new ArrayList<Map<String, Object>>();
                   }
                   final EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
-                  final EntityInfoAggregator inlineEntityInfo = EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
+                  final EntityInfoAggregator inlineEntityInfo =
+                      EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
                   new JsonFeedEntityProducer(inlineProperties).append(writer, inlineEntityInfo, inlineData, false);
 
                 } else {
-                  final WriteEntryCallbackResult result = ((OnWriteEntryContent) callback).retrieveEntryResult((WriteEntryCallbackContext) context);
+                  final WriteEntryCallbackResult result =
+                      ((OnWriteEntryContent) callback).retrieveEntryResult((WriteEntryCallbackContext) context);
                   Map<String, Object> inlineData = result.getEntryData();
                   if (inlineData != null && !inlineData.isEmpty()) {
                     final EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
-                    final EntityInfoAggregator inlineEntityInfo = EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
+                    final EntityInfoAggregator inlineEntityInfo =
+                        EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
                     new JsonEntryEntityProducer(inlineProperties).append(writer, inlineEntityInfo, inlineData, false);
                   } else {
                     jsonStreamWriter.unquotedValue("null");
                   }
                 }
               } catch (final ODataApplicationException e) {
-                throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+                throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+                    .getSimpleName()), e);
               }
             } else {
               writeDeferredUri(navigationPropertyName);
@@ -172,9 +184,11 @@ public class JsonEntryEntityProducer {
       writer.flush();
 
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 

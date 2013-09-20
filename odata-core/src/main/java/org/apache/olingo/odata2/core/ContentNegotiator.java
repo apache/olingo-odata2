@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core;
 
@@ -28,7 +28,6 @@ import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotAcceptableException;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
-import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.core.uri.UriType;
@@ -41,53 +40,59 @@ public class ContentNegotiator {
   private static final String URI_INFO_FORMAT_ATOM = "atom";
   private static final String URI_INFO_FORMAT_XML = "xml";
   static final String DEFAULT_CHARSET = "utf-8";
-  
+
   /**
-   * Do the content negotiation for <code>accept header value</code> based on 
-   * requested content type (in HTTP accept header from {@link ODataRequest}) 
-   * in combination with uri information from {@link UriInfo}
-   * and from given supported content types (via <code>supportedContentTypes</code>).
+   * Do the content negotiation for <code>accept header value</code> based on
+   * requested content type (in HTTP accept header from {@link ODataRequest})
+   * in combination with uri information from {@link org.apache.olingo.odata2.api.uri.UriInfo} and from given supported
+   * content types (via
+   * <code>supportedContentTypes</code>).
    * 
    * @param request specific request
    * @param uriInfo specific uri information
    * @param supportedContentTypes list of supported content types
-   * @return best fitting content type or <code>NULL</code> if content type is not set and for given {@link UriInfo} is ignored
+   * @return best fitting content type or <code>NULL</code> if content type is not set and for given
+   * {@link org.apache.olingo.odata2.api.uri.UriInfo} is
+   * ignored
    * @throws ODataException if no supported content type was found
    * @throws IllegalArgumentException if one of the input parameter is <code>NULL</code>
    */
-  public ContentType doContentNegotiation(ODataRequest odataRequest, UriInfoImpl uriInfo, List<String> supportedContentTypes) throws ODataException {
+  public ContentType doContentNegotiation(final ODataRequest odataRequest, final UriInfoImpl uriInfo,
+      final List<String> supportedContentTypes) throws ODataException {
     validateNotNull(odataRequest, uriInfo, supportedContentTypes);
 
-    if(uriInfo.isCount()) {
+    if (uriInfo.isCount()) {
       return ContentType.TEXT_PLAIN_CS_UTF_8;
-    } else if(uriInfo.isValue()) {
-      if(uriInfo.getUriType() == UriType.URI5 || uriInfo.getUriType() == UriType.URI4) {
-        return ContentType.TEXT_PLAIN_CS_UTF_8;        
+    } else if (uriInfo.isValue()) {
+      if (uriInfo.getUriType() == UriType.URI5 || uriInfo.getUriType() == UriType.URI4) {
+        return ContentType.TEXT_PLAIN_CS_UTF_8;
       }
       return doContentNegotiationForAcceptHeader(Arrays.asList("*/*"), ContentType.create(supportedContentTypes));
-    } 
-    
+    }
+
     if (uriInfo.getFormat() == null) {
-      return doContentNegotiationForAcceptHeader(odataRequest.getAcceptHeaders(), ContentType.create(supportedContentTypes));
+      return doContentNegotiationForAcceptHeader(odataRequest.getAcceptHeaders(), ContentType
+          .create(supportedContentTypes));
     } else {
       return doContentNegotiationForFormat(uriInfo, ContentType.createAsCustom(supportedContentTypes));
     }
   }
 
-  private void validateNotNull(ODataRequest odataRequest, UriInfoImpl uriInfo, List<String> supportedContentTypes) {
-    if(uriInfo == null) {
+  private void validateNotNull(final ODataRequest odataRequest, final UriInfoImpl uriInfo,
+      final List<String> supportedContentTypes) {
+    if (uriInfo == null) {
       throw new IllegalArgumentException("Parameter uriInfo MUST NOT be null.");
     }
-    if(odataRequest == null) {
+    if (odataRequest == null) {
       throw new IllegalArgumentException("Parameter odataRequest MUST NOT be null.");
     }
-    if(supportedContentTypes == null) {
+    if (supportedContentTypes == null) {
       throw new IllegalArgumentException("Parameter supportedContentTypes MUST NOT be null.");
     }
   }
 
-
-  private ContentType doContentNegotiationForFormat(final UriInfoImpl uriInfo, final List<ContentType> supportedContentTypes) throws ODataException {
+  private ContentType doContentNegotiationForFormat(final UriInfoImpl uriInfo,
+      final List<ContentType> supportedContentTypes) throws ODataException {
     validateFormatQuery(uriInfo);
     ContentType formatContentType = mapFormat(uriInfo);
     formatContentType = ensureCharset(formatContentType);
@@ -98,7 +103,8 @@ public class ContentNegotiator {
       }
     }
 
-    throw new ODataNotAcceptableException(ODataNotAcceptableException.NOT_SUPPORTED_CONTENT_TYPE.addContent(uriInfo.getFormat()));
+    throw new ODataNotAcceptableException(ODataNotAcceptableException.NOT_SUPPORTED_CONTENT_TYPE.addContent(uriInfo
+        .getFormat()));
   }
 
   /**
@@ -122,9 +128,9 @@ public class ContentNegotiator {
       if (uriInfo.getUriType() == UriType.URI0) {
         // special handling for serviceDocument uris (UriType.URI0)
         return ContentType.APPLICATION_ATOM_SVC;
-      } else if(uriInfo.getUriType() == UriType.URI1) {
-        return ContentType.APPLICATION_ATOM_XML_FEED;        
-      } else if(uriInfo.getUriType()==UriType.URI2) {
+      } else if (uriInfo.getUriType() == UriType.URI1) {
+        return ContentType.APPLICATION_ATOM_XML_FEED;
+      } else if (uriInfo.getUriType() == UriType.URI2) {
         return ContentType.APPLICATION_ATOM_XML_ENTRY;
       }
     } else if (URI_INFO_FORMAT_JSON.equals(format)) {
@@ -134,11 +140,13 @@ public class ContentNegotiator {
     return ContentType.createAsCustom(format);
   }
 
-  private ContentType doContentNegotiationForAcceptHeader(final List<String> acceptHeaderContentTypes, final List<ContentType> supportedContentTypes) throws ODataException {
+  private ContentType doContentNegotiationForAcceptHeader(final List<String> acceptHeaderContentTypes,
+      final List<ContentType> supportedContentTypes) throws ODataException {
     return contentNegotiation(extractAcceptHeaders(acceptHeaderContentTypes), supportedContentTypes);
   }
 
-  private List<ContentType> extractAcceptHeaders(final List<String> acceptHeaderValues) throws ODataBadRequestException {
+  private List<ContentType> extractAcceptHeaders(final List<String> acceptHeaderValues)
+      throws ODataBadRequestException {
     final List<ContentType> mediaTypes = new ArrayList<ContentType>();
     if (acceptHeaderValues != null) {
       for (final String mediaType : acceptHeaderValues) {
@@ -154,7 +162,8 @@ public class ContentNegotiator {
     return mediaTypes;
   }
 
-  ContentType contentNegotiation(final List<ContentType> acceptedContentTypes, final List<ContentType> supportedContentTypes) throws ODataException {
+  ContentType contentNegotiation(final List<ContentType> acceptedContentTypes,
+      final List<ContentType> supportedContentTypes) throws ODataException {
     final Set<ContentType> setSupported = new HashSet<ContentType>(supportedContentTypes);
 
     if (acceptedContentTypes.isEmpty()) {
@@ -171,12 +180,13 @@ public class ContentNegotiator {
       }
     }
 
-    throw new ODataNotAcceptableException(ODataNotAcceptableException.NOT_SUPPORTED_ACCEPT_HEADER.addContent(acceptedContentTypes.toString()));
+    throw new ODataNotAcceptableException(ODataNotAcceptableException.NOT_SUPPORTED_ACCEPT_HEADER
+        .addContent(acceptedContentTypes.toString()));
   }
 
-  private ContentType ensureCharset(ContentType contentType) {
-    if(ContentType.APPLICATION_ATOM_XML.isCompatible(contentType) 
-        || ContentType.APPLICATION_ATOM_SVC.isCompatible(contentType) 
+  private ContentType ensureCharset(final ContentType contentType) {
+    if (ContentType.APPLICATION_ATOM_XML.isCompatible(contentType)
+        || ContentType.APPLICATION_ATOM_SVC.isCompatible(contentType)
         || ContentType.APPLICATION_XML.isCompatible(contentType)) {
       return contentType.receiveWithCharsetParameter(DEFAULT_CHARSET);
     }

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.rest;
 
@@ -50,7 +50,7 @@ import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 /**
  * Creates an error response according to the format defined by the OData standard
  * if an exception occurs that is not handled elsewhere.
- *  
+ * 
  */
 @Provider
 public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
@@ -88,12 +88,14 @@ public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
   }
 
   private ODataResponse handleException(final Exception exception) {
-    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(uriInfo, httpHeaders, servletConfig, servletRequest);
+    ODataExceptionWrapper exceptionWrapper =
+        new ODataExceptionWrapper(uriInfo, httpHeaders, servletConfig, servletRequest);
     ODataResponse oDataResponse = exceptionWrapper.wrapInExceptionResponse(exception);
     return oDataResponse;
   }
 
-  private ODataResponse handleWebApplicationException(final Exception exception) throws ClassNotFoundException, InstantiationException, IllegalAccessException, EntityProviderException {
+  private ODataResponse handleWebApplicationException(final Exception exception) throws ClassNotFoundException,
+      InstantiationException, IllegalAccessException, EntityProviderException {
     ODataErrorContext errorContext = createErrorContext((WebApplicationException) exception);
     ODataErrorCallback callback = getErrorHandlerCallback();
     return callback == null ?
@@ -160,8 +162,8 @@ public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
         if (DOLLAR_FORMAT_JSON.equals(contentTypeString)) {
           contentType = ContentType.APPLICATION_JSON;
         } else {
-          //Any format mentioned in the $format parameter other than json results in an application/xml content type 
-          //for error messages due to the OData V2 Specification.
+          // Any format mentioned in the $format parameter other than json results in an application/xml content type
+          // for error messages due to the OData V2 Specification.
           contentType = ContentType.APPLICATION_XML;
         }
       }
@@ -174,10 +176,13 @@ public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
       if (ContentType.isParseable(type.toString())) {
         ContentType convertedContentType = ContentType.create(type.toString());
         if (convertedContentType.isWildcard()
-            || ContentType.APPLICATION_XML.equals(convertedContentType) || ContentType.APPLICATION_XML_CS_UTF_8.equals(convertedContentType)
-            || ContentType.APPLICATION_ATOM_XML.equals(convertedContentType) || ContentType.APPLICATION_ATOM_XML_CS_UTF_8.equals(convertedContentType)) {
+            || ContentType.APPLICATION_XML.equals(convertedContentType)
+            || ContentType.APPLICATION_XML_CS_UTF_8.equals(convertedContentType)
+            || ContentType.APPLICATION_ATOM_XML.equals(convertedContentType)
+            || ContentType.APPLICATION_ATOM_XML_CS_UTF_8.equals(convertedContentType)) {
           return ContentType.APPLICATION_XML;
-        } else if (ContentType.APPLICATION_JSON.equals(convertedContentType) || ContentType.APPLICATION_JSON_CS_UTF_8.equals(convertedContentType)) {
+        } else if (ContentType.APPLICATION_JSON.equals(convertedContentType)
+            || ContentType.APPLICATION_JSON_CS_UTF_8.equals(convertedContentType)) {
           return ContentType.APPLICATION_JSON;
         }
       }
@@ -185,7 +190,8 @@ public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
     return ContentType.APPLICATION_XML;
   }
 
-  private ODataErrorCallback getErrorHandlerCallback() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+  private ODataErrorCallback getErrorHandlerCallback() throws ClassNotFoundException, InstantiationException,
+      IllegalAccessException {
     ODataErrorCallback callback = null;
     final String factoryClassName = servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL);
     if (factoryClassName != null) {

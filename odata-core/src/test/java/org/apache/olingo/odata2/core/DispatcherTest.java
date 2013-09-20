@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core;
 
@@ -65,7 +65,7 @@ import org.mockito.stubbing.Answer;
 
 /**
  * Tests for request dispatching according to URI type and HTTP method.
- *  
+ * 
  */
 public class DispatcherTest extends BaseTest {
 
@@ -76,37 +76,49 @@ public class DispatcherTest extends BaseTest {
     EntitySetProcessor entitySet = mock(EntitySetProcessor.class);
     when(entitySet.readEntitySet(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
     when(entitySet.countEntitySet(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
-    when(entitySet.createEntity(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyString())).thenAnswer(getAnswer());
+    when(entitySet.createEntity(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyString())).thenAnswer(
+        getAnswer());
 
     EntityProcessor entity = mock(EntityProcessor.class);
     when(entity.readEntity(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
     when(entity.existsEntity(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
     when(entity.deleteEntity(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
-    when(entity.updateEntity(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyBoolean(), anyString())).thenAnswer(getAnswer());
+    when(entity.updateEntity(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyBoolean(), anyString()))
+        .thenAnswer(getAnswer());
 
     EntityComplexPropertyProcessor entityComplexProperty = mock(EntityComplexPropertyProcessor.class);
     when(entityComplexProperty.readEntityComplexProperty(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
-    when(entityComplexProperty.updateEntityComplexProperty(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyBoolean(), anyString())).thenAnswer(getAnswer());
+    when(
+        entityComplexProperty.updateEntityComplexProperty(any(UriInfoImpl.class), any(InputStream.class), anyString(),
+            anyBoolean(), anyString())).thenAnswer(getAnswer());
 
     EntitySimplePropertyProcessor entitySimpleProperty = mock(EntitySimplePropertyProcessor.class);
     when(entitySimpleProperty.readEntitySimpleProperty(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
-    when(entitySimpleProperty.updateEntitySimpleProperty(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyString())).thenAnswer(getAnswer());
+    when(
+        entitySimpleProperty.updateEntitySimpleProperty(any(UriInfoImpl.class), any(InputStream.class), anyString(),
+            anyString())).thenAnswer(getAnswer());
 
     EntitySimplePropertyValueProcessor entitySimplePropertyValue = mock(EntitySimplePropertyValueProcessor.class);
-    when(entitySimplePropertyValue.readEntitySimplePropertyValue(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
-    when(entitySimplePropertyValue.deleteEntitySimplePropertyValue(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
-    when(entitySimplePropertyValue.updateEntitySimplePropertyValue(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyString())).thenAnswer(getAnswer());
+    when(entitySimplePropertyValue.readEntitySimplePropertyValue(any(UriInfoImpl.class), anyString())).thenAnswer(
+        getAnswer());
+    when(entitySimplePropertyValue.deleteEntitySimplePropertyValue(any(UriInfoImpl.class), anyString())).thenAnswer(
+        getAnswer());
+    when(
+        entitySimplePropertyValue.updateEntitySimplePropertyValue(any(UriInfoImpl.class), any(InputStream.class),
+            anyString(), anyString())).thenAnswer(getAnswer());
 
     EntityLinkProcessor entityLink = mock(EntityLinkProcessor.class);
     when(entityLink.readEntityLink(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
     when(entityLink.existsEntityLink(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
     when(entityLink.deleteEntityLink(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
-    when(entityLink.updateEntityLink(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyString())).thenAnswer(getAnswer());
+    when(entityLink.updateEntityLink(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyString()))
+        .thenAnswer(getAnswer());
 
     EntityLinksProcessor entityLinks = mock(EntityLinksProcessor.class);
     when(entityLinks.readEntityLinks(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
     when(entityLinks.countEntityLinks(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
-    when(entityLinks.createEntityLink(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyString())).thenAnswer(getAnswer());
+    when(entityLinks.createEntityLink(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyString()))
+        .thenAnswer(getAnswer());
 
     MetadataProcessor metadata = mock(MetadataProcessor.class);
     when(metadata.readMetadata(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
@@ -123,7 +135,8 @@ public class DispatcherTest extends BaseTest {
     EntityMediaProcessor entityMedia = mock(EntityMediaProcessor.class);
     when(entityMedia.readEntityMedia(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
     when(entityMedia.deleteEntityMedia(any(UriInfoImpl.class), anyString())).thenAnswer(getAnswer());
-    when(entityMedia.updateEntityMedia(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyString())).thenAnswer(getAnswer());
+    when(entityMedia.updateEntityMedia(any(UriInfoImpl.class), any(InputStream.class), anyString(), anyString()))
+        .thenAnswer(getAnswer());
 
     ODataService service = mock(ODataService.class);
     when(service.getServiceDocumentProcessor()).thenReturn(serviceDocument);
@@ -167,7 +180,8 @@ public class DispatcherTest extends BaseTest {
     return uriInfo;
   }
 
-  private static void checkDispatch(final ODataHttpMethod method, final UriType uriType, final boolean isValue, final String expectedMethodName) throws ODataException {
+  private static void checkDispatch(final ODataHttpMethod method, final UriType uriType, final boolean isValue,
+      final String expectedMethodName) throws ODataException {
     ODataServiceFactory factory = mock(ODataServiceFactory.class);
 
     final ODataResponse response = new Dispatcher(factory, getMockService())
@@ -175,7 +189,9 @@ public class DispatcherTest extends BaseTest {
     assertEquals(expectedMethodName, response.getEntity());
   }
 
-  private static void checkDispatch(final ODataHttpMethod method, final UriType uriType, final String expectedMethodName) throws ODataException {
+  private static void
+      checkDispatch(final ODataHttpMethod method, final UriType uriType, final String expectedMethodName)
+          throws ODataException {
     checkDispatch(method, uriType, false, expectedMethodName);
   }
 
@@ -366,7 +382,8 @@ public class DispatcherTest extends BaseTest {
     notSupportedDispatch(ODataHttpMethod.MERGE, UriType.URI6A);
   }
 
-  private static void checkFeature(final UriType uriType, final boolean isValue, final Class<? extends ODataProcessor> feature) throws ODataException {
+  private static void checkFeature(final UriType uriType, final boolean isValue,
+      final Class<? extends ODataProcessor> feature) throws ODataException {
     ODataServiceFactory factory = mock(ODataServiceFactory.class);
     new Dispatcher(factory, getMockService());
     assertEquals(feature, Dispatcher.mapUriTypeToProcessorFeature(mockUriInfo(uriType, isValue)));
@@ -423,15 +440,17 @@ public class DispatcherTest extends BaseTest {
   }
 
   @SuppressWarnings("unchecked")
-  private void negotiateContentTypeCharset(final String requestType, final String supportedType, final boolean asFormat)
-      throws SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException, ODataException {
+  private void
+      negotiateContentTypeCharset(final String requestType, final String supportedType, final boolean asFormat)
+          throws SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException,
+          ODataException {
 
     ODataServiceFactory factory = mock(ODataServiceFactory.class);
     ODataService service = Mockito.mock(ODataService.class);
     Dispatcher dispatcher = new Dispatcher(factory, service);
 
     UriInfoImpl uriInfo = new UriInfoImpl();
-    uriInfo.setUriType(UriType.URI1); // 
+    uriInfo.setUriType(UriType.URI1); //
     if (asFormat) {
       uriInfo.setFormat(requestType);
     }
@@ -444,7 +463,8 @@ public class DispatcherTest extends BaseTest {
     Mockito.when(service.getEntitySetProcessor()).thenReturn(processor);
 
     InputStream content = null;
-    ODataResponse odataResponse = dispatcher.dispatch(ODataHttpMethod.GET, uriInfo, content, requestType, supportedType);
+    ODataResponse odataResponse =
+        dispatcher.dispatch(ODataHttpMethod.GET, uriInfo, content, requestType, supportedType);
     assertEquals(supportedType, odataResponse.getContentHeader());
   }
 }

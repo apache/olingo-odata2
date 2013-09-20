@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -47,7 +47,8 @@ public class JsonFeedConsumer {
   private FeedMetadataImpl feedMetadata = new FeedMetadataImpl();
   private boolean resultsArrayPresent = false;
 
-  public JsonFeedConsumer(final JsonReader reader, final EntityInfoAggregator eia, final EntityProviderReadProperties readProperties) {
+  public JsonFeedConsumer(final JsonReader reader, final EntityInfoAggregator eia,
+      final EntityProviderReadProperties readProperties) {
     this.reader = reader;
     this.eia = eia;
     this.readProperties = readProperties;
@@ -59,15 +60,19 @@ public class JsonFeedConsumer {
 
       if (reader.peek() != JsonToken.END_DOCUMENT) {
 
-        throw new EntityProviderException(EntityProviderException.END_DOCUMENT_EXPECTED.addContent(reader.peek().toString()));
+        throw new EntityProviderException(EntityProviderException.END_DOCUMENT_EXPECTED.addContent(reader.peek()
+            .toString()));
       }
 
     } catch (IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (IllegalStateException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
     return new ODataFeedImpl(entries, feedMetadata);
   }
@@ -119,7 +124,8 @@ public class JsonFeedConsumer {
         String nextLink = reader.nextString();
         feedMetadata.setNextLink(nextLink);
       } else {
-        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(nextName).addContent("JsonFeed"));
+        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(nextName).addContent(
+            "JsonFeed"));
       }
 
     } else if (FormatJson.DELTA.equals(nextName)) {
@@ -127,10 +133,12 @@ public class JsonFeedConsumer {
         String deltaLink = reader.nextString();
         feedMetadata.setDeltaLink(deltaLink);
       } else {
-        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(nextName).addContent("JsonFeed"));
+        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(nextName).addContent(
+            "JsonFeed"));
       }
     } else {
-      throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(nextName).addContent("JsonFeed"));
+      throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(nextName).addContent(
+          "JsonFeed"));
     }
   }
 
@@ -143,7 +151,8 @@ public class JsonFeedConsumer {
     reader.endArray();
   }
 
-  protected static void readInlineCount(final JsonReader reader, final FeedMetadataImpl feedMetadata) throws IOException, EntityProviderException {
+  protected static void readInlineCount(final JsonReader reader, final FeedMetadataImpl feedMetadata)
+      throws IOException, EntityProviderException {
     if (reader.peek() == JsonToken.STRING && feedMetadata.getInlineCount() == null) {
       int inlineCount;
       try {
@@ -161,10 +170,11 @@ public class JsonFeedConsumer {
     }
   }
 
-  protected ODataFeed readStartedInlineFeed(final String name) throws EdmException, EntityProviderException, IOException {
-    //consume the already started content
+  protected ODataFeed readStartedInlineFeed(final String name) throws EdmException, EntityProviderException,
+      IOException {
+    // consume the already started content
     handleName(name);
-    //consume the rest of the entry content
+    // consume the rest of the entry content
     readFeedContent();
     return new ODataFeedImpl(entries, feedMetadata);
   }

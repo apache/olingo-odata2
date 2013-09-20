@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -63,7 +63,8 @@ public class JsonEntryConsumer {
   private final EntityProviderReadProperties readProperties;
   private final ODataEntryImpl entryResult;
 
-  public JsonEntryConsumer(final JsonReader reader, final EntityInfoAggregator eia, final EntityProviderReadProperties readProperties) {
+  public JsonEntryConsumer(final JsonReader reader, final EntityInfoAggregator eia,
+      final EntityProviderReadProperties readProperties) {
     typeMappings = readProperties.getTypeMappings();
     this.eia = eia;
     this.readProperties = readProperties;
@@ -86,14 +87,18 @@ public class JsonEntryConsumer {
       reader.endObject();
 
       if (reader.peek() != JsonToken.END_DOCUMENT) {
-        throw new EntityProviderException(EntityProviderException.END_DOCUMENT_EXPECTED.addContent(reader.peek().toString()));
+        throw new EntityProviderException(EntityProviderException.END_DOCUMENT_EXPECTED.addContent(reader.peek()
+            .toString()));
       }
     } catch (IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (IllegalStateException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
 
     return entryResult;
@@ -152,7 +157,8 @@ public class JsonEntryConsumer {
       } else if (FormatJson.TYPE.equals(name)) {
         String fullQualifiedName = eia.getEntityType().getNamespace() + Edm.DELIMITER + eia.getEntityType().getName();
         if (!fullQualifiedName.equals(value)) {
-          throw new EntityProviderException(EntityProviderException.INVALID_ENTITYTYPE.addContent(fullQualifiedName).addContent(value));
+          throw new EntityProviderException(EntityProviderException.INVALID_ENTITYTYPE.addContent(fullQualifiedName)
+              .addContent(value));
         }
       } else if (FormatJson.ETAG.equals(name)) {
         entryMetadata.setEtag(value);
@@ -165,7 +171,8 @@ public class JsonEntryConsumer {
       } else if (FormatJson.CONTENT_TYPE.equals(name)) {
         mediaMetadata.setContentType(value);
       } else {
-        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(name).addContent(FormatJson.METADATA));
+        throw new EntityProviderException(EntityProviderException.INVALID_CONTENT.addContent(name).addContent(
+            FormatJson.METADATA));
       }
     }
 
@@ -175,12 +182,14 @@ public class JsonEntryConsumer {
   private void validateMetadata() throws EdmException, EntityProviderException {
     if (eia.getEntityType().hasStream()) {
       if (mediaMetadata.getSourceLink() == null) {
-        throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(FormatJson.MEDIA_SRC).addContent(FormatJson.METADATA));
+        throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(FormatJson.MEDIA_SRC)
+            .addContent(FormatJson.METADATA));
       }
       if (mediaMetadata.getContentType() == null) {
-        throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(FormatJson.CONTENT_TYPE).addContent(FormatJson.METADATA));
+        throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(FormatJson.CONTENT_TYPE)
+            .addContent(FormatJson.METADATA));
       }
-      //TODO Mime Type Mapping
+      // TODO Mime Type Mapping
     } else {
       if (mediaMetadata.getContentType() != null || mediaMetadata.getEditLink() != null
           || mediaMetadata.getEtag() != null || mediaMetadata.getSourceLink() != null) {
@@ -189,7 +198,8 @@ public class JsonEntryConsumer {
     }
   }
 
-  private void readNavigationProperty(final String navigationPropertyName) throws IOException, EntityProviderException, EdmException {
+  private void readNavigationProperty(final String navigationPropertyName) throws IOException, EntityProviderException,
+      EdmException {
     NavigationPropertyInfo navigationPropertyInfo = eia.getNavigationPropertyInfo(navigationPropertyName);
     if (navigationPropertyInfo == null) {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent(navigationPropertyName));
@@ -209,14 +219,16 @@ public class JsonEntryConsumer {
         }
         reader.endObject();
       } else {
-        EdmNavigationProperty navigationProperty = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
+        EdmNavigationProperty navigationProperty =
+            (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
         EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navigationProperty);
         EntityInfoAggregator inlineEia = EntityInfoAggregator.create(inlineEntitySet);
         EntityProviderReadProperties inlineReadProperties;
         OnReadInlineContent callback = readProperties.getCallback();
         try {
           if (callback == null) {
-            inlineReadProperties = EntityProviderReadProperties.init().mergeSemantic(readProperties.getMergeSemantic()).build();
+            inlineReadProperties =
+                EntityProviderReadProperties.init().mergeSemantic(readProperties.getMergeSemantic()).build();
 
           } else {
             inlineReadProperties = callback.receiveReadProperties(readProperties, navigationProperty);
@@ -247,23 +259,27 @@ public class JsonEntryConsumer {
           }
 
         } catch (ODataApplicationException e) {
-          throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+          throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+              .getSimpleName()), e);
         }
       }
       reader.endObject();
     } else {
-      final EdmNavigationProperty navigationProperty = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
+      final EdmNavigationProperty navigationProperty =
+          (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
       final EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navigationProperty);
       final EntityInfoAggregator inlineInfo = EntityInfoAggregator.create(inlineEntitySet);
       OnReadInlineContent callback = readProperties.getCallback();
       EntityProviderReadProperties inlineReadProperties;
       if (callback == null) {
-        inlineReadProperties = EntityProviderReadProperties.init().mergeSemantic(readProperties.getMergeSemantic()).build();
+        inlineReadProperties =
+            EntityProviderReadProperties.init().mergeSemantic(readProperties.getMergeSemantic()).build();
       } else {
         try {
           inlineReadProperties = callback.receiveReadProperties(readProperties, navigationProperty);
         } catch (final ODataApplicationException e) {
-          throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+          throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+              .getSimpleName()), e);
         }
       }
       ODataFeed feed = new JsonFeedConsumer(reader, inlineInfo, inlineReadProperties).readInlineFeedStandalone();
@@ -276,7 +292,8 @@ public class JsonEntryConsumer {
         try {
           callback.handleReadFeed(result);
         } catch (final ODataApplicationException e) {
-          throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+          throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+              .getSimpleName()), e);
         }
       }
     }
@@ -300,9 +317,9 @@ public class JsonEntryConsumer {
   }
 
   private ODataEntry readInlineEntry(final String name) throws EdmException, EntityProviderException, IOException {
-    //consume the already started content
+    // consume the already started content
     handleName(name);
-    //consume the rest of the entry content
+    // consume the rest of the entry content
     readEntryContent();
     return entryResult;
   }

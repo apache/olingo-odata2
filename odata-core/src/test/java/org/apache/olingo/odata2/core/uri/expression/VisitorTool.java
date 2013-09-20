@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
@@ -40,12 +40,14 @@ import org.apache.olingo.odata2.api.uri.expression.UnaryOperator;
 public class VisitorTool implements ExpressionVisitor {
 
   @Override
-  public Object visitBinary(final BinaryExpression binaryExpression, final BinaryOperator operator, final Object leftSide, final Object rightSide) {
+  public Object visitBinary(final BinaryExpression binaryExpression, final BinaryOperator operator,
+      final Object leftSide, final Object rightSide) {
     return "{" + leftSide.toString() + " " + operator.toUriLiteral() + " " + rightSide.toString() + "}";
   }
 
   @Override
-  public Object visitFilterExpression(final FilterExpression filterExpression, final String expressionString, final Object expression) {
+  public Object visitFilterExpression(final FilterExpression filterExpression, final String expressionString,
+      final Object expression) {
     return expression;
   }
 
@@ -55,7 +57,8 @@ public class VisitorTool implements ExpressionVisitor {
   }
 
   @Override
-  public Object visitMethod(final MethodExpression methodExpression, final MethodOperator method, final List<Object> retParameters) {
+  public Object visitMethod(final MethodExpression methodExpression, final MethodOperator method,
+      final List<Object> retParameters) {
     StringBuilder sb = new StringBuilder();
     sb.append("{");
     sb.append(method.toUriLiteral());
@@ -89,7 +92,8 @@ public class VisitorTool implements ExpressionVisitor {
   }
 
   @Override
-  public Object visitOrderByExpression(final OrderByExpression orderByExpression, final String expressionString, final List<Object> orders) {
+  public Object visitOrderByExpression(final OrderByExpression orderByExpression, final String expressionString,
+      final List<Object> orders) {
     StringBuilder sb = new StringBuilder();
     sb.append("{");
     sb.append("oc");
@@ -108,7 +112,8 @@ public class VisitorTool implements ExpressionVisitor {
   }
 
   @Override
-  public Object visitOrder(final OrderExpression orderExpression, final Object filterResult, final SortOrder sortOrder) {
+  public Object visitOrder(final OrderExpression orderExpression, final Object filterResult, 
+      final SortOrder sortOrder) {
     return "{o(" + filterResult + ", " + sortOrder.toString() + ")}";
   }
 

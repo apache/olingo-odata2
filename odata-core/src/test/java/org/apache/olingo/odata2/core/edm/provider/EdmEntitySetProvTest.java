@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
@@ -72,7 +72,8 @@ public class EdmEntitySetProvTest extends BaseTest {
 
     List<NavigationProperty> navigationProperties = new ArrayList<NavigationProperty>();
     FullQualifiedName fooBarAssocName = new FullQualifiedName("namespace", "fooBarAssoc");
-    navigationProperties.add(new NavigationProperty().setName("fooBarNav").setFromRole("fromFoo").setRelationship(fooBarAssocName).setToRole("toBar"));
+    navigationProperties.add(new NavigationProperty().setName("fooBarNav").setFromRole("fromFoo").setRelationship(
+        fooBarAssocName).setToRole("toBar"));
 
     EntityType fooEntityType = new EntityType().setName("fooEntityType").setNavigationProperties(navigationProperties);
     FullQualifiedName fooEntityTypeFullName = new FullQualifiedName("namespace", "fooEntityType");
@@ -93,7 +94,10 @@ public class EdmEntitySetProvTest extends BaseTest {
     Association fooBarAssoc = new Association().setName("fooBarAssoc").setEnd1(fooEnd).setEnd2(barEnd);
     when(edmProvider.getAssociation(fooBarAssocName)).thenReturn(fooBarAssoc);
 
-    AssociationSet associationSet = new AssociationSet().setName("fooBarRelation").setEnd1(new AssociationSetEnd().setRole("fromFoo").setEntitySet("foo")).setEnd2(new AssociationSetEnd().setRole("toBar").setEntitySet("bar"));
+    AssociationSet associationSet =
+        new AssociationSet().setName("fooBarRelation").setEnd1(
+            new AssociationSetEnd().setRole("fromFoo").setEntitySet("foo")).setEnd2(
+            new AssociationSetEnd().setRole("toBar").setEntitySet("bar"));
     FullQualifiedName assocFQName = new FullQualifiedName("namespace", "fooBarAssoc");
     when(edmProvider.getAssociationSet("Container", assocFQName, "foo", "fromFoo")).thenReturn(associationSet);
 
@@ -128,7 +132,8 @@ public class EdmEntitySetProvTest extends BaseTest {
   @Test
   public void testEntitySetType() throws Exception {
     assertEquals("fooEntityType", edmEntitySetFoo.getEntityType().getName());
-    assertEquals(edmEntitySetFoo.getEntityType().getName(), edmProvider.getEntityType(new FullQualifiedName("namespace", "fooEntityType")).getName());
+    assertEquals(edmEntitySetFoo.getEntityType().getName(), edmProvider.getEntityType(
+        new FullQualifiedName("namespace", "fooEntityType")).getName());
   }
 
   @Test

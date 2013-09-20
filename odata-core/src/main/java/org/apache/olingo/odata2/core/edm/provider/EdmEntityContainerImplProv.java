@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
@@ -50,7 +50,8 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
   private EdmEntityContainer edmExtendedEntityContainer;
   private boolean isDefaultContainer;
 
-  public EdmEntityContainerImplProv(final EdmImplProv edm, final EntityContainerInfo entityContainer) throws EdmException {
+  public EdmEntityContainerImplProv(final EdmImplProv edm, final EntityContainerInfo entityContainer)
+      throws EdmException {
     this.edm = edm;
     this.entityContainer = entityContainer;
     edmEntitySets = new HashMap<String, EdmEntitySet>();
@@ -126,7 +127,8 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
   }
 
   @Override
-  public EdmAssociationSet getAssociationSet(final EdmEntitySet sourceEntitySet, final EdmNavigationProperty navigationProperty) throws EdmException {
+  public EdmAssociationSet getAssociationSet(final EdmEntitySet sourceEntitySet,
+      final EdmNavigationProperty navigationProperty) throws EdmException {
     EdmAssociation edmAssociation = navigationProperty.getRelationship();
     String association = edmAssociation.getNamespace() + "." + edmAssociation.getName();
     String entitySetName = sourceEntitySet.getName();
@@ -140,9 +142,12 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
     }
 
     AssociationSet associationSet;
-    FullQualifiedName associationFQName = new FullQualifiedName(edmAssociation.getNamespace(), edmAssociation.getName());
+    FullQualifiedName associationFQName =
+        new FullQualifiedName(edmAssociation.getNamespace(), edmAssociation.getName());
     try {
-      associationSet = edm.edmProvider.getAssociationSet(entityContainer.getName(), associationFQName, entitySetName, entitySetFromRole);
+      associationSet =
+          edm.edmProvider.getAssociationSet(entityContainer.getName(), associationFQName, entitySetName,
+              entitySetFromRole);
     } catch (ODataException e) {
       throw new EdmException(EdmException.PROVIDERPROBLEM, e);
     }
@@ -179,6 +184,7 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
 
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(entityContainer.getAnnotationAttributes(), entityContainer.getAnnotationElements());
+    return new EdmAnnotationsImplProv(entityContainer.getAnnotationAttributes(), entityContainer
+        .getAnnotationElements());
   }
 }

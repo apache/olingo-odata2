@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -59,9 +59,10 @@ import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
 /**
  * Atom/XML format reader/consumer for entries.
  * 
- * {@link XmlEntryConsumer} instance can be reused for several {@link #readEntry(XMLStreamReader, EntityInfoAggregator, EntityProviderReadProperties)} calls
+ * {@link XmlEntryConsumer} instance can be reused for several
+ * {@link #readEntry(XMLStreamReader, EntityInfoAggregator, EntityProviderReadProperties)} calls
  * but be aware that the instance and their <code>readEntry*</code> methods are <b>NOT THREAD SAFE</b>.
- *  
+ * 
  */
 public class XmlEntryConsumer {
 
@@ -73,7 +74,8 @@ public class XmlEntryConsumer {
   private EntityTypeMapping typeMappings;
   private String currentHandledStartTagName;
 
-  public ODataEntry readEntry(final XMLStreamReader reader, final EntityInfoAggregator eia, final EntityProviderReadProperties readProperties) throws EntityProviderException {
+  public ODataEntry readEntry(final XMLStreamReader reader, final EntityInfoAggregator eia,
+      final EntityProviderReadProperties readProperties) throws EntityProviderException {
     try {
       initialize(readProperties);
 
@@ -86,9 +88,11 @@ public class XmlEntryConsumer {
 
       return readEntryResult;
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
@@ -113,7 +117,8 @@ public class XmlEntryConsumer {
     typeMappings = EntityTypeMapping.create(readProperties.getTypeMappings());
   }
 
-  private void handleStartedTag(final XMLStreamReader reader, final EntityInfoAggregator eia, final EntityProviderReadProperties readProperties)
+  private void handleStartedTag(final XMLStreamReader reader, final EntityInfoAggregator eia,
+      final EntityProviderReadProperties readProperties)
       throws EntityProviderException, XMLStreamException, EdmException {
 
     currentHandledStartTagName = reader.getLocalName();
@@ -135,7 +140,8 @@ public class XmlEntryConsumer {
     }
   }
 
-  private void readCustomElement(final XMLStreamReader reader, final String tagName, final EntityInfoAggregator eia) throws EdmException, EntityProviderException, XMLStreamException {
+  private void readCustomElement(final XMLStreamReader reader, final String tagName, final EntityInfoAggregator eia)
+      throws EdmException, EntityProviderException, XMLStreamException {
     EntityPropertyInfo targetPathInfo = eia.getTargetPathInfo(tagName);
     NamespaceContext nsctx = reader.getNamespaceContext();
 
@@ -212,7 +218,9 @@ public class XmlEntryConsumer {
    * @throws XMLStreamException
    * @throws EdmException
    */
-  private void readLink(final XMLStreamReader reader, final EntityInfoAggregator eia, final EntityProviderReadProperties readProperties) throws EntityProviderException, XMLStreamException, EdmException {
+  private void readLink(final XMLStreamReader reader, final EntityInfoAggregator eia,
+      final EntityProviderReadProperties readProperties) throws EntityProviderException, XMLStreamException,
+      EdmException {
     reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_LINK);
 
     final String rel = reader.getAttributeValue(null, FormatXml.ATOM_REL);
@@ -255,14 +263,16 @@ public class XmlEntryConsumer {
    * @throws EntityProviderException
    * @throws EdmException
    */
-  private void readInlineContent(final XMLStreamReader reader, final EntityInfoAggregator eia, final EntityProviderReadProperties readProperties,
+  private void readInlineContent(final XMLStreamReader reader, final EntityInfoAggregator eia,
+      final EntityProviderReadProperties readProperties,
       final String atomLinkType, final String atomLinkRel)
       throws XMLStreamException, EntityProviderException, EdmException {
 
     //
     String navigationPropertyName = atomLinkRel.substring(Edm.NAMESPACE_REL_2007_08.length());
 
-    EdmNavigationProperty navigationProperty = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
+    EdmNavigationProperty navigationProperty =
+        (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
     EdmEntitySet entitySet = eia.getEntitySet().getRelatedEntitySet(navigationProperty);
     EntityInfoAggregator inlineEia = EntityInfoAggregator.create(entitySet);
 
@@ -273,9 +283,11 @@ public class XmlEntryConsumer {
 
     List<ODataEntry> inlineEntries = new ArrayList<ODataEntry>();
 
-    while (!(reader.isEndElement() && Edm.NAMESPACE_M_2007_08.equals(reader.getNamespaceURI()) && FormatXml.M_INLINE.equals(reader.getLocalName()))) {
+    while (!(reader.isEndElement() && Edm.NAMESPACE_M_2007_08.equals(reader.getNamespaceURI()) && FormatXml.M_INLINE
+        .equals(reader.getLocalName()))) {
 
-      if (reader.isStartElement() && Edm.NAMESPACE_ATOM_2005.equals(reader.getNamespaceURI()) && FormatXml.ATOM_ENTRY.equals(reader.getLocalName())) {
+      if (reader.isStartElement() && Edm.NAMESPACE_ATOM_2005.equals(reader.getNamespaceURI())
+          && FormatXml.ATOM_ENTRY.equals(reader.getLocalName())) {
         XmlEntryConsumer xec = new XmlEntryConsumer();
         ODataEntry inlineEntry = xec.readEntry(reader, inlineEia, inlineProperties);
         inlineEntries.add(inlineEntry);
@@ -298,10 +310,12 @@ public class XmlEntryConsumer {
    * @param navigationProperty
    * @param isFeed
    * @param inlineEntries
-   * @throws EntityProviderException 
+   * @throws EntityProviderException
    */
-  private void updateReadProperties(final EntityProviderReadProperties readProperties, final String navigationPropertyName,
-      final EdmNavigationProperty navigationProperty, final boolean isFeed, final List<ODataEntry> inlineEntries) throws EntityProviderException {
+  private void updateReadProperties(final EntityProviderReadProperties readProperties,
+      final String navigationPropertyName,
+      final EdmNavigationProperty navigationProperty, final boolean isFeed, final List<ODataEntry> inlineEntries)
+      throws EntityProviderException {
     Object entry = extractODataEntity(isFeed, inlineEntries);
     OnReadInlineContent callback = readProperties.getCallback();
     if (callback == null) {
@@ -313,13 +327,15 @@ public class XmlEntryConsumer {
   }
 
   /**
-   * Updates the expand select tree ({@link #expandSelectTree}) for this {@link ReadEntryResult} ({@link #readEntryResult}).
+   * Updates the expand select tree ({@link #expandSelectTree}) for this {@link ReadEntryResult} (
+   * {@link #readEntryResult}).
    * 
    * @param navigationPropertyName
    * @param inlineEntries
-   * @throws EntityProviderException 
+   * @throws EntityProviderException
    */
-  private void updateExpandSelectTree(final String navigationPropertyName, final List<ODataEntry> inlineEntries) throws EntityProviderException {
+  private void updateExpandSelectTree(final String navigationPropertyName, final List<ODataEntry> inlineEntries)
+      throws EntityProviderException {
     expandSelectTree.setExpanded();
     ExpandSelectTreeNodeImpl subNode = getExpandSelectTreeNode(inlineEntries);
     expandSelectTree.putLink(navigationPropertyName, subNode);
@@ -330,10 +346,12 @@ public class XmlEntryConsumer {
    * {@link ExpandSelectTreeNodeImpl}.
    * 
    * @param inlineEntries entries which are checked for existing {@link ExpandSelectTreeNodeImpl}
-   * @return {@link ExpandSelectTreeNodeImpl} from the <code>inlineEntries</code> or if none exists create a new {@link ExpandSelectTreeNodeImpl}.
+   * @return {@link ExpandSelectTreeNodeImpl} from the <code>inlineEntries</code> or if none exists create a new
+   * {@link ExpandSelectTreeNodeImpl}.
    * @throws EntityProviderException if an unsupported {@link ExpandSelectTreeNode} implementation was found.
    */
-  private ExpandSelectTreeNodeImpl getExpandSelectTreeNode(final List<ODataEntry> inlineEntries) throws EntityProviderException {
+  private ExpandSelectTreeNodeImpl getExpandSelectTreeNode(final List<ODataEntry> inlineEntries)
+      throws EntityProviderException {
     if (inlineEntries.isEmpty()) {
       return new ExpandSelectTreeNodeImpl();
     } else {
@@ -348,7 +366,7 @@ public class XmlEntryConsumer {
   }
 
   /**
-   * Get a list of {@link ODataEntry}, an empty list, a single {@link ODataEntry} or <code>NULL</code> based on 
+   * Get a list of {@link ODataEntry}, an empty list, a single {@link ODataEntry} or <code>NULL</code> based on
    * <code>isFeed</code> value and <code>inlineEntries</code> content.
    * 
    * @param isFeed
@@ -357,7 +375,7 @@ public class XmlEntryConsumer {
    */
   private Object extractODataEntity(final boolean isFeed, final List<ODataEntry> inlineEntries) {
     if (isFeed) {
-      //TODO: fill metadata correctly with inline count and inline next link. Both are currently ignored.
+      // TODO: fill metadata correctly with inline count and inline next link. Both are currently ignored.
       return new ODataFeedImpl(inlineEntries, new FeedMetadataImpl());
     } else if (!inlineEntries.isEmpty()) {
       return inlineEntries.get(0);
@@ -375,7 +393,8 @@ public class XmlEntryConsumer {
    * @param entry
    * @throws EntityProviderException
    */
-  private void doCallback(final EntityProviderReadProperties readProperties, final EdmNavigationProperty navigationProperty,
+  private void doCallback(final EntityProviderReadProperties readProperties,
+      final EdmNavigationProperty navigationProperty,
       final OnReadInlineContent callback, final boolean isFeed, final Object content) throws EntityProviderException {
 
     try {
@@ -387,20 +406,23 @@ public class XmlEntryConsumer {
         callback.handleReadEntry(callbackInfo);
       }
     } catch (ODataApplicationException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
   /**
-   * Create {@link EntityProviderReadProperties} which can be used for reading of inline properties/entrys of navigation links within
+   * Create {@link EntityProviderReadProperties} which can be used for reading of inline properties/entrys of navigation
+   * links within
    * this current read entry.
    * 
    * @param readProperties
    * @param navigationProperty
    * @return
-   * @throws EntityProviderException 
+   * @throws EntityProviderException
    */
-  private EntityProviderReadProperties createInlineProperties(final EntityProviderReadProperties readProperties, final EdmNavigationProperty navigationProperty) throws EntityProviderException {
+  private EntityProviderReadProperties createInlineProperties(final EntityProviderReadProperties readProperties,
+      final EdmNavigationProperty navigationProperty) throws EntityProviderException {
     final OnReadInlineContent callback = readProperties.getCallback();
 
     EntityProviderReadProperties currentReadProperties = EntityProviderReadProperties.initFrom(readProperties).build();
@@ -410,7 +432,8 @@ public class XmlEntryConsumer {
       try {
         return callback.receiveReadProperties(currentReadProperties, navigationProperty);
       } catch (ODataApplicationException e) {
-        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+            .getSimpleName()), e);
       }
     }
   }
@@ -419,30 +442,34 @@ public class XmlEntryConsumer {
    * <p>
    * Inline content was found and {@link XMLStreamReader} already points to <code><m:inline> tag</code>.
    * <br/>
-   * <b>ATTENTION</b>: If {@link XMLStreamReader} does not point to the <code><m:inline> tag</code> an exception is thrown.
+   * <b>ATTENTION</b>: If {@link XMLStreamReader} does not point to the <code><m:inline> tag</code> an exception is
+   * thrown.
    * </p>
    * <p>
    * Check whether it is an inline <code>Feed</code> or <code>Entry</code> and validate that...
    * <ul>
    * <li>...{@link FormatXml#M_INLINE} tag is correctly set.</li>
    * <li>...based on {@link EdmMultiplicity} of {@link EdmNavigationProperty} all tags are correctly set.</li>
-   * <li>...{@link FormatXml#ATOM_TYPE} tag is correctly set and according to {@link FormatXml#ATOM_ENTRY} or {@link FormatXml#ATOM_FEED} to following tags are available.</li>
+   * <li>...{@link FormatXml#ATOM_TYPE} tag is correctly set and according to {@link FormatXml#ATOM_ENTRY} or
+   * {@link FormatXml#ATOM_FEED} to following tags are available.</li>
    * </ul>
    * 
    * For the case that one of above validations fail an {@link EntityProviderException} is thrown.
-   * If validation was successful <code>true</code> is returned for <code>Feed</code> and <code>false</code> for <code>Entry</code>
+   * If validation was successful <code>true</code> is returned for <code>Feed</code> and <code>false</code> for
+   * <code>Entry</code>
    * multiplicity.
    * </p>
    * 
    * @param reader xml content reader which already points to <code><m:inline> tag</code>
-   * @param eia all necessary information about the entity 
+   * @param eia all necessary information about the entity
    * @param type the atom type attribute value of the <code>link</code> tag
    * @param navigationPropertyName the navigation property name of the entity
    * @return <code>true</code> for <code>Feed</code> and <code>false</code> for <code>Entry</code>
    * @throws EntityProviderException is thrown if at least one validation fails.
    * @throws EdmException if edm access fails
    */
-  private boolean isInlineFeedValidated(final XMLStreamReader reader, final EntityInfoAggregator eia, final String type, final String navigationPropertyName) throws EntityProviderException, EdmException {
+  private boolean isInlineFeedValidated(final XMLStreamReader reader, final EntityInfoAggregator eia,
+      final String type, final String navigationPropertyName) throws EntityProviderException, EdmException {
     boolean isFeed = false;
     try {
       reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_M_2007_08, FormatXml.M_INLINE);
@@ -452,7 +479,8 @@ public class XmlEntryConsumer {
         throw new EntityProviderException(EntityProviderException.INVALID_INLINE_CONTENT.addContent("xml data"));
       }
 
-      EdmNavigationProperty navigationProperty = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
+      EdmNavigationProperty navigationProperty =
+          (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
       EdmMultiplicity navigationMultiplicity = navigationProperty.getMultiplicity();
 
       switch (navigationMultiplicity) {
@@ -471,7 +499,8 @@ public class XmlEntryConsumer {
     return isFeed;
   }
 
-  private void validateEntryTags(final XMLStreamReader reader, final ContentType cType) throws XMLStreamException, EntityProviderException {
+  private void validateEntryTags(final XMLStreamReader reader, final ContentType cType) throws XMLStreamException,
+      EntityProviderException {
     if (FormatXml.ATOM_ENTRY.equals(cType.getParameters().get(FormatXml.ATOM_TYPE))) {
       int next = reader.nextTag();
       if (XMLStreamConstants.START_ELEMENT == next) {
@@ -484,7 +513,8 @@ public class XmlEntryConsumer {
     }
   }
 
-  private void validateFeedTags(final XMLStreamReader reader, final ContentType cType) throws XMLStreamException, EntityProviderException {
+  private void validateFeedTags(final XMLStreamReader reader, final ContentType cType) throws XMLStreamException,
+      EntityProviderException {
     if (FormatXml.ATOM_FEED.equals(cType.getParameters().get(FormatXml.ATOM_TYPE))) {
       int next = reader.nextTag();
       if (XMLStreamConstants.START_ELEMENT == next) {
@@ -497,7 +527,8 @@ public class XmlEntryConsumer {
     }
   }
 
-  private void readContent(final XMLStreamReader reader, final EntityInfoAggregator eia) throws EntityProviderException, XMLStreamException, EdmException {
+  private void readContent(final XMLStreamReader reader, final EntityInfoAggregator eia)
+      throws EntityProviderException, XMLStreamException, EdmException {
     reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_CONTENT);
 
     final String contentType = reader.getAttributeValue(null, FormatXml.ATOM_TYPE);
@@ -511,7 +542,8 @@ public class XmlEntryConsumer {
       reader.require(XMLStreamConstants.END_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_CONTENT);
     } else {
       throw new EntityProviderException(EntityProviderException.INVALID_STATE
-          .addContent("Expected closing 'content' or starting 'properties' but found '" + reader.getLocalName() + "'."));
+          .addContent("Expected closing 'content' or starting 'properties' but found '" 
+      + reader.getLocalName() + "'."));
     }
 
     mediaMetadata.setContentType(contentType);
@@ -528,7 +560,8 @@ public class XmlEntryConsumer {
     reader.require(XMLStreamConstants.END_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_ID);
   }
 
-  private void readProperties(final XMLStreamReader reader, final EntityInfoAggregator entitySet) throws XMLStreamException, EdmException, EntityProviderException {
+  private void readProperties(final XMLStreamReader reader, final EntityInfoAggregator entitySet)
+      throws XMLStreamException, EdmException, EntityProviderException {
     // validate namespace
     reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_M_2007_08, FormatXml.M_PROPERTIES);
     if (entitySet.getEntityType().hasStream()) {
@@ -561,7 +594,8 @@ public class XmlEntryConsumer {
       } else if (reader.isEndElement()) {
         if (reader.getLocalName().equals(closeTag)) {
           closeTag = null;
-        } else if (Edm.NAMESPACE_M_2007_08.equals(reader.getNamespaceURI()) && FormatXml.M_PROPERTIES.equals(reader.getLocalName())) {
+        } else if (Edm.NAMESPACE_M_2007_08.equals(reader.getNamespaceURI())
+            && FormatXml.M_PROPERTIES.equals(reader.getLocalName())) {
           run = false;
         }
       }
@@ -571,28 +605,33 @@ public class XmlEntryConsumer {
 
   /**
    * Check if the {@link #currentHandledStartTagName} is the same as the <code>expectedTagName</code>.
-   * If tag name is not as expected or if {@link #currentHandledStartTagName} is not set an {@link EntityProviderException} is thrown.
+   * If tag name is not as expected or if {@link #currentHandledStartTagName} is not set an
+   * {@link EntityProviderException} is thrown.
    * 
    * @param expectedTagName expected name for {@link #currentHandledStartTagName}
-   * @throws EntityProviderException if tag name is not as expected or if {@link #currentHandledStartTagName} is <code>NULL</code>.
+   * @throws EntityProviderException if tag name is not as expected or if {@link #currentHandledStartTagName} is
+   * <code>NULL</code>.
    */
   private void checkCurrentHandledStartTag(final String expectedTagName) throws EntityProviderException {
     if (currentHandledStartTagName == null) {
-      throw new EntityProviderException(EntityProviderException.INVALID_STATE.addContent("No current handled start tag name set."));
+      throw new EntityProviderException(EntityProviderException.INVALID_STATE
+          .addContent("No current handled start tag name set."));
     } else if (!currentHandledStartTagName.equals(expectedTagName)) {
-      throw new EntityProviderException(EntityProviderException.INVALID_PARENT_TAG.addContent(expectedTagName).addContent(currentHandledStartTagName));
+      throw new EntityProviderException(EntityProviderException.INVALID_PARENT_TAG.addContent(expectedTagName)
+          .addContent(currentHandledStartTagName));
     }
   }
 
   /**
-   * Checks if property of currently read tag in {@link XMLStreamReader} is defined in 
+   * Checks if property of currently read tag in {@link XMLStreamReader} is defined in
    * <code>edm properties namespace</code> {@value Edm#NAMESPACE_D_2007_08}.
    * 
    * If no namespace uri definition is found for namespace prefix of property (<code>tag</code>) an exception is thrown.
    * 
    * @param reader {@link XMLStreamReader} with position at to checked tag
    * @return <code>true</code> if property is in <code>edm properties namespace</code>, otherwise <code>false</code>.
-   * @throws EntityProviderException If no namespace uri definition is found for namespace prefix of property (<code>tag</code>).
+   * @throws EntityProviderException If no namespace uri definition is found for namespace prefix of property
+   * (<code>tag</code>).
    */
   private boolean isEdmNamespaceProperty(final XMLStreamReader reader) throws EntityProviderException {
     final String nsUri = reader.getNamespaceURI();
@@ -614,7 +653,8 @@ public class XmlEntryConsumer {
    * @return valid {@link EntityPropertyInfo} (which is never <code>NULL</code>).
    * @throws EntityProviderException
    */
-  private EntityPropertyInfo getValidatedPropertyInfo(final EntityInfoAggregator entitySet, final String name) throws EntityProviderException {
+  private EntityPropertyInfo getValidatedPropertyInfo(final EntityInfoAggregator entitySet, final String name)
+      throws EntityProviderException {
     EntityPropertyInfo info = entitySet.getPropertyInfo(name);
     if (info == null) {
       throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY.addContent(name));

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
@@ -25,33 +25,39 @@ import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 /**
  * Interface which defines a method for parsing a $filter expression to allow different parser implementations
  * <p>
- * The current expression parser supports expressions as defined in the OData specification 2.0 with the following restrictions
- *   - the methods "cast", "isof" and "replace" are not supported
- *   
+ * The current expression parser supports expressions as defined in the OData specification 2.0 with the following
+ * restrictions
+ * - the methods "cast", "isof" and "replace" are not supported
+ * 
  * The expression parser can be used with providing an Entity Data Model (EDM) an without providing it.
- *  <p>When a EDM is provided the expression parser will be as strict as possible. That means:
- *  <li>All properties used in the expression must be defined inside the EDM</li>
- *  <li>The types of EDM properties will be checked against the lists of allowed type per method, binary- and unary operator</li>
- *  </p>
- *  <p>If no EDM is provided the expression parser performs a lax validation
- *  <li>The properties used in the expression are not looked up inside the EDM and the type of the expression node representing the 
- *      property will be "null"</li>
- *  <li>Expression node with EDM-types which are "null" are not considered during the parameter type validation, to the return type of the parent expression node will
- *  also become "null"</li>
- *  
- *  
+ * <p>When a EDM is provided the expression parser will be as strict as possible. That means:
+ * <li>All properties used in the expression must be defined inside the EDM</li>
+ * <li>The types of EDM properties will be checked against the lists of allowed type per method, binary- and unary
+ * operator</li>
+ * </p>
+ * <p>If no EDM is provided the expression parser performs a lax validation
+ * <li>The properties used in the expression are not looked up inside the EDM and the type of the expression node
+ * representing the
+ * property will be "null"</li>
+ * <li>Expression node with EDM-types which are "null" are not considered during the parameter type validation, to the
+ * return type of the parent expression node will
+ * also become "null"</li>
+ * 
+ * 
  */
 public interface FilterParser {
   /**
    * Parses a $filter expression string and creates an $orderby expression tree.
    * @param expression
-   *   The $filter expression string ( for example "city eq 'Sydney'" ) to be parsed
+   * The $filter expression string ( for example "city eq 'Sydney'" ) to be parsed
    * @return
-   *   Expression tree which can be traversed with help of the interfaces {@link org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor} and {@link org.apache.olingo.odata2.api.uri.expression.Visitable}
+   * Expression tree which can be traversed with help of the interfaces
+   * {@link org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor} and
+   * {@link org.apache.olingo.odata2.api.uri.expression.Visitable}
    * @throws ExpressionParserException
-   *   Exception thrown due to errors while parsing the $filter expression string 
+   * Exception thrown due to errors while parsing the $filter expression string
    * @throws ODataMessageException
-   *   Used for extensibility   
+   * Used for extensibility
    **/
   FilterExpression parseFilterString(String expression) throws ExpressionParserException, ODataMessageException;
 }

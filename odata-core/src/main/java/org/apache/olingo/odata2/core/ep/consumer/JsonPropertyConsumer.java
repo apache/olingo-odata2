@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
@@ -43,7 +43,8 @@ import com.google.gson.stream.JsonToken;
  */
 public class JsonPropertyConsumer {
 
-  public Map<String, Object> readPropertyStandalone(final JsonReader reader, final EdmProperty property, final EntityProviderReadProperties readProperties) throws EntityProviderException {
+  public Map<String, Object> readPropertyStandalone(final JsonReader reader, final EdmProperty property,
+      final EntityProviderReadProperties readProperties) throws EntityProviderException {
     try {
       EntityPropertyInfo entityPropertyInfo = EntityInfoAggregator.create(property);
       Map<String, Object> typeMappings = readProperties == null ? null : readProperties.getTypeMappings();
@@ -62,18 +63,23 @@ public class JsonPropertyConsumer {
       reader.endObject();
 
       if (reader.peek() != JsonToken.END_DOCUMENT) {
-        throw new EntityProviderException(EntityProviderException.END_DOCUMENT_EXPECTED.addContent(reader.peek().toString()));
+        throw new EntityProviderException(EntityProviderException.END_DOCUMENT_EXPECTED.addContent(reader.peek()
+            .toString()));
       }
 
       return result;
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (final IllegalStateException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
-  private void handleName(final JsonReader reader, final Map<String, Object> typeMappings, final EntityPropertyInfo entityPropertyInfo, final Map<String, Object> result, final String nextName) throws EntityProviderException {
+  private void handleName(final JsonReader reader, final Map<String, Object> typeMappings,
+      final EntityPropertyInfo entityPropertyInfo, final Map<String, Object> result, final String nextName)
+      throws EntityProviderException {
     if (!entityPropertyInfo.getName().equals(nextName)) {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent(nextName));
     }
@@ -85,19 +91,23 @@ public class JsonPropertyConsumer {
     result.put(nextName, propertyValue);
   }
 
-  protected Object readPropertyValue(final JsonReader reader, final EntityPropertyInfo entityPropertyInfo, final Object typeMapping) throws EntityProviderException {
+  protected Object readPropertyValue(final JsonReader reader, final EntityPropertyInfo entityPropertyInfo,
+      final Object typeMapping) throws EntityProviderException {
     try {
       return entityPropertyInfo.isComplex() ?
           readComplexProperty(reader, (EntityComplexPropertyInfo) entityPropertyInfo, typeMapping) :
           readSimpleProperty(reader, entityPropertyInfo, typeMapping);
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
-  private Object readSimpleProperty(final JsonReader reader, final EntityPropertyInfo entityPropertyInfo, final Object typeMapping) throws EdmException, EntityProviderException, IOException {
+  private Object readSimpleProperty(final JsonReader reader, final EntityPropertyInfo entityPropertyInfo,
+      final Object typeMapping) throws EdmException, EntityProviderException, IOException {
     final EdmSimpleType type = (EdmSimpleType) entityPropertyInfo.getType();
     Object value = null;
     final JsonToken tokenType = reader.peek();
@@ -110,7 +120,8 @@ public class JsonPropertyConsumer {
           value = reader.nextBoolean();
           value = value.toString();
         } else {
-          throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE.addContent(entityPropertyInfo.getName()));
+          throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE
+              .addContent(entityPropertyInfo.getName()));
         }
         break;
       case Byte:
@@ -121,14 +132,16 @@ public class JsonPropertyConsumer {
           value = reader.nextInt();
           value = value.toString();
         } else {
-          throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE.addContent(entityPropertyInfo.getName()));
+          throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE
+              .addContent(entityPropertyInfo.getName()));
         }
         break;
       default:
         if (tokenType == JsonToken.STRING) {
           value = reader.nextString();
         } else {
-          throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE.addContent(entityPropertyInfo.getName()));
+          throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE
+              .addContent(entityPropertyInfo.getName()));
         }
         break;
       }
@@ -139,11 +152,13 @@ public class JsonPropertyConsumer {
   }
 
   @SuppressWarnings("unchecked")
-  private Object readComplexProperty(final JsonReader reader, final EntityComplexPropertyInfo complexPropertyInfo, final Object typeMapping) throws EdmException, EntityProviderException, IOException {
+  private Object readComplexProperty(final JsonReader reader, final EntityComplexPropertyInfo complexPropertyInfo,
+      final Object typeMapping) throws EdmException, EntityProviderException, IOException {
     if (reader.peek().equals(JsonToken.NULL)) {
       reader.nextNull();
       if (complexPropertyInfo.isMandatory()) {
-        throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE.addContent(complexPropertyInfo.getName()));
+        throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE.addContent(complexPropertyInfo
+            .getName()));
       }
       return null;
     }
@@ -156,7 +171,8 @@ public class JsonPropertyConsumer {
       if (typeMapping instanceof Map) {
         mapping = (Map<String, Object>) typeMapping;
       } else {
-        throw new EntityProviderException(EntityProviderException.INVALID_MAPPING.addContent(complexPropertyInfo.getName()));
+        throw new EntityProviderException(EntityProviderException.INVALID_MAPPING.addContent(complexPropertyInfo
+            .getName()));
       }
     } else {
       mapping = new HashMap<String, Object>();
@@ -168,12 +184,15 @@ public class JsonPropertyConsumer {
         reader.beginObject();
         childName = reader.nextName();
         if (!FormatJson.TYPE.equals(childName)) {
-          throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(FormatJson.TYPE).addContent(FormatJson.METADATA));
+          throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(FormatJson.TYPE)
+              .addContent(FormatJson.METADATA));
         }
         String actualTypeName = reader.nextString();
-        String expectedTypeName = complexPropertyInfo.getType().getNamespace() + Edm.DELIMITER + complexPropertyInfo.getType().getName();
+        String expectedTypeName =
+            complexPropertyInfo.getType().getNamespace() + Edm.DELIMITER + complexPropertyInfo.getType().getName();
         if (!expectedTypeName.equals(actualTypeName)) {
-          throw new EntityProviderException(EntityProviderException.INVALID_ENTITYTYPE.addContent(expectedTypeName).addContent(actualTypeName));
+          throw new EntityProviderException(EntityProviderException.INVALID_ENTITYTYPE.addContent(expectedTypeName)
+              .addContent(actualTypeName));
         }
         reader.endObject();
       } else {
