@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.access.model;
 
@@ -33,8 +33,8 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAModelExcepti
 /**
  * This class holds utility methods for Type conversions between JPA and OData Types.
  * 
- *  
- *
+ * 
+ * 
  */
 public class JPATypeConvertor {
 
@@ -44,15 +44,18 @@ public class JPATypeConvertor {
    * Types.
    * 
    * @param jpaType
-   *            The JPA Type input.
+   * The JPA Type input.
    * @return The corresponding EdmSimpleTypeKind.
    * @throws ODataJPAModelException
-   * @throws ODataJPARuntimeException 
+   * @throws org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException
    * 
    * @see EdmSimpleTypeKind
    */
-  public static EdmSimpleTypeKind convertToEdmSimpleType(final Class<?> jpaType, final Attribute<?, ?> currentAttribute) throws ODataJPAModelException {
-    if (jpaType.equals(String.class) || jpaType.equals(Character.class) || jpaType.equals(char.class) || jpaType.equals(char[].class) ||
+  public static EdmSimpleTypeKind
+      convertToEdmSimpleType(final Class<?> jpaType, final Attribute<?, ?> currentAttribute)
+          throws ODataJPAModelException {
+    if (jpaType.equals(String.class) || jpaType.equals(Character.class) || jpaType.equals(char.class)
+        || jpaType.equals(char[].class) ||
         jpaType.equals(Character[].class)) {
       return EdmSimpleTypeKind.String;
     } else if (jpaType.equals(Long.class) || jpaType.equals(long.class)) {
@@ -77,7 +80,9 @@ public class JPATypeConvertor {
       return EdmSimpleTypeKind.Boolean;
     } else if ((jpaType.equals(Date.class)) || (jpaType.equals(Calendar.class))) {
       try {
-        if ((currentAttribute != null) && (currentAttribute.getDeclaringType().getJavaType().getDeclaredField(currentAttribute.getName()).getAnnotation(Temporal.class).value() == TemporalType.TIME)) {
+        if ((currentAttribute != null)
+            && (currentAttribute.getDeclaringType().getJavaType().getDeclaredField(currentAttribute.getName())
+                .getAnnotation(Temporal.class).value() == TemporalType.TIME)) {
           return EdmSimpleTypeKind.Time;
         } else {
           return EdmSimpleTypeKind.DateTime;
@@ -90,6 +95,7 @@ public class JPATypeConvertor {
     } else if (jpaType.equals(UUID.class)) {
       return EdmSimpleTypeKind.Guid;
     }
-    throw ODataJPAModelException.throwException(ODataJPAModelException.TYPE_NOT_SUPPORTED.addContent(jpaType.toString()), null);
+    throw ODataJPAModelException.throwException(ODataJPAModelException.TYPE_NOT_SUPPORTED
+        .addContent(jpaType.toString()), null);
   }
 }

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.jpql;
 
@@ -66,7 +66,8 @@ public class JPQLSelectContextImplTest {
 
   }
 
-  private void buildSelectContext(final boolean orderByIsNull, final boolean selectFieldsIsNull, final boolean filterIsNull, final boolean isTopNull, final boolean isSkipNull) {
+  private void buildSelectContext(final boolean orderByIsNull, final boolean selectFieldsIsNull,
+      final boolean filterIsNull, final boolean isTopNull, final boolean isSkipNull) {
     builder = null;
     selectContext = null;
     keyPredicates = new ArrayList<KeyPredicate>();
@@ -171,7 +172,8 @@ public class JPQLSelectContextImplTest {
       if (filterIsNull) {
         EasyMock.expect(resultsView.getFilter()).andStubReturn(null);
       } else {
-        EasyMock.expect(resultsView.getFilter()).andStubReturn(getFilterExpressionMockedObj(ExpressionKind.PROPERTY, "SalesOrder"));
+        EasyMock.expect(resultsView.getFilter()).andStubReturn(
+            getFilterExpressionMockedObj(ExpressionKind.PROPERTY, "SalesOrder"));
       }
       if (isTopNull) {
         EasyMock.expect(resultsView.getTop()).andStubReturn(null);
@@ -238,7 +240,8 @@ public class JPQLSelectContextImplTest {
     EasyMock.expect(resultsView.getFilter()).andStubReturn(null);
     EasyMock.replay(resultsView);
     try {
-      JPQLSelectContextBuilder builder1 = (JPQLSelectContextBuilder) JPQLContext.createBuilder(JPQLContextType.SELECT, resultsView);
+      JPQLSelectContextBuilder builder1 =
+          (JPQLSelectContextBuilder) JPQLContext.createBuilder(JPQLContextType.SELECT, resultsView);
 
       builder1.build();
       fail("Should not come here");
@@ -301,7 +304,8 @@ public class JPQLSelectContextImplTest {
   public void testEntitySetAsNull() {
     buildSelectContext(false, false, true, true, true);
     try {
-      JPQLSelectContextBuilder builder = (JPQLSelectContextBuilder) JPQLContext.createBuilder(JPQLContextType.SELECT, null);
+      JPQLSelectContextBuilder builder =
+          (JPQLSelectContextBuilder) JPQLContext.createBuilder(JPQLContextType.SELECT, null);
 
       JPQLSelectContext selectContext1 = (JPQLSelectContext) builder.build();
       assertNull(selectContext1.getJPAEntityAlias());
@@ -350,10 +354,12 @@ public class JPQLSelectContextImplTest {
 
   }
 
-  private FilterExpression getFilterExpressionMockedObj(final ExpressionKind leftOperandExpKind, final String propertyName) throws EdmException {
+  private FilterExpression getFilterExpressionMockedObj(final ExpressionKind leftOperandExpKind,
+      final String propertyName) throws EdmException {
     FilterExpression filterExpression = EasyMock.createMock(FilterExpression.class);
     EasyMock.expect(filterExpression.getKind()).andStubReturn(ExpressionKind.FILTER);
-    EasyMock.expect(filterExpression.getExpression()).andStubReturn(getPropertyExpressionMockedObj(leftOperandExpKind, propertyName));
+    EasyMock.expect(filterExpression.getExpression()).andStubReturn(
+        getPropertyExpressionMockedObj(leftOperandExpKind, propertyName));
     EasyMock.replay(filterExpression);
     return filterExpression;
   }

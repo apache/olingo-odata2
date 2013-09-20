@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.jpql;
 
@@ -63,11 +63,14 @@ public class JPQLJoinStatementBuilderTest {
 
   private List<JPAJoinClause> getJoinClauseList() {
     List<JPAJoinClause> joinClauseList = new ArrayList<JPAJoinClause>();
-    JPAJoinClause jpaOuterJoinClause = new JPAJoinClause("SOHeader", "soh", null, null, "soh.createdBy = 'Peter'", JPAJoinClause.JOIN.LEFT);
+    JPAJoinClause jpaOuterJoinClause =
+        new JPAJoinClause("SOHeader", "soh", null, null, "soh.createdBy = 'Peter'", JPAJoinClause.JOIN.LEFT);
     joinClauseList.add(jpaOuterJoinClause);
-    jpaOuterJoinClause = new JPAJoinClause("SOHeader", "soh", "soItem", "soi", "soi.shId = soh.soId", JPAJoinClause.JOIN.LEFT);
+    jpaOuterJoinClause =
+        new JPAJoinClause("SOHeader", "soh", "soItem", "soi", "soi.shId = soh.soId", JPAJoinClause.JOIN.LEFT);
     joinClauseList.add(jpaOuterJoinClause);
-    jpaOuterJoinClause = new JPAJoinClause("SOItem", "si", "material", "mat", "mat.id = 'abc'", JPAJoinClause.JOIN.LEFT);
+    jpaOuterJoinClause =
+        new JPAJoinClause("SOItem", "si", "material", "mat", "mat.id = 'abc'", JPAJoinClause.JOIN.LEFT);
     joinClauseList.add(jpaOuterJoinClause);
     return joinClauseList;
   }
@@ -81,7 +84,10 @@ public class JPQLJoinStatementBuilderTest {
     JPQLJoinStatementBuilder jpqlJoinStatementBuilder = new JPQLJoinStatementBuilder(context);
     try {
       JPQLStatement jpqlStatement = jpqlJoinStatementBuilder.build();
-      assertEquals("SELECT mat FROM SOHeader soh JOIN soh.soItem soi JOIN soi.material mat WHERE soh.buyerId = 2 AND soh.createdBy = 'Peter' AND soi.shId = soh.soId AND mat.id = 'abc' ORDER BY mat.buyerId asc , mat.city desc", jpqlStatement.toString());
+      assertEquals(
+          "SELECT mat FROM SOHeader soh JOIN soh.soItem soi JOIN soi.material mat WHERE soh.buyerId = 2 AND " +
+          "soh.createdBy = 'Peter' AND soi.shId = soh.soId AND mat.id = 'abc' ORDER BY mat.buyerId asc , mat.city desc",
+          jpqlStatement.toString());
     } catch (ODataJPARuntimeException e) {
       fail("Should not have come here");
     }

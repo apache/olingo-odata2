@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.access.model;
 
@@ -98,12 +98,14 @@ public class JPAEdmMappingModelServiceTest extends JPAEdmMappingModelService {
 
   @Test
   public void testMapJPAPersistenceUnit() {
-    assertEquals(PERSISTENCE_UNIT_NAME_EDM, objJPAEdmMappingModelServiceTest.mapJPAPersistenceUnit(PERSISTENCE_UNIT_NAME_JPA));
+    assertEquals(PERSISTENCE_UNIT_NAME_EDM, objJPAEdmMappingModelServiceTest
+        .mapJPAPersistenceUnit(PERSISTENCE_UNIT_NAME_JPA));
   }
 
   @Test
   public void testMapJPAPersistenceUnitNegative() {
-    assertNull(objJPAEdmMappingModelServiceTest.mapJPAPersistenceUnit(PERSISTENCE_UNIT_NAME_EDM));// Wrong value to bring null
+    assertNull(objJPAEdmMappingModelServiceTest.mapJPAPersistenceUnit(PERSISTENCE_UNIT_NAME_EDM));// Wrong value to
+                                                                                                  // bring null
   }
 
   @Test
@@ -113,7 +115,8 @@ public class JPAEdmMappingModelServiceTest extends JPAEdmMappingModelService {
 
   @Test
   public void testMapJPAEntityTypeNegative() {
-    assertNull(objJPAEdmMappingModelServiceTest.mapJPAEntityType(ENTITY_TYPE_NAME_JPA_WRONG));// Wrong value to bring null
+    assertNull(objJPAEdmMappingModelServiceTest.mapJPAEntityType(ENTITY_TYPE_NAME_JPA_WRONG));// Wrong value to bring
+                                                                                              // null
   }
 
   @Test
@@ -123,27 +126,32 @@ public class JPAEdmMappingModelServiceTest extends JPAEdmMappingModelService {
 
   @Test
   public void testMapJPAEntitySetNegative() {
-    assertNull(objJPAEdmMappingModelServiceTest.mapJPAEntitySet(ENTITY_TYPE_NAME_JPA_WRONG));// Wrong value to bring null
+    assertNull(objJPAEdmMappingModelServiceTest.mapJPAEntitySet(ENTITY_TYPE_NAME_JPA_WRONG));// Wrong value to bring
+                                                                                             // null
   }
 
   @Test
   public void testMapJPAAttribute() {
-    assertEquals(ATTRIBUTE_NAME_EDM, objJPAEdmMappingModelServiceTest.mapJPAAttribute(ENTITY_TYPE_NAME_JPA, ATTRIBUTE_NAME_JPA));
+    assertEquals(ATTRIBUTE_NAME_EDM, objJPAEdmMappingModelServiceTest.mapJPAAttribute(ENTITY_TYPE_NAME_JPA,
+        ATTRIBUTE_NAME_JPA));
   }
 
   @Test
   public void testMapJPAAttributeNegative() {
-    assertNull(objJPAEdmMappingModelServiceTest.mapJPAAttribute(ENTITY_TYPE_NAME_JPA, ATTRIBUTE_NAME_JPA + "AA"));// Wrong value to bring null
+    // Wrong value to bring null
+    assertNull(objJPAEdmMappingModelServiceTest.mapJPAAttribute(ENTITY_TYPE_NAME_JPA, ATTRIBUTE_NAME_JPA + "AA"));
   }
 
   @Test
   public void testMapJPARelationship() {
-    assertEquals(RELATIONSHIP_NAME_EDM, objJPAEdmMappingModelServiceTest.mapJPARelationship(ENTITY_TYPE_NAME_JPA, RELATIONSHIP_NAME_JPA));
+    assertEquals(RELATIONSHIP_NAME_EDM, objJPAEdmMappingModelServiceTest.mapJPARelationship(ENTITY_TYPE_NAME_JPA,
+        RELATIONSHIP_NAME_JPA));
   }
 
   @Test
   public void testMapJPARelationshipNegative() {
-    assertNull(objJPAEdmMappingModelServiceTest.mapJPARelationship(ENTITY_TYPE_NAME_JPA, RELATIONSHIP_NAME_JPA_WRONG));// Wrong value to bring null
+    // Wrong value to bring null
+    assertNull(objJPAEdmMappingModelServiceTest.mapJPARelationship(ENTITY_TYPE_NAME_JPA, RELATIONSHIP_NAME_JPA_WRONG));
   }
 
   @Test
@@ -153,17 +161,20 @@ public class JPAEdmMappingModelServiceTest extends JPAEdmMappingModelService {
 
   @Test
   public void testMapJPAEmbeddableTypeNegative() {
-    assertNull(objJPAEdmMappingModelServiceTest.mapJPAEmbeddableType(EMBEDDABLE_TYPE_NAME_JPA_WRONG));// Wrong value to bring null
+    assertNull(objJPAEdmMappingModelServiceTest.mapJPAEmbeddableType(EMBEDDABLE_TYPE_NAME_JPA_WRONG));// Wrong value to
+                                                                                                      // bring null
   }
 
   @Test
   public void testMapJPAEmbeddableTypeAttribute() {
-    assertEquals(EMBEDDABLE_ATTRIBUTE_NAME_EDM, objJPAEdmMappingModelServiceTest.mapJPAEmbeddableTypeAttribute(EMBEDDABLE_TYPE_NAME_JPA, EMBEDDABLE_ATTRIBUTE_NAME_JPA));
+    assertEquals(EMBEDDABLE_ATTRIBUTE_NAME_EDM, objJPAEdmMappingModelServiceTest.mapJPAEmbeddableTypeAttribute(
+        EMBEDDABLE_TYPE_NAME_JPA, EMBEDDABLE_ATTRIBUTE_NAME_JPA));
   }
 
   @Test
   public void testMapJPAEmbeddableTypeAttributeNegative() {
-    assertNull(objJPAEdmMappingModelServiceTest.mapJPAEmbeddableTypeAttribute(EMBEDDABLE_TYPE_NAME_JPA_WRONG, EMBEDDABLE_ATTRIBUTE_NAME_JPA));
+    assertNull(objJPAEdmMappingModelServiceTest.mapJPAEmbeddableTypeAttribute(EMBEDDABLE_TYPE_NAME_JPA_WRONG,
+        EMBEDDABLE_ATTRIBUTE_NAME_JPA));
   }
 
   @Test
@@ -173,7 +184,8 @@ public class JPAEdmMappingModelServiceTest extends JPAEdmMappingModelService {
 
   @Test
   public void testCheckExclusionOfJPAAttributeType() {
-    assertTrue(!objJPAEdmMappingModelServiceTest.checkExclusionOfJPAAttributeType(ENTITY_TYPE_NAME_JPA, ATTRIBUTE_NAME_JPA));
+    assertTrue(!objJPAEdmMappingModelServiceTest.checkExclusionOfJPAAttributeType(ENTITY_TYPE_NAME_JPA,
+        ATTRIBUTE_NAME_JPA));
   }
 
   @Test
@@ -183,7 +195,8 @@ public class JPAEdmMappingModelServiceTest extends JPAEdmMappingModelService {
 
   @Test
   public void testCheckExclusionOfJPAEmbeddableAttributeType() {
-    assertTrue(!objJPAEdmMappingModelServiceTest.checkExclusionOfJPAEmbeddableAttributeType(EMBEDDABLE_TYPE_NAME_JPA, EMBEDDABLE_ATTRIBUTE_NAME_JPA));
+    assertTrue(!objJPAEdmMappingModelServiceTest.checkExclusionOfJPAEmbeddableAttributeType(EMBEDDABLE_TYPE_NAME_JPA,
+        EMBEDDABLE_ATTRIBUTE_NAME_JPA));
   }
 
   /**

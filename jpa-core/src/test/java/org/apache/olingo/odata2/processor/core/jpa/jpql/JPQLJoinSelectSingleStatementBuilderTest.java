@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.jpql;
 
@@ -63,11 +63,14 @@ public class JPQLJoinSelectSingleStatementBuilderTest {
 
   private List<JPAJoinClause> getJoinClauseList() {
     List<JPAJoinClause> joinClauseList = new ArrayList<JPAJoinClause>();
-    JPAJoinClause jpaOuterJoinClause = new JPAJoinClause("SOHeader", "soh", null, null, "soh.soId = 1", JPAJoinClause.JOIN.LEFT);
+    JPAJoinClause jpaOuterJoinClause =
+        new JPAJoinClause("SOHeader", "soh", null, null, "soh.soId = 1", JPAJoinClause.JOIN.LEFT);
     joinClauseList.add(jpaOuterJoinClause);
-    jpaOuterJoinClause = new JPAJoinClause("SOHeader", "soh", "soItem", "soi", "soi.shId = soh.soId", JPAJoinClause.JOIN.LEFT);
+    jpaOuterJoinClause =
+        new JPAJoinClause("SOHeader", "soh", "soItem", "soi", "soi.shId = soh.soId", JPAJoinClause.JOIN.LEFT);
     joinClauseList.add(jpaOuterJoinClause);
-    jpaOuterJoinClause = new JPAJoinClause("SOItem", "si", "material", "mat", "mat.id = 'abc'", JPAJoinClause.JOIN.LEFT);
+    jpaOuterJoinClause =
+        new JPAJoinClause("SOItem", "si", "material", "mat", "mat.id = 'abc'", JPAJoinClause.JOIN.LEFT);
     joinClauseList.add(jpaOuterJoinClause);
     return joinClauseList;
   }
@@ -78,10 +81,14 @@ public class JPQLJoinSelectSingleStatementBuilderTest {
   @Test
   public void testBuild() throws Exception {
     setUp(getJoinClauseList());
-    JPQLJoinSelectSingleStatementBuilder jpqlJoinSelectsingleStatementBuilder = new JPQLJoinSelectSingleStatementBuilder(context);
+    JPQLJoinSelectSingleStatementBuilder jpqlJoinSelectsingleStatementBuilder =
+        new JPQLJoinSelectSingleStatementBuilder(context);
     try {
       JPQLStatement jpqlStatement = jpqlJoinSelectsingleStatementBuilder.build();
-      assertEquals("SELECT gt1 FROM SOHeader soh JOIN soh.soItem soi JOIN soi.material mat WHERE soh.soId = 1 AND soi.shId = soh.soId AND mat.id = 'abc'", jpqlStatement.toString());
+      assertEquals(
+          "SELECT gt1 FROM SOHeader soh JOIN soh.soItem soi JOIN soi.material mat WHERE soh.soId = 1 AND " +
+          "soi.shId = soh.soId AND mat.id = 'abc'",
+          jpqlStatement.toString());
     } catch (ODataJPARuntimeException e) {
       fail("Should not have come here");
     }
@@ -108,7 +115,8 @@ public class JPQLJoinSelectSingleStatementBuilderTest {
   @Test
   public void testJoinClauseAsNull() throws Exception {
     setUp(null);
-    JPQLJoinSelectSingleStatementBuilder jpqlJoinSelectsingleStatementBuilder = new JPQLJoinSelectSingleStatementBuilder(context);
+    JPQLJoinSelectSingleStatementBuilder jpqlJoinSelectsingleStatementBuilder =
+        new JPQLJoinSelectSingleStatementBuilder(context);
     try {
       jpqlJoinSelectsingleStatementBuilder.build();
       fail("Should not have come here");
@@ -121,7 +129,8 @@ public class JPQLJoinSelectSingleStatementBuilderTest {
   public void testJoinClauseListAsEmpty() throws Exception {
     List<JPAJoinClause> joinClauseList = new ArrayList<JPAJoinClause>();
     setUp(joinClauseList);
-    JPQLJoinSelectSingleStatementBuilder jpqlJoinSelectsingleStatementBuilder = new JPQLJoinSelectSingleStatementBuilder(context);
+    JPQLJoinSelectSingleStatementBuilder jpqlJoinSelectsingleStatementBuilder =
+        new JPQLJoinSelectSingleStatementBuilder(context);
     try {
       jpqlJoinSelectsingleStatementBuilder.build();
       fail("Should not have come here");

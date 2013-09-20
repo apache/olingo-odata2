@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 /**
  * 
@@ -55,8 +55,9 @@ public class JPQLSelectStatementBuilderTest {
 
   }
 
-  private JPQLSelectContext createSelectContext(final OrderByExpression orderByExpression, final FilterExpression filterExpression) throws ODataJPARuntimeException, EdmException {
-    //Object Instantiation
+  private JPQLSelectContext createSelectContext(final OrderByExpression orderByExpression,
+      final FilterExpression filterExpression) throws ODataJPARuntimeException, EdmException {
+    // Object Instantiation
 
     JPQLSelectContext jpqlSelectContextImpl = null;
     GetEntitySetUriInfo getEntitySetView = EasyMock.createMock(GetEntitySetUriInfo.class);
@@ -65,7 +66,7 @@ public class JPQLSelectStatementBuilderTest {
     EdmEntityType edmEntityType = EasyMock.createMock(EdmEntityType.class);
     List<SelectItem> selectItemList = null;
 
-    //Setting up the expected value
+    // Setting up the expected value
 
     EasyMock.expect(getEntitySetView.getTargetEntitySet()).andStubReturn(edmEntitySet);
     EasyMock.expect(getEntitySetView.getOrderBy()).andStubReturn(orderByExpression);
@@ -90,8 +91,8 @@ public class JPQLSelectStatementBuilderTest {
 
   /**
    * Test method for {@link org.apache.olingo.odata2.processor.jpa.jpql.JPQLSelectStatementBuilder#build)}.
-   * @throws EdmException 
-   * @throws ODataJPARuntimeException 
+   * @throws EdmException
+   * @throws ODataJPARuntimeException
    */
 
   @Test
@@ -114,19 +115,21 @@ public class JPQLSelectStatementBuilderTest {
     jpqlSelectContextImpl.setOrderByCollection(orderByCollection);
     jpqlSelectStatementBuilder = new JPQLSelectStatementBuilder(jpqlSelectContextImpl);
 
-    assertEquals("SELECT E1 FROM SalesOrderHeader E1 ORDER BY E1.soID ASC , E1.buyerId DESC", jpqlSelectStatementBuilder.build().toString());
+    assertEquals("SELECT E1 FROM SalesOrderHeader E1 ORDER BY E1.soID ASC , E1.buyerId DESC",
+        jpqlSelectStatementBuilder.build().toString());
   }
 
   @Test
   public void testBuildQueryWithFilter() throws EdmException, ODataJPARuntimeException {
     OrderByExpression orderByExpression = EasyMock.createMock(OrderByExpression.class);
-    FilterExpression filterExpression = null;//getFilterExpressionMockedObj();
+    FilterExpression filterExpression = null;// getFilterExpressionMockedObj();
     JPQLSelectContext jpqlSelectContextImpl = createSelectContext(orderByExpression, filterExpression);
     jpqlSelectContextImpl.setWhereExpression("E1.soID >= 1234");
 
     jpqlSelectStatementBuilder = new JPQLSelectStatementBuilder(jpqlSelectContextImpl);
 
-    assertEquals("SELECT E1 FROM SalesOrderHeader E1 WHERE E1.soID >= 1234", jpqlSelectStatementBuilder.build().toString());
+    assertEquals("SELECT E1 FROM SalesOrderHeader E1 WHERE E1.soID >= 1234", jpqlSelectStatementBuilder.build()
+        .toString());
   }
 
 }

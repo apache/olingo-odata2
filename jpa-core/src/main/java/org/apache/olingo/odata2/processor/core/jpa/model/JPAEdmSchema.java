@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.model;
 
@@ -146,7 +146,7 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements JPAEdmSchemaView
         List<ComplexType> complexTypes = complexTypeView.getConsistentEdmComplexTypes();
         List<ComplexType> existingComplexTypes = new ArrayList<ComplexType>();
         for (ComplexType complexType : complexTypes) {
-          if (complexType != null && nonKeyComplexList.contains(complexType.getName())) {//null check for exclude
+          if (complexType != null && nonKeyComplexList.contains(complexType.getName())) {// null check for exclude
             existingComplexTypes.add(complexType);
           }
         }
@@ -165,7 +165,8 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements JPAEdmSchemaView
         }
 
       }
-      List<EntityType> entityTypes = entityContainerView.getJPAEdmEntitySetView().getJPAEdmEntityTypeView().getConsistentEdmEntityTypes();
+      List<EntityType> entityTypes =
+          entityContainerView.getJPAEdmEntitySetView().getJPAEdmEntityTypeView().getConsistentEdmEntityTypes();
       List<NavigationProperty> navigationProperties;
       if (entityTypes != null && !entityTypes.isEmpty()) {
         for (EntityType entityType : entityTypes) {

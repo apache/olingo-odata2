@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.model;
 
@@ -47,7 +47,8 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
   private List<JPAEdmReferentialConstraintView> inconsistentRefConstraintViewList;
   private int numberOfSimilarEndPoints;
 
-  public JPAEdmAssociation(final JPAEdmAssociationEndView associationEndview, final JPAEdmEntityTypeView entityTypeView, final JPAEdmPropertyView propertyView, final int value) {
+  public JPAEdmAssociation(final JPAEdmAssociationEndView associationEndview,
+      final JPAEdmEntityTypeView entityTypeView, final JPAEdmPropertyView propertyView, final int value) {
     super(associationEndview);
     associationEndView = associationEndview;
     numberOfSimilarEndPoints = value;
@@ -93,8 +94,11 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
         if (association != null) {
           if (view.compare(association.getEnd1(), association.getEnd2())) {
             JPAEdmAssociationEndView associationEnd = associationEndMap.get(association.getName());
-            if (associationEnd.getJoinColumnName() != null && associationEnd.getJoinColumnReferenceColumnName() != null && view.getJoinColumnName() != null && view.getJoinColumnReferenceColumnName() != null) {
-              if (view.getJoinColumnName().equals(associationEnd.getJoinColumnName()) && view.getJoinColumnReferenceColumnName().equals(associationEnd.getJoinColumnReferenceColumnName())) {
+            if (associationEnd.getJoinColumnName() != null && associationEnd.getJoinColumnReferenceColumnName() != null
+                && view.getJoinColumnName() != null && view.getJoinColumnReferenceColumnName() != null) {
+              if (view.getJoinColumnName().equals(associationEnd.getJoinColumnName())
+                  && view.getJoinColumnReferenceColumnName()
+                  .equals(associationEnd.getJoinColumnReferenceColumnName())) {
                 currentAssociation = association;
                 return association;
               }
@@ -120,7 +124,8 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
   }
 
   @Override
-  public void addJPAEdmAssociationView(final JPAEdmAssociationView associationView, final JPAEdmAssociationEndView associationEndView) {
+  public void addJPAEdmAssociationView(final JPAEdmAssociationView associationView,
+      final JPAEdmAssociationEndView associationEndView) {
     if (associationView != null) {
       currentAssociation = associationView.getEdmAssociation();
       associationMap.put(currentAssociation.getName(), currentAssociation);
@@ -218,7 +223,10 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
       if (association != null) {
         end1 = association.getEnd1();
         end2 = association.getEnd2();
-        if ((end1.getType().equals(currentAssociationEnd1.getType()) && end2.getType().equals(currentAssociationEnd2.getType())) || (end1.getType().equals(currentAssociationEnd2.getType()) && end2.getType().equals(currentAssociationEnd1.getType()))) {
+        if ((end1.getType().equals(currentAssociationEnd1.getType()) && end2.getType().equals(
+            currentAssociationEnd2.getType()))
+            || (end1.getType().equals(currentAssociationEnd2.getType()) && end2.getType().equals(
+                currentAssociationEnd1.getType()))) {
           count++;
         }
       }

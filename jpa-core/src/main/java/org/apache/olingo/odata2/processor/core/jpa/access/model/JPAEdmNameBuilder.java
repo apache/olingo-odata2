@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.access.model;
 
@@ -89,7 +89,7 @@ public class JPAEdmNameBuilder {
     if (edmEntityTypeName == null) {
       edmEntityTypeName = jpaEntityName;
     }
-    //Setting the mapping object
+    // Setting the mapping object
     edmEntityType.setMapping(((Mapping) mapping).setInternalName(jpaEntityName));
 
     edmEntityType.setName(edmEntityTypeName);
@@ -130,9 +130,13 @@ public class JPAEdmNameBuilder {
     JPAEdmMappingModelAccess mappingModelAccess = view.getJPAEdmMappingModelAccess();
     if (mappingModelAccess != null && mappingModelAccess.isMappingModelExists()) {
       if (isComplexMode) {
-        propertyName = mappingModelAccess.mapJPAEmbeddableTypeAttribute(view.getJPAEdmComplexTypeView().getJPAEmbeddableType().getJavaType().getSimpleName(), jpaAttributeName);
+        propertyName =
+            mappingModelAccess.mapJPAEmbeddableTypeAttribute(view.getJPAEdmComplexTypeView().getJPAEmbeddableType()
+                .getJavaType().getSimpleName(), jpaAttributeName);
       } else {
-        propertyName = mappingModelAccess.mapJPAAttribute(view.getJPAEdmEntityTypeView().getJPAEntityType().getName(), jpaAttributeName);
+        propertyName =
+            mappingModelAccess.mapJPAAttribute(view.getJPAEdmEntityTypeView().getJPAEntityType().getName(),
+                jpaAttributeName);
       }
     }
     if (propertyName == null) {
@@ -312,7 +316,8 @@ public class JPAEdmNameBuilder {
    * EDM Association End Name - RULES
    * ************************************************************************
    */
-  public static void build(final JPAEdmAssociationEndView assocaitionEndView, final JPAEdmEntityTypeView entityTypeView, final JPAEdmPropertyView propertyView) {
+  public static void build(final JPAEdmAssociationEndView assocaitionEndView,
+      final JPAEdmEntityTypeView entityTypeView, final JPAEdmPropertyView propertyView) {
 
     String namespace = buildNamespace(assocaitionEndView);
 
@@ -323,12 +328,13 @@ public class JPAEdmNameBuilder {
     name = null;
     String jpaEntityTypeName = null;
     Attribute<?, ?> jpaAttribute = propertyView.getJPAAttribute();
-    if (jpaAttribute.isCollection())
+    if (jpaAttribute.isCollection()) {
       jpaEntityTypeName = ((PluralAttribute<?, ?, ?>) jpaAttribute).getElementType().getJavaType()
           .getSimpleName();
-    else
+    } else {
       jpaEntityTypeName = propertyView.getJPAAttribute().getJavaType()
           .getSimpleName();
+    }
 
     JPAEdmMappingModelAccess mappingModelAccess = assocaitionEndView.getJPAEdmMappingModelAccess();
 
@@ -431,10 +437,11 @@ public class JPAEdmNameBuilder {
         .getJPAEdmMappingModelAccess();
 
     String targetEntityTypeName = null;
-    if (jpaAttribute.isCollection())
+    if (jpaAttribute.isCollection()) {
       targetEntityTypeName = ((PluralAttribute<?, ?, ?>) jpaAttribute).getElementType().getJavaType().getSimpleName();
-    else
+    } else {
       targetEntityTypeName = jpaAttribute.getJavaType().getSimpleName();
+    }
 
     if (mappingModelAccess != null
         && mappingModelAccess.isMappingModelExists()) {

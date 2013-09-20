@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.edm;
 
@@ -51,7 +51,7 @@ public class ODataJPAEdmProviderNegativeTest {
       Field field = clazz.getDeclaredField("schemas");
       field.setAccessible(true);
       List<Schema> schemas = new ArrayList<Schema>();
-      schemas.add(new Schema().setNamespace("salesorderprocessing")); //Empty Schema
+      schemas.add(new Schema().setNamespace("salesorderprocessing")); // Empty Schema
       field.set(edmProvider, schemas);
       field = clazz.getDeclaredField("oDataJPAContext");
       field.setAccessible(true);
@@ -106,7 +106,8 @@ public class ODataJPAEdmProviderNegativeTest {
   public void testGetAssociationFullQualifiedName() {
     Association association = null;
     try {
-      association = edmProvider.getAssociation(new FullQualifiedName("salesorderprocessing", "SalesOrderHeader_SalesOrderItem"));
+      association =
+          edmProvider.getAssociation(new FullQualifiedName("salesorderprocessing", "SalesOrderHeader_SalesOrderItem"));
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -125,7 +126,8 @@ public class ODataJPAEdmProviderNegativeTest {
   @Test
   public void testGetAssociationSet() {
     try {
-      assertNull(edmProvider.getAssociationSet("salesorderprocessingContainer", new FullQualifiedName("salesorderprocessing", "SalesOrderHeader_SalesOrderItem"), "SalesOrderHeaders", "SalesOrderHeader"));
+      assertNull(edmProvider.getAssociationSet("salesorderprocessingContainer", new FullQualifiedName(
+          "salesorderprocessing", "SalesOrderHeader_SalesOrderItem"), "SalesOrderHeaders", "SalesOrderHeader"));
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -158,7 +160,7 @@ public class ODataJPAEdmProviderNegativeTest {
         List<EntityContainer> containerList = new ArrayList<EntityContainer>();
         containerList.add(container); // Empty Container
         schema.setEntityContainers(containerList);
-        schemas.add(schema); //Empty Schema
+        schemas.add(schema); // Empty Schema
         field.set(provider, schemas);
       } catch (IllegalArgumentException e) {
         fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);

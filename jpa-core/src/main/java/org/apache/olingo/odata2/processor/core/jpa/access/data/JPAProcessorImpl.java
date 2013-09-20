@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.access.data;
 
@@ -268,6 +268,7 @@ public class JPAProcessorImpl implements JPAProcessor {
   }
 
   /* Process Create Entity Request */
+  @Override
   public <T> List<T> process(final PostUriInfo createView, final InputStream content,
       final String requestedContentType) throws ODataJPAModelException,
       ODataJPARuntimeException {
@@ -275,25 +276,28 @@ public class JPAProcessorImpl implements JPAProcessor {
   }
 
   @Override
-  public <T> List<T> process(PostUriInfo createView, Map<String, Object> content) throws ODataJPAModelException, ODataJPARuntimeException {
+  public <T> List<T> process(final PostUriInfo createView, final Map<String, Object> content)
+      throws ODataJPAModelException, ODataJPARuntimeException {
     return processCreate(createView, null, content, null);
   }
 
   /* Process Update Entity Request */
   @Override
-  public <T> Object process(PutMergePatchUriInfo updateView,
+  public <T> Object process(final PutMergePatchUriInfo updateView,
       final InputStream content, final String requestContentType)
       throws ODataJPAModelException, ODataJPARuntimeException {
     return processUpdate(updateView, content, null, requestContentType);
   }
 
   @Override
-  public <T> Object process(PutMergePatchUriInfo updateView, Map<String, Object> content) throws ODataJPAModelException, ODataJPARuntimeException {
+  public <T> Object process(final PutMergePatchUriInfo updateView, final Map<String, Object> content)
+      throws ODataJPAModelException, ODataJPARuntimeException {
     return processUpdate(updateView, null, content, null);
   }
 
   @SuppressWarnings("unchecked")
-  private <T> List<T> processCreate(final PostUriInfo createView, final InputStream content, final Map<String, Object> properties,
+  private <T> List<T> processCreate(final PostUriInfo createView, final InputStream content,
+      final Map<String, Object> properties,
       final String requestedContentType) throws ODataJPAModelException,
       ODataJPARuntimeException {
     try {
@@ -306,13 +310,13 @@ public class JPAProcessorImpl implements JPAProcessor {
 
       if (content != null) {
         final ODataEntityParser oDataEntityParser = new ODataEntityParser(oDataJPAContext);
-        final ODataEntry oDataEntry = oDataEntityParser.parseEntry(oDataEntitySet, content, requestedContentType, false);
+        final ODataEntry oDataEntry =
+            oDataEntityParser.parseEntry(oDataEntitySet, content, requestedContentType, false);
         virtualJPAEntity.create(oDataEntry);
         JPALink link = new JPALink(oDataJPAContext);
         link.setSourceJPAEntity(jpaEntity);
         link.create(createView, content, requestedContentType, requestedContentType);
-      }
-      else if (properties != null) {
+      } else if (properties != null) {
         virtualJPAEntity.create(properties);
       } else {
         return null;
@@ -338,7 +342,7 @@ public class JPAProcessorImpl implements JPAProcessor {
   }
 
   public <T> Object processUpdate(PutMergePatchUriInfo updateView,
-      final InputStream content, Map<String, Object> properties, final String requestContentType)
+      final InputStream content, final Map<String, Object> properties, final String requestContentType)
       throws ODataJPAModelException, ODataJPARuntimeException {
     JPQLContextType contextType = null;
     Object jpaEntity = null;
@@ -356,9 +360,10 @@ public class JPAProcessorImpl implements JPAProcessor {
 
       jpaEntity = readEntity(updateView, contextType);
 
-      if (jpaEntity == null)
+      if (jpaEntity == null) {
         throw ODataJPARuntimeException
             .throwException(ODataJPARuntimeException.RESOURCE_NOT_FOUND, null);
+      }
 
       final EdmEntitySet oDataEntitySet = updateView.getTargetEntitySet();
       final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
@@ -369,11 +374,11 @@ public class JPAProcessorImpl implements JPAProcessor {
         final ODataEntityParser oDataEntityParser = new ODataEntityParser(oDataJPAContext);
         final ODataEntry oDataEntry = oDataEntityParser.parseEntry(oDataEntitySet, content, requestContentType, false);
         virtualJPAEntity.update(oDataEntry);
-      }
-      else if (properties != null)
+      } else if (properties != null) {
         virtualJPAEntity.update(properties);
-      else
+      } else {
         return null;
+      }
       em.flush();
       em.getTransaction().commit();
     } catch (Exception e) {
@@ -451,7 +456,8 @@ public class JPAProcessorImpl implements JPAProcessor {
 
     Object selectedObject = null;
 
-    if (uriParserResultView instanceof DeleteUriInfo || uriParserResultView instanceof GetEntityUriInfo || uriParserResultView instanceof PutMergePatchUriInfo) {
+    if (uriParserResultView instanceof DeleteUriInfo || uriParserResultView instanceof GetEntityUriInfo
+        || uriParserResultView instanceof PutMergePatchUriInfo) {
 
       JPQLContext selectJPQLContext = JPQLContext.createBuilder(
           contextType, uriParserResultView).build();

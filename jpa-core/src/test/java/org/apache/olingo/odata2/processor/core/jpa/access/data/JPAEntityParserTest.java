@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.access.data;
 
@@ -38,7 +38,6 @@ import org.apache.olingo.odata2.api.edm.EdmStructuralType;
 import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -429,7 +428,10 @@ public class JPAEntityParserTest {
       getGetterName.setAccessible(true);
 
     } catch (NoSuchMethodException e) {
-      assertEquals("org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser.getGetterName1(org.apache.olingo.odata2.api.edm.EdmProperty)", e.getMessage());
+      assertEquals(
+          "org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser.getGetterName1" +
+          "(org.apache.olingo.odata2.api.edm.EdmProperty)",
+          e.getMessage());
     } catch (SecurityException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
 
@@ -455,7 +457,8 @@ public class JPAEntityParserTest {
     try {
       EasyMock.expect(structuralType.getPropertyNames()).andStubThrow(new EdmException(null));
       EasyMock.replay(structuralType);
-      Method getGetters = resultParser.getClass().getDeclaredMethod("getGetters", Object.class, EdmStructuralType.class);
+      Method getGetters =
+          resultParser.getClass().getDeclaredMethod("getGetters", Object.class, EdmStructuralType.class);
       getGetters.setAccessible(true);
       try {
         getGetters.invoke(resultParser, jpaEntity, structuralType);
@@ -467,7 +470,10 @@ public class JPAEntityParserTest {
         assertTrue(true);
       }
     } catch (NoSuchMethodException e) {
-      assertEquals("org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser.getGetters(java.lang.Object, org.apache.olingo.odata2.api.edm.EdmStructuralType)", e.getMessage());
+      assertEquals(
+          "org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser.getGetters(java.lang.Object, " +
+          "org.apache.olingo.odata2.api.edm.EdmStructuralType)",
+          e.getMessage());
     } catch (SecurityException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (EdmException e) {

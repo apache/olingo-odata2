@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.access.data;
 
@@ -59,7 +59,8 @@ public class JPALink {
     sourceJPAEntity = jpaEntity;
   }
 
-  public void create(final PostUriInfo uriInfo, final InputStream content, final String requestContentType, final String contentType) throws ODataJPARuntimeException, ODataJPAModelException {
+  public void create(final PostUriInfo uriInfo, final InputStream content, final String requestContentType,
+      final String contentType) throws ODataJPARuntimeException, ODataJPAModelException {
 
     EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();
     String targerEntitySetName;
@@ -99,14 +100,17 @@ public class JPALink {
           getUriInfo = parser.parseLinkURI();
           sourceJPAEntity = jpaProcessor.process((GetEntityUriInfo) getUriInfo);
           if (sourceJPAEntity == null) {
-            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND.addContent(getUriInfo.getTargetEntitySet().getName()), null);
+            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND
+                .addContent(getUriInfo.getTargetEntitySet().getName()), null);
           }
         }
 
         JPAEntityParser entityParser = new JPAEntityParser();
-        Method setMethod = entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
+        Method setMethod =
+            entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 
-        Method getMethod = entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
+        Method getMethod =
+            entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
 
         if (getMethod.getReturnType().getTypeParameters() != null) {
           @SuppressWarnings("unchecked")
@@ -142,7 +146,8 @@ public class JPALink {
 
   }
 
-  public void update(final PutMergePatchUriInfo putUriInfo, final InputStream content, final String requestContentType, final String contentType) throws ODataJPARuntimeException, ODataJPAModelException {
+  public void update(final PutMergePatchUriInfo putUriInfo, final InputStream content, final String requestContentType,
+      final String contentType) throws ODataJPARuntimeException, ODataJPAModelException {
     UriInfo uriInfo = (UriInfo) putUriInfo;
 
     EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();
@@ -183,16 +188,20 @@ public class JPALink {
           getUriInfo = parser.parseLinkURI();
           sourceJPAEntity = jpaProcessor.process((GetEntityUriInfo) getUriInfo);
           if (sourceJPAEntity == null) {
-            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND.addContent(getUriInfo.getTargetEntitySet().getName()), null);
+            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND
+                .addContent(getUriInfo.getTargetEntitySet().getName()), null);
           }
         }
 
         JPAEntityParser entityParser = new JPAEntityParser();
-        Method setMethod = entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
+        Method setMethod =
+            entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 
-        Method getMethod = entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
+        Method getMethod =
+            entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
 
-        if (getMethod.getReturnType().getTypeParameters() != null && getMethod.getReturnType().getTypeParameters().length != 0) {
+        if (getMethod.getReturnType().getTypeParameters() != null
+            && getMethod.getReturnType().getTypeParameters().length != 0) {
           @SuppressWarnings("unchecked")
           List<Object> relatedEntities = (List<Object>) getMethod.invoke(sourceJPAEntity);
           relatedEntities.add(targetJPAEntity);

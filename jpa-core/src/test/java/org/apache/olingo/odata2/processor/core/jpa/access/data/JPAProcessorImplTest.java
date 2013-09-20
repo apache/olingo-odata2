@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.access.data;
 
@@ -66,13 +66,14 @@ import org.junit.Test;
 
 public class JPAProcessorImplTest {
 
-  // -------------------------------- Common Start ------------------------------------common in ODataJPAProcessorDefaultTest as well
+  // -------------------------------- Common Start ------------------------------------common in
+  // ODataJPAProcessorDefaultTest as well
   private static final String STR_LOCAL_URI = "http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/";
   private static final String SALESORDERPROCESSING_CONTAINER = "salesorderprocessingContainer";
   private static final String SO_ID = "SoId";
   private static final String SALES_ORDER = "SalesOrder";
   private static final String SALES_ORDER_HEADERS = "SalesOrderHeaders";
-  //-------------------------------- Common End ------------------------------------
+  // -------------------------------- Common End ------------------------------------
 
   JPAProcessorImpl objJPAProcessorImpl;
 
@@ -138,7 +139,8 @@ public class JPAProcessorImplTest {
     }
   }
 
-  // ---------------------------- Common Code Start ---------------- TODO - common in ODataJPAProcessorDefaultTest as well 
+  // ---------------------------- Common Code Start ---------------- TODO - common in ODataJPAProcessorDefaultTest as
+  // well
 
   private DeleteUriInfo getDeletetUriInfo() {
     UriInfo objUriInfo = EasyMock.createMock(UriInfo.class);
@@ -179,7 +181,7 @@ public class JPAProcessorImplTest {
     EasyMock.expect(objUriInfo.getSkip()).andStubReturn(getSkip());
     EasyMock.expect(objUriInfo.getInlineCount()).andStubReturn(getInlineCount());
     EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
-    //EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(getFunctionImport());
+    // EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(getFunctionImport());
     EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(null);
     EasyMock.replay(objUriInfo);
     return objUriInfo;
@@ -235,7 +237,8 @@ public class JPAProcessorImplTest {
       EasyMock.expect(edmEntityType.hasStream()).andStubReturn(false);
       EasyMock.expect(edmEntityType.getNavigationPropertyNames()).andStubReturn(new ArrayList<String>());
       EasyMock.expect(edmEntityType.getKeyPropertyNames()).andStubReturn(new ArrayList<String>());
-      EasyMock.expect(edmEntityType.getMapping()).andStubReturn(getEdmMappingMockedObj(SALES_ORDER));// ID vs Salesorder ID
+      EasyMock.expect(edmEntityType.getMapping()).andStubReturn(getEdmMappingMockedObj(SALES_ORDER));// ID vs Salesorder
+                                                                                                     // ID
       EasyMock.replay(edmEntityType);
     } catch (EdmException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -284,8 +287,9 @@ public class JPAProcessorImplTest {
   public EntityManager getLocalEntityManager() {
     EntityManager em = EasyMock.createMock(EntityManager.class);
     EasyMock.expect(em.createQuery("SELECT E1 FROM SalesOrderHeaders E1")).andStubReturn(getQuery());
-    EasyMock.expect(em.createQuery("SELECT COUNT ( E1 ) FROM SalesOrderHeaders E1")).andStubReturn(getQueryForSelectCount());
-    EasyMock.expect(em.getTransaction()).andStubReturn(getLocalTransaction()); //For Delete
+    EasyMock.expect(em.createQuery("SELECT COUNT ( E1 ) FROM SalesOrderHeaders E1")).andStubReturn(
+        getQueryForSelectCount());
+    EasyMock.expect(em.getTransaction()).andStubReturn(getLocalTransaction()); // For Delete
     em.flush();
     em.flush();
     Address obj = new Address();
@@ -438,6 +442,6 @@ public class JPAProcessorImplTest {
     return uri;
   }
 
-  //-------------------------------- Common End ------------------------------------
+  // -------------------------------- Common End ------------------------------------
 
 }

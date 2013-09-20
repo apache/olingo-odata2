@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.model;
 
@@ -82,7 +82,8 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
 
       HashMap<Class<?>, String[]> customOperations = schemaView.getRegisteredOperations();
 
-      jpaEdmEntityTypeView = schemaView.getJPAEdmEntityContainerView().getJPAEdmEntitySetView().getJPAEdmEntityTypeView();
+      jpaEdmEntityTypeView =
+          schemaView.getJPAEdmEntityContainerView().getJPAEdmEntitySetView().getJPAEdmEntityTypeView();
       jpaEdmComplexTypeView = schemaView.getJPAEdmComplexTypeView();
 
       if (customOperations != null) {
@@ -136,7 +137,8 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
 
     private FunctionImport buildFunctionImport(final Method method) throws ODataJPAModelException {
 
-      org.apache.olingo.odata2.api.annotation.edm.FunctionImport annotation = method.getAnnotation(org.apache.olingo.odata2.api.annotation.edm.FunctionImport.class);
+      org.apache.olingo.odata2.api.annotation.edm.FunctionImport annotation =
+          method.getAnnotation(org.apache.olingo.odata2.api.annotation.edm.FunctionImport.class);
       if (annotation != null && annotation.returnType() != ReturnType.NONE) {
         FunctionImport functionImport = new FunctionImport();
 
@@ -161,7 +163,8 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
       return null;
     }
 
-    private void buildParameter(final FunctionImport functionImport, final Method method) throws ODataJPAModelException {
+    private void buildParameter(final FunctionImport functionImport, final Method method) 
+        throws ODataJPAModelException {
 
       Annotation[][] annotations = method.getParameterAnnotations();
       Class<?>[] parameterTypes = method.getParameterTypes();
@@ -176,7 +179,8 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
             Parameter annotation = (Parameter) element;
             FunctionImportParameter functionImportParameter = new FunctionImportParameter();
             if (annotation.name().equals("")) {
-              throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_PARAM_NAME_EXP.addContent(method.getDeclaringClass().getName(), method.getName()), null);
+              throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_PARAM_NAME_EXP.addContent(method
+                  .getDeclaringClass().getName(), method.getName()), null);
             } else {
               functionImportParameter.setName(annotation.name());
             }
@@ -214,12 +218,14 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
       }
     }
 
-    private void buildReturnType(final FunctionImport functionImport, final Method method, final org.apache.olingo.odata2.api.annotation.edm.FunctionImport annotation) throws ODataJPAModelException {
+    private void buildReturnType(final FunctionImport functionImport, final Method method,
+        final org.apache.olingo.odata2.api.annotation.edm.FunctionImport annotation) throws ODataJPAModelException {
       ReturnType returnType = annotation.returnType();
       Multiplicity multiplicity = null;
 
       if (returnType != ReturnType.NONE) {
-        org.apache.olingo.odata2.api.edm.provider.ReturnType functionReturnType = new org.apache.olingo.odata2.api.edm.provider.ReturnType();
+        org.apache.olingo.odata2.api.edm.provider.ReturnType functionReturnType =
+            new org.apache.olingo.odata2.api.edm.provider.ReturnType();
         multiplicity = annotation.multiplicity();
 
         if (multiplicity == Multiplicity.MANY) {
@@ -238,7 +244,8 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
 
         Class<?> methodReturnType = method.getReturnType();
         if (methodReturnType == null || methodReturnType.getName().equals("void")) {
-          throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_EXP.addContent(method.getDeclaringClass(), method.getName()), null);
+          throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_EXP.addContent(method
+              .getDeclaringClass(), method.getName()), null);
         }
         switch (returnType) {
         case ENTITY_TYPE:
@@ -250,7 +257,8 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
           }
 
           if (edmEntityType == null) {
-            throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND.addContent(method.getDeclaringClass(), method.getName(), methodReturnType.getSimpleName()), null);
+            throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND
+                .addContent(method.getDeclaringClass(), method.getName(), methodReturnType.getSimpleName()), null);
           }
           functionReturnType.setTypeName(JPAEdmNameBuilder.build(schemaView, edmEntityType.getName()));
           break;
@@ -268,7 +276,8 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
             complexType = jpaEdmComplexTypeView.searchEdmComplexType(getReturnTypeName(method));
           }
           if (complexType == null) {
-            throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND.addContent(method.getDeclaringClass(), method.getName(), methodReturnType.getSimpleName()), null);
+            throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND
+                .addContent(method.getDeclaringClass(), method.getName(), methodReturnType.getSimpleName()), null);
           }
           functionReturnType.setTypeName(JPAEdmNameBuilder.build(schemaView, complexType.getName()));
           break;

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.jpql;
 
@@ -72,7 +72,8 @@ public class JPQLBuilderFactoryTest {
 
     // Build JPQL Context
     JPQLContext selectContext = JPQLContext.createBuilder(JPQLContextType.SELECT, getEntitySetView).build();
-    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
+    JPQLStatementBuilder statementBuilder =
+        new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
 
     assertTrue(statementBuilder instanceof JPQLSelectStatementBuilder);
 
@@ -85,7 +86,8 @@ public class JPQLBuilderFactoryTest {
 
     // Build JPQL Context
     JPQLContext selectContext = JPQLContext.createBuilder(JPQLContextType.SELECT_SINGLE, getEntityView).build();
-    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
+    JPQLStatementBuilder statementBuilder =
+        new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
 
     assertTrue(statementBuilder instanceof JPQLSelectSingleStatementBuilder);
 
@@ -98,7 +100,8 @@ public class JPQLBuilderFactoryTest {
 
     // Build JPQL Context
     JPQLContext selectContext = JPQLContext.createBuilder(JPQLContextType.JOIN, getEntitySetView).build();
-    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
+    JPQLStatementBuilder statementBuilder =
+        new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
 
     assertTrue(statementBuilder instanceof JPQLJoinStatementBuilder);
 
@@ -111,7 +114,8 @@ public class JPQLBuilderFactoryTest {
 
     // Build JPQL Context
     JPQLContext selectContext = JPQLContext.createBuilder(JPQLContextType.JOIN_SINGLE, getEntityView).build();
-    JPQLStatementBuilder statementBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
+    JPQLStatementBuilder statementBuilder =
+        new ODataJPAFactoryImpl().getJPQLBuilderFactory().getStatementBuilder(selectContext);
 
     assertTrue(statementBuilder instanceof JPQLJoinSelectSingleStatementBuilder);
 
@@ -121,7 +125,8 @@ public class JPQLBuilderFactoryTest {
   public void testGetContextBuilderforDelete() throws ODataException {
 
     // Build JPQL ContextBuilder
-    JPQLContextBuilder contextBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getContextBuilder(JPQLContextType.DELETE);
+    JPQLContextBuilder contextBuilder =
+        new ODataJPAFactoryImpl().getJPQLBuilderFactory().getContextBuilder(JPQLContextType.DELETE);
 
     assertNull(contextBuilder);
 
@@ -131,7 +136,8 @@ public class JPQLBuilderFactoryTest {
   public void testGetContextBuilderforSelect() throws ODataException {
 
     // Build JPQL ContextBuilder
-    JPQLContextBuilder contextBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getContextBuilder(JPQLContextType.SELECT);
+    JPQLContextBuilder contextBuilder =
+        new ODataJPAFactoryImpl().getJPQLBuilderFactory().getContextBuilder(JPQLContextType.SELECT);
 
     assertNotNull(contextBuilder);
     assertTrue(contextBuilder instanceof JPQLSelectContextBuilder);
@@ -142,7 +148,8 @@ public class JPQLBuilderFactoryTest {
   public void testGetContextBuilderforSelectSingle() throws ODataException {
 
     // Build JPQL ContextBuilder
-    JPQLContextBuilder contextBuilder = new ODataJPAFactoryImpl().getJPQLBuilderFactory().getContextBuilder(JPQLContextType.SELECT_SINGLE);
+    JPQLContextBuilder contextBuilder =
+        new ODataJPAFactoryImpl().getJPQLBuilderFactory().getContextBuilder(JPQLContextType.SELECT_SINGLE);
 
     assertNotNull(contextBuilder);
     assertTrue(contextBuilder instanceof JPQLSelectSingleContextBuilder);

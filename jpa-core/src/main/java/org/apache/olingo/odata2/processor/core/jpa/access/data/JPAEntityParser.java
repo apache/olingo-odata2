@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.access.data;
 
@@ -66,7 +66,7 @@ public final class JPAEntityParser {
    * @param jpaEntity
    * @param selectedItems
    * @return a Hash Map of Properties and values for given selected properties
-   *         of an EdmEntity Type
+   * of an EdmEntity Type
    * @throws ODataJPARuntimeException
    */
 
@@ -306,31 +306,31 @@ public final class JPAEntityParser {
     return accessModifierMap;
   }
 
-  public static Object getProperty(Method method, Object entity) throws ODataJPARuntimeException {
+  public static Object getProperty(final Method method, final Object entity) throws ODataJPARuntimeException {
     Object propertyValue = null;
     try {
       Class<?> returnType = method.getReturnType();
 
-      if (returnType.equals(char[].class))
-      {
+      if (returnType.equals(char[].class)) {
         char[] ch = (char[]) method.invoke(entity);
-        if (ch != null)
+        if (ch != null) {
           propertyValue = (String) String.valueOf((char[]) method.invoke(entity));
-      }
-      else if (returnType.equals(Character[].class))
+        }
+      } else if (returnType.equals(Character[].class)) {
         propertyValue = (String) toString((Character[]) method.invoke(entity));
-      else if (returnType.equals(char.class)) {
+      } else if (returnType.equals(char.class)) {
         char c = (Character) method.invoke(entity);
-        if (c != '\u0000')
+        if (c != '\u0000') {
           propertyValue = (String) String.valueOf(c);
-      }
-      else if (returnType.equals(Character.class)) {
+        }
+      } else if (returnType.equals(Character.class)) {
         Character c = (Character) method.invoke(entity);
-        if (c != null)
+        if (c != null) {
           propertyValue = toString(new Character[] { c });
-      }
-      else
+        }
+      } else {
         propertyValue = method.invoke(entity);
+      }
     } catch (IllegalAccessException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (IllegalArgumentException e) {
@@ -341,30 +341,38 @@ public final class JPAEntityParser {
     return propertyValue;
   }
 
-  public static String toString(Character[] input) {
-    if (input == null) return null;
+  public static String toString(final Character[] input) {
+    if (input == null) {
+      return null;
+    }
 
     StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < input.length; i++) {
-      if (input[i] == null) continue;
-      builder.append(input[i].charValue());
+    for (Character element : input) {
+      if (element == null) {
+        continue;
+      }
+      builder.append(element.charValue());
     }
     return builder.toString();
 
   }
 
-  public static Character[] toCharacterArray(String input) {
-    if (input == null) return null;
+  public static Character[] toCharacterArray(final String input) {
+    if (input == null) {
+      return null;
+    }
 
     Character[] characters = new Character[input.length()];
     char[] chars = ((String) input).toCharArray();
-    for (int i = 0; i < input.length(); i++)
+    for (int i = 0; i < input.length(); i++) {
       characters[i] = new Character(chars[i]);
+    }
 
     return characters;
   }
 
-  public static String getAccessModifierName(final String propertyName, final EdmMapping mapping, final String accessModifier)
+  public static String getAccessModifierName(final String propertyName, final EdmMapping mapping,
+      final String accessModifier)
       throws ODataJPARuntimeException {
     String name = null;
     StringBuilder builder = new StringBuilder();
@@ -408,7 +416,8 @@ public final class JPAEntityParser {
 
   }
 
-  public Method getAccessModifier(final Object jpaEntity, final EdmNavigationProperty navigationProperty, final String accessModifier)
+  public Method getAccessModifier(final Object jpaEntity, final EdmNavigationProperty navigationProperty,
+      final String accessModifier)
       throws ODataJPARuntimeException {
 
     try {

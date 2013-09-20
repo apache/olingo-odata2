@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.access.data;
 
@@ -71,7 +71,8 @@ public class JPAEntity {
   }
 
   @SuppressWarnings("unchecked")
-  private void write(final Map<String, Object> oDataEntryProperties, final boolean isCreate) throws ODataJPARuntimeException {
+  private void write(final Map<String, Object> oDataEntryProperties, final boolean isCreate)
+      throws ODataJPARuntimeException {
     try {
 
       EdmStructuralType structuralType = null;
@@ -85,7 +86,8 @@ public class JPAEntity {
       }
 
       if (accessModifiersWrite == null) {
-        accessModifiersWrite = jpaEntityParser.getAccessModifiers(jpaEntity, oDataEntityType, JPAEntityParser.ACCESS_MODIFIER_SET);
+        accessModifiersWrite =
+            jpaEntityParser.getAccessModifiers(jpaEntity, oDataEntityType, JPAEntityParser.ACCESS_MODIFIER_SET);
       }
 
       if (oDataEntityType == null || oDataEntryProperties == null) {
@@ -93,10 +95,10 @@ public class JPAEntity {
             .throwException(ODataJPARuntimeException.GENERAL, null);
       }
 
-      final HashMap<String, String> embeddableKeys = jpaEntityParser.getJPAEmbeddableKeyMap(jpaEntity.getClass().getName());
+      final HashMap<String, String> embeddableKeys =
+          jpaEntityParser.getJPAEmbeddableKeyMap(jpaEntity.getClass().getName());
       Set<String> propertyNames = null;
-      if (embeddableKeys != null)
-      {
+      if (embeddableKeys != null) {
         setEmbeddableKeyProperty(embeddableKeys, oDataEntityType.getKeyProperties(), oDataEntryProperties, jpaEntity);
         propertyNames = new HashSet<String>();
         propertyNames.addAll(oDataEntryProperties.keySet());
@@ -132,7 +134,9 @@ public class JPAEntity {
         case NAVIGATION:
         case ENTITY:
           structuralType = (EdmStructuralType) edmTyped.getType();
-          accessModifier = jpaEntityParser.getAccessModifier(jpaEntity, (EdmNavigationProperty) edmTyped, JPAEntityParser.ACCESS_MODIFIER_SET);
+          accessModifier =
+              jpaEntityParser.getAccessModifier(jpaEntity, (EdmNavigationProperty) edmTyped,
+                  JPAEntityParser.ACCESS_MODIFIER_SET);
           EdmEntitySet edmRelatedEntitySet = oDataEntitySet.getRelatedEntitySet((EdmNavigationProperty) edmTyped);
           List<ODataEntry> relatedEntries = (List<ODataEntry>) oDataEntryProperties.get(propertyName);
           List<Object> relatedJPAEntites = new ArrayList<Object>();
@@ -222,21 +226,25 @@ public class JPAEntity {
   }
 
   @SuppressWarnings("unchecked")
-  protected void setComplexProperty(Method accessModifier, final Object jpaEntity, final EdmStructuralType edmComplexType, final HashMap<String, Object> propertyValue)
-      throws EdmException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, ODataJPARuntimeException {
+  protected void setComplexProperty(Method accessModifier, final Object jpaEntity,
+      final EdmStructuralType edmComplexType, final HashMap<String, Object> propertyValue)
+      throws EdmException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+      InstantiationException, ODataJPARuntimeException {
 
     JPAEdmMapping mapping = (JPAEdmMapping) edmComplexType.getMapping();
     Object embeddableObject = mapping.getJPAType().newInstance();
     accessModifier.invoke(jpaEntity, embeddableObject);
 
-    HashMap<String, Method> accessModifiers = jpaEntityParser.getAccessModifiers(embeddableObject, edmComplexType, JPAEntityParser.ACCESS_MODIFIER_SET);
+    HashMap<String, Method> accessModifiers =
+        jpaEntityParser.getAccessModifiers(embeddableObject, edmComplexType, JPAEntityParser.ACCESS_MODIFIER_SET);
 
     for (String edmPropertyName : edmComplexType.getPropertyNames()) {
       EdmTyped edmTyped = (EdmTyped) edmComplexType.getProperty(edmPropertyName);
       accessModifier = accessModifiers.get(edmPropertyName);
       if (edmTyped.getType().getKind().toString().equals(EdmTypeKind.COMPLEX.toString())) {
         EdmStructuralType structualType = (EdmStructuralType) edmTyped.getType();
-        setComplexProperty(accessModifier, embeddableObject, structualType, (HashMap<String, Object>) propertyValue.get(edmPropertyName));
+        setComplexProperty(accessModifier, embeddableObject, structualType, (HashMap<String, Object>) propertyValue
+            .get(edmPropertyName));
       } else {
         setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName));
       }
@@ -247,39 +255,35 @@ public class JPAEntity {
       IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     if (entityPropertyValue != null) {
       Class<?> parameterType = method.getParameterTypes()[0];
-      if (parameterType.equals(char[].class))
-      {
+      if (parameterType.equals(char[].class)) {
         char[] characters = ((String) entityPropertyValue).toCharArray();
         method.invoke(entity, characters);
-      }
-      else if (parameterType.equals(char.class)) {
+      } else if (parameterType.equals(char.class)) {
         char c = ((String) entityPropertyValue).charAt(0);
         method.invoke(entity, c);
-      }
-      else if (parameterType.equals(Character[].class))
-      {
+      } else if (parameterType.equals(Character[].class)) {
         Character[] characters = JPAEntityParser.toCharacterArray((String) entityPropertyValue);
         method.invoke(entity, (Object) characters);
-      }
-      else if (parameterType.equals(Character.class)) {
+      } else if (parameterType.equals(Character.class)) {
         Character c = Character.valueOf(((String) entityPropertyValue).charAt(0));
         method.invoke(entity, c);
-      }
-      else
+      } else {
         method.invoke(entity, entityPropertyValue);
+      }
     }
   }
 
-  protected void setEmbeddableKeyProperty(final HashMap<String, String> embeddableKeys, final List<EdmProperty> oDataEntryKeyProperties,
+  protected void setEmbeddableKeyProperty(final HashMap<String, String> embeddableKeys,
+      final List<EdmProperty> oDataEntryKeyProperties,
       final Map<String, Object> oDataEntryProperties, final Object entity)
-      throws ODataJPARuntimeException, EdmException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
+      throws ODataJPARuntimeException, EdmException, IllegalAccessException, IllegalArgumentException,
+      InvocationTargetException, InstantiationException {
 
     HashMap<String, Object> embeddableObjMap = new HashMap<String, Object>();
     List<EdmProperty> leftODataEntryKeyProperties = new ArrayList<EdmProperty>();
     HashMap<String, String> leftEmbeddableKeys = new HashMap<String, String>();
 
-    for (EdmProperty edmProperty : oDataEntryKeyProperties)
-    {
+    for (EdmProperty edmProperty : oDataEntryKeyProperties) {
       if (oDataEntryProperties.containsKey(edmProperty.getName()) == false) {
         continue;
       }
@@ -306,11 +310,10 @@ public class JPAEntity {
         method = jpaEntityParser.getAccessModifierSet(embeddableObj, methodPartName);
         Object simpleObj = oDataEntryProperties.get(edmProperty.getName());
         method.invoke(embeddableObj, simpleObj);
-      }
-      else if (embeddableKeyNameSplit.length > 2) // Deeply nested
-      {
+      } else if (embeddableKeyNameSplit.length > 2) { // Deeply nested
         leftODataEntryKeyProperties.add(edmProperty);
-        leftEmbeddableKeys.put(edmPropertyName, embeddableKeyNameComposite.split(embeddableKeyNameSplit[0] + ".", 2)[1]);
+        leftEmbeddableKeys
+            .put(edmPropertyName, embeddableKeyNameComposite.split(embeddableKeyNameSplit[0] + ".", 2)[1]);
         setEmbeddableKeyProperty(leftEmbeddableKeys, leftODataEntryKeyProperties, oDataEntryProperties, embeddableObj);
       }
 

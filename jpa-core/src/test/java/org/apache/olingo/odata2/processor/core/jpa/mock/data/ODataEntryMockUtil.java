@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.mock.data;
 
@@ -57,7 +57,8 @@ public class ODataEntryMockUtil {
 
   public static ODataEntry mockODataEntryWithComplexType(final String entityName) {
     ODataEntry oDataEntry = EasyMock.createMock(ODataEntry.class);
-    EasyMock.expect(oDataEntry.getProperties()).andReturn(mockODataEntryPropertiesWithComplexType(entityName)).anyTimes();
+    EasyMock.expect(oDataEntry.getProperties()).andReturn(mockODataEntryPropertiesWithComplexType(entityName))
+        .anyTimes();
 
     EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(false);
     EasyMock.replay(oDataEntry);
@@ -75,18 +76,16 @@ public class ODataEntryMockUtil {
       propertyMap.put(JPATypeMock.PROPERTY_NAME_MDATETIME, VALUE_DATE_TIME);
 
       propertyMap.put(JPATypeMock.PROPERTY_NAME_MSTRING, VALUE_MSTRING);
-    }
-    else if (entityName.equals(JPARelatedTypeMock.ENTITY_NAME)) {
+    } else if (entityName.equals(JPARelatedTypeMock.ENTITY_NAME)) {
       propertyMap.put(JPARelatedTypeMock.PROPERTY_NAME_MLONG, VALUE_MLONG);
       propertyMap.put(JPARelatedTypeMock.PROPERTY_NAME_MDOUBLE, VALUE_MDOUBLE);
       propertyMap.put(JPARelatedTypeMock.PROPERTY_NAME_MBYTE, VALUE_MBYTE);
       propertyMap.put(JPARelatedTypeMock.PROPERTY_NAME_MBYTEARRAY, VALUE_MBYTEARRAY);
-    }
-    else if (entityName.equals(JPATypeEmbeddableMock.ENTITY_NAME)) {
+    } else if (entityName.equals(JPATypeEmbeddableMock.ENTITY_NAME)) {
       propertyMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MSHORT, VALUE_SHORT);
-      propertyMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MEMBEDDABLE, mockODataEntryProperties(JPATypeEmbeddableMock2.ENTITY_NAME));
-    }
-    else if (entityName.equals(JPATypeEmbeddableMock2.ENTITY_NAME)) {
+      propertyMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MEMBEDDABLE,
+          mockODataEntryProperties(JPATypeEmbeddableMock2.ENTITY_NAME));
+    } else if (entityName.equals(JPATypeEmbeddableMock2.ENTITY_NAME)) {
       propertyMap.put(JPATypeEmbeddableMock2.PROPERTY_NAME_MFLOAT, VALUE_MFLOAT);
       propertyMap.put(JPATypeEmbeddableMock2.PROPERTY_NAME_MUUID, VALUE_UUID);
     }
@@ -96,7 +95,8 @@ public class ODataEntryMockUtil {
 
   public static Map<String, Object> mockODataEntryPropertiesWithComplexType(final String entityName) {
     Map<String, Object> propertyMap = mockODataEntryProperties(entityName);
-    propertyMap.put(JPATypeMock.PROPERTY_NAME_MCOMPLEXTYPE, mockODataEntryProperties(JPATypeEmbeddableMock.ENTITY_NAME));
+    propertyMap
+        .put(JPATypeMock.PROPERTY_NAME_MCOMPLEXTYPE, mockODataEntryProperties(JPATypeEmbeddableMock.ENTITY_NAME));
     return propertyMap;
   }
 
