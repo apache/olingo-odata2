@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa.model.mapping;
 
@@ -26,10 +26,10 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * 
- * 				The default name for EDM
- * 				entity type is derived from JPA entity type name. This can be
- * 				overriden using JPAEntityTypeMapType.
- * 			
+ * The default name for EDM
+ * entity type is derived from JPA entity type name. This can be
+ * overriden using JPAEntityTypeMapType.
+ * 
  * 
  * <p>Java class for JPAEntityTypeMapType complex type.
  * 
@@ -37,25 +37,28 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * <pre>
  * &lt;complexType name="JPAEntityTypeMapType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="EDMEntityType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="EDMEntitySet" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="JPAAttributes" type="{http://www.apache.org/olingo/odata2/processor/api/jpa/model/mapping}JPAAttributeMapType"/>
- *         &lt;element name="JPARelationships" type="{http://www.apache.org/olingo/odata2/processor/api/jpa/model/mapping}JPARelationshipMapType"/>
- *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="exclude" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
+ * &lt;complexContent>
+ * &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ * &lt;sequence>
+ * &lt;element name="EDMEntityType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ * &lt;element name="EDMEntitySet" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ * &lt;element name="JPAAttributes"
+ * type="{http://www.apache.org/olingo/odata2/processor/api/jpa/model/mapping}JPAAttributeMapType"/>
+ * &lt;element name="JPARelationships"
+ * type="{http://www.apache.org/olingo/odata2/processor/api/jpa/model/mapping}JPARelationshipMapType"/>
+ * &lt;/sequence>
+ * &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ * &lt;attribute name="exclude" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ * &lt;/restriction>
+ * &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "JPAEntityTypeMapType", propOrder = { "edmEntityType", "edmEntitySet", "jpaAttributes", "jpaRelationships" })
+@XmlType(name = "JPAEntityTypeMapType", propOrder = { "edmEntityType", "edmEntitySet", "jpaAttributes",
+    "jpaRelationships" })
 public class JPAEntityTypeMapType {
 
   @XmlElement(name = "EDMEntityType")
@@ -75,9 +78,8 @@ public class JPAEntityTypeMapType {
    * Gets the value of the edmEntityType property.
    * 
    * @return
-   *     possible object is
-   *     {@link String }
-   *     
+   * possible object is {@link String }
+   * 
    */
   public String getEDMEntityType() {
     return edmEntityType;
@@ -87,9 +89,8 @@ public class JPAEntityTypeMapType {
    * Sets the value of the edmEntityType property.
    * 
    * @param value
-   *     allowed object is
-   *     {@link String }
-   *     
+   * allowed object is {@link String }
+   * 
    */
   public void setEDMEntityType(final String value) {
     edmEntityType = value;
@@ -99,9 +100,8 @@ public class JPAEntityTypeMapType {
    * Gets the value of the edmEntitySet property.
    * 
    * @return
-   *     possible object is
-   *     {@link String }
-   *     
+   * possible object is {@link String }
+   * 
    */
   public String getEDMEntitySet() {
     return edmEntitySet;
@@ -111,9 +111,8 @@ public class JPAEntityTypeMapType {
    * Sets the value of the edmEntitySet property.
    * 
    * @param value
-   *     allowed object is
-   *     {@link String }
-   *     
+   * allowed object is {@link String }
+   * 
    */
   public void setEDMEntitySet(final String value) {
     edmEntitySet = value;
@@ -123,9 +122,8 @@ public class JPAEntityTypeMapType {
    * Gets the value of the jpaAttributes property.
    * 
    * @return
-   *     possible object is
-   *     {@link JPAAttributeMapType }
-   *     
+   * possible object is {@link JPAAttributeMapType }
+   * 
    */
   public JPAAttributeMapType getJPAAttributes() {
     return jpaAttributes;
@@ -135,9 +133,8 @@ public class JPAEntityTypeMapType {
    * Sets the value of the jpaAttributes property.
    * 
    * @param value
-   *     allowed object is
-   *     {@link JPAAttributeMapType }
-   *     
+   * allowed object is {@link JPAAttributeMapType }
+   * 
    */
   public void setJPAAttributes(final JPAAttributeMapType value) {
     jpaAttributes = value;
@@ -147,9 +144,8 @@ public class JPAEntityTypeMapType {
    * Gets the value of the jpaRelationships property.
    * 
    * @return
-   *     possible object is
-   *     {@link JPARelationshipMapType }
-   *     
+   * possible object is {@link JPARelationshipMapType }
+   * 
    */
   public JPARelationshipMapType getJPARelationships() {
     return jpaRelationships;
@@ -159,9 +155,8 @@ public class JPAEntityTypeMapType {
    * Sets the value of the jpaRelationships property.
    * 
    * @param value
-   *     allowed object is
-   *     {@link JPARelationshipMapType }
-   *     
+   * allowed object is {@link JPARelationshipMapType }
+   * 
    */
   public void setJPARelationships(final JPARelationshipMapType value) {
     jpaRelationships = value;
@@ -171,9 +166,8 @@ public class JPAEntityTypeMapType {
    * Gets the value of the name property.
    * 
    * @return
-   *     possible object is
-   *     {@link String }
-   *     
+   * possible object is {@link String }
+   * 
    */
   public String getName() {
     return name;
@@ -183,9 +177,8 @@ public class JPAEntityTypeMapType {
    * Sets the value of the name property.
    * 
    * @param value
-   *     allowed object is
-   *     {@link String }
-   *     
+   * allowed object is {@link String }
+   * 
    */
   public void setName(final String value) {
     name = value;
@@ -195,9 +188,8 @@ public class JPAEntityTypeMapType {
    * Gets the value of the exclude property.
    * 
    * @return
-   *     possible object is
-   *     {@link Boolean }
-   *     
+   * possible object is {@link Boolean }
+   * 
    */
   public boolean isExclude() {
     if (exclude == null) {
@@ -211,9 +203,8 @@ public class JPAEntityTypeMapType {
    * Sets the value of the exclude property.
    * 
    * @param value
-   *     allowed object is
-   *     {@link Boolean }
-   *     
+   * allowed object is {@link Boolean }
+   * 
    */
   public void setExclude(final Boolean value) {
     exclude = value;

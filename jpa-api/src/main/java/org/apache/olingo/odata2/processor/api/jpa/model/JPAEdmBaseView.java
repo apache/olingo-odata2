@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa.model;
 
@@ -31,8 +31,8 @@ import org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmMappingModelAcces
  * The implementation of the view acts as a base container for containers of
  * Java Persistence Model and Entity Data Model elements.
  * 
- *  
- *         <p>
+ * 
+ * <p>
  * @org.apache.olingo.odata2.DoNotImplement
  * 
  */
@@ -46,8 +46,7 @@ public interface JPAEdmBaseView {
   /**
    * The method returns the Java Persistence MetaModel
    * 
-   * @return a meta model of type
-   *         {@link javax.persistence.metamodel.Metamodel}
+   * @return a meta model of type {@link javax.persistence.metamodel.Metamodel}
    */
   public Metamodel getJPAMetaModel();
 
@@ -55,8 +54,7 @@ public interface JPAEdmBaseView {
    * The method returns a builder for building Entity Data Model elements from
    * Java Persistence Model Elements
    * 
-   * @return a builder of type
-   *         {@link org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmBuilder}
+   * @return a builder of type {@link org.apache.olingo.odata2.processor.api.jpa.access.JPAEdmBuilder}
    */
   public JPAEdmBuilder getBuilder();
 
@@ -64,8 +62,8 @@ public interface JPAEdmBaseView {
    * The method returns the if the container is consistent without any errors
    * 
    * @return <ul>
-   *         <li>true - if the container is consistent without errors</li>
-   *         <li>false - if the container is inconsistent with errors</li>
+   * <li>true - if the container is consistent without errors</li>
+   * <li>false - if the container is inconsistent with errors</li>
    * 
    */
   public boolean isConsistent();

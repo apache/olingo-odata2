@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa;
 
@@ -30,8 +30,8 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
 
 /**
  * <p>
- * Extend this factory class and create own instance of
- * {@link org.apache.olingo.odata2.api.ODataService} that transforms Java Persistence
+ * Extend this factory class and create own instance of {@link org.apache.olingo.odata2.api.ODataService} that
+ * transforms Java Persistence
  * Models into an OData Service. The factory class instantiates instances of
  * type {@link org.apache.olingo.odata2.api.edm.provider.EdmProvider} and
  * {@link org.apache.olingo.odata2.api.processor.ODataSingleProcessor}. The OData
@@ -40,8 +40,7 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  * </p>
  * <p>
  * The factory implementation is passed as servlet init parameter to a JAX-RS
- * runtime which will instantiate a {@link org.apache.olingo.odata2.api.ODataService}
- * implementation using this factory.
+ * runtime which will instantiate a {@link org.apache.olingo.odata2.api.ODataService} implementation using this factory.
  * </p>
  * 
  * <p>
@@ -52,8 +51,7 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  * 
  * <b>Sample Configuration:</b>
  * 
- * <pre>
- * {@code
+ * <pre> {@code
  * <servlet>
  *  <servlet-name>ReferenceScenarioServlet</servlet-name>
  *  <servlet-class>org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet</servlet-class>
@@ -71,8 +69,7 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  *  </init-param>
  *  <load-on-startup>1</load-on-startup>
  * </servlet>
- * }
- * </pre>
+ * } </pre>
  */
 
 public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
@@ -121,17 +118,16 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
 
   /**
    * Implement this method and initialize OData JPA Context. It is mandatory
-   * to set an instance of type {@link javax.persistence.EntityManagerFactory}
-   * into the context. An exception of type
-   * {@link org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException}
-   * is thrown if EntityManagerFactory is not initialized. <br>
+   * to set an instance of type {@link javax.persistence.EntityManagerFactory} into the context. An exception of type
+   * {@link org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException} is thrown if
+   * EntityManagerFactory is not initialized. <br>
    * <br>
    * <b>Sample Code:</b> <code>
-   * 	<p>public class JPAReferenceServiceFactory extends ODataJPAServiceFactory{</p>
-   * 	
-   * 	<blockquote>private static final String PUNIT_NAME = "punit";
+   * <p>public class JPAReferenceServiceFactory extends ODataJPAServiceFactory{</p>
+   * 
+   * <blockquote>private static final String PUNIT_NAME = "punit";
    * <br>
-   * public ODataJPAContext initializeODataJPAContext() { 
+   * public ODataJPAContext initializeODataJPAContext() {
    * <blockquote>ODataJPAContext oDataJPAContext = this.getODataJPAContext();
    * <br>
    * EntityManagerFactory emf = Persistence.createEntityManagerFactory(PUNIT_NAME);
@@ -143,8 +139,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
    * } </code>
    * <p>
    * 
-   * @return an instance of type
-   *         {@link org.apache.olingo.odata2.processor.api.jpa.ODataJPAContext}
+   * @return an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.ODataJPAContext}
    * @throws ODataJPARuntimeException
    */
   public abstract ODataJPAContext initializeODataJPAContext() throws ODataJPARuntimeException;

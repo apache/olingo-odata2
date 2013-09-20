@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa.model.mapping;
 
@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * 
- * 				The default name for EDM
- * 				property is derived from JPA attribute name. This can be overriden
- * 				using
- * 				JPAAttributeMapType.
- * 			
+ * The default name for EDM
+ * property is derived from JPA attribute name. This can be overriden
+ * using
+ * JPAAttributeMapType.
+ * 
  * 
  * <p>Java class for JPAAttributeMapType complex type.
  * 
@@ -42,22 +42,22 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  * <pre>
  * &lt;complexType name="JPAAttributeMapType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="JPAAttribute" maxOccurs="unbounded" minOccurs="0">
- *           &lt;complexType>
- *             &lt;simpleContent>
- *               &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *                 &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="exclude" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *               &lt;/extension>
- *             &lt;/simpleContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
+ * &lt;complexContent>
+ * &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ * &lt;sequence>
+ * &lt;element name="JPAAttribute" maxOccurs="unbounded" minOccurs="0">
+ * &lt;complexType>
+ * &lt;simpleContent>
+ * &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
+ * &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ * &lt;attribute name="exclude" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ * &lt;/extension>
+ * &lt;/simpleContent>
+ * &lt;/complexType>
+ * &lt;/element>
+ * &lt;/sequence>
+ * &lt;/restriction>
+ * &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
  * 
@@ -82,13 +82,12 @@ public class JPAAttributeMapType {
    * <p>
    * For example, to add a new item, do as follows:
    * <pre>
-   *    getJPAAttribute().add(newItem);
+   * getJPAAttribute().add(newItem);
    * </pre>
    * 
    * 
    * <p>
-   * Objects of the following type(s) are allowed in the list
-   * {@link JPAAttributeMapType.JPAAttribute }
+   * Objects of the following type(s) are allowed in the list {@link JPAAttributeMapType.JPAAttribute }
    * 
    * 
    */
@@ -106,12 +105,12 @@ public class JPAAttributeMapType {
    * 
    * <pre>
    * &lt;complexType>
-   *   &lt;simpleContent>
-   *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
-   *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
-   *       &lt;attribute name="exclude" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-   *     &lt;/extension>
-   *   &lt;/simpleContent>
+   * &lt;simpleContent>
+   * &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
+   * &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+   * &lt;attribute name="exclude" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+   * &lt;/extension>
+   * &lt;/simpleContent>
    * &lt;/complexType>
    * </pre>
    * 
@@ -132,9 +131,8 @@ public class JPAAttributeMapType {
      * Gets the value of the value property.
      * 
      * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * possible object is {@link String }
+     * 
      */
     public String getValue() {
       return value;
@@ -144,9 +142,8 @@ public class JPAAttributeMapType {
      * Sets the value of the value property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * allowed object is {@link String }
+     * 
      */
     public void setValue(final String value) {
       this.value = value;
@@ -156,9 +153,8 @@ public class JPAAttributeMapType {
      * Gets the value of the name property.
      * 
      * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * possible object is {@link String }
+     * 
      */
     public String getName() {
       return name;
@@ -168,9 +164,8 @@ public class JPAAttributeMapType {
      * Sets the value of the name property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * allowed object is {@link String }
+     * 
      */
     public void setName(final String value) {
       name = value;
@@ -180,9 +175,8 @@ public class JPAAttributeMapType {
      * Gets the value of the exclude property.
      * 
      * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     * possible object is {@link Boolean }
+     * 
      */
     public boolean isExclude() {
       if (exclude == null) {
@@ -196,9 +190,8 @@ public class JPAAttributeMapType {
      * Sets the value of the exclude property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     * allowed object is {@link Boolean }
+     * 
      */
     public void setExclude(final Boolean value) {
       exclude = value;

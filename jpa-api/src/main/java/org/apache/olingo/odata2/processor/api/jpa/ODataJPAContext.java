@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa;
 
@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension;
  * <li>An instance of Java Persistence Entity Manager Factory</li>
  * </ol>
  * 
- *   <br>
+ * <br>
  * @org.apache.olingo.odata2.DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAAccessFactory
@@ -56,7 +56,7 @@ public interface ODataJPAContext {
    * The method sets the Java Persistence Unit Name into the context.
    * 
    * @param pUnitName
-   *            is the Java Persistence Unit Name.
+   * is the Java Persistence Unit Name.
    * 
    */
   public void setPersistenceUnitName(String pUnitName);
@@ -72,9 +72,8 @@ public interface ODataJPAContext {
    * The method sets the OData Processor for JPA into the context.
    * 
    * @param processor
-   *            is the specific implementation of
-   *            {@link org.apache.olingo.odata2.processor.api.jpa.ODataJPAProcessor}
-   *            for processing OData service requests.
+   * is the specific implementation of {@link org.apache.olingo.odata2.processor.api.jpa.ODataJPAProcessor} for
+   * processing OData service requests.
    */
   public void setODataProcessor(ODataProcessor processor);
 
@@ -89,9 +88,8 @@ public interface ODataJPAContext {
    * The method sets EDM provider into the context
    * 
    * @param edmProvider
-   *            is the specific implementation of
-   *            {@link org.apache.olingo.odata2.api.edm.provider.EdmProvider} for
-   *            transforming Java persistence models to Entity Data Model
+   * is the specific implementation of {@link org.apache.olingo.odata2.api.edm.provider.EdmProvider} for
+   * transforming Java persistence models to Entity Data Model
    * 
    */
   public void setEdmProvider(EdmProvider edmProvider);
@@ -112,7 +110,7 @@ public interface ODataJPAContext {
    * context.
    * 
    * @param emf
-   *            is of type {@link javax.persistence.EntityManagerFactory}
+   * is of type {@link javax.persistence.EntityManagerFactory}
    * 
    */
   public void setEntityManagerFactory(EntityManagerFactory emf);
@@ -128,8 +126,7 @@ public interface ODataJPAContext {
    * The method sets OData context into the context.
    * 
    * @param ctx
-   *            is an OData context of type
-   *            {@link org.apache.olingo.odata2.api.processor.ODataContext}
+   * is an OData context of type {@link org.apache.olingo.odata2.api.processor.ODataContext}
    */
   public void setODataContext(ODataContext ctx);
 
@@ -138,7 +135,7 @@ public interface ODataJPAContext {
    * mapping model is an XML document based on JPAEDMMappingModel.xsd
    * 
    * @param name
-   *            is the name of JPA EDM mapping model
+   * is the name of JPA EDM mapping model
    */
   public void setJPAEdmMappingModel(String name);
 
@@ -165,8 +162,7 @@ public interface ODataJPAContext {
    * several times overwrites already set extension instance in the context.
    * 
    * @param jpaEdmExtension
-   *            is an instance of type
-   *            {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension}
+   * is an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension}
    * 
    */
   public void setJPAEdmExtension(JPAEdmExtension jpaEdmExtension);
@@ -174,7 +170,8 @@ public interface ODataJPAContext {
   /**
    * The method returns the JPA Edm Extension instance set into the context.
    * 
-   * @return an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEmbeddableTypeMapType}
+   * @return an instance of type
+   * {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEmbeddableTypeMapType}
    */
   public JPAEdmExtension getJPAEdmExtension();
 

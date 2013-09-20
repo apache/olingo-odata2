@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa.model;
 
@@ -40,8 +40,8 @@ import org.apache.olingo.odata2.api.edm.provider.Association;
  * </ol>
  * </p>
  * 
- *  
- *         <p>
+ * 
+ * <p>
  * @org.apache.olingo.odata2.DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationSetView
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintView
@@ -61,36 +61,32 @@ public interface JPAEdmAssociationView extends JPAEdmBaseView {
    * set to be consistent only if all its mandatory properties can be
    * completely built from a Java Persistence Relationship.
    * 
-   * @return a consistent list of
-   *         {@link org.apache.olingo.odata2.api.edm.provider.Association}
+   * @return a consistent list of {@link org.apache.olingo.odata2.api.edm.provider.Association}
    * 
    */
   public List<Association> getConsistentEdmAssociationList();
 
   /**
-   * The method adds
-   * {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
-   * to its container
+   * The method adds {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView} to its container
    * 
    * @param associationView
-   *            of type
-   *            {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
+   * of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
    */
-  public void addJPAEdmAssociationView(JPAEdmAssociationView associationView, JPAEdmAssociationEndView associationEndView);
+  public void addJPAEdmAssociationView(JPAEdmAssociationView associationView,
+      JPAEdmAssociationEndView associationEndView);
 
   /**
    * The method searches for an Association in its container against the
-   * search parameter <b>view</b> of type
-   * {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}.
+   * search parameter <b>view</b> of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
+   * .
    * 
    * The Association in the container <b>view</b> is searched against the
    * consistent list of Association stored in this container.
    * 
    * @param view
-   *            of type
-   *            {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
+   * of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
    * @return {@link org.apache.olingo.odata2.api.edm.provider.Association} if found
-   *         in the container
+   * in the container
    */
   public Association searchAssociation(JPAEdmAssociationEndView view);
 
@@ -101,8 +97,7 @@ public interface JPAEdmAssociationView extends JPAEdmBaseView {
    * </p>
    * 
    * @param refView
-   *            of type
-   *            {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintView}
+   * of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintView}
    */
   public void addJPAEdmRefConstraintView(JPAEdmReferentialConstraintView refView);
 
@@ -111,23 +106,22 @@ public interface JPAEdmAssociationView extends JPAEdmBaseView {
    * being processed.
    * 
    * @return an instance of type
-   *         {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintView}
+   * {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmReferentialConstraintView}
    */
   public JPAEdmReferentialConstraintView getJPAEdmReferentialConstraintView();
 
   /**
    * The method searches for the number of associations with similar endpoints in its container against the
-   * search parameter <b>view</b> of type
-   * {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}.
+   * search parameter <b>view</b> of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
+   * .
    * 
    * The Association in the container <b>view</b> is searched against the
    * consistent list of Association stored in this container.
    * 
    * @param view
-   *            of type
-   *            {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
+   * of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
    * @return {@link org.apache.olingo.odata2.api.edm.provider.Association} if found
-   *         in the container
+   * in the container
    */
   int getNumberOfAssociationsWithSimilarEndPoints(JPAEdmAssociationEndView view);
 

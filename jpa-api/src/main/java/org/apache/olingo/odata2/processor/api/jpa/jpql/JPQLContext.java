@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa.jpql;
 
@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
  * built can be used for constructing JPQL statements. <br>
  * A default implementation is provided by the library.
  * 
- *  
+ * 
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLStatement
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.JPQLBuilderFactory
@@ -57,7 +57,7 @@ public abstract class JPQLContext implements JPQLContextView {
    * sets JPA Entity Name into the context
    * 
    * @param jpaEntityName
-   *            is the name of JPA Entity
+   * is the name of JPA Entity
    */
   protected final void setJPAEntityName(final String jpaEntityName) {
     this.jpaEntityName = jpaEntityName;
@@ -67,7 +67,7 @@ public abstract class JPQLContext implements JPQLContextView {
    * sets JPA Entity alias name into the context
    * 
    * @param jpaEntityAlias
-   *            is the JPA entity alias name
+   * is the JPA entity alias name
    */
   protected final void setJPAEntityAlias(final String jpaEntityAlias) {
     this.jpaEntityAlias = jpaEntityAlias;
@@ -85,7 +85,7 @@ public abstract class JPQLContext implements JPQLContextView {
    * sets the JPQL context type into the context
    * 
    * @param type
-   *            is JPQLContextType
+   * is JPQLContextType
    */
   protected final void setType(final JPQLContextType type) {
     this.type = type;
@@ -109,19 +109,19 @@ public abstract class JPQLContext implements JPQLContextView {
 
   /**
    * the method returns an instance of type
-   * {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder}
-   * based on the JPQLContextType. The context builder can be used for
+   * {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder} based on the
+   * JPQLContextType. The context builder can be used for
    * building different JPQL contexts.
    * 
    * @param contextType
-   *            is the JPQLContextType
+   * is the JPQLContextType
    * @param resultsView
-   *            is the OData request view
-   * @return an instance of type
-   *         {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder}
+   * is the OData request view
+   * @return an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder}
    * @throws ODataJPARuntimeException
    */
-  public final static JPQLContextBuilder createBuilder(final JPQLContextType contextType, final Object resultsView) throws ODataJPARuntimeException {
+  public final static JPQLContextBuilder createBuilder(final JPQLContextType contextType, final Object resultsView)
+      throws ODataJPARuntimeException {
     return JPQLContextBuilder.create(contextType, resultsView);
   }
 
@@ -129,7 +129,7 @@ public abstract class JPQLContext implements JPQLContextView {
    * The abstract class is extended by specific JPQLContext builder for
    * building JPQLContexts.
    * 
-   *  
+   * 
    * 
    */
   public static abstract class JPQLContextBuilder {
@@ -146,15 +146,17 @@ public abstract class JPQLContext implements JPQLContextView {
      * the method instantiates an instance of type JPQLContextBuilder.
      * 
      * @param contextType
-     *            indicates the type of JPQLContextBuilder to instantiate.
+     * indicates the type of JPQLContextBuilder to instantiate.
      * @param resultsView
-     *            is the OData request view
+     * is the OData request view
      * @return an instance of type
-     *         {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder}
+     * {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext.JPQLContextBuilder}
      * @throws ODataJPARuntimeException
      */
-    private static JPQLContextBuilder create(final JPQLContextType contextType, final Object resultsView) throws ODataJPARuntimeException {
-      JPQLContextBuilder contextBuilder = ODataJPAFactory.createFactory().getJPQLBuilderFactory().getContextBuilder(contextType);
+    private static JPQLContextBuilder create(final JPQLContextType contextType, final Object resultsView)
+        throws ODataJPARuntimeException {
+      JPQLContextBuilder contextBuilder =
+          ODataJPAFactory.createFactory().getJPQLBuilderFactory().getContextBuilder(contextType);
       if (contextBuilder == null) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ERROR_JPQLCTXBLDR_CREATE, null);
       }
@@ -167,8 +169,7 @@ public abstract class JPQLContext implements JPQLContextView {
      * to build JPQL Contexts. The build method makes use of information set
      * into the context to built JPQL Context Types.
      * 
-     * @return an instance of
-     *         {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext}
+     * @return an instance of {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContext}
      * @throws ODataJPAModelException
      * @throws ODataJPARuntimeException
      */
@@ -179,7 +180,7 @@ public abstract class JPQLContext implements JPQLContextView {
      * The method sets the OData request view into the JPQL context.
      * 
      * @param resultsView
-     *            is an instance representing OData request.
+     * is an instance representing OData request.
      */
     protected abstract void setResultsView(Object resultsView);
 

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa.model;
 
@@ -39,8 +39,8 @@ import org.apache.olingo.odata2.api.edm.provider.Property;
  * complex types. An EDM complex type is said to be consistent only if it used
  * in at least one of the EDM entity type.
  * 
- *  
- *         <p>
+ * 
+ * <p>
  * @org.apache.olingo.odata2.DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexPropertyView
  * 
@@ -50,8 +50,7 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
   /**
    * The method returns an EDM complex type that is currently being processed.
    * 
-   * @return an instance of type
-   *         {@link org.apache.olingo.odata2.api.edm.provider.ComplexType}
+   * @return an instance of type {@link org.apache.olingo.odata2.api.edm.provider.ComplexType}
    */
   public ComplexType getEdmComplexType();
 
@@ -59,8 +58,7 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
    * The method returns an JPA embeddable type that is currently being
    * processed.
    * 
-   * @return an instance of type
-   *         {@link javax.persistence.metamodel.EmbeddableType}
+   * @return an instance of type {@link javax.persistence.metamodel.EmbeddableType}
    */
   public javax.persistence.metamodel.EmbeddableType<?> getJPAEmbeddableType();
 
@@ -76,7 +74,7 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
    * the given JPA embeddable type name.
    * 
    * @param embeddableTypeName
-   *            is the name of JPA embeddable type
+   * is the name of JPA embeddable type
    * @return a reference to EDM complex type if found else null
    */
   public ComplexType searchEdmComplexType(String embeddableTypeName);
@@ -85,8 +83,7 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
    * The method add a JPA EDM complex type view to the container.
    * 
    * @param view
-   *            is an instance of type
-   *            {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexTypeView}
+   * is an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexTypeView}
    */
   public void addJPAEdmCompleTypeView(JPAEdmComplexTypeView view);
 
@@ -95,7 +92,7 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
    * the given EDM complex type's fully qualified name.
    * 
    * @param type
-   *            is the fully qualified name of EDM complex type
+   * is the fully qualified name of EDM complex type
    * @return a reference to EDM complex type if found else null
    */
   public ComplexType searchEdmComplexType(FullQualifiedName type);
@@ -105,14 +102,15 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
    * properties.
    * 
    * @param complexType
-   *            is the EDM complex type to expand
+   * is the EDM complex type to expand
    * @param expandedPropertyList
-   *            is the list to be populated with expanded EDM simple
-   *            properties
+   * is the list to be populated with expanded EDM simple
+   * properties
    * @param embeddablePropertyName
-   *            is the name of the complex property. The name is used as the
-   *            qualifier for the expanded simple property names.
+   * is the name of the complex property. The name is used as the
+   * qualifier for the expanded simple property names.
    */
-  public void expandEdmComplexType(ComplexType complexType, List<Property> expandedPropertyList, String embeddablePropertyName);
+  public void expandEdmComplexType(ComplexType complexType, List<Property> expandedPropertyList,
+      String embeddablePropertyName);
 
 }

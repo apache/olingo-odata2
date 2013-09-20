@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa.jpql;
 
@@ -22,15 +22,14 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
 
 /**
- * The class represents a Java Persistence Query Language (JPQL) Statement. 
- * The JPQL statement is built using a builder namely 
- * {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLStatement.JPQLStatementBuilder}
- * . Based upon the JPQL Context types (
- * {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType} different
- * kinds of JPQL statements are built. 
+ * The class represents a Java Persistence Query Language (JPQL) Statement.
+ * The JPQL statement is built using a builder namely
+ * {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLStatement.JPQLStatementBuilder} . Based upon the JPQL
+ * Context types ( {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextType} different
+ * kinds of JPQL statements are built.
  * The JPQL statements thus generated can be executed using JPA Query APIs to fetch JPA entities.
  * 
- *  
+ * 
  * @see org.apache.olingo.odata2.processor.api.jpa.factory.JPQLBuilderFactory
  * @see org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextView
  */
@@ -44,10 +43,9 @@ public class JPQLStatement {
    * upon the JPQL Context.
    * 
    * @param context
-   *            a non null value of
-   *            {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextView}
-   *            . The context is expected to be set to be built with no
-   *            errors.
+   * a non null value of {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLContextView} . The context is
+   * expected to be set to be built with no
+   * errors.
    * @return an instance of JPQL statement builder
    * @throws ODataJPARuntimeException
    */
@@ -80,7 +78,7 @@ public class JPQLStatement {
    * A default statement builder for building each kind of JPQL statements is
    * provided by the library.
    * 
-   *  
+   * 
    * 
    */
   public static abstract class JPQLStatementBuilder {
@@ -99,10 +97,9 @@ public class JPQLStatement {
      * The abstract method is implemented by specific statement builder for
      * building JPQL Statement.
      * 
-     * @return an instance of
-     *         {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLStatement}
+     * @return an instance of {@link org.apache.olingo.odata2.processor.api.jpa.jpql.JPQLStatement}
      * @throws ODataJPARuntimeException
-     *             in case there are errors building the statements
+     * in case there are errors building the statements
      */
     public abstract JPQLStatement build() throws ODataJPARuntimeException;
 

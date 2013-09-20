@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa.access;
 
@@ -29,7 +29,7 @@ package org.apache.olingo.odata2.processor.api.jpa.access;
  * </ol>
  * </b>
  * 
- *  
+ * 
  * 
  */
 public class JPAJoinClause {
@@ -43,7 +43,7 @@ public class JPAJoinClause {
    * <li>INNER - inner join
    * </ol>
    * 
-   *  
+   * 
    * 
    */
   public enum JOIN {
@@ -100,23 +100,22 @@ public class JPAJoinClause {
    * Constructor for creating elements of JPA Join Clause container.
    * 
    * @param entityName
-   *            is the name of the JPA entity participating in the join
+   * is the name of the JPA entity participating in the join
    * @param entityAlias
-   *            is the alias for the JPA entity participating in the join
+   * is the alias for the JPA entity participating in the join
    * @param entityRelationShip
-   *            is the name of the JPA entity relationship participating in
-   *            the join
+   * is the name of the JPA entity relationship participating in
+   * the join
    * @param entityRelationShipAlias
-   *            is the alias name of the JPA entity relationship participating
-   *            in the join
+   * is the alias name of the JPA entity relationship participating
+   * in the join
    * @param joinCondition
-   *            is the condition on which the joins should occur
+   * is the condition on which the joins should occur
    * @param joinType
-   *            is the type of join
-   *            {@link org.apache.olingo.odata2.processor.api.jpa.access.JPAJoinClause.JOIN}
-   *            to execute
+   * is the type of join {@link org.apache.olingo.odata2.processor.api.jpa.access.JPAJoinClause.JOIN} to execute
    */
-  public JPAJoinClause(final String entityName, final String entityAlias, final String entityRelationShip, final String entityRelationShipAlias, final String joinCondition, final JOIN joinType) {
+  public JPAJoinClause(final String entityName, final String entityAlias, final String entityRelationShip,
+      final String entityRelationShipAlias, final String joinCondition, final JOIN joinType) {
 
     this.entityName = entityName;
     this.entityAlias = entityAlias;
@@ -137,9 +136,8 @@ public class JPAJoinClause {
   }
 
   /**
-   * The method returns the type of
-   * {@link org.apache.olingo.odata2.processor.api.jpa.access.JPAJoinClause.JOIN}
-   * that can be used for building JPQL join statements.
+   * The method returns the type of {@link org.apache.olingo.odata2.processor.api.jpa.access.JPAJoinClause.JOIN} that
+   * can be used for building JPQL join statements.
    * 
    * @return join type
    */

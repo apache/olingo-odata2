@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa.access;
 
@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEdmMappingMod
 /**
  * Interface provides methods to access JPA EDM mapping model.
  * 
- *  
+ * 
  * @see JPAEdmMappingModel
  * 
  */
@@ -31,9 +31,8 @@ public interface JPAEdmMappingModelAccess {
 
   /**
    * The method searches and loads the mapping model stored in &ltfile&gt.xml
-   * file into the java object
-   * {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEdmMappingModel}
-   * . The name of the file is set into ODataJPAContext method.
+   * file into the java object {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEdmMappingModel} . The
+   * name of the file is set into ODataJPAContext method.
    * 
    * @see org.apache.olingo.odata2.processor.api.jpa.ODataJPAContext#setJPAEdmMappingModel(String)
    */
@@ -43,7 +42,7 @@ public interface JPAEdmMappingModelAccess {
    * The method returns if there exists a mapping model.
    * 
    * @return true - if there exists a mapping model for the OData service else
-   *         false
+   * false
    */
   public boolean isMappingModelExists();
 
@@ -51,8 +50,7 @@ public interface JPAEdmMappingModelAccess {
    * The method returns a JPA EDM mapping model Java object. The mapping model
    * in XML files is un-marshaled into the Java object.
    * 
-   * @return an instance of type
-   *         {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEdmMappingModel}
+   * @return an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.model.mapping.JPAEdmMappingModel}
    */
   public JPAEdmMappingModel getJPAEdmMappingModel();
 
@@ -60,9 +58,9 @@ public interface JPAEdmMappingModelAccess {
    * The method returns EDM Schema namespace for the persistence unit name
    * 
    * @param persistenceUnitName
-   *            is the Java persistence unit name
+   * is the Java persistence unit name
    * @return EDM schema name space mapped to Java persistence unit name or
-   *         null if no mapping is available
+   * null if no mapping is available
    */
   public String mapJPAPersistenceUnit(String persistenceUnitName);
 
@@ -71,9 +69,9 @@ public interface JPAEdmMappingModelAccess {
    * type name
    * 
    * @param jpaEntityTypeName
-   *            is the Java persistence entity type name
+   * is the Java persistence entity type name
    * @return EDM entity type name mapped to Java persistence entity type name
-   *         or null if no mapping is available
+   * or null if no mapping is available
    */
   public String mapJPAEntityType(String jpaEntityTypeName);
 
@@ -82,9 +80,9 @@ public interface JPAEdmMappingModelAccess {
    * type name
    * 
    * @param jpaEntityTypeName
-   *            is the Java persistence entity type name
+   * is the Java persistence entity type name
    * @return EDM entity set name mapped to Java persistence entity type name
-   *         or null if no mapping is available
+   * or null if no mapping is available
    */
   public String mapJPAEntitySet(String jpaEntityTypeName);
 
@@ -93,11 +91,11 @@ public interface JPAEdmMappingModelAccess {
    * attribute name.
    * 
    * @param jpaEntityTypeName
-   *            is the Java persistence entity type name
+   * is the Java persistence entity type name
    * @param jpaAttributeName
-   *            is the Java persistence attribute name
+   * is the Java persistence attribute name
    * @return EDM property name mapped to Java persistence attribute name or
-   *         null if no mapping is available
+   * null if no mapping is available
    */
   public String mapJPAAttribute(String jpaEntityTypeName, String jpaAttributeName);
 
@@ -106,11 +104,11 @@ public interface JPAEdmMappingModelAccess {
    * entity relationship name.
    * 
    * @param jpaEntityTypeName
-   *            is the Java persistence entity type name
+   * is the Java persistence entity type name
    * @param jpaRelationshipName
-   *            is the Java persistence relationship name
+   * is the Java persistence relationship name
    * @return EDM navigation property name mapped to Java persistence entity
-   *         relationship name or null if no mapping is available
+   * relationship name or null if no mapping is available
    */
   public String mapJPARelationship(String jpaEntityTypeName, String jpaRelationshipName);
 
@@ -119,9 +117,9 @@ public interface JPAEdmMappingModelAccess {
    * name.
    * 
    * @param jpaEmbeddableTypeName
-   *            is the Java persistence embeddable type name
+   * is the Java persistence embeddable type name
    * @return EDM complex type name mapped to Java persistence entity
-   *         relationship name or null if no mapping is available
+   * relationship name or null if no mapping is available
    */
   public String mapJPAEmbeddableType(String jpaEmbeddableTypeName);
 
@@ -130,11 +128,11 @@ public interface JPAEdmMappingModelAccess {
    * type's attribute name.
    * 
    * @param jpaEmbeddableTypeName
-   *            is the Java persistence
+   * is the Java persistence
    * @param jpaAttributeName
-   *            is the Java persistence attribute name
+   * is the Java persistence attribute name
    * @return EDM property name mapped to Java persistence attribute name or
-   *         null if no mapping is available
+   * null if no mapping is available
    */
   public String mapJPAEmbeddableTypeAttribute(String jpaEmbeddableTypeName, String jpaAttributeName);
 
@@ -143,9 +141,9 @@ public interface JPAEdmMappingModelAccess {
    * model
    * 
    * @param jpaEntityTypeName
-   *            is the name of JPA Entity Type
+   * is the name of JPA Entity Type
    * @return <b>true</b> - if JPA Entity should be excluded<br>
-   *         <b>false</b> - if JPA Entity should be not be excluded
+   * <b>false</b> - if JPA Entity should be not be excluded
    * 
    */
   public boolean checkExclusionOfJPAEntityType(String jpaEntityTypeName);
@@ -155,11 +153,11 @@ public interface JPAEdmMappingModelAccess {
    * Entity Type
    * 
    * @param jpaEntityTypeName
-   *            is the name of JPA Entity Type
+   * is the name of JPA Entity Type
    * @param jpaAttributeName
-   *            is the name of JPA attribute
+   * is the name of JPA attribute
    * @return <b>true</b> - if JPA attribute should be excluded<br>
-   *         <b>false</b> - if JPA attribute should be not be excluded
+   * <b>false</b> - if JPA attribute should be not be excluded
    * 
    */
   public boolean checkExclusionOfJPAAttributeType(String jpaEntityTypeName, String jpaAttributeName);
@@ -169,9 +167,9 @@ public interface JPAEdmMappingModelAccess {
    * from EDM model
    * 
    * @param jpaEmbeddableTypeName
-   *            is the name of JPA Embeddable Type
+   * is the name of JPA Embeddable Type
    * @return <b>true</b> - if JPA Embeddable Type should be excluded<br>
-   *         <b>false</b> - if JPA Embeddable Type should be not be excluded
+   * <b>false</b> - if JPA Embeddable Type should be not be excluded
    * 
    */
   public boolean checkExclusionOfJPAEmbeddableType(String jpaEmbeddableTypeName);
@@ -181,12 +179,12 @@ public interface JPAEdmMappingModelAccess {
    * excluded from EDM model
    * 
    * @param jpaEmbeddableTypeName
-   *            is the name of JPA Embeddable Attribute Type
+   * is the name of JPA Embeddable Attribute Type
    * @param jpaAttributeName
-   * 				is the name of JPA Attribute name
+   * is the name of JPA Attribute name
    * @return <b>true</b> - if JPA Embeddable Attribute Type should be excluded<br>
-   *         <b>false</b> - if JPA Embeddable Attribute Type should be not be
-   *         excluded
+   * <b>false</b> - if JPA Embeddable Attribute Type should be not be
+   * excluded
    * 
    */
   public boolean checkExclusionOfJPAEmbeddableAttributeType(String jpaEmbeddableTypeName, String jpaAttributeName);

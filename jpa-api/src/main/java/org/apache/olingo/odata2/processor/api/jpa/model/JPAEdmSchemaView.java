@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- *        or more contributor license agreements.  See the NOTICE file
- *        distributed with this work for additional information
- *        regarding copyright ownership.  The ASF licenses this file
- *        to you under the Apache License, Version 2.0 (the
- *        "License"); you may not use this file except in compliance
- *        with the License.  You may obtain a copy of the License at
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- *          http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *        Unless required by applicable law or agreed to in writing,
- *        software distributed under the License is distributed on an
- *        "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *        KIND, either express or implied.  See the License for the
- *        specific language governing permissions and limitations
- *        under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa.model;
 
@@ -34,14 +34,13 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
  * schema is consistent only if following elements are consistent
  * <ol>
  * <li>{@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}</li>
- * <li>
- * {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityContainerView}</li>
+ * <li> {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityContainerView}</li>
  * <li>{@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexTypeView}</li>
  * </ol>
  * </p>
  * 
- *  
- *         <p>
+ * 
+ * <p>
  * @org.apache.olingo.odata2.DoNotImplement
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView
  * @see org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityContainerView
@@ -52,8 +51,7 @@ public interface JPAEdmSchemaView extends JPAEdmBaseView {
   /**
    * The method returns the EDM schema present in the container.
    * 
-   * @return an instance EDM schema of type
-   *         {@link org.apache.olingo.odata2.api.edm.provider.Schema}
+   * @return an instance EDM schema of type {@link org.apache.olingo.odata2.api.edm.provider.Schema}
    */
   public Schema getEdmSchema();
 
@@ -61,8 +59,7 @@ public interface JPAEdmSchemaView extends JPAEdmBaseView {
    * The method returns JPA EDM container view. The JPA EDM container view can
    * be used to access EDM Entity Container elements.
    * 
-   * @return an instance of type
-   *         {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityContainerView}
+   * @return an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityContainerView}
    */
   public JPAEdmEntityContainerView getJPAEdmEntityContainerView();
 
@@ -70,8 +67,7 @@ public interface JPAEdmSchemaView extends JPAEdmBaseView {
    * The method returns JPA EDM complex view. The JPA EDM complex view can be
    * used to access EDM complex types and JPA Embeddable Types.
    * 
-   * @return an instance of type
-   *         {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexTypeView}
+   * @return an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexTypeView}
    */
   public JPAEdmComplexTypeView getJPAEdmComplexTypeView();
 
@@ -79,8 +75,7 @@ public interface JPAEdmSchemaView extends JPAEdmBaseView {
    * The method returns JPA EDM association view. The JPA EDM association view
    * can be used to access EDM associations and JPA Relationships.
    * 
-   * @return an instance of type
-   *         {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
+   * @return an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationView}
    */
   public JPAEdmAssociationView getJPAEdmAssociationView();
 
@@ -96,12 +91,12 @@ public interface JPAEdmSchemaView extends JPAEdmBaseView {
    * The method is a callback.
    * 
    * @param customClass
-   *            is the class that contains custom operations
+   * is the class that contains custom operations
    * @param methodNames
-   *            is the name of the method that needs to be transformed into
-   *            Function Imports. It is an optional parameter. If null is
-   *            passed then all annotated methods are transformed into
-   *            Function Imports.
+   * is the name of the method that needs to be transformed into
+   * Function Imports. It is an optional parameter. If null is
+   * passed then all annotated methods are transformed into
+   * Function Imports.
    * 
    */
   public void registerOperations(Class<?> customClass, String methodNames[]);
