@@ -1,39 +1,37 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.api.uri.expression;
 
 /**
- * Represents a binary expression node in the expression tree returned by the methods 
- * <li>{@link org.apache.olingo.odata2.api.uri.UriParser#parseFilterString(org.apache.olingo.odata2.api.edm.EdmEntityType, String)}</li>
- * <li>{@link org.apache.olingo.odata2.api.uri.UriParser#parseOrderByString(org.apache.olingo.odata2.api.edm.EdmEntityType, String)}</li>
- * <br> 
+ * Represents a binary expression node in the expression tree returned by the methods
+ * <br>
  * <br>
  * A binary expression node is inserted in the expression tree for any valid
  * ODATA binary operator in {@link BinaryOperator} (e.g. for "and", "div", "eg", ... )
  * <br>
- *  
+ * 
  */
 public interface BinaryExpression extends CommonExpression {
   /**
-    * @return Operator object that represents the used operator
-    * @see BinaryOperator
-    */
+   * @return Operator object that represents the used operator
+   * @see BinaryOperator
+   */
   public BinaryOperator getOperator();
 
   /**

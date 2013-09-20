@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 
 /**
  * Compilation of generic context objects.
- *  
+ * 
  * @org.apache.olingo.odata2.DoNotImplement
  */
 public interface ODataContext {
@@ -54,7 +54,7 @@ public interface ODataContext {
   PathInfo getPathInfo() throws ODataException;
 
   /**
-   * If a request execution is part of batch processing then this method returns the context of the 
+   * If a request execution is part of batch processing then this method returns the context of the
    * outer batch request.
    * @return a batch parent context or null
    */
@@ -138,10 +138,10 @@ public interface ODataContext {
 
   /**
    * Gets a list of languages that are acceptable for the response.
-   * If no acceptable languages are specified, a read-only list containing 
+   * If no acceptable languages are specified, a read-only list containing
    * a single wildcard java.util.Locale instance (with language field set to "*") is returned.
    * @return a read-only list of acceptable languages sorted according to their q-value,
-   *         with highest preference first.
+   * with highest preference first.
    */
   List<Locale> getAcceptableLanguages();
 

@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
  * Error context information bean. Usually created and in error situations.
  * @see org.apache.olingo.odata2.api.ep.EntityProvider EntityProvider
  * @see ODataErrorCallback
- *  
+ * 
  */
 public class ODataErrorContext {
 
@@ -70,7 +70,7 @@ public class ODataErrorContext {
     this.exception = exception;
   }
 
-  /** 
+  /**
    * Get the content type which should be used to serialize an error response.
    * @return a content type
    */
@@ -103,7 +103,7 @@ public class ODataErrorContext {
   }
 
   /**
-   * Return OData error code that is returned in error response. 
+   * Return OData error code that is returned in error response.
    * @return an application defined error code
    */
   public String getErrorCode() {
@@ -111,7 +111,7 @@ public class ODataErrorContext {
   }
 
   /**
-   * Set OData error code that should be returned in error response. 
+   * Set OData error code that should be returned in error response.
    * @param errorCode an application defined error code
    */
   public void setErrorCode(final String errorCode) {
@@ -134,7 +134,7 @@ public class ODataErrorContext {
     this.message = message;
   }
 
-  /** 
+  /**
    * Return the locale of the translated message.
    * @return a locale
    */
@@ -210,7 +210,8 @@ public class ODataErrorContext {
 
   /**
    * Get {@link PathInfo} object.
-   * May be <code>NULL</code> if no path info was created/set till error occurred (but may be over written by application).
+   * May be <code>NULL</code> if no path info was created/set till error occurred (but may be over written by
+   * application).
    * 
    * @return {@link PathInfo} or <code>NULL</code>.
    */

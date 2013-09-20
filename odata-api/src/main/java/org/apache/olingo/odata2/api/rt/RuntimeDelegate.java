@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
@@ -38,18 +38,18 @@ import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.api.uri.UriParser;
 
 /**
- * Provides access to core implementation classes for interfaces. This class is used 
- * by internal abstract API implementations and it is not intended to be used by others. 
+ * Provides access to core implementation classes for interfaces. This class is used
+ * by internal abstract API implementations and it is not intended to be used by others.
  * 
  * @org.apache.olingo.odata2.DoNotImplement
- *  
+ * 
  */
 public abstract class RuntimeDelegate {
 
   private static final String IMPLEMENTATION = "org.apache.olingo.odata2.core.rt.RuntimeDelegateImpl";
 
   /**
-   * Create a runtime delegate instance from the core library. The core 
+   * Create a runtime delegate instance from the core library. The core
    * library (org.apache.olingo.odata2.core.jar) needs to be included into the classpath
    * of the using application.
    * @return an implementation object
@@ -62,7 +62,7 @@ public abstract class RuntimeDelegate {
 
       /*
        * We explicitly do not use the singleton pattern to keep the server state free
-       * and avoid class loading issues also during hot deployment. 
+       * and avoid class loading issues also during hot deployment.
        */
       final Object object = clazz.newInstance();
       delegate = (RuntimeDelegateInstance) object;
@@ -91,9 +91,11 @@ public abstract class RuntimeDelegate {
 
     protected abstract EntityProviderInterface createEntityProvider();
 
-    protected abstract ODataService createODataSingleProcessorService(EdmProvider provider, ODataSingleProcessor processor);
+    protected abstract ODataService createODataSingleProcessorService(EdmProvider provider,
+        ODataSingleProcessor processor);
 
-    protected abstract EdmProvider createEdmProvider(InputStream metadataXml, boolean validate) throws EntityProviderException;
+    protected abstract EdmProvider createEdmProvider(InputStream metadataXml, boolean validate)
+        throws EntityProviderException;
 
     protected abstract BatchResponsePartBuilder createBatchResponsePartBuilder();
 
@@ -151,7 +153,7 @@ public abstract class RuntimeDelegate {
   }
 
   /**
-   * Creates and returns a http entity provider. 
+   * Creates and returns a http entity provider.
    * @return an implementation object
    */
   public static EntityProviderInterface createEntityProvider() {
@@ -159,22 +161,24 @@ public abstract class RuntimeDelegate {
   }
 
   /**
-   * Creates and returns a single processor service. 
+   * Creates and returns a single processor service.
    * @param provider a provider implementation for the metadata of the OData service
    * @param processor a single data processor implementation of the OData service
    * @return a implementation object
    */
-  public static ODataService createODataSingleProcessorService(final EdmProvider provider, final ODataSingleProcessor processor) {
+  public static ODataService createODataSingleProcessorService(final EdmProvider provider,
+      final ODataSingleProcessor processor) {
     return RuntimeDelegate.getInstance().createODataSingleProcessorService(provider, processor);
   }
 
   /**
-   * Creates and returns an edm provider. 
+   * Creates and returns an edm provider.
    * @param metadataXml a metadata xml input stream (means the metadata document)
    * @param validate true if semantic checks for metadata input stream shall be done
    * @return an instance of EdmProvider
    */
-  public static EdmProvider createEdmProvider(final InputStream metadataXml, final boolean validate) throws EntityProviderException {
+  public static EdmProvider createEdmProvider(final InputStream metadataXml, final boolean validate)
+      throws EntityProviderException {
     return RuntimeDelegate.getInstance().createEdmProvider(metadataXml, validate);
   }
 

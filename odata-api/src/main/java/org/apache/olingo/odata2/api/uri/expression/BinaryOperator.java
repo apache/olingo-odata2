@@ -1,30 +1,31 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.api.uri.expression;
 
 /**
- * Enumerations for supported binary operators of the ODATA expression parser 
+ * Enumerations for supported binary operators of the ODATA expression parser
  * for ODATA version 2.0 (with some restrictions)
- *  
-*/
+ * 
+ */
 public enum BinaryOperator {
-  AND("and"), OR("or"), EQ("eq"), NE("ne"), LT("lt"), LE("le"), GT("gt"), GE("ge"), ADD("add"), SUB("sub"), MUL("mul"), DIV("div"), MODULO("mod"),
+  AND("and"), OR("or"), EQ("eq"), NE("ne"), LT("lt"), LE("le"), GT("gt"), GE("ge"), ADD("add"), SUB("sub"),
+  MUL("mul"), DIV("div"), MODULO("mod"),
 
   /**
    * Property access operator. E.g. $filter=address/city eq "Sydney"
@@ -44,7 +45,7 @@ public enum BinaryOperator {
     this.stringRespresentation = stringRespresentation;
   }
 
-  /** 
+  /**
    * @return Operator name for usage in text
    */
   @Override
@@ -53,7 +54,7 @@ public enum BinaryOperator {
   }
 
   /**
-   * @return URI literal of the binary operator as used in the URL. 
+   * @return URI literal of the binary operator as used in the URL.
    */
   public String toUriLiteral() {
     return uriSyntax;

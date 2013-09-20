@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
@@ -27,8 +27,9 @@ import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 
 /**
- * {@link EntityProviderWriteProperties} contains all additional properties which are necessary to <b>write (serialize)</b> an
- * {@link org.apache.olingo.odata2.api.ep.entry.ODataEntry} into an specific format (e.g. <code>XML</code> or <code>JSON</code> or ...).
+ * {@link EntityProviderWriteProperties} contains all additional properties which are necessary to <b>write
+ * (serialize)</b> an {@link org.apache.olingo.odata2.api.ep.entry.ODataEntry} into an specific format (e.g.
+ * <code>XML</code> or <code>JSON</code> or ...).
  */
 public class EntityProviderWriteProperties {
 
@@ -68,9 +69,9 @@ public class EntityProviderWriteProperties {
   }
 
   /**
-  * Gets the type of the inlinecount request from the system query option.
-  * @return the type of the inlinecount request from the system query option
-  */
+   * Gets the type of the inlinecount request from the system query option.
+   * @return the type of the inlinecount request from the system query option
+   */
   public final InlineCount getInlineCountType() {
     return inlineCountType;
   }
@@ -88,7 +89,7 @@ public class EntityProviderWriteProperties {
   }
 
   /**
-  * Gets the inlinecount.
+   * Gets the inlinecount.
    * @return the inlinecount as Integer
    * @see #getInlineCountType
    */
@@ -112,7 +113,7 @@ public class EntityProviderWriteProperties {
     private final EntityProviderWriteProperties properties = new EntityProviderWriteProperties();
 
     /**
-     * @param mediaResourceMimeType  the mediaResourceMimeType to set
+     * @param mediaResourceMimeType the mediaResourceMimeType to set
      */
     public final ODataEntityProviderPropertiesBuilder mediaResourceMimeType(final String mediaResourceMimeType) {
       properties.mediaResourceMimeType = mediaResourceMimeType;
@@ -120,7 +121,7 @@ public class EntityProviderWriteProperties {
     }
 
     /**
-     * @param inlineCountType  the inlineCountType to set
+     * @param inlineCountType the inlineCountType to set
      */
     public final ODataEntityProviderPropertiesBuilder inlineCountType(final InlineCount inlineCountType) {
       properties.inlineCountType = inlineCountType;
@@ -128,7 +129,7 @@ public class EntityProviderWriteProperties {
     }
 
     /**
-     * @param inlineCount  the inlineCount to set
+     * @param inlineCount the inlineCount to set
      */
     public final ODataEntityProviderPropertiesBuilder inlineCount(final Integer inlineCount) {
       properties.inlineCount = inlineCount;
@@ -160,7 +161,8 @@ public class EntityProviderWriteProperties {
     }
 
     /**
-     * Set a expand select tree which results from $expand and $select query parameter. Usually the data structure is constructed 
+     * Set a expand select tree which results from $expand and $select query parameter. Usually the data structure is
+     * constructed
      * by the uri parser.
      * @param expandSelectTree data structure
      * @return properties builder
@@ -194,7 +196,8 @@ public class EntityProviderWriteProperties {
   }
 
   public static ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
-    final ODataEntityProviderPropertiesBuilder b = EntityProviderWriteProperties.serviceRoot(properties.getServiceRoot());
+    final ODataEntityProviderPropertiesBuilder b = EntityProviderWriteProperties.serviceRoot(properties
+        .getServiceRoot());
     b.fromProperties(properties);
     return b;
   }

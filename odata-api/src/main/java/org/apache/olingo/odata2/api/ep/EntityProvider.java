@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
@@ -40,32 +40,32 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 
 /**
- * <p>Entity Provider</p> 
+ * <p>Entity Provider</p>
  * <p>An {@link EntityProvider} provides all necessary <b>read</b> and <b>write</b>
  * methods for accessing the entities defined in an <code>Entity Data Model</code>.
  * Therefore this library provides (in its <code>core</code> packages) as convenience
  * basic entity providers for accessing entities in the <b>XML</b> and <b>JSON</b>
  * formats.</p>
- *  
+ * 
  */
 public final class EntityProvider {
 
   /**
-   * (Internal) interface for all {@link EntityProvider} necessary <b>read</b> and <b>write</b> methods for accessing 
+   * (Internal) interface for all {@link EntityProvider} necessary <b>read</b> and <b>write</b> methods for accessing
    * entities defined in an <code>Entity Data Model</code>.
    * <p>
    * This interface is declared as inner interface (class) because the {@link EntityProvider} provides a convenience
    * access (and basic implementation for <b>XML</b> and <b>JSON</b> format) to all interface methods.
    * <br/>
-   * Hence, it is <b>not recommended</b> to implement this interface (it is possible to implement it and to provide an 
+   * Hence, it is <b>not recommended</b> to implement this interface (it is possible to implement it and to provide an
    * own {@link EntityProvider} for support of additional formats but it is recommended to
    * handle additional formats directly within an <code>ODataProcessor</code>).
    */
   public interface EntityProviderInterface {
 
     /**
-     * Write metadata document in XML format for the given schemas and the provided predefined 
-     * namespaces at the EDMX element. PredefinedNamespaces is of type 
+     * Write metadata document in XML format for the given schemas and the provided predefined
+     * namespaces at the EDMX element. PredefinedNamespaces is of type
      * Map{@literal <}prefix,namespace{@literal >} and may be null or an empty Map.
      * 
      * @param schemas all XML schemas which will be written
@@ -73,7 +73,8 @@ public final class EntityProvider {
      * @return resulting {@link ODataResponse} with written metadata content.
      * @throws EntityProviderException if writing of data (serialization) fails
      */
-    ODataResponse writeMetadata(List<Schema> schemas, Map<String, String> predefinedNamespaces) throws EntityProviderException;
+    ODataResponse writeMetadata(List<Schema> schemas, Map<String, String> predefinedNamespaces)
+        throws EntityProviderException;
 
     /**
      * Write service document based on given {@link Edm} and <code>service root</code> as
@@ -117,39 +118,45 @@ public final class EntityProvider {
     ODataResponse writeBinary(String mimeType, byte[] data) throws EntityProviderException;
 
     /**
-     * Write given <code>data</code> (which is given in form of a {@link List} with a {@link Map} for each entity. Such a {@link Map}
-     * contains all properties [as <code>property name</code> to <code>property value</code> mapping] for the entry) in the specified
-     * format (given as <code>contentType</code>) based on given <code>entity data model for an entity set</code> (given as {@link EdmEntitySet})
+     * Write given <code>data</code> (which is given in form of a {@link List} with a {@link Map} for each entity. Such
+     * a {@link Map} contains all properties [as <code>property name</code> to <code>property value</code> mapping] for
+     * the entry) in the specified
+     * format (given as <code>contentType</code>) based on given <code>entity data model for an entity set</code> (given
+     * as {@link EdmEntitySet})
      * and <code>properties</code> for this entity provider (given as {@link EntityProviderWriteProperties}).
      * 
      * @param contentType format in which the feed should be written
      * @param entitySet entity data model for given entity data set
      * @param data set of entries in form of a {@link List} with a {@link Map} for each entity (such a {@link Map}
-     *              contains all properties [as <code>property name</code> to <code>property value</code> mapping).
-     * @param properties additional properties necessary for writing of data 
+     * contains all properties [as <code>property name</code> to <code>property value</code> mapping).
+     * @param properties additional properties necessary for writing of data
      * @return resulting {@link ODataResponse} with written feed content.
      * @throws EntityProviderException if writing of data (serialization) fails
      */
-    ODataResponse writeFeed(String contentType, EdmEntitySet entitySet, List<Map<String, Object>> data, EntityProviderWriteProperties properties) throws EntityProviderException;
+    ODataResponse writeFeed(String contentType, EdmEntitySet entitySet, List<Map<String, Object>> data,
+        EntityProviderWriteProperties properties) throws EntityProviderException;
 
     /**
-     * Write given <code>data</code> (which is given in form of a {@link Map} for which contains all properties 
+     * Write given <code>data</code> (which is given in form of a {@link Map} for which contains all properties
      * as <code>property name</code> to <code>property value</code> mapping) for the entry in the specified
-     * format (given as <code>contentType</code>) based on <code>entity data model for an entity set</code> (given as {@link EdmEntitySet})
+     * format (given as <code>contentType</code>) based on <code>entity data model for an entity set</code> (given as
+     * {@link EdmEntitySet})
      * and <code>properties</code> for this entity provider (given as {@link EntityProviderWriteProperties}).
      * 
      * @param contentType format in which the entry should be written
      * @param entitySet entity data model for given entity data set
-     * @param data which contains all properties as <code>property name</code> to <code>property value</code> mapping for the entry
-     * @param properties additional properties necessary for writing of data 
+     * @param data which contains all properties as <code>property name</code> to <code>property value</code> mapping
+     * for the entry
+     * @param properties additional properties necessary for writing of data
      * @return resulting {@link ODataResponse} with written entry content
      * @throws EntityProviderException if writing of data (serialization) fails
      */
-    ODataResponse writeEntry(String contentType, EdmEntitySet entitySet, Map<String, Object> data, EntityProviderWriteProperties properties) throws EntityProviderException;
+    ODataResponse writeEntry(String contentType, EdmEntitySet entitySet, Map<String, Object> data,
+        EntityProviderWriteProperties properties) throws EntityProviderException;
 
     /**
      * Write given <code>value</code> (which is given in form of an {@link Object}) for the property in the specified
-     * format (given as <code>contentType</code>) based on given <code>entity data model for an entity property</code> 
+     * format (given as <code>contentType</code>) based on given <code>entity data model for an entity property</code>
      * (given as {@link EdmProperty}).
      * 
      * @param contentType format in which the property should be written
@@ -158,59 +165,71 @@ public final class EntityProvider {
      * @return resulting {@link ODataResponse} with written property content.
      * @throws EntityProviderException if writing of data (serialization) fails
      */
-    ODataResponse writeProperty(String contentType, EdmProperty edmProperty, Object value) throws EntityProviderException;
+    ODataResponse writeProperty(String contentType, EdmProperty edmProperty, Object value)
+        throws EntityProviderException;
 
     /**
-     * Write <b>link</b> for key property based on <code>entity data model for an entity set</code> (given as {@link EdmEntitySet})
+     * Write <b>link</b> for key property based on <code>entity data model for an entity set</code> (given as
+     * {@link EdmEntitySet})
      * in the specified format (given as <code>contentType</code>).
-     * The necessary key property values must be provided within the <code>data</code> (in the form of <code>property name</code>
+     * The necessary key property values must be provided within the <code>data</code> (in the form of <code>property
+     * name</code>
      * to <code>property value</code> mapping) and <code>properties</code> for this entity provider must be set
      * (given as {@link EntityProviderWriteProperties}).
      * 
      * @param contentType format in which the entry should be written
      * @param entitySet entity data model for given entity data set
-     * @param data which contains all key properties as <code>property name</code> to <code>property value</code> mapping for the entry
-     * @param properties additional properties necessary for writing of data 
+     * @param data which contains all key properties as <code>property name</code> to <code>property value</code>
+     * mapping for the entry
+     * @param properties additional properties necessary for writing of data
      * @return resulting {@link ODataResponse} with written link content.
      * @throws EntityProviderException if writing of data (serialization) fails
      */
-    ODataResponse writeLink(String contentType, EdmEntitySet entitySet, Map<String, Object> data, EntityProviderWriteProperties properties) throws EntityProviderException;
+    ODataResponse writeLink(String contentType, EdmEntitySet entitySet, Map<String, Object> data,
+        EntityProviderWriteProperties properties) throws EntityProviderException;
 
     /**
-     * Write all <b>links</b> for key property based on <code>entity data model for an entity set</code> (given as {@link EdmEntitySet})
+     * Write all <b>links</b> for key property based on <code>entity data model for an entity set</code> (given as
+     * {@link EdmEntitySet})
      * in the specified format (given as <code>contentType</code>) for a set of entries.
-     * The necessary key property values must be provided within the <code>data</code> (in form of a {@link List} with a {@link Map} 
-     * for each entry. Such a {@link Map} contains all key properties [as <code>property name</code> to 
-     * <code>property value</code> mapping] for the entry) and <code>properties</code> for this entity provider must be set
+     * The necessary key property values must be provided within the <code>data</code> (in form of a {@link List} with a
+     * {@link Map} for each entry. Such a {@link Map} contains all key properties [as <code>property name</code> to
+     * <code>property value</code> mapping] for the entry) and <code>properties</code> for this entity provider must be
+     * set
      * (given as {@link EntityProviderWriteProperties}).
      * 
      * @param contentType format in which the entry should be written
      * @param entitySet entity data model for given entity data set
      * @param data set of entries in form of a {@link List} with a {@link Map} for each entry (such a {@link Map}
-     *              contains all key properties [as <code>property name</code> to <code>property value</code> mapping).
-     * @param properties additional properties necessary for writing of data 
+     * contains all key properties [as <code>property name</code> to <code>property value</code> mapping).
+     * @param properties additional properties necessary for writing of data
      * @return resulting {@link ODataResponse} with written links content.
      * @throws EntityProviderException if writing of data (serialization) fails
      */
-    ODataResponse writeLinks(String contentType, EdmEntitySet entitySet, List<Map<String, Object>> data, EntityProviderWriteProperties properties) throws EntityProviderException;
+    ODataResponse writeLinks(String contentType, EdmEntitySet entitySet, List<Map<String, Object>> data,
+        EntityProviderWriteProperties properties) throws EntityProviderException;
 
     /**
-     * Write <code>data</code> result (given as {@link Object}) of function import based on <code>return type</code> 
-     * of {@link EdmFunctionImport} in specified format (given as <code>contentType</code>). Additional <code>properties</code> 
+     * Write <code>data</code> result (given as {@link Object}) of function import based on <code>return type</code>
+     * of {@link EdmFunctionImport} in specified format (given as <code>contentType</code>). Additional
+     * <code>properties</code>
      * for this entity provider must be set (given as {@link EntityProviderWriteProperties}).
      * 
      * @param contentType format in which the entry should be written
      * @param functionImport entity data model for executed function import
      * @param data result of function import
-     * @param properties additional properties necessary for writing of data 
+     * @param properties additional properties necessary for writing of data
      * @return resulting {@link ODataResponse} with written function import result content.
      * @throws EntityProviderException if writing of data (serialization) fails
      */
-    ODataResponse writeFunctionImport(String contentType, EdmFunctionImport functionImport, Object data, EntityProviderWriteProperties properties) throws EntityProviderException;
+    ODataResponse writeFunctionImport(String contentType, EdmFunctionImport functionImport, Object data,
+        EntityProviderWriteProperties properties) throws EntityProviderException;
 
     /**
-     * Read (de-serialize) a data feed from <code>content</code> (as {@link InputStream}) in specified format (given as <code>contentType</code>)
-     * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide this data as {@link ODataEntry}.
+     * Read (de-serialize) a data feed from <code>content</code> (as {@link InputStream}) in specified format (given as
+     * <code>contentType</code>)
+     * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide this data as
+     * {@link ODataEntry}.
      * 
      * @param contentType format of content in the given input stream.
      * @param entitySet entity data model for entity set to be read
@@ -219,7 +238,8 @@ public final class EntityProvider {
      * @return an {@link ODataFeed} object
      * @throws EntityProviderException if reading of data (de-serialization) fails
      */
-    ODataFeed readFeed(String contentType, EdmEntitySet entitySet, InputStream content, EntityProviderReadProperties properties) throws EntityProviderException;
+    ODataFeed readFeed(String contentType, EdmEntitySet entitySet, InputStream content,
+        EntityProviderReadProperties properties) throws EntityProviderException;
 
     /**
      * Reads (de-serializes) data from <code>content</code> (as {@link InputStream})
@@ -229,19 +249,22 @@ public final class EntityProvider {
      * Does not return complete entry data but only data present in the
      * de-serialized content.
      * @param contentType format of content in the given input stream
-     * @param entitySet   entity data model for entity set to be read
-     * @param content     data in form of an {@link InputStream} which
-     *                    contains the data in specified format
-     * @param properties  additional properties necessary for reading
-     *                    content from {@link InputStream} into {@link Map}.
+     * @param entitySet entity data model for entity set to be read
+     * @param content data in form of an {@link InputStream} which
+     * contains the data in specified format
+     * @param properties additional properties necessary for reading
+     * content from {@link InputStream} into {@link Map}.
      * @return entry as {@link ODataEntry}
      * @throws EntityProviderException if reading of data (de-serialization) fails
      */
-    ODataEntry readEntry(String contentType, EdmEntitySet entitySet, InputStream content, EntityProviderReadProperties properties) throws EntityProviderException;
+    ODataEntry readEntry(String contentType, EdmEntitySet entitySet, InputStream content,
+        EntityProviderReadProperties properties) throws EntityProviderException;
 
     /**
-     * Read (de-serialize) properties from <code>content</code> (as {@link InputStream}) in specified format (given as <code>contentType</code>)
-     * based on <code>entity data model</code> (given as {@link EdmProperty}) and provide this data as {@link Map} which contains
+     * Read (de-serialize) properties from <code>content</code> (as {@link InputStream}) in specified format (given as
+     * <code>contentType</code>)
+     * based on <code>entity data model</code> (given as {@link EdmProperty}) and provide this data as {@link Map} which
+     * contains
      * the read data in form of <code>property name</code> to <code>property value</code> mapping.
      * 
      * @param contentType format of content in the given input stream.
@@ -251,25 +274,30 @@ public final class EntityProvider {
      * @return property as name and value in a map
      * @throws EntityProviderException if reading of data (de-serialization) fails
      */
-    Map<String, Object> readProperty(String contentType, EdmProperty edmProperty, InputStream content, EntityProviderReadProperties properties) throws EntityProviderException;
+    Map<String, Object> readProperty(String contentType, EdmProperty edmProperty, InputStream content,
+        EntityProviderReadProperties properties) throws EntityProviderException;
 
     /**
-     * Read (de-serialize) a property value from <code>content</code> (as {@link InputStream}) in format <code>text/plain</code>
+     * Read (de-serialize) a property value from <code>content</code> (as {@link InputStream}) in format
+     * <code>text/plain</code>
      * based on <code>entity data model</code> (given as {@link EdmProperty}) and provide this data as {@link Object}.
      * 
      * @param edmProperty entity data model for entity property to be read
      * @param content data in form of an {@link InputStream} which contains the data in format <code>text/plain</code>
-     * @param typeMapping defines the mapping for this <code>edm property</code> to a <code>java class</code> which should be used
-     *                  during read of the content. If according <code>edm property</code> can not be read
-     *                  into given <code>java class</code> an {@link EntityProviderException} is thrown.
-     *                  Supported mappings are documented in {@link org.apache.olingo.odata2.api.edm.EdmSimpleType}.
+     * @param typeMapping defines the mapping for this <code>edm property</code> to a <code>java class</code> which
+     * should be used
+     * during read of the content. If according <code>edm property</code> can not be read
+     * into given <code>java class</code> an {@link EntityProviderException} is thrown.
+     * Supported mappings are documented in {@link org.apache.olingo.odata2.api.edm.EdmSimpleType}.
      * @return property value as object
      * @throws EntityProviderException if reading of data (de-serialization) fails
      */
-    Object readPropertyValue(EdmProperty edmProperty, InputStream content, Class<?> typeMapping) throws EntityProviderException;
+    Object readPropertyValue(EdmProperty edmProperty, InputStream content, Class<?> typeMapping)
+        throws EntityProviderException;
 
     /**
-     * Read (de-serialize) a link from <code>content</code> (as {@link InputStream}) in specified format (given as <code>contentType</code>)
+     * Read (de-serialize) a link from <code>content</code> (as {@link InputStream}) in specified format (given as
+     * <code>contentType</code>)
      * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide the link as {@link String}.
      * 
      * @param contentType format of content in the given input stream.
@@ -284,27 +312,30 @@ public final class EntityProvider {
      * Read (de-serialize) all links from <code>content</code> (as {@link InputStream})
      * in specified format (given as <code>contentType</code>) based on <code>entity data model</code>
      * (given as {@link EdmEntitySet}) and provide the link as List of Strings.
-     *
+     * 
      * @param contentType format of content in the given input stream.
      * @param entitySet entity data model for entity property to be read
      * @param content data in form of an {@link InputStream} which contains the data in specified format
      * @return links as List of Strings
      * @throws EntityProviderException if reading of data (de-serialization) fails
      */
-    List<String> readLinks(String contentType, EdmEntitySet entitySet, InputStream content) throws EntityProviderException;
+    List<String> readLinks(String contentType, EdmEntitySet entitySet, InputStream content)
+        throws EntityProviderException;
 
     /**
-     * Read (de-serialize) data from metadata <code>inputStream</code> (as {@link InputStream}) and provide Edm as {@link Edm}
+     * Read (de-serialize) data from metadata <code>inputStream</code> (as {@link InputStream}) and provide Edm as
+     * {@link Edm}
      * 
      * @param inputStream the given input stream
-     * @param validate has to be true if metadata should be validated 
+     * @param validate has to be true if metadata should be validated
      * @return Edm as {@link Edm}
      * @throws EntityProviderException if reading of data (de-serialization) fails
      */
     Edm readMetadata(InputStream inputStream, boolean validate) throws EntityProviderException;
 
     /**
-     * Read (de-serialize) binary data from <code>content</code> (as {@link InputStream}) and provide it as <code>byte[]</code>.
+     * Read (de-serialize) binary data from <code>content</code> (as {@link InputStream}) and provide it as
+     * <code>byte[]</code>.
      * 
      * @param content data in form of an {@link InputStream} which contains the binary data
      * @return binary data as bytes
@@ -314,31 +345,34 @@ public final class EntityProvider {
 
     /**
      * <p>Serializes an error message according to the OData standard.</p>
-     * @param context     contains error details see {@link ODataErrorContext}
-     * @return            an {@link ODataResponse} containing the serialized error message
+     * @param context contains error details see {@link ODataErrorContext}
+     * @return an {@link ODataResponse} containing the serialized error message
      */
     ODataResponse writeErrorDocument(ODataErrorContext context);
 
     /**
-     * Read (de-serialize) data from service document <code>inputStream</code> (as {@link InputStream}) and provide ServiceDocument as {@link ServiceDocument}
+     * Read (de-serialize) data from service document <code>inputStream</code> (as {@link InputStream}) and provide
+     * ServiceDocument as {@link ServiceDocument}
      * 
      * @param serviceDocument the given input stream
      * @param contentType format of content in the given input stream
      * @return ServiceDocument as {@link ServiceDocument}
-     * @throws EntityProviderException  if reading of data (de-serialization) fails
+     * @throws EntityProviderException if reading of data (de-serialization) fails
      */
     ServiceDocument readServiceDocument(InputStream serviceDocument, String contentType) throws EntityProviderException;
 
     /**
-     * Parse Batch Request body <code>inputStream</code> (as {@link InputStream}) and provide a list of Batch Parts as {@link BatchPart}
+     * Parse Batch Request body <code>inputStream</code> (as {@link InputStream}) and provide a list of Batch Parts as
+     * {@link BatchPart}
      * 
      * @param contentType format of content in the given input stream
      * @param content request body
      * @param properties additional properties necessary for parsing. Must not be null.
      * @return list of {@link BatchPart}
-     * @throws BatchException  if parsing fails
+     * @throws BatchException if parsing fails
      */
-    List<BatchRequestPart> parseBatchRequest(String contentType, InputStream content, EntityProviderBatchProperties properties) throws BatchException;
+    List<BatchRequestPart> parseBatchRequest(String contentType, InputStream content,
+        EntityProviderBatchProperties properties) throws BatchException;
 
     /**
      * Write responses of Batch Response Parts in Batch Response as {@link ODataResponse}.
@@ -346,7 +380,7 @@ public final class EntityProvider {
      * 
      * @param batchResponseParts a list of {@link BatchResponsePart}
      * @return Batch Response as {@link ODataResponse}
-     * @throws BatchException 
+     * @throws BatchException
      */
     ODataResponse writeBatchResponse(List<BatchResponsePart> batchResponseParts) throws BatchException;
 
@@ -354,18 +388,19 @@ public final class EntityProvider {
      * Create Batch Request body as InputStream.
      * 
      * @param batchParts a list of BatchPartRequests {@link BatchPart}
-     * @param boundary 
+     * @param boundary
      * @return Batch Request as InputStream
      */
     InputStream writeBatchRequest(List<BatchPart> batchParts, String boundary);
 
-    /** 
-     * Parse Batch Response body (as {@link InputStream}) and provide a list of single responses as {@link BatchSingleResponse}
-     *
+    /**
+     * Parse Batch Response body (as {@link InputStream}) and provide a list of single responses as
+     * {@link BatchSingleResponse}
+     * 
      * @param content response body
      * @param contentType format of content in the given input stream (incl. boundary parameter)
      * @return list of {@link BatchSingleResponse}
-     * @throws BatchException 
+     * @throws BatchException
      */
     List<BatchSingleResponse> parseBatchResponse(String contentType, InputStream content) throws BatchException;
 
@@ -383,16 +418,16 @@ public final class EntityProvider {
   /**
    * <p>Serializes an error message according to the OData standard.</p>
    * An exception is not thrown because this method is used in exception handling.</p>
-   * @param context     contains error details see {@link ODataErrorContext}
-   * @return            an {@link ODataResponse} containing the serialized error message
+   * @param context contains error details see {@link ODataErrorContext}
+   * @return an {@link ODataResponse} containing the serialized error message
    */
   public static ODataResponse writeErrorDocument(final ODataErrorContext context) {
     return createEntityProvider().writeErrorDocument(context);
   }
 
   /**
-   * Write metadata document in XML format for the given schemas and the provided predefined 
-   * namespaces at the EDMX element. PredefinedNamespaces is of type 
+   * Write metadata document in XML format for the given schemas and the provided predefined
+   * namespaces at the EDMX element. PredefinedNamespaces is of type
    * Map{@literal <}prefix,namespace{@literal >} and may be null or an empty Map.
    * 
    * @param schemas all XML schemas which will be written
@@ -400,7 +435,8 @@ public final class EntityProvider {
    * @return resulting {@link ODataResponse} with written metadata content.
    * @throws EntityProviderException if writing of data (serialization) fails
    */
-  public static ODataResponse writeMetadata(final List<Schema> schemas, final Map<String, String> predefinedNamespaces) throws EntityProviderException {
+  public static ODataResponse writeMetadata(final List<Schema> schemas, final Map<String, String> predefinedNamespaces)
+      throws EntityProviderException {
     return createEntityProvider().writeMetadata(schemas, predefinedNamespaces);
   }
 
@@ -414,7 +450,8 @@ public final class EntityProvider {
    * @return resulting {@link ODataResponse} with written service document content.
    * @throws EntityProviderException if writing of data (serialization) fails
    */
-  public static ODataResponse writeServiceDocument(final String contentType, final Edm edm, final String serviceRoot) throws EntityProviderException {
+  public static ODataResponse writeServiceDocument(final String contentType, final Edm edm, final String serviceRoot)
+      throws EntityProviderException {
     return createEntityProvider().writeServiceDocument(contentType, edm, serviceRoot);
   }
 
@@ -426,7 +463,8 @@ public final class EntityProvider {
    * @return resulting {@link ODataResponse} with written property value content.
    * @throws EntityProviderException if writing of data (serialization) fails
    */
-  public static ODataResponse writePropertyValue(final EdmProperty edmProperty, final Object value) throws EntityProviderException {
+  public static ODataResponse writePropertyValue(final EdmProperty edmProperty, final Object value)
+      throws EntityProviderException {
     return createEntityProvider().writePropertyValue(edmProperty, value);
   }
 
@@ -454,43 +492,50 @@ public final class EntityProvider {
   }
 
   /**
-   * Write given <code>data</code> (which is given in form of a {@link List} with a {@link Map} for each entity. Such a {@link Map}
-   * contains all properties [as <code>property name</code> to <code>property value</code> mapping] for the entry) in the specified
-   * format (given as <code>contentType</code>) based on given <code>entity data model for an entity set</code> (given as {@link EdmEntitySet})
+   * Write given <code>data</code> (which is given in form of a {@link List} with a {@link Map} for each entity. Such a
+   * {@link Map} contains all properties [as <code>property name</code> to <code>property value</code> mapping] for the
+   * entry) in the specified
+   * format (given as <code>contentType</code>) based on given <code>entity data model for an entity set</code> (given
+   * as {@link EdmEntitySet})
    * and <code>properties</code> for this entity provider (given as {@link EntityProviderWriteProperties}).
    * 
    * @param contentType format in which the feed should be written
    * @param entitySet entity data model for given entity data set
    * @param data set of entries in form of a {@link List} with a {@link Map} for each entity (such a {@link Map}
-   *              contains all properties [as <code>property name</code> to <code>property value</code> mapping).
-   * @param properties additional properties necessary for writing of data 
+   * contains all properties [as <code>property name</code> to <code>property value</code> mapping).
+   * @param properties additional properties necessary for writing of data
    * @return resulting {@link ODataResponse} with written feed content.
    * @throws EntityProviderException if writing of data (serialization) fails
    */
-  public static ODataResponse writeFeed(final String contentType, final EdmEntitySet entitySet, final List<Map<String, Object>> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public static ODataResponse writeFeed(final String contentType, final EdmEntitySet entitySet,
+      final List<Map<String, Object>> data, final EntityProviderWriteProperties properties)
+      throws EntityProviderException {
     return createEntityProvider().writeFeed(contentType, entitySet, data, properties);
   }
 
   /**
-   * Write given <code>data</code> (which is given in form of a {@link Map} for which contains all properties 
+   * Write given <code>data</code> (which is given in form of a {@link Map} for which contains all properties
    * as <code>property name</code> to <code>property value</code> mapping) for the entry in the specified
-   * format (given as <code>contentType</code>) based on <code>entity data model for an entity set</code> (given as {@link EdmEntitySet})
+   * format (given as <code>contentType</code>) based on <code>entity data model for an entity set</code> (given as
+   * {@link EdmEntitySet})
    * and <code>properties</code> for this entity provider (given as {@link EntityProviderWriteProperties}).
    * 
    * @param contentType format in which the entry should be written
    * @param entitySet entity data model for given entity data set
-   * @param data which contains all properties as <code>property name</code> to <code>property value</code> mapping for the entry
-   * @param properties additional properties necessary for writing of data 
+   * @param data which contains all properties as <code>property name</code> to <code>property value</code> mapping for
+   * the entry
+   * @param properties additional properties necessary for writing of data
    * @return resulting {@link ODataResponse} with written entry content
    * @throws EntityProviderException if writing of data (serialization) fails
    */
-  public static ODataResponse writeEntry(final String contentType, final EdmEntitySet entitySet, final Map<String, Object> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public static ODataResponse writeEntry(final String contentType, final EdmEntitySet entitySet,
+      final Map<String, Object> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
     return createEntityProvider().writeEntry(contentType, entitySet, data, properties);
   }
 
   /**
    * Write given <code>value</code> (which is given in form of an {@link Object}) for the property in the specified
-   * format (given as <code>contentType</code>) based on given <code>entity data model for an entity property</code> 
+   * format (given as <code>contentType</code>) based on given <code>entity data model for an entity property</code>
    * (given as {@link EdmProperty}).
    * 
    * @param contentType format in which the property should be written
@@ -499,112 +544,137 @@ public final class EntityProvider {
    * @return resulting {@link ODataResponse} with written property content.
    * @throws EntityProviderException if writing of data (serialization) fails
    */
-  public static ODataResponse writeProperty(final String contentType, final EdmProperty edmProperty, final Object value) throws EntityProviderException {
+  public static ODataResponse
+      writeProperty(final String contentType, final EdmProperty edmProperty, final Object value)
+          throws EntityProviderException {
     return createEntityProvider().writeProperty(contentType, edmProperty, value);
   }
 
   /**
-   * Write <b>link</b> for key property based on <code>entity data model for an entity set</code> (given as {@link EdmEntitySet})
+   * Write <b>link</b> for key property based on <code>entity data model for an entity set</code> (given as
+   * {@link EdmEntitySet})
    * in the specified format (given as <code>contentType</code>).
-   * The necessary key property values must be provided within the <code>data</code> (in the form of <code>property name</code>
+   * The necessary key property values must be provided within the <code>data</code> (in the form of <code>property
+   * name</code>
    * to <code>property value</code> mapping) and <code>properties</code> for this entity provider must be set
    * (given as {@link EntityProviderWriteProperties}).
    * 
    * @param contentType format in which the entry should be written
    * @param entitySet entity data model for given entity data set
-   * @param data which contains all key properties as <code>property name</code> to <code>property value</code> mapping for the entry
-   * @param properties additional properties necessary for writing of data 
+   * @param data which contains all key properties as <code>property name</code> to <code>property value</code> mapping
+   * for the entry
+   * @param properties additional properties necessary for writing of data
    * @return resulting {@link ODataResponse} with written link content.
    * @throws EntityProviderException if writing of data (serialization) fails
    */
-  public static ODataResponse writeLink(final String contentType, final EdmEntitySet entitySet, final Map<String, Object> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public static ODataResponse writeLink(final String contentType, final EdmEntitySet entitySet,
+      final Map<String, Object> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
     return createEntityProvider().writeLink(contentType, entitySet, data, properties);
   }
 
   /**
-   * Write all <b>links</b> for key property based on <code>entity data model for an entity set</code> (given as {@link EdmEntitySet})
+   * Write all <b>links</b> for key property based on <code>entity data model for an entity set</code> (given as
+   * {@link EdmEntitySet})
    * in the specified format (given as <code>contentType</code>) for a set of entries.
-   * The necessary key property values must be provided within the <code>data</code> (in form of a {@link List} with a {@link Map} 
-   * for each entry. Such a {@link Map} contains all key properties [as <code>property name</code> to 
-   * <code>property value</code> mapping] for the entry) and <code>properties</code> for this entity provider must be set
+   * The necessary key property values must be provided within the <code>data</code> (in form of a {@link List} with a
+   * {@link Map} for each entry. Such a {@link Map} contains all key properties [as <code>property name</code> to
+   * <code>property value</code> mapping] for the entry) and <code>properties</code> for this entity provider must be
+   * set
    * (given as {@link EntityProviderWriteProperties}).
    * 
    * @param contentType format in which the entry should be written
    * @param entitySet entity data model for given entity data set
-   * @param data set of entries in form of a {@link List} with a {@link Map} for each entry (such a {@link Map}
-   *              contains all key properties [as <code>property name</code> to <code>property value</code> mapping).
-   * @param properties additional properties necessary for writing of data 
+   * @param data set of entries in form of a {@link List} with a {@link Map} for each entry (such a {@link Map} contains
+   * all key properties [as <code>property name</code> to <code>property value</code> mapping).
+   * @param properties additional properties necessary for writing of data
    * @return resulting {@link ODataResponse} with written links content.
    * @throws EntityProviderException if writing of data (serialization) fails
    */
-  public static ODataResponse writeLinks(final String contentType, final EdmEntitySet entitySet, final List<Map<String, Object>> data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public static ODataResponse writeLinks(final String contentType, final EdmEntitySet entitySet,
+      final List<Map<String, Object>> data, final EntityProviderWriteProperties properties)
+      throws EntityProviderException {
     return createEntityProvider().writeLinks(contentType, entitySet, data, properties);
   }
 
   /**
-   * Write <code>data</code> result (given as {@link Object}) of function import based on <code>return type</code> 
-   * of {@link EdmFunctionImport} in specified format (given as <code>contentType</code>). Additional <code>properties</code> 
+   * Write <code>data</code> result (given as {@link Object}) of function import based on <code>return type</code>
+   * of {@link EdmFunctionImport} in specified format (given as <code>contentType</code>). Additional
+   * <code>properties</code>
    * for this entity provider must be set (given as {@link EntityProviderWriteProperties}).
    * 
    * @param contentType format in which the entry should be written
    * @param functionImport entity data model for executed function import
    * @param data result of function import
-   * @param properties additional properties necessary for writing of data 
+   * @param properties additional properties necessary for writing of data
    * @return resulting {@link ODataResponse} with written function import result content.
    * @throws EntityProviderException if writing of data (serialization) fails
    */
-  public static ODataResponse writeFunctionImport(final String contentType, final EdmFunctionImport functionImport, final Object data, final EntityProviderWriteProperties properties) throws EntityProviderException {
+  public static ODataResponse writeFunctionImport(final String contentType, final EdmFunctionImport functionImport,
+      final Object data, final EntityProviderWriteProperties properties) throws EntityProviderException {
     return createEntityProvider().writeFunctionImport(contentType, functionImport, data, properties);
   }
 
   /**
-   * Read (de-serialize) a data feed from <code>content</code> (as {@link InputStream}) in specified format (given as <code>contentType</code>)
-   * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide this data as {@link ODataEntry}.
+   * Read (de-serialize) a data feed from <code>content</code> (as {@link InputStream}) in specified format (given as
+   * <code>contentType</code>)
+   * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide this data as {@link ODataEntry}
+   * .
    * 
    * @param contentType format of content in the given input stream.
    * @param entitySet entity data model for entity set to be read
    * @param content feed data in form of an {@link InputStream} which contains the data in specified format
-   * @param properties additional properties necessary for reading content from {@link InputStream} into {@link Map}. Must not be null.
+   * @param properties additional properties necessary for reading content from {@link InputStream} into {@link Map}.
+   * Must not be null.
    * @return an {@link ODataFeed} object
    * @throws EntityProviderException if reading of data (de-serialization) fails
    */
-  public static ODataFeed readFeed(final String contentType, final EdmEntitySet entitySet, final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+  public static ODataFeed readFeed(final String contentType, final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     return createEntityProvider().readFeed(contentType, entitySet, content, properties);
   }
 
   /**
-   * Read (de-serialize) data from <code>content</code> (as {@link InputStream}) in specified format (given as <code>contentType</code>)
-   * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide this data as {@link ODataEntry}.
+   * Read (de-serialize) data from <code>content</code> (as {@link InputStream}) in specified format (given as
+   * <code>contentType</code>)
+   * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide this data as {@link ODataEntry}
+   * .
    * 
    * @param contentType format of content in the given input stream.
    * @param entitySet entity data model for entity set to be read
    * @param content data in form of an {@link InputStream} which contains the data in specified format
-   * @param properties additional properties necessary for reading content from {@link InputStream} into {@link Map}. Must not be null.
+   * @param properties additional properties necessary for reading content from {@link InputStream} into {@link Map}.
+   * Must not be null.
    * @return entry as {@link ODataEntry}
    * @throws EntityProviderException if reading of data (de-serialization) fails
    */
-  public static ODataEntry readEntry(final String contentType, final EdmEntitySet entitySet, final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+  public static ODataEntry readEntry(final String contentType, final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     return createEntityProvider().readEntry(contentType, entitySet, content, properties);
   }
 
   /**
-   * Read (de-serialize) properties from <code>content</code> (as {@link InputStream}) in specified format (given as <code>contentType</code>)
-   * based on <code>entity data model</code> (given as {@link EdmProperty}) and provide this data as {@link Map} which contains
+   * Read (de-serialize) properties from <code>content</code> (as {@link InputStream}) in specified format (given as
+   * <code>contentType</code>)
+   * based on <code>entity data model</code> (given as {@link EdmProperty}) and provide this data as {@link Map} which
+   * contains
    * the read data in form of <code>property name</code> to <code>property value</code> mapping.
    * 
    * @param contentType format of content in the given input stream.
    * @param edmProperty entity data model for entity property to be read
    * @param content data in form of an {@link InputStream} which contains the data in specified format
-   * @param properties additional properties necessary for reading content from {@link InputStream} into {@link Map}. Must not be null.
+   * @param properties additional properties necessary for reading content from {@link InputStream} into {@link Map}.
+   * Must not be null.
    * @return property as name and value in a map
    * @throws EntityProviderException if reading of data (de-serialization) fails
    */
-  public static Map<String, Object> readProperty(final String contentType, final EdmProperty edmProperty, final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+  public static Map<String, Object> readProperty(final String contentType, final EdmProperty edmProperty,
+      final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
     return createEntityProvider().readProperty(contentType, edmProperty, content, properties);
   }
 
   /**
-   * Read (de-serialize) a property value from <code>content</code> (as {@link InputStream}) in format <code>text/plain</code>
+   * Read (de-serialize) a property value from <code>content</code> (as {@link InputStream}) in format
+   * <code>text/plain</code>
    * based on <code>entity data model</code> (given as {@link EdmProperty}) and provide this data as {@link Object}.
    * 
    * @param edmProperty entity data model for entity property to be read
@@ -612,29 +682,34 @@ public final class EntityProvider {
    * @return property value as object
    * @throws EntityProviderException if reading of data (de-serialization) fails
    */
-  public static Object readPropertyValue(final EdmProperty edmProperty, final InputStream content) throws EntityProviderException {
+  public static Object readPropertyValue(final EdmProperty edmProperty, final InputStream content)
+      throws EntityProviderException {
     return createEntityProvider().readPropertyValue(edmProperty, content, null);
   }
 
   /**
-   * Read (de-serialize) a property value from <code>content</code> (as {@link InputStream}) in format <code>text/plain</code>
+   * Read (de-serialize) a property value from <code>content</code> (as {@link InputStream}) in format
+   * <code>text/plain</code>
    * based on <code>entity data model</code> (given as {@link EdmProperty}) and provide this data as {@link Object}.
    * 
    * @param edmProperty entity data model for entity property to be read
    * @param content data in form of an {@link InputStream} which contains the data in format <code>text/plain</code>
-   * @param typeMapping defines the mapping for this <code>edm property</code> to a <code>java class</code> which should be used
-   *                  during read of the content. If according <code>edm property</code> can not be read
-   *                  into given <code>java class</code> an {@link EntityProviderException} is thrown.
-   *                  Supported mappings are documented in {@link org.apache.olingo.odata2.api.edm.EdmSimpleType}.
+   * @param typeMapping defines the mapping for this <code>edm property</code> to a <code>java class</code> which should
+   * be used
+   * during read of the content. If according <code>edm property</code> can not be read
+   * into given <code>java class</code> an {@link EntityProviderException} is thrown.
+   * Supported mappings are documented in {@link org.apache.olingo.odata2.api.edm.EdmSimpleType}.
    * @return property value as object
    * @throws EntityProviderException if reading of data (de-serialization) fails
    */
-  public static Object readPropertyValue(final EdmProperty edmProperty, final InputStream content, final Class<?> typeMapping) throws EntityProviderException {
+  public static Object readPropertyValue(final EdmProperty edmProperty, final InputStream content,
+      final Class<?> typeMapping) throws EntityProviderException {
     return createEntityProvider().readPropertyValue(edmProperty, content, typeMapping);
   }
 
   /**
-   * Read (de-serialize) a link from <code>content</code> (as {@link InputStream}) in specified format (given as <code>contentType</code>)
+   * Read (de-serialize) a link from <code>content</code> (as {@link InputStream}) in specified format (given as
+   * <code>contentType</code>)
    * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide the link as {@link String}.
    * 
    * @param contentType format of content in the given input stream.
@@ -643,7 +718,8 @@ public final class EntityProvider {
    * @return link as string
    * @throws EntityProviderException if reading of data (de-serialization) fails
    */
-  public static String readLink(final String contentType, final EdmEntitySet entitySet, final InputStream content) throws EntityProviderException {
+  public static String readLink(final String contentType, final EdmEntitySet entitySet, final InputStream content)
+      throws EntityProviderException {
     return createEntityProvider().readLink(contentType, entitySet, content);
   }
 
@@ -651,19 +727,21 @@ public final class EntityProvider {
    * Read (de-serialize) a link collection from <code>content</code> (as {@link InputStream})
    * in specified format (given as <code>contentType</code>) based on <code>entity data model</code>
    * (given as {@link EdmEntitySet}) and provide the links as List of Strings.
-   *
+   * 
    * @param contentType format of content in the given input stream.
    * @param entitySet entity data model for entity property to be read
    * @param content data in form of an {@link InputStream} which contains the data in specified format
    * @return links as List of Strings
    * @throws EntityProviderException if reading of data (de-serialization) fails
    */
-  public static List<String> readLinks(final String contentType, final EdmEntitySet entitySet, final InputStream content) throws EntityProviderException {
+  public static List<String> readLinks(final String contentType, final EdmEntitySet entitySet,
+      final InputStream content) throws EntityProviderException {
     return createEntityProvider().readLinks(contentType, entitySet, content);
   }
 
   /**
-   * Read (de-serialize) binary data from <code>content</code> (as {@link InputStream}) and provide it as <code>byte[]</code>.
+   * Read (de-serialize) binary data from <code>content</code> (as {@link InputStream}) and provide it as
+   * <code>byte[]</code>.
    * 
    * @param content data in form of an {@link InputStream} which contains the binary data
    * @return binary data as bytes
@@ -674,10 +752,11 @@ public final class EntityProvider {
   }
 
   /**
-   * Read (de-serialize) data from metadata <code>inputStream</code> (as {@link InputStream}) and provide Edm as {@link Edm}
+   * Read (de-serialize) data from metadata <code>inputStream</code> (as {@link InputStream}) and provide Edm as
+   * {@link Edm}
    * 
    * @param metadataXml a metadata xml input stream (means the metadata document)
-   * @param validate has to be true if metadata should be validated 
+   * @param validate has to be true if metadata should be validated
    * @return Edm as {@link Edm}
    * @throws EntityProviderException if reading of data (de-serialization) fails
    */
@@ -686,19 +765,22 @@ public final class EntityProvider {
   }
 
   /**
-   * Read (de-serialize) data from service document <code>inputStream</code> (as {@link InputStream}) and provide ServiceDocument as {@link ServiceDocument}
+   * Read (de-serialize) data from service document <code>inputStream</code> (as {@link InputStream}) and provide
+   * ServiceDocument as {@link ServiceDocument}
    * 
    * @param serviceDocument the given input stream
    * @param contentType format of content in the given input stream
    * @return ServiceDocument as {@link ServiceDocument}
-   * @throws EntityProviderException  if reading of data (de-serialization) fails
+   * @throws EntityProviderException if reading of data (de-serialization) fails
    */
-  public static ServiceDocument readServiceDocument(final InputStream serviceDocument, final String contentType) throws EntityProviderException {
+  public static ServiceDocument readServiceDocument(final InputStream serviceDocument, final String contentType)
+      throws EntityProviderException {
     return createEntityProvider().readServiceDocument(serviceDocument, contentType);
   }
 
   /**
-   * Parse Batch Request body <code>inputStream</code> (as {@link InputStream}) and provide a list of Batch Request parts as {@link BatchRequestPart}
+   * Parse Batch Request body <code>inputStream</code> (as {@link InputStream}) and provide a list of Batch Request
+   * parts as {@link BatchRequestPart}
    * 
    * @param contentType format of content in the given input stream
    * @param content request body
@@ -706,7 +788,8 @@ public final class EntityProvider {
    * @return list of {@link BatchRequestPart}
    * @throws BatchException if parsing fails
    */
-  public static List<BatchRequestPart> parseBatchRequest(final String contentType, final InputStream content, final EntityProviderBatchProperties properties) throws BatchException {
+  public static List<BatchRequestPart> parseBatchRequest(final String contentType, final InputStream content,
+      final EntityProviderBatchProperties properties) throws BatchException {
     return createEntityProvider().parseBatchRequest(contentType, content, properties);
   }
 
@@ -716,9 +799,10 @@ public final class EntityProvider {
    * 
    * @param batchResponseParts a list of {@link BatchResponsePart}
    * @return Batch Response as {@link ODataResponse}
-   * @throws BatchException 
+   * @throws BatchException
    */
-  public static ODataResponse writeBatchResponse(final List<BatchResponsePart> batchResponseParts) throws BatchException {
+  public static ODataResponse writeBatchResponse(final List<BatchResponsePart> batchResponseParts)
+      throws BatchException {
     return createEntityProvider().writeBatchResponse(batchResponseParts);
   }
 
@@ -726,22 +810,24 @@ public final class EntityProvider {
    * Create Batch Request body as InputStream.
    * 
    * @param batchParts a list of BatchPartRequests {@link BatchPart}
-   * @param boundary 
+   * @param boundary
    * @return Batch Request as InputStream
    */
   public static InputStream writeBatchRequest(final List<BatchPart> batchParts, final String boundary) {
     return createEntityProvider().writeBatchRequest(batchParts, boundary);
   }
 
-  /** 
-   * Parse Batch Response body (as {@link InputStream}) and provide a list of single responses as {@link BatchSingleResponse}
-   *
+  /**
+   * Parse Batch Response body (as {@link InputStream}) and provide a list of single responses as
+   * {@link BatchSingleResponse}
+   * 
    * @param content response body
    * @param contentType format of content in the given input stream (inclusive boundary parameter)
    * @return list of {@link BatchSingleResponse}
-   * @throws BatchException 
+   * @throws BatchException
    */
-  public static List<BatchSingleResponse> parseBatchResponse(final InputStream content, final String contentType) throws BatchException {
+  public static List<BatchSingleResponse> parseBatchResponse(final InputStream content, final String contentType)
+      throws BatchException {
     return createEntityProvider().parseBatchResponse(contentType, content);
   }
 

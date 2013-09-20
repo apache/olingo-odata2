@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
@@ -27,7 +27,7 @@ package org.apache.olingo.odata2.api.exception;
  * <br>To support internationalization and translation of messages, this class
  * and its sub classes contain a {@link MessageReference} object which can be
  * mapped to a related key and message text in the resource bundles.
- *  
+ * 
  */
 public abstract class ODataMessageException extends ODataException {
 
@@ -44,18 +44,18 @@ public abstract class ODataMessageException extends ODataException {
   /**
    * Creates {@link ODataMessageException} with given {@link MessageReference}.
    * @param messageReference references the message text (and additional values)
-   *                         of this {@link ODataMessageException}
+   * of this {@link ODataMessageException}
    */
   public ODataMessageException(final MessageReference messageReference) {
     this(messageReference, null, null);
   }
 
   /**
-   * Creates {@link ODataMessageException} with given {@link MessageReference}
-   * and cause {@link Throwable} which caused this exception.
+   * Creates {@link ODataMessageException} with given {@link MessageReference} and cause {@link Throwable} which caused
+   * this exception.
    * @param messageReference references the message text (and additional values)
-   *                         of this {@link ODataMessageException}
-   * @param cause            exception which caused this exception
+   * of this {@link ODataMessageException}
+   * @param cause exception which caused this exception
    */
   public ODataMessageException(final MessageReference messageReference, final Throwable cause) {
     this(messageReference, cause, null);
@@ -65,9 +65,9 @@ public abstract class ODataMessageException extends ODataException {
    * Creates {@link ODataMessageException} with given {@link MessageReference},
    * cause {@link Throwable} and error code.
    * @param messageReference references the message text (and additional values)
-   *                         of this {@link ODataMessageException}
-   * @param cause            exception which caused this exception
-   * @param errorCode        a String with a unique code identifying this exception
+   * of this {@link ODataMessageException}
+   * @param cause exception which caused this exception
+   * @param errorCode a String with a unique code identifying this exception
    */
   public ODataMessageException(final MessageReference messageReference, final Throwable cause, final String errorCode) {
     super(cause);
@@ -78,8 +78,8 @@ public abstract class ODataMessageException extends ODataException {
   /**
    * Creates {@link ODataMessageException} with given {@link MessageReference} and error code.
    * @param messageReference references the message text (and additional values)
-   *                         of this {@link ODataMessageException}
-   * @param errorCode        a String with a unique code identifying this exception
+   * of this {@link ODataMessageException}
+   * @param errorCode a String with a unique code identifying this exception
    */
   public ODataMessageException(final MessageReference messageReference, final String errorCode) {
     this(messageReference, null, errorCode);
@@ -87,11 +87,12 @@ public abstract class ODataMessageException extends ODataException {
 
   /**
    * Creates {@link MessageReference} objects more conveniently.
-   * @param clazz               exception class for message reference
+   * @param clazz exception class for message reference
    * @param messageReferenceKey unique (in exception class) key for message reference
    * @return created message-reference instance
    */
-  protected static final MessageReference createMessageReference(final Class<? extends ODataMessageException> clazz, final String messageReferenceKey) {
+  protected static final MessageReference createMessageReference(final Class<? extends ODataMessageException> clazz,
+      final String messageReferenceKey) {
     return MessageReference.create(clazz, messageReferenceKey);
   }
 

@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
 
 /**
  * Wrapper for UriParser functionality.
- *  
+ * 
  */
 public abstract class UriParser {
 
@@ -46,7 +46,8 @@ public abstract class UriParser {
    * @return {@link UriInfo} information about the parsed URI
    * @throws ODataException
    */
-  public static UriInfo parse(final Edm edm, final List<PathSegment> pathSegments, final Map<String, String> queryParameters) throws ODataException {
+  public static UriInfo parse(final Edm edm, final List<PathSegment> pathSegments,
+      final Map<String, String> queryParameters) throws ODataException {
     return RuntimeDelegate.getUriParser(edm).parse(pathSegments, queryParameters);
   }
 
@@ -59,42 +60,44 @@ public abstract class UriParser {
    * @throws UriNotMatchingException
    * @throws EdmException
    */
-  public abstract UriInfo parse(List<PathSegment> pathSegments, Map<String, String> queryParameters) throws UriSyntaxException, UriNotMatchingException, EdmException;
+  public abstract UriInfo parse(List<PathSegment> pathSegments, Map<String, String> queryParameters)
+      throws UriSyntaxException, UriNotMatchingException, EdmException;
 
   /**
    * Parses a $filter expression string and create an expression tree.
    * <p>The current expression parser supports expressions as defined in the
    * OData specification 2.0 with the following restrictions:
    * <ul>
-   *   <li>the methods "cast", "isof" and "replace" are not supported</li>
+   * <li>the methods "cast", "isof" and "replace" are not supported</li>
    * </ul></p>
-   *
+   * 
    * <p>The expression parser can be used with providing an Entity Data Model (EDM)
    * and without providing it. When an EDM is provided the expression parser will be
    * as strict as possible. That means:
    * <ul>
-   *   <li>All properties used in the expression must be defined inside the EDM,</li>
-   *   <li>the types of EDM properties will be checked against the lists of allowed
-   *       types per method and per binary or unary operator, respectively</li>
+   * <li>All properties used in the expression must be defined inside the EDM,</li>
+   * <li>the types of EDM properties will be checked against the lists of allowed
+   * types per method and per binary or unary operator, respectively</li>
    * </ul>
    * If no EDM is provided the expression parser performs a lax validation:
    * <ul>
-   *   <li>The properties used in the expression are not looked up inside the EDM
-   *       and the type of the expression node representing the property will be "null",</li>
-   *   <li>expression nodes with EDM type "null" are not considered during the parameter
-   *       type validation, so the return type of the parent expression node will
-   *       also become "null".</li>
+   * <li>The properties used in the expression are not looked up inside the EDM
+   * and the type of the expression node representing the property will be "null",</li>
+   * <li>expression nodes with EDM type "null" are not considered during the parameter
+   * type validation, so the return type of the parent expression node will
+   * also become "null".</li>
    * </ul>
-   * @param edm        entity data model of the accessed OData service 
-   * @param edmType    EDM type of the OData entity/complex type/... addressed by the URL
+   * @param edm entity data model of the accessed OData service
+   * @param edmType EDM type of the OData entity/complex type/... addressed by the URL
    * @param expression $filter expression string to be parsed
-   * @return           expression tree which can be traversed with help of the interfaces
-   *                   {@link org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor ExpressionVisitor}
-   *                   and {@link org.apache.olingo.odata2.api.uri.expression.Visitable Visitable}
+   * @return expression tree which can be traversed with help of the interfaces
+   * {@link org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor ExpressionVisitor} and
+   * {@link org.apache.olingo.odata2.api.uri.expression.Visitable Visitable}
    * @throws ExpressionParserException thrown due to errors while parsing the $filter expression string
-   * @throws ODataMessageException     for extensibility
+   * @throws ODataMessageException for extensibility
    */
-  public static FilterExpression parseFilter(final Edm edm, final EdmEntityType edmType, final String expression) throws ExpressionParserException, ODataMessageException {
+  public static FilterExpression parseFilter(final Edm edm, final EdmEntityType edmType, final String expression)
+      throws ExpressionParserException, ODataMessageException {
     return RuntimeDelegate.getUriParser(edm).parseFilterString(edmType, expression);
   }
 
@@ -103,79 +106,84 @@ public abstract class UriParser {
    * <p>The current expression parser supports expressions as defined in the
    * OData specification 2.0 with the following restrictions:
    * <ul>
-   *   <li>the methods "cast", "isof" and "replace" are not supported</li>
+   * <li>the methods "cast", "isof" and "replace" are not supported</li>
    * </ul></p>
-   *
+   * 
    * <p>The expression parser can be used with providing an Entity Data Model (EDM)
    * and without providing it. When an EDM is provided the expression parser will be
    * as strict as possible. That means:
    * <ul>
-   *   <li>All properties used in the expression must be defined inside the EDM,</li>
-   *   <li>the types of EDM properties will be checked against the lists of allowed
-   *       types per method and per binary or unary operator, respectively</li>
+   * <li>All properties used in the expression must be defined inside the EDM,</li>
+   * <li>the types of EDM properties will be checked against the lists of allowed
+   * types per method and per binary or unary operator, respectively</li>
    * </ul>
    * If no EDM is provided the expression parser performs a lax validation:
    * <ul>
-   *   <li>The properties used in the expression are not looked up inside the EDM
-   *       and the type of the expression node representing the property will be "null",</li>
-   *   <li>expression nodes with EDM type "null" are not considered during the parameter
-   *       type validation, so the return type of the parent expression node will
-   *       also become "null".</li>
+   * <li>The properties used in the expression are not looked up inside the EDM
+   * and the type of the expression node representing the property will be "null",</li>
+   * <li>expression nodes with EDM type "null" are not considered during the parameter
+   * type validation, so the return type of the parent expression node will
+   * also become "null".</li>
    * </ul>
-   * @param edmType    EDM type of the OData entity/complex type/... addressed by the URL
+   * @param edmType EDM type of the OData entity/complex type/... addressed by the URL
    * @param expression $filter expression string to be parsed
-   * @return           expression tree which can be traversed with help of the interfaces
-   *                   {@link org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor ExpressionVisitor}
-   *                   and {@link org.apache.olingo.odata2.api.uri.expression.Visitable Visitable}
+   * @return expression tree which can be traversed with help of the interfaces
+   * {@link org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor ExpressionVisitor} and
+   * {@link org.apache.olingo.odata2.api.uri.expression.Visitable Visitable}
    * @throws ExpressionParserException thrown due to errors while parsing the $filter expression string
-   * @throws ODataMessageException     for extensibility
+   * @throws ODataMessageException for extensibility
    */
-  public abstract FilterExpression parseFilterString(EdmEntityType edmType, String expression) throws ExpressionParserException, ODataMessageException;
+  public abstract FilterExpression parseFilterString(EdmEntityType edmType, String expression)
+      throws ExpressionParserException, ODataMessageException;
 
   /**
    * Parses a $orderby expression string and creates an expression tree.
-   * @param edm        EDM model of the accessed OData service 
-   * @param edmType    EDM type of the OData entity/complex type/... addressed by the URL
+   * @param edm EDM model of the accessed OData service
+   * @param edmType EDM type of the OData entity/complex type/... addressed by the URL
    * @param expression $orderby expression string to be parsed
-   * @return           expression tree which can be traversed with help of the interfaces
-   *                   {@link org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor ExpressionVisitor}
-   *                   and {@link org.apache.olingo.odata2.api.uri.expression.Visitable Visitable}
+   * @return expression tree which can be traversed with help of the interfaces
+   * {@link org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor ExpressionVisitor} and
+   * {@link org.apache.olingo.odata2.api.uri.expression.Visitable Visitable}
    * @throws ExpressionParserException thrown due to errors while parsing the $orderby expression string
-   * @throws ODataMessageException     used for extensibility
+   * @throws ODataMessageException used for extensibility
    */
-  public static OrderByExpression parseOrderBy(final Edm edm, final EdmEntityType edmType, final String expression) throws ExpressionParserException, ODataMessageException {
+  public static OrderByExpression parseOrderBy(final Edm edm, final EdmEntityType edmType, final String expression)
+      throws ExpressionParserException, ODataMessageException {
     return RuntimeDelegate.getUriParser(edm).parseOrderByString(edmType, expression);
   }
 
   /**
    * Parses a $orderby expression string and creates an expression tree.
-   * @param edmType    EDM type of the OData entity/complex type/... addressed by the URL
+   * @param edmType EDM type of the OData entity/complex type/... addressed by the URL
    * @param expression $orderby expression string to be parsed
-   * @return           expression tree which can be traversed with help of the interfaces
-   *                   {@link org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor ExpressionVisitor}
-   *                   and {@link org.apache.olingo.odata2.api.uri.expression.Visitable Visitable}
+   * @return expression tree which can be traversed with help of the interfaces
+   * {@link org.apache.olingo.odata2.api.uri.expression.ExpressionVisitor ExpressionVisitor} and
+   * {@link org.apache.olingo.odata2.api.uri.expression.Visitable Visitable}
    * @throws ExpressionParserException thrown due to errors while parsing the $orderby expression string
-   * @throws ODataMessageException     used for extensibility
+   * @throws ODataMessageException used for extensibility
    */
-  public abstract OrderByExpression parseOrderByString(EdmEntityType edmType, String expression) throws ExpressionParserException, ODataMessageException;
+  public abstract OrderByExpression parseOrderByString(EdmEntityType edmType, String expression)
+      throws ExpressionParserException, ODataMessageException;
 
   /**
-   * Creates an optimized expression tree out of $expand and $select expressions. 
+   * Creates an optimized expression tree out of $expand and $select expressions.
    * @param select List of {@link SelectItem select items}
    * @param expand List of Lists of {@link NavigationPropertySegment navigation property segments}
-   * @return       expression tree of type {@link ExpandSelectTreeNode}
+   * @return expression tree of type {@link ExpandSelectTreeNode}
    * @throws EdmException
    */
-  public static ExpandSelectTreeNode createExpandSelectTree(final List<SelectItem> select, final List<ArrayList<NavigationPropertySegment>> expand) throws EdmException {
+  public static ExpandSelectTreeNode createExpandSelectTree(final List<SelectItem> select,
+      final List<ArrayList<NavigationPropertySegment>> expand) throws EdmException {
     return RuntimeDelegate.getUriParser(null).buildExpandSelectTree(select, expand);
   }
 
   /**
-   * Creates an optimized expression tree out of $expand and $select expressions. 
+   * Creates an optimized expression tree out of $expand and $select expressions.
    * @param select List of {@link SelectItem select items}
    * @param expand List of Lists of {@link NavigationPropertySegment navigation property segments}
-   * @return       expression tree of type {@link ExpandSelectTreeNode}
+   * @return expression tree of type {@link ExpandSelectTreeNode}
    * @throws EdmException
    */
-  public abstract ExpandSelectTreeNode buildExpandSelectTree(List<SelectItem> select, List<ArrayList<NavigationPropertySegment>> expand) throws EdmException;
+  public abstract ExpandSelectTreeNode buildExpandSelectTree(List<SelectItem> select,
+      List<ArrayList<NavigationPropertySegment>> expand) throws EdmException;
 }

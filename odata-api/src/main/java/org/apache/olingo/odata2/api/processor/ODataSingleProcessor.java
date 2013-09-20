@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
@@ -68,15 +68,19 @@ import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 /**
  * <p>A default {@link ODataProcessor} that implements all processor features in a single class.</p>
  * <p>It is recommended to derive from this class and it is required by the
- * {@link org.apache.olingo.odata2.api.ODataServiceFactory} to build an {@link org.apache.olingo.odata2.api.ODataService}.</p>
+ * {@link org.apache.olingo.odata2.api.ODataServiceFactory} to build an
+ * {@link org.apache.olingo.odata2.api.ODataService}.</p>
  * <p>This abstract class provides a default behavior, returning the correct response
  * for requests for the service or the metadata document, respectively, and throwing an
  * {@link ODataNotImplementedException} for all other requests.
- * Sub classes have to override only methods they want to support.</p> 
+ * Sub classes have to override only methods they want to support.</p>
  * 
- *  
+ * 
  */
-public abstract class ODataSingleProcessor implements MetadataProcessor, ServiceDocumentProcessor, EntityProcessor, EntitySetProcessor, EntityComplexPropertyProcessor, EntityLinkProcessor, EntityLinksProcessor, EntityMediaProcessor, EntitySimplePropertyProcessor, EntitySimplePropertyValueProcessor, FunctionImportProcessor, FunctionImportValueProcessor, BatchProcessor, CustomContentType {
+public abstract class ODataSingleProcessor implements MetadataProcessor, ServiceDocumentProcessor, EntityProcessor,
+    EntitySetProcessor, EntityComplexPropertyProcessor, EntityLinkProcessor, EntityLinksProcessor,
+    EntityMediaProcessor, EntitySimplePropertyProcessor, EntitySimplePropertyValueProcessor, FunctionImportProcessor,
+    FunctionImportValueProcessor, BatchProcessor, CustomContentType {
 
   /**
    * A request context object usually injected by the OData library.
@@ -103,16 +107,18 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see BatchProcessor
    */
   @Override
-  public ODataResponse executeBatch(final BatchHandler handler, final String contentType, final InputStream content) throws ODataException {
+  public ODataResponse executeBatch(final BatchHandler handler, final String contentType, final InputStream content)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
   /**
-   * @throws ODataNotImplementedException 
+   * @throws ODataNotImplementedException
    * @see BatchProcessor
    */
   @Override
-  public BatchResponsePart executeChangeSet(final BatchHandler handler, final List<ODataRequest> requests) throws ODataException {
+  public BatchResponsePart executeChangeSet(final BatchHandler handler, final List<ODataRequest> requests)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -120,7 +126,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see FunctionImportProcessor
    */
   @Override
-  public ODataResponse executeFunctionImport(final GetFunctionImportUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse executeFunctionImport(final GetFunctionImportUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -128,7 +135,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see FunctionImportValueProcessor
    */
   @Override
-  public ODataResponse executeFunctionImportValue(final GetFunctionImportUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse executeFunctionImportValue(final GetFunctionImportUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -136,7 +144,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntitySimplePropertyValueProcessor
    */
   @Override
-  public ODataResponse readEntitySimplePropertyValue(final GetSimplePropertyUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse readEntitySimplePropertyValue(final GetSimplePropertyUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -144,7 +153,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntitySimplePropertyValueProcessor
    */
   @Override
-  public ODataResponse updateEntitySimplePropertyValue(final PutMergePatchUriInfo uriInfo, final InputStream content, final String requestContentType, final String contentType) throws ODataException {
+  public ODataResponse updateEntitySimplePropertyValue(final PutMergePatchUriInfo uriInfo, final InputStream content,
+      final String requestContentType, final String contentType) throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -152,7 +162,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntitySimplePropertyValueProcessor
    */
   @Override
-  public ODataResponse deleteEntitySimplePropertyValue(final DeleteUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse deleteEntitySimplePropertyValue(final DeleteUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -160,7 +171,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntitySimplePropertyProcessor
    */
   @Override
-  public ODataResponse readEntitySimpleProperty(final GetSimplePropertyUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse readEntitySimpleProperty(final GetSimplePropertyUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -168,7 +180,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntitySimplePropertyProcessor
    */
   @Override
-  public ODataResponse updateEntitySimpleProperty(final PutMergePatchUriInfo uriInfo, final InputStream content, final String requestContentType, final String contentType) throws ODataException {
+  public ODataResponse updateEntitySimpleProperty(final PutMergePatchUriInfo uriInfo, final InputStream content,
+      final String requestContentType, final String contentType) throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -176,7 +189,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityMediaProcessor
    */
   @Override
-  public ODataResponse readEntityMedia(final GetMediaResourceUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse readEntityMedia(final GetMediaResourceUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -184,7 +198,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityMediaProcessor
    */
   @Override
-  public ODataResponse updateEntityMedia(final PutMergePatchUriInfo uriInfo, final InputStream content, final String requestContentType, final String contentType) throws ODataException {
+  public ODataResponse updateEntityMedia(final PutMergePatchUriInfo uriInfo, final InputStream content,
+      final String requestContentType, final String contentType) throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -200,7 +215,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityLinksProcessor
    */
   @Override
-  public ODataResponse readEntityLinks(final GetEntitySetLinksUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse readEntityLinks(final GetEntitySetLinksUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -208,7 +224,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityLinksProcessor
    */
   @Override
-  public ODataResponse countEntityLinks(final GetEntitySetLinksCountUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse countEntityLinks(final GetEntitySetLinksCountUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -216,7 +233,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityLinkProcessor
    */
   @Override
-  public ODataResponse createEntityLink(final PostUriInfo uriInfo, final InputStream content, final String requestContentType, final String contentType) throws ODataException {
+  public ODataResponse createEntityLink(final PostUriInfo uriInfo, final InputStream content,
+      final String requestContentType, final String contentType) throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -224,7 +242,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityLinkProcessor
    */
   @Override
-  public ODataResponse readEntityLink(final GetEntityLinkUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse readEntityLink(final GetEntityLinkUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -232,7 +251,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityLinkProcessor
    */
   @Override
-  public ODataResponse existsEntityLink(final GetEntityLinkCountUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse existsEntityLink(final GetEntityLinkCountUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -240,7 +260,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityLinkProcessor
    */
   @Override
-  public ODataResponse updateEntityLink(final PutMergePatchUriInfo uriInfo, final InputStream content, final String requestContentType, final String contentType) throws ODataException {
+  public ODataResponse updateEntityLink(final PutMergePatchUriInfo uriInfo, final InputStream content,
+      final String requestContentType, final String contentType) throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -256,7 +277,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityComplexPropertyProcessor
    */
   @Override
-  public ODataResponse readEntityComplexProperty(final GetComplexPropertyUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse readEntityComplexProperty(final GetComplexPropertyUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -264,7 +286,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityComplexPropertyProcessor
    */
   @Override
-  public ODataResponse updateEntityComplexProperty(final PutMergePatchUriInfo uriInfo, final InputStream content, final String requestContentType, final boolean merge, final String contentType) throws ODataException {
+  public ODataResponse updateEntityComplexProperty(final PutMergePatchUriInfo uriInfo, final InputStream content,
+      final String requestContentType, final boolean merge, final String contentType) throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -272,7 +295,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntitySetProcessor
    */
   @Override
-  public ODataResponse readEntitySet(final GetEntitySetUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse readEntitySet(final GetEntitySetUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -280,7 +304,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntitySetProcessor
    */
   @Override
-  public ODataResponse countEntitySet(final GetEntitySetCountUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse countEntitySet(final GetEntitySetCountUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -288,7 +313,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntitySetProcessor
    */
   @Override
-  public ODataResponse createEntity(final PostUriInfo uriInfo, final InputStream content, final String requestContentType, final String contentType) throws ODataException {
+  public ODataResponse createEntity(final PostUriInfo uriInfo, final InputStream content,
+      final String requestContentType, final String contentType) throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -304,7 +330,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityProcessor
    */
   @Override
-  public ODataResponse existsEntity(final GetEntityCountUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse existsEntity(final GetEntityCountUriInfo uriInfo, final String contentType)
+      throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -312,7 +339,8 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see EntityProcessor
    */
   @Override
-  public ODataResponse updateEntity(final PutMergePatchUriInfo uriInfo, final InputStream content, final String requestContentType, final boolean merge, final String contentType) throws ODataException {
+  public ODataResponse updateEntity(final PutMergePatchUriInfo uriInfo, final InputStream content,
+      final String requestContentType, final boolean merge, final String contentType) throws ODataException {
     throw new ODataNotImplementedException();
   }
 
@@ -328,12 +356,14 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
    * @see ServiceDocumentProcessor
    */
   @Override
-  public ODataResponse readServiceDocument(final GetServiceDocumentUriInfo uriInfo, final String contentType) throws ODataException {
+  public ODataResponse readServiceDocument(final GetServiceDocumentUriInfo uriInfo, final String contentType)
+      throws ODataException {
     final Edm entityDataModel = getContext().getService().getEntityDataModel();
     final String serviceRoot = getContext().getPathInfo().getServiceRoot().toASCIIString();
 
     final ODataResponse response = EntityProvider.writeServiceDocument(contentType, entityDataModel, serviceRoot);
-    final ODataResponseBuilder odataResponseBuilder = ODataResponse.fromResponse(response).header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10);
+    final ODataResponseBuilder odataResponseBuilder = ODataResponse.fromResponse(response).header(
+        ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10);
 
     return odataResponseBuilder.build();
   }
@@ -345,14 +375,17 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
   public ODataResponse readMetadata(final GetMetadataUriInfo uriInfo, final String contentType) throws ODataException {
     final EdmServiceMetadata edmServiceMetadata = getContext().getService().getEntityDataModel().getServiceMetadata();
 
-    return ODataResponse.status(HttpStatusCodes.OK).header(ODataHttpHeaders.DATASERVICEVERSION, edmServiceMetadata.getDataServiceVersion()).entity(edmServiceMetadata.getMetadata()).build();
+    return ODataResponse.status(HttpStatusCodes.OK)
+        .header(ODataHttpHeaders.DATASERVICEVERSION, edmServiceMetadata.getDataServiceVersion())
+        .entity(edmServiceMetadata.getMetadata()).build();
   }
 
   /**
    * @see CustomContentType
    */
   @Override
-  public List<String> getCustomContentTypes(final Class<? extends ODataProcessor> processorFeature) throws ODataException {
+  public List<String> getCustomContentTypes(final Class<? extends ODataProcessor> processorFeature)
+      throws ODataException {
     return Collections.emptyList();
   }
 }

@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  * 
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
@@ -25,17 +25,14 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 
 /**
- * <p>An <code>ODataResponse</code> is usually created by an {@link ODataProcessor}
- * during request handling.</p>
- * <p>The handler can use a serializer to create an 
+ * <p>An <code>ODataResponse</code> is usually created by an {@link ODataProcessor} during request handling.</p>
+ * <p>The handler can use a serializer to create an
  * OData body (== response entity) and can set various response headers.
  * A response can be created using the builder pattern:
- * <pre>
- * {@code
+ * <pre> {@code
  * ODataResponse response = ODataResponse.entity("hello world").setStatus(HttpStatusCodes.OK).build();
- * }
- * </pre>
- *  
+ * } </pre>
+ * 
  */
 public abstract class ODataResponse {
 
@@ -55,7 +52,8 @@ public abstract class ODataResponse {
   public abstract Object getEntity();
 
   /**
-   * Close the underlying entity input stream (if such a stream is available) and release all with this repsonse associated resources.
+   * Close the underlying entity input stream (if such a stream is available) and release all with this repsonse
+   * associated resources.
    * 
    * @throws IOException if something goes wrong during close of {@link ODataResponse}
    */
@@ -119,7 +117,7 @@ public abstract class ODataResponse {
   }
 
   /**
-   * @param name  HTTP header name
+   * @param name HTTP header name
    * @param value associated value
    * @return a builder object
    */
@@ -143,8 +141,8 @@ public abstract class ODataResponse {
   }
 
   /**
-   * Implementation of the builder pattern to create instances of this type of object. 
-   *  
+   * Implementation of the builder pattern to create instances of this type of object.
+   * 
    */
   public static abstract class ODataResponseBuilder {
 
