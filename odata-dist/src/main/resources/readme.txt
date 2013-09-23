@@ -6,7 +6,7 @@ Apache Olingo is a Java library and extensions around
 the OData specification.
 
 Apache Olingo supports the specification versions
- - OData 2.0  <http://odata.org>
+ - OData 2.0 <http://www.odata.org/documentation/odata-v2-documentation/>
 
 Building Apache Olingo
 ======================
