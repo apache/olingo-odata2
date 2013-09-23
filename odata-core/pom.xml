@@ -21,13 +21,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>core</artifactId>
+	<artifactId>olingo.odata2.core</artifactId>
 	<packaging>jar</packaging>
-	<name>${project.groupId}-${project.artifactId}</name>
+	<name>${project.artifactId}</name>
 
 	<parent>
-		<groupId>org.apache.olingo.odata2</groupId>
-		<artifactId>parent</artifactId>
+		<groupId>org.apache.olingo</groupId>
+		<artifactId>olingo.odata2.parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
@@ -170,8 +170,8 @@
         </dependency>
 
 		<dependency>
-			<groupId>org.apache.olingo.odata2</groupId>
-			<artifactId>api</artifactId>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo.odata2.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -187,8 +187,8 @@
     
         <!-- Test dependencies -->
         <dependency>
-            <groupId>org.apache.olingo.odata2</groupId>
-            <artifactId>testutil</artifactId>
+            <groupId>org.apache.olingo</groupId>
+            <artifactId>olingo.odata2.testutil</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

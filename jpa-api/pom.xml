@@ -22,15 +22,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.apache.olingo.odata2</groupId>
-		<artifactId>parent</artifactId>
+		<groupId>org.apache.olingo</groupId>
+		<artifactId>olingo.odata2.parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
-	<artifactId>jpa.processor.api</artifactId>
+	<artifactId>olingo.odata2.jpa.processor.api</artifactId>
 	<packaging>jar</packaging>
-	<name>${project.groupId}-${project.artifactId}</name>
+	<name>${project.artifactId}</name>
 	
 	<build>
 		<plugins>
@@ -83,8 +83,8 @@
 
 		<!-- OData Java Library -->
 		<dependency>
-			<groupId>org.apache.olingo.odata2</groupId>
-			<artifactId>api</artifactId>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo.odata2.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

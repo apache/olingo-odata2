@@ -14,13 +14,13 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>jpa.processor.ref.web</artifactId>
+	<artifactId>olingo.odata2.jpa.processor.ref.web</artifactId>
 	<packaging>war</packaging>
-	<name>${project.groupId}-${project.artifactId}</name>
+	<name>${project.artifactId}</name>
 
 	<parent>
-		<groupId>org.apache.olingo.odata2</groupId>
-		<artifactId>parent</artifactId>
+		<groupId>org.apache.olingo</groupId>
+		<artifactId>olingo.odata2.parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
@@ -71,28 +71,28 @@
 			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.olingo.odata2</groupId>
-			<artifactId>core</artifactId>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo.odata2.core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.olingo.odata2</groupId>
-			<artifactId>api</artifactId>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo.odata2.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.olingo.odata2</groupId>
-			<artifactId>jpa.processor.api</artifactId>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo.odata2.jpa.processor.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.olingo.odata2</groupId>
-			<artifactId>jpa.processor.core</artifactId>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo.odata2.jpa.processor.core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.olingo.odata2</groupId>
-			<artifactId>jpa.processor.ref</artifactId>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo.odata2.jpa.processor.ref</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
