@@ -573,6 +573,59 @@ public class EdmSimpleTypeTest extends BaseTest {
         EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED);
     expectErrorInValueToString(instance, dateTime, null, null, EdmSimpleTypeException.LITERAL_KIND_MISSING);
   }
+  
+  /**
+   * Extended test for combination of precision with dates before 1970 (and for regression after 1970)
+   */
+  @Test
+  public void valueToStringDateTimeSpecial() throws Exception {
+
+    for (int precision = 0; precision < 3; precision++) {
+      try {
+        assertValueToStringDateTimeSpecial(1954, 7, 4, precision);
+        fail("Expected exception not thrown");
+      } catch(EdmSimpleTypeException e) { }
+      
+      try {
+        assertValueToStringDateTimeSpecial(1999, 7, 4, precision);
+        fail("Expected exception not thrown");
+      } catch(EdmSimpleTypeException e) { }
+    }
+
+    for (int precision = 3; precision < 6; precision++) {
+      assertValueToStringDateTimeSpecial(1954, 7, 4, precision);
+      assertValueToStringDateTimeSpecial(1999, 7, 4, precision);
+    }
+  }
+
+  private void assertValueToStringDateTimeSpecial(int year, int month, int day, int precision) throws Exception {
+    final EdmSimpleType instance = EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance();
+    final StringBuilder regExToMatch = new StringBuilder();// = new StringBuilder("1954-08-04T\\d\\d:\\d\\d:\\d\\d");
+    regExToMatch.append(year).append("-");
+    if(month < 9) {
+      regExToMatch.append("0");
+    }
+    // add '1' to the month because java calendar month begin with '0'
+    regExToMatch.append(month+1).append("-");
+    if(day < 10) {
+      regExToMatch.append("0");
+    }
+    regExToMatch.append(day).append("T\\d\\d:\\d\\d:\\d\\d");
+
+    if(precision > 0) {
+      regExToMatch.append("\\.");
+    }
+    for (int i = 0; i < precision; i++) {
+      regExToMatch.append("\\d");
+    }
+    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    date.set(year, month, day);
+    
+    //
+    String formated = instance.valueToString(date, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(precision, null));
+    assertTrue("Formated date '" + formated + "' is wrong for precision '" + precision +
+        "'. (used regex = [" + regExToMatch.toString() + "])", formated.matches(regExToMatch.toString()));
+  }
 
   @Test
   public void valueToStringDateTimeOffset() throws Exception {

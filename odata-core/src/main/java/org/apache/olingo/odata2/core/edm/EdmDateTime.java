@@ -186,7 +186,7 @@ public class EdmDateTime extends AbstractSimpleType {
     appendTwoDigits(result, dateTimeValue.get(Calendar.SECOND));
 
     try {
-      appendMilliseconds(result, timeInMillis, facets);
+      appendMilliseconds(result, dateTimeValue.get(Calendar.MILLISECOND), facets);
     } catch (final IllegalArgumentException e) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets), e);
     }
