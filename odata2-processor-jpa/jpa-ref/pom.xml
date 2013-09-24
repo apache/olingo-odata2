@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
          or more contributor license agreements.  See the NOTICE file
@@ -17,23 +17,31 @@
          specific language governing permissions and limitations
          under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.apache.olingo</groupId>
-		<artifactId>olingo.odata2.parent</artifactId>
+		<artifactId>olingo.odata2.processor-jpa</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../</relativePath>
+		<relativePath>..</relativePath>
 	</parent>
 
-	<artifactId>olingo.odata2.jpa.processor.api</artifactId>
+	<artifactId>olingo.odata2.jpa.processor.ref</artifactId>
 	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 	
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
@@ -58,11 +66,10 @@
 				<configuration>
 					<instructions>
 						<Import-Package>
-							org.apache.olingo.odata2.processor.core.jpa.factory;resolution:=optional,
 							*
 						</Import-Package>
 						<Export-Package>
-							org.apache.olingo.odata2.processor.api.*;version=${project.version}
+							org.apache.olingo.odata2.jpa.processor.ref.factory;version=${project.version},
 						</Export-Package>
 						<Bundle-DocURL>${project.url}</Bundle-DocURL>
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
@@ -77,15 +84,33 @@
 		<!-- JPA Support -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>${version.eclipselink}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.persistence</artifactId>
-			<version>${version.javax.persistence}</version>
+			<version>2.0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.10</version>
 		</dependency>
 
-		<!-- OData Java Library -->
+		<!-- OData Annotation Support -->
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo.odata2.api</artifactId>
+			<artifactId>olingo.odata2.api.annotation</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		
+		<!-- JUnits -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

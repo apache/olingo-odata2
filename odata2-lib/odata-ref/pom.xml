@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-         Licensed to the Apache Software Foundation (ASF) under one
+  Licensed to the Apache Software Foundation (ASF) under one
          or more contributor license agreements.  See the NOTICE file
          distributed with this work for additional information
          regarding copyright ownership.  The ASF licenses this file
@@ -21,36 +21,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>olingo.odata2.ref.web</artifactId>
-	<packaging>war</packaging>
+	<artifactId>olingo.odata2.ref</artifactId>
+	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 
 	<parent>
 		<groupId>org.apache.olingo</groupId>
-		<artifactId>olingo.odata2.parent</artifactId>
+		<artifactId>olingo.odata2.lib</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/version</directory>
-				<filtering>true</filtering>
-				<targetPath>../${project.build.finalName}/gen</targetPath>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-
 		<plugins>
-			<plugin>
-				<groupId>com.sap.research</groupId>
-				<artifactId>nwcloud-maven-plugin</artifactId>
-				<version>1.0.0.RELEASE</version>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -58,55 +41,68 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>bundle-manifest</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<instructions>
+						<Import-Package>
+							*
+						</Import-Package>
+						<Export-Package>
+							org.apache.olingo.odata2.ref.processor;version=${project.version},
+						</Export-Package>
+						<Bundle-DocURL>${project.url}</Bundle-DocURL>
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+					</instructions>
+				</configuration>
+			</plugin>
 		</plugins>
-
 	</build>
-	
+
+
 	<dependencies>
 		<dependency>
-			<!-- required because of auto detection of web facet 2.5 -->
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo.odata2.ref</artifactId>
+			<artifactId>olingo.odata2.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
 			<artifactId>olingo.odata2.core</artifactId>
 			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo.odata2.testutil</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
+			<artifactId>slf4j-api</artifactId>
 			<version>1.7.1</version>
 		</dependency>
 	</dependencies>
 
-    <profiles>
-      <profile>
-        <id>dev</id>
-        
-        <build>
-          <defaultGoal>cargo:run</defaultGoal>         
-          
-          <plugins>
-            <plugin>
-              <groupId>org.codehaus.cargo</groupId>
-              <artifactId>cargo-maven2-plugin</artifactId>
-              <version>1.4.2</version>
-            </plugin>
-          </plugins>
-        </build>        
-      </profile>
-     </profiles>
 </project>

@@ -61,18 +61,8 @@
     </properties>
 
     <modules>
-        <module>odata-api</module>
-        <module>odata-testutil</module>
-        <module>odata-core</module>
-        <module>odata-fit</module>
-        <module>odata-ref</module>
-        <module>odata-web</module>
-        <module>jpa-annotation</module>
-        <module>jpa-api</module>
-        <module>jpa-core</module>
-        <module>jpa-ref</module>
-        <module>jpa-web</module>
-        <module>odata-dist</module>
+        <module>odata2-lib</module>
+        <module>odata2-processor-jpa</module>
     </modules>
 
     <build>

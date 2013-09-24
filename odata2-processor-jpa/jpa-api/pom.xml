@@ -23,12 +23,12 @@
 
 	<parent>
 		<groupId>org.apache.olingo</groupId>
-		<artifactId>olingo.odata2.parent</artifactId>
+		<artifactId>olingo.odata2.processor-jpa</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
-	<artifactId>olingo.odata2.jpa.processor.core</artifactId>
+	<artifactId>olingo.odata2.jpa.processor.api</artifactId>
 	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 	
@@ -57,90 +57,35 @@
 				</executions>
 				<configuration>
 					<instructions>
-						<Import-Package>*</Import-Package>
-						<Export-Package>org.apache.olingo.odata2.processor.core.jpa.factory;version=${project.version}</Export-Package>
+						<Import-Package>
+							org.apache.olingo.odata2.processor.core.jpa.factory;resolution:=optional,
+							*
+						</Import-Package>
+						<Export-Package>
+							org.apache.olingo.odata2.processor.api.*;version=${project.version}
+						</Export-Package>
 						<Bundle-DocURL>${project.url}</Bundle-DocURL>
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 					</instructions>
 				</configuration>
 			</plugin>
-                        <plugin>
-                          <groupId>org.apache.maven.plugins</groupId>
-                          <artifactId>maven-compiler-plugin</artifactId>
-                          <version>2.3.2</version>
-                          <configuration>
-                            <source>1.6</source>
-                            <target>1.6</target>
-                          </configuration>
-                        </plugin>
-                </plugins>
+		</plugins>
 	</build>
 	
 	<dependencies>
-		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo.odata2.api.annotation</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<!-- ########################## -->
-		<!-- Java Persistence API -->
-		<!-- ########################## -->
+		<!-- JPA Support -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.persistence</artifactId>
 			<version>${version.javax.persistence}</version>
 		</dependency>
 
-		<!-- ########################## -->
-		<!-- OData Java Library Support -->
-		<!-- ########################## -->
+		<!-- OData Java Library -->
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
 			<artifactId>olingo.odata2.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo.odata2.core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<!-- ########################## -->
-		<!-- OData Java JPA API -->
-		<!-- ########################## -->
-		<dependency>
-			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo.odata2.jpa.processor.api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<!-- ########################## -->
-		<!-- For Testing -->
-		<!-- ########################## -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.9</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.easymock</groupId>
-			<artifactId>easymock</artifactId>
-			<version>3.1</version>
-                        <scope>test</scope>
-		</dependency>
-
-		<!-- ########################## -->
-		<!-- Supportability Tools -->
-		<!-- ########################## -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.2</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
-
 </project>
