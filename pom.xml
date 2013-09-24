@@ -63,7 +63,8 @@
     <modules>
         <module>odata2-lib</module>
         <module>odata2-processor-jpa</module>
-    </modules>
+        <module>odata2-dist</module>
+   </modules>
 
     <build>
         <finalName>${project.groupId}-${project.artifactId}-${project.version}</finalName>

@@ -20,14 +20,14 @@
     <fileSets>
         <fileSet>
             <outputDirectory>/</outputDirectory>
-            <directory>${basedir}/../odata-web/target</directory>
+            <directory>${basedir}/../odata2-lib/odata-web/target/</directory>
             <includes>
                 <include>**/*.war</include>
             </includes>
         </fileSet>
         <fileSet>
             <outputDirectory>/</outputDirectory>
-            <directory>${basedir}/../jpa-web/target</directory>
+            <directory>${basedir}/../odata2-processor-jpa/jpa-web/target/</directory>
             <includes>
                 <include>**/*.war</include>
             </includes>
