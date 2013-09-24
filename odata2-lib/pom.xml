@@ -24,6 +24,7 @@
 
     <modules>
         <module>odata-api</module>
+        <module>odata-annotation</module>
         <module>odata-testutil</module>
         <module>odata-core</module>
         <module>odata-fit</module>
