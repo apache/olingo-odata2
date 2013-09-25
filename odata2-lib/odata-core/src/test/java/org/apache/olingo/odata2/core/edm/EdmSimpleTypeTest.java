@@ -581,15 +581,18 @@ public class EdmSimpleTypeTest extends BaseTest {
   public void valueToStringDateTimeSpecial() throws Exception {
 
     for (int precision = 0; precision < 3; precision++) {
-      try {
-        assertValueToStringDateTimeSpecial(1954, 7, 4, precision);
-        fail("Expected exception not thrown");
-      } catch(EdmSimpleTypeException e) { }
-      
-      try {
-        assertValueToStringDateTimeSpecial(1999, 7, 4, precision);
-        fail("Expected exception not thrown");
-      } catch(EdmSimpleTypeException e) { }
+      final EdmSimpleType instance = EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance();
+      final EdmFacets facets = getPrecisionScaleFacets(precision, null);
+      final Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      date.set(Calendar.MILLISECOND, 10 * precision+1);
+
+      date.set(1954, 7, 4);
+      expectErrorInValueToString(instance, date, EdmLiteralKind.DEFAULT, facets, 
+          EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
+
+      date.set(1999, 7, 4);
+      expectErrorInValueToString(instance, date, EdmLiteralKind.DEFAULT, facets, 
+          EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
     }
 
     for (int precision = 3; precision < 6; precision++) {
@@ -620,6 +623,7 @@ public class EdmSimpleTypeTest extends BaseTest {
     }
     Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     date.set(year, month, day);
+    date.set(Calendar.MILLISECOND, 10*precision+1);
     
     //
     String formated = instance.valueToString(date, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(precision, null));
