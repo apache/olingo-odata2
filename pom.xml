@@ -22,7 +22,7 @@
         <version>13</version>
     </parent>
 
-    <inceptionYear>2012</inceptionYear>
+    <inceptionYear>2013</inceptionYear>
 
     <licenses>
         <license>
@@ -31,6 +31,17 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <url>http://olingo.incubator.apache.org</url>
+
+    <mailingLists>
+        <mailingList>
+            <name>Apache Olingo Developers Mailinglist</name>
+            <archive>http://mail-archives.apache.org/mod_mbox/incubator-olingo-dev/</archive>
+            <post>mailto:dev@olingo.incubator.apache.org</post>
+            <subscribe>mailto:dev-subscribe@olingo.incubator.apache.org</subscribe>
+        </mailingList>
+    </mailingLists>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -64,7 +75,7 @@
         <module>odata2-lib</module>
         <module>odata2-processor-jpa</module>
         <module>odata2-dist</module>
-   </modules>
+    </modules>
 
     <build>
         <finalName>${project.groupId}-${project.artifactId}-${project.version}</finalName>
@@ -232,29 +243,29 @@
                     </execution>
                 </executions>
             </plugin>
-          <plugin>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <executions>
-              <execution>
-				<id>checkstyle</id>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
                         <phase>verify</phase>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <outputFileFormat>xml</outputFileFormat>
-              <consoleOutput>true</consoleOutput>
-              <enableRSS>false</enableRSS>
-              <linkXRef>false</linkXRef>
-              <configLocation>src/checkstyle/config.xml</configLocation>
-              <sourceDirectory>${basedir}/src</sourceDirectory>
-              <encoding>UTF-8</encoding>
-              <failOnViolation>true</failOnViolation>
-			  <violationSeverity>warning</violationSeverity>
-            </configuration>
-          </plugin>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputFileFormat>xml</outputFileFormat>
+                    <consoleOutput>true</consoleOutput>
+                    <enableRSS>false</enableRSS>
+                    <linkXRef>false</linkXRef>
+                    <configLocation>src/checkstyle/config.xml</configLocation>
+                    <sourceDirectory>${basedir}/src</sourceDirectory>
+                    <encoding>UTF-8</encoding>
+                    <failOnViolation>true</failOnViolation>
+                    <violationSeverity>warning</violationSeverity>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -294,7 +305,7 @@
                             </webResources>
                         </configuration>
                     </plugin>
-                 </plugins>
+                </plugins>
             </build>
         </profile>
         <profile>
@@ -305,7 +316,7 @@
                         <artifactId>maven-checkstyle-plugin</artifactId>
                         <executions>
                             <execution>
-                              <phase>package</phase>
+                                <phase>package</phase>
                             </execution>
                         </executions>
                         <configuration>
