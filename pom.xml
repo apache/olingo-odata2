@@ -79,6 +79,7 @@
 
     <build>
         <finalName>${project.groupId}-${project.artifactId}-${project.version}</finalName>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -266,6 +267,36 @@
                     <violationSeverity>warning</violationSeverity>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
+                                <resourceBundle>org.apache:apache-incubator-disclaimer-resource-bundle:1.1</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <!-- this is relative to the pom.xml directory -->
+                            <directory>${project.build.directory}/maven-shared-archive-resources</directory>
+                            <includes>
+                                <include>META-INF/*</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -283,29 +314,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <build>
-                <plugins>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>apache-release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <configuration>
-                            <webResources>
-                                <resource>
-                                    <!-- this is relative to the pom.xml directory -->
-                                    <directory>${project.build.directory}/maven-shared-archive-resources</directory>
-                                    <includes>
-                                        <include>META-INF/*</include>
-                                    </includes>
-                                </resource>
-                            </webResources>
-                        </configuration>
-                    </plugin>
-                </plugins>
+                <defaultGoal>clean install</defaultGoal>
             </build>
         </profile>
         <profile>
