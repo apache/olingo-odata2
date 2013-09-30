@@ -23,11 +23,11 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <scope>compile</scope>
             <includes>
-                <include>org.apache.olingo:olingo.odata2.core</include>
-                <include>org.apache.olingo:olingo.odata2.api</include>
+                <include>org.apache.olingo:olingo-odata2-core-incubating</include>
+                <include>org.apache.olingo:olingo-odata2-api-incubating</include>
             </includes>
             <excludes>
-                <exclude>org.apache.olingo:olingo.odata2.api.annotation</exclude>
+                <exclude>org.apache.olingo:olingo-odata2-api-annotation-incubating</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>
@@ -35,20 +35,6 @@
         <fileSet>
             <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
             <outputDirectory>/</outputDirectory>
-            <excludes>
-                <exclude>DEPENDENCIES</exclude>
-                <exclude>NOTICE</exclude>
-                <exclude>readme.txt</exclude>
-            </excludes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources</directory>
-            <outputDirectory>/</outputDirectory>
-            <includes>
-                <include>DEPENDENCIES</include>
-                <include>NOTICE</include>
-                <include>readme.txt</include>
-            </includes>
         </fileSet>
     </fileSets>
 </assembly>
