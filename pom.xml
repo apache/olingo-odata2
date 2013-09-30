@@ -79,7 +79,7 @@
     </modules>
 
     <build>
-        <finalName>${project.groupId}-${project.artifactId}-${project.version}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
 
         <pluginManagement>
             <plugins>
