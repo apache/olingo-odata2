@@ -28,7 +28,6 @@
                 <include>org.apache.olingo:olingo-odata2-api-annotation-incubating</include>
                 <include>org.apache.olingo:olingo-odata2-jpa-processor-api-incubating</include>
                 <include>org.apache.olingo:olingo-odata2-jpa-processor-core-incubating</include>
-
                 <include>org.eclipse.persistence:javax.persistence</include>
             </includes>
         </dependencySet>
@@ -37,6 +36,13 @@
         <fileSet>
             <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
             <outputDirectory>/</outputDirectory>
+            <excludes>
+                <exclude>LICENSE</exclude>
+            </excludes>
         </fileSet>
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <outputDirectory>/</outputDirectory>
+         </fileSet>
     </fileSets>
 </assembly>

@@ -8,28 +8,17 @@
     the License. -->
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-
-    <id>ref</id>
-
+    <id>javadoc</id>
     <formats>
         <format>zip</format>
     </formats>
-
     <includeBaseDirectory>false</includeBaseDirectory>
-
     <fileSets>
         <fileSet>
             <outputDirectory>/</outputDirectory>
-            <directory>${basedir}/../odata2-lib/odata-web/target/</directory>
+            <directory>${project.parent.parent.build.directory}/apidocs</directory>
             <includes>
-                <include>**/*.war</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <outputDirectory>/</outputDirectory>
-            <directory>${basedir}/../odata2-processor-jpa/jpa-web/target/</directory>
-            <includes>
-                <include>**/*.war</include>
+                <include>**</include>
             </includes>
         </fileSet>
         <fileSet>
