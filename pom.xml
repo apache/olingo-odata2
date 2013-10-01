@@ -233,12 +233,16 @@
                                     <packages>org.apache.olingo.odata2.api:org.apache.olingo.odata2.api.*</packages>
                                 </group>
                                 <group>
+                                    <title>OData Reference Scenario</title>
+                                    <packages>org.apache.olingo.odata2.ref:org.apache.olingo.odata2.ref.*</packages>
+                                </group>
+                                <group>
                                     <title>OData JPA Processor</title>
                                     <packages>org.apache.olingo.odata2.processor.api:org.apache.olingo.odata2.processor.api.*</packages>
                                 </group>
                                 <group>
-                                    <title>OData Reference Scenario</title>
-                                    <packages>org.apache.olingo.odata2.ref:org.apache.olingo.odata2.ref.*</packages>
+                                    <title>OData JPA Reference Scenario</title>
+                                    <packages>org.apache.olingo.odata2.jpa.processor.ref:org.apache.olingo.odata2.jpa.processor.ref.*</packages>
                                 </group>
                             </groups>
                         </configuration>
