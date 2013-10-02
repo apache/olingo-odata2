@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.rest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
@@ -34,6 +35,7 @@ import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
+import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ODataContextImpl;
@@ -48,6 +50,8 @@ public final class ODataSubLocator {
   private ODataServiceFactory serviceFactory;
   private ODataRequest request;
 
+  private HttpServletRequest httpRequest; 
+  
   @GET
   public Response handleGet() throws ODataException {
     return handle(ODataHttpMethod.GET);
@@ -112,6 +116,7 @@ public final class ODataSubLocator {
     context.setAcceptableLanguages(request.getAcceptableLanguages());
     context.setPathInfo(request.getPathInfo());
     context.setServiceFactory(serviceFactory);
+    context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, httpRequest);
     ODataExceptionWrapper exceptionWrapper =
         new ODataExceptionWrapper(context, request.getQueryParameters(), request.getAcceptHeaders());
     ODataResponse response =
@@ -141,6 +146,7 @@ public final class ODataSubLocator {
     ODataContextImpl context = new ODataContextImpl(request, serviceFactory);
     ODataService service = serviceFactory.createService(context);
     context.setService(service);
+    context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, httpRequest);
     service.getProcessor().setContext(context);
 
     ODataRequestHandler requestHandler = new ODataRequestHandler(serviceFactory, service, context);
@@ -164,6 +170,8 @@ public final class ODataSubLocator {
         .contentType(RestUtil.extractRequestContentType(param).toContentTypeString())
         .build();
 
+    subLocator.httpRequest = param.getServletRequest();
+    
     return subLocator;
   }
 
