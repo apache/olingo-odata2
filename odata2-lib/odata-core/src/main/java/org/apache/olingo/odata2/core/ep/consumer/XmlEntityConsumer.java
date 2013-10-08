@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -35,6 +34,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.EntityProviderReadPropertiesBuilder;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 
 /**
@@ -43,9 +43,6 @@ import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
  * 
  */
 public class XmlEntityConsumer {
-
-  /** Default used charset for reader */
-  private static final String DEFAULT_CHARSET = "UTF-8";
 
   public XmlEntityConsumer() throws EntityProviderException {
     super();
@@ -57,18 +54,13 @@ public class XmlEntityConsumer {
     EntityProviderException cachedException = null;
 
     try {
-      reader = createStaxReader(content);
+      reader = XmlHelper.createStreamReader(content);
 
       EntityInfoAggregator eia = EntityInfoAggregator.create(entitySet);
       XmlFeedConsumer xfc = new XmlFeedConsumer();
       return xfc.readFeed(reader, eia, properties);
     } catch (EntityProviderException e) {
       cachedException = e;
-      throw cachedException;
-    } catch (XMLStreamException e) {
-      cachedException =
-          new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-              .getSimpleName()), e);
       throw cachedException;
     } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
       if (reader != null) {
@@ -92,17 +84,12 @@ public class XmlEntityConsumer {
     EntityProviderException cachedException = null;
 
     try {
-      reader = createStaxReader(content);
+      reader = XmlHelper.createStreamReader(content);
       EntityInfoAggregator eia = EntityInfoAggregator.create(entitySet);
 
       return new XmlEntryConsumer().readEntry(reader, eia, properties);
     } catch (EntityProviderException e) {
       cachedException = e;
-      throw cachedException;
-    } catch (XMLStreamException e) {
-      cachedException =
-          new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-              .getSimpleName()), e);
       throw cachedException;
     } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
       if (reader != null) {
@@ -127,14 +114,12 @@ public class XmlEntityConsumer {
     XmlPropertyConsumer xec = new XmlPropertyConsumer();
 
     try {
-      reader = createStaxReader(content);
+      reader = XmlHelper.createStreamReader(content);
       Map<String, Object> result =
           xec.readProperty(reader, edmProperty, properties.getMergeSemantic(), properties.getTypeMappings());
       return result;
-    } catch (XMLStreamException e) {
-      cachedException =
-          new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-              .getSimpleName()), e);
+    } catch (EntityProviderException e) {
+      cachedException = e;
       throw cachedException;
     } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
       if (reader != null) {
@@ -182,12 +167,10 @@ public class XmlEntityConsumer {
     XmlLinkConsumer xlc = new XmlLinkConsumer();
 
     try {
-      reader = createStaxReader(content);
+      reader = XmlHelper.createStreamReader(content);
       return xlc.readLink(reader, entitySet);
-    } catch (XMLStreamException e) {
-      cachedException =
-          new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-              .getSimpleName()), e);
+    } catch (EntityProviderException e) {
+      cachedException = e;
       throw cachedException;
     } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
       if (reader != null) {
@@ -211,12 +194,10 @@ public class XmlEntityConsumer {
     XmlLinkConsumer xlc = new XmlLinkConsumer();
 
     try {
-      reader = createStaxReader(content);
+      reader = XmlHelper.createStreamReader(content);
       return xlc.readLinks(reader, entitySet);
-    } catch (XMLStreamException e) {
-      cachedException =
-          new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-              .getSimpleName()), e);
+    } catch (EntityProviderException e) {
+      cachedException = e;
       throw cachedException;
     } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
       if (reader != null) {
@@ -234,28 +215,4 @@ public class XmlEntityConsumer {
     }
   }
 
-  private XMLStreamReader createStaxReader(final Object content) throws XMLStreamException, EntityProviderException {
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-    factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
-
-    if (content == null) {
-      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
-          .addContent("Got not supported NULL object as content to de-serialize."));
-    }
-
-    if (content instanceof InputStream) {
-      XMLStreamReader streamReader = factory.createXMLStreamReader((InputStream) content, DEFAULT_CHARSET);
-      // verify charset encoding set in content is supported (if not set UTF-8 is used as defined in
-      // 'http://www.w3.org/TR/2008/REC-xml-20081126/')
-      String characterEncodingInContent = streamReader.getCharacterEncodingScheme();
-      if (characterEncodingInContent != null && !DEFAULT_CHARSET.equalsIgnoreCase(characterEncodingInContent)) {
-        throw new EntityProviderException(EntityProviderException.UNSUPPORTED_CHARACTER_ENCODING
-            .addContent(characterEncodingInContent));
-      }
-      return streamReader;
-    }
-    throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
-        .addContent("Found not supported content of class '" + content.getClass() + "' to de-serialize."));
-  }
 }
