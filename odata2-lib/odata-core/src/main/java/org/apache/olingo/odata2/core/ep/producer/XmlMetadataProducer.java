@@ -339,7 +339,7 @@ public class XmlMetadataProducer {
                   writeAssociationSetEnd(associationSet.getEnd1(), predefinedNamespaces, xmlStreamWriter);
                   writeAssociationSetEnd(associationSet.getEnd2(), predefinedNamespaces, xmlStreamWriter);
 
-                  writeAnnotationElements(associationSet.getAnnotationElements(), predefinedNamespaces, 
+                  writeAnnotationElements(associationSet.getAnnotationElements(), predefinedNamespaces,
                       xmlStreamWriter);
 
                   xmlStreamWriter.writeEndElement();
@@ -395,7 +395,7 @@ public class XmlMetadataProducer {
                     }
                   }
 
-                  writeAnnotationElements(functionImport.getAnnotationElements(), predefinedNamespaces, 
+                  writeAnnotationElements(functionImport.getAnnotationElements(), predefinedNamespaces,
                       xmlStreamWriter);
 
                   xmlStreamWriter.writeEndElement();

@@ -105,7 +105,7 @@ public class AtomServiceDocumentConsumer {
           && Edm.PREFIX_XML.equals(reader.getAttributePrefix(i))
           || (FormatXml.XML_LANG.equals(reader.getAttributeLocalName(i)) && Edm.PREFIX_XML.equals(reader
               .getAttributePrefix(i)))
-          || ("local".equals(reader.getAttributeNamespace(i)) || DEFAULT_PREFIX.equals(reader.getAttributePrefix(i))))) 
+          || ("local".equals(reader.getAttributeNamespace(i)) || DEFAULT_PREFIX.equals(reader.getAttributePrefix(i)))))
       {
         extAttributes.add(new ExtensionAttributeImpl()
             .setName(reader.getAttributeLocalName(i))
@@ -118,7 +118,7 @@ public class AtomServiceDocumentConsumer {
     return attribute.setAttributes(extAttributes);
   }
 
-  private WorkspaceImpl parseWorkspace(final XMLStreamReader reader) 
+  private WorkspaceImpl parseWorkspace(final XMLStreamReader reader)
       throws XMLStreamException, EntityProviderException {
     reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_APP_2007, FormatXml.APP_WORKSPACE);
 
@@ -162,8 +162,8 @@ public class AtomServiceDocumentConsumer {
       throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent("href"));
     }
     while (reader.hasNext()
-        && !(reader.isEndElement() && Edm.NAMESPACE_APP_2007.equals(reader.getNamespaceURI()) 
-            && FormatXml.APP_COLLECTION.equals(reader.getLocalName()))) {
+        && !(reader.isEndElement() && Edm.NAMESPACE_APP_2007.equals(reader.getNamespaceURI())
+        && FormatXml.APP_COLLECTION.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         currentHandledStartTagName = reader.getLocalName();
@@ -230,8 +230,8 @@ public class AtomServiceDocumentConsumer {
       }
       List<Category> categoriesList = new ArrayList<Category>();
       while (reader.hasNext()
-          && !(reader.isEndElement() && Edm.NAMESPACE_APP_2007.equals(reader.getNamespaceURI()) 
-              && FormatXml.APP_CATEGORIES.equals(reader.getLocalName()))) {
+          && !(reader.isEndElement() && Edm.NAMESPACE_APP_2007.equals(reader.getNamespaceURI())
+          && FormatXml.APP_CATEGORIES.equals(reader.getLocalName()))) {
         reader.next();
         if (reader.isStartElement()) {
           currentHandledStartTagName = reader.getLocalName();
@@ -264,8 +264,8 @@ public class AtomServiceDocumentConsumer {
       EntityProviderException {
     ExtensionElementImpl extElement = new ExtensionElementImpl();
     if (!(Edm.NAMESPACE_APP_2007.equals(reader.getNamespaceURI())
-    || (FormatXml.ATOM_TITLE.equals(reader.getLocalName()) 
-        && Edm.NAMESPACE_ATOM_2005.equals(reader.getNamespaceURI())))) {
+    || (FormatXml.ATOM_TITLE.equals(reader.getLocalName())
+    && Edm.NAMESPACE_ATOM_2005.equals(reader.getNamespaceURI())))) {
       extElement = parseElement(reader);
     }
     return extElement;

@@ -61,7 +61,7 @@ public class MapProcessor extends ODataSingleProcessor {
   }
 
   @Override
-  public ODataResponse readEntitySet(final GetEntitySetUriInfo uriInfo, final String contentType) 
+  public ODataResponse readEntitySet(final GetEntitySetUriInfo uriInfo, final String contentType)
       throws ODataException {
     final EntityProviderWriteProperties properties =
         EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).build();

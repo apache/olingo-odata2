@@ -196,6 +196,7 @@ public class ListsProcessor extends ODataSingleProcessor {
       values.add(getStructuralTypeValueMap(entryData, entityType));
     }
 
+    String mediaTypeKey = entityType.getMapping() == null ? null : entityType.getMapping().getMimeType();
     final EntityProviderWriteProperties feedProperties = EntityProviderWriteProperties
         .serviceRoot(context.getPathInfo().getServiceRoot())
         .inlineCountType(inlineCountType)
@@ -203,6 +204,7 @@ public class ListsProcessor extends ODataSingleProcessor {
         .expandSelectTree(UriParser.createExpandSelectTree(uriInfo.getSelect(), uriInfo.getExpand()))
         .callbacks(getCallbacks(data, entityType))
         .nextLink(nextLink)
+        .mediaResourceTypeKey(mediaTypeKey)
         .build();
 
     final int timingHandle = context.startRuntimeMeasurement("EntityProvider", "writeFeed");
@@ -828,8 +830,14 @@ public class ListsProcessor extends ODataSingleProcessor {
     }
 
     ODataContext context = getContext();
+    String mediaTypeKey = null;
+    if (type instanceof EdmStructuralType) {
+      EdmStructuralType structType = (EdmStructuralType) type;
+      mediaTypeKey = structType.getMapping() == null ? null : structType.getMapping().getMimeType();
+
+    }
     final EntityProviderWriteProperties entryProperties = EntityProviderWriteProperties
-        .serviceRoot(context.getPathInfo().getServiceRoot()).build();
+        .serviceRoot(context.getPathInfo().getServiceRoot()).mediaResourceTypeKey(mediaTypeKey).build();
 
     final int timingHandle = context.startRuntimeMeasurement("EntityProvider", "writeFunctionImport");
 
@@ -938,7 +946,7 @@ public class ListsProcessor extends ODataSingleProcessor {
     return eTag == null ? null : "W/\"" + eTag + "\"";
   }
 
-  private <T> Map<String, ODataCallback> getCallbacks(final T data, final EdmEntityType entityType) 
+  private <T> Map<String, ODataCallback> getCallbacks(final T data, final EdmEntityType entityType)
       throws EdmException {
     final List<String> navigationPropertyNames = entityType.getNavigationPropertyNames();
     if (navigationPropertyNames.isEmpty()) {
@@ -978,10 +986,12 @@ public class ListsProcessor extends ODataSingleProcessor {
         }
         WriteFeedCallbackResult result = new WriteFeedCallbackResult();
         result.setFeedData(values);
+        String mimeTypeKey =
+            entityType.getMapping() == null ? null : entityType.getMapping().getMimeType();
         EntityProviderWriteProperties inlineProperties =
             EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).callbacks(
                 getCallbacks(relatedData, entityType)).expandSelectTree(context.getCurrentExpandSelectTreeNode())
-                .selfLink(context.getSelfLink()).build();
+                .selfLink(context.getSelfLink()).mediaResourceTypeKey(mimeTypeKey).build();
         result.setInlineProperties(inlineProperties);
         return result;
       } catch (final ODataException e) {
@@ -1003,9 +1013,12 @@ public class ListsProcessor extends ODataSingleProcessor {
           relatedData = null;
         }
         result.setEntryData(getStructuralTypeValueMap(relatedData, entityType));
+        String mimeTypeKey =
+            entityType.getMapping() == null ? null : entityType.getMapping().getMimeType();
         EntityProviderWriteProperties inlineProperties =
             EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).callbacks(
                 getCallbacks(relatedData, entityType)).expandSelectTree(context.getCurrentExpandSelectTreeNode())
+                .mediaResourceTypeKey(mimeTypeKey)
                 .build();
         result.setInlineProperties(inlineProperties);
         return result;
@@ -1048,10 +1061,13 @@ public class ListsProcessor extends ODataSingleProcessor {
     final Map<String, Object> values = getStructuralTypeValueMap(data, entityType);
 
     ODataContext context = getContext();
+    String mimeTypeKey =
+        entitySet.getEntityType().getMapping() == null ? null : entitySet.getEntityType().getMapping().getMimeType();
     EntityProviderWriteProperties writeProperties = EntityProviderWriteProperties
         .serviceRoot(context.getPathInfo().getServiceRoot())
         .expandSelectTree(expandSelectTree)
         .callbacks(getCallbacks(data, entityType))
+        .mediaResourceTypeKey(mimeTypeKey)
         .build();
 
     final int timingHandle = context.startRuntimeMeasurement("EntityProvider", "writeEntry");

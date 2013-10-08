@@ -339,7 +339,7 @@ public class JsonPropertyConsumerTest extends BaseTest {
   public void complexPropertyWithStringToStringMappingStandalone() throws Exception {
     final String complexPropertyJson =
         "{\"d\":{\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"}," +
-        "\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}}}";
+            "\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}}}";
     JsonReader reader = prepareReader(complexPropertyJson);
     final EdmProperty property =
         (EdmProperty) MockFacade.getMockEdm().getComplexType("RefScenario", "c_Location").getProperty("City");
@@ -363,8 +363,8 @@ public class JsonPropertyConsumerTest extends BaseTest {
   public void deepComplexPropertyWithStringToStringMappingStandalone() throws Exception {
     final String complexPropertyJson =
         "{\"d\":{\"Location\":{\"__metadata\":{\"type\":\"RefScenario.c_Location\"}," +
-        "\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\"," +
-        "\"CityName\":\"Heidelberg\"},\"Country\":\"Germany\"}}}";
+            "\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\"," +
+            "\"CityName\":\"Heidelberg\"},\"Country\":\"Germany\"}}}";
     JsonReader reader = prepareReader(complexPropertyJson);
     EdmProperty edmProperty =
         (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType()
@@ -433,8 +433,8 @@ public class JsonPropertyConsumerTest extends BaseTest {
   public void deepComplexPropertyOnOpenReader() throws Exception {
     final String complexPropertyJson =
         "{\"__metadata\":{\"type\":\"RefScenario.c_Location\"}," +
-        "\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\"," +
-        "\"CityName\":\"Heidelberg\"},\"Country\":\"Germany\"}";
+            "\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\"," +
+            "\"CityName\":\"Heidelberg\"},\"Country\":\"Germany\"}";
     JsonReader reader = prepareReader(complexPropertyJson);
     EdmProperty edmProperty =
         (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType()
@@ -470,7 +470,7 @@ public class JsonPropertyConsumerTest extends BaseTest {
   public void complexPropertyStandalone() throws Exception {
     final String complexPropertyJson =
         "{\"d\":{\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"}," +
-        "\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}}}";
+            "\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"}}}";
     JsonReader reader = prepareReader(complexPropertyJson);
     final EdmProperty property =
         (EdmProperty) MockFacade.getMockEdm().getComplexType("RefScenario", "c_Location").getProperty("City");
@@ -488,8 +488,8 @@ public class JsonPropertyConsumerTest extends BaseTest {
   public void deepComplexPropertyStandalone() throws Exception {
     final String complexPropertyJson =
         "{\"d\":{\"Location\":{\"__metadata\":{\"type\":\"RefScenario.c_Location\"}," +
-        "\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\"," +
-        "\"CityName\":\"Heidelberg\"},\"Country\":\"Germany\"}}}";
+            "\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"},\"PostalCode\":\"69124\"," +
+            "\"CityName\":\"Heidelberg\"},\"Country\":\"Germany\"}}}";
     JsonReader reader = prepareReader(complexPropertyJson);
     EdmProperty edmProperty =
         (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees").getEntityType()

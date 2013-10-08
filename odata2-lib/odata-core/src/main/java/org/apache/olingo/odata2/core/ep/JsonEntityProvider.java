@@ -324,7 +324,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
   }
 
   @Override
-  public List<String> readLinks(final EdmEntitySet entitySet, final InputStream content) 
+  public List<String> readLinks(final EdmEntitySet entitySet, final InputStream content)
       throws EntityProviderException {
     return new JsonEntityConsumer().readLinks(entitySet, content);
   }

@@ -245,11 +245,11 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type]", metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @Nullable and" +
-        " @m:FC_TargetPath]",
+            " @m:FC_TargetPath]",
         metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:NavigationProperty[@Name and " +
-        "@Relationship and @FromRole and @ToRole]",
+            "@Relationship and @FromRole and @ToRole]",
         metadata);
   }
 
@@ -257,11 +257,11 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
   public void testAnnotations() throws Exception {
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @Nullable and " +
-        "@annoPrefix:annoName]",
+            "@annoPrefix:annoName]",
         metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @m:FC_TargetPath and " +
-        "@annoPrefix:annoName]",
+            "@annoPrefix:annoName]",
         metadata);
   }
 
@@ -283,7 +283,7 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
         metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer/a:FunctionImport[@Name and @ReturnType and " +
-        "@EntitySet and @m:HttpMethod]",
+            "@EntitySet and @m:HttpMethod]",
         metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityContainer/a:FunctionImport/a:Parameter[@Name and @Type]",
@@ -299,13 +299,13 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
         metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:" +
-        "Principal[@Role]/a:PropertyRef[@Name]",
+            "Principal[@Role]/a:PropertyRef[@Name]",
         metadata);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:Dependent[@Role]",
         metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:Association/a:ReferentialConstraint/a:Dependent" +
-        "[@Role]/a:PropertyRef[@Name]",
+            "[@Role]/a:PropertyRef[@Name]",
         metadata);
   }
 

@@ -157,7 +157,7 @@ public class AbstractRefTest extends AbstractFitTest {
     assertNotNull(getBody(response));
   }
 
-  protected void deleteUri(final String uri, final HttpStatusCodes expectedStatusCode) 
+  protected void deleteUri(final String uri, final HttpStatusCodes expectedStatusCode)
       throws Exception, AssertionError {
     final HttpResponse response = callUri(ODataHttpMethod.DELETE, uri, null, null, null, null, expectedStatusCode);
     if (expectedStatusCode != HttpStatusCodes.NO_CONTENT) {

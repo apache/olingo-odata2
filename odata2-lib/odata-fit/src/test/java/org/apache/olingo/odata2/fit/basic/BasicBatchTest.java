@@ -68,7 +68,7 @@ public class BasicBatchTest extends AbstractBasicTest {
   private static final String LF = "\n";
   private static final String REG_EX_BOUNDARY =
       "(([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\(\\),/:=\\?]" +
-      "{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\")";
+          "{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\")";
   private static final String REG_EX = "multipart/mixed;\\s*boundary=" + REG_EX_BOUNDARY + "\\s*";
 
   private static final String REQUEST_PAYLOAD =

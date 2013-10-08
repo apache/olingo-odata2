@@ -43,7 +43,7 @@ public class ODataEntryImpl implements ODataEntry {
   }
 
   public ODataEntryImpl(final Map<String, Object> data, final MediaMetadata mediaMetadata,
-      final EntryMetadata entryMetadata, final ExpandSelectTreeNode expandSelectTree, 
+      final EntryMetadata entryMetadata, final ExpandSelectTreeNode expandSelectTree,
       final boolean containsInlineEntry) {
     this.data = data;
     this.entryMetadata = entryMetadata;

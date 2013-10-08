@@ -71,7 +71,7 @@ public class EntryXmlReadOnlyTest extends AbstractRefXmlTest {
     assertXpathEvaluatesTo(
         EMPLOYEE_1_NAME,
         "/atom:entry/atom:link[@href=\"Rooms('1')/nr_Employees\"]" +
-        "/m:inline/atom:feed/atom:entry/m:properties/d:EmployeeName",
+            "/m:inline/atom:feed/atom:entry/m:properties/d:EmployeeName",
         getBody(response));
 
     response = callUri("Container2.Photos(Id=1,Type='image%2Fpng')");
@@ -137,13 +137,13 @@ public class EntryXmlReadOnlyTest extends AbstractRefXmlTest {
     assertXpathEvaluatesTo(
         EMPLOYEE_5_NAME,
         "/atom:entry/atom:link[@href=\"Rooms('3')/nr_Employees\"]" +
-        "/m:inline/atom:feed/atom:entry/m:properties/d:EmployeeName",
+            "/m:inline/atom:feed/atom:entry/m:properties/d:EmployeeName",
         body);
     assertXpathEvaluatesTo(
         EMPLOYEE_3_NAME,
         "/atom:entry/atom:link[@href=\"Rooms('3')/nr_Employees\"]" +
-        "/m:inline/atom:feed/atom:entry/atom:link[@href=\"Employees('5')/ne_Manager\"]" +
-        "/m:inline/atom:entry/m:properties/d:EmployeeName",
+            "/m:inline/atom:feed/atom:entry/atom:link[@href=\"Employees('5')/ne_Manager\"]" +
+            "/m:inline/atom:entry/m:properties/d:EmployeeName",
         body);
 
     notFound("Employees('3')?$expand=noNavProp");
@@ -173,7 +173,7 @@ public class EntryXmlReadOnlyTest extends AbstractRefXmlTest {
     assertEquals(entry, getBody(callUri("Employees('6')?$select=*,ne_Room")));
 
     checkUri("Container2.Photos(Id=4,Type='foo')?$select=%D0%A1%D0%BE%D0%B4%D0%B5%D1%80%D0%B6" +
-    		"%D0%B0%D0%BD%D0%B8%D0%B5,Id");
+        "%D0%B0%D0%BD%D0%B8%D0%B5,Id");
 
     response = callUri("Employees('6')?$expand=ne_Room&$select=ne_Room/Version");
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
@@ -181,12 +181,12 @@ public class EntryXmlReadOnlyTest extends AbstractRefXmlTest {
     assertXpathEvaluatesTo(
         "2",
         "/atom:entry/atom:link[@href=\"Employees('6')/ne_Room\"]/m:inline/atom:entry/atom:content" +
-        "[@type=\"application/xml\"]/m:properties/d:Version",
+            "[@type=\"application/xml\"]/m:properties/d:Version",
         body);
     assertXpathNotExists("/atom:entry/m:properties/d:Location", body);
     assertXpathNotExists(
         "/atom:entry/atom:link[@href=\"Employees('6')/ne_Room\"]/m:inline/atom:entry/atom:content" +
-        "[@type=\"application/xml\"]/m:properties/d:Seats",
+            "[@type=\"application/xml\"]/m:properties/d:Seats",
         body);
 
     response = callUri("Rooms('3')?$expand=nr_Employees/ne_Team&$select=nr_Employees/ne_Team/Name");
@@ -195,14 +195,14 @@ public class EntryXmlReadOnlyTest extends AbstractRefXmlTest {
     assertXpathEvaluatesTo(
         "Team 2",
         "/atom:entry/atom:link[@href=\"Rooms('3')/nr_Employees\"]/m:inline/atom:feed/atom:entry" +
-        "/atom:link[@href=\"Employees('5')/ne_Team\"]/m:inline/atom:entry/atom:content/m:properties/d:Name",
+            "/atom:link[@href=\"Employees('5')/ne_Team\"]/m:inline/atom:entry/atom:content/m:properties/d:Name",
         body);
     assertXpathNotExists("/atom:entry/atom:content/m:properties", body);
     assertXpathNotExists(
         "/atom:entry/atom:link[@href=\"Rooms('3')/nr_Employees\"]/m:inline/atom:feed/atom:entry/m:properties", body);
     assertXpathNotExists(
         "/atom:entry/atom:link[@href=\"Rooms('3')/nr_Employees\"]/m:inline/atom:feed/atom:entry" +
-        "/atom:link[@href=\"Employees('5')/ne_Team\"]/m:inline/atom:entry/atom:content/m:properties/d:Id",
+            "/atom:link[@href=\"Employees('5')/ne_Team\"]/m:inline/atom:entry/atom:content/m:properties/d:Id",
         body);
 
     notFound("Teams('3')?$select=noProp");

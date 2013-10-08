@@ -136,7 +136,7 @@ public abstract class AbstractProviderTest extends AbstractXmlProducerTestHelper
         .put(
             "ImageUrl",
             "http://www.mopo.de/image/view/2012/6/4/16548086,13385561,medRes,maxh,234,maxw,234," +
-            "Parodia_Mona_Lisa_Lego_Hamburger_Morgenpost.jpg");
+                "Parodia_Mona_Lisa_Lego_Hamburger_Morgenpost.jpg");
     Map<String, Object> imageData = new HashMap<String, Object>();
     imageData.put("Image", new byte[] { 1, 2, 3, 4 });
     imageData.put("getImageType", "image/png");
@@ -189,8 +189,8 @@ public abstract class AbstractProviderTest extends AbstractXmlProducerTestHelper
     return ctx;
   }
 
-  protected EntityProviderInterface createEntityProvider() throws ODataException, EdmException, 
-  EntityProviderException {
+  protected EntityProviderInterface createEntityProvider() throws ODataException, EdmException,
+      EntityProviderException {
     return new ProviderFacadeImpl();
   }
 

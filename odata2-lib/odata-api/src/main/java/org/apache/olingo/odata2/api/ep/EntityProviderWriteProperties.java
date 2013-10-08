@@ -41,6 +41,8 @@ public class EntityProviderWriteProperties {
   private ExpandSelectTreeNode expandSelectTree;
   private Map<String, ODataCallback> callbacks = Collections.emptyMap();
   private URI selfLink;
+  private String mediaResourceSourceKey;
+  private String mediaResourceTypeKey;
 
   private EntityProviderWriteProperties() {}
 
@@ -104,6 +106,22 @@ public class EntityProviderWriteProperties {
   public final String getNextLink() {
     return nextLink;
   }
+  
+  /**
+   * Gets the key under which the resource source value can be found in the data map.
+   * @return the key of the media resource source
+   */
+  public final String getMediaResourceSourceKey() {
+    return mediaResourceSourceKey;
+  }
+  
+  /**
+   * Gets the key under which the resource mime type can be found in the data map.
+   * @return the key of the media resource type
+   */
+  public final String getMediaResourceTypeKey() {
+    return mediaResourceTypeKey;
+  }
 
   public static ODataEntityProviderPropertiesBuilder serviceRoot(final URI serviceRoot) {
     return new ODataEntityProviderPropertiesBuilder().serviceRoot(serviceRoot);
@@ -111,12 +129,29 @@ public class EntityProviderWriteProperties {
 
   public static class ODataEntityProviderPropertiesBuilder {
     private final EntityProviderWriteProperties properties = new EntityProviderWriteProperties();
+    
 
     /**
      * @param mediaResourceMimeType the mediaResourceMimeType to set
      */
     public final ODataEntityProviderPropertiesBuilder mediaResourceMimeType(final String mediaResourceMimeType) {
       properties.mediaResourceMimeType = mediaResourceMimeType;
+      return this;
+    }
+    
+    /**
+     * @param mediaResourceSourceKey the mediaResourceSourceKey to set
+     */
+    public final ODataEntityProviderPropertiesBuilder mediaResourceSourceKey(final String mediaResourceSourceKey) {
+      properties.mediaResourceSourceKey = mediaResourceSourceKey;
+      return this;
+    }
+    
+    /**
+     * @param mediaResourceTypeKey the mediaResourceTypeKey to set
+     */
+    public ODataEntityProviderPropertiesBuilder mediaResourceTypeKey(String mediaResourceTypeKey) {
+      properties.mediaResourceTypeKey = mediaResourceTypeKey;
       return this;
     }
 
@@ -192,7 +227,6 @@ public class EntityProviderWriteProperties {
       this.properties.selfLink = properties.getSelfLink();
       return this;
     }
-
   }
 
   public static ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {

@@ -938,7 +938,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     InputStream reqContent = createContentAsStream(content);
 
     // execute
-    readAndExpectException(entitySet, reqContent, 
+    readAndExpectException(entitySet, reqContent,
         EntityProviderException.INVALID_INLINE_CONTENT.addContent("xml data"));
   }
 
@@ -959,7 +959,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     InputStream reqContent = createContentAsStream(content);
 
     // execute
-    readAndExpectException(entitySet, reqContent, 
+    readAndExpectException(entitySet, reqContent,
         EntityProviderException.INVALID_INLINE_CONTENT.addContent("xml data"));
   }
 

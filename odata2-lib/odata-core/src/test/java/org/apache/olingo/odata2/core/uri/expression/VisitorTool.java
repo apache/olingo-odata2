@@ -112,7 +112,7 @@ public class VisitorTool implements ExpressionVisitor {
   }
 
   @Override
-  public Object visitOrder(final OrderExpression orderExpression, final Object filterResult, 
+  public Object visitOrder(final OrderExpression orderExpression, final Object filterResult,
       final SortOrder sortOrder) {
     return "{o(" + filterResult + ", " + sortOrder.toString() + ")}";
   }

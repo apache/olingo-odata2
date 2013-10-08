@@ -93,6 +93,8 @@ public class EdmEntityTypeImplProvTest extends BaseTest {
     List<Property> keyPropertysBarBase = new ArrayList<Property>();
     Property keyPropBarBase = new SimpleProperty().setName("Id").setType(EdmSimpleTypeKind.String);
     keyPropertysBarBase.add(keyPropBarBase);
+    keyPropBarBase = new SimpleProperty().setName("NotrmalProp").setType(EdmSimpleTypeKind.String);
+    keyPropertysBarBase.add(keyPropBarBase);
     barBase.setProperties(keyPropertysBarBase);
 
     PropertyRef refToKeyBarBase = new PropertyRef().setName("Id");

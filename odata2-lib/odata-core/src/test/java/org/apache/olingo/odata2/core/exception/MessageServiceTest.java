@@ -42,7 +42,7 @@ public class MessageServiceTest extends BaseTest {
 
     assertEquals(
         "MessageService could not be created because of exception 'IllegalArgumentException with message " +
-        "'Parameter locale MUST NOT be NULL.'.",
+            "'Parameter locale MUST NOT be NULL.'.",
         ms.getText());
   }
 
@@ -71,7 +71,7 @@ public class MessageServiceTest extends BaseTest {
 
     assertEquals(
         "Missing replacement for place holder in value 'First was [%1$s] and second was [%2$s]!' " +
-        "for following arguments '[first]'!",
+            "for following arguments '[first]'!",
         ms.getText());
   }
 

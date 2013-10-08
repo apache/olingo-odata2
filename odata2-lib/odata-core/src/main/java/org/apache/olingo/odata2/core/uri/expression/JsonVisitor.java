@@ -98,7 +98,7 @@ public class JsonVisitor implements ExpressionVisitor {
   }
 
   @Override
-  public Object visitOrder(final OrderExpression orderExpression, final Object filterResult, 
+  public Object visitOrder(final OrderExpression orderExpression, final Object filterResult,
       final SortOrder sortOrder) {
     try {
       StringWriter writer = new StringWriter();

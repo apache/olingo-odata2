@@ -383,7 +383,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
   }
 
   @Override
-  public List<String> readLinks(final EdmEntitySet entitySet, final InputStream content) 
+  public List<String> readLinks(final EdmEntitySet entitySet, final InputStream content)
       throws EntityProviderException {
     XmlEntityConsumer xec = new XmlEntityConsumer();
     return xec.readLinks(entitySet, content);

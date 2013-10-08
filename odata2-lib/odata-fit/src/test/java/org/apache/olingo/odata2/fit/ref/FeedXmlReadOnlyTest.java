@@ -174,7 +174,7 @@ public class FeedXmlReadOnlyTest extends AbstractRefXmlTest {
 
     response =
         callUri("Employees?$filter=indexof(ImageUrl,EmployeeId)%20mod%20(Age%20sub%2028)%20eq%20month" +
-        		"(EntryDate)%20mul%203%20div%2027%20sub%201");
+            "(EntryDate)%20mul%203%20div%2027%20sub%201");
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=feed");
     body = getBody(response);
     assertXpathEvaluatesTo("1", "count(/atom:feed/atom:entry)", body);
@@ -210,7 +210,7 @@ public class FeedXmlReadOnlyTest extends AbstractRefXmlTest {
 
     checkUri("Employees('1')/ne_Room/nr_Employees('1')?$filter=EmployeeId%20eq%20'1'");
     checkUri("Container2.Photos(Id=4,Type='foo')?$filter=%D0%A1%D0%BE%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D0%BD%" +
-    		"D0%B8%D0%B5%20eq%20'%D0%9F%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%82'");
+        "D0%B8%D0%B5%20eq%20'%D0%9F%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%82'");
 
     notFound("Employees('4')?$filter=Age%20eq%2099");
     notFound("Rooms('1')/nr_Employees('1')?$filter=Age%20eq%2099");
@@ -249,12 +249,12 @@ public class FeedXmlReadOnlyTest extends AbstractRefXmlTest {
   public void nextLinkQueryOptions() throws Exception {
     final HttpResponse response =
         callUri("Rooms?$format=atom&$filter=true&$inlinecount=none&$orderby=Name&$skiptoken=1&$skip=0&$top=200" +
-        		"&$expand=nr_Building&$select=Seats");
+            "&$expand=nr_Building&$select=Seats");
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=feed");
     final String body = getBody(response);
     assertXpathEvaluatesTo(
         "Rooms?$format=atom&$filter=true&$inlinecount=none&$orderby=Name&$top=200&$expand=nr_Building" +
-        "&$select=Seats&$skiptoken=97",
+            "&$select=Seats&$skiptoken=97",
         "/atom:feed/atom:link[@rel='next']/@href", body);
   }
 

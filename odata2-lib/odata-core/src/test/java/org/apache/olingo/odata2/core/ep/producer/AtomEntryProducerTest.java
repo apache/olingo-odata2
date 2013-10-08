@@ -701,6 +701,98 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     assertXpathExists("/a:entry/a:link[@title='ne_Manager']", xmlString);
   }
 
+  @Test
+  public void serializeWithCustomSrcAttributeOnEmployee() throws Exception {
+    AtomEntityProvider ser = createAtomEntityProvider();
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);
+    String mediaResourceSourceKey = "~src";
+    localEmployeeData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
+    EntityProviderWriteProperties localProperties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
+            ).build();
+    ODataResponse response =
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            localEmployeeData,
+            localProperties);
+    String xmlString = verifyResponse(response);
+
+    assertXpathExists(
+        "/a:entry/a:link[@href=\"Employees('1')/$value\" and" +
+            " @rel=\"edit-media\" and @type=\"application/octet-stream\"]", xmlString);
+    assertXpathExists("/a:entry/a:content[@type=\"application/octet-stream\"]", xmlString);
+    assertXpathExists("/a:entry/a:content[@src=\"http://localhost:8080/images/image1\"]", xmlString);
+  }
+
+  @Test
+  public void serializeWithCustomSrcAndTypeAttributeOnEmployee() throws Exception {
+    AtomEntityProvider ser = createAtomEntityProvider();
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);
+    String mediaResourceSourceKey = "~src";
+    localEmployeeData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
+    String mediaResourceTypeKey = "~type";
+    localEmployeeData.put(mediaResourceTypeKey, "image/jpeg");
+    EntityProviderWriteProperties localProperties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
+            ).mediaResourceTypeKey(mediaResourceTypeKey).build();
+    ODataResponse response =
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            localEmployeeData,
+            localProperties);
+    String xmlString = verifyResponse(response);
+
+    assertXpathExists(
+        "/a:entry/a:link[@href=\"Employees('1')/$value\" and" +
+            " @rel=\"edit-media\" and @type=\"image/jpeg\"]", xmlString);
+    assertXpathExists("/a:entry/a:content[@type=\"image/jpeg\"]", xmlString);
+    assertXpathExists("/a:entry/a:content[@src=\"http://localhost:8080/images/image1\"]", xmlString);
+  }
+
+  @Test
+  public void serializeWithCustomSrcAttributeOnRoom() throws Exception {
+    AtomEntityProvider ser = createAtomEntityProvider();
+    Map<String, Object> localRoomData = new HashMap<String, Object>(roomData);
+    String mediaResourceSourceKey = "~src";
+    localRoomData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
+    EntityProviderWriteProperties localProperties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
+            ).build();
+    ODataResponse response =
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
+            localRoomData,
+            localProperties);
+    String xmlString = verifyResponse(response);
+
+    assertXpathNotExists(
+        "/a:entry/a:link[@href=\"Rooms('1')/$value\" and" +
+            " @rel=\"edit-media\" and @type=\"application/octet-stream\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:content[@type=\"application/octet-stream\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:content[@src=\"http://localhost:8080/images/image1\"]", xmlString);
+  }
+
+  @Test
+  public void serializeWithCustomSrcAndTypeAttributeOnRoom() throws Exception {
+    AtomEntityProvider ser = createAtomEntityProvider();
+    Map<String, Object> localRoomData = new HashMap<String, Object>(roomData);
+    String mediaResourceSourceKey = "~src";
+    localRoomData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
+    String mediaResourceTypeKey = "~type";
+    localRoomData.put(mediaResourceTypeKey, "image/jpeg");
+    EntityProviderWriteProperties localProperties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
+            ).mediaResourceTypeKey(mediaResourceTypeKey).build();
+    ODataResponse response =
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
+            localRoomData,
+            localProperties);
+    String xmlString = verifyResponse(response);
+
+    assertXpathNotExists(
+        "/a:entry/a:link[@href=\"Rooms('1')/$value\" and" +
+            " @rel=\"edit-media\" and @type=\"image/jpeg\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:content[@type=\"image/jpeg\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:content[@src=\"http://localhost:8080/images/image1\"]", xmlString);
+  }
+
   private void verifyTagOrdering(final String xmlString, final String... toCheckTags) {
     XMLUnitHelper.verifyTagOrdering(xmlString, toCheckTags);
   }

@@ -48,14 +48,14 @@ public class ODataMessageTextVerifierTest extends BaseTest {
     assertEquals(
         "Error",
         "Error-->Messagetext for key:\"org.apache.olingo.odata2.testutil.mock.SampleClassForInvalidMessageReferences." +
-        "DOES_NOT_EXIST\" missing",
+            "DOES_NOT_EXIST\" missing",
         ec.get(0).getMessage());
 
     assertNotNull("!!!Error in testtool", ec.get(1));
     assertEquals(
         "Error",
         "Error-->Messagetext for key:\"org.apache.olingo.odata2.testutil.mock.SampleClassForInvalidMessageReferences." +
-        "EXITS_BUT_EMPTY\" empty",
+            "EXITS_BUT_EMPTY\" empty",
         ec.get(1).getMessage());
 
   }

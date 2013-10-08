@@ -77,7 +77,7 @@ public class JsonPropertyEntityProducer {
           jsonStreamWriter.separator();
           final String name = childPropertyInfo.getName();
           jsonStreamWriter.name(name);
-          appendPropertyValue(jsonStreamWriter, childPropertyInfo, 
+          appendPropertyValue(jsonStreamWriter, childPropertyInfo,
               value == null ? null : ((Map<?, ?>) value).get(name));
         }
         jsonStreamWriter.endObject();

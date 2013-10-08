@@ -464,7 +464,7 @@ public class FilterParserImpl implements FilterParser {
       validateEdmPropertyOfStructuredType(resourceEntityType, property, propertyToken);
       return;
     } else {
-      if ((leftExpression.getKind() != ExpressionKind.PROPERTY) && 
+      if ((leftExpression.getKind() != ExpressionKind.PROPERTY) &&
           (leftExpression.getKind() != ExpressionKind.MEMBER)) {
         if (actBinOp != null) {
           // Tested with TestParserExceptions.TestPMvalidateEdmProperty CASE 6
@@ -568,7 +568,7 @@ public class FilterParserImpl implements FilterParser {
    * }
    */
 
-  protected void validateUnaryOperatorTypes(final UnaryExpression unaryExpression) 
+  protected void validateUnaryOperatorTypes(final UnaryExpression unaryExpression)
       throws ExpressionParserInternalError {
     InfoUnaryOperator unOpt = availableUnaryOperators.get(unaryExpression.getOperator().toUriLiteral());
     EdmType operandType = unaryExpression.getOperand().getEdmType();

@@ -106,11 +106,11 @@ public class BasicProviderTest extends AbstractProviderTest {
     setNamespaces();
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @Nullable and " +
-        "@annoPrefix:annoName]",
+            "@annoPrefix:annoName]",
         metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @m:FC_TargetPath and " +
-        "@annoPrefix:annoName]",
+            "@annoPrefix:annoName]",
         metadata);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name=\"EmployeeName\"]",
         metadata);
@@ -126,7 +126,7 @@ public class BasicProviderTest extends AbstractProviderTest {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:schemaElementTest1/prefix:schemaElementTest3", metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:schemaElementTest1/a:schemaElementTest4[@rel=\"self\" and " +
-        "@pre:href=\"http://foo\"]",
+            "@pre:href=\"http://foo\"]",
         metadata);
   }
 
@@ -143,13 +143,13 @@ public class BasicProviderTest extends AbstractProviderTest {
     setNamespaces();
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @Nullable and " +
-        "@annoPrefix:annoName]",
+            "@annoPrefix:annoName]",
         metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name and @Type and @m:FC_TargetPath and " +
-        "@annoPrefix:annoName]",
+            "@annoPrefix:annoName]",
         metadata);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name=\"EmployeeName\"]", 
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name=\"EmployeeName\"]",
         metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType/a:Property[@Name=\"EmployeeName\"]/a:propertyAnnoElement",
@@ -163,7 +163,7 @@ public class BasicProviderTest extends AbstractProviderTest {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:schemaElementTest1/prefix:schemaElementTest3", metadata);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:schemaElementTest1/a:schemaElementTest4[@rel=\"self\" and " +
-        "@pre:href=\"http://foo\"]",
+            "@pre:href=\"http://foo\"]",
         metadata);
   }
 

@@ -23,14 +23,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -54,6 +57,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.StringMap;
 
 /**
  *  
@@ -71,12 +75,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     teamData.put("isScrumTeam", true);
 
     final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, teamData, DEFAULT_PROPERTIES);
-    assertNotNull(response);
-    assertNotNull(response.getEntity());
-    assertNull("EntitypProvider must not set content header", response.getContentHeader());
-
-    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertNotNull(json);
+    final String json = verifyResponse(response);
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Teams('1')\","
         + "\"uri\":\"" + BASE_URI + "Teams('1')\",\"type\":\"RefScenario.Team\"},"
         + "\"Id\":\"1\",\"Name\":null,\"isScrumTeam\":true,"
@@ -111,12 +110,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, buildingData,
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node).build());
-    assertNotNull(response);
-    assertNotNull(response.getEntity());
-    assertNull("EntitypProvider must not set content header", response.getContentHeader());
-
-    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertNotNull(json);
+    final String json = verifyResponse(response);
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Buildings('1')\","
         + "\"uri\":\"" + BASE_URI + "Buildings('1')\",\"type\":\"RefScenario.Building\"},"
         + "\"nb_Rooms\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Buildings('1')/nb_Rooms\"}}}}",
@@ -130,15 +124,12 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     photoData.put("Id", 1);
     photoData.put("Type", "image/png");
     photoData.put("BinaryData", new byte[] { -1, 0, 1, 2 });
-    photoData.put("getType", "image/png");
 
-    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, photoData, DEFAULT_PROPERTIES);
-    assertNotNull(response);
-    assertNotNull(response.getEntity());
-    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+    EntityProviderWriteProperties writeProperties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceTypeKey("Type").build();
 
-    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertNotNull(json);
+    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, photoData, writeProperties);
+    final String json = verifyResponse(response);
     assertEquals("{\"d\":{\"__metadata\":{"
         + "\"id\":\"" + BASE_URI + "Container2.Photos(Id=1,Type='image%2Fpng')\","
         + "\"uri\":\"" + BASE_URI + "Container2.Photos(Id=1,Type='image%2Fpng')\","
@@ -162,14 +153,13 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     ExpandSelectTreeNode node = Mockito.mock(ExpandSelectTreeNode.class);
     Mockito.when(node.getProperties()).thenReturn(Arrays.asList(property));
 
-    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, employeeData,
-        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node).build());
-    assertNotNull(response);
-    assertNotNull(response.getEntity());
-    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+    EntityProviderWriteProperties writeProperties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceTypeKey("getImageType")
+            .serviceRoot(URI.create(BASE_URI)).expandSelectTree(node).build();
 
-    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertNotNull(json);
+    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, employeeData,
+        writeProperties);
+    final String json = verifyResponse(response);
     assertEquals("{\"d\":{\"__metadata\":{"
         + "\"id\":\"" + BASE_URI + "Employees('1')\","
         + "\"uri\":\"" + BASE_URI + "Employees('1')\","
@@ -303,12 +293,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         new JsonEntityProvider().writeEntry(entitySet, roomData,
             EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
                 .callbacks(callbacks).build());
-    assertNotNull(response);
-    assertNotNull(response.getEntity());
-    assertNull("EntitypProvider must not set content header", response.getContentHeader());
-
-    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertNotNull(json);
+    final String json = verifyResponse(response);
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Rooms('1')\","
         + "\"uri\":\"" + BASE_URI + "Rooms('1')\",\"type\":\"RefScenario.Room\",\"etag\":\"W/\\\"1\\\"\"},"
         + "\"nr_Building\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Buildings('1')\","
@@ -333,12 +318,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, roomData,
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).build());
-    assertNotNull(response);
-    assertNotNull(response.getEntity());
-    assertNull("EntitypProvider must not set content header", response.getContentHeader());
-
-    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertNotNull(json);
+    final String json = verifyResponse(response);
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Rooms('1')\","
         + "\"uri\":\"" + BASE_URI + "Rooms('1')\",\"type\":\"RefScenario.Room\",\"etag\":\"W/\\\"1\\\"\"},"
         + "\"nr_Building\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Rooms('1')/nr_Building\"}}}}",
@@ -402,12 +382,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         new JsonEntityProvider().writeEntry(entitySet, buildingData,
             EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
                 .callbacks(callbacks).build());
-    assertNotNull(response);
-    assertNotNull(response.getEntity());
-    assertNull("EntitypProvider must not set content header", response.getContentHeader());
-
-    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertNotNull(json);
+    final String json = verifyResponse(response);
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Buildings('1')\","
         + "\"uri\":\"" + BASE_URI + "Buildings('1')\",\"type\":\"RefScenario.Building\"},"
         + "\"nb_Rooms\":{\"results\":[{\"__metadata\":{\"id\":\"" + BASE_URI + "Rooms('1')\","
@@ -526,12 +501,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, buildingData,
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).build());
-    assertNotNull(response);
-    assertNotNull(response.getEntity());
-    assertNull("EntitypProvider must not set content header", response.getContentHeader());
-
-    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertNotNull(json);
+    final String json = verifyResponse(response);
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Buildings('1')\","
         + "\"uri\":\"" + BASE_URI + "Buildings('1')\",\"type\":\"RefScenario.Building\"},"
         + "\"nb_Rooms\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Buildings('1')/nb_Rooms\"}}}}",
@@ -556,6 +526,173 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     new JsonEntityProvider().writeEntry(entitySet, buildingData,
         EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1).callbacks(callbacks)
             .build());
+  }
 
+  @SuppressWarnings("unchecked")
+  @Test
+  public void serializeWithCustomSrcAttributeOnEmployee() throws Exception {
+    Map<String, Object> employeeData = new HashMap<String, Object>();
+
+    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    date.clear();
+    date.set(1999, 0, 1);
+
+    employeeData.put("EmployeeId", "1");
+    employeeData.put("ImmageUrl", null);
+    employeeData.put("ManagerId", "1");
+    employeeData.put("Age", new Integer(52));
+    employeeData.put("RoomId", "1");
+    employeeData.put("EntryDate", date);
+    employeeData.put("TeamId", "42");
+    employeeData.put("EmployeeName", "Walter Winter");
+
+    Map<String, Object> locationData = new HashMap<String, Object>();
+    Map<String, Object> cityData = new HashMap<String, Object>();
+    cityData.put("PostalCode", "33470");
+    cityData.put("CityName", "Duckburg");
+    locationData.put("City", cityData);
+    locationData.put("Country", "Calisota");
+
+    employeeData.put("Location", locationData);
+
+    String mediaResourceSourceKey = "~src";
+    employeeData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
+    EntityProviderWriteProperties localProperties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
+            ).build();
+    ODataResponse response =
+        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet(
+            "Employees"),
+            employeeData,
+            localProperties);
+    String jsonString = verifyResponse(response);
+    Gson gson = new Gson();
+    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
+    jsonMap = (StringMap<Object>) jsonMap.get("d");
+    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
+
+    assertEquals("http://localhost:8080/images/image1", jsonMap.get("media_src"));
+    assertEquals("application/octet-stream", jsonMap.get("content_type"));
+    assertEquals("http://host:80/service/Employees('1')/$value", jsonMap.get("edit_media"));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void serializeWithCustomSrcAndTypeAttributeOnEmployee() throws Exception {
+    Map<String, Object> employeeData = new HashMap<String, Object>();
+
+    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    date.clear();
+    date.set(1999, 0, 1);
+
+    employeeData.put("EmployeeId", "1");
+    employeeData.put("ImmageUrl", null);
+    employeeData.put("ManagerId", "1");
+    employeeData.put("Age", new Integer(52));
+    employeeData.put("RoomId", "1");
+    employeeData.put("EntryDate", date);
+    employeeData.put("TeamId", "42");
+    employeeData.put("EmployeeName", "Walter Winter");
+
+    Map<String, Object> locationData = new HashMap<String, Object>();
+    Map<String, Object> cityData = new HashMap<String, Object>();
+    cityData.put("PostalCode", "33470");
+    cityData.put("CityName", "Duckburg");
+    locationData.put("City", cityData);
+    locationData.put("Country", "Calisota");
+
+    employeeData.put("Location", locationData);
+    String mediaResourceSourceKey = "~src";
+    employeeData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
+    String mediaResourceTypeKey = "~type";
+    employeeData.put(mediaResourceTypeKey, "image/jpeg");
+    EntityProviderWriteProperties localProperties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
+            ).mediaResourceTypeKey(mediaResourceTypeKey).build();
+    ODataResponse response =
+        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet(
+            "Employees"),
+            employeeData,
+            localProperties);
+    String jsonString = verifyResponse(response);
+
+    Gson gson = new Gson();
+    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
+    jsonMap = (StringMap<Object>) jsonMap.get("d");
+    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
+
+    assertEquals("http://localhost:8080/images/image1", jsonMap.get("media_src"));
+    assertEquals("image/jpeg", jsonMap.get("content_type"));
+    assertEquals("http://host:80/service/Employees('1')/$value", jsonMap.get("edit_media"));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void serializeWithCustomSrcAttributeOnRoom() throws Exception {
+    Map<String, Object> roomData = new HashMap<String, Object>();
+    roomData.put("Id", "1");
+    roomData.put("Name", "Neu Schwanstein");
+    roomData.put("Seats", new Integer(20));
+    roomData.put("Version", new Integer(3));
+
+    String mediaResourceSourceKey = "~src";
+    roomData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
+    EntityProviderWriteProperties localProperties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
+            ).build();
+    ODataResponse response =
+        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
+            roomData,
+            localProperties);
+    String jsonString = verifyResponse(response);
+    Gson gson = new Gson();
+    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
+    jsonMap = (StringMap<Object>) jsonMap.get("d");
+    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
+
+    assertNull(jsonMap.get("media_src"));
+    assertNull(jsonMap.get("content_type"));
+    assertNull(jsonMap.get("edit_media"));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void serializeWithCustomSrcAndTypeAttributeOnRoom() throws Exception {
+    Map<String, Object> roomData = new HashMap<String, Object>();
+    roomData.put("Id", "1");
+    roomData.put("Name", "Neu Schwanstein");
+    roomData.put("Seats", new Integer(20));
+    roomData.put("Version", new Integer(3));
+
+    String mediaResourceSourceKey = "~src";
+    roomData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
+    String mediaResourceTypeKey = "~type";
+    roomData.put(mediaResourceTypeKey, "image/jpeg");
+    EntityProviderWriteProperties localProperties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
+            ).mediaResourceTypeKey(mediaResourceTypeKey).build();
+    ODataResponse response =
+        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
+            roomData,
+            localProperties);
+    String jsonString = verifyResponse(response);
+    Gson gson = new Gson();
+    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
+    jsonMap = (StringMap<Object>) jsonMap.get("d");
+    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
+
+    assertNull(jsonMap.get("media_src"));
+    assertNull(jsonMap.get("content_type"));
+    assertNull(jsonMap.get("edit_media"));
+  }
+
+  private String verifyResponse(final ODataResponse response) throws IOException {
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+
+    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
+    assertNotNull(json);
+    return json;
   }
 }

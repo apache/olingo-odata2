@@ -40,7 +40,7 @@ public class ExpandSelectTreeCreator {
   private List<SelectItem> initialSelect;
   private List<ArrayList<NavigationPropertySegment>> initialExpand;
 
-  public ExpandSelectTreeCreator(final List<SelectItem> select, 
+  public ExpandSelectTreeCreator(final List<SelectItem> select,
       final List<ArrayList<NavigationPropertySegment>> expand) {
     if (select != null) {
       initialSelect = select;

@@ -542,8 +542,8 @@ public class XmlEntryConsumer {
       reader.require(XMLStreamConstants.END_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_CONTENT);
     } else {
       throw new EntityProviderException(EntityProviderException.INVALID_STATE
-          .addContent("Expected closing 'content' or starting 'properties' but found '" 
-      + reader.getLocalName() + "'."));
+          .addContent("Expected closing 'content' or starting 'properties' but found '"
+              + reader.getLocalName() + "'."));
     }
 
     mediaMetadata.setContentType(contentType);

@@ -164,10 +164,10 @@ public class ExpandSelectTreeCreatorImplTest extends BaseTest {
   @Test
   public void deepLinkInSelectAndExpand() throws Exception {
     // {"all":false,"properties":[],"links":[{"ne_Room":{"all":false,"properties":[],
-    //"links":[{"nr_Employees":{"all":true,"properties":[],"links":[]}}]}}]}
+    // "links":[{"nr_Employees":{"all":true,"properties":[],"links":[]}}]}}]}
     String expected =
         "{\"all\":false,\"properties\":[],\"links\":[{\"ne_Room\":{\"all\":false," +
-        "\"properties\":[],\"links\":[{\"nr_Employees\":{\"all\":true,\"properties\":[],\"links\":[]}}]}}]}";
+            "\"properties\":[],\"links\":[{\"nr_Employees\":{\"all\":true,\"properties\":[],\"links\":[]}}]}}]}";
 
     // $select=ne_Room/nr_Employees&$expand=ne_Room,ne_Manager,ne_Room/nr_Employees,ne_Room/nr_Building
     String actual =
@@ -200,8 +200,8 @@ public class ExpandSelectTreeCreatorImplTest extends BaseTest {
   @Test
   public void complexSelectExpand() throws Exception {
     // {"all":false,"properties":["Age"],"links":[{"ne_Room":{"all":false,"properties":["Seats"],
-    //"links":[]}},{"ne_Team":null},{"ne_Manager":{"all":true,"properties":[],"links":[{"ne_Team":{"all":true,
-    //"properties":[],"links":[{"nt_Employees":{"all":true,"properties":[],"links":[]}}]}}]}}]}
+    // "links":[]}},{"ne_Team":null},{"ne_Manager":{"all":true,"properties":[],"links":[{"ne_Team":{"all":true,
+    // "properties":[],"links":[{"nt_Employees":{"all":true,"properties":[],"links":[]}}]}}]}}]}
 
     String select = "Age,ne_Room/Seats,ne_Team/Name,ne_Manager/*,ne_Manager/ne_Team,ne_Team";
     String expand = "ne_Room/nr_Building,ne_Manager/ne_Team/nt_Employees,ne_Manager/ne_Room";
@@ -225,7 +225,7 @@ public class ExpandSelectTreeCreatorImplTest extends BaseTest {
         ExpandSelectTreeNodeImpl managerNode = (ExpandSelectTreeNodeImpl) links.get(navPropertyName);
         String expected =
             "{\"all\":true,\"properties\":[],\"links\":[{\"ne_Team\":{\"all\":true,\"properties\":[]," +
-            "\"links\":[{\"nt_Employees\":{\"all\":true,\"properties\":[],\"links\":[]}}]}}]}";
+                "\"links\":[{\"nt_Employees\":{\"all\":true,\"properties\":[],\"links\":[]}}]}}]}";
         String actualString = managerNode.toJsonString();
         assertEquals(expected, actualString);
       } else {
@@ -317,10 +317,10 @@ public class ExpandSelectTreeCreatorImplTest extends BaseTest {
   @Test
   public void multiExpandLinkWithoutSelect() throws Exception {
     // {"all":true,"properties":[],"links":[{"ne_Manager":{"all":true,"properties":[],
-    //"links":[{"ne_Manager":{"all":true,"properties":[],"links":[]}}]}}]}
+    // "links":[{"ne_Manager":{"all":true,"properties":[],"links":[]}}]}}]}
     String expected =
         "{\"all\":true,\"properties\":[],\"links\":[{\"ne_Manager\":{\"all\":true,\"properties\":[]," +
-        "\"links\":[{\"ne_Manager\":{\"all\":true,\"properties\":[],\"links\":[]}}]}}]}";
+            "\"links\":[{\"ne_Manager\":{\"all\":true,\"properties\":[],\"links\":[]}}]}}]}";
 
     // $expand=ne_Manager/ne_Manager,ne_Manager
     String actual = getExpandSelectTree(null, "ne_Manager/ne_Manager,ne_Manager").toJsonString();
@@ -344,11 +344,11 @@ public class ExpandSelectTreeCreatorImplTest extends BaseTest {
   @Test
   public void oneSelectDeepExpand() throws Exception {
     // {"all":false,"properties":[],"links":[{"ne_Manager":{"all":true,"properties":[],"links":[{
-    //"ne_Room":{"all":true,"properties":[],"links":[{"nr_Building":{"all":true,"properties":[],"links":[]}}]}}]}}]}
+    // "ne_Room":{"all":true,"properties":[],"links":[{"nr_Building":{"all":true,"properties":[],"links":[]}}]}}]}}]}
     String expected =
         "{\"all\":false,\"properties\":[],\"links\":[{\"ne_Manager\":{\"all\":true,\"properties\":[]," +
-        "\"links\":[{\"ne_Room\":{\"all\":true,\"properties\":[],\"links\":[{\"nr_Building\":{\"all\":true," +
-        "\"properties\":[],\"links\":[]}}]}}]}}]}";
+            "\"links\":[{\"ne_Room\":{\"all\":true,\"properties\":[],\"links\":[{\"nr_Building\":{\"all\":true," +
+            "\"properties\":[],\"links\":[]}}]}}]}}]}";
 
     // $select=ne_Manager $expand=ne_Manager/ne_Room/nr_Building
     String actual = getExpandSelectTree("ne_Manager", "ne_Manager/ne_Room/nr_Building").toJsonString();
@@ -373,7 +373,7 @@ public class ExpandSelectTreeCreatorImplTest extends BaseTest {
     // {"all":false,"properties":["EmployeeId"],"links":[{"ne_Room":{"all":true,"properties":[],"links":[]}}]}
     String expected =
         "{\"all\":false,\"properties\":[\"EmployeeId\"],\"links\":[{\"ne_Room\":{\"all\":true," +
-        "\"properties\":[],\"links\":[]}}]}";
+            "\"properties\":[],\"links\":[]}}]}";
 
     // $select=EmployeeId,ne_Room/* $expand=ne_Room/nr_Building
     String actual = getExpandSelectTree("EmployeeId,ne_Room/*", "ne_Room/nr_Building").toJsonString();
@@ -390,7 +390,7 @@ public class ExpandSelectTreeCreatorImplTest extends BaseTest {
     // {"all":false,"properties":["EmployeeId"],"links":[{"ne_Room":{"all":true,"properties":[],"links":[]}}]}
     String expected =
         "{\"all\":false,\"properties\":[\"EmployeeId\"],\"links\":[{\"ne_Room\":{\"all\":false," +
-        "\"properties\":[\"Id\"],\"links\":[]}}]}";
+            "\"properties\":[\"Id\"],\"links\":[]}}]}";
 
     // $select=EmployeeId,ne_Room/* $expand=ne_Room/nr_Building
     String actual = getExpandSelectTree("EmployeeId,ne_Room/Id", "ne_Room/nr_Building").toJsonString();
@@ -421,12 +421,12 @@ public class ExpandSelectTreeCreatorImplTest extends BaseTest {
   public void twoExpandsTwoSelects() throws Exception {
 
     // {"all":false,"properties":[],"links":[{"ne_Manager":{"all":false,"properties":["EmployeeId"],
-    //"links":[{"ne_Room":{"all":true,"properties":[],"links":[{"nr_Building":{"all":true,"properties":[],
-    //"links":[]}}]}}]}}]}
+    // "links":[{"ne_Room":{"all":true,"properties":[],"links":[{"nr_Building":{"all":true,"properties":[],
+    // "links":[]}}]}}]}}]}
     String expected =
         "{\"all\":false,\"properties\":[],\"links\":[{\"ne_Manager\":{\"all\":false,\"properties\":[\"EmployeeId\"]," +
-        "\"links\":[{\"ne_Room\":{\"all\":true,\"properties\":[],\"links\":[{\"nr_Building\":{\"all\":true," +
-        "\"properties\":[],\"links\":[]}}]}}]}}]}";
+            "\"links\":[{\"ne_Room\":{\"all\":true,\"properties\":[],\"links\":[{\"nr_Building\":{\"all\":true," +
+            "\"properties\":[],\"links\":[]}}]}}]}}]}";
 
     // $select=ne_Manager/EmployeeId,ne_Manager/ne_Room $expand=ne_Manager/ne_Room/nr_Building
     String actual =
@@ -445,16 +445,16 @@ public class ExpandSelectTreeCreatorImplTest extends BaseTest {
   public void twoExpandsTest() throws Exception {
 
     // {"all":false,"properties":[],"links":[{"ne_Manager":{"all":true,"properties":[],
-    //"links":[{"ne_Room":{"all":true,"properties":[],"links":[{"nr_Building":{"all":true,"properties":[],
-    //"links":[]}}]}},{"ne_Team":{"all":true,"properties":[],"links":[]}}]}}]}
+    // "links":[{"ne_Room":{"all":true,"properties":[],"links":[{"nr_Building":{"all":true,"properties":[],
+    // "links":[]}}]}},{"ne_Team":{"all":true,"properties":[],"links":[]}}]}}]}
     String expected1 =
         "{\"all\":false,\"properties\":[],\"links\":[{\"ne_Manager\":{\"all\":true,\"properties\":[]," +
-        "\"links\":[{\"ne_Room\":{\"all\":true,\"properties\":[],\"links\":[{\"nr_Building\":{\"all\":true," +
-        "\"properties\":[],\"links\":[]}}]}},{\"ne_Team\":{\"all\":true,\"properties\":[],\"links\":[]}}]}}]}";
+            "\"links\":[{\"ne_Room\":{\"all\":true,\"properties\":[],\"links\":[{\"nr_Building\":{\"all\":true," +
+            "\"properties\":[],\"links\":[]}}]}},{\"ne_Team\":{\"all\":true,\"properties\":[],\"links\":[]}}]}}]}";
     String expected2 =
         "{\"all\":false,\"properties\":[],\"links\":[{\"ne_Manager\":{\"all\":true,\"properties\":[]," +
-        "\"links\":[{\"ne_Team\":{\"all\":true,\"properties\":[],\"links\":[]}},{\"ne_Room\":{\"all\":true," +
-        "\"properties\":[],\"links\":[{\"nr_Building\":{\"all\":true,\"properties\":[],\"links\":[]}}]}}]}}]}";
+            "\"links\":[{\"ne_Team\":{\"all\":true,\"properties\":[],\"links\":[]}},{\"ne_Room\":{\"all\":true," +
+            "\"properties\":[],\"links\":[{\"nr_Building\":{\"all\":true,\"properties\":[],\"links\":[]}}]}}]}}]}";
 
     // $select=ne_Manager $expand=ne_Manager/ne_Room/nr_Building,ne_Manager/ne_Team
     String actual =
@@ -490,11 +490,11 @@ public class ExpandSelectTreeCreatorImplTest extends BaseTest {
   public void oneExpandsFourSelects() throws Exception {
 
     // {"all":false,"properties":[],"links":[{"ne_Manager":{"all":true,"properties":[],"links":[{"ne_Room":
-    //{"all":true,"properties":[],"links":[{"nr_Building":{"all":true,"properties":[],"links":[]}}]}}]}}]}
+    // {"all":true,"properties":[],"links":[{"nr_Building":{"all":true,"properties":[],"links":[]}}]}}]}}]}
     String expected =
         "{\"all\":false,\"properties\":[],\"links\":[{\"ne_Manager\":{\"all\":true,\"properties\":[],\"links\":" +
-        "[{\"ne_Room\":{\"all\":true,\"properties\":[],\"links\":[{\"nr_Building\":{\"all\":true,\"properties\":" +
-        "[],\"links\":[]}}]}}]}}]}";
+            "[{\"ne_Room\":{\"all\":true,\"properties\":[],\"links\":[{\"nr_Building\":{\"all\":true,\"properties\":" +
+            "[],\"links\":[]}}]}}]}}]}";
 
     // $select=ne_Manager/EmployeeId,ne_Manager/ne_Room/Id,ne_Manager/ne_Room/nr_Building/Id,ne_Manager
     // $expand=ne_Manager/ne_Room/nr_Building

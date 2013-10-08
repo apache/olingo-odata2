@@ -94,19 +94,19 @@ public class TestParserExceptions extends TestBase {
     GetPTF(edmEtAllTypes, "'text' eq NotAProperty")
         .aExMsgText(
             "No property \"NotAProperty\" exists in type \"TecRefScenario.EtAllTypes\" at" +
-            " position 11 in \"'text' eq NotAProperty\".");
+                " position 11 in \"'text' eq NotAProperty\".");
 
     // CASE 3
     GetPTF(edmEtAllTypes, "Complex/NotAProperty")
         .aExMsgText(
             "No property \"NotAProperty\" exists in type \"TecRefScenario.CtAllTypes\" at" +
-            " position 9 in \"Complex/NotAProperty\".");
+                " position 9 in \"Complex/NotAProperty\".");
 
     // CASE 4
     GetPTF(edmEtAllTypes, "'text' eq Complex/NotAProperty")
         .aExMsgText(
             "No property \"NotAProperty\" exists in type \"TecRefScenario.CtAllTypes\" at " +
-            "position 19 in \"'text' eq Complex/NotAProperty\".");
+                "position 19 in \"'text' eq Complex/NotAProperty\".");
 
     // CASE 5
     GetPTF(edmEtAllTypes, "String/NotAProperty").aExMsgText(
@@ -146,7 +146,7 @@ public class TestParserExceptions extends TestBase {
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"startswith\" at position 1 in \"startswith()\" with the specified " +
-            "arguments. Method \"startswith\" requires exact 2 argument(s).");
+                "arguments. Method \"startswith\" requires exact 2 argument(s).");
 
     // CASE 13
     // http://services.odata.org/Northwind/Northwind.svc/Products(1)/Supplier?$filter=startswith('A')
@@ -156,7 +156,7 @@ public class TestParserExceptions extends TestBase {
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"startswith\" at position 1 in \"startswith('A')\" with the specified " +
-            "arguments. Method \"startswith\" requires exact 2 argument(s).");
+                "arguments. Method \"startswith\" requires exact 2 argument(s).");
 
     // CASE 14
     // http://services.odata.org/Northwind/Northwind.svc/Products(1)/Supplier?$filter=startswith('A','B')
@@ -171,18 +171,18 @@ public class TestParserExceptions extends TestBase {
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"startswith\" at position 1 in \"startswith('A','B','C')\" with the" +
-            " specified arguments. Method \"startswith\" requires exact 2 argument(s).");
+                " specified arguments. Method \"startswith\" requires exact 2 argument(s).");
 
     // CASE 16
     GetPTF("concat()")
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"concat()\" with the specified arguments." +
-            " Method \"concat\" requires 2 or more arguments.");
+                " Method \"concat\" requires 2 or more arguments.");
     // CASE 17
     GetPTF("concat('A')")
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"concat('A')\" with the specified " +
-            "arguments. Method \"concat\" requires 2 or more arguments.");
+                "arguments. Method \"concat\" requires 2 or more arguments.");
     // CASE 18
     GetPTF("concat('A','B')").aSerialized("{concat('A','B')}");
     // CASE 19
@@ -192,7 +192,7 @@ public class TestParserExceptions extends TestBase {
     GetPTF("'A' and concat('A')")
         .aExMsgText(
             "No applicable method found for \"concat\" at position 9 in \"'A' and concat('A')\" with the specified " +
-            "arguments. Method \"concat\" requires 2 or more arguments.");
+                "arguments. Method \"concat\" requires 2 or more arguments.");
 
     // CASE 1
     // http://services.odata.org/Northwind/Northwind.svc/Products(1)/Supplier?$filter=concat(
@@ -239,12 +239,12 @@ public class TestParserExceptions extends TestBase {
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX3()\" with the specified " +
-            "arguments. Method \"concat\" requires 2 or more arguments.");
+                "arguments. Method \"concat\" requires 2 or more arguments.");
     GetPTF("testingMINMAX3('A')")
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX3('A')\" with the specified " +
-            "arguments. Method \"concat\" requires 2 or more arguments.");
+                "arguments. Method \"concat\" requires 2 or more arguments.");
     GetPTF("testingMINMAX3('A','B')").aSerialized("{concat('A','B')}");
     GetPTF("testingMINMAX3('A','B','C')").aSerialized("{concat('A','B','C')}");
 
@@ -255,17 +255,17 @@ public class TestParserExceptions extends TestBase {
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX4('A')\" with the specified " +
-            "arguments. Method \"concat\" requires maximal 0 arguments.");
+                "arguments. Method \"concat\" requires maximal 0 arguments.");
     GetPTF("testingMINMAX4('A','B')")
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX4('A','B')\" with the " +
-            "specified arguments. Method \"concat\" requires maximal 0 arguments.");
+                "specified arguments. Method \"concat\" requires maximal 0 arguments.");
     GetPTF("testingMINMAX4('A','B','C')")
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX4('A','B','C')\" with the " +
-            "specified arguments. Method \"concat\" requires maximal 0 arguments.");
+                "specified arguments. Method \"concat\" requires maximal 0 arguments.");
 
     // CASE 9
     // min =-1, max = 2,
@@ -276,7 +276,7 @@ public class TestParserExceptions extends TestBase {
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX5('A','B','C')\" with the " +
-            "specified arguments. Method \"concat\" requires maximal 2 arguments.");
+                "specified arguments. Method \"concat\" requires maximal 2 arguments.");
 
     // CASE 10
     // min =1, max = 2,
@@ -284,14 +284,14 @@ public class TestParserExceptions extends TestBase {
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX6()\" with the specified " +
-            "arguments. Method \"concat\" requires between 1 and 2 arguments.");
+                "arguments. Method \"concat\" requires between 1 and 2 arguments.");
     GetPTF("testingMINMAX6('A')").aSerialized("{concat('A')}");
     GetPTF("testingMINMAX6('A','B')").aSerialized("{concat('A','B')}");
     GetPTF("testingMINMAX6('A','B','C')")
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX6('A','B','C')\" with the " +
-            "specified arguments. Method \"concat\" requires between 1 and 2 arguments.");
+                "specified arguments. Method \"concat\" requires between 1 and 2 arguments.");
 
     // CASE 11
     // min =1, max = 2,
@@ -299,18 +299,18 @@ public class TestParserExceptions extends TestBase {
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX7()\" with the specified " +
-            "arguments. Method \"concat\" requires exact 1 argument(s).");
+                "arguments. Method \"concat\" requires exact 1 argument(s).");
     GetPTF("testingMINMAX7('A')").aSerialized("{concat('A')}");
     GetPTF("testingMINMAX7('A','B')")
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX7('A','B')\" with the " +
-            "specified arguments. Method \"concat\" requires exact 1 argument(s).");
+                "specified arguments. Method \"concat\" requires exact 1 argument(s).");
     GetPTF("testingMINMAX7('A','B','C')")
         .aExType(ExpressionParserException.class)
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"testingMINMAX7('A','B','C')\" with " +
-            "the specified arguments. Method \"concat\" requires exact 1 argument(s).");
+                "the specified arguments. Method \"concat\" requires exact 1 argument(s).");
 
     // CASE 12
     // http://services.odata.org/Northwind/Northwind.svc/Products(1)/Supplier?$filter=concat('a' 'b')
@@ -342,7 +342,7 @@ public class TestParserExceptions extends TestBase {
         .aExKey(ExpressionParserException.INVALID_TYPES_FOR_BINARY_OPERATOR)
         .aExMsgText(
             "Operator \"add\" incompatible with operand types \"System.Uint7\" and \"Edm.String\" at " +
-            "position 5 in \"123 add 'abc'\".");
+                "position 5 in \"123 add 'abc'\".");
   }
 
   @Test

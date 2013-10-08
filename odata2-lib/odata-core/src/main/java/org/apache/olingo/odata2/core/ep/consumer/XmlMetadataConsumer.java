@@ -324,8 +324,8 @@ public class XmlMetadataConsumer {
     }
     associationSet.setAnnotationAttributes(readAnnotationAttribute(reader));
     while (reader.hasNext()
-        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI()) 
-            && XmlMetadataConstants.EDM_ASSOCIATION_SET.equals(reader.getLocalName()))) {
+        && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
+        && XmlMetadataConstants.EDM_ASSOCIATION_SET.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);

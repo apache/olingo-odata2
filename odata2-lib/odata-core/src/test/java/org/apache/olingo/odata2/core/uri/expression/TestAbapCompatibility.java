@@ -392,7 +392,7 @@ public class TestAbapCompatibility extends TestBase {
     GetPTF("concat('125')")
         .aExMsgText(
             "No applicable method found for \"concat\" at position 1 in \"concat('125')\" with the " +
-            "specified arguments. Method \"concat\" requires 2 or more arguments.");
+                "specified arguments. Method \"concat\" requires 2 or more arguments.");
 
     // lcl_helper=>veri_expression_ex(
     // iv_expression = `indexof('a','b','c')`
@@ -401,7 +401,7 @@ public class TestAbapCompatibility extends TestBase {
     GetPTF("indexof('a','b','c')")
         .aExMsgText(
             "No applicable method found for \"indexof\" at position 1 in \"indexof('a','b','c')\" with " +
-            "the specified arguments. Method \"indexof\" requires exact 2 argument(s).");
+                "the specified arguments. Method \"indexof\" requires exact 2 argument(s).");
 
     // lcl_helper=>veri_expression_ex(
     // iv_expression = `replace('aBa','B','CCC')`

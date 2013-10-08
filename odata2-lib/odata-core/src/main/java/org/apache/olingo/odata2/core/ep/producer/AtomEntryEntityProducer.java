@@ -95,21 +95,23 @@ public class AtomEntryEntityProducer {
       }
 
       // write all atom infos (mandatory and optional)
-      appendAtomMandatoryParts(writer, eia, data);
+      String selfLink = createSelfLink(eia, data, null);
+      appendAtomMandatoryParts(writer, eia, data, selfLink);
       appendAtomOptionalParts(writer, eia, data);
 
       if (eia.getEntityType().hasStream()) {
         // write all links
-        appendAtomEditLink(writer, eia, data);
-        appendAtomContentLink(writer, eia, data, properties.getMediaResourceMimeType());
+        appendAtomEditLink(writer, eia, data, selfLink);
+        // TODO: fix
+        appendAtomContentLink(writer, eia, data, selfLink);
         appendAtomNavigationLinks(writer, eia, data);
         // write properties/content
         appendCustomProperties(writer, eia, data);
-        appendAtomContentPart(writer, eia, data, properties.getMediaResourceMimeType());
+        appendAtomContentPart(writer, eia, data, selfLink);
         appendProperties(writer, eia, data);
       } else {
         // write all links
-        appendAtomEditLink(writer, eia, data);
+        appendAtomEditLink(writer, eia, data, selfLink);
         appendAtomNavigationLinks(writer, eia, data);
         // write properties/content
         appendCustomProperties(writer, eia, data);
@@ -295,12 +297,10 @@ public class AtomEntryEntityProducer {
   }
 
   private void appendAtomEditLink(final XMLStreamWriter writer, final EntityInfoAggregator eia,
-      final Map<String, Object> data) throws EntityProviderException {
+      final Map<String, Object> data, final String selfLink) throws EntityProviderException {
     try {
-      String self = createSelfLink(eia, data, null);
-
       writer.writeStartElement(FormatXml.ATOM_LINK);
-      writer.writeAttribute(FormatXml.ATOM_HREF, self);
+      writer.writeAttribute(FormatXml.ATOM_HREF, selfLink);
       writer.writeAttribute(FormatXml.ATOM_REL, Edm.LINK_REL_EDIT);
       writer.writeAttribute(FormatXml.ATOM_TITLE, eia.getEntityType().getName());
       writer.writeEndElement();
@@ -312,16 +312,21 @@ public class AtomEntryEntityProducer {
   }
 
   private void appendAtomContentLink(final XMLStreamWriter writer, final EntityInfoAggregator eia,
-      final Map<String, Object> data, String mediaResourceMimeType) throws EntityProviderException {
+      final Map<String, Object> data, final String selfLink) throws EntityProviderException {
     try {
-      String self = createSelfLink(eia, data, "$value");
-
+      String mediaResourceMimeType = properties.getMediaResourceMimeType();
       if (mediaResourceMimeType == null) {
-        mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
+        String mediaResourceMimeTypeKey = properties.getMediaResourceTypeKey();
+        if (mediaResourceMimeTypeKey != null) {
+          mediaResourceMimeType = extractKey(data, mediaResourceMimeTypeKey);
+        }
+        if (mediaResourceMimeType == null) {
+          mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
+        }
       }
 
       writer.writeStartElement(FormatXml.ATOM_LINK);
-      writer.writeAttribute(FormatXml.ATOM_HREF, self);
+      writer.writeAttribute(FormatXml.ATOM_HREF, selfLink + "/$value");
       writer.writeAttribute(FormatXml.ATOM_REL, Edm.LINK_REL_EDIT_MEDIA);
       writer.writeAttribute(FormatXml.ATOM_TYPE, mediaResourceMimeType);
       writer.writeEndElement();
@@ -331,12 +336,28 @@ public class AtomEntryEntityProducer {
   }
 
   private void appendAtomContentPart(final XMLStreamWriter writer, final EntityInfoAggregator eia,
-      final Map<String, Object> data, String mediaResourceMimeType) throws EntityProviderException {
+      final Map<String, Object> data, final String selfLink) throws EntityProviderException {
     try {
-      String self = createSelfLink(eia, data, "$value");
+
+      String mediaResourceSourceKey = properties.getMediaResourceSourceKey();
+      String mediaResourceMimeType = properties.getMediaResourceMimeType();
+
+      String self = null;
+      if (mediaResourceSourceKey != null) {
+        self = extractKey(data, mediaResourceSourceKey);
+      }
+      if (self == null) {
+        self = selfLink + "/$value";
+      }
 
       if (mediaResourceMimeType == null) {
-        mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
+        String mediaResourceMimeTypeKey = properties.getMediaResourceTypeKey();
+        if (mediaResourceMimeTypeKey != null) {
+          mediaResourceMimeType = extractKey(data, mediaResourceMimeTypeKey);
+        }
+        if (mediaResourceMimeType == null) {
+          mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
+        }
       }
 
       writer.writeStartElement(FormatXml.ATOM_CONTENT);
@@ -348,11 +369,22 @@ public class AtomEntryEntityProducer {
     }
   }
 
+  private String extractKey(final Map<String, Object> data, final String mediaResourceMimeTypeKey)
+      throws EntityProviderException {
+    Object key = data.get(mediaResourceMimeTypeKey);
+    if (key == null || key instanceof String) {
+      return (String) key;
+    } else {
+      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+          .addContent("Key must be of type String"));
+    }
+  }
+
   private void appendAtomMandatoryParts(final XMLStreamWriter writer, final EntityInfoAggregator eia,
-      final Map<String, Object> data) throws EntityProviderException {
+      final Map<String, Object> data, final String selfLink) throws EntityProviderException {
     try {
       writer.writeStartElement(FormatXml.ATOM_ID);
-      location = properties.getServiceRoot().toASCIIString() + createSelfLink(eia, data, null);
+      location = properties.getServiceRoot().toASCIIString() + selfLink;
       writer.writeCharacters(location);
       writer.writeEndElement();
 
@@ -383,7 +415,7 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  String getUpdatedString(final EntityInfoAggregator eia, final Map<String, Object> data) 
+  String getUpdatedString(final EntityInfoAggregator eia, final Map<String, Object> data)
       throws EdmSimpleTypeException {
     Object updateDate = null;
     EdmFacets updateFacets = null;
@@ -507,7 +539,7 @@ public class AtomEntryEntityProducer {
 
       final EdmSimpleType type = (EdmSimpleType) keyPropertyInfo.getType();
       try {
-        keys.append(Encoder.encode(type.valueToString(data.get(name), EdmLiteralKind.URI, 
+        keys.append(Encoder.encode(type.valueToString(data.get(name), EdmLiteralKind.URI,
             keyPropertyInfo.getFacets())));
       } catch (final EdmSimpleTypeException e) {
         throw new EntityProviderException(EntityProviderException.COMMON, e);

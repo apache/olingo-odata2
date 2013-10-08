@@ -254,8 +254,8 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testBaseUriWithEncoding() throws ClientProtocolException, IOException, ODataException, 
-  URISyntaxException {
+  public void testBaseUriWithEncoding() throws ClientProtocolException, IOException, ODataException,
+      URISyntaxException {
     server.setPathSplit(3);
     startServer();
 

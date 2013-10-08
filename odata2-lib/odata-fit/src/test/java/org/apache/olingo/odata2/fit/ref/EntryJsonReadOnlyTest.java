@@ -115,7 +115,7 @@ public class EntryJsonReadOnlyTest extends AbstractRefTest {
   public void entryWithTwoLevelInline() throws Exception {
     HttpResponse response =
         callUri("Employees('5')?$expand=ne_Room/nr_Building&$select=Age,ne_Room/Seats," +
-        		"ne_Room/nr_Building/Name&$format=json");
+            "ne_Room/nr_Building/Name&$format=json");
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
     assertEquals("{\"d\":{\"__metadata\":{"
         + "\"id\":\"" + getEndpoint() + "Employees('5')\","
@@ -135,7 +135,7 @@ public class EntryJsonReadOnlyTest extends AbstractRefTest {
 
     response =
         callUri("Employees('1')?$expand=ne_Room/nr_Building&$select=EntryDate,ne_Manager,ne_Room/*," +
-        		"ne_Room/nr_Building/Name&$format=json");
+            "ne_Room/nr_Building/Name&$format=json");
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
     assertEquals("{\"d\":{\"__metadata\":{"
         + "\"id\":\"" + getEndpoint() + "Employees('1')\","

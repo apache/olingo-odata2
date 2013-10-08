@@ -69,7 +69,7 @@ public class ODataRequestHandler {
   private final ODataService service;
   private final ODataContext context;
 
-  public ODataRequestHandler(final ODataServiceFactory factory, final ODataService service, 
+  public ODataRequestHandler(final ODataServiceFactory factory, final ODataService service,
       final ODataContext context) {
     serviceFactory = factory;
     this.service = service;
@@ -413,7 +413,7 @@ public class ODataRequestHandler {
 
     // Adjust processor feature.
     if (processorFeature == EntitySetProcessor.class) {
-      processorFeature = uriInfo.getTargetEntitySet().getEntityType().hasStream() ? EntityMediaProcessor.class : 
+      processorFeature = uriInfo.getTargetEntitySet().getEntityType().hasStream() ? EntityMediaProcessor.class :
           EntityProcessor.class; // The request must contain a single entity!
     } else if (processorFeature == EntityLinksProcessor.class) {
       processorFeature = EntityLinkProcessor.class; // The request must contain a single link!

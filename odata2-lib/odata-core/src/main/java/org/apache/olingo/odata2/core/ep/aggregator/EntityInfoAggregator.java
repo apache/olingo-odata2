@@ -163,7 +163,7 @@ public class EntityInfoAggregator {
    * if create of {@link EntityPropertyInfo} something goes wrong (e.g. exceptions during
    * access of {@link EntityPropertyInfo}).
    */
-  public static Map<String, EntityPropertyInfo> create(final EdmComplexType complexType) 
+  public static Map<String, EntityPropertyInfo> create(final EdmComplexType complexType)
       throws EntityProviderException {
     try {
       EntityInfoAggregator entityInfo = new EntityInfoAggregator();

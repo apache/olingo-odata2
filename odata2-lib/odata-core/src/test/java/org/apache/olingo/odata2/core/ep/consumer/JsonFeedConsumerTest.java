@@ -304,11 +304,11 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
     String content =
         "{\"d\":{\"__count\":\"3\",\"results\":[{" +
-        "\"__metadata\":{\"id\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\"," +
-        "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\",\"type\":\"RefScenario.Team\"}," +
-        "\"Id\":\"1\",\"Name\":\"Team 1\",\"isScrumTeam\":false,\"nt_Employees\":{\"__deferred\":{" +
-        "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')/nt_Employees\"}}}]," +
-        "\"__next\":\"Rooms?$skiptoken=98&$inlinecount=allpages\",\"__delta\":\"deltalink\"}}";
+            "\"__metadata\":{\"id\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\"," +
+            "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\",\"type\":\"RefScenario.Team\"}," +
+            "\"Id\":\"1\",\"Name\":\"Team 1\",\"isScrumTeam\":false,\"nt_Employees\":{\"__deferred\":{" +
+            "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')/nt_Employees\"}}}]," +
+            "\"__next\":\"Rooms?$skiptoken=98&$inlinecount=allpages\",\"__delta\":\"deltalink\"}}";
     assertNotNull(content);
     InputStream contentBody = createContentAsStream(content);
 

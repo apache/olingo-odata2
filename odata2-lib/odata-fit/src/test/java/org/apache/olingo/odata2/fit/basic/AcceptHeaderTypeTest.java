@@ -163,7 +163,7 @@ public class AcceptHeaderTypeTest extends AbstractBasicTest {
 
   @Test
   public void illegalLwsInAcceptHeaderParameter() throws Exception {
-    testGetRequest("Employees('1')", "application/xml; param=\talskdf;", HttpStatusCodes.BAD_REQUEST, 
+    testGetRequest("Employees('1')", "application/xml; param=\talskdf;", HttpStatusCodes.BAD_REQUEST,
         "application/xml");
   }
 

@@ -123,7 +123,7 @@ public class FeedJsonReadOnlyTest extends AbstractRefTest {
   public void feedWithTwoLevelInline() throws Exception {
     final HttpResponse response =
         callUri("Employees()?$expand=ne_Room/nr_Building&$select=Age,ne_Room/Seats,ne_Room/nr_Building/Name&" +
-        		"$top=2&$format=json");
+            "$top=2&$format=json");
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
     assertEquals("{\"d\":{\"results\":[{\"__metadata\":{"
         + "\"id\":\"" + getEndpoint() + "Employees('1')\","

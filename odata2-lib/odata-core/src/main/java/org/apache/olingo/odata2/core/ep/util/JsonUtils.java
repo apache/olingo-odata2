@@ -42,7 +42,7 @@ public class JsonUtils {
           String name = reader.nextName();
           if (!("d".equals(name) ^ "results".equals(name))) {
             // TODO I18N
-            throw new EntityProviderException(EntityProviderException.COMMON, name + 
+            throw new EntityProviderException(EntityProviderException.COMMON, name +
                 " not expected, only d or results");
           }
         }
