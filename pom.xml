@@ -75,6 +75,7 @@
     <modules>
         <module>odata2-lib</module>
         <module>odata2-processor-jpa</module>
+        <module>odata2-edm-annotation</module>
         <module>odata2-dist</module>
         <module>odata2-sample</module>
     </modules>
