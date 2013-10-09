@@ -19,12 +19,18 @@
 package org.apache.olingo.odata2.core.ep;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
+import org.apache.olingo.odata2.core.ep.producer.MyCallback;
+import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.Test;
 
@@ -50,14 +56,34 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
 
   @Test
   public void buildPropertiesDefaults() throws Exception {
-    URI baseUri = new URI("http://localhost:80/");
-    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(baseUri).build();
+    URI serviceRoot = new URI("http://localhost:80/");
+    Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
+    callbacks.put("aCallback", new MyCallback(null, null));
+    ExpandSelectTreeNode expandSelectTree = new ExpandSelectTreeNodeImpl();
+    URI selfLink = new URI("http://some.uri");
+    final EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(serviceRoot)
+        .callbacks(callbacks)
+        .expandSelectTree(expandSelectTree)
+        .inlineCount(1)
+        .inlineCountType(InlineCount.ALLPAGES)
+        .mediaResourceTypeKey("~typeKey")
+        .mediaResourceSourceKey("~srcKey")
+        .mediaResourceMimeType("image/png")
+        .nextLink("http://localhost")
+        .selfLink(selfLink)
+        .build();
 
-    assertEquals("http://localhost:80/", properties.getServiceRoot().toASCIIString());
-    assertNull(properties.getInlineCountType());
-    assertNull(properties.getInlineCount());
-    assertNull(properties.getMediaResourceMimeType());
-    assertNull(properties.getNextLink());
+    assertEquals("Wrong amount of callbacks.", 1, properties.getCallbacks().size());
+    assertTrue("No callback found.", properties.getCallbacks().containsKey("aCallback"));
+    assertEquals("Wrong expand select tree.", expandSelectTree, properties.getExpandSelectTree());
+    assertEquals("Wrong self link.", selfLink, properties.getSelfLink());
+    assertEquals("Wrong media resource mime type.", "image/png", properties.getMediaResourceMimeType());
+    assertEquals("Wrong media resource type key.", "~typeKey", properties.getMediaResourceTypeKey());
+    assertEquals("Wrong media resource src key.", "~srcKey", properties.getMediaResourceSourceKey());
+    assertEquals("Wrong base uri.", "http://localhost:80/", properties.getServiceRoot().toASCIIString());
+    assertEquals("Wrong inline count type.", InlineCount.ALLPAGES, properties.getInlineCountType());
+    assertEquals("Wrong inline count.", Integer.valueOf(1), properties.getInlineCount());
+    assertEquals("Wrong nextLink", "http://localhost", properties.getNextLink());
   }
 
   @Test
@@ -68,5 +94,42 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .mediaResourceMimeType(mediaResourceMimeType)
         .build();
     assertEquals("Wrong mime type.", "text/html", properties.getMediaResourceMimeType());
+  }
+  
+  @Test
+  public void buildEntryPropertiesFromExisting() throws Exception {
+    URI serviceRoot = new URI("http://localhost:80/");
+    Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
+    callbacks.put("aCallback", new MyCallback(null, null));
+    ExpandSelectTreeNode expandSelectTree = new ExpandSelectTreeNodeImpl();
+    URI selfLink = new URI("http://some.uri");
+    final EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(serviceRoot)
+        .callbacks(callbacks)
+        .expandSelectTree(expandSelectTree)
+        .inlineCount(1)
+        .inlineCountType(InlineCount.ALLPAGES)
+        .mediaResourceTypeKey("~typeKey")
+        .mediaResourceSourceKey("~srcKey")
+        .mediaResourceMimeType("image/png")
+        .nextLink("http://localhost")
+        .selfLink(selfLink)
+        .build();
+
+    //
+    final EntityProviderWriteProperties fromProperties = 
+        EntityProviderWriteProperties.fromProperties(properties).build();
+    
+    //
+    assertEquals(1, fromProperties.getCallbacks().size());
+    assertTrue(fromProperties.getCallbacks().containsKey("aCallback"));
+    assertEquals(expandSelectTree, fromProperties.getExpandSelectTree());
+    assertEquals(selfLink, fromProperties.getSelfLink());
+    assertEquals("image/png", fromProperties.getMediaResourceMimeType());
+    assertEquals("~typeKey", fromProperties.getMediaResourceTypeKey());
+    assertEquals("~srcKey", fromProperties.getMediaResourceSourceKey());
+    assertEquals("Wrong base uri.", "http://localhost:80/", fromProperties.getServiceRoot().toASCIIString());
+    assertEquals("Wrong inline count type.", InlineCount.ALLPAGES, fromProperties.getInlineCountType());
+    assertEquals("Wrong inline count.", Integer.valueOf(1), fromProperties.getInlineCount());
+    assertEquals("Wrong nextLink", "http://localhost", fromProperties.getNextLink());
   }
 }

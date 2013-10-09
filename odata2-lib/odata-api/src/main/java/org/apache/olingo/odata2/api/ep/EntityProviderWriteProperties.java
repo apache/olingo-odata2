@@ -219,6 +219,8 @@ public class EntityProviderWriteProperties {
 
     public ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
       this.properties.mediaResourceMimeType = properties.getMediaResourceMimeType();
+      this.properties.mediaResourceTypeKey = properties.getMediaResourceTypeKey();
+      this.properties.mediaResourceSourceKey = properties.getMediaResourceSourceKey();
       this.properties.inlineCountType = properties.getInlineCountType();
       this.properties.inlineCount = properties.getInlineCount();
       this.properties.nextLink = properties.getNextLink();
@@ -230,9 +232,8 @@ public class EntityProviderWriteProperties {
   }
 
   public static ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
-    final ODataEntityProviderPropertiesBuilder b = EntityProviderWriteProperties.serviceRoot(properties
-        .getServiceRoot());
-    b.fromProperties(properties);
-    return b;
+    final ODataEntityProviderPropertiesBuilder builder = 
+        EntityProviderWriteProperties.serviceRoot(properties.getServiceRoot());
+    return builder.fromProperties(properties);
   }
 }
