@@ -84,8 +84,6 @@ import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.NavigationSegment;
 import org.apache.olingo.odata2.api.uri.PathInfo;
-import org.apache.olingo.odata2.api.uri.PathSegment;
-import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.UriParser;
 import org.apache.olingo.odata2.api.uri.expression.BinaryExpression;
 import org.apache.olingo.odata2.api.uri.expression.CommonExpression;
@@ -1113,45 +1111,21 @@ public class ListsProcessor extends ODataSingleProcessor {
   }
 
   private Map<String, Object> parseLinkUri(final EdmEntitySet targetEntitySet, final String uriString)
-      throws ODataException {
-    final String serviceRoot = getContext().getPathInfo().getServiceRoot().toString();
-    final String path = uriString.startsWith(serviceRoot.toString()) ?
-        uriString.substring(serviceRoot.length()) : uriString;
-    final PathSegment pathSegment = new PathSegment() {
-      @Override
-      public String getPath() {
-        return path;
-      }
-
-      @Override
-      public Map<String, List<String>> getMatrixParameters() {
-        return null;
-      }
-    };
-
-    final Edm edm = getContext().getService().getEntityDataModel();
+      throws EdmException {
     ODataContext context = getContext();
-    final int timingHandle = context.startRuntimeMeasurement("UriParser", "parse");
+    final int timingHandle = context.startRuntimeMeasurement("UriParser", "getKeyPredicatesFromEntityLink");
 
-    UriInfo uri = null;
+    List<KeyPredicate> key = null;
     try {
-      uri = UriParser.parse(edm, Arrays.asList(pathSegment), Collections.<String, String> emptyMap());
+      key = UriParser.getKeyPredicatesFromEntityLink(targetEntitySet, uriString,
+          context.getPathInfo().getServiceRoot());
     } catch (ODataException e) {
       // We don't understand the link target. This could also be seen as an error.
     }
 
     context.stopRuntimeMeasurement(timingHandle);
 
-    if (uri == null) {
-      return null;
-    } else if (uri.getTargetEntitySet() == null
-        || uri.getTargetEntitySet() != targetEntitySet
-        || !uri.getNavigationSegments().isEmpty()
-        || uri.getKeyPredicates().isEmpty()) {
-      throw new ODataBadRequestException(ODataBadRequestException.BODY);
-    } else {
-      return mapKey(uri.getKeyPredicates());
-    }
+    return key == null ? null : mapKey(key);
   }
 
   private <T> void createInlinedEntities(final EdmEntitySet entitySet, final T data, final ODataEntry entryValues)

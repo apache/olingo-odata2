@@ -36,12 +36,14 @@ import java.util.Map;
 
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
+import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.UriNotMatchingException;
@@ -909,4 +911,47 @@ public class UriParserTest extends BaseTest {
     parseWrongUri("Teams('1')?$expand=nt_Employees//ne_Manager", UriSyntaxException.EMPTYSEGMENT);
   }
 
+  private void wrongGetKey(final EdmEntitySet entitySet, final String link, final String serviceRoot,
+      final MessageReference exceptionContext) throws ODataException {
+    try {
+      new UriParserImpl(null).getKeyFromEntityLink(entitySet, link,
+          serviceRoot == null ? null : URI.create(serviceRoot));
+      fail("Expected UriParserException not thrown");
+    } catch (ODataMessageException e) {
+      assertNotNull(e);
+      assertEquals(exceptionContext.getKey(), e.getMessageReference().getKey());
+    }
+  }
+
+  @Test
+  public void getKeyFromLink() throws Exception {
+    final EdmEntitySet entitySet = edm.getDefaultEntityContainer().getEntitySet("Teams");
+    final EdmEntitySet entitySet2 = edm.getEntityContainer("Container2").getEntitySet("Photos");
+    final String serviceRoot = "http://service.com/example.svc/";
+    final UriParserImpl parser = new UriParserImpl(null);
+
+    List<KeyPredicate> key = parser.getKeyFromEntityLink(entitySet, "Teams('1')", null);
+    assertEquals(1, key.size());
+    assertEquals(entitySet.getEntityType().getKeyProperties().get(0), key.get(0).getProperty());
+    assertEquals("1", key.get(0).getLiteral());
+
+    key = parser.getKeyFromEntityLink(entitySet, "Teams(Id='2')", URI.create(serviceRoot));
+    assertEquals("2", key.get(0).getLiteral());
+
+    key = parser.getKeyFromEntityLink(entitySet, serviceRoot + "Teams('3')", URI.create(serviceRoot));
+    assertEquals("3", key.get(0).getLiteral());
+
+    key = parser.getKeyFromEntityLink(entitySet2, "Container2.Photos(Id=4,Type='test')", null);
+    assertEquals(2, key.size());
+
+    wrongGetKey(entitySet, "someContainer.Teams('5')", null, UriNotMatchingException.CONTAINERNOTFOUND);
+    wrongGetKey(entitySet, "Employees('6')/ne_Team", null, UriNotMatchingException.MATCHPROBLEM);
+    wrongGetKey(entitySet, "Teams()", null, UriSyntaxException.ENTITYSETINSTEADOFENTITY);
+    wrongGetKey(entitySet, "Teams('8')/Id", null, UriNotMatchingException.MATCHPROBLEM);
+    wrongGetKey(entitySet, "Rooms('9')", null, UriNotMatchingException.NOTFOUND);
+    wrongGetKey(entitySet, "anotherServiceRoot/Teams('10')", serviceRoot, UriNotMatchingException.NOTFOUND);
+    wrongGetKey(entitySet2, "Photos(Id=11,Type='test')", null, UriNotMatchingException.CONTAINERNOTFOUND);
+    wrongGetKey(entitySet2, "anotherContainer.Photos(Id=12,Type='test')", null,
+        UriNotMatchingException.CONTAINERNOTFOUND);
+  }
 }

@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
+import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
@@ -852,5 +854,34 @@ public class UriParserImpl extends UriParser {
   public ExpandSelectTreeNode buildExpandSelectTree(final List<SelectItem> select,
       final List<ArrayList<NavigationPropertySegment>> expand) throws EdmException {
     return new ExpandSelectTreeCreator(select, expand).create();
+  }
+
+  @Override
+  public List<KeyPredicate> getKeyFromEntityLink(final EdmEntitySet entitySet, final String entityLink,
+      final URI serviceRoot) throws ODataException {
+    final String relativeLink = serviceRoot == null ? entityLink :
+        entityLink.startsWith(serviceRoot.toString()) ?
+            entityLink.substring(serviceRoot.toString().length()) : entityLink;
+    final Matcher matcher = INITIAL_SEGMENT_PATTERN.matcher(relativeLink);
+    if (!matcher.matches()) {
+      throw new UriNotMatchingException(UriNotMatchingException.MATCHPROBLEM.addContent(relativeLink));
+    }
+
+    final String entityContainerName = percentDecode(matcher.group(1));
+    if (entityContainerName == null && !entitySet.getEntityContainer().isDefaultEntityContainer()
+        || entityContainerName != null && !entityContainerName.equals(entitySet.getEntityContainer().getName())) {
+      throw new UriNotMatchingException(UriNotMatchingException.CONTAINERNOTFOUND.addContent(entityContainerName));
+    }
+
+    final String entitySetName = percentDecode(matcher.group(2));
+    if (!entitySetName.equals(entitySet.getName())) {
+      throw new UriNotMatchingException(UriNotMatchingException.NOTFOUND.addContent(entitySetName));
+    }
+
+    final String keyPredicate = matcher.group(3);
+    if (keyPredicate == null) {
+      throw new UriSyntaxException(UriSyntaxException.ENTITYSETINSTEADOFENTITY.addContent(entitySetName));
+    }
+    return parseKey(keyPredicate, entitySet.getEntityType());
   }
 }
