@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author d046871
  */
 class ResourceHelper {
 
@@ -49,7 +48,7 @@ class ResourceHelper {
 
       return stream.toByteArray();
     } catch (IOException e) {
-      throw new ModelException(e);
+      throw new RuntimeException(e);
     } finally {
       if(instream != null) {
         try {
