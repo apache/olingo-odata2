@@ -27,6 +27,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface EntityDataSource {
   String name() default "";
-  Class<?> entityClass() default Object.class;
   Class<?> entityType();
 }

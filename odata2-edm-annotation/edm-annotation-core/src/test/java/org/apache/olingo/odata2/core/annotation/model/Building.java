@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
@@ -33,8 +32,8 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 /**
  *  
  */
-@EdmEntityType(name="Building", namespace=ModelSharedConstants.NAMESPACE_1)
-@EdmEntitySet(name="Buildings", container="Container1")
+@EdmEntityType(name="Building", namespace=ModelSharedConstants.NAMESPACE_1, 
+        entitySetName = "Buildings", container="Container1")
 public class Building {
   @EdmKey
   @EdmProperty(type = EdmSimpleTypeKind.String)

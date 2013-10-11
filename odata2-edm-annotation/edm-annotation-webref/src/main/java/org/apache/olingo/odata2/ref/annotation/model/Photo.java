@@ -27,7 +27,7 @@ public class Photo {
   private static final String RESOURCE = "/male_1_WinterW.jpg";
   private static byte[] defaultImage = ResourceHelper.loadAsByte(RESOURCE);
 
-  private final int id;
+  private int id;
   private String name;
   private String type = "image/jpeg";
   private String imageUrl = "http://localhost" + RESOURCE;
@@ -38,8 +38,8 @@ public class Photo {
 
   public Photo(final int id, final String name, final String type) {
     this.id = id;
-    setName(name);
-    setType(type);
+    this.name = name;
+    this.type = type;
   }
 
   public int getId() {

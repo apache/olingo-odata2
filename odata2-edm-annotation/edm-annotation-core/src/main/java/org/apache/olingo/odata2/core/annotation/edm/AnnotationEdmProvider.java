@@ -27,13 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexEntity;
-import org.apache.olingo.odata2.api.annotation.edm.EdmComplexProperty;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
@@ -270,24 +269,22 @@ public class AnnotationEdmProvider extends EdmProvider {
   }
 
   private void handleEntityContainer(Class<?> aClass) {
-    EdmEntitySet entitySet = aClass.getAnnotation(EdmEntitySet.class);
-    if (entitySet != null) {
-      EdmEntityType entity = aClass.getAnnotation(EdmEntityType.class);
-      String containerName = entitySet.container();
+    EdmEntityType entity = aClass.getAnnotation(EdmEntityType.class);
+    if (entity != null && !entity.entitySetName().isEmpty()) {
+      String containerName = entity.container();
       ContainerBuilder builder = containerName2ContainerBuilder.get(containerName);
       if (builder == null) {
         builder = ContainerBuilder.init(entity.namespace(), containerName);
         containerName2ContainerBuilder.put(containerName, builder);
       }
-      builder.addEntitySet(createEntitySet(entitySet, entity));
+      builder.addEntitySet(createEntitySet(entity));
     }
   }
 
-  private EntitySet createEntitySet(EdmEntitySet et, EdmEntityType entity) {
-    String name = et.name();
+  private EntitySet createEntitySet(EdmEntityType entity) {
     FullQualifiedName typeName = new FullQualifiedName(entity.namespace(), entity.name());
 
-    return new EntitySet().setName(name).setEntityType(typeName);
+    return new EntitySet().setName(entity.entitySetName()).setEntityType(typeName);
   }
 
   private void finish() {
@@ -349,15 +346,11 @@ public class AnnotationEdmProvider extends EdmProvider {
       for (Field field : fields) {
         EdmProperty ep = field.getAnnotation(EdmProperty.class);
         if (ep != null) {
-          properties.add(createProperty(ep, field));
+          properties.add(createProperty(ep, field, namespace));
           EdmKey eti = field.getAnnotation(EdmKey.class);
           if (eti != null) {
             keyProperties.add(createKeyProperty(ep, field));
           }
-        }
-        EdmComplexProperty ecp = field.getAnnotation(EdmComplexProperty.class);
-        if (ecp != null) {
-          properties.add(createComplexProperty(ecp, field, namespace));
         }
         EdmNavigationProperty enp = field.getAnnotation(EdmNavigationProperty.class);
         if (enp != null) {
@@ -429,7 +422,16 @@ public class AnnotationEdmProvider extends EdmProvider {
       return keyProperty.setName(entityName);
     }
 
-    private Property createProperty(EdmProperty ep, Field field) {
+    private Property createProperty(EdmProperty ep, Field field, String defaultNamespace) {
+      if(isAnnotatedEntity(field.getType())) {
+        return createComplexProperty(ep, field, defaultNamespace);
+      } else {
+        return createSimpleProperty(ep, field);
+      }
+    }
+    
+
+    private Property createSimpleProperty(EdmProperty ep, Field field) {
       SimpleProperty sp = new SimpleProperty();
       String entityName = ep.name();
       if (entityName.isEmpty()) {
@@ -446,7 +448,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       return sp;
     }
 
-    private Property createComplexProperty(EdmComplexProperty ep, Field field, String defaultNamespace) {
+    private Property createComplexProperty(EdmProperty ep, Field field, String defaultNamespace) {
       ComplexProperty cp = new ComplexProperty();
       String entityName = ep.name();
       if (entityName.isEmpty()) {
@@ -577,6 +579,12 @@ public class AnnotationEdmProvider extends EdmProvider {
 
     private String getCanonicalName(Field field) {
       return ANNOTATION_HELPER.getCanonicalName(field);
+    }
+
+    private boolean isAnnotatedEntity(Class<?> clazz) {
+      boolean isComplexEntity = clazz.getAnnotation(EdmComplexEntity.class) != null;
+      boolean isEntity = clazz.getAnnotation(EdmEntityType.class) != null;
+      return isComplexEntity || isEntity;
     }
   }
 

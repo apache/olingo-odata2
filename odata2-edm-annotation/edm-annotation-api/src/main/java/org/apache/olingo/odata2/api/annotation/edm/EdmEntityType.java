@@ -28,4 +28,7 @@ import java.lang.annotation.Target;
 public @interface EdmEntityType {
   String name() default "";
   String namespace();
+  /* If set this entity is exposed as entity set with given name. If not set theire will be no entity set generated. */
+  String entitySetName() default "";
+  String container() default "";
 }
