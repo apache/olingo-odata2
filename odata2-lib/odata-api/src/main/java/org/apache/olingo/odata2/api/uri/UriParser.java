@@ -18,11 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.api.uri;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.exception.ODataException;
@@ -186,4 +188,37 @@ public abstract class UriParser {
    */
   public abstract ExpandSelectTreeNode buildExpandSelectTree(List<SelectItem> select,
       List<ArrayList<NavigationPropertySegment>> expand) throws EdmException;
+
+  /**
+   * <p>Retrieves the key predicates from a canonical link to an entity.</p>
+   * <p>A canonical link to an entity must follow the pattern
+   * <code>[&lt;service root&gt;][&lt;entityContainer&gt;.]&lt;entitySet&gt;(&lt;key&gt;)</code>, i.e.,
+   * it must be a relative or absolute URI consisting of an entity set (qualified
+   * with an entity-container name if not in the default entity container) and a
+   * syntactically valid key that identifies a single entity; example:
+   * <code>http://example.server.com/service.svc/Employees('42')</code>.</p>
+   * @param entitySet   the entity set the entity belongs to
+   * @param entityLink  the link as String
+   * @param serviceRoot the root URI of the service, may be <code>null</code>
+   *                    for a relative link URI
+   * @return a list of key predicates
+   * @throws ODataException in case the link is malformed
+   */
+  public static List<KeyPredicate> getKeyPredicatesFromEntityLink(final EdmEntitySet entitySet,
+      final String entityLink, final URI serviceRoot) throws ODataException {
+    return RuntimeDelegate.getUriParser(null).getKeyFromEntityLink(entitySet, entityLink, serviceRoot);
+  }
+
+  /**
+   * Retrieves the key predicates from a canonical link to an entity.
+   * @param entitySet   the entity set the entity belongs to
+   * @param entityLink  the link as String
+   * @param serviceRoot the root URI of the service, may be <code>null</code>
+   *                    for a relative link URI
+   * @return a list of key predicates
+   * @throws ODataException in case the link is malformed
+   * @see #getKeyPredicatesFromEntityLink
+   */
+  public abstract List<KeyPredicate> getKeyFromEntityLink(EdmEntitySet entitySet, String entityLink,
+      URI serviceRoot) throws ODataException;
 }

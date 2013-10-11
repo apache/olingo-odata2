@@ -91,6 +91,15 @@ public class MiscChangeTest extends AbstractRefTest {
         callUri(ODataHttpMethod.PUT, "Container2.Photos(Id=2,Type='image%2Fbmp')/$value", null, null, "00", IMAGE_GIF,
             HttpStatusCodes.NO_CONTENT);
     checkEtag(response, "W/\"2\"");
+
+    response =
+        callUri(ODataHttpMethod.PATCH, url, null, null, "00", HttpContentType.APPLICATION_OCTET_STREAM,
+            HttpStatusCodes.METHOD_NOT_ALLOWED);
+    response.getEntity().getContent().close();
+    response =
+        callUri(ODataHttpMethod.MERGE, url, null, null, "00", HttpContentType.APPLICATION_OCTET_STREAM,
+            HttpStatusCodes.METHOD_NOT_ALLOWED);
+    response.getEntity().getContent().close();
   }
 
   @Test
@@ -100,10 +109,12 @@ public class MiscChangeTest extends AbstractRefTest {
     String url = "Container2.Photos(Id=3,Type='image%2Fjpeg')/Image/$value";
     callUri(ODataHttpMethod.PUT, url, HttpHeaders.ETAG, "W/\"3\"", "4711", HttpContentType.APPLICATION_OCTET_STREAM,
         HttpStatusCodes.NO_CONTENT);
-    assertEquals("4711", getBody(callUri(url)));
+    HttpResponse response = callUri(url);
+    assertEquals("4711", getBody(response));
+    checkMediaType(response, HttpContentType.APPLICATION_OCTET_STREAM);
 
     url = "Container2.Photos(Id=4,Type='foo')/BinaryData/$value";
-    HttpResponse response =
+    response =
         callUri(ODataHttpMethod.PUT, url, HttpHeaders.ETAG, "W/\"4\"", "4711", IMAGE_JPEG, HttpStatusCodes.NO_CONTENT);
     checkEtag(response, "W/\"4\"");
     assertEquals("4711", getBody(callUri(url)));
@@ -112,6 +123,9 @@ public class MiscChangeTest extends AbstractRefTest {
     url = "Employees('2')/EntryDate/$value";
     putUri(url, content, HttpContentType.TEXT_PLAIN, HttpStatusCodes.NO_CONTENT);
     assertEquals(content, getBody(callUri(url)));
+
+    callUri(ODataHttpMethod.PATCH, url, null, null, content, HttpContentType.TEXT_PLAIN, HttpStatusCodes.NO_CONTENT);
+    callUri(ODataHttpMethod.MERGE, url, null, null, content, HttpContentType.TEXT_PLAIN, HttpStatusCodes.NO_CONTENT);
 
     putUri("Employees('2')/EmployeeId/$value", "42", HttpContentType.TEXT_PLAIN, HttpStatusCodes.METHOD_NOT_ALLOWED);
     putUri("Employees('2')/Age/$value", "42a", HttpContentType.TEXT_PLAIN, HttpStatusCodes.BAD_REQUEST);
