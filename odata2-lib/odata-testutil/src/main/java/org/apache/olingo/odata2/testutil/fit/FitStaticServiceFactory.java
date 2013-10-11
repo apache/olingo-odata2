@@ -51,6 +51,14 @@ public class FitStaticServiceFactory extends ODataServiceFactory {
   private static Map<String, ODataService> PORT_2_SERVICE = Collections
       .synchronizedMap(new HashMap<String, ODataService>());
 
+  public static void bindService(String key, final ODataService service) {
+    PORT_2_SERVICE.put(key, service);
+  }
+
+  public static void unbindService(String key) {
+    PORT_2_SERVICE.remove(key);
+  }
+
   public static void bindService(final TestServer server, final ODataService service) {
     PORT_2_SERVICE.put(createId(server), service);
   }

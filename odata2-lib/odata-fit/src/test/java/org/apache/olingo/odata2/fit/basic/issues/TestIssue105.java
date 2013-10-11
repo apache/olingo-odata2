@@ -38,6 +38,7 @@ import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.api.processor.part.MetadataProcessor;
 import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.fit.basic.AbstractBasicTest;
+import org.apache.olingo.odata2.testutil.fit.FitStaticServiceFactory;
 import org.junit.Test;
 
 /**
@@ -77,6 +78,41 @@ public class TestIssue105 extends AbstractBasicTest {
 
     URI serviceRoot2 = getService().getProcessor().getContext().getPathInfo().getServiceRoot();
     assertEquals(uri2.getHost(), serviceRoot2.getHost());
+  }
+
+  @Test
+  public void checkContextForDifferentWithHostHeader() throws ClientProtocolException, IOException,
+      ODataException, URISyntaxException {
+    try {
+      FitStaticServiceFactory.bindService("123", getService());
+
+      // 1st request: cache uri
+      URI uri = URI.create(getEndpoint().toString() + "$metadata");
+      HttpGet get1 = new HttpGet(uri);
+      HttpResponse response1 = getHttpClient().execute(get1);
+      assertNotNull(response1);
+
+      URI serviceRoot1 = getService().getProcessor().getContext().getPathInfo().getServiceRoot();
+      assertEquals(uri.getHost(), serviceRoot1.getHost());
+
+      get1.reset();
+
+      HttpGet get2 = new HttpGet(uri);
+      get2.addHeader("Host", "bla:123");
+      HttpResponse response2 = getHttpClient().execute(get2);
+      assertNotNull(response2);
+
+      URI serviceRoot2 = getService().getProcessor().getContext().getPathInfo().getServiceRoot();
+      assertEquals("bla", serviceRoot2.getHost());
+      assertEquals(123, serviceRoot2.getPort());
+
+      URI requestUri = getService().getProcessor().getContext().getPathInfo().getRequestUri();
+      assertEquals("bla", requestUri.getHost());
+      assertEquals(123, requestUri.getPort());
+
+    } finally {
+      FitStaticServiceFactory.unbindService("123");
+    }
   }
 
 }
