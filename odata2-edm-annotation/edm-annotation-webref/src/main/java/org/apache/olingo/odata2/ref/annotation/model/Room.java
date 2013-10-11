@@ -21,18 +21,16 @@ package org.apache.olingo.odata2.ref.annotation.model;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
-import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 
 /**
  *
  */
-@EdmEntityType(name = "Room", namespace = ModelSharedConstants.NAMESPACE_1)
-@EdmEntitySet(name = "Rooms", container = ModelSharedConstants.CONTAINER_1)
+@EdmEntityType(name = "Room", namespace = ModelSharedConstants.NAMESPACE_1, 
+        entitySetName = "Rooms", container = ModelSharedConstants.CONTAINER_1)
 public class Room extends RefBase {
 
   @EdmProperty

@@ -20,9 +20,7 @@ package org.apache.olingo.odata2.ref.annotation.model;
 
 import java.text.DateFormat;
 import java.util.Calendar;
-import org.apache.olingo.odata2.api.annotation.edm.EdmComplexProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
@@ -33,12 +31,12 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 /**
  *  
  */
-@EdmEntityType(name="Employee", namespace=ModelSharedConstants.NAMESPACE_1)
-@EdmEntitySet(name="Employees", container=ModelSharedConstants.CONTAINER_1)
+@EdmEntityType(name="Employee", namespace=ModelSharedConstants.NAMESPACE_1, 
+        entitySetName = "Employees", container=ModelSharedConstants.CONTAINER_1)
 public class Employee {
   private static int counter = 1;
-  @EdmProperty(name="EmployeeId", type = EdmSimpleTypeKind.Int32)
   @EdmKey
+  @EdmProperty(name="EmployeeId", type = EdmSimpleTypeKind.Int32)
   private int employeeId;
   @EdmProperty(name="EmployeeName")
   private String employeeName;
@@ -54,7 +52,7 @@ public class Employee {
   private byte[] image;
   private String imageUrl;
   private Calendar entryDate;
-  @EdmComplexProperty(name="Location")
+  @EdmProperty(name="Location")
   private Location location;
 
   public Employee(final int employeeId, final String name) {

@@ -19,7 +19,6 @@
 package org.apache.olingo.odata2.core.annotation.model;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexEntity;
-import org.apache.olingo.odata2.api.annotation.edm.EdmComplexProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 
 /**
@@ -29,7 +28,7 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 public class Location {
   @EdmProperty
   private String country;
-  @EdmComplexProperty
+  @EdmProperty
   private City city;
 
   public Location(final String country, final String postalCode, final String cityName) {

@@ -21,15 +21,14 @@ package org.apache.olingo.odata2.ref.annotation.model;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
 
 /**
  *
  */
-@EdmEntityType(name = "Manager", namespace = ModelSharedConstants.NAMESPACE_1)
-@EdmEntitySet(name = "Managers", container = ModelSharedConstants.CONTAINER_1)
+@EdmEntityType(name = "Manager", namespace = ModelSharedConstants.NAMESPACE_1, 
+        entitySetName = "Managers", container = ModelSharedConstants.CONTAINER_1)
 public class Manager extends Employee {
 
   @EdmNavigationProperty(name = "nm_Employees", relationship = "ManagerEmployees",

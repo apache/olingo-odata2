@@ -23,7 +23,6 @@ import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

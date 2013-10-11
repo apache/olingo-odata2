@@ -58,6 +58,7 @@ import org.apache.olingo.odata2.core.annotation.processor.json.JsonConsumer;
  */
 public class AnnotationProcessor extends ODataSingleProcessor {
 
+  private static final Object[] EMPTY_ARRAY = new Object[0];
   private static final AnnotationHelper ANNOTATION_HELPER = new AnnotationHelper();
 
   private final List<Class<?>> foundClasses;
@@ -368,6 +369,9 @@ public class AnnotationProcessor extends ODataSingleProcessor {
     }
 
     private Object[] mapParameterKeys(Method method, List<KeyPredicate> keys) throws IllegalStateException {
+      if(method == null) {
+        return EMPTY_ARRAY;
+      }
       Class<?>[] pTypes = method.getParameterTypes();
       if (pTypes.length != keys.size()) {
         throw new IllegalStateException("Wrong amount of key properties. Expected read keys = "
