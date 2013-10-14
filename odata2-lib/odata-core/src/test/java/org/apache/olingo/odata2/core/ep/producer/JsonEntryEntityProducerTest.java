@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +39,8 @@ import java.util.TimeZone;
 
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
@@ -124,11 +128,9 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     photoData.put("Id", 1);
     photoData.put("Type", "image/png");
     photoData.put("BinaryData", new byte[] { -1, 0, 1, 2 });
+    photoData.put("getType", "image/png");
 
-    EntityProviderWriteProperties writeProperties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceTypeKey("Type").build();
-
-    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, photoData, writeProperties);
+    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, photoData, DEFAULT_PROPERTIES);
     final String json = verifyResponse(response);
     assertEquals("{\"d\":{\"__metadata\":{"
         + "\"id\":\"" + BASE_URI + "Container2.Photos(Id=1,Type='image%2Fpng')\","
@@ -154,8 +156,8 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     Mockito.when(node.getProperties()).thenReturn(Arrays.asList(property));
 
     EntityProviderWriteProperties writeProperties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceTypeKey("getImageType")
-            .serviceRoot(URI.create(BASE_URI)).expandSelectTree(node).build();
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).serviceRoot(URI.create(BASE_URI))
+            .expandSelectTree(node).build();
 
     final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, employeeData,
         writeProperties);
@@ -557,14 +559,12 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     String mediaResourceSourceKey = "~src";
     employeeData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
-    EntityProviderWriteProperties localProperties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
-            ).build();
-    ODataResponse response =
-        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet(
-            "Employees"),
-            employeeData,
-            localProperties);
+
+    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    EdmMapping mapping = employeesSet.getEntityType().getMapping();
+    when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
+
+    ODataResponse response = new JsonEntityProvider().writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
     String jsonString = verifyResponse(response);
     Gson gson = new Gson();
     StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
@@ -604,16 +604,16 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     employeeData.put("Location", locationData);
     String mediaResourceSourceKey = "~src";
     employeeData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
-    String mediaResourceTypeKey = "~type";
-    employeeData.put(mediaResourceTypeKey, "image/jpeg");
-    EntityProviderWriteProperties localProperties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
-            ).mediaResourceTypeKey(mediaResourceTypeKey).build();
-    ODataResponse response =
-        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet(
-            "Employees"),
-            employeeData,
-            localProperties);
+    String mediaResourceMimeTypeKey = "~type";
+    employeeData.put(mediaResourceMimeTypeKey, "image/jpeg");
+
+    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    EdmMapping mapping = employeesSet.getEntityType().getMapping();
+    when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
+    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
+    when(mapping.getMimeType()).thenReturn(null);
+
+    ODataResponse response = new JsonEntityProvider().writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
     String jsonString = verifyResponse(response);
 
     Gson gson = new Gson();
@@ -637,13 +637,14 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     String mediaResourceSourceKey = "~src";
     roomData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
-    EntityProviderWriteProperties localProperties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
-            ).build();
-    ODataResponse response =
-        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
-            roomData,
-            localProperties);
+
+    EdmEntitySet roomsSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    EdmEntityType roomType = roomsSet.getEntityType();
+    EdmMapping mapping = mock(EdmMapping.class);
+    when(roomType.getMapping()).thenReturn(mapping);
+    when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
+
+    ODataResponse response = new JsonEntityProvider().writeEntry(roomsSet, roomData, DEFAULT_PROPERTIES);
     String jsonString = verifyResponse(response);
     Gson gson = new Gson();
     StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
@@ -666,15 +667,17 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
     String mediaResourceSourceKey = "~src";
     roomData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
-    String mediaResourceTypeKey = "~type";
-    roomData.put(mediaResourceTypeKey, "image/jpeg");
-    EntityProviderWriteProperties localProperties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
-            ).mediaResourceTypeKey(mediaResourceTypeKey).build();
-    ODataResponse response =
-        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
-            roomData,
-            localProperties);
+    String mediaResourceMimeTypeKey = "~type";
+    roomData.put(mediaResourceMimeTypeKey, "image/jpeg");
+
+    EdmEntitySet roomsSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    EdmEntityType roomType = roomsSet.getEntityType();
+    EdmMapping mapping = mock(EdmMapping.class);
+    when(roomType.getMapping()).thenReturn(mapping);
+    when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
+    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
+
+    ODataResponse response = new JsonEntityProvider().writeEntry(roomsSet, roomData, DEFAULT_PROPERTIES);
     String jsonString = verifyResponse(response);
     Gson gson = new Gson();
     StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
@@ -684,6 +687,54 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     assertNull(jsonMap.get("media_src"));
     assertNull(jsonMap.get("content_type"));
     assertNull(jsonMap.get("edit_media"));
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Test
+  public void assureGetMimeTypeWinsOverGetMediaResourceMimeTypeKey() throws Exception {
+    // Keep this test till version 1.2
+    Map<String, Object> employeeData = new HashMap<String, Object>();
+
+    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    date.clear();
+    date.set(1999, 0, 1);
+
+    employeeData.put("EmployeeId", "1");
+    employeeData.put("ImmageUrl", null);
+    employeeData.put("ManagerId", "1");
+    employeeData.put("Age", new Integer(52));
+    employeeData.put("RoomId", "1");
+    employeeData.put("EntryDate", date);
+    employeeData.put("TeamId", "42");
+    employeeData.put("EmployeeName", "Walter Winter");
+
+    Map<String, Object> locationData = new HashMap<String, Object>();
+    Map<String, Object> cityData = new HashMap<String, Object>();
+    cityData.put("PostalCode", "33470");
+    cityData.put("CityName", "Duckburg");
+    locationData.put("City", cityData);
+    locationData.put("Country", "Calisota");
+
+    employeeData.put("Location", locationData);
+    String mediaResourceMimeTypeKey = "~type";
+    employeeData.put(mediaResourceMimeTypeKey, "wrong");
+    String originalMimeTypeKey = "~originalType";
+    employeeData.put(originalMimeTypeKey, "right");
+    
+    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    EdmMapping mapping = employeesSet.getEntityType().getMapping();
+    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
+    when(mapping.getMimeType()).thenReturn(originalMimeTypeKey);
+
+    ODataResponse response = new JsonEntityProvider().writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
+    String jsonString = verifyResponse(response);
+
+    Gson gson = new Gson();
+    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
+    jsonMap = (StringMap<Object>) jsonMap.get("d");
+    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
+
+    assertEquals("right", jsonMap.get("content_type"));
   }
 
   private String verifyResponse(final ODataResponse response) throws IOException {
