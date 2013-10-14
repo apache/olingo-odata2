@@ -97,6 +97,7 @@ public class Mapping implements EdmMapping {
   public Mapping setMediaResourceSourceKey(String mediaResourceSourceKey) {
     this.mediaResourceSourceKey = mediaResourceSourceKey;
     return this;
+
   }
 
   /**
