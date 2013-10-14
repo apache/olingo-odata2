@@ -131,7 +131,7 @@ public class JsonFunctionImportTest extends BaseTest {
         MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("OldestEmployee");
     final String uri = "http://host:80/service/";
     final EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(URI.create(uri)).mediaResourceTypeKey("getImageType").build();
+        EntityProviderWriteProperties.serviceRoot(URI.create(uri)).build();
     Map<String, Object> employeeData = new HashMap<String, Object>();
     employeeData.put("EmployeeId", "1");
     employeeData.put("getImageType", "image/jpeg");

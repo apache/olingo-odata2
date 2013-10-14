@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
+import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
@@ -312,13 +313,16 @@ public class AtomEntryEntityProducer {
   }
 
   private void appendAtomContentLink(final XMLStreamWriter writer, final EntityInfoAggregator eia,
-      final Map<String, Object> data, final String selfLink) throws EntityProviderException {
+      final Map<String, Object> data, final String selfLink) throws EntityProviderException, EdmException {
     try {
       String mediaResourceMimeType = properties.getMediaResourceMimeType();
       if (mediaResourceMimeType == null) {
-        String mediaResourceMimeTypeKey = properties.getMediaResourceTypeKey();
-        if (mediaResourceMimeTypeKey != null) {
-          mediaResourceMimeType = extractKey(data, mediaResourceMimeTypeKey);
+        EdmMapping entityTypeMapping = eia.getEntityType().getMapping();
+        if (entityTypeMapping != null) {
+          String mediaResourceMimeTypeKey = entityTypeMapping.getMediaResourceMimeTypeKey();
+          if (mediaResourceMimeTypeKey != null) {
+            mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
+          }
         }
         if (mediaResourceMimeType == null) {
           mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
@@ -336,25 +340,35 @@ public class AtomEntryEntityProducer {
   }
 
   private void appendAtomContentPart(final XMLStreamWriter writer, final EntityInfoAggregator eia,
-      final Map<String, Object> data, final String selfLink) throws EntityProviderException {
+      final Map<String, Object> data, final String selfLink) throws EntityProviderException, EdmException {
     try {
 
-      String mediaResourceSourceKey = properties.getMediaResourceSourceKey();
+      // We have to support the media resource mime type at the properties till version 1.2 then this can be refactored
       String mediaResourceMimeType = properties.getMediaResourceMimeType();
-
+      EdmMapping entityTypeMapping = eia.getEntityType().getMapping();
       String self = null;
-      if (mediaResourceSourceKey != null) {
-        self = extractKey(data, mediaResourceSourceKey);
-      }
-      if (self == null) {
-        self = selfLink + "/$value";
-      }
 
-      if (mediaResourceMimeType == null) {
-        String mediaResourceMimeTypeKey = properties.getMediaResourceTypeKey();
-        if (mediaResourceMimeTypeKey != null) {
-          mediaResourceMimeType = extractKey(data, mediaResourceMimeTypeKey);
+      if (entityTypeMapping != null) {
+        String mediaResourceSourceKey = entityTypeMapping.getMediaResourceSourceKey();
+        if (mediaResourceSourceKey != null) {
+          self = (String) data.get(mediaResourceSourceKey);
         }
+        if (self == null) {
+          self = selfLink + "/$value";
+        }
+        if (mediaResourceMimeType == null) {
+          String mediaResourceMimeTypeKey =
+              entityTypeMapping.getMimeType() != null ? entityTypeMapping.getMimeType()
+                  : entityTypeMapping.getMediaResourceMimeTypeKey();
+          if (mediaResourceMimeTypeKey != null) {
+            mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
+          }
+          if (mediaResourceMimeType == null) {
+            mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
+          }
+        }
+      } else {
+        self = selfLink + "/$value";
         if (mediaResourceMimeType == null) {
           mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
         }
@@ -366,17 +380,6 @@ public class AtomEntryEntityProducer {
       writer.writeEndElement();
     } catch (XMLStreamException e) {
       throw new EntityProviderException(EntityProviderException.COMMON, e);
-    }
-  }
-
-  private String extractKey(final Map<String, Object> data, final String mediaResourceMimeTypeKey)
-      throws EntityProviderException {
-    Object key = data.get(mediaResourceMimeTypeKey);
-    if (key == null || key instanceof String) {
-      return (String) key;
-    } else {
-      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
-          .addContent("Key must be of type String"));
     }
   }
 

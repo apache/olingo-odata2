@@ -42,7 +42,9 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmCustomizableFeedMappings;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
+import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmTargetPath;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
@@ -707,13 +709,11 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);
     String mediaResourceSourceKey = "~src";
     localEmployeeData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
-    EntityProviderWriteProperties localProperties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
-            ).build();
-    ODataResponse response =
-        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
-            localEmployeeData,
-            localProperties);
+    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    EdmMapping mapping = employeesSet.getEntityType().getMapping();
+    when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
+
+    ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
     String xmlString = verifyResponse(response);
 
     assertXpathExists(
@@ -729,15 +729,14 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);
     String mediaResourceSourceKey = "~src";
     localEmployeeData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
-    String mediaResourceTypeKey = "~type";
-    localEmployeeData.put(mediaResourceTypeKey, "image/jpeg");
-    EntityProviderWriteProperties localProperties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
-            ).mediaResourceTypeKey(mediaResourceTypeKey).build();
-    ODataResponse response =
-        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
-            localEmployeeData,
-            localProperties);
+    String mediaResourceMimeTypeKey = "~type";
+    localEmployeeData.put(mediaResourceMimeTypeKey, "image/jpeg");
+    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    EdmMapping mapping = employeesSet.getEntityType().getMapping();
+    when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
+    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
+    when(mapping.getMimeType()).thenReturn(null);
+    ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
     String xmlString = verifyResponse(response);
 
     assertXpathExists(
@@ -753,13 +752,13 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     Map<String, Object> localRoomData = new HashMap<String, Object>(roomData);
     String mediaResourceSourceKey = "~src";
     localRoomData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
-    EntityProviderWriteProperties localProperties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
-            ).build();
-    ODataResponse response =
-        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
-            localRoomData,
-            localProperties);
+    EdmEntitySet roomsSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    EdmEntityType roomType = roomsSet.getEntityType();
+    EdmMapping mapping = mock(EdmMapping.class);
+    when(roomType.getMapping()).thenReturn(mapping);
+    when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
+
+    ODataResponse response = ser.writeEntry(roomsSet, localRoomData, DEFAULT_PROPERTIES);
     String xmlString = verifyResponse(response);
 
     assertXpathNotExists(
@@ -775,15 +774,16 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     Map<String, Object> localRoomData = new HashMap<String, Object>(roomData);
     String mediaResourceSourceKey = "~src";
     localRoomData.put(mediaResourceSourceKey, "http://localhost:8080/images/image1");
-    String mediaResourceTypeKey = "~type";
-    localRoomData.put(mediaResourceTypeKey, "image/jpeg");
-    EntityProviderWriteProperties localProperties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).mediaResourceSourceKey(mediaResourceSourceKey
-            ).mediaResourceTypeKey(mediaResourceTypeKey).build();
-    ODataResponse response =
-        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
-            localRoomData,
-            localProperties);
+    String mediaResourceMimeTypeKey = "~type";
+    localRoomData.put(mediaResourceMimeTypeKey, "image/jpeg");
+    EdmEntitySet roomsSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    EdmEntityType roomType = roomsSet.getEntityType();
+    EdmMapping mapping = mock(EdmMapping.class);
+    when(roomType.getMapping()).thenReturn(mapping);
+    when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
+    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
+
+    ODataResponse response = ser.writeEntry(roomsSet, localRoomData, DEFAULT_PROPERTIES);
     String xmlString = verifyResponse(response);
 
     assertXpathNotExists(
@@ -791,6 +791,26 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
             " @rel=\"edit-media\" and @type=\"image/jpeg\"]", xmlString);
     assertXpathNotExists("/a:entry/a:content[@type=\"image/jpeg\"]", xmlString);
     assertXpathNotExists("/a:entry/a:content[@src=\"http://localhost:8080/images/image1\"]", xmlString);
+  }
+
+  @Test
+  public void assureGetMimeTypeWinsOverGetMediaResourceMimeTypeKey() throws Exception {
+    // Keep this test till version 1.2
+    AtomEntityProvider ser = createAtomEntityProvider();
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);
+    String mediaResourceMimeTypeKey = "~type";
+    localEmployeeData.put(mediaResourceMimeTypeKey, "wrong");
+    String originalMimeTypeKey = "~originalType";
+    localEmployeeData.put(originalMimeTypeKey, "right");
+    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    EdmMapping mapping = employeesSet.getEntityType().getMapping();
+    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
+    when(mapping.getMimeType()).thenReturn(originalMimeTypeKey);
+    ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
+    String xmlString = verifyResponse(response);
+
+    assertXpathExists("/a:entry/a:content[@type=\"right\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:content[@type=\"wrong\"]", xmlString);
   }
 
   private void verifyTagOrdering(final String xmlString, final String... toCheckTags) {

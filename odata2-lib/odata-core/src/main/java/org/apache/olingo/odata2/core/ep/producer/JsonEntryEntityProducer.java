@@ -29,6 +29,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
@@ -200,23 +201,38 @@ public class JsonEntryEntityProducer {
     }
     if (type.hasStream()) {
       jsonStreamWriter.separator();
+
+      // We have to support the media resource mime type at the properties till version 1.2 then this can be refactored
       String mediaResourceMimeType = properties.getMediaResourceMimeType();
-      if (mediaResourceMimeType == null) {
-        String mediaResourceMimeTypeKey = properties.getMediaResourceTypeKey();
-        if (mediaResourceMimeTypeKey != null) {
-          mediaResourceMimeType = extractKey(data, mediaResourceMimeTypeKey);
+      EdmMapping entityTypeMapping = entityInfo.getEntityType().getMapping();
+      String mediaSrc = null;
+
+      if (entityTypeMapping != null) {
+        String mediaResourceSourceKey = entityTypeMapping.getMediaResourceSourceKey();
+        if (mediaResourceSourceKey != null) {
+          mediaSrc = (String) data.get(mediaResourceSourceKey);
         }
+        if (mediaSrc == null) {
+          mediaSrc = self + "/$value";
+        }
+        if (mediaResourceMimeType == null) {
+          mediaResourceMimeType =
+              entityTypeMapping.getMimeType() != null ? (String) data.get(entityTypeMapping.getMimeType())
+                  : (String) data.get(entityTypeMapping.getMediaResourceMimeTypeKey());
+          if (mediaResourceMimeType == null) {
+            mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
+          }
+        }
+      } else {
+        mediaSrc = self + "/$value";
         if (mediaResourceMimeType == null) {
           mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
         }
       }
+
       jsonStreamWriter.namedStringValueRaw(FormatJson.CONTENT_TYPE, mediaResourceMimeType);
       jsonStreamWriter.separator();
 
-      String mediaSrc = self + "/$value";
-      if (properties.getMediaResourceSourceKey() != null) {
-        mediaSrc = (String) data.get(properties.getMediaResourceSourceKey());
-      }
       jsonStreamWriter.namedStringValue(FormatJson.MEDIA_SRC, mediaSrc);
       jsonStreamWriter.separator();
       jsonStreamWriter.namedStringValue(FormatJson.EDIT_MEDIA, location + "/$value");

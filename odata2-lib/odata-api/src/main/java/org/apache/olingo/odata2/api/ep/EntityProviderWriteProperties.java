@@ -34,6 +34,7 @@ import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 public class EntityProviderWriteProperties {
 
   private URI serviceRoot;
+  @Deprecated
   private String mediaResourceMimeType;
   private InlineCount inlineCountType;
   private Integer inlineCount;
@@ -41,8 +42,6 @@ public class EntityProviderWriteProperties {
   private ExpandSelectTreeNode expandSelectTree;
   private Map<String, ODataCallback> callbacks = Collections.emptyMap();
   private URI selfLink;
-  private String mediaResourceSourceKey;
-  private String mediaResourceTypeKey;
 
   private EntityProviderWriteProperties() {}
 
@@ -66,6 +65,7 @@ public class EntityProviderWriteProperties {
    * Gets the MIME type of the media resource.
    * @return the MIME type of the media resource
    */
+  @Deprecated
   public final String getMediaResourceMimeType() {
     return mediaResourceMimeType;
   }
@@ -106,22 +106,6 @@ public class EntityProviderWriteProperties {
   public final String getNextLink() {
     return nextLink;
   }
-  
-  /**
-   * Gets the key under which the resource source value can be found in the data map.
-   * @return the key of the media resource source
-   */
-  public final String getMediaResourceSourceKey() {
-    return mediaResourceSourceKey;
-  }
-  
-  /**
-   * Gets the key under which the resource mime type can be found in the data map.
-   * @return the key of the media resource type
-   */
-  public final String getMediaResourceTypeKey() {
-    return mediaResourceTypeKey;
-  }
 
   public static ODataEntityProviderPropertiesBuilder serviceRoot(final URI serviceRoot) {
     return new ODataEntityProviderPropertiesBuilder().serviceRoot(serviceRoot);
@@ -134,27 +118,12 @@ public class EntityProviderWriteProperties {
     /**
      * @param mediaResourceMimeType the mediaResourceMimeType to set
      */
+    @Deprecated
     public final ODataEntityProviderPropertiesBuilder mediaResourceMimeType(final String mediaResourceMimeType) {
       properties.mediaResourceMimeType = mediaResourceMimeType;
       return this;
     }
     
-    /**
-     * @param mediaResourceSourceKey the mediaResourceSourceKey to set
-     */
-    public final ODataEntityProviderPropertiesBuilder mediaResourceSourceKey(final String mediaResourceSourceKey) {
-      properties.mediaResourceSourceKey = mediaResourceSourceKey;
-      return this;
-    }
-    
-    /**
-     * @param mediaResourceTypeKey the mediaResourceTypeKey to set
-     */
-    public ODataEntityProviderPropertiesBuilder mediaResourceTypeKey(String mediaResourceTypeKey) {
-      properties.mediaResourceTypeKey = mediaResourceTypeKey;
-      return this;
-    }
-
     /**
      * @param inlineCountType the inlineCountType to set
      */
@@ -219,8 +188,6 @@ public class EntityProviderWriteProperties {
 
     public ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
       this.properties.mediaResourceMimeType = properties.getMediaResourceMimeType();
-      this.properties.mediaResourceTypeKey = properties.getMediaResourceTypeKey();
-      this.properties.mediaResourceSourceKey = properties.getMediaResourceSourceKey();
       this.properties.inlineCountType = properties.getInlineCountType();
       this.properties.inlineCount = properties.getInlineCount();
       this.properties.nextLink = properties.getNextLink();

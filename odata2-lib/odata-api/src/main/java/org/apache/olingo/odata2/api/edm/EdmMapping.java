@@ -37,7 +37,20 @@ public interface EdmMapping {
    * 
    * @return mapping name as String
    */
+  @Deprecated
   String getMimeType();
+
+  /**
+   * Gets the key under which the resource source value can be found in the data map.
+   * @return the key of the media resource source
+   */
+  String getMediaResourceSourceKey();
+
+  /**
+   * Gets the key under which the resource mime type can be found in the data map.
+   * @return the key of the media resource type
+   */
+  String getMediaResourceMimeTypeKey();
 
   /**
    * Get the set object for this mapping

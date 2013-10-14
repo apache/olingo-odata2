@@ -66,8 +66,6 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .expandSelectTree(expandSelectTree)
         .inlineCount(1)
         .inlineCountType(InlineCount.ALLPAGES)
-        .mediaResourceTypeKey("~typeKey")
-        .mediaResourceSourceKey("~srcKey")
         .mediaResourceMimeType("image/png")
         .nextLink("http://localhost")
         .selfLink(selfLink)
@@ -78,8 +76,6 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertEquals("Wrong expand select tree.", expandSelectTree, properties.getExpandSelectTree());
     assertEquals("Wrong self link.", selfLink, properties.getSelfLink());
     assertEquals("Wrong media resource mime type.", "image/png", properties.getMediaResourceMimeType());
-    assertEquals("Wrong media resource type key.", "~typeKey", properties.getMediaResourceTypeKey());
-    assertEquals("Wrong media resource src key.", "~srcKey", properties.getMediaResourceSourceKey());
     assertEquals("Wrong base uri.", "http://localhost:80/", properties.getServiceRoot().toASCIIString());
     assertEquals("Wrong inline count type.", InlineCount.ALLPAGES, properties.getInlineCountType());
     assertEquals("Wrong inline count.", Integer.valueOf(1), properties.getInlineCount());
@@ -95,7 +91,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .build();
     assertEquals("Wrong mime type.", "text/html", properties.getMediaResourceMimeType());
   }
-  
+
   @Test
   public void buildEntryPropertiesFromExisting() throws Exception {
     URI serviceRoot = new URI("http://localhost:80/");
@@ -108,25 +104,21 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .expandSelectTree(expandSelectTree)
         .inlineCount(1)
         .inlineCountType(InlineCount.ALLPAGES)
-        .mediaResourceTypeKey("~typeKey")
-        .mediaResourceSourceKey("~srcKey")
         .mediaResourceMimeType("image/png")
         .nextLink("http://localhost")
         .selfLink(selfLink)
         .build();
 
     //
-    final EntityProviderWriteProperties fromProperties = 
+    final EntityProviderWriteProperties fromProperties =
         EntityProviderWriteProperties.fromProperties(properties).build();
-    
+
     //
     assertEquals(1, fromProperties.getCallbacks().size());
     assertTrue(fromProperties.getCallbacks().containsKey("aCallback"));
     assertEquals(expandSelectTree, fromProperties.getExpandSelectTree());
     assertEquals(selfLink, fromProperties.getSelfLink());
     assertEquals("image/png", fromProperties.getMediaResourceMimeType());
-    assertEquals("~typeKey", fromProperties.getMediaResourceTypeKey());
-    assertEquals("~srcKey", fromProperties.getMediaResourceSourceKey());
     assertEquals("Wrong base uri.", "http://localhost:80/", fromProperties.getServiceRoot().toASCIIString());
     assertEquals("Wrong inline count type.", InlineCount.ALLPAGES, fromProperties.getInlineCountType());
     assertEquals("Wrong inline count.", Integer.valueOf(1), fromProperties.getInlineCount());
