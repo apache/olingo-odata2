@@ -1,21 +1,17 @@
-/*******************************************************************************
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
+/**
+ * *****************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE
+ * file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *****************************************************************************
+ */
 package org.apache.olingo.odata2.core.annotation.processor.json;
 
 import java.io.ByteArrayInputStream;
@@ -29,11 +25,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
+import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
+import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
@@ -66,7 +69,7 @@ public class EdmAnnotationSerializer {
     }
   }
 
-  private String handleEdmAnnotations(Object entity) 
+  private String handleEdmAnnotations(Object entity)
           throws IllegalArgumentException, IllegalAccessException, IOException {
     //
     Writer writer = new StringWriter();
@@ -80,10 +83,10 @@ public class EdmAnnotationSerializer {
   }
 
   private void writeObject(Object entity, JsonWriter json) throws IllegalAccessException {
-    if(entity.getClass().isArray()) {
+    if (entity.getClass().isArray()) {
       List<Object> entities = Arrays.asList(entity);
       writeCollection(entities, json);
-    } else if(Collection.class.isAssignableFrom(entity.getClass())) {
+    } else if (Collection.class.isAssignableFrom(entity.getClass())) {
       Collection<Object> entities = (Collection<Object>) entity;
       writeCollection(entities, json);
     } else {
@@ -97,7 +100,7 @@ public class EdmAnnotationSerializer {
     json.startArray();
     boolean writeSeperator = false;
     for (Object object : entities) {
-      if(writeSeperator) {
+      if (writeSeperator) {
         json.writeSeparator();
       } else {
         writeSeperator = true;
@@ -107,7 +110,7 @@ public class EdmAnnotationSerializer {
     json.endArray();
     json.endObject();
   }
-  
+
   private void writeSingleObject(Object entity, JsonWriter json) throws IllegalAccessException {
     List<Field> fields = getAllFields(entity.getClass());
     json.startObject();
@@ -120,14 +123,14 @@ public class EdmAnnotationSerializer {
     json.endObject();
   }
 
-  private boolean writeEdmNavigationProperty(Object entity, JsonWriter json, Field field) 
+  private boolean writeEdmNavigationProperty(Object entity, JsonWriter json, Field field)
           throws IllegalArgumentException, IllegalAccessException {
     EdmNavigationProperty navProperty = field.getAnnotation(EdmNavigationProperty.class);
     EdmEntityType entityType = entity.getClass().getAnnotation(EdmEntityType.class);
     if (navProperty != null) {
       field.setAccessible(true);
       Object keyValue = extractEdmKey(entity);
-      json.writeProperty("uri", baseUri + entityType.entitySetName() + "('" + keyValue.toString() + "')" 
+      json.writeStringProperty("uri", baseUri + entityType.entitySetName() + "('" + keyValue.toString() + "')"
               + "/" + navProperty.relationship());
       return true;
     }
@@ -140,18 +143,63 @@ public class EdmAnnotationSerializer {
       field.setAccessible(true);
       Object fieldValue = field.get(entity);
       String name = getName(property, field);
-      Class<?> defaultType = getType(property);
-      json.writeProperty(name, fieldValue, defaultType);
+      EdmSimpleTypeKind defaultType = getDefaultSimpleTypeKind(field, property);
+      try {
+        String value = defaultType.getEdmSimpleTypeInstance().valueToString(fieldValue, EdmLiteralKind.JSON, null);
+        write(defaultType, name, value, json);
+      } catch (EdmSimpleTypeException e) {
+        throw new IllegalArgumentException("Illegal argument for valueToString for EdmSimpleType = '"
+                + property.type() + "' with message = '" + e.getMessage() + "'.");
+      }
       return true;
     }
     return false;
+  }
+
+  public void write(EdmSimpleTypeKind kind, String name, String value, JsonWriter jsonStreamWriter) {
+    switch (kind) {
+      case String:
+        jsonStreamWriter.writeStringProperty(name, value);
+        break;
+      case Boolean:
+      case Byte:
+      case SByte:
+      case Int16:
+      case Int32:
+        jsonStreamWriter.writeRawProperty(name, value);
+        break;
+      case DateTime:
+      case DateTimeOffset:
+        // Although JSON escaping is (and should be) done in the JSON
+        // serializer, we backslash-escape the forward slash here explicitly
+        // because it is not required to escape it in JSON but in OData.
+        jsonStreamWriter.writeRawStringProperty(name, value == null ? null : value.replace("/", "\\/"));
+        break;
+      default:
+        jsonStreamWriter.writeRawStringProperty(name, value);
+        break;
+    }
+  }
+
+  private EdmSimpleTypeKind getDefaultSimpleTypeKind(Field field, EdmProperty property) {
+    final EdmSimpleTypeKind type = property.type();
+    if (type == EdmSimpleTypeKind.Null) {
+      Class<?> fieldType = field.getType();
+      if (fieldType == String.class) {
+        return EdmSimpleTypeKind.String;
+      } else if (fieldType == Long.class) {
+        return EdmSimpleTypeKind.Int64;
+      } else if (fieldType == Integer.class) {
+        return EdmSimpleTypeKind.Int32;
+      }
+    }
+    return type;
   }
 
   private Class<?> getType(EdmProperty property) {
     Class<?> defaultType = property.type().getEdmSimpleTypeInstance().getDefaultType();
     return defaultType;
   }
-  
 
   private Object extractEdmKey(Object value) throws IllegalArgumentException, IllegalAccessException {
     Field idField = getFieldWithAnnotation(value.getClass(), EdmKey.class);
@@ -192,13 +240,13 @@ public class EdmAnnotationSerializer {
   }
 
   private boolean isConsumable(Object entity) {
-    if(entity == null) {
+    if (entity == null) {
       return false;
-    } else if(ANNOTATION_HELPER.isEdmAnnotated(entity)) {
+    } else if (ANNOTATION_HELPER.isEdmAnnotated(entity)) {
       return true;
-    } else if(entity.getClass().isArray() || entity.getClass().isAssignableFrom(Collection.class)) {
+    } else if (entity.getClass().isArray() || entity.getClass().isAssignableFrom(Collection.class)) {
       return true;
-    } else if(Collection.class.isAssignableFrom(entity.getClass())) {
+    } else if (Collection.class.isAssignableFrom(entity.getClass())) {
       return true;
     }
     return false;
@@ -206,7 +254,7 @@ public class EdmAnnotationSerializer {
 
   private String getName(EdmProperty property, Field field) {
     String name = property.name();
-    if(name.isEmpty()) {
+    if (name.isEmpty()) {
       name = ANNOTATION_HELPER.getCanonicalName(field);
     }
     return name;

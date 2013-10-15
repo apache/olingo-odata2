@@ -75,6 +75,8 @@ public class ClassHelper {
           annotatedClasses.add(c);
         }
       } catch (ClassNotFoundException ex) {
+        throw new IllegalArgumentException("Exception during class loading of class '" + fqn + 
+                "' with message '" + ex.getMessage() + "'.");
       }
     }
     

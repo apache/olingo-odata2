@@ -27,8 +27,10 @@ import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationEdmProvider;
 import org.apache.olingo.odata2.core.annotation.processor.AnnotationProcessor;
 import org.apache.olingo.odata2.ref.annotation.model.Building;
+import org.apache.olingo.odata2.ref.annotation.model.Photo;
 import org.apache.olingo.odata2.ref.annotation.model.Team;
 import org.apache.olingo.odata2.ref.annotation.model.ds.BuildingDs;
+import org.apache.olingo.odata2.ref.annotation.model.ds.PhotoDs;
 import org.apache.olingo.odata2.ref.annotation.model.ds.TeamDs;
 
 /**
@@ -58,7 +60,6 @@ public class ScenarioServiceFactory extends ODataServiceFactory {
             ? new ScenarioDebugCallback() : super.getCallback(callbackInterface));
   }
 
-
   private final class ScenarioDebugCallback implements ODataDebugCallback {
 
     @Override
@@ -80,6 +81,11 @@ public class ScenarioServiceFactory extends ODataServiceFactory {
     buildingsDs.createOrUpdate(createBuilding("Red Building"));
     buildingsDs.createOrUpdate(createBuilding("Green Building"));
     buildingsDs.createOrUpdate(createBuilding("Blue Building"));
+    
+    PhotoDs photoDs = new PhotoDs();
+    photoDs.storePhoto(createPhoto("Small picture"));
+    photoDs.storePhoto(createPhoto("Medium picture"));
+    photoDs.storePhoto(createPhoto("Big picture"));
   }
 
   private Team createTeam(String teamName, boolean isScrumTeam) {
@@ -93,5 +99,12 @@ public class ScenarioServiceFactory extends ODataServiceFactory {
     Building b = new Building();
     b.setName(buildingName);
     return b;
+  }
+
+  private Photo createPhoto(String name) {
+    Photo p = new Photo(name, "PNG");
+    p.setImageType("image/png");
+    p.setImageUri("http://localhost/image/" + name);
+    return p;
   }
 }

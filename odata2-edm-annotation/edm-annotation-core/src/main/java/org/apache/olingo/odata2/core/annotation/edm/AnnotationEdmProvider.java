@@ -29,10 +29,10 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexEntity;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
-import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
@@ -316,6 +316,7 @@ public class AnnotationEdmProvider extends EdmProvider {
     final private String namespace;
     final private String name;
     private boolean isAbstract = false;
+    private boolean isMediaResource = false;
     private FullQualifiedName baseEntityType = null;
     private final List<PropertyRef> keyProperties = new ArrayList<PropertyRef>();
     private final List<Property> properties = new ArrayList<Property>();
@@ -358,6 +359,10 @@ public class AnnotationEdmProvider extends EdmProvider {
           navProperties.add(navProperty);
           Association association = createAssociation(field, navProperty);
           associations.add(association);
+        }
+        EdmMediaResourceContent emrc = field.getAnnotation(EdmMediaResourceContent.class);
+        if(emrc != null) {
+          isMediaResource = true;
         }
       }
 
@@ -406,6 +411,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       }
       return entityType.setName(name)
               .setAbstract(isAbstract)
+              .setHasStream(isMediaResource)
               .setProperties(properties);
     }
 
@@ -502,6 +508,8 @@ public class AnnotationEdmProvider extends EdmProvider {
         return EdmSimpleTypeKind.Int32;
       } else if (type == Integer.class) {
         return EdmSimpleTypeKind.Int32;
+      } else if (type == Byte[].class || type == byte[].class) {
+        return EdmSimpleTypeKind.Binary;
       } else {
         throw new UnsupportedOperationException("Not supported type '" + type
                 + "' yet."); //To change body of generated methods, choose Tools | Templates.
