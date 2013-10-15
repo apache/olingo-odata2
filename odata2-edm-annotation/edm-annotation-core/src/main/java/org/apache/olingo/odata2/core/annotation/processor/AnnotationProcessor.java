@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.exception.ODataException;
@@ -47,6 +49,7 @@ import org.apache.olingo.odata2.api.annotation.edm.ds.EntityRead;
 import org.apache.olingo.odata2.api.annotation.edm.ds.EntitySetRead;
 import org.apache.olingo.odata2.api.annotation.edm.ds.EntityUpdate;
 import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.api.uri.info.GetMediaResourceUriInfo;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
 import org.apache.olingo.odata2.core.annotation.edm.ClassHelper;
@@ -149,6 +152,30 @@ public class AnnotationProcessor extends ODataSingleProcessor {
     return ODataResponse.status(HttpStatusCodes.NOT_FOUND).build();
   }
 
+  @Override
+  public ODataResponse readEntityMedia(GetMediaResourceUriInfo uriInfo, String contentType) throws ODataException {
+    final String name = uriInfo.getTargetType().getName();
+
+    List<KeyPredicate> keys = uriInfo.getKeyPredicates();
+    Object result = readEntity(name, keys);
+    if (result != null) {
+      Object content = new AnnotationHelper().getValueForField(result, EdmMediaResourceContent.class);
+      Object mimeType = new AnnotationHelper().getValueForField(result, EdmMediaResourceMimeType.class);
+    return ODataResponse.status(HttpStatusCodes.OK).entity(content).contentHeader(String.valueOf(mimeType)).build();
+    }
+
+    return ODataResponse.status(HttpStatusCodes.NOT_FOUND).build();
+  }
+  
+  private Object readEntity(String entityName, List<KeyPredicate> keys) {
+    DataSourceHolder holder = dataSources.get(entityName);
+    if (holder != null) {
+      return holder.readEntity(keys);
+    }
+    return null;
+  }
+  
+  
   private ODataResponse createODataResponse(Object result, HttpStatusCodes statusCode) throws ODataException {
 //    StringBuilder resultAsString = new StringBuilder("{\"d\":");
 //    if (result != null) {

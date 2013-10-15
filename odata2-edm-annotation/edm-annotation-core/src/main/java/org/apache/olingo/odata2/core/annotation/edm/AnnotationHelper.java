@@ -18,15 +18,55 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.annotation.edm;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Locale;
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexEntity;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
+import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  *
  */
 public class AnnotationHelper {
+
+  public Object getValueForField(Object result, Class<? extends Annotation> annotation) {
+    if(result == null) {
+      return null;
+    }
+    return getValueForField(result, result.getClass(), annotation, true);
+  }
+
+  private Object getValueForField(Object result, Class<?> resultClass, 
+          Class<? extends Annotation> annotation, boolean inherited) {
+    if(result == null) {
+      return null;
+    }
+    
+    Field[] fields = resultClass.getDeclaredFields();
+    for (Field field : fields) {
+      if(field.getAnnotation(annotation) != null) {
+        try {
+          boolean access = field.isAccessible();
+          field.setAccessible(true);
+          Object value = field.get(result);
+          field.setAccessible(access);
+          return value;
+        } catch (IllegalArgumentException ex) { // should never happen
+          throw new ODataRuntimeException(ex);
+        } catch (IllegalAccessException ex) { // should never happen
+          throw new ODataRuntimeException(ex);
+        }
+      }
+    }
+
+    Class<?> superClass = result.getClass().getSuperclass();
+    if(inherited && superClass != Object.class) {
+      return getValueForField(result, superClass, annotation, true);
+    }
+    
+    return null;
+  }
 
   public boolean isEdmAnnotated(Object object) {
     if(object == null) {

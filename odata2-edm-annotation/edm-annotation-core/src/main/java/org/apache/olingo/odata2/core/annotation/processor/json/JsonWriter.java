@@ -1,21 +1,17 @@
-/*******************************************************************************
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
+/**
+ * *****************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE
+ * file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ * ****************************************************************************
+ */
 package org.apache.olingo.odata2.core.annotation.processor.json;
 
 import java.io.IOException;
@@ -97,6 +93,14 @@ public class JsonWriter {
     }
   }
 
+  public void writeRawString(String value) {
+    try {
+      writer.write("\"" + value + "\"");
+    } catch (IOException e) {
+      throw new ODataRuntimeException(e.getMessage(), e);
+    }
+  }
+
   public void writeString(String value) {
     try {
       writer.write("\"" + encode(value) + "\"");
@@ -113,62 +117,23 @@ public class JsonWriter {
     }
   }
 
-  public void writeNumber(int value) {
-    try {
-      writer.write(Integer.toString(value));
-    } catch (IOException e) {
-      throw new ODataRuntimeException(e.getMessage(), e);
-    }
-  }
-
-  public void writeNumber(float value) {
-    try {
-      String fvalue = Float.toString(value);
-      while (fvalue.contains(".") && fvalue.endsWith("0")) {
-        fvalue = fvalue.substring(0, fvalue.length() - 1);
-      }
-      if (fvalue.endsWith(".")) {
-        fvalue = fvalue.substring(0, fvalue.length() - 1);
-      }
-      writer.write(fvalue);
-    } catch (IOException e) {
-      throw new ODataRuntimeException(e.getMessage(), e);
-    }
-  }
-
-  public void writeNumber(double value) {
-    try {
-      String fvalue = Double.toString(value);
-      while (fvalue.contains(".") && fvalue.endsWith("0")) {
-        fvalue = fvalue.substring(0, fvalue.length() - 1);
-      }
-      if (fvalue.endsWith(".")) {
-        fvalue = fvalue.substring(0, fvalue.length() - 1);
-      }
-      writer.write(fvalue);
-    } catch (IOException e) {
-      throw new ODataRuntimeException(e.getMessage(), e);
-    }
-  }
-
-  public void writeBoolean(boolean value) {
-    try {
-      writer.write(value ? "true" : "false");
-    } catch (IOException e) {
-      throw new ODataRuntimeException(e.getMessage(), e);
-    }
-  }
-
-  public void writeProperty(String name, Object value) {
-    if(value == null) {
-      writeProperty(name, value, null);
+  public void writeStringProperty(String name, String value) {
+    if (value == null) {
+      writeProperty(name, value, false);
     } else {
-      writeProperty(name, value, value.getClass());
+      writeProperty(name, encode(value), false);
     }
   }
-  
-  
-  void writeProperty(String name, Object value, Class<?> defaultType) {
+
+  public void writeRawStringProperty(String name, String value) {
+    writeProperty(name, value, false);
+  }
+
+  public void writeRawProperty(String name, String value) {
+    writeProperty(name, value, true);
+  }
+
+  private void writeProperty(String name, String value, boolean raw) {
     if (firstProperty) {
       firstProperty = false;
     } else {
@@ -181,10 +146,10 @@ public class JsonWriter {
       writeNull();
     } else {
       try {
-        if(defaultType == null) {
-          writeValue(value);
+        if (raw) {
+          writeRaw(value);
         } else {
-          writeValueAs(value, defaultType);
+          writeString(value);
         }
       } catch (Exception e) {
         writeString("exception for property with name '" + name
@@ -192,10 +157,10 @@ public class JsonWriter {
                 + "' and toString '" + value.toString() + "'.");
       }
     }
+
   }
 
-  
-  public void writeRaw(String value) {
+  private void writeRaw(String value) {
     try {
       writer.write(value);
     } catch (IOException e) {
@@ -228,29 +193,11 @@ public class JsonWriter {
     return sb.toString();
   }
 
-  void start() {
+  public void start() {
     writeRaw("{\n\"d\":");
   }
 
-  void finish() {
+  public void finish() {
     writeRaw("\n}");
-  }
-
-  private void writeValueAs(Object value, Class<?> clazz) {
-    if(clazz.isAssignableFrom(String.class)) {
-      writeString(String.valueOf(value));
-    } else if(clazz.isAssignableFrom(Float.class)) {
-      writeNumber((Float) value);
-    } else if(clazz.isAssignableFrom(Double.class)) {
-      writeNumber((Double) value);
-    } else if(clazz.isAssignableFrom(Integer.class)) {
-      writeNumber((Integer) value);
-    } else {
-      writeString(value.toString());
-    }
-  }
-  
-  private void writeValue(Object value) {
-    writeValueAs(value, value.getClass());
   }
 }
