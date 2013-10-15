@@ -71,6 +71,7 @@ public class Mapping implements EdmMapping {
    * Sets the mime type for this {@link Mapping}.
    * @param mimeType
    * @return {@link Mapping} for method chaining
+   * @deprecated use instead functionality of {@link #setMediaResourceMimeTypeKey(String)} method
    */
   @Deprecated
   public Mapping setMimeType(final String mimeType) {
@@ -91,17 +92,21 @@ public class Mapping implements EdmMapping {
   /**
    * Sets the key for the resource source key which is used for the lookup in the data map
    * @param mediaResourceSourceKey under which the source can be found in the data map
+   * @return {@link Mapping} for method chaining
    */
-  public void setMediaResourceSourceKey(String mediaResourceSourceKey) {
+  public Mapping setMediaResourceSourceKey(String mediaResourceSourceKey) {
     this.mediaResourceSourceKey = mediaResourceSourceKey;
+    return this;
   }
 
   /**
    * Sets the key for the resource mime type key which is used for the lookup in the data map
    * @param mediaResourceMimeTypeKey under which the mime type can be found in the data map
+   * @return {@link Mapping} for method chaining
    */
-  public void setMediaResourceMimeTypeKey(String mediaResourceMimeTypeKey) {
+  public Mapping setMediaResourceMimeTypeKey(String mediaResourceMimeTypeKey) {
     this.mediaResourceMimeTypeKey = mediaResourceMimeTypeKey;
+    return this;
   }
 
 

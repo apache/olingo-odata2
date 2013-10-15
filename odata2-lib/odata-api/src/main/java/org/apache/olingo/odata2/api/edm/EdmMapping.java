@@ -36,6 +36,7 @@ public interface EdmMapping {
    * Get the mapping name for mime type lookup
    * 
    * @return mapping name as String
+   * @deprecated use instead functionality of {@link #getMediaResourceMimeTypeKey()} method
    */
   @Deprecated
   String getMimeType();

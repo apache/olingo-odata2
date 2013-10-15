@@ -64,6 +64,8 @@ public class EntityProviderWriteProperties {
   /**
    * Gets the MIME type of the media resource.
    * @return the MIME type of the media resource
+   * @deprecated use instead the functionality of 'EdmMapping -> mediaResourceMimeTypeKey' to reference via a key
+   * to the 'mime type' of the media resource provided in the entity data map
    */
   @Deprecated
   public final String getMediaResourceMimeType() {
@@ -84,7 +86,7 @@ public class EntityProviderWriteProperties {
 
   /**
    * Gets the expand select tree data structure resulting from $expand and $select query options.
-   * @return a paresed tree structure representing the $expand and $select
+   * @return a parsed tree structure representing the $expand and $select
    */
   public final ExpandSelectTreeNode getExpandSelectTree() {
     return expandSelectTree;
@@ -117,6 +119,8 @@ public class EntityProviderWriteProperties {
 
     /**
      * @param mediaResourceMimeType the mediaResourceMimeType to set
+     * @deprecated use instead the functionality of 'EdmMapping -> mediaResourceMimeTypeKey' to reference via a key
+     * to the 'mime type' of the media resource provided in the entity data map
      */
     @Deprecated
     public final ODataEntityProviderPropertiesBuilder mediaResourceMimeType(final String mediaResourceMimeType) {
