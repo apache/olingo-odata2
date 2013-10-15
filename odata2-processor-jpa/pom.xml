@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-odata2-processor-jpa-incubating</artifactId>
+    <artifactId>olingo-odata2-jpa-processor-incubating</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
 
