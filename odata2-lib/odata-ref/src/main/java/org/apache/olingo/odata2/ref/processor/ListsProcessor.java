@@ -46,6 +46,7 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmLiteral;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
+import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
@@ -1518,13 +1519,26 @@ public class ListsProcessor extends ODataSingleProcessor {
         null : getterMethodName.replaceFirst("^is", "set").replaceFirst("^get", "set");
   }
 
+  private static void handleMimeType(Object data, EdmMapping mapping, Map<String, Object> valueMap) 
+      throws ODataNotFoundException {
+    final String methodName = mapping.getMimeType();
+    if (mapping.getMimeType() != null) {
+      Object value = getValue(data, methodName);
+      valueMap.put(methodName, value);
+      if(mapping.getMediaResourceMimeTypeKey() != null) {
+        valueMap.put(mapping.getMediaResourceMimeTypeKey(), value);
+      }
+    }
+  }
+  
   private static <T> Map<String, Object> getSimpleTypeValueMap(final T data, final List<EdmProperty> propertyPath)
       throws ODataException {
     final EdmProperty property = propertyPath.get(propertyPath.size() - 1);
     Map<String, Object> valueWithMimeType = new HashMap<String, Object>();
     valueWithMimeType.put(property.getName(), getPropertyValue(data, propertyPath));
-    final String mimeTypeMappingName = property.getMapping().getMimeType();
-    valueWithMimeType.put(mimeTypeMappingName, getValue(data, mimeTypeMappingName));
+
+    handleMimeType(data, property.getMapping(), valueWithMimeType);
+    
     return valueWithMimeType;
   }
 
@@ -1535,9 +1549,9 @@ public class ListsProcessor extends ODataSingleProcessor {
 
     Map<String, Object> valueMap = new HashMap<String, Object>();
 
-    if (type.getMapping() != null && type.getMapping().getMimeType() != null) {
-      final String methodName = type.getMapping().getMimeType();
-      valueMap.put(methodName, getValue(data, methodName));
+    EdmMapping mapping = type.getMapping();
+    if (mapping != null) {
+      handleMimeType(data, mapping, valueMap);
     }
 
     for (final String propertyName : type.getPropertyNames()) {
