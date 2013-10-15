@@ -23,19 +23,20 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 
 import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
-import org.apache.log4j.Logger;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.testutil.fit.FitStaticServiceFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  
  */
 public class TestServer {
-  private static final Logger log = Logger.getLogger(TestServer.class);
+  private static final Logger log = LoggerFactory.getLogger(TestServer.class);
 
   private static final int PORT_MIN = 19000;
   private static final int PORT_MAX = 19200;
@@ -87,7 +88,7 @@ public class TestServer {
       endpoint = new URI(DEFAULT_SCHEME, null, DEFAULT_HOST, isa.getPort(), "/abc" + path, null, null);
       log.trace("Started server at endpoint " + endpoint.toASCIIString());
     } catch (final Exception e) {
-      log.error(e);
+      log.error("server start failed", e);
       throw new ServerRuntimeException(e);
     }
   }
@@ -115,7 +116,7 @@ public class TestServer {
         throw new BindException("no free port in range of [" + PORT_MIN + ".." + PORT_MAX + "]");
       }
     } catch (final Exception e) {
-      log.error(e);
+      log.error("server start failed", e);
       throw new ServerRuntimeException(e);
     }
   }

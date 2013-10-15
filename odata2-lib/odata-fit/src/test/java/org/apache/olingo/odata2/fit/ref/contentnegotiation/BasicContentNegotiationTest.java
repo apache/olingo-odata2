@@ -36,19 +36,20 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  
  */
 public class BasicContentNegotiationTest extends AbstractContentNegotiationTest {
 
-  private static final Logger LOG = Logger.getLogger(BasicContentNegotiationTest.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BasicContentNegotiationTest.class);
 
   @Test
   public void acceptHeaderAppAtomXml() throws Exception {

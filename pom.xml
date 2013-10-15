@@ -76,6 +76,7 @@
         <module>odata2-lib</module>
         <module>odata2-processor-jpa</module>
         <module>odata2-dist</module>
+        <module>odata2-sample</module>
     </modules>
 
     <build>
@@ -152,7 +153,7 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>2.4</version>
                 </plugin>
-            </plugins>
+             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
