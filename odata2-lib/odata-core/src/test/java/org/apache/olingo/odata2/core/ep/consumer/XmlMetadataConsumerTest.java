@@ -22,9 +22,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -34,6 +36,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmAction;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmContentKind;
+import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
@@ -166,6 +169,42 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
       + "\" m:FC_NsUri=\"" + FC_NS_URI + "\"" + " m:FC_NsPrefix=\"" + FC_NS_PREFIX + "\" m:FC_KeepInContent=\""
       + FC_KEEP_IN_CONTENT + "\" m:FC_ContentKind=\"text\" >" + "</Property>" + "</EntityType>" + "</Schema>"
       + "</edmx:DataServices>" + "</edmx:Edmx>";
+
+  private final String xmlWithStringValueForMaxLengthFacet = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+      + Edm.NAMESPACE_EDMX_2007_06
+      + "\">" + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+      + "<Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+      + "<EntityType Name= \"Photo\"><Key><PropertyRef Name=\"Id\"/></Key><Property Name=\"Id\" Type=\"Edm.Int32\" " +
+      "Nullable=\"false\" MaxLength=\"Max\"/><Property Name=\"Name\" Type=\"Edm.Int32\" MaxLength=\"max\"/>"
+      + "</EntityType></Schema></edmx:DataServices></edmx:Edmx>";
+
+  @Test
+  public void stringValueForMaxLegthFacet() throws Exception {
+      XmlMetadataConsumer parser = new XmlMetadataConsumer();
+      XMLStreamReader reader = createStreamReader(xmlWithStringValueForMaxLengthFacet);
+      DataServices result = parser.readMetadata(reader, true);
+
+      List<Property> properties = result.getSchemas().get(0).getEntityTypes().get(0).getProperties();
+      assertEquals(2, properties.size());
+
+      Property property = getForName(properties, "Id");
+      EdmFacets facets = property.getFacets();
+      assertEquals(new Integer(Integer.MAX_VALUE), facets.getMaxLength());
+
+      property = getForName(properties, "Name");
+      facets = property.getFacets();
+      assertEquals(new Integer(Integer.MAX_VALUE), facets.getMaxLength());
+  }
+
+  private Property getForName(List<Property> properties, String propertyName) {
+    for (Property property : properties) {
+      if (property.getName().equals(propertyName)) {
+        return property;
+      }
+    }
+    fail("Should have found property:" + propertyName);
+    return null;
+  }
 
   @Test
   public void test() throws XMLStreamException, EntityProviderException {
