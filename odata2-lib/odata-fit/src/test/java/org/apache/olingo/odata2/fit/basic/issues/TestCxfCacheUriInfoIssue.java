@@ -44,7 +44,7 @@ import org.junit.Test;
 /**
  *  
  */
-public class TestIssue105 extends AbstractBasicTest {
+public class TestCxfCacheUriInfoIssue extends AbstractBasicTest {
 
   @Override
   protected ODataSingleProcessor createProcessor() throws ODataException {

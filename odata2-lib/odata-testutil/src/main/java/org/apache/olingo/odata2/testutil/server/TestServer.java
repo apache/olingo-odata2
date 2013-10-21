@@ -90,14 +90,15 @@ public class TestServer {
         }
 
         final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        contextHandler.addServlet(odataServletHolder, path + "/*");
+        contextHandler.setContextPath("/abc");
+       contextHandler.addServlet(odataServletHolder, path + "/*");
 
         try {
           final InetSocketAddress isa = new InetSocketAddress(DEFAULT_HOST, port);
           server = new Server(isa);
           server.setHandler(contextHandler);
           server.start();
-          endpoint = new URI(DEFAULT_SCHEME, null, DEFAULT_HOST, isa.getPort(), path, null, null);
+          endpoint = new URI(DEFAULT_SCHEME, null, DEFAULT_HOST, isa.getPort(), "/abc" + path, null, null);
           log.trace("Started server at endpoint " + endpoint.toASCIIString());
           break;
         } catch (final BindException e) {

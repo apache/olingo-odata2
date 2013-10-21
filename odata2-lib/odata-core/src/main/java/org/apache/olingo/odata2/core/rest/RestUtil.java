@@ -217,7 +217,8 @@ public class RestUtil {
   private static URI buildBaseUri(final HttpServletRequest request,
       final List<PathSegment> precedingPathSegments) throws ODataException {
     try {
-      UriBuilder uriBuilder = UriBuilder.fromUri(request.getServletPath());
+      String path = request.getContextPath() + request.getServletPath();
+      UriBuilder uriBuilder = UriBuilder.fromUri(path);
       for (final PathSegment ps : precedingPathSegments) {
         uriBuilder = uriBuilder.path(ps.getPath());
         for (final String key : ps.getMatrixParameters().keySet()) {
