@@ -154,7 +154,6 @@ public interface JPAProcessor {
    * @param createView
    * @param content
    * @param requestContentType
-   * @param contentType
    * @return Created Object
    * 
    * @throws ODataJPAModelException
@@ -172,8 +171,6 @@ public interface JPAProcessor {
    * 
    * @param createView
    * @param content
-   * @param requestContentType
-   * @param contentType
    * @return Created Object
    * 
    * @throws ODataJPAModelException
@@ -187,8 +184,9 @@ public interface JPAProcessor {
    * Processes OData request for updating Entity. The method returns an Object
    * which is updated. A Null reference implies object was not created.
    * 
-   * @param deleteuriInfo
-   * @param contentType
+   * @param updateView
+   * @param content
+   * @param requestContentType
    * @return Deleted Object
    * 
    * @throws ODataJPAModelException
@@ -202,8 +200,8 @@ public interface JPAProcessor {
    * Processes OData request for updating Entity. The method returns an Object
    * which is updated. A Null reference implies object was not created.
    * 
-   * @param deleteuriInfo
-   * @param contentType
+   * @param updateView
+   * @param content
    * @return Deleted Object
    * 
    * @throws ODataJPAModelException
