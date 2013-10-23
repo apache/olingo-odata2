@@ -56,6 +56,7 @@ import org.apache.olingo.odata2.core.uri.UriType;
 import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.ref.model.DataContainer;
 import org.apache.olingo.odata2.ref.processor.ListsProcessor;
+import org.apache.olingo.odata2.ref.processor.BeanPropertyAccess;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
@@ -103,7 +104,8 @@ public abstract class AbstractContentNegotiationTest extends AbstractFitTest {
   protected ODataService createService() throws ODataException {
     DataContainer dataContainer = new DataContainer();
     dataContainer.init();
-    final ODataSingleProcessor processor = new ListsProcessor(new ScenarioDataSource(dataContainer));
+    final ODataSingleProcessor processor = new ListsProcessor(new ScenarioDataSource(dataContainer),
+        new BeanPropertyAccess());
     final EdmProvider provider = new ScenarioEdmProvider();
     return new ODataSingleProcessorService(provider, processor) {};
   }
