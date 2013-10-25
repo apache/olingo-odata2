@@ -90,8 +90,8 @@ public class RestUtil {
     } else if (ContentType.isParseable(contentType)) {
       return ContentType.create(contentType);
     } else {
-      throw new ODataUnsupportedMediaTypeException(ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE
-          .addContent(HttpHeaders.CONTENT_TYPE, contentType));
+      throw new ODataUnsupportedMediaTypeException(
+              ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE.addContent(contentType));
     }
   }
 
