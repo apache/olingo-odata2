@@ -43,8 +43,8 @@ public class TestCxfCacheUriInfoIssue2 {
     server1.setPathSplit(0);
     server2.setPathSplit(0);
 
-    server1.startServer(Service1Factory.class);
-    server2.startServer(Service2Factory.class);
+    server1.startServer(Service1Factory.class, 19000);
+    server2.startServer(Service2Factory.class, 19100);
   }
 
   @Test
