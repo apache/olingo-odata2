@@ -41,6 +41,8 @@ public class TestServer {
   private static final int PORT_MAX = 19200;
   private static final int PORT_INC = 1;
 
+  private static int nextFreePort = PORT_MIN;
+
   private static final String DEFAULT_SCHEME = "http";
   private static final String DEFAULT_HOST = "localhost";
   private static final String DEFAULT_PATH = "/test";
@@ -78,7 +80,8 @@ public class TestServer {
 
   public void startServer(final Class<? extends ODataServiceFactory> factoryClass) {
     try {
-      for (int port = PORT_MIN; port <= PORT_MAX; port += PORT_INC) {
+      for (int port = nextFreePort; port <= PORT_MAX; port += PORT_INC) {
+        nextFreePort = port + PORT_INC;
         final CXFNonSpringJaxrsServlet odataServlet = new CXFNonSpringJaxrsServlet();
         final ServletHolder odataServletHolder = new ServletHolder(odataServlet);
         odataServletHolder.setInitParameter("javax.ws.rs.Application",
@@ -91,7 +94,7 @@ public class TestServer {
 
         final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contextHandler.setContextPath("/abc");
-       contextHandler.addServlet(odataServletHolder, path + "/*");
+        contextHandler.addServlet(odataServletHolder, path + "/*");
 
         try {
           final InetSocketAddress isa = new InetSocketAddress(DEFAULT_HOST, port);
@@ -106,10 +109,10 @@ public class TestServer {
         }
       }
 
+
       if (!server.isStarted()) {
         throw new BindException("no free port in range of [" + PORT_MIN + ".." + PORT_MAX + "]");
       }
-
     } catch (final Exception e) {
       log.error(e);
       throw new ServerRuntimeException(e);
