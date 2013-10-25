@@ -80,7 +80,7 @@ public class ContentNegotiationPostRequestTest extends AbstractContentNegotiatio
           "</d:Location>" +
           "<d:Age>52</d:Age>" +
           "<d:EntryDate>1999-01-01T00:00:00</d:EntryDate>" +
-          "<d:ImageUrl>/male_1_WinterW.jpg</d:ImageUrl>" +
+          "<d:ImageUrl>/Employee_1.png</d:ImageUrl>" +
           "</m:properties>" +
           "</entry>";
 

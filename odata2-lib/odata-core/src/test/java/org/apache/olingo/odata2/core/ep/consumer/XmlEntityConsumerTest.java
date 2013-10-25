@@ -122,7 +122,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
           "    </d:Location>" +
           "    <d:Age>52</d:Age>" +
           "    <d:EntryDate>1999-01-01T00:00:00</d:EntryDate>" +
-          "    <d:ImageUrl>/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg</d:ImageUrl>" +
+          "    <d:ImageUrl>/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png</d:ImageUrl>" +
           "  </m:properties>" +
           "</entry>";
 
@@ -1860,7 +1860,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
   @SuppressWarnings("unchecked")
@@ -1896,7 +1896,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
   /**
@@ -1935,7 +1935,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
   @Test
@@ -2013,7 +2013,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
   @SuppressWarnings("unchecked")
@@ -2053,7 +2053,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(new Date(915148800000l), properties.get("EntryDate"));
-    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
   @SuppressWarnings("unchecked")
@@ -2086,7 +2086,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
   @SuppressWarnings("unchecked")
@@ -2119,7 +2119,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
   @SuppressWarnings("unchecked")
@@ -2151,7 +2151,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     Calendar entryDate = (Calendar) properties.get("EntryDate");
     assertEquals(915148800000L, entryDate.getTimeInMillis());
     assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
-    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
   @Test(expected = EntityProviderException.class)
@@ -2225,7 +2225,7 @@ public class XmlEntityConsumerTest extends AbstractConsumerTest {
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Short.valueOf("52"), properties.get("Age"));
     assertEquals(Long.valueOf(915148800000L), properties.get("EntryDate"));
-    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/male_1_WinterW.jpg", properties.get("ImageUrl"));
+    assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
   @Test

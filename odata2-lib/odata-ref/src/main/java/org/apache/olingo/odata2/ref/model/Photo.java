@@ -27,7 +27,7 @@ import java.util.Arrays;
  *  
  */
 public class Photo {
-  private static final String RESOURCE = "/male_1_WinterW.jpg";
+  private static final String RESOURCE = "/Employee_1.png";
   private static byte[] defaultImage;
 
   private final int id;
