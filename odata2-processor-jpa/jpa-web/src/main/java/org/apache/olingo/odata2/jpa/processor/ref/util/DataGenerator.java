@@ -33,7 +33,6 @@ import org.eclipse.persistence.queries.DataModifyQuery;
 import org.eclipse.persistence.queries.SQLCall;
 import org.eclipse.persistence.sessions.Session;
 
-
 /**
  * This is a utility class for generating and cleaning data. The generated data would be used by the application.
  * 

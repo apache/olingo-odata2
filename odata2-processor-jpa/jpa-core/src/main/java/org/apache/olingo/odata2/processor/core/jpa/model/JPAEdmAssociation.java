@@ -98,7 +98,7 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
                 && view.getJoinColumnName() != null && view.getJoinColumnReferenceColumnName() != null) {
               if (view.getJoinColumnName().equals(associationEnd.getJoinColumnName())
                   && view.getJoinColumnReferenceColumnName()
-                  .equals(associationEnd.getJoinColumnReferenceColumnName())) {
+                      .equals(associationEnd.getJoinColumnReferenceColumnName())) {
                 currentAssociation = association;
                 return association;
               }

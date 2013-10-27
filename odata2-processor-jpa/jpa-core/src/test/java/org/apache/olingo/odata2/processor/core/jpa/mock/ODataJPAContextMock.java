@@ -36,6 +36,7 @@ public abstract class ODataJPAContextMock {
     EasyMock.expect(odataJPAContext.getEntityManagerFactory()).andReturn(mockEntityManagerFactory());
     EasyMock.expect(odataJPAContext.getJPAEdmMappingModel()).andReturn(MAPPING_MODEL);
     EasyMock.expect(odataJPAContext.getJPAEdmExtension()).andReturn(null);
+    EasyMock.expect(odataJPAContext.getDefaultNaming()).andReturn(true);
     EasyMock.replay(odataJPAContext);
     return odataJPAContext;
   }

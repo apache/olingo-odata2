@@ -38,6 +38,7 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   private String jpaEdmMappingModelName;
   private JPAEdmExtension jpaEdmExtension;
   private static final ThreadLocal<ODataContext> oDataContextThreadLocal = new ThreadLocal<ODataContext>();
+  private boolean defaultNaming = true;
 
   @Override
   public String getPersistenceUnitName() {
@@ -131,5 +132,15 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   @Override
   public JPAEdmExtension getJPAEdmExtension() {
     return jpaEdmExtension;
+  }
+
+  @Override
+  public void setDefaultNaming(final boolean defaultNaming) {
+    this.defaultNaming = defaultNaming;
+  }
+
+  @Override
+  public boolean getDefaultNaming() {
+    return defaultNaming;
   }
 }

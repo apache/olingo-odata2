@@ -175,4 +175,32 @@ public interface ODataJPAContext {
    */
   public JPAEdmExtension getJPAEdmExtension();
 
+  /**
+   * The method sets into the context whether the library should consider default naming for 
+   * <ul><li>EdmProperty</li>
+   * <li>EdmComplexProperty</li>
+   * <li>EdmNavigationProperty</li></ul>
+   * 
+   * @param defaultNaming is a boolean value that indicates if set to
+   * <ul><li>true - default naming is considered in case no mapping is provided.</li>
+   * <li>false - default naming is not considered in case no mapping is provided. The 
+   * name provided in JPA Entity Model is considered.</li>
+   * </ul>
+   */
+  public void setDefaultNaming(boolean defaultNaming);
+
+  /**
+   * The method returns whether the library should consider default naming for 
+   * <ul><li>EdmProperty</li>
+   * <li>EdmComplexProperty</li>
+   * <li>EdmNavigationProperty</li></ul>
+   * 
+   * @return
+   * <ul><li>true - default naming is considered in case no mapping is provided.</li>
+   * <li>false - default naming is not considered in case no mapping is provided. The 
+   * name provided in JPA Entity Model is considered.</li>
+   * </ul>
+   */
+  public boolean getDefaultNaming();
+
 }

@@ -27,7 +27,6 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension;
 
 public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
   private static final String PUNIT_NAME = "salesorderprocessing";
-  private static final String MAPPING_MODEL = "SalesOrderProcessingMappingModel.xml";
 
   @Override
   public ODataJPAContext initializeODataJPAContext()
@@ -35,7 +34,8 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
     ODataJPAContext oDataJPAContext = getODataJPAContext();
     oDataJPAContext.setEntityManagerFactory(JPAEntityManagerFactory.getEntityManagerFactory(PUNIT_NAME));
     oDataJPAContext.setPersistenceUnitName(PUNIT_NAME);
-    oDataJPAContext.setJPAEdmMappingModel(MAPPING_MODEL);
+    //oDataJPAContext.setJPAEdmMappingModel(MAPPING_MODEL);
+    oDataJPAContext.setDefaultNaming(false);
     oDataJPAContext
         .setJPAEdmExtension((JPAEdmExtension) new SalesOrderProcessingExtension());
 

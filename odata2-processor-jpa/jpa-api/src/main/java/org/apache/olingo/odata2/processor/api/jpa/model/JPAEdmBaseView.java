@@ -64,6 +64,7 @@ public interface JPAEdmBaseView {
    * @return <ul>
    * <li>true - if the container is consistent without errors</li>
    * <li>false - if the container is inconsistent with errors</li>
+   * </ul>
    * 
    */
   public boolean isConsistent();
@@ -87,4 +88,14 @@ public interface JPAEdmBaseView {
    * @return an instance of JPA Edm Extension
    */
   public JPAEdmExtension getJPAEdmExtension();
+
+  /**
+   * The method returns whether the default naming logic is skipped for the
+   * current view.
+   * 
+   * @return <ul><li>true - skip default naming logic</li>
+   *         <li>false - do not skip default naming logic</li>
+   *         </ul>
+   */
+  public boolean isDefaultNamingSkipped();
 }

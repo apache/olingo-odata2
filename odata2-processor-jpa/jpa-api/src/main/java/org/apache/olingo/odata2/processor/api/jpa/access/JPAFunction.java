@@ -38,7 +38,7 @@ public class JPAFunction {
   private Type returnType;
   private Object[] args;
 
-  public JPAFunction(final Method function, final Class<?>[] parameterTypes, final Type returnType, 
+  public JPAFunction(final Method function, final Class<?>[] parameterTypes, final Type returnType,
       final Object[] args) {
     this.function = function;
     this.parameterTypes = parameterTypes;

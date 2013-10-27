@@ -430,7 +430,7 @@ public class JPAEntityParserTest {
     } catch (NoSuchMethodException e) {
       assertEquals(
           "org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser.getGetterName1" +
-          "(org.apache.olingo.odata2.api.edm.EdmProperty)",
+              "(org.apache.olingo.odata2.api.edm.EdmProperty)",
           e.getMessage());
     } catch (SecurityException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -472,7 +472,7 @@ public class JPAEntityParserTest {
     } catch (NoSuchMethodException e) {
       assertEquals(
           "org.apache.olingo.odata2.processor.core.jpa.access.data.JPAEntityParser.getGetters(java.lang.Object, " +
-          "org.apache.olingo.odata2.api.edm.EdmStructuralType)",
+              "org.apache.olingo.odata2.api.edm.EdmStructuralType)",
           e.getMessage());
     } catch (SecurityException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);

@@ -203,7 +203,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
 
           currentSimpleProperty = new SimpleProperty();
           JPAEdmNameBuilder
-              .build((JPAEdmPropertyView) JPAEdmProperty.this, isBuildModeComplexType);
+              .build((JPAEdmPropertyView) JPAEdmProperty.this, isBuildModeComplexType, skipDefaultNaming);
 
           EdmSimpleTypeKind simpleTypeKind = JPATypeConvertor
               .convertToEdmSimpleType(currentAttribute
@@ -257,7 +257,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
             } else {
               JPAEdmNameBuilder
                   .build((JPAEdmComplexPropertyView) JPAEdmProperty.this,
-                      JPAEdmProperty.this);
+                      JPAEdmProperty.this, skipDefaultNaming);
             }
             currentComplexProperty.setType(new FullQualifiedName(
                 schemaView.getEdmSchema().getNamespace(),

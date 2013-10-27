@@ -19,9 +19,9 @@
 package org.apache.olingo.odata2.processor.core.jpa.access.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.odata2.api.edm.provider.ComplexProperty;
+import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexPropertyView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmPropertyView;
@@ -33,9 +33,49 @@ import org.junit.Test;
 
 public class JPAEdmNameBuilderTest {
 
-  @SuppressWarnings("rawtypes")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   @Test
-  public void testBuildJPAEdmComplexPropertyViewJPAEdmPropertyView() {
+  public void testBuildJPAEdmPropertyView() {
+
+    SimpleProperty simpleProperty = new SimpleProperty();
+
+    // Mocking EDMProperty
+    JPAEdmPropertyView propertyView = EasyMock.createMock(JPAEdmPropertyView.class);
+    JPAEdmEntityTypeView entityTypeView = EasyMock.createMock(JPAEdmEntityTypeView.class);
+
+    EasyMock.expect(propertyView.getJPAAttribute()).andStubReturn(new JPAAttribute());
+    EasyMock.expect(propertyView.getJPAEdmEntityTypeView()).andStubReturn(entityTypeView);
+    EasyMock.expect(propertyView.getJPAEdmMappingModelAccess()).andStubReturn(null);
+    EasyMock.expect(propertyView.getEdmSimpleProperty()).andStubReturn(simpleProperty);
+    EasyMock.replay(propertyView);
+
+    JPAEdmNameBuilder.build(propertyView, false, false);
+    assertEquals("Id", simpleProperty.getName());
+  }
+
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @Test
+  public void testBuildJPAEdmPropertyViewWithNoDefaultNaming() {
+
+    SimpleProperty simpleProperty = new SimpleProperty();
+
+    // Mocking EDMProperty
+    JPAEdmPropertyView propertyView = EasyMock.createMock(JPAEdmPropertyView.class);
+    JPAEdmEntityTypeView entityTypeView = EasyMock.createMock(JPAEdmEntityTypeView.class);
+
+    EasyMock.expect(propertyView.getJPAAttribute()).andStubReturn(new JPAAttribute());
+    EasyMock.expect(propertyView.getJPAEdmEntityTypeView()).andStubReturn(entityTypeView);
+    EasyMock.expect(propertyView.getJPAEdmMappingModelAccess()).andStubReturn(null);
+    EasyMock.expect(propertyView.getEdmSimpleProperty()).andStubReturn(simpleProperty);
+    EasyMock.replay(propertyView);
+
+    JPAEdmNameBuilder.build(propertyView, false, true);
+    assertEquals("id", simpleProperty.getName());
+  }
+
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @Test
+  public void testBuildJPAEdmComplexPropertyView() {
     JPAEdmComplexPropertyView complexPropertyView = EasyMock.createMock(JPAEdmComplexPropertyView.class);
     ComplexProperty complexProperty = new ComplexProperty();
     EasyMock.expect(complexPropertyView.getEdmComplexProperty()).andStubReturn(complexProperty);
@@ -46,20 +86,45 @@ public class JPAEdmNameBuilderTest {
     // Mocking EDMProperty
     JPAEdmPropertyView propertyView = EasyMock.createMock(JPAEdmPropertyView.class);
     JPAEdmEntityTypeView entityTypeView = EasyMock.createMock(JPAEdmEntityTypeView.class);
-    EasyMock.expect(entityTypeView.getJPAEntityType()).andStubReturn(new JEntityType());
+    EasyMock.expect(entityTypeView.getJPAEntityType()).andStubReturn(new JPAEntityType());
     EasyMock.replay(entityTypeView);
-    EasyMock.expect(propertyView.getJPAAttribute()).andStubReturn(new JAttribute());
+    EasyMock.expect(propertyView.getJPAAttribute()).andStubReturn(new JPAAttribute());
     EasyMock.expect(propertyView.getJPAEdmEntityTypeView()).andStubReturn(entityTypeView);
     EasyMock.replay(complexPropertyView);
     EasyMock.replay(propertyView);
 
-    JPAEdmNameBuilder.build(complexPropertyView, propertyView);
+    JPAEdmNameBuilder.build(complexPropertyView, propertyView, false);
     assertEquals("Id", complexPropertyView.getEdmComplexProperty().getName());
 
   }
 
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @Test
+  public void testBuildJPAEdmComplexPropertyViewWithNoDefaultNaming() {
+    JPAEdmComplexPropertyView complexPropertyView = EasyMock.createMock(JPAEdmComplexPropertyView.class);
+    ComplexProperty complexProperty = new ComplexProperty();
+    EasyMock.expect(complexPropertyView.getEdmComplexProperty()).andStubReturn(complexProperty);
+    ODataJPAContextImpl oDataJPAContext = new ODataJPAContextImpl();
+    JPAEdmMappingModelService mappingModelService = new JPAEdmMappingModelService(oDataJPAContext);
+    EasyMock.expect(complexPropertyView.getJPAEdmMappingModelAccess()).andStubReturn(mappingModelService);
+
+    // Mocking EDMProperty
+    JPAEdmPropertyView propertyView = EasyMock.createMock(JPAEdmPropertyView.class);
+    JPAEdmEntityTypeView entityTypeView = EasyMock.createMock(JPAEdmEntityTypeView.class);
+    EasyMock.expect(entityTypeView.getJPAEntityType()).andStubReturn(new JPAEntityType());
+    EasyMock.replay(entityTypeView);
+    EasyMock.expect(propertyView.getJPAAttribute()).andStubReturn(new JPAAttribute());
+    EasyMock.expect(propertyView.getJPAEdmEntityTypeView()).andStubReturn(entityTypeView);
+    EasyMock.replay(complexPropertyView);
+    EasyMock.replay(propertyView);
+
+    JPAEdmNameBuilder.build(complexPropertyView, propertyView, true);
+    assertEquals("id", complexPropertyView.getEdmComplexProperty().getName());
+
+  }
+
   @SuppressWarnings("hiding")
-  class JAttribute<Object, String> extends JPAAttributeMock<Object, java.lang.String> {
+  class JPAAttribute<Object, String> extends JPAAttributeMock<Object, java.lang.String> {
 
     @Override
     public java.lang.String getName() {
@@ -73,18 +138,14 @@ public class JPAEdmNameBuilderTest {
 
   }
 
-  class JEntityType<Object> extends JPAEntityTypeMock<Object> {
+  @SuppressWarnings("hiding")
+  class JPAEntityType<Object> extends JPAEntityTypeMock<Object> {
 
     @Override
     public java.lang.String getName() {
       return "SalesOrderHeader";
     }
 
-  }
-
-  @Test
-  public void testBuildJPAEdmComplexPropertyViewString() {
-    assertTrue(true);
   }
 
 }
