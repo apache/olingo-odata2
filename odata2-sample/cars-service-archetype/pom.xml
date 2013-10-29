@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-odata2-sample-cars-service-incubating-archetype</artifactId>
+    <artifactId>olingo-odata2-sample-cars-service-archetype-incubating</artifactId>
     <name>${project.artifactId}</name>
     <version>1.1.0-SNAPSHOT</version>
 
