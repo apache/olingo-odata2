@@ -22,6 +22,6 @@
     </parent>
 
     <modules>
-        <module>cars-archetype</module>
+        <module>cars-service-archetype</module>
     </modules>
 </project>
