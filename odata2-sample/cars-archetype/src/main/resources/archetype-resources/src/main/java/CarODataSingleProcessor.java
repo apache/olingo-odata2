@@ -1,42 +1,61 @@
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
+/*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ ******************************************************************************/
 package ${package};
 
-import static ${package}.MyEdmProvider.ENTITY_SET_NAME_CARS;
-import static ${package}.MyEdmProvider.ENTITY_SET_NAME_MANUFACTURERS;
+import static ${package}.CarEdmProvider.ENTITY_SET_NAME_CARS;
+import static ${package}.CarEdmProvider.ENTITY_SET_NAME_MANUFACTURERS;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import ${groupId}.odata2.api.edm.EdmEntitySet;
-import ${groupId}.odata2.api.edm.EdmLiteralKind;
-import ${groupId}.odata2.api.edm.EdmProperty;
-import ${groupId}.odata2.api.edm.EdmSimpleType;
-import ${groupId}.odata2.api.ep.EntityProvider;
-import ${groupId}.odata2.api.ep.EntityProviderWriteProperties;
-import ${groupId}.odata2.api.ep.EntityProviderWriteProperties.ODataEntityProviderPropertiesBuilder;
-import ${groupId}.odata2.api.exception.ODataException;
-import ${groupId}.odata2.api.exception.ODataNotFoundException;
-import ${groupId}.odata2.api.exception.ODataNotImplementedException;
-import ${groupId}.odata2.api.processor.ODataResponse;
-import ${groupId}.odata2.api.processor.ODataSingleProcessor;
-import ${groupId}.odata2.api.uri.KeyPredicate;
-import ${groupId}.odata2.api.uri.info.GetEntitySetUriInfo;
-import ${groupId}.odata2.api.uri.info.GetEntityUriInfo;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
+import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.ODataEntityProviderPropertiesBuilder;
+import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
+import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
+import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
+import org.apache.olingo.odata2.api.uri.KeyPredicate;
+import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
+import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 
-public class MyODataSingleProcessor extends ODataSingleProcessor {
+public class CarODataSingleProcessor extends ODataSingleProcessor {
 
-  private final DataStore dataStore;
+  private final CarDataStore dataStore;
 
-  public MyODataSingleProcessor() {
-    dataStore = new DataStore();
+  public CarODataSingleProcessor() {
+    dataStore = new CarDataStore();
   }
 
   @Override
-  public ODataResponse readEntitySet(GetEntitySetUriInfo uriInfo, String contentType) throws ODataException {
+  public ODataResponse readEntitySet(final GetEntitySetUriInfo uriInfo, final String contentType) 
+      throws ODataException {
 
     EdmEntitySet entitySet;
 
@@ -74,7 +93,7 @@ public class MyODataSingleProcessor extends ODataSingleProcessor {
   }
 
   @Override
-  public ODataResponse readEntity(GetEntityUriInfo uriInfo, String contentType) throws ODataException {
+  public ODataResponse readEntity(final GetEntityUriInfo uriInfo, final String contentType) throws ODataException {
 
     if (uriInfo.getNavigationSegments().size() == 0) {
       EdmEntitySet entitySet = uriInfo.getStartEntitySet();
@@ -127,7 +146,7 @@ public class MyODataSingleProcessor extends ODataSingleProcessor {
     throw new ODataNotImplementedException();
   }
 
-  private int getKeyValue(KeyPredicate key) throws ODataException {
+  private int getKeyValue(final KeyPredicate key) throws ODataException {
     EdmProperty property = key.getProperty();
     EdmSimpleType type = (EdmSimpleType) property.getType();
     return type.valueOfString(key.getLiteral(), EdmLiteralKind.DEFAULT, property.getFacets(), Integer.class);

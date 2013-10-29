@@ -1,3 +1,21 @@
+/*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ ******************************************************************************/
 package org.apache.olingo.odata2.sample.service;
 
 import java.util.ArrayList;
@@ -31,7 +49,7 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.api.exception.ODataException;
 
-public class MyEdmProvider extends EdmProvider {
+public class CarEdmProvider extends EdmProvider {
 
   static final String ENTITY_SET_NAME_MANUFACTURERS = "Manufacturers";
   static final String ENTITY_SET_NAME_CARS = "Cars";
@@ -104,7 +122,7 @@ public class MyEdmProvider extends EdmProvider {
   }
 
   @Override
-  public EntityType getEntityType(FullQualifiedName edmFQName) throws ODataException {
+  public EntityType getEntityType(final FullQualifiedName edmFQName) throws ODataException {
     if (NAMESPACE.equals(edmFQName.getNamespace())) {
 
       if (ENTITY_TYPE_1_1.getName().equals(edmFQName.getName())) {
@@ -182,7 +200,7 @@ public class MyEdmProvider extends EdmProvider {
   }
 
   @Override
-  public ComplexType getComplexType(FullQualifiedName edmFQName) throws ODataException {
+  public ComplexType getComplexType(final FullQualifiedName edmFQName) throws ODataException {
     if (NAMESPACE.equals(edmFQName.getNamespace())) {
       if (COMPLEX_TYPE.getName().equals(edmFQName.getName())) {
         List<Property> properties = new ArrayList<Property>();
@@ -198,7 +216,7 @@ public class MyEdmProvider extends EdmProvider {
   }
 
   @Override
-  public Association getAssociation(FullQualifiedName edmFQName) throws ODataException {
+  public Association getAssociation(final FullQualifiedName edmFQName) throws ODataException {
     if (NAMESPACE.equals(edmFQName.getNamespace())) {
       if (ASSOCIATION_CAR_MANUFACTURER.getName().equals(edmFQName.getName())) {
         return new Association().setName(ASSOCIATION_CAR_MANUFACTURER.getName())
@@ -212,7 +230,7 @@ public class MyEdmProvider extends EdmProvider {
   }
 
   @Override
-  public EntitySet getEntitySet(String entityContainer, String name) throws ODataException {
+  public EntitySet getEntitySet(final String entityContainer, final String name) throws ODataException {
     if (ENTITY_CONTAINER.equals(entityContainer)) {
       if (ENTITY_SET_NAME_CARS.equals(name)) {
         return new EntitySet().setName(name).setEntityType(ENTITY_TYPE_1_1);
@@ -224,8 +242,8 @@ public class MyEdmProvider extends EdmProvider {
   }
 
   @Override
-  public AssociationSet getAssociationSet(String entityContainer, FullQualifiedName association,
-      String sourceEntitySetName, String sourceEntitySetRole) throws ODataException {
+  public AssociationSet getAssociationSet(final String entityContainer, final FullQualifiedName association,
+      final String sourceEntitySetName, final String sourceEntitySetRole) throws ODataException {
     if (ENTITY_CONTAINER.equals(entityContainer)) {
       if (ASSOCIATION_CAR_MANUFACTURER.equals(association)) {
         return new AssociationSet().setName(ASSOCIATION_SET)
@@ -238,7 +256,7 @@ public class MyEdmProvider extends EdmProvider {
   }
 
   @Override
-  public FunctionImport getFunctionImport(String entityContainer, String name) throws ODataException {
+  public FunctionImport getFunctionImport(final String entityContainer, final String name) throws ODataException {
     if (ENTITY_CONTAINER.equals(entityContainer)) {
       if (FUNCTION_IMPORT.equals(name)) {
         return new FunctionImport().setName(name)
@@ -250,7 +268,7 @@ public class MyEdmProvider extends EdmProvider {
   }
 
   @Override
-  public EntityContainerInfo getEntityContainerInfo(String name) throws ODataException {
+  public EntityContainerInfo getEntityContainerInfo(final String name) throws ODataException {
     if (name == null || "ODataCarsEntityContainer".equals(name)) {
       return new EntityContainerInfo().setName("ODataCarsEntityContainer").setDefaultEntityContainer(true);
     }

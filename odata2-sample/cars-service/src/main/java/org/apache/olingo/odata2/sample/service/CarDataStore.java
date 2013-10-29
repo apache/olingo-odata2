@@ -1,7 +1,22 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
-package ${package};
+/*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ ******************************************************************************/
+package org.apache.olingo.odata2.sample.service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-public class DataStore {
+public class CarDataStore {
 
   // Data accessors
-  public Map<String, Object> getCar(int id) {
+  public Map<String, Object> getCar(final int id) {
     Map<String, Object> data = null;
 
     Calendar updated = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -51,8 +66,9 @@ public class DataStore {
     return data;
   }
 
-  private Map<String, Object> createCar(int carId, String model, int manufacturerId, double price,
-      String currency, String modelYear, Calendar updated, String imagePath) {
+  private Map<String, Object> createCar(final int carId, final String model, final int manufacturerId,
+      final double price,
+      final String currency, final String modelYear, final Calendar updated, final String imagePath) {
     Map<String, Object> data = new HashMap<String, Object>();
 
     data.put("Id", carId);
@@ -67,7 +83,7 @@ public class DataStore {
     return data;
   }
 
-  public Map<String, Object> getManufacturer(int id) {
+  public Map<String, Object> getManufacturer(final int id) {
     Map<String, Object> data = null;
     Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 
@@ -91,7 +107,8 @@ public class DataStore {
     return data;
   }
 
-  private Map<String, Object> createManufacturer(int id, String name, Map<String, Object> address, Calendar updated) {
+  private Map<String, Object> createManufacturer(final int id, final String name, final Map<String, Object> address,
+      final Calendar updated) {
     Map<String, Object> data = new HashMap<String, Object>();
     data.put("Id", id);
     data.put("Name", name);
@@ -100,7 +117,8 @@ public class DataStore {
     return data;
   }
 
-  private Map<String, Object> createAddress(String street, String city, String zipCode, String country) {
+  private Map<String, Object> createAddress(final String street, final String city, final String zipCode,
+      final String country) {
     Map<String, Object> address = new HashMap<String, Object>();
     address.put("Street", street);
     address.put("City", city);
@@ -126,7 +144,7 @@ public class DataStore {
     return manufacturers;
   }
 
-  public List<Map<String, Object>> getCarsFor(int manufacturerId) {
+  public List<Map<String, Object>> getCarsFor(final int manufacturerId) {
     List<Map<String, Object>> cars = getCars();
     List<Map<String, Object>> carsForManufacturer = new ArrayList<Map<String, Object>>();
 
@@ -139,7 +157,7 @@ public class DataStore {
     return carsForManufacturer;
   }
 
-  public Map<String, Object> getManufacturerFor(int carId) {
+  public Map<String, Object> getManufacturerFor(final int carId) {
     Map<String, Object> car = getCar(carId);
     if (car != null) {
       Object manufacturerId = car.get("ManufacturerId");

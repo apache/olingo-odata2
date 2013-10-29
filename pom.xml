@@ -232,6 +232,7 @@
                     <encoding>UTF-8</encoding>
                     <failOnViolation>true</failOnViolation>
                     <violationSeverity>warning</violationSeverity>
+                    <excludes>**/archetype-resources/**/*</excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -323,6 +324,10 @@
                                         <exclude>**/*.batch</exclude>
                                         <exclude>**/NOTICE</exclude>
                                         <exclude>**/DEPENDENCIES</exclude>
+                                        <exclude>**/archetype-resources/**</exclude>
+                                        <exclude>**/archetype-metadata.xml</exclude>
+                                        <exclude>**/archetype.properties</exclude>
+                                        <exclude>**/*.txt</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>
