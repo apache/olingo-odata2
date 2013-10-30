@@ -94,8 +94,8 @@ public interface JPAEdmBaseView {
    * current view.
    * 
    * @return <ul><li>true - skip default naming logic</li>
-   *         <li>false - do not skip default naming logic</li>
-   *         </ul>
+   * <li>false - do not skip default naming logic</li>
+   * </ul>
    */
   public boolean isDefaultNamingSkipped();
 }
