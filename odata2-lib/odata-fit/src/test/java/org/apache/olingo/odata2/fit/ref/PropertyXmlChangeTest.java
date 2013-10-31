@@ -22,14 +22,14 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
+import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.junit.Test;
 
 /**
- * Tests employing the reference scenario changing properties in XML format
- * 
+ * Tests employing the reference scenario changing properties in XML format.
  */
 public class PropertyXmlChangeTest extends AbstractRefXmlTest {
 
@@ -52,9 +52,8 @@ public class PropertyXmlChangeTest extends AbstractRefXmlTest {
 
     final String url4 = "Rooms('42')/Seats";
     requestBody = "<Seats xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">42</Seats>";
-    HttpResponse response =
-        callUri(ODataHttpMethod.PUT, url4, null, null, requestBody, HttpContentType.APPLICATION_XML_UTF8,
-            HttpStatusCodes.NO_CONTENT);
+    HttpResponse response = callUri(ODataHttpMethod.PUT, url4, HttpHeaders.IF_MATCH, "W/\"1\"", requestBody,
+        HttpContentType.APPLICATION_XML_UTF8, HttpStatusCodes.NO_CONTENT);
     checkEtag(response, "W/\"1\"");
 
     final String url5 = "Employees('2')/EmployeeId";

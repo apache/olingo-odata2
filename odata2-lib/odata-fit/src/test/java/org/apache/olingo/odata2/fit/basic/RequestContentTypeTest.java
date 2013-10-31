@@ -107,7 +107,7 @@ public class RequestContentTypeTest extends AbstractBasicTest {
 
   @Test
   public void validApplicationXmlContentType() throws Exception {
-    HttpPut put = new HttpPut(URI.create(getEndpoint().toString() + "Rooms('1')"));
+    HttpPut put = new HttpPut(URI.create(getEndpoint().toString() + "Teams('1')"));
     put.setHeader(HttpHeaders.CONTENT_TYPE, HttpContentType.APPLICATION_XML);
     final HttpResponse response = getHttpClient().execute(put);
     // We expect an internal server error due to the incomplete processor implementation.
@@ -124,7 +124,7 @@ public class RequestContentTypeTest extends AbstractBasicTest {
 
   @Test
   public void validTextPlainContentType() throws Exception {
-    HttpPut put = new HttpPut(URI.create(getEndpoint().toString() + "Rooms('1')/Seats/$value"));
+    HttpPut put = new HttpPut(URI.create(getEndpoint().toString() + "Teams('1')/isScrumTeam/$value"));
     put.setHeader(HttpHeaders.CONTENT_TYPE, HttpContentType.TEXT_PLAIN);
     final HttpResponse response = getHttpClient().execute(put);
     // We expect an internal server error due to the incomplete processor implementation.

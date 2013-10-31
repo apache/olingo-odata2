@@ -29,12 +29,16 @@ import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
+import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
+import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataMethodNotAllowedException;
+import org.apache.olingo.odata2.api.exception.ODataPreconditionRequiredException;
 import org.apache.olingo.odata2.api.exception.ODataUnsupportedMediaTypeException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataProcessor;
@@ -112,6 +116,12 @@ public class ODataRequestHandler {
       List<String> supportedContentTypes = getSupportedContentTypes(uriInfo, method);
       ContentType acceptContentType =
           new ContentNegotiator().doContentNegotiation(request, uriInfo, supportedContentTypes);
+
+      checkConditions(method, uriInfo,
+          context.getRequestHeader(HttpHeaders.IF_MATCH),
+          context.getRequestHeader(HttpHeaders.IF_NONE_MATCH),
+          context.getRequestHeader(HttpHeaders.IF_MODIFIED_SINCE),
+          context.getRequestHeader(HttpHeaders.IF_UNMODIFIED_SINCE));
 
       timingHandle2 = context.startRuntimeMeasurement("Dispatcher", "dispatch");
       odataResponse =
@@ -265,7 +275,7 @@ public class ODataRequestHandler {
         throw new ODataMethodNotAllowedException(ODataMethodNotAllowedException.DISPATCH);
       } else {
         if (uriInfo.getFormat() != null) {
-//          throw new ODataMethodNotAllowedException(ODataMethodNotAllowedException.DISPATCH);
+          //          throw new ODataMethodNotAllowedException(ODataMethodNotAllowedException.DISPATCH);
           throw new ODataBadRequestException(ODataBadRequestException.INVALID_SYNTAX);
         }
       }
@@ -473,6 +483,36 @@ public class ODataRequestHandler {
   private List<ContentType> getSupportedContentTypes(final Class<? extends ODataProcessor> processorFeature)
       throws ODataException {
     return ContentType.createAsCustom(service.getSupportedContentTypes(processorFeature));
+  }
+
+  /**
+   * A modifying request that targets an entity with enabled concurrency control
+   * must contain at least one concurrency-control HTTP request header field.
+   */
+  private static void checkConditions(final ODataHttpMethod method, final UriInfoImpl uriInfo,
+      final String ifMatch, final String ifNoneMatch, final String ifModifiedSince, final String ifUnmodifiedSince)
+      throws ODataException {
+    if ((method == ODataHttpMethod.PUT || method == ODataHttpMethod.PATCH || method == ODataHttpMethod.MERGE
+        || method == ODataHttpMethod.DELETE)
+        && ifMatch == null && ifNoneMatch == null && ifModifiedSince == null && ifUnmodifiedSince == null
+        && Arrays.asList(UriType.URI2, UriType.URI6A, UriType.URI3, UriType.URI4, UriType.URI5, UriType.URI17)
+            .contains(uriInfo.getUriType())
+        && hasConcurrencyControl(uriInfo.getTargetEntitySet().getEntityType())) {
+      throw new ODataPreconditionRequiredException(ODataPreconditionRequiredException.COMMON);
+    }
+  }
+
+  private static boolean hasConcurrencyControl(final EdmEntityType entityType) throws EdmException {
+    boolean concurrency = false;
+    for (final String propertyName : entityType.getPropertyNames()) {
+      final EdmFacets facets = ((EdmProperty) entityType.getProperty(propertyName)).getFacets();
+      if (facets != null && facets.getConcurrencyMode() != null
+          && facets.getConcurrencyMode() == EdmConcurrencyMode.Fixed) {
+        concurrency = true;
+        break;
+      }
+    }
+    return concurrency;
   }
 
   private static String getDebugValue(final ODataContext context, final Map<String, String> queryParameters) {
