@@ -18,12 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.api.jpa;
 
+import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.api.processor.ODataErrorCallback;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
+import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPAErrorCallback;
 import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAAccessFactory;
 import org.apache.olingo.odata2.processor.api.jpa.factory.ODataJPAFactory;
@@ -76,6 +79,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
 
   private ODataJPAContext oDataJPAContext;
   private ODataContext oDataContext;
+  private boolean setDetailErrors = false;
 
   /**
    * Creates an OData Service based on the values set in
@@ -158,4 +162,29 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
     return oDataJPAContext;
 
   }
+
+  /**
+   * The method sets the context whether a detail error message should be thrown
+   * or a less detail error message should be thrown by the library.
+   * @param setDetailErrors takes
+   * <ul><li>true - to indicate that library should throw a detailed error message</li>
+   * <li>false - to indicate that library should not throw a detailed error message</li>
+   * </ul>
+   * 
+   */
+  protected void setDetailErrors(final boolean setDetailErrors) {
+    this.setDetailErrors = setDetailErrors;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+    if (setDetailErrors == true) {
+      if (callbackInterface.isAssignableFrom(ODataErrorCallback.class)) {
+        return (T) new ODataJPAErrorCallback();
+      }
+    }
+    return null;
+  }
+
 }
