@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core;
+package org.apache.olingo.odata2.core.rest;
 
 import java.net.URI;
 import java.text.ParseException;
