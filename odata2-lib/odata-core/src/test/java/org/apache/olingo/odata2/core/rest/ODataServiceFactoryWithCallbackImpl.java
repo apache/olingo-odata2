@@ -18,20 +18,34 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.rest;
 
+import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.api.processor.ODataErrorCallback;
 
-public class ODataServiceFactoryImpl extends ODataServiceFactory {
+public class ODataServiceFactoryWithCallbackImpl extends ODataServiceFactory {
 
-  public ODataServiceFactoryImpl() {
+  public ODataServiceFactoryWithCallbackImpl() {
     super();
   }
 
   @Override
   public ODataService createService(final ODataContext ctx) throws ODataException {
     return null;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+    T callback = null;
+
+    if (callbackInterface == ODataErrorCallback.class) {
+      callback = (T) new ODataErrorHandlerCallbackImpl();
+    }
+
+    return callback;
   }
 
 }

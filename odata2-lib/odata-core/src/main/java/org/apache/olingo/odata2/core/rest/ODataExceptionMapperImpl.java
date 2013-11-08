@@ -27,6 +27,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -67,6 +68,8 @@ public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
   ServletConfig servletConfig;
   @Context
   HttpServletRequest servletRequest;
+  @Context
+  Application app;
 
   @Override
   public Response toResponse(final Exception exception) {
@@ -87,8 +90,9 @@ public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
   }
 
   private ODataResponse handleException(final Exception exception) {
+
     ODataExceptionWrapper exceptionWrapper =
-        new ODataExceptionWrapper(uriInfo, httpHeaders, servletConfig, servletRequest);
+        new ODataExceptionWrapper(uriInfo, httpHeaders, getErrorHandlerCallback());
     ODataResponse oDataResponse = exceptionWrapper.wrapInExceptionResponse(exception);
     return oDataResponse;
   }
@@ -189,22 +193,11 @@ public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
     return ContentType.APPLICATION_XML;
   }
 
-  private ODataErrorCallback getErrorHandlerCallback() throws ClassNotFoundException, InstantiationException,
-      IllegalAccessException {
+  private ODataErrorCallback getErrorHandlerCallback() {
     ODataErrorCallback callback = null;
-    final String factoryClassName = servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL);
-    if (factoryClassName != null) {
-      ClassLoader cl = (ClassLoader) servletRequest.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
-      Class<?> factoryClass;
-      if (cl == null) {
-        factoryClass = Class.forName(factoryClassName);
-      } else {
-        factoryClass = Class.forName(factoryClassName, true, cl);
-      }
-      final ODataServiceFactory serviceFactory = (ODataServiceFactory) factoryClass.newInstance();
-
-      callback = serviceFactory.getCallback(ODataErrorCallback.class);
-    }
+    final ODataServiceFactory serviceFactory =
+        ODataRootLocator.createServiceFactoryFromContext(app, servletRequest, servletConfig);
+    callback = serviceFactory.getCallback(ODataErrorCallback.class);
     return callback;
   }
 }
