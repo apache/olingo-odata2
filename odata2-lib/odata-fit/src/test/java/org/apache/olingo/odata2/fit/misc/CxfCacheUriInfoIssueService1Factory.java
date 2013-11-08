@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.fit.basic.issues;
+package org.apache.olingo.odata2.fit.misc;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -37,17 +37,17 @@ import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-public class Service1Factory extends ODataServiceFactory {
+public class CxfCacheUriInfoIssueService1Factory extends ODataServiceFactory {
 
   public static ODataContext context;
   public static ODataService service;
-  
-  public Service1Factory() {
+
+  public CxfCacheUriInfoIssueService1Factory() {
     super();
-   }
+  }
 
   @Override
-  public ODataService createService(ODataContext ctx) throws ODataException {
+  public ODataService createService(final ODataContext ctx) throws ODataException {
     final EdmProvider provider = mock(EdmProvider.class);
     final ODataSingleProcessor processor = mock(ODataSingleProcessor.class);
     when(((MetadataProcessor) processor).readMetadata(any(GetMetadataUriInfo.class), any(String.class))).thenReturn(
@@ -73,4 +73,3 @@ public class Service1Factory extends ODataServiceFactory {
   }
 
 }
-

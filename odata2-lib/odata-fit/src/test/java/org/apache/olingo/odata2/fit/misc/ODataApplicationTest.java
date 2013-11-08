@@ -1,3 +1,21 @@
+/*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ ******************************************************************************/
 package org.apache.olingo.odata2.fit.misc;
 
 import static org.junit.Assert.assertNotNull;
@@ -6,8 +24,6 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
 import org.eclipse.jetty.server.Server;
@@ -17,7 +33,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestOSGiEnabledFactory {
+public class ODataApplicationTest {
 
   private static final URI endpoint = URI.create("http://localhost:19080/osgi");
   private Server server;
@@ -45,9 +61,6 @@ public class TestOSGiEnabledFactory {
     URLConnection con = url.openConnection();
     con.addRequestProperty("accept", "*/*");
     Object content = con.getContent();
-    Map<String, List<String>> bla = con.getHeaderFields();
-    System.out.println(bla);
-    System.out.println(con.getHeaderField(0));
     assertNotNull(content);
 
   }
@@ -56,7 +69,7 @@ public class TestOSGiEnabledFactory {
     final CXFNonSpringJaxrsServlet odataServlet = new CXFNonSpringJaxrsServlet();
     final ServletHolder odataServletHolder = new ServletHolder(odataServlet);
     odataServletHolder.setInitParameter("javax.ws.rs.Application",
-        MyRestApplication.class.getName());
+        ODataApplication_.class.getName());
 
     final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
     contextHandler.addServlet(odataServletHolder, endpoint.getPath() + "/*");

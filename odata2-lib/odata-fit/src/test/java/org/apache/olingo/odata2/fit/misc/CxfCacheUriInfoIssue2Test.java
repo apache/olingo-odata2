@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.fit.basic.issues;
+package org.apache.olingo.odata2.fit.misc;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
 
@@ -30,7 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestCxfCacheUriInfoIssue2 {
+public class CxfCacheUriInfoIssue2Test {
 
   private TestServer server1;
   private TestServer server2;
@@ -43,8 +44,8 @@ public class TestCxfCacheUriInfoIssue2 {
     server1.setPathSplit(0);
     server2.setPathSplit(0);
 
-    server1.startServer(Service1Factory.class, 19000);
-    server2.startServer(Service2Factory.class, 19100);
+    server1.startServer(CxfCacheUriInfoIssueService1Factory.class, 19000);
+    server2.startServer(CxfCacheUriInfoIssueService2Factory.class, 19100);
   }
 
   @Test
@@ -53,16 +54,20 @@ public class TestCxfCacheUriInfoIssue2 {
     final HttpGet get1 = new HttpGet(uri1);
     HttpResponse r1 = new DefaultHttpClient().execute(get1);
     assertNotNull(r1);
-    assertEquals(uri1, Service1Factory.service.getProcessor().getContext().getPathInfo().getRequestUri());
-    assertEquals(server1.getEndpoint(), Service1Factory.service.getProcessor().getContext().getPathInfo()
+    assertEquals(uri1, CxfCacheUriInfoIssueService1Factory.service.getProcessor().getContext().getPathInfo()
+        .getRequestUri());
+    assertEquals(server1.getEndpoint(), CxfCacheUriInfoIssueService1Factory.service.getProcessor().getContext()
+        .getPathInfo()
         .getServiceRoot());
 
     URI uri2 = URI.create(server2.getEndpoint().toASCIIString() + "$metadata");
     final HttpGet get2 = new HttpGet(uri2);
     HttpResponse r2 = new DefaultHttpClient().execute(get2);
     assertNotNull(r2);
-    assertEquals(uri2, Service2Factory.service.getProcessor().getContext().getPathInfo().getRequestUri());
-    assertEquals(server2.getEndpoint(), Service2Factory.service.getProcessor().getContext().getPathInfo()
+    assertEquals(uri2, CxfCacheUriInfoIssueService2Factory.service.getProcessor().getContext().getPathInfo()
+        .getRequestUri());
+    assertEquals(server2.getEndpoint(), CxfCacheUriInfoIssueService2Factory.service.getProcessor().getContext()
+        .getPathInfo()
         .getServiceRoot());
   }
 

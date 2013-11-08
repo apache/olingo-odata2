@@ -208,7 +208,7 @@ public class ContextTest extends AbstractBasicTest {
     final String httpMethod = ctx.getHttpMethod();
     assertEquals("GET", httpMethod);
   }
-  
+
   @Test
   public void checkHttpRequest() throws ClientProtocolException, IOException, ODataException {
     final HttpGet get = new HttpGet(URI.create(getEndpoint().toString() + "/$metadata"));
