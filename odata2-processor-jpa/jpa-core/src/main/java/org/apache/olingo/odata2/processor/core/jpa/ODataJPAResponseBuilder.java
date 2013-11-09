@@ -249,7 +249,7 @@ public final class ODataJPAResponseBuilder {
     if (deletedObject == null) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
-    return ODataResponse.status(HttpStatusCodes.OK).build();
+    return ODataResponse.status(HttpStatusCodes.NO_CONTENT).build();
   }
 
   /* Response for Function Import Single Result */
@@ -429,7 +429,7 @@ public final class ODataJPAResponseBuilder {
 
   /*
    * This method handles $inlinecount request. It also modifies the list of results in case of
-   * $inlinecount and $top/$skip combinations. Specific to LinksUriInfo. //TODO
+   * $inlinecount and $top/$skip combinations. Specific to LinksUriInfo. 
    * 
    * @param edmEntityList
    * 
@@ -501,7 +501,7 @@ public final class ODataJPAResponseBuilder {
 
   /*
    * This method handles $inlinecount request. It also modifies the list of results in case of
-   * $inlinecount and $top/$skip combinations. Specific to Entity Set. //TODO
+   * $inlinecount and $top/$skip combinations. Specific to Entity Set. 
    */
   private static Integer getInlineCountForNonFilterQueryEntitySet(final List<Map<String, Object>> edmEntityList,
       final GetEntitySetUriInfo resultsView) {
