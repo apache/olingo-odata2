@@ -122,7 +122,8 @@ public class JPAEdmNameBuilder {
    * EDM Property Name - RULES
    * ************************************************************************
    */
-  public static void build(final JPAEdmPropertyView view, final boolean isComplexMode) {
+  public static void build(final JPAEdmPropertyView view, final boolean isComplexMode,
+      final boolean skipDefaultNaming) {
     Attribute<?, ?> jpaAttribute = view.getJPAAttribute();
     String jpaAttributeName = jpaAttribute.getName();
     String propertyName = null;
@@ -139,8 +140,10 @@ public class JPAEdmNameBuilder {
                 jpaAttributeName);
       }
     }
-    if (propertyName == null) {
+    if (skipDefaultNaming == false && propertyName == null) {
       propertyName = Character.toUpperCase(jpaAttributeName.charAt(0)) + jpaAttributeName.substring(1);
+    } else if (propertyName == null) {
+      propertyName = jpaAttributeName;
     }
 
     view.getEdmSimpleProperty().setName(propertyName);
@@ -259,7 +262,8 @@ public class JPAEdmNameBuilder {
    * EDM Complex Property Name - RULES
    * ************************************************************************
    */
-  public static void build(final JPAEdmComplexPropertyView complexView, final JPAEdmPropertyView propertyView) {
+  public static void build(final JPAEdmComplexPropertyView complexView,
+      final JPAEdmPropertyView propertyView, final boolean skipDefaultNaming) {
 
     ComplexProperty complexProperty = complexView.getEdmComplexProperty();
 
@@ -273,9 +277,12 @@ public class JPAEdmNameBuilder {
       propertyName = mappingModelAccess.mapJPAAttribute(jpaEntityTypeName, jpaAttributeName);
     }
 
-    if (propertyName == null) {
+    if (skipDefaultNaming == false && propertyName == null) {
       propertyName = Character.toUpperCase(jpaAttributeName.charAt(0)) + jpaAttributeName.substring(1);
+    } else if (propertyName == null) {
+      propertyName = jpaAttributeName;
     }
+
     // change for navigation property issue
     JPAEdmMapping mapping = new JPAEdmMappingImpl();
     ((Mapping) mapping).setInternalName(jpaAttributeName);
@@ -286,7 +293,8 @@ public class JPAEdmNameBuilder {
 
   }
 
-  public static void build(final JPAEdmComplexPropertyView complexView, final String parentComplexTypeName) {
+  public static void build(final JPAEdmComplexPropertyView complexView,
+      final String parentComplexTypeName, final boolean skipDefaultNaming) {
     ComplexProperty complexProperty = complexView.getEdmComplexProperty();
 
     JPAEdmMappingModelAccess mappingModelAccess = complexView.getJPAEdmMappingModelAccess();
@@ -296,9 +304,12 @@ public class JPAEdmNameBuilder {
     if (mappingModelAccess != null && mappingModelAccess.isMappingModelExists()) {
       propertyName = mappingModelAccess.mapJPAEmbeddableTypeAttribute(parentComplexTypeName, jpaAttributeName);
     }
-    if (propertyName == null) {
+    if (skipDefaultNaming == false && propertyName == null) {
       propertyName = Character.toUpperCase(jpaAttributeName.charAt(0)) + jpaAttributeName.substring(1);
+    } else if (propertyName == null) {
+      propertyName = jpaAttributeName;
     }
+
     JPAEdmMapping mapping = new JPAEdmMappingImpl();
     ((Mapping) mapping).setInternalName(jpaAttributeName);
     mapping.setJPAType(propertyView.getJPAAttribute().getJavaType());
@@ -411,7 +422,7 @@ public class JPAEdmNameBuilder {
 
   public static void build(final JPAEdmAssociationView associationView,
       final JPAEdmPropertyView propertyView,
-      final JPAEdmNavigationPropertyView navPropertyView, final int count) {
+      final JPAEdmNavigationPropertyView navPropertyView, final boolean skipDefaultNaming, final int count) {
 
     String toName = null;
     String fromName = null;
@@ -459,12 +470,17 @@ public class JPAEdmNameBuilder {
       fromName = jpaEntityTypeName;
     }
 
-    if (navPropName == null) {
-      navPropName = toName.concat(NAVIGATION_NAME);
+    if (skipDefaultNaming == false) {
+      if (navPropName == null) {
+        navPropName = toName.concat(NAVIGATION_NAME);
+      }
+      if (count > 1) {
+        navPropName = navPropName + Integer.toString(count - 1);
+      }
+    } else if (navPropName == null) {
+      navPropName = jpaAttribute.getName();
     }
-    if (count > 1) {
-      navPropName = navPropName + Integer.toString(count - 1);
-    }
+
     navProp.setName(navPropName);
 
     if (toName.equals(associationEndTypeOne.getName())) {

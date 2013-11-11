@@ -29,6 +29,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension;
 
 public abstract class JPAEdmBaseViewImpl implements JPAEdmBaseView {
 
+  protected boolean skipDefaultNaming = false;
   protected String pUnitName = null;
   protected Metamodel metaModel = null;
   protected boolean isConsistent = true;
@@ -41,6 +42,7 @@ public abstract class JPAEdmBaseViewImpl implements JPAEdmBaseView {
     metaModel = view.getJPAMetaModel();
     jpaEdmMappingModelAccess = view.getJPAEdmMappingModelAccess();
     jpaEdmExtension = view.getJPAEdmExtension();
+    skipDefaultNaming = view.isDefaultNamingSkipped();
   }
 
   public JPAEdmBaseViewImpl(final ODataJPAContext context) {
@@ -50,6 +52,7 @@ public abstract class JPAEdmBaseViewImpl implements JPAEdmBaseView {
         ODataJPAFactory.createFactory().getJPAAccessFactory().getJPAEdmMappingModelAccess(context);
     jpaEdmExtension = context.getJPAEdmExtension();
     jpaEdmMappingModelAccess.loadMappingModel();
+    skipDefaultNaming = !context.getDefaultNaming();
   }
 
   public JPAEdmBaseViewImpl(final Metamodel metaModel, final String pUnitName) {
@@ -88,6 +91,11 @@ public abstract class JPAEdmBaseViewImpl implements JPAEdmBaseView {
   @Override
   public JPAEdmExtension getJPAEdmExtension() {
     return jpaEdmExtension;
+  }
+
+  @Override
+  public boolean isDefaultNamingSkipped() {
+    return skipDefaultNaming;
   }
 
 }

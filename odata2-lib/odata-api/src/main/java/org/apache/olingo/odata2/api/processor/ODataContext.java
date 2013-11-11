@@ -34,6 +34,8 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
  */
 public interface ODataContext {
 
+  String HTTP_SERVLET_REQUEST_OBJECT = "~httpRequestObject";
+
   /**
    * Gets the OData service.
    * @return ODataService related for this context

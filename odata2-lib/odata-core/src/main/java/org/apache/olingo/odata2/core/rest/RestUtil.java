@@ -37,7 +37,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
@@ -91,8 +90,8 @@ public class RestUtil {
     } else if (ContentType.isParseable(contentType)) {
       return ContentType.create(contentType);
     } else {
-      throw new ODataUnsupportedMediaTypeException(ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE
-          .addContent(HttpHeaders.CONTENT_TYPE, contentType));
+      throw new ODataUnsupportedMediaTypeException(
+              ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE.addContent(contentType));
     }
   }
 
@@ -169,10 +168,10 @@ public class RestUtil {
   }
 
   public static PathInfoImpl buildODataPathInfo(final SubLocatorParameter param) throws ODataException {
-    final UriInfo uriInfo = param.getUriInfo();
     PathInfoImpl pathInfo = splitPath(param);
-    pathInfo.setServiceRoot(buildBaseUri(param.getServletRequest(), uriInfo, pathInfo.getPrecedingSegments()));
-    pathInfo.setRequestUri(uriInfo.getRequestUri());
+
+    pathInfo.setServiceRoot(buildBaseUri(param.getServletRequest(), pathInfo.getPrecedingSegments()));
+    pathInfo.setRequestUri(buildRequestUri(param.getServletRequest()));
 
     return pathInfo;
   }
@@ -215,10 +214,11 @@ public class RestUtil {
     return pathInfo;
   }
 
-  private static URI buildBaseUri(final HttpServletRequest request, final javax.ws.rs.core.UriInfo uriInfo,
+  private static URI buildBaseUri(final HttpServletRequest request,
       final List<PathSegment> precedingPathSegments) throws ODataException {
     try {
-      UriBuilder uriBuilder = uriInfo.getBaseUriBuilder();
+      String path = request.getContextPath() + request.getServletPath();
+      UriBuilder uriBuilder = UriBuilder.fromUri(path);
       for (final PathSegment ps : precedingPathSegments) {
         uriBuilder = uriBuilder.path(ps.getPath());
         for (final String key : ps.getMatrixParameters().keySet()) {
@@ -230,7 +230,8 @@ public class RestUtil {
       /*
        * workaround because of host name is cached by uriInfo
        */
-      uriBuilder.host(request.getServerName());
+      uriBuilder.host(request.getServerName()).port(request.getServerPort());
+      uriBuilder.scheme(request.getScheme());
 
       String uriString = uriBuilder.build().toString();
       if (!uriString.endsWith("/")) {
@@ -241,6 +242,23 @@ public class RestUtil {
     } catch (final URISyntaxException e) {
       throw new ODataException(e);
     }
+  }
+
+  private static URI buildRequestUri(HttpServletRequest servletRequest) {
+    URI requestUri;
+
+    StringBuffer buf = servletRequest.getRequestURL();
+    String queryString = servletRequest.getQueryString();
+
+    if (queryString != null) {
+      buf.append("?");
+      buf.append(queryString);
+    }
+
+    String requestUriString = buf.toString();
+
+    requestUri = URI.create(requestUriString);
+    return requestUri;
   }
 
   private static List<PathSegment> convertPathSegmentList(final List<javax.ws.rs.core.PathSegment> pathSegments) {

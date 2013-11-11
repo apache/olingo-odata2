@@ -14,7 +14,7 @@
     <artifactId>olingo-odata2-parent-incubating</artifactId>
     <version>1.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    
+
     <name>${project.artifactId}</name>
 
     <parent>
@@ -68,7 +68,7 @@
         <junit.version>4.10</junit.version>
         <xmlunit.version>1.3</xmlunit.version>
 
-        <version.eclipselink>2.5.0</version.eclipselink>
+        <version.eclipselink>2.5.1</version.eclipselink>
         <version.javax.persistence>2.0.5</version.javax.persistence>
     </properties>
 
@@ -77,6 +77,7 @@
         <module>odata2-processor-jpa</module>
         <module>odata2-edm-annotation</module>
         <module>odata2-dist</module>
+        <module>odata2-sample</module>
     </modules>
 
     <build>
@@ -148,7 +149,12 @@
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.7</version>
                 </plugin>
-            </plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
@@ -207,50 +213,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>javadoc-jar</id>
-                        <phase>${javadoc.phase}</phase>
-                        <goals>
-                            <goal>aggregate-jar</goal>
-                        </goals>
-                        <configuration>
-                            <tags>
-                                <tag>
-                                    <name>org.apache.olingo.odata2.DoNotImplement</name>
-                                    <placement>a</placement>
-                                    <head>Do not implement this interface or derive from class.</head>
-                                </tag>
-                            </tags>
-                            <excludePackageNames>org.apache.olingo.odata2.core:org.apache.olingo.odata2.core.*:org.apache.olingo.odata2.processor.core:org.apache.olingo.odata2.processor.core.*:org.apache.olingo.odata2.testutil:org.apache.olingo.odata2.testutil.*</excludePackageNames>
-                            <additionalJOptions>
-                                <additionalJOption>-quiet</additionalJOption>
-                            </additionalJOptions>
-                            <groups>
-                                <group>
-                                    <title>OData Lib</title>
-                                    <packages>org.apache.olingo.odata2.api:org.apache.olingo.odata2.api.*</packages>
-                                </group>
-                                <group>
-                                    <title>OData Reference Scenario</title>
-                                    <packages>org.apache.olingo.odata2.ref:org.apache.olingo.odata2.ref.*</packages>
-                                </group>
-                                <group>
-                                    <title>OData JPA Processor</title>
-                                    <packages>org.apache.olingo.odata2.processor.api:org.apache.olingo.odata2.processor.api.*</packages>
-                                </group>
-                                <group>
-                                    <title>OData JPA Reference Scenario</title>
-                                    <packages>org.apache.olingo.odata2.jpa.processor.ref:org.apache.olingo.odata2.jpa.processor.ref.*</packages>
-                                </group>
-                            </groups>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <executions>
                     <execution>
@@ -271,6 +233,7 @@
                     <encoding>UTF-8</encoding>
                     <failOnViolation>true</failOnViolation>
                     <violationSeverity>warning</violationSeverity>
+                    <excludes>**/archetype-resources/**/*</excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -362,6 +325,10 @@
                                         <exclude>**/*.batch</exclude>
                                         <exclude>**/NOTICE</exclude>
                                         <exclude>**/DEPENDENCIES</exclude>
+                                        <exclude>**/archetype-resources/**</exclude>
+                                        <exclude>**/archetype-metadata.xml</exclude>
+                                        <exclude>**/archetype.properties</exclude>
+                                        <exclude>**/*.txt</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>
@@ -370,7 +337,66 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>apache-release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>javadoc-jar</id>
+                                <phase>${javadoc.phase}</phase>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                                <configuration>
+                                    <tags>
+                                        <tag>
+                                            <name>org.apache.olingo.odata2.DoNotImplement</name>
+                                            <placement>a</placement>
+                                            <head>Do not implement this interface or derive from class.</head>
+                                        </tag>
+                                    </tags>
+                                    <excludePackageNames>org.apache.olingo.odata2.core:org.apache.olingo.odata2.core.*:org.apache.olingo.odata2.processor.core:org.apache.olingo.odata2.processor.core.*:org.apache.olingo.odata2.testutil:org.apache.olingo.odata2.testutil.*</excludePackageNames>
+                                    <additionalJOptions>
+                                        <additionalJOption>-quiet</additionalJOption>
+                                    </additionalJOptions>
+                                    <groups>
+                                        <group>
+                                            <title>OData Lib</title>
+                                            <packages>org.apache.olingo.odata2.api:org.apache.olingo.odata2.api.*</packages>
+                                        </group>
+                                        <group>
+                                            <title>OData Reference Scenario</title>
+                                            <packages>org.apache.olingo.odata2.ref:org.apache.olingo.odata2.ref.*</packages>
+                                        </group>
+                                        <group>
+                                            <title>OData JPA Processor</title>
+                                            <packages>org.apache.olingo.odata2.processor.api:org.apache.olingo.odata2.processor.api.*</packages>
+                                        </group>
+                                        <group>
+                                            <title>OData JPA Reference Scenario</title>
+                                            <packages>org.apache.olingo.odata2.jpa.processor.ref:org.apache.olingo.odata2.jpa.processor.ref.*</packages>
+                                        </group>
+                                    </groups>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
+	
+	<repositories>
+		<repository>
+			<id>oss.sonatype.org</id>
+			<name>OSS Sonatype Staging</name>
+			<url>https://oss.sonatype.org/content/groups/staging</url>
+		</repository>
+	</repositories>
 
     <dependencies>
         <dependency>

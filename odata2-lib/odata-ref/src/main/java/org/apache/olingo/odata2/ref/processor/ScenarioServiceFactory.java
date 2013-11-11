@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.ref.model.DataContainer;
 
 /**
- *  
+ * Service Factory for the reference scenario.
  */
 public class ScenarioServiceFactory extends ODataServiceFactory {
 
@@ -39,7 +39,7 @@ public class ScenarioServiceFactory extends ODataServiceFactory {
 
     return createODataSingleProcessorService(
         new ScenarioEdmProvider(),
-        new ListsProcessor(new ScenarioDataSource(dataContainer)));
+        new ListsProcessor(new ScenarioDataSource(dataContainer), new BeanPropertyAccess()));
   }
 
   @SuppressWarnings("unchecked")

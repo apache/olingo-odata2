@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.ref.web;
 
+import java.util.ResourceBundle;
+
 import org.apache.olingo.odata2.jpa.processor.ref.extension.SalesOrderProcessingExtension;
 import org.apache.olingo.odata2.jpa.processor.ref.factory.JPAEntityManagerFactory;
 import org.apache.olingo.odata2.processor.api.jpa.ODataJPAContext;
@@ -28,6 +30,8 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension;
 public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
   private static final String PUNIT_NAME = "salesorderprocessing";
   private static final String MAPPING_MODEL = "SalesOrderProcessingMappingModel.xml";
+  private static final String CONFIG = "serviceConfig";
+  private static final String SHOW_DETAIL_ERROR = "showDetailError";
 
   @Override
   public ODataJPAContext initializeODataJPAContext()
@@ -39,6 +43,14 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
     oDataJPAContext
         .setJPAEdmExtension((JPAEdmExtension) new SalesOrderProcessingExtension());
 
+    setErrorLevel();
+
     return oDataJPAContext;
+  }
+
+  private void setErrorLevel() {
+    ResourceBundle config = ResourceBundle.getBundle(CONFIG);
+    boolean error = Boolean.parseBoolean((String) config.getObject(SHOW_DETAIL_ERROR));
+    setDetailErrors(error);
   }
 }

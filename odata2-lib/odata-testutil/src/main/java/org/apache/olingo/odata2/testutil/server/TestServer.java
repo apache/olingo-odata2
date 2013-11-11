@@ -23,19 +23,20 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 
 import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
-import org.apache.log4j.Logger;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.testutil.fit.FitStaticServiceFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  
  */
 public class TestServer {
-  private static final Logger log = Logger.getLogger(TestServer.class);
+  private static final Logger log = LoggerFactory.getLogger(TestServer.class);
 
   private static final int PORT_MIN = 19000;
   private static final int PORT_MAX = 19200;
@@ -76,28 +77,34 @@ public class TestServer {
 
   private Server server;
 
+  public void startServer(final Class<? extends ODataServiceFactory> factoryClass, int fixedPort) {
+    try {
+      final ServletContextHandler contextHandler = createContextHandler(factoryClass);
+      final InetSocketAddress isa = new InetSocketAddress(DEFAULT_HOST, fixedPort);
+      server = new Server(isa);
+
+      server.setHandler(contextHandler);
+      server.start();
+      endpoint = new URI(DEFAULT_SCHEME, null, DEFAULT_HOST, isa.getPort(), "/abc" + path, null, null);
+      log.trace("Started server at endpoint " + endpoint.toASCIIString());
+    } catch (final Exception e) {
+      log.error("server start failed", e);
+      throw new ServerRuntimeException(e);
+    }
+  }
+
   public void startServer(final Class<? extends ODataServiceFactory> factoryClass) {
     try {
       for (int port = PORT_MIN; port <= PORT_MAX; port += PORT_INC) {
-        final CXFNonSpringJaxrsServlet odataServlet = new CXFNonSpringJaxrsServlet();
-        final ServletHolder odataServletHolder = new ServletHolder(odataServlet);
-        odataServletHolder.setInitParameter("javax.ws.rs.Application",
-            "org.apache.olingo.odata2.core.rest.app.ODataApplication");
-        odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
-
-        if (pathSplit > 0) {
-          odataServletHolder.setInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL, Integer.toString(pathSplit));
-        }
-
-        final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        contextHandler.addServlet(odataServletHolder, path + "/*");
+        final ServletContextHandler contextHandler = createContextHandler(factoryClass);
 
         try {
           final InetSocketAddress isa = new InetSocketAddress(DEFAULT_HOST, port);
           server = new Server(isa);
+
           server.setHandler(contextHandler);
           server.start();
-          endpoint = new URI(DEFAULT_SCHEME, null, DEFAULT_HOST, isa.getPort(), path, null, null);
+          endpoint = new URI(DEFAULT_SCHEME, null, DEFAULT_HOST, isa.getPort(), "/abc" + path, null, null);
           log.trace("Started server at endpoint " + endpoint.toASCIIString());
           break;
         } catch (final BindException e) {
@@ -108,11 +115,27 @@ public class TestServer {
       if (!server.isStarted()) {
         throw new BindException("no free port in range of [" + PORT_MIN + ".." + PORT_MAX + "]");
       }
-
     } catch (final Exception e) {
-      log.error(e);
+      log.error("server start failed", e);
       throw new ServerRuntimeException(e);
     }
+  }
+
+  private ServletContextHandler createContextHandler(final Class<? extends ODataServiceFactory> factoryClass) {
+    final CXFNonSpringJaxrsServlet odataServlet = new CXFNonSpringJaxrsServlet();
+    final ServletHolder odataServletHolder = new ServletHolder(odataServlet);
+    odataServletHolder.setInitParameter("javax.ws.rs.Application",
+        "org.apache.olingo.odata2.core.rest.app.ODataApplication");
+    odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
+
+    if (pathSplit > 0) {
+      odataServletHolder.setInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL, Integer.toString(pathSplit));
+    }
+
+    final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    contextHandler.setContextPath("/abc");
+    contextHandler.addServlet(odataServletHolder, path + "/*");
+    return contextHandler;
   }
 
   public void startServer(final ODataService service) {

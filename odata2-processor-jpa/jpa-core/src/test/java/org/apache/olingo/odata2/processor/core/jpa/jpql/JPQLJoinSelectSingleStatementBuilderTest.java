@@ -87,7 +87,7 @@ public class JPQLJoinSelectSingleStatementBuilderTest {
       JPQLStatement jpqlStatement = jpqlJoinSelectsingleStatementBuilder.build();
       assertEquals(
           "SELECT gt1 FROM SOHeader soh JOIN soh.soItem soi JOIN soi.material mat WHERE soh.soId = 1 AND " +
-          "soi.shId = soh.soId AND mat.id = 'abc'",
+              "soi.shId = soh.soId AND mat.id = 'abc'",
           jpqlStatement.toString());
     } catch (ODataJPARuntimeException e) {
       fail("Should not have come here");

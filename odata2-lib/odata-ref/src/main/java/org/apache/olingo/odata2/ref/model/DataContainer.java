@@ -111,7 +111,7 @@ public class DataContainer {
     emp1.setLocation(new Location("Germany", "69124", "Heidelberg"));
     emp1.setEntryDate(generateDate(1999, 1, 1));
     emp1.setImageUri("Employees('1')/$value");
-    emp1.setImage("/male_1_WinterW.jpg");
+    emp1.setImage("/Employee_1.png");
     emp1.setImageType(IMAGE_JPEG);
     employees.add(emp1);
     managers.add(emp1);
@@ -128,7 +128,7 @@ public class DataContainer {
     emp2.setLocation(new Location("Germany", "69190", "Walldorf"));
     emp2.setEntryDate(generateDate(2003, 7, 1));
     emp2.setImageUri("Employees('2')/$value");
-    emp2.setImage("/male_2_FallF.jpg");
+    emp2.setImage("/Employee_2.png");
     emp2.setImageType(IMAGE_JPEG);
     employees.add(emp2);
 
@@ -144,7 +144,7 @@ public class DataContainer {
     emp3.setLocation(emp2.getLocation());
     emp3.setEntryDate(null);
     emp3.setImageUri("Employees('3')/$value");
-    emp3.setImage("/male_3_SmithJo.jpg");
+    emp3.setImage("/Employee_3.png");
     emp3.setImageType(IMAGE_JPEG);
     employees.add(emp3);
     managers.add(emp3);
@@ -161,7 +161,7 @@ public class DataContainer {
     emp4.setLocation(emp2.getLocation());
     emp4.setEntryDate(generateDate(2004, 9, 12));
     emp4.setImageUri("Employees('4')/$value");
-    emp4.setImage("/male_4_BurkeP.jpg");
+    emp4.setImage("/Employee_4.png");
     emp4.setImageType(IMAGE_JPEG);
     employees.add(emp4);
 
@@ -177,7 +177,7 @@ public class DataContainer {
     emp5.setLocation(emp2.getLocation());
     emp5.setEntryDate(generateDate(2001, 2, 1));
     emp5.setImageUri("Employees('5')/$value");
-    emp5.setImage("/male_5_FieldJ.jpg");
+    emp5.setImage("/Employee_5.png");
     emp5.setImageType(IMAGE_JPEG);
     employees.add(emp5);
 
@@ -193,7 +193,7 @@ public class DataContainer {
     emp6.setLocation(emp2.getLocation());
     emp6.setEntryDate(generateDate(2010, 12, 1));
     emp6.setImageUri("Employees('6')/$value");
-    emp6.setImage("/female_6_BaySu.jpg");
+    emp6.setImage("/Employee_6.png");
     emp6.setImageType(IMAGE_JPEG);
     employees.add(emp6);
 

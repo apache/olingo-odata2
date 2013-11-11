@@ -18,65 +18,59 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.basic.issues;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.olingo.odata2.api.ODataService;
+import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.api.processor.part.MetadataProcessor;
 import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
-import org.apache.olingo.odata2.fit.basic.AbstractBasicTest;
-import org.junit.Test;
+import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
-/**
- *  
- */
-public class TestIssue105 extends AbstractBasicTest {
+public class Service1Factory extends ODataServiceFactory {
+
+  public static ODataContext context;
+  public static ODataService service;
+  
+  public Service1Factory() {
+    super();
+   }
 
   @Override
-  protected ODataSingleProcessor createProcessor() throws ODataException {
+  public ODataService createService(ODataContext ctx) throws ODataException {
+    final EdmProvider provider = mock(EdmProvider.class);
     final ODataSingleProcessor processor = mock(ODataSingleProcessor.class);
     when(((MetadataProcessor) processor).readMetadata(any(GetMetadataUriInfo.class), any(String.class))).thenReturn(
         ODataResponse.entity("metadata").status(HttpStatusCodes.OK).build());
-    return processor;
-  }
 
-  @Test
-  public void checkContextForDifferentHostNamesRequests() throws ClientProtocolException, IOException, ODataException,
-      URISyntaxException {
-    URI uri1 = URI.create(getEndpoint().toString() + "$metadata");
+    doAnswer(new Answer<Object>() {
+      @Override
+      public Object answer(final InvocationOnMock invocation) throws Throwable {
+        context = (ODataContext) invocation.getArguments()[0];
+        return null;
+      }
+    }).when(processor).setContext(any(ODataContext.class));
 
-    HttpGet get1 = new HttpGet(uri1);
-    HttpResponse response1 = getHttpClient().execute(get1);
-    assertNotNull(response1);
+    when(processor.getContext()).thenAnswer(new Answer<ODataContext>() {
+      @Override
+      public ODataContext answer(final InvocationOnMock invocation) throws Throwable {
+        return context;
+      }
+    });
 
-    URI serviceRoot1 = getService().getProcessor().getContext().getPathInfo().getServiceRoot();
-    assertEquals(uri1.getHost(), serviceRoot1.getHost());
-
-    get1.reset();
-
-    URI uri2 =
-        new URI(uri1.getScheme(), uri1.getUserInfo(), "127.0.0.1", uri1.getPort(), uri1.getPath(), uri1.getQuery(),
-            uri1.getFragment());
-
-    HttpGet get2 = new HttpGet(uri2);
-    HttpResponse response2 = getHttpClient().execute(get2);
-    assertNotNull(response2);
-
-    URI serviceRoot2 = getService().getProcessor().getContext().getPathInfo().getServiceRoot();
-    assertEquals(uri2.getHost(), serviceRoot2.getHost());
+    service = new ODataSingleProcessorService(provider, processor) {};
+    return service;
   }
 
 }
+

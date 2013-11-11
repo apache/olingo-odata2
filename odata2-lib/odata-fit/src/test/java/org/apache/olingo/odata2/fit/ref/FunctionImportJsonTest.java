@@ -71,7 +71,7 @@ public class FunctionImportJsonTest extends AbstractRefTest {
 
     response = callUri("ManagerPhoto?Id='1'&$format=json");
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
-    assertTrue(getBody(response).startsWith("{\"d\":{\"ManagerPhoto\":\"/9j/4"));
+    assertTrue(getBody(response).startsWith("{\"d\":{\"ManagerPhoto\":\"iVBORw0KGgoAAAAN"));
 
     final String expected = getBody(callUri("Employees('3')?$format=json"));
     response = callUri("OldestEmployee", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_JSON);

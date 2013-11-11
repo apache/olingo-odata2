@@ -33,11 +33,10 @@ import org.eclipse.persistence.queries.DataModifyQuery;
 import org.eclipse.persistence.queries.SQLCall;
 import org.eclipse.persistence.sessions.Session;
 
-
 /**
  * This is a utility class for generating and cleaning data. The generated data would be used by the application.
  * 
- *
+ * 
  */
 public class DataGenerator {
 
@@ -68,14 +67,14 @@ public class DataGenerator {
    */
   public void generate() {
     String[] resourceSQLPropFileNames = getSQLInsertFileNames();
-    if (resourceSQLPropFileNames.length > 0) { //If configuration is proper with at least one file
+    if (resourceSQLPropFileNames.length > 0) { // If configuration is proper with at least one file
       Session session = ((EntityManagerImpl) entityManager).getActiveSession();
       ResourceBundle[] resourceBundleArr = new ResourceBundle[resourceSQLPropFileNames.length];
       entityManager.getTransaction().begin();
 
-      for (int i = 0; i < resourceSQLPropFileNames.length; i++) { //For each Entity SQL property file, 
+      for (int i = 0; i < resourceSQLPropFileNames.length; i++) { // For each Entity SQL property file,
         System.out.println("Reading from File - " + resourceSQLPropFileNames[i]);
-        resourceBundleArr[i] = ResourceBundle.getBundle(resourceSQLPropFileNames[i]);//Get SQL statements as properties
+        resourceBundleArr[i] = ResourceBundle.getBundle(resourceSQLPropFileNames[i]);// Get SQL statements as properties
 
         Set<String> keySet = resourceBundleArr[i].keySet();
 
@@ -139,7 +138,7 @@ public class DataGenerator {
   public void clean() {
     // Delete using SQLs
     String[] deleteStatements = getSQLDeleteStatements();
-    if (deleteStatements.length > 0) { //If configuration is proper with at least one delete Statements
+    if (deleteStatements.length > 0) { // If configuration is proper with at least one delete Statements
       Session session = ((EntityManagerImpl) entityManager).getActiveSession();
       entityManager.getTransaction().begin();
       for (String deleteStatement : deleteStatements) {

@@ -287,31 +287,31 @@ public class EdmMockUtilV2 {
     } else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_MSTRING)) {
       mapping.setJPAType(String.class);
       ((Mapping) mapping).setInternalName(JPATypeMock.PROPERTY_NAME_MSTRING);
-    }  else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_MDATETIME)) {
+    } else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_MDATETIME)) {
       mapping.setJPAType(Calendar.class);
       ((Mapping) mapping).setInternalName(JPATypeMock.PROPERTY_NAME_MDATETIME);
-    }  else if (propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MLONG)) {
+    } else if (propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MLONG)) {
       mapping.setJPAType(long.class);
       ((Mapping) mapping).setInternalName(JPARelatedTypeMock.PROPERTY_NAME_MLONG);
-    }  else if (propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MDOUBLE)) {
+    } else if (propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MDOUBLE)) {
       mapping.setJPAType(double.class);
       ((Mapping) mapping).setInternalName(JPARelatedTypeMock.PROPERTY_NAME_MDOUBLE);
-    }  else if (propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MBYTE)) {
+    } else if (propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MBYTE)) {
       mapping.setJPAType(byte.class);
       ((Mapping) mapping).setInternalName(JPARelatedTypeMock.PROPERTY_NAME_MBYTE);
-    }  else if (propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MBYTEARRAY)) {
+    } else if (propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MBYTEARRAY)) {
       mapping.setJPAType(byte[].class);
       ((Mapping) mapping).setInternalName(JPARelatedTypeMock.PROPERTY_NAME_MBYTEARRAY);
-    }  else if (propertyName.equals(JPATypeMock.JPATypeEmbeddableMock.PROPERTY_NAME_MSHORT)) {
+    } else if (propertyName.equals(JPATypeMock.JPATypeEmbeddableMock.PROPERTY_NAME_MSHORT)) {
       mapping.setJPAType(Short.TYPE);
       ((Mapping) mapping).setInternalName(JPATypeMock.JPATypeEmbeddableMock.PROPERTY_NAME_MSHORT);
-    }  else if (propertyName.equals(JPATypeMock.JPATypeEmbeddableMock2.PROPERTY_NAME_MFLOAT)) {
+    } else if (propertyName.equals(JPATypeMock.JPATypeEmbeddableMock2.PROPERTY_NAME_MFLOAT)) {
       mapping.setJPAType(Float.TYPE);
       ((Mapping) mapping).setInternalName(JPATypeMock.JPATypeEmbeddableMock2.PROPERTY_NAME_MFLOAT);
-    }  else if (propertyName.equals(JPATypeMock.JPATypeEmbeddableMock2.PROPERTY_NAME_MUUID)) {
+    } else if (propertyName.equals(JPATypeMock.JPATypeEmbeddableMock2.PROPERTY_NAME_MUUID)) {
       mapping.setJPAType(UUID.class);
       ((Mapping) mapping).setInternalName(JPATypeMock.JPATypeEmbeddableMock2.PROPERTY_NAME_MUUID);
-    }  else if (propertyName.equals(JPATypeMock.JPATypeEmbeddableMock.PROPERTY_NAME_MEMBEDDABLE)) {
+    } else if (propertyName.equals(JPATypeMock.JPATypeEmbeddableMock.PROPERTY_NAME_MEMBEDDABLE)) {
       mapping.setJPAType(JPATypeEmbeddableMock2.class);
       ((Mapping) mapping).setInternalName(JPATypeMock.JPATypeEmbeddableMock.PROPERTY_NAME_MEMBEDDABLE);
     } else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_MCOMPLEXTYPE)) {

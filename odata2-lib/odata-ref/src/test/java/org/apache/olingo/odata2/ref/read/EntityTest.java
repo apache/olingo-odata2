@@ -46,6 +46,7 @@ import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.ref.model.DataContainer;
 import org.apache.olingo.odata2.ref.processor.ListsProcessor;
+import org.apache.olingo.odata2.ref.processor.BeanPropertyAccess;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.Before;
@@ -68,7 +69,7 @@ public class EntityTest extends BaseTest {
     dataContainer = new DataContainer();
     dataContainer.reset();
     dataSource = new ScenarioDataSource(dataContainer);
-    processor = new ListsProcessor(dataSource);
+    processor = new ListsProcessor(dataSource, new BeanPropertyAccess());
   }
 
   @Before

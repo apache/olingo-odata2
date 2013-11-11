@@ -29,8 +29,7 @@ import org.junit.Test;
 
 /**
  * Tests employing the reference scenario that use neither XML nor JSON
- * and that change data in some way
- * 
+ * and that change data in some way.
  */
 public class MiscChangeTest extends AbstractRefTest {
 
@@ -44,7 +43,7 @@ public class MiscChangeTest extends AbstractRefTest {
     callUri(ODataHttpMethod.DELETE, "Container2.Photos(Id=1,Type='image%2Fpng')",
         HttpHeaders.IF_MATCH, "W/\"1\"", null, null, HttpStatusCodes.NO_CONTENT);
 
-    // deleteUri("Rooms('1')", HttpStatusCodes.PRECONDITION_REQUIRED);
+    deleteUri("Rooms('1')", HttpStatusCodes.PRECONDITION_REQUIRED);
     deleteUri("Managers()", HttpStatusCodes.METHOD_NOT_ALLOWED);
     deleteUri("Managers('5')", HttpStatusCodes.NOT_FOUND);
     deleteUri("Employees('2')/ne_Manager", HttpStatusCodes.BAD_REQUEST);
@@ -87,18 +86,15 @@ public class MiscChangeTest extends AbstractRefTest {
     checkMediaType(response, HttpContentType.APPLICATION_OCTET_STREAM);
     assertEquals("00", getBody(response));
 
-    response =
-        callUri(ODataHttpMethod.PUT, "Container2.Photos(Id=2,Type='image%2Fbmp')/$value", null, null, "00", IMAGE_GIF,
-            HttpStatusCodes.NO_CONTENT);
+    response = callUri(ODataHttpMethod.PUT, "Container2.Photos(Id=2,Type='image%2Fbmp')/$value",
+        HttpHeaders.IF_MATCH, "W/\"2\"", "00", IMAGE_GIF, HttpStatusCodes.NO_CONTENT);
     checkEtag(response, "W/\"2\"");
 
-    response =
-        callUri(ODataHttpMethod.PATCH, url, null, null, "00", HttpContentType.APPLICATION_OCTET_STREAM,
-            HttpStatusCodes.METHOD_NOT_ALLOWED);
+    response = callUri(ODataHttpMethod.PATCH, url, null, null, "00", HttpContentType.APPLICATION_OCTET_STREAM,
+        HttpStatusCodes.METHOD_NOT_ALLOWED);
     response.getEntity().getContent().close();
-    response =
-        callUri(ODataHttpMethod.MERGE, url, null, null, "00", HttpContentType.APPLICATION_OCTET_STREAM,
-            HttpStatusCodes.METHOD_NOT_ALLOWED);
+    response = callUri(ODataHttpMethod.MERGE, url, null, null, "00", HttpContentType.APPLICATION_OCTET_STREAM,
+        HttpStatusCodes.METHOD_NOT_ALLOWED);
     response.getEntity().getContent().close();
   }
 
@@ -107,15 +103,15 @@ public class MiscChangeTest extends AbstractRefTest {
     putUri("Employees('2')/Age/$value", "42", HttpContentType.TEXT_PLAIN, HttpStatusCodes.NO_CONTENT);
 
     String url = "Container2.Photos(Id=3,Type='image%2Fjpeg')/Image/$value";
-    callUri(ODataHttpMethod.PUT, url, HttpHeaders.ETAG, "W/\"3\"", "4711", HttpContentType.APPLICATION_OCTET_STREAM,
-        HttpStatusCodes.NO_CONTENT);
+    callUri(ODataHttpMethod.PUT, url, HttpHeaders.IF_MATCH, "W/\"3\"", "4711",
+        HttpContentType.APPLICATION_OCTET_STREAM, HttpStatusCodes.NO_CONTENT);
     HttpResponse response = callUri(url);
     assertEquals("4711", getBody(response));
     checkMediaType(response, HttpContentType.APPLICATION_OCTET_STREAM);
 
     url = "Container2.Photos(Id=4,Type='foo')/BinaryData/$value";
-    response =
-        callUri(ODataHttpMethod.PUT, url, HttpHeaders.ETAG, "W/\"4\"", "4711", IMAGE_JPEG, HttpStatusCodes.NO_CONTENT);
+    response = callUri(ODataHttpMethod.PUT, url, HttpHeaders.IF_MATCH, "W/\"4\"", "4711", IMAGE_JPEG,
+        HttpStatusCodes.NO_CONTENT);
     checkEtag(response, "W/\"4\"");
     assertEquals("4711", getBody(callUri(url)));
 

@@ -70,7 +70,7 @@ public class JPAEdmNavigationProperty extends JPAEdmBaseViewImpl implements JPAE
     public void build() throws ODataJPAModelException {
 
       currentNavigationProperty = new NavigationProperty();
-      JPAEdmNameBuilder.build(associationView, propertyView, JPAEdmNavigationProperty.this, count);
+      JPAEdmNameBuilder.build(associationView, propertyView, JPAEdmNavigationProperty.this, skipDefaultNaming, count);
       consistentNavigationProperties.add(currentNavigationProperty);
     }
 

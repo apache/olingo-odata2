@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.fit.basic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,6 +31,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.http.HttpResponse;
@@ -205,5 +207,18 @@ public class ContextTest extends AbstractBasicTest {
 
     final String httpMethod = ctx.getHttpMethod();
     assertEquals("GET", httpMethod);
+  }
+  
+  @Test
+  public void checkHttpRequest() throws ClientProtocolException, IOException, ODataException {
+    final HttpGet get = new HttpGet(URI.create(getEndpoint().toString() + "/$metadata"));
+    getHttpClient().execute(get);
+
+    final ODataContext ctx = getService().getProcessor().getContext();
+    assertNotNull(ctx);
+
+    final Object requestObject = ctx.getParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT);
+    assertNotNull(requestObject);
+    assertTrue(requestObject instanceof HttpServletRequest);
   }
 }

@@ -21,8 +21,6 @@ package org.apache.olingo.odata2.core.edm.provider;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
@@ -39,6 +37,7 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.consumer.XmlMetadataConsumer;
 
 public class EdmxProvider extends EdmProvider {
@@ -46,7 +45,7 @@ public class EdmxProvider extends EdmProvider {
 
   public EdmxProvider parse(final InputStream in, final boolean validate) throws EntityProviderException {
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
-    XMLStreamReader streamReader = createStreamReader(in);
+    XMLStreamReader streamReader = XmlHelper.createStreamReader(in);
     dataServices = parser.readMetadata(streamReader, validate);
     return this;
   }
@@ -171,21 +170,5 @@ public class EdmxProvider extends EdmProvider {
   @Override
   public List<Schema> getSchemas() throws ODataException {
     return dataServices.getSchemas();
-  }
-
-  private XMLStreamReader createStreamReader(final InputStream in) throws EntityProviderException {
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-    factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
-
-    XMLStreamReader streamReader;
-    try {
-      streamReader = factory.createXMLStreamReader(in);
-    } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
-    }
-
-    return streamReader;
   }
 }

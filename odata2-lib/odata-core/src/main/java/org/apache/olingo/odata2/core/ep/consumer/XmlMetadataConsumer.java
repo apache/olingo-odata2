@@ -701,7 +701,8 @@ public class XmlMetadataConsumer {
         facets.setNullable("true".equalsIgnoreCase(isNullable));
       }
       if (maxLength != null) {
-        if (XmlMetadataConstants.EDM_PROPERTY_MAX_LENGTH_MAX_VALUE.equals(maxLength)) {
+        if (XmlMetadataConstants.EDM_PROPERTY_MAX_LENGTH_MAX_VALUE_FIRST_UPPERCASE.equals(maxLength)
+            || XmlMetadataConstants.EDM_PROPERTY_MAX_LENGTH_MAX_VALUE_LOWERCASE.equals(maxLength)) {
           facets.setMaxLength(Integer.MAX_VALUE);
         } else {
           facets.setMaxLength(Integer.parseInt(maxLength));

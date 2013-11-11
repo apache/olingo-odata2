@@ -192,7 +192,7 @@ public final class JPAEntityParser {
             method = propertyValue.getClass().getMethod(
                 namePart, (Class<?>[]) null);
             method.setAccessible(true);
-            propertyValue = getProperty(method, jpaEntity);
+            propertyValue = getProperty(method, propertyValue);
           }
           edmEntity.put(key, propertyValue);
         }

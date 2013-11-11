@@ -163,7 +163,7 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
       return null;
     }
 
-    private void buildParameter(final FunctionImport functionImport, final Method method) 
+    private void buildParameter(final FunctionImport functionImport, final Method method)
         throws ODataJPAModelException {
 
       Annotation[][] annotations = method.getParameterAnnotations();

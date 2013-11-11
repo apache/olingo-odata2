@@ -37,7 +37,8 @@
             <outputDirectory>/</outputDirectory>
             <excludes>
                 <exclude>LICENSE</exclude>
-            </excludes>
+                <exclude>NOTICE</exclude>
+           </excludes>
         </fileSet>
         <fileSet>
             <directory>src/main/resources</directory>

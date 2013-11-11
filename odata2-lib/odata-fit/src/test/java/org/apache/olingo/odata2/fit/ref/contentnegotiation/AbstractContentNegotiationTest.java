@@ -42,7 +42,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
@@ -55,18 +54,21 @@ import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.core.uri.UriType;
 import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.ref.model.DataContainer;
+import org.apache.olingo.odata2.ref.processor.BeanPropertyAccess;
 import org.apache.olingo.odata2.ref.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  
  */
 public abstract class AbstractContentNegotiationTest extends AbstractFitTest {
 
-  private static final Logger LOG = Logger.getLogger(AbstractContentNegotiationTest.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractContentNegotiationTest.class);
 
   protected final static List<String> ACCEPT_HEADER_VALUES = Arrays.asList(
       "", // for requests with no 'Accept' header set
@@ -103,7 +105,8 @@ public abstract class AbstractContentNegotiationTest extends AbstractFitTest {
   protected ODataService createService() throws ODataException {
     DataContainer dataContainer = new DataContainer();
     dataContainer.init();
-    final ODataSingleProcessor processor = new ListsProcessor(new ScenarioDataSource(dataContainer));
+    final ODataSingleProcessor processor = new ListsProcessor(new ScenarioDataSource(dataContainer),
+        new BeanPropertyAccess());
     final EdmProvider provider = new ScenarioEdmProvider();
     return new ODataSingleProcessorService(provider, processor) {};
   }

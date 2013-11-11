@@ -387,4 +387,10 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView, JPAEdmAsso
     return null;
   }
 
+  @Override
+  public boolean isDefaultNamingSkipped() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
 }

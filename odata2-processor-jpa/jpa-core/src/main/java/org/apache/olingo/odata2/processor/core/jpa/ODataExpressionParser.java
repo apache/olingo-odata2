@@ -96,8 +96,8 @@ public class ODataExpressionParser {
     case BINARY:
       final BinaryExpression binaryExpression = (BinaryExpression) whereExpression;
       if ((binaryExpression.getLeftOperand().getKind() == ExpressionKind.METHOD)
-          && ((binaryExpression.getOperator() == BinaryOperator.EQ) || 
-              (binaryExpression.getOperator() == BinaryOperator.NE))
+          && ((binaryExpression.getOperator() == BinaryOperator.EQ) ||
+          (binaryExpression.getOperator() == BinaryOperator.NE))
           && (((MethodExpression) binaryExpression.getLeftOperand()).getMethod() == MethodOperator.SUBSTRINGOF)) {
         methodFlag = 1;
       }
