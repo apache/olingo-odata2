@@ -15,11 +15,11 @@
  */
 package org.apache.olingo.odata2.core.annotation.processor.json;
 
-import org.apache.olingo.odata2.core.annotation.processor.json.JsonConsumer;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 

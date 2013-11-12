@@ -45,13 +45,6 @@ public class Building {
           to = @NavigationEnd(role = "r_Room", type="Room", multiplicity = EdmMultiplicity.MANY))
   private List<Room> rooms = new ArrayList<Room>();
 
-  public Building() { }
-
-  public Building(final int id, final String name) {
-    this.id = id;
-    setName(name);
-  }
-
   public String getId() {
     return Integer.toString(id);
   }

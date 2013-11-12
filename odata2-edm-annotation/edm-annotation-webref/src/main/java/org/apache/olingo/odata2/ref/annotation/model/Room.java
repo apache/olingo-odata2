@@ -45,10 +45,6 @@ public class Room extends RefBase {
           to = @NavigationEnd(role = "r_Employees", type = "Employee", multiplicity = EdmMultiplicity.MANY))
   private List<Employee> employees = new ArrayList<Employee>();
 
-  public Room(final int id, final String name) {
-    super(id, name);
-  }
-
   public void setSeats(final int seats) {
     this.seats = seats;
   }

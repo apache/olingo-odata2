@@ -91,6 +91,11 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+          <groupId>org.apache.olingo</groupId>
+          <artifactId>olingo-odata2-edm-annotation-core-incubating</artifactId>
+          <version>${project.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
