@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.annotation.ds;
 
+import java.util.Collection;
 import org.apache.olingo.odata2.api.data.ValueAccess;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
@@ -39,6 +40,14 @@ public class AnnotationValueAccess implements ValueAccess {
    */
   @Override
   public <T> Object getPropertyValue(final T data, final EdmProperty property) throws ODataException {
+    if(data instanceof Collection) {
+      Collection c = (Collection) data;
+      for (Object object : c) {
+        if(annotationHelper.isEdmAnnotated(data)) {
+          return annotationHelper.getValueForProperty(data, property.getName());
+        }
+      }
+    }
     if(annotationHelper.isEdmAnnotated(data)) {
       return annotationHelper.getValueForProperty(data, property.getName());
     }

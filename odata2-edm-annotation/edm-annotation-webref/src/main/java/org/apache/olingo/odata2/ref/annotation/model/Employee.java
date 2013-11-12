@@ -37,7 +37,7 @@ public class Employee {
   private static int counter = 1;
   @EdmKey
   @EdmProperty(name="EmployeeId", type = EdmSimpleTypeKind.String)
-  private int employeeId;
+  private String employeeId;
   @EdmProperty(name="EmployeeName")
   private String employeeName;
   @EdmProperty
@@ -46,6 +46,10 @@ public class Employee {
           from = @NavigationEnd(role="r_Employees", multiplicity = EdmMultiplicity.MANY))//,
 //          to = @NavigationEnd(type = "Manager"))
   private Manager manager;
+  @EdmNavigationProperty(name = "ne_Team", relationship="TeamEmployees", 
+          from = @NavigationEnd(role = "r_Employees", type = "Employee", multiplicity = EdmMultiplicity.MANY),
+          to = @NavigationEnd(role = "r_Team",  type = "Team")
+  )
   private Team team;
   private Room room;
   private String imageType;
@@ -56,7 +60,7 @@ public class Employee {
   private Location location;
 
   public String getId() {
-    return Integer.toString(employeeId);
+    return employeeId;
   }
 
   public void setEmployeeName(final String employeeName) {
@@ -152,7 +156,10 @@ public class Employee {
 
   @Override
   public int hashCode() {
-    return employeeId;
+    if(employeeId == null) {
+      return 0;
+    }
+    return employeeId.hashCode();
   }
 
   @Override

@@ -75,7 +75,7 @@ public class Room extends RefBase {
 
   @Override
   public int hashCode() {
-    return id;
+    return super.hashCode();
   }
 
   @Override
