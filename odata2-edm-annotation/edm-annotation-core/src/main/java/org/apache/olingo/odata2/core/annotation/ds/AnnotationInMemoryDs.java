@@ -1,41 +1,43 @@
-/*******************************************************************************
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
+/**
+ * *****************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE
+ * file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *****************************************************************************
+ */
 package org.apache.olingo.odata2.core.annotation.ds;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
+import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.data.ListsDataSource;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
+import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
 import org.apache.olingo.odata2.core.annotation.edm.ClassHelper;
+import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class AnnotationInMemoryDs implements ListsDataSource {
 
@@ -62,7 +64,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
       dataStores.put(entityType.name(), dhs);
     }
   }
-  
+
   public <T> DataStore<T> getDataStore(Class<T> clazz) {
     return DataStore.createInMemory(clazz);
   }
@@ -82,25 +84,24 @@ public class AnnotationInMemoryDs implements ListsDataSource {
   }
 
   @Override
-  public Object readData(EdmEntitySet entitySet, Map<String, Object> keys) 
-      throws ODataNotFoundException, EdmException, ODataApplicationException {
+  public Object readData(EdmEntitySet entitySet, Map<String, Object> keys)
+          throws ODataNotFoundException, EdmException, ODataApplicationException {
     final String name = entitySet.getEntityType().getName();
 
     DataStore<Object> store = dataStores.get(name);
     if (store != null) {
-        Object keyInstance = store.createInstance();
-        setKeyFields(keyInstance, keys.values().toArray());
+      Object keyInstance = store.createInstance();
+      ANNOTATION_HELPER.setKeyFields(keyInstance, keys.values().toArray());
 
-        Object result = store.read(keyInstance);
-        if (result != null) {
-          return result;
-        }
+      Object result = store.read(keyInstance);
+      if (result != null) {
+        return result;
+      }
     }
 
     throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
   }
 
-  
   @Override
   public Object readData(EdmFunctionImport function, Map<String, Object> parameters, Map<String, Object> keys)
           throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
@@ -111,14 +112,46 @@ public class AnnotationInMemoryDs implements ListsDataSource {
   public Object readRelatedData(EdmEntitySet sourceEntitySet, Object sourceData, EdmEntitySet targetEntitySet,
           Map<String, Object> targetKeys)
           throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
-    final Object data;
-    if (targetKeys.isEmpty()) {
-      data = this.readData(targetEntitySet);
-    } else {
-      data = this.readData(targetEntitySet, targetKeys);
-    }
 
-    return data;
+    if (targetKeys.isEmpty()) {
+      String sourceName = sourceEntitySet.getEntityType().getName();
+      DataStore sourceStore = dataStores.get(sourceName);
+
+      String targetName = targetEntitySet.getEntityType().getName();
+      DataStore targetStore = dataStores.get(targetName);
+
+      Field sourceFieldAtTarget = extractSourceField(sourceStore, targetStore);
+      if (sourceFieldAtTarget == null) {
+        throw new ODataRuntimeException("Missing source field for related data.");
+      }
+
+      Collection targetData = targetStore.read();
+      List resultData = new ArrayList();
+      for (Object targetInstance : targetData) {
+        Object targetNavigationInstance = getValue(sourceFieldAtTarget, targetInstance);
+        if(targetNavigationInstance instanceof Collection) {
+          Collection c = (Collection) targetNavigationInstance;
+          for (Object object : c) {
+            if (ANNOTATION_HELPER.keyMatch(sourceData, object)) {
+              resultData.add(targetInstance);
+            }
+          }
+        } else if (ANNOTATION_HELPER.keyMatch(sourceData, targetNavigationInstance)) {
+          resultData.add(targetInstance);
+        }
+      }
+      
+      EdmNavigationProperty navProperty = sourceFieldAtTarget.getAnnotation(EdmNavigationProperty.class);
+      if(navProperty.from().multiplicity() == EdmMultiplicity.ONE) {
+        if(resultData.isEmpty()) {
+          return null;
+        }
+        return resultData.get(0);
+      }
+      return resultData;
+    } else {
+      throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+    }
   }
 
   @Override
@@ -168,18 +201,27 @@ public class AnnotationInMemoryDs implements ListsDataSource {
           throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
   }
-  
 
-  private <T> T setKeyFields(T instance, Object[] keyValues) {
-    List<Field> fields = ANNOTATION_HELPER.getAnnotatedFields(instance, EdmKey.class);
-    if (fields.size() != keyValues.length) {
-      throw new IllegalStateException("Wrong amount of key properties. Expected read keys = "
-              + fields + " given key predicates = " + Arrays.toString(keyValues));
+  private Object getValue(Field field, Object instance) {
+    try {
+      boolean access = field.isAccessible();
+      field.setAccessible(true);
+      Object value = field.get(instance);
+      field.setAccessible(access);
+      return value;
+    } catch (IllegalArgumentException e) {
+      throw new ODataRuntimeException("Error for getting value of field '"
+              + field + "' at instance '" + instance + "'.", e);
+    } catch (IllegalAccessException e) {
+      throw new ODataRuntimeException("Error for getting value of field '"
+              + field + "' at instance '" + instance + "'.", e);
     }
-    
-    String propertyName = ANNOTATION_HELPER.getCanonicalName(fields.get(0));
-    ANNOTATION_HELPER.setValueForProperty(instance, propertyName, keyValues[0]);
+  }
 
-    return instance;
+  private Field extractSourceField(DataStore sourceStore, DataStore targetStore) {
+    Class sourceDataTypeClass = sourceStore.getDataTypeClass();
+    Class targetDataTypeClass = targetStore.getDataTypeClass();
+    
+    return ANNOTATION_HELPER.getCommonNavigationFieldFromTarget(sourceDataTypeClass, targetDataTypeClass);
   }
 }

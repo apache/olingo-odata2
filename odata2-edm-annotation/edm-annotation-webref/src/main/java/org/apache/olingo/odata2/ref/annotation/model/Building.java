@@ -69,6 +69,10 @@ public class Building {
     }
   }
 
+  public void addRoom(Room room) {
+    rooms.add(room);
+  }
+  
   public List<Room> getRooms() {
     return rooms;
   }

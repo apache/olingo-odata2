@@ -112,10 +112,14 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
     teamDs.create(createTeam("Team Zeta", true));
 
     DataStore<Building> buildingsDs = dataSource.getDataStore(Building.class);
-    buildingsDs.create(createBuilding("Red Building"));
-    buildingsDs.create(createBuilding("Green Building"));
-    buildingsDs.create(createBuilding("Blue Building"));
-    buildingsDs.create(createBuilding("Yellow Building"));
+    Building redBuilding = createBuilding("Red Building");
+    buildingsDs.create(redBuilding);
+    Building greenBuilding = createBuilding("Green Building");
+    buildingsDs.create(greenBuilding);
+    Building blueBuilding = createBuilding("Blue Building");
+    buildingsDs.create(blueBuilding);
+    Building yellowBuilding = createBuilding("Yellow Building");
+    buildingsDs.create(yellowBuilding);
 
     DataStore<Photo> photoDs = dataSource.getDataStore(Photo.class);
     photoDs.create(createPhoto("Small picture"));
@@ -123,10 +127,12 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
     photoDs.create(createPhoto("Big picture"));
 
     DataStore<Room> roomDs = dataSource.getDataStore(Room.class);
-    roomDs.create(createRoom("Tiny room", 5, 1));
-    roomDs.create(createRoom("Small room", 20, 1));
-    roomDs.create(createRoom("Big room", 40, 1));
-    roomDs.create(createRoom("Huge room", 120, 1));
+    roomDs.create(createRoom("Tiny red room", 5, 1, redBuilding));
+    roomDs.create(createRoom("Small red room", 20, 1, redBuilding));
+    roomDs.create(createRoom("Small green room", 20, 1, greenBuilding));
+    roomDs.create(createRoom("Big blue room", 40, 1, blueBuilding));
+    roomDs.create(createRoom("Huge blue room", 120, 1, blueBuilding));
+    roomDs.create(createRoom("Huge yellow room", 120, 1, yellowBuilding));
   }
 
   private Team createTeam(String teamName, boolean isScrumTeam) {
@@ -151,11 +157,15 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
     return p;
   }
 
-  private Room createRoom(String name, int seats, int version) {
+  private Room createRoom(String name, int seats, int version, Building building) {
     Room r = new Room();
     r.setName(name);
     r.setSeats(seats);
     r.setVersion(version);
+    r.setBuilding(building);
+    
+    building.addRoom(r);
+    
     return r;
   }
 }

@@ -35,9 +35,10 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 public class Team extends RefBase {
   @EdmProperty(type = EdmSimpleTypeKind.Boolean)
   private Boolean isScrumTeam;
-  @EdmNavigationProperty(name = "ne_Teams", relationship="TeamEmployees", 
-          from = @NavigationEnd(role = "r_Team",  type = "Team"),
-          to = @NavigationEnd(role = "r_Employees", type = "Employee", multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name = "nt_Employees", relationship="TeamEmployees", 
+//          from = @NavigationEnd(role = "r_Team",  type = "Team"),
+          to = @NavigationEnd(role = "r_Employees", type = "Employee", multiplicity = EdmMultiplicity.MANY)
+  )
   private List<Employee> employees = new ArrayList<Employee>();
 
   public Boolean isScrumTeam() {
@@ -58,7 +59,7 @@ public class Team extends RefBase {
 
   @Override
   public int hashCode() {
-    return id;
+    return super.hashCode();
   }
 
   @Override

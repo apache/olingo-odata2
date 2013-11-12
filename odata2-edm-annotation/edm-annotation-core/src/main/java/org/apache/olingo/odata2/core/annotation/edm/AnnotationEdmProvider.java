@@ -457,17 +457,20 @@ public class AnnotationEdmProvider extends EdmProvider {
 
     private Property createComplexProperty(EdmProperty ep, Field field, String defaultNamespace) {
       ComplexProperty cp = new ComplexProperty();
+      // settings from property
       String entityName = ep.name();
       if (entityName.isEmpty()) {
         entityName = getCanonicalName(field);
       }
       cp.setName(entityName);
-      //
-      String entityNamespace = ep.namespace();
-      if (entityNamespace.isEmpty()) {
-        entityNamespace = defaultNamespace;
+      
+      // settings from related complex entity
+      EdmComplexEntity ece = field.getType().getAnnotation(EdmComplexEntity.class);
+      String complexEntityNamespace = ece.namespace();
+      if (complexEntityNamespace.isEmpty()) {
+        complexEntityNamespace = defaultNamespace;
       }
-      cp.setType(new FullQualifiedName(entityNamespace, entityName));
+      cp.setType(new FullQualifiedName(complexEntityNamespace, ece.name()));
 
       return cp;
     }

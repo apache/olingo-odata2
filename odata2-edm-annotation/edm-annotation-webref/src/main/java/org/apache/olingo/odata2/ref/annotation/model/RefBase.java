@@ -32,14 +32,14 @@ public abstract class RefBase {
   protected String name;
   @EdmProperty(name="Id", type = EdmSimpleTypeKind.String)
   @EdmKey
-  protected int id;
+  protected String id;
 
   public String getName() {
     return name;
   }
 
   public String getId() {
-    return Integer.toString(id);
+    return id;
   }
 
   public void setName(String name) {
@@ -47,6 +47,32 @@ public abstract class RefBase {
   }
 
   public void setId(int id) {
-    this.id = id;
+    this.id = String.valueOf(id);
+  }
+
+  @Override
+  public int hashCode() {
+    if(id == null) {
+      return -1;
+    }
+    return id.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final RefBase other = (RefBase) obj;
+    if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+      return false;
+    }
+    if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+      return false;
+    }
+    return true;
   }
 }
