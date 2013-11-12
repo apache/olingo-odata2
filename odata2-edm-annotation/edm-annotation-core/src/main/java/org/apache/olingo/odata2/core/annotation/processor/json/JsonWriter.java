@@ -16,6 +16,7 @@ package org.apache.olingo.odata2.core.annotation.processor.json;
 
 import java.io.IOException;
 import java.io.Writer;
+
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class JsonWriter {

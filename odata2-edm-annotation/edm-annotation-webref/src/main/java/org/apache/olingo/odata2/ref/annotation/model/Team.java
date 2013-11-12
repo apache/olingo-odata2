@@ -40,14 +40,6 @@ public class Team extends RefBase {
           to = @NavigationEnd(role = "r_Employees", type = "Employee", multiplicity = EdmMultiplicity.MANY))
   private List<Employee> employees = new ArrayList<Employee>();
 
-  public Team() {
-    super(-1, null);
-  }
-  
-  public Team(final int id, final String name) {
-    super(id, name);
-  }
-
   public Boolean isScrumTeam() {
     return isScrumTeam;
   }

@@ -50,11 +50,6 @@ public class Photo {
   @EdmMediaResourceContent
   private byte[] image = ResourceHelper.generateImage();
 
-  public Photo(final String name, final String type) {
-    this.name = name;
-    this.type = type;
-  }
-
   public String getName() {
     return name;
   }

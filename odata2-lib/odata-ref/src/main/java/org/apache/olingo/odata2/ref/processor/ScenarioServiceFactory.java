@@ -24,6 +24,8 @@ import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.core.annotation.ds.BeanPropertyAccess;
+import org.apache.olingo.odata2.core.annotation.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.ref.model.DataContainer;
 

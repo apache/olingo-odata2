@@ -18,14 +18,16 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.annotation.processor.json;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
+
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 
 /**
  *

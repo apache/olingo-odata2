@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.ref.processor;
+package org.apache.olingo.odata2.api.data;
 
 import java.util.Arrays;
 import java.util.List;

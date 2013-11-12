@@ -16,24 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.ref.processor;
+package org.apache.olingo.odata2.core.annotation.ds;
 
+import org.apache.olingo.odata2.api.data.ValueAccess;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
+import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
 
 /**
- * This interface is intended to access values in a Java object.
+ *
  */
-public interface ValueAccess {
-
+public class AnnotationValueAccess implements ValueAccess {
+  private final AnnotationHelper annotationHelper = new AnnotationHelper();
+  
   /**
    * Retrieves the value of an EDM property for the given data object.
    * @param data     the Java data object
    * @param property the requested {@link EdmProperty}
    * @return the requested property value
    */
-  public <T> Object getPropertyValue(final T data, final EdmProperty property) throws ODataException;
+  @Override
+  public <T> Object getPropertyValue(final T data, final EdmProperty property) throws ODataException {
+    if(annotationHelper.isEdmAnnotated(data)) {
+      return annotationHelper.getValueForProperty(data, property.getName());
+    }
+    throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+  }
 
   /**
    * Sets the value of an EDM property for the given data object.
@@ -41,7 +51,14 @@ public interface ValueAccess {
    * @param property the {@link EdmProperty}
    * @param value    the new value of the property
    */
-  public <T, V> void setPropertyValue(T data, final EdmProperty property, final V value) throws ODataException;
+  @Override
+  public <T, V> void setPropertyValue(T data, final EdmProperty property, final V value) throws ODataException {
+    if(annotationHelper.isEdmAnnotated(data)) {
+      annotationHelper.setValueForProperty(data, property.getName(), value);
+    } else {
+      throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+    }
+  }
 
   /**
    * Retrieves the Java type of an EDM property for the given data object.
@@ -49,7 +66,16 @@ public interface ValueAccess {
    * @param property the requested {@link EdmProperty}
    * @return the requested Java type
    */
-  public <T> Class<?> getPropertyType(final T data, final EdmProperty property) throws ODataException;
+  public <T> Class<?> getPropertyType(final T data, final EdmProperty property) throws ODataException {
+    if(annotationHelper.isEdmAnnotated(data)) {
+      Class<?> fieldType = annotationHelper.getFieldTypeForProperty(data, property.getName());
+      if(fieldType == null) {
+        throw new ODataException("No field type found for property " + property);
+      }
+      return fieldType;
+    }
+    throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+  }
 
   /**
    * Retrieves the value defined by a mapping object for the given data object.
@@ -57,7 +83,9 @@ public interface ValueAccess {
    * @param mapping  the requested {@link EdmMapping}
    * @return the requested value
    */
-  public <T> Object getMappingValue(final T data, final EdmMapping mapping) throws ODataException;
+  public <T> Object getMappingValue(final T data, final EdmMapping mapping) throws ODataException {
+    throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+  }
 
   /**
    * Sets the value defined by a mapping object for the given data object.
@@ -65,5 +93,7 @@ public interface ValueAccess {
    * @param mapping  the {@link EdmMapping}
    * @param value    the new value
    */
-  public <T, V> void setMappingValue(T data, final EdmMapping mapping, final V value) throws ODataException;
+  public <T, V> void setMappingValue(T data, final EdmMapping mapping, final V value) throws ODataException {
+    throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+  }
 }

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.ref.processor;
+package org.apache.olingo.odata2.core.annotation.processor;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -36,6 +36,9 @@ import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.InlineCount;
+import org.apache.olingo.odata2.api.data.ListsDataSource;
+import org.apache.olingo.odata2.api.data.ListsDataSource.BinaryData;
+import org.apache.olingo.odata2.api.data.ValueAccess;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -111,7 +114,6 @@ import org.apache.olingo.odata2.api.uri.info.GetMediaResourceUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetSimplePropertyUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
-import org.apache.olingo.odata2.ref.processor.ListsDataSource.BinaryData;
 
 /**
  * Implementation of the centralized parts of OData processing,

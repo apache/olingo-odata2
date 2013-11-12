@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 public class Employee {
   private static int counter = 1;
   @EdmKey
-  @EdmProperty(name="EmployeeId", type = EdmSimpleTypeKind.Int32)
+  @EdmProperty(name="EmployeeId", type = EdmSimpleTypeKind.String)
   private int employeeId;
   @EdmProperty(name="EmployeeName")
   private String employeeName;
@@ -54,11 +54,6 @@ public class Employee {
   private Calendar entryDate;
   @EdmProperty(name="Location")
   private Location location;
-
-  public Employee(final int employeeId, final String name) {
-    this.employeeId = employeeId;
-    setEmployeeName(name);
-  }
 
   public String getId() {
     return Integer.toString(employeeId);

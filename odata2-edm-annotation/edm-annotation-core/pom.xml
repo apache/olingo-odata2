@@ -34,8 +34,15 @@ the License. -->
     </dependency>
     <dependency>
       <groupId>org.apache.olingo</groupId>
+      <artifactId>olingo-odata2-api-annotation-incubating</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-odata2-core-incubating</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
+  
+
 </project>

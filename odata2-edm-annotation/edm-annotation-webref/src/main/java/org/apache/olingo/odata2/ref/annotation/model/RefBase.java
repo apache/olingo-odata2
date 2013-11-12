@@ -34,11 +34,6 @@ public abstract class RefBase {
   @EdmKey
   protected int id;
 
-  public RefBase(int id, String name) {
-    this.name = name;
-    this.id = id;
-  }
-
   public String getName() {
     return name;
   }

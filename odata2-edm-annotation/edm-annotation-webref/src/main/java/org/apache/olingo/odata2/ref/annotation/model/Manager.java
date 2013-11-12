@@ -35,10 +35,6 @@ public class Manager extends Employee {
           to = @NavigationEnd(role = "r_Employees", type = "Employee"))
   private List<Employee> employees = new ArrayList<Employee>();
 
-  public Manager(final int id, final String name) {
-    super(id, name);
-  }
-
   public List<Employee> getEmployees() {
     return employees;
   }
