@@ -33,8 +33,6 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 @EdmEntityType(name = "Photo", namespace = ModelSharedConstants.NAMESPACE_1,
         entitySetName = "Photos", container = ModelSharedConstants.CONTAINER_1)
 public class Photo {
-  private static final String RESOURCE = "/male_1_WinterW.jpg";
-
   @EdmProperty
   @EdmKey
   private String name;
@@ -45,7 +43,7 @@ public class Photo {
   private String mimeType;
   @EdmProperty
   @EdmMediaResourceSource
-  private String imageUrl = "http://localhost" + RESOURCE;
+  private String imageUrl = "http://localhost/someResource.png";
   @EdmProperty(type = EdmSimpleTypeKind.Binary)
   @EdmMediaResourceContent
   private byte[] image = ResourceHelper.generateImage();

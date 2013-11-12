@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 /**
  *
  */
-class ResourceHelper {
+public class ResourceHelper {
 
   public static byte[] loadAsByte(String resource) {
     return load(resource, new byte[0]);
