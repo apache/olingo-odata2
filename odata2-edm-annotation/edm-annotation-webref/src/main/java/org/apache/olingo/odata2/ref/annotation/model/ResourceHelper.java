@@ -28,7 +28,7 @@ import javax.imageio.ImageIO;
 /**
  *
  */
-class ResourceHelper {
+public class ResourceHelper {
 
   public static byte[] loadAsByte(String resource) {
     return load(resource, new byte[0]);
@@ -59,16 +59,23 @@ class ResourceHelper {
     }
   }
 
+  public enum Format {BMP, JPEG, PNG, GIF};
+  
   public static byte[] generateImage() {
+    return generateImage(Format.PNG);
+  }
+  
+  public static byte[] generateImage(Format format) {
     try {
       int width = 320;
       int height = 320;
       BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
       WritableRaster raster = image.getRaster();
       
+      int mod = format.ordinal() + 2;
       for (int h = 0; h < height; h++) {
         for (int w = 0; w < width; w++) {
-          if (((h / 32) + (w / 32)) % 2 == 0) {
+          if (((h / 32) + (w / 32)) % mod == 0) {
             raster.setSample(w, h, 0, 0);
           } else {
             raster.setSample(w, h, 0, 1);
@@ -77,7 +84,7 @@ class ResourceHelper {
       }
       
       ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-      ImageIO.write(image, "PNG", out);
+      ImageIO.write(image, format.name(), out);
       return out.toByteArray();
     } catch (IOException ex) {
       return new byte[0];

@@ -33,6 +33,8 @@ import org.apache.olingo.odata2.core.annotation.edm.AnnotationEdmProvider;
 import org.apache.olingo.odata2.core.annotation.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.annotation.model.Building;
 import org.apache.olingo.odata2.ref.annotation.model.Photo;
+import org.apache.olingo.odata2.ref.annotation.model.ResourceHelper;
+import org.apache.olingo.odata2.ref.annotation.model.ResourceHelper;
 import org.apache.olingo.odata2.ref.annotation.model.Room;
 import org.apache.olingo.odata2.ref.annotation.model.Team;
 import org.slf4j.Logger;
@@ -122,9 +124,10 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
     buildingsDs.create(yellowBuilding);
 
     DataStore<Photo> photoDs = dataSource.getDataStore(Photo.class);
-    photoDs.create(createPhoto("Small picture"));
-    photoDs.create(createPhoto("Medium picture"));
-    photoDs.create(createPhoto("Big picture"));
+    photoDs.create(createPhoto("Small picture", ResourceHelper.Format.GIF));
+    photoDs.create(createPhoto("Medium picture", ResourceHelper.Format.PNG));
+    photoDs.create(createPhoto("Big picture", ResourceHelper.Format.JPEG));
+    photoDs.create(createPhoto("Huge picture", ResourceHelper.Format.BMP));
 
     DataStore<Room> roomDs = dataSource.getDataStore(Room.class);
     roomDs.create(createRoom("Tiny red room", 5, 1, redBuilding));
@@ -148,12 +151,13 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
     return b;
   }
 
-  private Photo createPhoto(String name) {
+  private Photo createPhoto(String name, ResourceHelper.Format format) {
     Photo p = new Photo();
     p.setName(name);
-    p.setType("PNG");
-    p.setImageType("image/png");
     p.setImageUri("http://localhost/image/" + name);
+    p.setType(format.name());
+    p.setImageType("image/" + format.name().toLowerCase());
+    p.setImage(ResourceHelper.generateImage(format));
     return p;
   }
 

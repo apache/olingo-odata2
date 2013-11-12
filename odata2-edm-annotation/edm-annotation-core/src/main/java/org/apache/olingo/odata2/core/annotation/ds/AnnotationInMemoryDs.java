@@ -16,16 +16,14 @@ package org.apache.olingo.odata2.core.annotation.ds;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.data.ListsDataSource;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -157,7 +155,12 @@ public class AnnotationInMemoryDs implements ListsDataSource {
   @Override
   public BinaryData readBinaryData(EdmEntitySet entitySet, Object mediaLinkEntryData)
           throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
-    throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+
+    Object data = ANNOTATION_HELPER.getValueForField(mediaLinkEntryData, EdmMediaResourceContent.class);
+    Object mimeType = ANNOTATION_HELPER.getValueForField(mediaLinkEntryData, EdmMediaResourceMimeType.class);
+
+    BinaryData db = new BinaryData((byte[])data, String.valueOf(mimeType));
+    return db;
   }
 
   @Override
