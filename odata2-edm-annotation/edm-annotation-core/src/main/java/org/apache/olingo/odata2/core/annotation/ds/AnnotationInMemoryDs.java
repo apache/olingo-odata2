@@ -71,9 +71,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
   public List<?> readData(EdmEntitySet entitySet) throws ODataNotImplementedException,
           ODataNotFoundException, EdmException, ODataApplicationException {
 
-    final String name = entitySet.getEntityType().getName();
-
-    DataStore<Object> holder = dataStores.get(name);
+    DataStore<Object> holder = getDataStore(entitySet);
     if (holder != null) {
       return new ArrayList(holder.read());
     }
@@ -84,9 +82,8 @@ public class AnnotationInMemoryDs implements ListsDataSource {
   @Override
   public Object readData(EdmEntitySet entitySet, Map<String, Object> keys)
           throws ODataNotFoundException, EdmException, ODataApplicationException {
-    final String name = entitySet.getEntityType().getName();
 
-    DataStore<Object> store = dataStores.get(name);
+    DataStore<Object> store = getDataStore(entitySet);
     if (store != null) {
       Object keyInstance = store.createInstance();
       ANNOTATION_HELPER.setKeyFields(keyInstance, keys.values().toArray());
@@ -166,6 +163,12 @@ public class AnnotationInMemoryDs implements ListsDataSource {
   @Override
   public Object newDataObject(EdmEntitySet entitySet)
           throws ODataNotImplementedException, EdmException, ODataApplicationException {
+
+    DataStore<Object> dataStore = getDataStore(entitySet);
+    if (dataStore != null) {
+      return dataStore.createInstance();
+    }
+
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
   }
 
@@ -179,15 +182,18 @@ public class AnnotationInMemoryDs implements ListsDataSource {
   @Override
   public void deleteData(EdmEntitySet entitySet, Map<String, Object> keys)
           throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
-    throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
-
+    DataStore<Object> dataStore = getDataStore(entitySet);
+    Object keyInstance = dataStore.createInstance();
+    ANNOTATION_HELPER.setKeyFields(keyInstance, keys.values().toArray());
+    dataStore.delete(keyInstance);
   }
 
   @Override
   public void createData(EdmEntitySet entitySet, Object data)
           throws ODataNotImplementedException, EdmException, ODataApplicationException {
-    throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
 
+    DataStore<Object> dataStore = getDataStore(entitySet);
+    dataStore.create(data);
   }
 
   @Override
@@ -195,7 +201,6 @@ public class AnnotationInMemoryDs implements ListsDataSource {
           Map<String, Object> targetKeys)
           throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
-
   }
 
   @Override
@@ -203,6 +208,26 @@ public class AnnotationInMemoryDs implements ListsDataSource {
           Map<String, Object> targetKeys)
           throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+  }
+
+
+  /**
+   * Returns corresponding DataStore for EdmEntitySet or if no data store is registered an
+   * ODataRuntimeException is thrown.
+   * Never returns NULL.
+   * 
+   * @param entitySet for which the corresponding DataStore is returned
+   * @return a DataStore object 
+   * @throws EdmException 
+   * @throws  ODataRuntimeException if no DataStore is found
+   */
+  private DataStore<Object> getDataStore(EdmEntitySet entitySet) throws EdmException {
+    final String name = entitySet.getEntityType().getName();
+    DataStore<Object> dataStore = dataStores.get(name);
+    if(dataStore == null) {
+      throw new ODataRuntimeException("No DataStore found for entity set '" + entitySet + "'.");
+    }
+    return dataStore;
   }
 
   private Object getValue(Field field, Object instance) {
