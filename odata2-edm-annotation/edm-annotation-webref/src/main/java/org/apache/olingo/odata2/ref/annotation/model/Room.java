@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.ref.annotation.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
@@ -29,20 +30,20 @@ import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 /**
  *
  */
-@EdmEntityType(name = "Room", namespace = ModelSharedConstants.NAMESPACE_1, 
-        entitySetName = "Rooms", container = ModelSharedConstants.CONTAINER_1)
+@EdmEntityType(name = "Room", namespace = ModelSharedConstants.NAMESPACE_1)
+@EdmEntitySet(name = "Rooms")
 public class Room extends RefBase {
 
   @EdmProperty
   private Integer seats;
   @EdmProperty
   private Integer version;
-  @EdmNavigationProperty(name="nr_Building", relationship="BuildingRooms",
-          from = @NavigationEnd(role="r_Room", multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name="nr_Building", association="BuildingRooms",
+          from = @NavigationEnd(role="r_Room", entitySet = Building.class, multiplicity = EdmMultiplicity.MANY))
   private Building building;
-  @EdmNavigationProperty(name="nr_Employees", relationship="RoomEmployees", 
-          from = @NavigationEnd(role = "r_Room", type = "Room", multiplicity = EdmMultiplicity.ONE),
-          to = @NavigationEnd(role = "r_Employees", type = "Employee", multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name="nr_Employees", association="RoomEmployees", 
+          from = @NavigationEnd(role = "r_Room", entitySet = Room.class, multiplicity = EdmMultiplicity.ONE),
+          to = @NavigationEnd(role = "r_Employees", entitySet = Employee.class, multiplicity = EdmMultiplicity.MANY))
   private List<Employee> employees = new ArrayList<Employee>();
 
   public void setSeats(final int seats) {

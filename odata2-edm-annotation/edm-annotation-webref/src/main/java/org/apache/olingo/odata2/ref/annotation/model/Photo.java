@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.ref.annotation.model;
 
 import java.util.Arrays;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
@@ -30,8 +31,8 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 /**
  *  
  */
-@EdmEntityType(name = "Photo", namespace = ModelSharedConstants.NAMESPACE_1,
-        entitySetName = "Photos", container = ModelSharedConstants.CONTAINER_1)
+@EdmEntityType(name = "Photo", namespace = ModelSharedConstants.NAMESPACE_1)
+@EdmEntitySet(name = "Photos")
 public class Photo {
   @EdmProperty
   @EdmKey

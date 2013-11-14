@@ -28,7 +28,8 @@ import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 @Target(ElementType.FIELD)
 public @interface NavigationEnd {
   String role() default "";
-  String type() default "";
+  // because entityset is mandatory for some cases set it as default to 'Object.class'
+  Class<?> entitySet() default Object.class;
   
   EdmMultiplicity multiplicity() default EdmMultiplicity.ONE;
 }

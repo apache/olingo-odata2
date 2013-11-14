@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.annotation.model;
 
 import java.text.DateFormat;
 import java.util.Calendar;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
@@ -32,8 +33,8 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 /**
  *  
  */
-@EdmEntityType(name="Employee", namespace=ModelSharedConstants.NAMESPACE_1, 
-        entitySetName = "Employees", container=ModelSharedConstants.CONTAINER_1)
+@EdmEntityType(name="Employee", namespace=ModelSharedConstants.NAMESPACE_1)
+@EdmEntitySet(name = "Employees")
 public class Employee {
   private static int counter = 1;
   @EdmKey
@@ -43,8 +44,8 @@ public class Employee {
   private String employeeName;
   @EdmProperty
   private int age;
-  @EdmNavigationProperty(name="ne_Manager", relationship="ManagerEmployees",
-          from = @NavigationEnd(role="r_Employees", multiplicity = EdmMultiplicity.MANY))//,
+  @EdmNavigationProperty(name="ne_Manager", association="ManagerEmployees",
+          from = @NavigationEnd(role="r_Employees", entitySet=Employee.class, multiplicity=EdmMultiplicity.MANY))//,
 //          to = @NavigationEnd(type = "Manager"))
   private Manager manager;
   private Team team;

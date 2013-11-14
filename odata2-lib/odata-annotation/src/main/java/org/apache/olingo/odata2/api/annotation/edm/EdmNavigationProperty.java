@@ -28,8 +28,8 @@ import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 @Target(ElementType.FIELD)
 public @interface EdmNavigationProperty {
   String name();
-  String relationship();
-  
+  String association() default ""; // if not set -> will be generated
+
   //
   NavigationEnd from() default @NavigationEnd;
   NavigationEnd to() default @NavigationEnd;

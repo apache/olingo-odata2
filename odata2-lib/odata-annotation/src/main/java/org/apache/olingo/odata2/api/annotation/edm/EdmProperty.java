@@ -29,8 +29,5 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 public @interface EdmProperty {
   EdmSimpleTypeKind type() default EdmSimpleTypeKind.Null;
   String name() default "";
-  /* only for complex property */
-  String namespace() default "";
   EdmFacets facets() default @EdmFacets;
-
 }

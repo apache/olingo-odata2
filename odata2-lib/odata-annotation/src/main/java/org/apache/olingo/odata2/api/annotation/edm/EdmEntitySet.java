@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface EdmComplexEntity {
+public @interface EdmEntitySet {
   String name() default "";
-  String namespace();
+//  String container() default "";
 }

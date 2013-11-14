@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.annotation.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
@@ -31,14 +32,14 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 /**
 *  
 */
-@EdmEntityType(name="Team", namespace = ModelSharedConstants.NAMESPACE_1, 
-        entitySetName = "Teams", container = ModelSharedConstants.CONTAINER_1)
+@EdmEntityType(name="Team", namespace = ModelSharedConstants.NAMESPACE_1) 
+@EdmEntitySet(name = "Teams")
 public class Team extends RefBase {
   @EdmProperty(type = EdmSimpleTypeKind.Boolean)
   private Boolean isScrumTeam;
-  @EdmNavigationProperty(name = "ne_Teams", relationship="TeamEmployees", 
-          from = @NavigationEnd(role = "r_Team",  type = "Team"),
-          to = @NavigationEnd(role = "r_Employees", type = "Employee", multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name = "ne_Teams", association="TeamEmployees", 
+          from = @NavigationEnd(role = "r_Team",  entitySet = Team.class),
+          to = @NavigationEnd(role = "r_Employees", entitySet = Employee.class, multiplicity = EdmMultiplicity.MANY))
   private List<Employee> employees = new ArrayList<Employee>();
 
   public Team() {
