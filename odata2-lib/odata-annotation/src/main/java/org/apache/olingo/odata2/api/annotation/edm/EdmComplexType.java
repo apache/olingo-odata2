@@ -16,27 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.ref.annotation.model;
+package org.apache.olingo.odata2.api.annotation.edm;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
-import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- *
- */
-@EdmEntityType(name = "Manager", namespace = ModelSharedConstants.NAMESPACE_1)
-@EdmEntitySet(name = "Managers")
-public class Manager extends Employee {
-
-  @EdmNavigationProperty(name = "nm_Employees", association = "ManagerEmployees",
-          to = @NavigationEnd(role = "r_Employees", entitySet = Employee.class))
-  private List<Employee> employees = new ArrayList<Employee>();
-
-  public List<Employee> getEmployees() {
-    return employees;
-  }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface EdmComplexType {
+  String name() default "";
+  String namespace();
 }

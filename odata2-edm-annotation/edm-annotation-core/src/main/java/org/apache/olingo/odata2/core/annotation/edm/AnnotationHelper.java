@@ -23,10 +23,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.apache.olingo.odata2.api.annotation.edm.EdmComplexEntity;
+import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
@@ -35,7 +34,6 @@ import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.core.annotation.ds.DataStore;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
@@ -109,7 +107,7 @@ public class AnnotationHelper {
       for (Field sourcField : sourceFields) {
         EdmNavigationProperty sourceNav = sourcField.getAnnotation(EdmNavigationProperty.class);
         EdmNavigationProperty targetNav = targetField.getAnnotation(EdmNavigationProperty.class);
-        if (sourceNav.relationship().equals(targetNav.relationship())) {
+        if (sourceNav.association().equals(targetNav.association())) {
           return targetField;
         }
       }
@@ -388,8 +386,9 @@ public class AnnotationHelper {
       return false;
     } else {
       final boolean isEntity = null != clazz.getAnnotation(EdmEntityType.class);
-      final boolean isComplexEntity = null != clazz.getAnnotation(EdmComplexEntity.class);
-      return isEntity || isComplexEntity;
+      final boolean isEntitySet = null != clazz.getAnnotation(EdmEntitySet.class);
+      final boolean isComplexEntity = null != clazz.getAnnotation(EdmComplexType.class);
+      return isEntity || isComplexEntity || isEntitySet;
     }
   }
 

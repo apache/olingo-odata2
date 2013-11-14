@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.ref.annotation.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
@@ -32,8 +33,8 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 /**
  *  
  */
-@EdmEntityType(name="Building", namespace=ModelSharedConstants.NAMESPACE_1, 
-        entitySetName = "Buildings", container="Container1")
+@EdmEntityType(name="Building", namespace=ModelSharedConstants.NAMESPACE_1) 
+@EdmEntitySet(name = "Buildings")
 public class Building {
   @EdmKey
   @EdmProperty(type = EdmSimpleTypeKind.Int32)
@@ -41,8 +42,8 @@ public class Building {
   @EdmProperty
   private String name;
   private byte[] image;
-  @EdmNavigationProperty(name="nb_rooms", relationship="BuildingRooms",
-          to = @NavigationEnd(role = "r_Room", type="Room", multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name="nb_rooms", association="BuildingRooms",
+          to = @NavigationEnd(role = "r_Room", entitySet=Room.class, multiplicity = EdmMultiplicity.MANY))
   private List<Room> rooms = new ArrayList<Room>();
 
   public String getId() {

@@ -18,14 +18,14 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.annotation.model;
 
-import org.apache.olingo.odata2.api.annotation.edm.EdmComplexEntity;
+import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 
 
 /**
  *  
  */
-@EdmComplexEntity(name = "c_Location", namespace = ModelSharedConstants.NAMESPACE_1)
+@EdmComplexType(name = "c_Location", namespace = ModelSharedConstants.NAMESPACE_1)
 public class Location {
   @EdmProperty
   private String country;

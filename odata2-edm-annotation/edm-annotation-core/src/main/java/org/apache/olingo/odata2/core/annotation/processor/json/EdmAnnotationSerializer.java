@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
@@ -122,12 +122,12 @@ public class EdmAnnotationSerializer {
   private boolean writeEdmNavigationProperty(Object entity, JsonWriter json, Field field)
           throws IllegalArgumentException, IllegalAccessException {
     EdmNavigationProperty navProperty = field.getAnnotation(EdmNavigationProperty.class);
-    EdmEntityType entityType = entity.getClass().getAnnotation(EdmEntityType.class);
+    EdmEntitySet entitySet = entity.getClass().getAnnotation(EdmEntitySet.class);
     if (navProperty != null) {
       field.setAccessible(true);
       Object keyValue = extractEdmKey(entity);
-      json.writeStringProperty("uri", baseUri + entityType.entitySetName() + "('" + keyValue.toString() + "')"
-              + "/" + navProperty.relationship());
+      json.writeStringProperty("uri", baseUri + entitySet.name() + "('" + keyValue.toString() + "')"
+              + "/" + navProperty.association());
       return true;
     }
     return false;

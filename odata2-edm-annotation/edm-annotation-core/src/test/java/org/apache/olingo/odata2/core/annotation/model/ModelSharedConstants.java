@@ -21,5 +21,5 @@ package org.apache.olingo.odata2.core.annotation.model;
 public interface ModelSharedConstants {
 
   String NAMESPACE_1 = "RefScenario";
-  String CONTAINER_1 = "Container1";
+  String CONTAINER_1 = "DefaultContainer";
 }
