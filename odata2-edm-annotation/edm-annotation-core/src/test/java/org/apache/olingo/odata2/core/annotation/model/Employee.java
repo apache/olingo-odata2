@@ -48,7 +48,10 @@ public class Employee {
           from = @NavigationEnd(role="r_Employees", entitySet=Employee.class, multiplicity=EdmMultiplicity.MANY))//,
 //          to = @NavigationEnd(type = "Manager"))
   private Manager manager;
+  @EdmNavigationProperty(name = "ne_Team")
   private Team team;
+  @EdmNavigationProperty(name = "ne_Room", association = "RoomEmployees",
+          from = @NavigationEnd(multiplicity = EdmMultiplicity.MANY))
   private Room room;
   private String imageType;
   private byte[] image;

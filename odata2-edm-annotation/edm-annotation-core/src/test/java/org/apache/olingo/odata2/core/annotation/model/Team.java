@@ -37,9 +37,8 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 public class Team extends RefBase {
   @EdmProperty(type = EdmSimpleTypeKind.Boolean)
   private Boolean isScrumTeam;
-  @EdmNavigationProperty(name = "ne_Teams", association="TeamEmployees", 
-          from = @NavigationEnd(role = "r_Team",  entitySet = Team.class),
-          to = @NavigationEnd(role = "r_Employees", entitySet = Employee.class, multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name = "ne_Teams", 
+          to = @NavigationEnd(entitySet = Employee.class, multiplicity = EdmMultiplicity.MANY))
   private List<Employee> employees = new ArrayList<Employee>();
 
   public Team() {

@@ -86,7 +86,7 @@ public class AnnotationEdmProviderTest {
     assertEquals(1, employeeKeys.size());
     assertEquals("EmployeeId", employeeKeys.get(0).getName());
     assertEquals(4, employee.getProperties().size());
-    assertEquals(1, employee.getNavigationProperties().size());
+    assertEquals(3, employee.getNavigationProperties().size());
 
     List<Schema> schemas = localAep.getSchemas();
     assertEquals(1, schemas.size());
@@ -167,7 +167,7 @@ public class AnnotationEdmProviderTest {
     if(name.equals("RoomEmployees")) {
       validateAssociation(association, 
               "r_Room", EdmMultiplicity.ONE, defaultFqn("Room"),
-              "r_Employees", EdmMultiplicity.MANY, defaultFqn("Employee"));
+              "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
     } else if(name.equals("BuildingRooms")) {
         validateAssociation(association, 
                 "r_Building", EdmMultiplicity.ONE, defaultFqn("Building"),
@@ -176,10 +176,10 @@ public class AnnotationEdmProviderTest {
         validateAssociation(association, 
                 "r_Manager", EdmMultiplicity.ONE, defaultFqn("Manager"),
                 "r_Employees", EdmMultiplicity.MANY, defaultFqn("Employee"));
-    } else if(name.equals("TeamEmployees")) {
+    } else if(name.equals("r_Employee-r_Team")) {
         validateAssociation(association, 
                 "r_Team", EdmMultiplicity.ONE, defaultFqn("Team"),
-                "r_Employees", EdmMultiplicity.MANY, defaultFqn("Employee"));
+                "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
     } else {
         fail("Got unknown association to validate with name '" + name + "'.");
     }
@@ -227,8 +227,20 @@ public class AnnotationEdmProviderTest {
     assertEquals(1, employeeKeys.size());
     assertEquals("EmployeeId", employeeKeys.get(0).getName());
     assertEquals(4, employee.getProperties().size());
-    assertEquals(1, employee.getNavigationProperties().size());
-  }
+    assertEquals(3, employee.getNavigationProperties().size());
+
+    for (NavigationProperty navigationProperty : employee.getNavigationProperties()) {
+      if (navigationProperty.getName().equals("ne_Manager")) {
+        validateNavProperty(navigationProperty, "ManagerEmployees", "r_Employees", "r_Manager");
+      } else if (navigationProperty.getName().equals("ne_Team")) {
+        validateNavProperty(navigationProperty, "r_Employee-r_Team", "r_Employee", "r_Team");
+      } else if (navigationProperty.getName().equals("ne_Room")) {
+        validateNavProperty(navigationProperty, "RoomEmployees", "r_Employee", "r_Room");
+      } else {
+        fail("Got unexpected navigation property with name '" + navigationProperty.getName() + "'.");
+      }
+    }
+}
 
   @Test
   public void entityTypeTeam() throws Exception {
@@ -240,6 +252,8 @@ public class AnnotationEdmProviderTest {
 
     assertEquals(1, team.getProperties().size());
     assertEquals(1, team.getNavigationProperties().size());
+    NavigationProperty navigationProperty= team.getNavigationProperties().get(0);
+    validateNavProperty(navigationProperty, "r_Employee-r_Team", "r_Team", "r_Employee");
   }
 
   @Test
@@ -293,7 +307,7 @@ public class AnnotationEdmProviderTest {
     
     for (NavigationProperty navigationProperty : navigationProperties) {
       if(navigationProperty.getName().equals("nr_Employees")) {
-        validateNavProperty(navigationProperty, "RoomEmployees", "r_Room", "r_Employees");
+        validateNavProperty(navigationProperty, "RoomEmployees", "r_Room", "r_Employee");
       } else if(navigationProperty.getName().equals("nr_Building")) {
         validateNavProperty(navigationProperty, "BuildingRooms", "r_Room", "r_Building");
       } else {
