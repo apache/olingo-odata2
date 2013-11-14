@@ -40,8 +40,8 @@ public class Room extends RefBase {
           from = @NavigationEnd(role = "r_Room", multiplicity = EdmMultiplicity.MANY))
   private Building building;
   @EdmNavigationProperty(name = "nr_Employees", association = "RoomEmployees",
-          from = @NavigationEnd(role = "r_Room", entitySet = Room.class, multiplicity = EdmMultiplicity.ONE),
-          to = @NavigationEnd(role = "r_Employees", entitySet = Employee.class, multiplicity = EdmMultiplicity.MANY))
+//          from = @NavigationEnd(role = "r_Room", entitySet = Room.class, multiplicity = EdmMultiplicity.ONE),
+          to = @NavigationEnd(entitySet = Employee.class, multiplicity = EdmMultiplicity.MANY))
   private List<Employee> employees = new ArrayList<Employee>();
 
   public Room(final int id, final String name) {
