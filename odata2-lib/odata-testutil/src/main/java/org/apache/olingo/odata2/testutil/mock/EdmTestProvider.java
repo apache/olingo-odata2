@@ -27,6 +27,7 @@ import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTargetPath;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
+import org.apache.olingo.odata2.api.edm.provider.AliasInfo;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -100,13 +101,22 @@ public class EdmTestProvider extends EdmProvider {
   private static final String FUNCTION_IMPORT_5 = "MostCommonLocation";
   private static final String FUNCTION_IMPORT_6 = "ManagerPhoto";
   private static final String FUNCTION_IMPORT_7 = "OldestEmployee";
+  private static final String SCHEMA_ALIAS = "Self";
 
+  @Override
+  public List<AliasInfo> getAliasInfos(){
+    List<AliasInfo> aliasInfos = new ArrayList<AliasInfo>();
+    aliasInfos.add(new AliasInfo().setAlias(SCHEMA_ALIAS).setNamespace(NAMESPACE_1));
+    return aliasInfos;
+  }
+  
   @Override
   public List<Schema> getSchemas() throws ODataException {
     final List<Schema> schemas = new ArrayList<Schema>();
 
     Schema schema = new Schema();
     schema.setNamespace(NAMESPACE_1);
+    schema.setAlias(SCHEMA_ALIAS);
 
     final List<EntityType> entityTypes = new ArrayList<EntityType>();
     entityTypes.add(getEntityType(ENTITY_TYPE_1_1));

@@ -19,11 +19,13 @@
 package org.apache.olingo.odata2.core.edm.provider;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
+import org.apache.olingo.odata2.api.edm.provider.AliasInfo;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
 import org.apache.olingo.odata2.api.edm.provider.ComplexType;
@@ -39,6 +41,8 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.consumer.XmlMetadataConsumer;
+
+import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
 
 public class EdmxProvider extends EdmProvider {
   private DataServices dataServices;
@@ -170,5 +174,17 @@ public class EdmxProvider extends EdmProvider {
   @Override
   public List<Schema> getSchemas() throws ODataException {
     return dataServices.getSchemas();
+  }
+  
+  @Override
+  public List<AliasInfo> getAliasInfos(){
+    List<AliasInfo> aliasInfos = new ArrayList<AliasInfo>();
+    for(Schema schema : dataServices.getSchemas()){
+      if(schema.getAlias() != null){
+        aliasInfos.add(new AliasInfo().setAlias(schema.getAlias()).setNamespace(schema.getNamespace()));
+      }
+    }
+    
+    return aliasInfos;
   }
 }

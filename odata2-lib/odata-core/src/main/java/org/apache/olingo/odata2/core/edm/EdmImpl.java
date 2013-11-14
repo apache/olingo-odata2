@@ -43,6 +43,7 @@ public abstract class EdmImpl implements Edm {
   private Map<FullQualifiedName, EdmEntityType> edmEntityTypes;
   private Map<FullQualifiedName, EdmComplexType> edmComplexTypes;
   private Map<FullQualifiedName, EdmAssociation> edmAssociations;
+  private Map<String, String> aliasToNamespaceInfo;
   private List<EdmEntitySet> edmEntitySets;
   private List<EdmFunctionImport> edmFunctionImports;
 
@@ -88,8 +89,10 @@ public abstract class EdmImpl implements Edm {
   }
 
   @Override
-  public EdmEntityType getEntityType(final String namespace, final String name) throws EdmException {
-    FullQualifiedName fqName = new FullQualifiedName(namespace, name);
+  public EdmEntityType getEntityType(final String namespaceOrAlias, final String name) throws EdmException {
+    String finalNamespace = getNamespaceForAlias(namespaceOrAlias);
+
+    FullQualifiedName fqName = new FullQualifiedName(finalNamespace, name);
     if (edmEntityTypes.containsKey(fqName)) {
       return edmEntityTypes.get(fqName);
     }
@@ -108,9 +111,29 @@ public abstract class EdmImpl implements Edm {
     return edmEntityType;
   }
 
+  private String getNamespaceForAlias(final String namespaceOrAlias) throws EdmException {
+    if (aliasToNamespaceInfo == null) {
+      try {
+        aliasToNamespaceInfo = createAliasToNamespaceInfo();
+        if (aliasToNamespaceInfo == null) {
+          aliasToNamespaceInfo = new HashMap<String, String>();
+        }
+      } catch (ODataException e) {
+        throw new EdmException(EdmException.COMMON, e);
+      }
+    }
+    String namespace = aliasToNamespaceInfo.get(namespaceOrAlias);
+    // If not contained in info it must be a namespace
+    if (namespace == null) {
+      namespace = namespaceOrAlias;
+    }
+    return namespace;
+  }
+
   @Override
-  public EdmComplexType getComplexType(final String namespace, final String name) throws EdmException {
-    FullQualifiedName fqName = new FullQualifiedName(namespace, name);
+  public EdmComplexType getComplexType(final String namespaceOrAlias, final String name) throws EdmException {
+    String finalNamespace = getNamespaceForAlias(namespaceOrAlias);
+    FullQualifiedName fqName = new FullQualifiedName(finalNamespace, name);
     if (edmComplexTypes.containsKey(fqName)) {
       return edmComplexTypes.get(fqName);
     }
@@ -130,8 +153,9 @@ public abstract class EdmImpl implements Edm {
   }
 
   @Override
-  public EdmAssociation getAssociation(final String namespace, final String name) throws EdmException {
-    FullQualifiedName fqName = new FullQualifiedName(namespace, name);
+  public EdmAssociation getAssociation(final String namespaceOrAlias, final String name) throws EdmException {
+    String finalNamespace = getNamespaceForAlias(namespaceOrAlias);
+    FullQualifiedName fqName = new FullQualifiedName(finalNamespace, name);
     if (edmAssociations.containsKey(fqName)) {
       return edmAssociations.get(fqName);
     }
@@ -195,4 +219,6 @@ public abstract class EdmImpl implements Edm {
   protected abstract List<EdmEntitySet> createEntitySets() throws ODataException;
 
   protected abstract List<EdmFunctionImport> createFunctionImports() throws ODataException;
+
+  protected abstract Map<String, String> createAliasToNamespaceInfo() throws ODataException;
 }

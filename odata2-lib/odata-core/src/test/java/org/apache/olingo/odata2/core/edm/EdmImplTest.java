@@ -24,7 +24,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.EdmAssociation;
 import org.apache.olingo.odata2.api.edm.EdmComplexType;
@@ -134,6 +136,11 @@ public class EdmImplTest extends BaseTest {
     protected List<EdmFunctionImport> createFunctionImports() throws ODataException {
       List<EdmFunctionImport> edmFunctionImports = new ArrayList<EdmFunctionImport>();
       return edmFunctionImports;
+    }
+
+    @Override
+    protected Map<String, String> createAliasToNamespaceInfo() throws ODataException {
+      return new HashMap<String, String>();
     }
   }
 }

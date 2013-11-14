@@ -19,7 +19,9 @@
 package org.apache.olingo.odata2.core.edm.provider;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.EdmAssociation;
 import org.apache.olingo.odata2.api.edm.EdmComplexType;
@@ -28,6 +30,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
+import org.apache.olingo.odata2.api.edm.provider.AliasInfo;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.ComplexType;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
@@ -125,5 +128,17 @@ public class EdmImplProv extends EdmImpl implements EdmProviderAccessor {
       }
     }
     return edmFunctionImports;
+  }
+
+  @Override
+  protected Map<String, String> createAliasToNamespaceInfo() throws ODataException {
+    List<AliasInfo> aliasInfos = edmProvider.getAliasInfos();
+    Map<String, String> aliasToNamespaceInfo = new HashMap<String, String>();
+    if (aliasInfos != null) {
+      for (AliasInfo info : aliasInfos) {
+        aliasToNamespaceInfo.put(info.getAlias(), info.getNamespace());
+      }
+    }
+    return aliasToNamespaceInfo;
   }
 }

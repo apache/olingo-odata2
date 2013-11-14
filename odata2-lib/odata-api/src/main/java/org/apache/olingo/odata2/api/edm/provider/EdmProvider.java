@@ -116,4 +116,9 @@ public abstract class EdmProvider {
   public List<Schema> getSchemas() throws ODataException {
     throw new ODataNotImplementedException();
   }
+
+  public List<AliasInfo> getAliasInfos() throws ODataException {
+    return null;
+  }
+
 }
