@@ -117,6 +117,12 @@ public abstract class EdmProvider {
     throw new ODataNotImplementedException();
   }
 
+  /**
+   * This method should return a list of all defined aliases and their associated namespace. If not implemented aliases
+   * cannot be resolved
+   * @return List<{@link AliasInfo}>
+   * @throws ODataException
+   */
   public List<AliasInfo> getAliasInfos() throws ODataException {
     return null;
   }

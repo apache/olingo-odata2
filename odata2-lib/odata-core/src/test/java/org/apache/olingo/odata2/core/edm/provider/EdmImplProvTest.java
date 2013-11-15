@@ -37,15 +37,15 @@ import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 public class EdmImplProvTest extends BaseTest {
 
   private static EdmImplProv edm;
 
-  @BeforeClass
-  public static void getEdmImpl() throws Exception {
+  @Before
+  public void getEdmImpl() throws Exception {
     EdmProvider edmProvider = mock(EdmProvider.class);
 
     List<AliasInfo> aliasInfos = new ArrayList<AliasInfo>();
@@ -74,6 +74,27 @@ public class EdmImplProvTest extends BaseTest {
     edm = new EdmImplProv(edmProvider);
   }
 
+  @Test
+  public void assertCallWithAliasResultsInRightCaching() throws Exception{
+    EdmEntityType entityTypeWithAlias = edm.getEntityType("et1", "EntityType1");
+    assertEquals("EntityType1", entityTypeWithAlias.getName());
+    EdmEntityType entityType = edm.getEntityType("EntityType1Ns", "EntityType1");
+    assertEquals("EntityType1", entityType.getName());
+    assertEquals(entityType, entityTypeWithAlias);
+    
+    EdmComplexType complexTypeWithAlias = edm.getComplexType("ct1", "ComplexType1");
+    assertEquals("ComplexType1", complexTypeWithAlias.getName());
+    EdmComplexType complexType = edm.getComplexType("ComplexType1Ns", "ComplexType1");
+    assertEquals("ComplexType1", complexType.getName());
+    assertEquals(complexType, complexTypeWithAlias);
+    
+    EdmAssociation associationWithAlias = edm.getAssociation("at1", "Association1");
+    assertEquals("Association1", associationWithAlias.getName());
+    EdmAssociation association = edm.getAssociation("Association1Ns", "Association1");
+    assertEquals("Association1", association.getName());
+    assertEquals(association, associationWithAlias);
+  }
+  
   @Test
   public void testEntityType() throws EdmException {
     EdmEntityType entityType = edm.getEntityType("EntityType1Ns", "EntityType1");
