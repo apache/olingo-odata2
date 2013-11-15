@@ -16,22 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.rest;
+package org.apache.olingo.odata2.api.edm.provider;
 
-import org.apache.olingo.odata2.api.ODataService;
-import org.apache.olingo.odata2.api.ODataServiceFactory;
-import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.api.processor.ODataContext;
+/**
+ * Objects of this class hold an alias and the associated namespace
+ */
+public class AliasInfo {
 
-public class ODataServiceFactoryImpl extends ODataServiceFactory {
+  private String alias;
+  private String namespace;
 
-  public ODataServiceFactoryImpl() {
-    super();
+  /**
+   * @return the alias
+   */
+  public String getAlias() {
+    return alias;
   }
 
-  @Override
-  public ODataService createService(final ODataContext ctx) throws ODataException {
-    return null;
+  /**
+   * @param alias
+   * @return {@link AliasInfo} for method chaining
+   */
+  public AliasInfo setAlias(String alias) {
+    this.alias = alias;
+    return this;
+  }
+
+  /**
+   * @return the namespace which is associated with this alias
+   */
+  public String getNamespace() {
+    return namespace;
+  }
+
+  /**
+   * @param namespace
+   * @return {@link AliasInfo} for method chaining
+   */
+  public AliasInfo setNamespace(String namespace) {
+    this.namespace = namespace;
+    return this;
   }
 
 }

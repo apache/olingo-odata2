@@ -24,8 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
@@ -37,8 +35,6 @@ import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
-import org.apache.olingo.odata2.api.ep.EntityProviderException;
-import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 import org.junit.Test;
@@ -46,7 +42,27 @@ import org.junit.Test;
 public class EdmxProviderTest {
 
   @Test
-  public void testEntityType() throws EntityProviderException, ODataException, XMLStreamException {
+  public void getElementsWithAlias() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+
+    assertNotNull(edm.getEntityType("Self", "Employee"));
+    assertNotNull(edm.getEntityType("Self", "Room"));
+    assertNotNull(edm.getEntityType("Self", "Manager"));
+    assertNotNull(edm.getEntityType("Self", "Team"));
+    assertNotNull(edm.getEntityType("Self", "Building"));
+
+    assertNotNull(edm.getAssociation("Self", "BuildingRooms"));
+    assertNotNull(edm.getAssociation("Self", "ManagerEmployees"));
+    assertNotNull(edm.getAssociation("Self", "TeamEmployees"));
+    assertNotNull(edm.getAssociation("Self", "RoomEmployees"));
+
+    assertNotNull(edm.getComplexType("Self", "c_Location"));
+    assertNotNull(edm.getComplexType("Self", "c_City"));
+  }
+
+  @Test
+  public void testEntityType() throws Exception {
     Edm edm = createEdm();
 
     assertNotNull(edm);
@@ -63,7 +79,7 @@ public class EdmxProviderTest {
   }
 
   @Test
-  public void testAssociation() throws EntityProviderException, ODataException, XMLStreamException {
+  public void testAssociation() throws Exception {
     Edm edm = createEdm();
     assertNotNull(edm);
 
@@ -80,7 +96,7 @@ public class EdmxProviderTest {
   }
 
   @Test
-  public void testAssociationSet() throws EntityProviderException, ODataException, XMLStreamException {
+  public void testAssociationSet() throws Exception {
     EdmProvider testProvider = new EdmTestProvider();
     Edm edm = createEdm();
     assertNotNull(edm);
@@ -99,7 +115,7 @@ public class EdmxProviderTest {
   }
 
   @Test
-  public void testSchema() throws EntityProviderException, ODataException, XMLStreamException {
+  public void testSchema() throws Exception {
     EdmProvider testProvider = new EdmTestProvider();
     Edm edm = createEdm();
     assertNotNull(edm);
@@ -119,7 +135,7 @@ public class EdmxProviderTest {
   }
 
   @Test
-  public void testContainer() throws EntityProviderException, ODataException, XMLStreamException {
+  public void testContainer() throws Exception {
     EdmProvider testProvider = new EdmTestProvider();
     Edm edm = createEdm();
     assertNotNull(edm);
@@ -138,7 +154,7 @@ public class EdmxProviderTest {
   }
 
   @Test
-  public void testEntitySets() throws EntityProviderException, ODataException {
+  public void testEntitySets() throws Exception {
     Edm edm = createEdm();
     assertNotNull(edm);
 
@@ -147,7 +163,7 @@ public class EdmxProviderTest {
   }
 
   @Test
-  public void testFunctionImports() throws EntityProviderException, ODataException {
+  public void testFunctionImports() throws Exception {
     Edm edm = createEdm();
     assertNotNull(edm);
 
@@ -155,7 +171,7 @@ public class EdmxProviderTest {
     assertEquals(7, functionImports.size());
   }
 
-  private Edm createEdm() throws EntityProviderException, ODataException {
+  private Edm createEdm() throws Exception {
     EdmProvider testProvider = new EdmTestProvider();
     ODataResponse response = EntityProvider.writeMetadata(testProvider.getSchemas(), null);
     InputStream in = (InputStream) response.getEntity();

@@ -16,22 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.rest;
+package org.apache.olingo.odata2.fit.misc;
 
-import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
-import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.core.rest.app.AbstractODataApplication;
 
-public class ODataServiceFactoryImpl extends ODataServiceFactory {
-
-  public ODataServiceFactoryImpl() {
-    super();
-  }
+public class ODataApplication_ extends AbstractODataApplication {
 
   @Override
-  public ODataService createService(final ODataContext ctx) throws ODataException {
-    return null;
+  public Class<? extends ODataServiceFactory> getServiceFactoryClass() {
+    return ODataApplicationFactory.class;
   }
 
 }

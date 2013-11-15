@@ -60,6 +60,7 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.ContentType.ODataFormat;
 import org.apache.olingo.odata2.core.debug.ODataDebugResponseWrapper;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
+import org.apache.olingo.odata2.core.rest.ODataExceptionWrapper;
 import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.core.uri.UriParserImpl;
 import org.apache.olingo.odata2.core.uri.UriType;

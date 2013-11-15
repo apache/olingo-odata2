@@ -88,9 +88,14 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     uri = new URI("http://localhost:8080/ODataService.svc/Entity");
     when(exceptionMapper.uriInfo.getRequestUri()).thenReturn(uri);
 
+    when(exceptionMapper.servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(
+        ODataServiceFactoryImpl.class.getName());
+    when(exceptionMapper.servletRequest.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL)).thenReturn(
+        ODataServiceFactoryImpl.class.getClassLoader());
+
     MultivaluedHashMap<String, String> httpHeaders = new MultivaluedHashMap<String, String>();
     when(exceptionMapper.httpHeaders.getRequestHeaders()).thenReturn(httpHeaders);
-
+    
     disableLogging();
 
   }
@@ -102,7 +107,7 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     value.put("AcceptMulti", Arrays.asList("AcceptValue_1", "AcceptValue_2"));
     when(exceptionMapper.httpHeaders.getRequestHeaders()).thenReturn(value);
     when(exceptionMapper.servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(
-        ODataServiceFactoryImpl.class.getName());
+        ODataServiceFactoryWithCallbackImpl.class.getName());
     when(exceptionMapper.servletRequest.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL)).thenReturn(null);
     Response response = exceptionMapper.toResponse(new Exception());
 
@@ -126,9 +131,9 @@ public class ODataExceptionMapperImplTest extends BaseTest {
     value.put("AcceptMulti", Arrays.asList("AcceptValue_1", "AcceptValue_2"));
     when(exceptionMapper.httpHeaders.getRequestHeaders()).thenReturn(value);
     when(exceptionMapper.servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(
-        ODataServiceFactoryImpl.class.getName());
+        ODataServiceFactoryWithCallbackImpl.class.getName());
     when(exceptionMapper.servletRequest.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL)).thenReturn(
-        ODataServiceFactoryImpl.class.getClassLoader());
+        ODataServiceFactoryWithCallbackImpl.class.getClassLoader());
     Response response = exceptionMapper.toResponse(new Exception());
 
     // verify
@@ -435,7 +440,7 @@ public class ODataExceptionMapperImplTest extends BaseTest {
   @Test
   public void testCallback() throws Exception {
     when(exceptionMapper.servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(
-        ODataServiceFactoryImpl.class.getName());
+        ODataServiceFactoryWithCallbackImpl.class.getName());
     Response response = exceptionMapper.toResponse(new Exception());
 
     // verify

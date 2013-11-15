@@ -43,6 +43,7 @@ import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.core.rest.ODataErrorHandlerCallbackImpl;
+import org.apache.olingo.odata2.core.rest.ODataExceptionWrapper;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.Test;
 import org.mockito.Mockito;

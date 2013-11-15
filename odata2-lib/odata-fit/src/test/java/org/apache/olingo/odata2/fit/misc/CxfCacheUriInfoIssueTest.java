@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.fit.basic.issues;
+package org.apache.olingo.odata2.fit.misc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -44,7 +44,7 @@ import org.junit.Test;
 /**
  *  
  */
-public class TestCxfCacheUriInfoIssue extends AbstractBasicTest {
+public class CxfCacheUriInfoIssueTest extends AbstractBasicTest {
 
   @Override
   protected ODataSingleProcessor createProcessor() throws ODataException {

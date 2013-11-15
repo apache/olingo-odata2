@@ -39,7 +39,6 @@ import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ODataContextImpl;
-import org.apache.olingo.odata2.core.ODataExceptionWrapper;
 import org.apache.olingo.odata2.core.ODataRequestHandler;
 
 /**
