@@ -446,7 +446,7 @@ public class AnnotationEdmProvider extends EdmProvider {
 
     private Property createProperty(EdmProperty ep, Field field, String defaultNamespace) {
       if(isAnnotatedEntity(field.getType())) {
-        return createComplexProperty(ep, field, defaultNamespace);
+        return createComplexProperty(field, defaultNamespace);
       } else {
         return createSimpleProperty(ep, field);
       }
@@ -455,10 +455,7 @@ public class AnnotationEdmProvider extends EdmProvider {
 
     private Property createSimpleProperty(EdmProperty ep, Field field) {
       SimpleProperty sp = new SimpleProperty();
-      String entityName = ep.name();
-      if (entityName.isEmpty()) {
-        entityName = getCanonicalName(field);
-      }
+      String entityName = ANNOTATION_HELPER.getPropertyName(field);
       sp.setName(entityName);
       //
       EdmSimpleTypeKind type = ep.type();
@@ -470,13 +467,10 @@ public class AnnotationEdmProvider extends EdmProvider {
       return sp;
     }
 
-    private Property createComplexProperty(EdmProperty ep, Field field, String defaultNamespace) {
+    private Property createComplexProperty(Field field, String defaultNamespace) {
       ComplexProperty cp = new ComplexProperty();
       // settings from property
-      String entityName = ep.name();
-      if (entityName.isEmpty()) {
-        entityName = getCanonicalName(field);
-      }
+      String entityName = ANNOTATION_HELPER.getPropertyName(field);
       cp.setName(entityName);
       
       // settings from related complex entity
@@ -492,10 +486,7 @@ public class AnnotationEdmProvider extends EdmProvider {
 
     private NavigationProperty createNavigationProperty(String namespace, EdmNavigationProperty enp, Field field) {
       NavigationProperty navProp = new NavigationProperty();
-      String entityName = enp.name();
-      if (entityName.isEmpty()) {
-        entityName = getCanonicalName(field);
-      }
+      String entityName = ANNOTATION_HELPER.getPropertyName(field);
       navProp.setName(entityName);
       //
       NavigationEnd from = enp.from();

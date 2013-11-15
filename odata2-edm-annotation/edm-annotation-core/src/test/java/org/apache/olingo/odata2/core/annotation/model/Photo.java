@@ -19,31 +19,38 @@
 package org.apache.olingo.odata2.core.annotation.model;
 
 import java.util.Arrays;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceSource;
+import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.core.annotation.model.ModelSharedConstants;
+import org.apache.olingo.odata2.core.annotation.model.ResourceHelper;
 
 /**
  *  
  */
+@EdmEntityType(name = "Photo", namespace = ModelSharedConstants.NAMESPACE_1)
+@EdmEntitySet(name = "Photos")
 public class Photo {
-  private static final String RESOURCE = "/male_1_WinterW.jpg";
-
-  private final int id;
+  @EdmProperty
+  @EdmKey
   private String name;
-  private String type = "image/jpeg";
-  private String imageUrl = "http://localhost" + RESOURCE;
-  private byte[] image = new byte[0];
-  private String imageType = type;
-  private byte[] binaryData;
-  private String content;
-
-  public Photo(final int id, final String name, final String type) {
-    this.id = id;
-    setName(name);
-    setType(type);
-  }
-
-  public int getId() {
-    return id;
-  }
+  @EdmProperty(name = "ImageFormat")
+  @EdmKey
+  private String type;
+  @EdmProperty
+  @EdmMediaResourceMimeType
+  private String mimeType;
+  @EdmProperty
+  @EdmMediaResourceSource
+  private String imageUrl = "http://localhost/someResource.png";
+  @EdmProperty(type = EdmSimpleTypeKind.Binary)
+  @EdmMediaResourceContent
+  private byte[] image = ResourceHelper.generateImage();
 
   public String getName() {
     return name;
@@ -78,53 +85,45 @@ public class Photo {
   }
 
   public String getImageType() {
-    return imageType;
+    return mimeType;
   }
 
   public void setImageType(final String imageType) {
-    this.imageType = imageType;
-  }
-
-  public byte[] getBinaryData() {
-    if (binaryData == null) {
-      return null;
-    } else {
-      return binaryData.clone();
-    }
-  }
-
-  public void setBinaryData(final byte[] binaryData) {
-    this.binaryData = binaryData;
-  }
-
-  public void setContent(final String content) {
-    this.content = content;
-  }
-
-  public String getContent() {
-    return content;
+    this.mimeType = imageType;
   }
 
   @Override
   public int hashCode() {
-    return id;
+    int hash = 5;
+    hash = 83 * hash + (this.name != null ? this.name.hashCode() : 0);
+    hash = 83 * hash + (this.type != null ? this.type.hashCode() : 0);
+    return hash;
   }
 
   @Override
-  public boolean equals(final Object obj) {
-    return this == obj
-        || obj != null && getClass() == obj.getClass() && id == ((Photo) obj).id;
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final Photo other = (Photo) obj;
+    if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+      return false;
+    }
+    if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
+      return false;
+    }
+    return true;
   }
-
+  
   @Override
   public String toString() {
-    return "{\"Id\":" + id + ","
-        + "\"Name\":\"" + name + "\","
+    return "{\"Name\":\"" + name + "\","
         + "\"Type\":\"" + type + "\","
         + "\"ImageUrl\":\"" + imageUrl + "\","
         + "\"Image\":\"" + Arrays.toString(image) + "\","
-        + "\"ImageType\":\"" + imageType + "\","
-        + "\"Content:\"" + content + "\","
-        + "\"BinaryData\":\"" + Arrays.toString(binaryData) + "\"}";
+        + "\"MimeType\":\"" + mimeType + "\"";
   }
 }

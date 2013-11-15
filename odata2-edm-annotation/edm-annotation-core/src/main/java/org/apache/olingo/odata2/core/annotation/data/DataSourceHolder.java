@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.annotation.ds;
+package org.apache.olingo.odata2.core.annotation.data;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

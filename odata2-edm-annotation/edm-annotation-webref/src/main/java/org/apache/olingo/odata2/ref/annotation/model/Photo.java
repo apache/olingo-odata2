@@ -34,9 +34,10 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 @EdmEntityType(name = "Photo", namespace = ModelSharedConstants.NAMESPACE_1)
 @EdmEntitySet(name = "Photos")
 public class Photo {
-  @EdmProperty
   @EdmKey
+  @EdmProperty
   private String name;
+  @EdmKey
   @EdmProperty
   private String type;
   @EdmProperty

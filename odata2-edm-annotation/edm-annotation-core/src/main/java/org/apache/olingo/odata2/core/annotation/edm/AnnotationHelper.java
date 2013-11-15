@@ -78,14 +78,57 @@ public class AnnotationHelper {
     }
   }
 
+  /**
+   * Get the set property name from an EdmProperty or EdmNavigationProperty annotation.
+   * 
+   * @param field
+   * @return 
+   */
+  public String getPropertyNameFromAnnotation(Field field) {
+    EdmProperty property = field.getAnnotation(EdmProperty.class);
+    if(property == null) {
+      EdmNavigationProperty navProperty = field.getAnnotation(EdmNavigationProperty.class);
+      if(navProperty == null) {
+        throw new EdmAnnotationException("Given field '" + field
+                + "' has no EdmProperty or EdmNavigationProperty annotation.");
+      }
+      return navProperty.name();
+    }
+    return property.name();
+  }
+
+  public String getPropertyName(Field field) {
+      String propertyName = getPropertyNameFromAnnotation(field);
+      if (propertyName.isEmpty()) {
+        propertyName = getCanonicalName(field);
+      }
+      return propertyName;
+  }
+
   public static final class ODataAnnotationException extends ODataException {
 
     public ODataAnnotationException(String message) {
       super(message);
     }
   }
-  
-  public <T> T setKeyFields(T instance, Object[] keyValues) {
+
+  public <T> T setKeyFields(T instance, Map<String, Object> keys) {
+    List<Field> fields = getAnnotatedFields(instance, EdmKey.class);
+    if (fields.size() != keys.size()) {
+      throw new IllegalStateException("Wrong amount of key properties. Expected read keys = "
+              + fields + " given key predicates = " + keys);
+    }
+    
+    for (Field field : fields) {
+      String propertyName = getPropertyName(field);
+      Object keyValue = keys.get(propertyName);
+      setValueForProperty(instance, propertyName, keyValue);
+    }
+
+    return instance;
+  }
+
+  public <T> T setKeyFields__(T instance, Object[] keyValues) {
     List<Field> fields = getAnnotatedFields(instance, EdmKey.class);
     if (fields.size() != keyValues.length) {
       throw new IllegalStateException("Wrong amount of key properties. Expected read keys = "
@@ -370,7 +413,8 @@ public class AnnotationHelper {
       return type.getEdmSimpleTypeInstance().valueOfString(propertyValue,
               EdmLiteralKind.DEFAULT, null, fieldClass);
     } catch (EdmSimpleTypeException ex) {
-      throw new ODataRuntimeException(ex);
+      throw new ODataRuntimeException("Conversion failed for string property with error: " 
+              + ex.getMessage(), ex);
     }
   }
 
@@ -405,5 +449,12 @@ public class AnnotationHelper {
       return content;
     }
     return content.substring(0, 1).toUpperCase(Locale.ENGLISH) + content.substring(1);
+  }
+
+  
+  private static class EdmAnnotationException extends RuntimeException {
+    public EdmAnnotationException(String message) {
+      super(message);
+    }
   }
 }

@@ -77,11 +77,11 @@ th, td { border: 1px solid; padding: 20px; }
 						target="_blank">Employees('1')</a></li>
 					<li><a href="ReferenceScenario.svc/Managers('1')"
 						target="_blank">Managers('1')</a></li>
-					<li><a href="ReferenceScenario.svc/Buildings('1')"
-						target="_blank">Buildings('1')</a></li>
+					<li><a href="ReferenceScenario.svc/Buildings(1)"
+						target="_blank">Buildings(1)</a></li>
 					<li><a href="ReferenceScenario.svc/Rooms('1')" target="_blank">Rooms('1')</a></li>
- 					<li><a href="ReferenceScenario.svc/Container2.Photos(Id=4,Type='foo')"
-                           target="_blank">Container2.Photos(Id=4,Type='foo')</a></li>
+ 					<li><a href="ReferenceScenario.svc/Photos(Name='1',Type='2')"
+                           target="_blank">Container2.Photos(Name='1',Type='2')</a></li>
 				</ul>
 			</td>
 			<td valign="top">

@@ -49,7 +49,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
-import org.apache.olingo.odata2.core.annotation.ds.BeanPropertyAccess;
+import org.apache.olingo.odata2.core.annotation.data.BeanPropertyAccess;
 import org.apache.olingo.odata2.core.annotation.processor.ListsProcessor;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;

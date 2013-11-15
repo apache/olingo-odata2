@@ -14,8 +14,8 @@
  */
 package org.apache.olingo.odata2.ref.annotation.processor;
 
-import org.apache.olingo.odata2.core.annotation.ds.AnnotationValueAccess;
-import org.apache.olingo.odata2.core.annotation.ds.AnnotationInMemoryDs;
+import org.apache.olingo.odata2.core.annotation.data.AnnotationValueAccess;
+import org.apache.olingo.odata2.core.annotation.data.AnnotationInMemoryDs;
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.ODataDebugCallback;
 import org.apache.olingo.odata2.api.ODataService;
@@ -28,12 +28,11 @@ import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataErrorCallback;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
-import org.apache.olingo.odata2.core.annotation.ds.DataStore;
+import org.apache.olingo.odata2.core.annotation.data.DataStore;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationEdmProvider;
 import org.apache.olingo.odata2.core.annotation.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.annotation.model.Building;
 import org.apache.olingo.odata2.ref.annotation.model.Photo;
-import org.apache.olingo.odata2.ref.annotation.model.ResourceHelper;
 import org.apache.olingo.odata2.ref.annotation.model.ResourceHelper;
 import org.apache.olingo.odata2.ref.annotation.model.Room;
 import org.apache.olingo.odata2.ref.annotation.model.Team;
@@ -73,8 +72,6 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
             ? new ScenarioDebugCallback() : super.getCallback(callbackInterface));
   }
 
-  
-  
   /*
   * Helper classes and methods
   */
@@ -105,7 +102,7 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
 
   }
 
-  private void initializeSampleData(AnnotationInMemoryDs dataSource) {
+  private void initializeSampleData(AnnotationInMemoryDs dataSource) throws ODataApplicationException {
     DataStore<Team> teamDs = dataSource.getDataStore(Team.class);
     teamDs.create(createTeam("Team Alpha", true));
     teamDs.create(createTeam("Team Beta", false));

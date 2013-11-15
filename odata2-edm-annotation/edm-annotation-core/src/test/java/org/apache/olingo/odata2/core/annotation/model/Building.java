@@ -39,7 +39,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 public class Building {
   @EdmKey
   @EdmProperty(type = EdmSimpleTypeKind.String)
-  private int id;
+  private String id;
   @EdmProperty
   private String name;
   private byte[] image;
@@ -47,16 +47,8 @@ public class Building {
           to = @NavigationEnd(role = "r_Room", entitySet=Room.class, multiplicity = EdmMultiplicity.MANY))
   private List<Room> rooms = new ArrayList<Room>();
 
-  public Building() {
-  }
-
-  public Building(final int id, final String name) {
-    this.id = id;
-    setName(name);
-  }
-
   public String getId() {
-    return Integer.toString(id);
+    return id;
   }
 
   public void setName(final String name) {
@@ -85,7 +77,10 @@ public class Building {
 
   @Override
   public int hashCode() {
-    return id;
+    if(id == null) {
+      return 0;
+    }
+    return id.hashCode();
   }
 
   @Override
