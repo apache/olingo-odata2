@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
 import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
+import org.apache.olingo.odata2.api.edm.provider.Key;
 import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
@@ -50,11 +51,11 @@ import org.apache.olingo.odata2.core.annotation.model.Photo;
 import org.apache.olingo.odata2.core.annotation.model.RefBase;
 import org.apache.olingo.odata2.core.annotation.model.Room;
 import org.apache.olingo.odata2.core.annotation.model.Team;
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
 /**
  *
- * @author d046871
  */
 public class AnnotationEdmProviderTest {
 
@@ -148,7 +149,7 @@ public class AnnotationEdmProviderTest {
     EntityContainer container = containers.get(0);
     assertEquals(ModelSharedConstants.CONTAINER_1, container.getName());
     final List<EntitySet> entitySets = container.getEntitySets();
-    assertEquals(5, entitySets.size());
+    assertEquals(6, entitySets.size());
     
     List<Association> associations = schema.getAssociations();
     assertEquals(4, associations.size());
@@ -257,6 +258,33 @@ public class AnnotationEdmProviderTest {
   }
 
   @Test
+  public void entityTypePhotoWithTwoKeyProperties() throws Exception {
+    // validate team
+    EntityType photo = aep.getEntityType(new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, "Photo"));
+    assertEquals("Photo", photo.getName());
+    final List<Property> properties = photo.getProperties();
+    assertEquals(5, properties.size());
+    assertTrue(containsProperty(properties, "Name"));
+    assertTrue(containsProperty(properties, "ImageFormat"));
+    assertTrue(containsProperty(properties, "MimeType"));
+    assertTrue(containsProperty(properties, "ImageUrl"));
+    assertTrue(containsProperty(properties, "Image"));
+    assertFalse(photo.isAbstract());
+    assertTrue(photo.isHasStream());
+
+    Key photoKey = photo.getKey();
+    List<PropertyRef> keyReferences = photoKey.getKeys();
+    assertEquals(2, keyReferences.size());
+    PropertyRef name = getPropertyRef(keyReferences, "Name");
+    assertEquals("Name", name.getName());
+    PropertyRef imageFormat = getPropertyRef(keyReferences, "ImageFormat");
+    assertEquals("ImageFormat", imageFormat.getName());
+    
+//    assertEquals(0, photo.getNavigationProperties().size());
+    assertNull(photo.getNavigationProperties());
+  }
+
+  @Test
   public void entityTypeAbstractBaseType() throws Exception {
     // validate employee
     EntityType baseType = aep.getEntityType(new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, "Base"));
@@ -330,5 +358,27 @@ public class AnnotationEdmProviderTest {
   private void validateNavProperty(NavigationProperty navigationProperty, 
           String relationship, String fromRole, String toRole) {
     validateNavProperty(navigationProperty, null, relationship, fromRole, toRole);
+  }
+  
+  private boolean containsProperty(List<Property> properties, String propertyName) {
+    return getProperty(properties, propertyName) != null;
+  }
+
+  private Property getProperty(List<Property> properties, String name) {
+    for (Property property : properties) {
+      if(name.equals(property.getName())) {
+        return property;
+      }
+    }
+    return null;
+  }
+  
+  private PropertyRef getPropertyRef(List<PropertyRef> properties, String name) {
+    for (PropertyRef property : properties) {
+      if(name.equals(property.getName())) {
+        return property;
+      }
+    }
+    return null;
   }
 }

@@ -12,7 +12,7 @@
  * specific language governing permissions and limitations under the License.
  *****************************************************************************
  */
-package org.apache.olingo.odata2.core.annotation.ds;
+package org.apache.olingo.odata2.core.annotation.data;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -86,7 +86,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
     DataStore<Object> store = getDataStore(entitySet);
     if (store != null) {
       Object keyInstance = store.createInstance();
-      ANNOTATION_HELPER.setKeyFields(keyInstance, keys.values().toArray());
+      ANNOTATION_HELPER.setKeyFields(keyInstance, keys);
 
       Object result = store.read(keyInstance);
       if (result != null) {
@@ -179,12 +179,29 @@ public class AnnotationInMemoryDs implements ListsDataSource {
 
   }
 
+  /**
+   * <p>Updates a single data object identified by the specified entity set and key fields of
+   * the data object.</p>
+   * @param entitySet the {@link EdmEntitySet} the object must correspond to
+   * @param data the data object of the new entity
+   * @return updated data object instance
+   * @throws org.apache.olingo.odata2.api.exception.ODataNotImplementedException
+   * @throws org.apache.olingo.odata2.api.edm.EdmException
+   * @throws org.apache.olingo.odata2.api.exception.ODataApplicationException
+   */
+  public Object updateData(EdmEntitySet entitySet, Object data)
+          throws ODataNotImplementedException, EdmException, ODataApplicationException {
+
+    DataStore<Object> dataStore = getDataStore(entitySet);
+    return dataStore.update(data);
+  }
+
   @Override
   public void deleteData(EdmEntitySet entitySet, Map<String, Object> keys)
           throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     DataStore<Object> dataStore = getDataStore(entitySet);
     Object keyInstance = dataStore.createInstance();
-    ANNOTATION_HELPER.setKeyFields(keyInstance, keys.values().toArray());
+    ANNOTATION_HELPER.setKeyFields(keyInstance, keys);
     dataStore.delete(keyInstance);
   }
 

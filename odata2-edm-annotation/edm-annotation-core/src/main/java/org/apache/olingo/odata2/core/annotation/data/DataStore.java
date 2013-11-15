@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.annotation.ds;
+package org.apache.olingo.odata2.core.annotation.data;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
@@ -32,6 +33,7 @@ import org.apache.olingo.odata2.api.annotation.edm.ds.EntityDelete;
 import org.apache.olingo.odata2.api.annotation.edm.ds.EntityRead;
 import org.apache.olingo.odata2.api.annotation.edm.ds.EntitySetRead;
 import org.apache.olingo.odata2.api.annotation.edm.ds.EntityUpdate;
+import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
@@ -104,7 +106,7 @@ public class DataStore<T> {
   }
 
   @EntityCreate
-  public T create(T object) {
+  public T create(T object) throws DataStoreException {
     createKeys(object);
     dataStore.add(object);
     return object;
@@ -135,8 +137,11 @@ public class DataStore<T> {
     return keyList;
   }
   
-  private T createKeys(T object) {
+  private T createKeys(T object) throws DataStoreException {
     List<Field> fields = ANNOTATION_HELPER.getAnnotatedFields(object, EdmKey.class);
+    if(fields.isEmpty()) {
+      throw new DataStoreException("No EdmKey annotated fields found for class " + object.getClass());
+    }
     Map<String, Object> fieldName2KeyValue = new HashMap<String, Object>();
     
     for (Field field : fields) {
@@ -162,5 +167,16 @@ public class DataStore<T> {
     
     throw new UnsupportedOperationException("Automated key generation for type '" + type
             + "' is not supported (caused on field '" + field + "').");
+  }
+  
+  public static class DataStoreException extends ODataApplicationException {
+
+    public DataStoreException(String message) {
+      this(message, null);
+    }
+
+    public DataStoreException(String message, Throwable cause) {
+      super(message, Locale.ENGLISH, cause);
+    }
   }
 }

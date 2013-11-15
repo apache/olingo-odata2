@@ -44,7 +44,7 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetMediaResourceUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
-import org.apache.olingo.odata2.core.annotation.ds.DataSourceHolder;
+import org.apache.olingo.odata2.core.annotation.data.DataSourceHolder;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
 import org.apache.olingo.odata2.core.annotation.edm.ClassHelper;
 import org.apache.olingo.odata2.core.annotation.processor.json.EdmAnnotationSerializer;
