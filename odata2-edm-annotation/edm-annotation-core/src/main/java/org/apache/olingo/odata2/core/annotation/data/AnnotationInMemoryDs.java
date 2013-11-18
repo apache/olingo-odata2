@@ -58,8 +58,8 @@ public class AnnotationInMemoryDs implements ListsDataSource {
     for (Class<?> clz : foundClasses) {
 
       DataStore<Object> dhs = (DataStore<Object>) DataStore.createInMemory(clz);
-      EdmEntityType entityType = clz.getAnnotation(EdmEntityType.class);
-      dataStores.put(entityType.name(), dhs);
+      String entityTypeName = ANNOTATION_HELPER.extractEntityTypeName(clz);
+      dataStores.put(entityTypeName, dhs);
     }
   }
 

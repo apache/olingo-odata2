@@ -10,7 +10,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- *****************************************************************************
+ * ****************************************************************************
  */
 package org.apache.olingo.odata2.core.annotation.edm;
 
@@ -33,6 +33,7 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
@@ -79,16 +80,74 @@ public class AnnotationHelper {
   }
 
   /**
-   * Get the set property name from an EdmProperty or EdmNavigationProperty annotation.
+   * Returns <code>NULL</code> if given class is not annotated. If annotated the set entity type name is returned and if
+   * no name is set the default name is generated from the simple class name.
+   *
+   * @param annotatedClass
+   * @return
+   */
+  public String extractEntityTypeName(Class<?> annotatedClass) {
+    return extractTypeName(annotatedClass, EdmEntityType.class);
+  }
+
+  public FullQualifiedName extractEntityTypeFqn(Class<?> annotatedClass) {
+    EdmEntityType type = annotatedClass.getAnnotation(EdmEntityType.class);
+    return new FullQualifiedName(type.namespace(), extractEntityTypeName(annotatedClass));
+  }
+
+  public FullQualifiedName extractComplexTypeFqn(Class<?> annotatedClass) {
+    EdmComplexType type = annotatedClass.getAnnotation(EdmComplexType.class);
+    return new FullQualifiedName(type.namespace(), extractComplexTypeName(annotatedClass));
+  }
+
+  public String extractComplexTypeName(Class<?> annotatedClass) {
+    return extractTypeName(annotatedClass, EdmComplexType.class);
+  }
+
+  /**
    * 
+   * 
+   * @param <T> must be EdmEntityType or EdmComplexType annotation
+   * @param annotatedClass
+   * @param typeAnnotation
+   * @return null if annotatedClass is not annotated or 
+   * name set via annotation or generated via {@link #getCanonicalName(java.lang.Class)}
+   */
+  private <T extends Annotation> String extractTypeName(Class<?> annotatedClass, Class<T> typeAnnotation) {
+    if (annotatedClass == Object.class) {
+      return null;
+    }
+    T type = annotatedClass.getAnnotation(typeAnnotation);
+    if (type == null) {
+      return null;
+    }
+    
+    String name;
+    if(typeAnnotation == EdmEntityType.class) {
+      name = ((EdmEntityType)type).name();
+    } else if(typeAnnotation == EdmComplexType.class) {
+      name = ((EdmComplexType)type).name();
+    } else {
+      return null;
+    }
+
+    if (name.isEmpty()) {
+      return getCanonicalName(annotatedClass);
+    }
+    return name;
+  }
+  
+  /**
+   * Get the set property name from an EdmProperty or EdmNavigationProperty annotation.
+   *
    * @param field
-   * @return 
+   * @return
    */
   public String getPropertyNameFromAnnotation(Field field) {
     EdmProperty property = field.getAnnotation(EdmProperty.class);
-    if(property == null) {
+    if (property == null) {
       EdmNavigationProperty navProperty = field.getAnnotation(EdmNavigationProperty.class);
-      if(navProperty == null) {
+      if (navProperty == null) {
         throw new EdmAnnotationException("Given field '" + field
                 + "' has no EdmProperty or EdmNavigationProperty annotation.");
       }
@@ -98,11 +157,11 @@ public class AnnotationHelper {
   }
 
   public String getPropertyName(Field field) {
-      String propertyName = getPropertyNameFromAnnotation(field);
-      if (propertyName.isEmpty()) {
-        propertyName = getCanonicalName(field);
-      }
-      return propertyName;
+    String propertyName = getPropertyNameFromAnnotation(field);
+    if (propertyName.isEmpty()) {
+      propertyName = getCanonicalName(field);
+    }
+    return propertyName;
   }
 
   public static final class ODataAnnotationException extends ODataException {
@@ -118,7 +177,7 @@ public class AnnotationHelper {
       throw new IllegalStateException("Wrong amount of key properties. Expected read keys = "
               + fields + " given key predicates = " + keys);
     }
-    
+
     for (Field field : fields) {
       String propertyName = getPropertyName(field);
       Object keyValue = keys.get(propertyName);
@@ -128,20 +187,6 @@ public class AnnotationHelper {
     return instance;
   }
 
-  public <T> T setKeyFields__(T instance, Object[] keyValues) {
-    List<Field> fields = getAnnotatedFields(instance, EdmKey.class);
-    if (fields.size() != keyValues.length) {
-      throw new IllegalStateException("Wrong amount of key properties. Expected read keys = "
-              + fields + " given key predicates = " + Arrays.toString(keyValues));
-    }
-
-    String propertyName = getCanonicalName(fields.get(0));
-    setValueForProperty(instance, propertyName, keyValues[0]);
-
-    return instance;
-  }
-
-  
   public Field getCommonNavigationFieldFromTarget(Class<?> sourceClass, Class<?> targetClass) {
     List<Field> sourceFields = getAnnotatedFields(sourceClass, EdmNavigationProperty.class);
     List<Field> targetFields = getAnnotatedFields(targetClass, EdmNavigationProperty.class);
@@ -157,7 +202,6 @@ public class AnnotationHelper {
     }
     return null;
   }
-
 
   public Class<?> getFieldTypeForProperty(Object instance, String propertyName) throws ODataAnnotationException {
     if (instance == null) {
@@ -194,31 +238,6 @@ public class AnnotationHelper {
     }
   }
 
-//  private Object getValueForPropertyName(Object instance, String propertyName, 
-//      Class<?> resultClass, boolean inherited) {
-//    if (instance == null) {
-//      return null;
-//    }
-//
-//    Field[] fields = resultClass.getDeclaredFields();
-//    for (Field field : fields) {
-//      EdmProperty property = field.getAnnotation(EdmProperty.class);
-//      if (property != null) {
-//        if(property.name().equals(propertyName)) {
-//          return getFieldValue(instance, field);
-//        } else if(field.getName().equals(propertyName)) {
-//          return getFieldValue(instance, field);
-//        }
-//      }
-//    }
-//
-//    Class<?> superClass = resultClass.getSuperclass();
-//    if (inherited && superClass != Object.class) {
-//      return getValueForPropertyName(instance, propertyName, superClass, true);
-//    }
-//
-//    return null;
-//  }
   private Field getFieldForPropertyName(Object instance, String propertyName,
           Class<?> resultClass, boolean inherited) {
     if (instance == null) {
@@ -309,7 +328,7 @@ public class AnnotationHelper {
   }
 
   public List<Field> getAnnotatedFields(Object instance, Class<? extends Annotation> annotation) {
-    if(instance == null) {
+    if (instance == null) {
       return null;
     }
     return getAnnotatedFields(instance.getClass(), annotation, true);
@@ -413,7 +432,7 @@ public class AnnotationHelper {
       return type.getEdmSimpleTypeInstance().valueOfString(propertyValue,
               EdmLiteralKind.DEFAULT, null, fieldClass);
     } catch (EdmSimpleTypeException ex) {
-      throw new ODataRuntimeException("Conversion failed for string property with error: " 
+      throw new ODataRuntimeException("Conversion failed for string property with error: "
               + ex.getMessage(), ex);
     }
   }
@@ -423,6 +442,12 @@ public class AnnotationHelper {
       return false;
     }
     return isEdmAnnotated(object.getClass());
+  }
+
+  public boolean isEdmTypeAnnotated(Class<?> clazz) {
+    boolean isComplexEntity = clazz.getAnnotation(EdmComplexType.class) != null;
+    boolean isEntity = clazz.getAnnotation(EdmEntityType.class) != null;
+    return isComplexEntity || isEntity;
   }
 
   public boolean isEdmAnnotated(Class<?> clazz) {
@@ -451,8 +476,8 @@ public class AnnotationHelper {
     return content.substring(0, 1).toUpperCase(Locale.ENGLISH) + content.substring(1);
   }
 
-  
   private static class EdmAnnotationException extends RuntimeException {
+
     public EdmAnnotationException(String message) {
       super(message);
     }

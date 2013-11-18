@@ -79,6 +79,10 @@ public class DataStore<T> {
     return dataTypeClass;
   }
   
+  public String getEntityTypeName() {
+    return ANNOTATION_HELPER.extractEntityTypeName(dataTypeClass);
+  }
+  
   public T createInstance() {
     try {
       return dataTypeClass.newInstance();
