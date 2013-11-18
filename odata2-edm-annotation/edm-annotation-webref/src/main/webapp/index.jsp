@@ -68,8 +68,7 @@ th, td { border: 1px solid; padding: 20px; }
 					<li><a href="ReferenceScenario.svc/Managers" target="_blank">Managers</a></li>
 					<li><a href="ReferenceScenario.svc/Buildings" target="_blank">Buildings</a></li>
 					<li><a href="ReferenceScenario.svc/Rooms" target="_blank">Rooms</a></li>
-					<li><a href="ReferenceScenario.svc/Container2.Photos"
-						target="_blank">Container2.Photos</a></li>
+					<li><a href="ReferenceScenario.svc/Photos" target="_blank">Photos</a></li>
 				</ul>
 				<h3>Entities</h3>
 				<ul>
@@ -81,7 +80,7 @@ th, td { border: 1px solid; padding: 20px; }
 						target="_blank">Buildings(1)</a></li>
 					<li><a href="ReferenceScenario.svc/Rooms('1')" target="_blank">Rooms('1')</a></li>
  					<li><a href="ReferenceScenario.svc/Photos(Name='1',Type='2')"
-                           target="_blank">Container2.Photos(Name='1',Type='2')</a></li>
+                           target="_blank">Photos(Name='1',Type='2')</a></li>
 				</ul>
 			</td>
 			<td valign="top">

@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.core.annotation.edm;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -339,17 +340,21 @@ public class AnnotationEdmProvider extends EdmProvider {
     private final List<NavigationProperty> navProperties = new ArrayList<NavigationProperty>();
     private final List<Association> associations = new ArrayList<Association>();
 
-    public TypeBuilder(String namespace, String name) {
-      this.namespace = namespace;
-      this.name = name;
+//    public TypeBuilder(String namespace, String name) {
+//      this.namespace = namespace;
+//      this.name = name;
+//    }
+    public TypeBuilder(FullQualifiedName fqn) {
+      this.namespace = fqn.getNamespace();
+      this.name = fqn.getName();
     }
 
     public static TypeBuilder init(EdmEntityType entity, Class<?> aClass) {
-      return new TypeBuilder(entity.namespace(), entity.name()).withClass(aClass);
+      return new TypeBuilder(ANNOTATION_HELPER.extractEntityTypeFqn(aClass)).withClass(aClass);
     }
 
     public static TypeBuilder init(EdmComplexType entity, Class<?> aClass) {
-      return new TypeBuilder(entity.namespace(), entity.name()).withClass(aClass);
+      return new TypeBuilder(ANNOTATION_HELPER.extractComplexTypeFqn(aClass)).withClass(aClass);
     }
 
     private TypeBuilder withClass(Class<?> aClass) {
@@ -517,9 +522,9 @@ public class AnnotationEdmProvider extends EdmProvider {
     }
 
     private String getCanonicalRole(NavigationEnd navEnd, Class<?> fallbackClass) {
-        String toRole = extractEntitTypeName(navEnd.entitySet());
+        String toRole = ANNOTATION_HELPER.extractEntityTypeName(navEnd.entitySet());
         if(toRole == null) {
-          toRole = extractEntitTypeName(fallbackClass);
+          toRole = ANNOTATION_HELPER.extractEntityTypeName(fallbackClass);
         }
         return "r_" + toRole;
     }
@@ -527,10 +532,14 @@ public class AnnotationEdmProvider extends EdmProvider {
     private EdmSimpleTypeKind getEdmSimpleType(Class<?> type) {
       if (type == String.class) {
         return EdmSimpleTypeKind.String;
-      } else if (type == int.class) {
+      } else if (type == int.class || type == Integer.class) {
         return EdmSimpleTypeKind.Int32;
-      } else if (type == Integer.class) {
-        return EdmSimpleTypeKind.Int32;
+      } else if (type == double.class || type == Double.class) {
+        return EdmSimpleTypeKind.Double;
+      } else if (type == long.class || type == Long.class) {
+        return EdmSimpleTypeKind.Int64;
+      } else if (type == Calendar.class) {
+        return EdmSimpleTypeKind.DateTime;
       } else if (type == Byte[].class || type == byte[].class) {
         return EdmSimpleTypeKind.Binary;
       } else {
@@ -538,30 +547,26 @@ public class AnnotationEdmProvider extends EdmProvider {
       }
     }
 
-    private EdmEntityType checkForBaseEntity(Class<?> aClass) {
+    private Class<?> checkForBaseEntityClass(Class<?> aClass) {
       Class<?> superClass = aClass.getSuperclass();
       if (superClass == Object.class) {
         return null;
       } else {
         EdmEntityType edmEntity = superClass.getAnnotation(EdmEntityType.class);
         if (edmEntity == null) {
-          return checkForBaseEntity(superClass);
+          return checkForBaseEntityClass(superClass);
         } else {
-          return edmEntity;
+          return superClass;
         }
       }
     }
 
     private FullQualifiedName createBaseEntityFqn(Class<?> aClass) {
-      EdmEntityType baseEntity = checkForBaseEntity(aClass);
-      if (baseEntity == null) {
+      Class<?> baseEntityClass = checkForBaseEntityClass(aClass);
+      if (baseEntityClass == null) {
         return null;
       }
-      String beName = baseEntity.name();
-      if (beName.isEmpty()) {
-        beName = aClass.getName();
-      }
-      return new FullQualifiedName(baseEntity.namespace(), beName);
+      return ANNOTATION_HELPER.extractEntityTypeFqn(baseEntityClass);
     }
 
     private Association createAssociation(Field field, NavigationProperty navProperty) {
@@ -573,7 +578,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       fromEnd.setRole(navProperty.getFromRole());
       String typeName = extractEntitTypeName(from);
       if (typeName.isEmpty()) {
-        typeName = extractEntitTypeName(field.getDeclaringClass());
+        typeName = ANNOTATION_HELPER.extractEntityTypeName(field.getDeclaringClass());
       }
       fromEnd.setType(new FullQualifiedName(namespace, typeName));
       fromEnd.setMultiplicity(from.multiplicity());
@@ -584,7 +589,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       toEnd.setRole(navProperty.getToRole());
       String toTypeName = extractEntitTypeName(to);
       if (toTypeName.isEmpty()) {
-        toTypeName = extractEntitTypeName(field.getType());
+        toTypeName = ANNOTATION_HELPER.extractEntityTypeName(field.getType());
       }
       toEnd.setType(new FullQualifiedName(namespace, toTypeName));
 
@@ -608,14 +613,8 @@ public class AnnotationEdmProvider extends EdmProvider {
       return ANNOTATION_HELPER.getCanonicalName(field);
     }
     
-    private String getCanonicalName(Class<?> clazz) {
-      return ANNOTATION_HELPER.getCanonicalName(clazz);
-    }
-
     private boolean isAnnotatedEntity(Class<?> clazz) {
-      boolean isComplexEntity = clazz.getAnnotation(EdmComplexType.class) != null;
-      boolean isEntity = clazz.getAnnotation(EdmEntityType.class) != null;
-      return isComplexEntity || isEntity;
+      return ANNOTATION_HELPER.isEdmTypeAnnotated(clazz);
     }
 
     private String extractEntitTypeName(NavigationEnd navEnd) {
@@ -626,28 +625,6 @@ public class AnnotationEdmProvider extends EdmProvider {
       EdmEntityType type = entityTypeClass.getAnnotation(EdmEntityType.class);
       if(type == null) {
         return "";
-      }
-      return type.name();
-    }
-    
-    /**
-     * Returns <code>NULL</code> if given class is not annotated.
-     * If annotated the set entity type name is returned and if no name is set the
-     * default name is generated from the simple class name.
-     * 
-     * @param annotatedClass
-     * @return 
-     */
-    private String extractEntitTypeName(Class<?> annotatedClass) {
-      if(annotatedClass == Object.class) {
-        return null;
-      }
-      EdmEntityType type = annotatedClass.getAnnotation(EdmEntityType.class);
-      if(type == null) {
-        return null;
-      }
-      if(type.name().isEmpty()) {
-        return getCanonicalName(annotatedClass);
       }
       return type.name();
     }
