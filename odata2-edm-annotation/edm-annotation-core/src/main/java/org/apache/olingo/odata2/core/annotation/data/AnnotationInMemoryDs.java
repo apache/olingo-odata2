@@ -115,7 +115,9 @@ public class AnnotationInMemoryDs implements ListsDataSource {
       String targetName = targetEntitySet.getEntityType().getName();
       DataStore targetStore = dataStores.get(targetName);
 
-      Field sourceFieldAtTarget = extractSourceField(sourceStore, targetStore);
+      AnnotationHelper.AnnotatedNavInfo navigationInfo = extractNavigationInfo(sourceStore, targetStore);
+
+      Field sourceFieldAtTarget = navigationInfo.getToField();
       if (sourceFieldAtTarget == null) {
         throw new ODataRuntimeException("Missing source field for related data.");
       }
@@ -136,8 +138,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
         }
       }
       
-      EdmNavigationProperty navProperty = sourceFieldAtTarget.getAnnotation(EdmNavigationProperty.class);
-      if(navProperty.from().multiplicity() == EdmMultiplicity.ONE) {
+      if(navigationInfo.getToMultiplicity() == EdmMultiplicity.ONE) {
         if(resultData.isEmpty()) {
           return null;
         }
@@ -268,5 +269,12 @@ public class AnnotationInMemoryDs implements ListsDataSource {
     Class targetDataTypeClass = targetStore.getDataTypeClass();
     
     return ANNOTATION_HELPER.getCommonNavigationFieldFromTarget(sourceDataTypeClass, targetDataTypeClass);
+  }
+
+  private AnnotationHelper.AnnotatedNavInfo extractNavigationInfo(DataStore sourceStore, DataStore targetStore) {
+    Class sourceDataTypeClass = sourceStore.getDataTypeClass();
+    Class targetDataTypeClass = targetStore.getDataTypeClass();
+    
+    return ANNOTATION_HELPER.getCommonNavigationInfo(sourceDataTypeClass, targetDataTypeClass);
   }
 }
