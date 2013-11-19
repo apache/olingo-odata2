@@ -17,7 +17,6 @@ package org.apache.olingo.odata2.core.annotation.edm;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +29,9 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
+import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
+import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
@@ -79,6 +80,21 @@ public class AnnotationHelper {
     }
   }
 
+  public String extractEntitTypeName(NavigationEnd navEnd, Class<?> fallbackClass) {
+    Class<?> entityTypeClass = navEnd.entitySet();
+    if (entityTypeClass == Object.class) {
+      return extractEntityTypeName(fallbackClass);
+    }
+    EdmEntityType type = entityTypeClass.getAnnotation(EdmEntityType.class);
+    if (type == null) {
+      return null;
+    }
+    if(type.name().isEmpty()) {
+      return extractEntityTypeName(fallbackClass);
+    }
+    return type.name();
+  }
+
   /**
    * Returns <code>NULL</code> if given class is not annotated. If annotated the set entity type name is returned and if
    * no name is set the default name is generated from the simple class name.
@@ -105,13 +121,13 @@ public class AnnotationHelper {
   }
 
   /**
-   * 
-   * 
+   *
+   *
    * @param <T> must be EdmEntityType or EdmComplexType annotation
    * @param annotatedClass
    * @param typeAnnotation
-   * @return null if annotatedClass is not annotated or 
-   * name set via annotation or generated via {@link #getCanonicalName(java.lang.Class)}
+   * @return null if annotatedClass is not annotated or name set via annotation or generated via
+   * {@link #getCanonicalName(java.lang.Class)}
    */
   private <T extends Annotation> String extractTypeName(Class<?> annotatedClass, Class<T> typeAnnotation) {
     if (annotatedClass == Object.class) {
@@ -121,12 +137,12 @@ public class AnnotationHelper {
     if (type == null) {
       return null;
     }
-    
+
     String name;
-    if(typeAnnotation == EdmEntityType.class) {
-      name = ((EdmEntityType)type).name();
-    } else if(typeAnnotation == EdmComplexType.class) {
-      name = ((EdmComplexType)type).name();
+    if (typeAnnotation == EdmEntityType.class) {
+      name = ((EdmEntityType) type).name();
+    } else if (typeAnnotation == EdmComplexType.class) {
+      name = ((EdmComplexType) type).name();
     } else {
       return null;
     }
@@ -136,7 +152,7 @@ public class AnnotationHelper {
     }
     return name;
   }
-  
+
   /**
    * Get the set property name from an EdmProperty or EdmNavigationProperty annotation.
    *
@@ -164,6 +180,41 @@ public class AnnotationHelper {
     return propertyName;
   }
 
+  public String extractRoleName(NavigationEnd navigationEnd, Class<?> fallbackClass) {
+      String role = navigationEnd.role();
+      if (role.isEmpty()) {
+        role = getCanonicalRole(navigationEnd, fallbackClass);
+      }
+      return role;
+  }
+  
+  public String getCanonicalRole(NavigationEnd navEnd, Class<?> fallbackClass) {
+    String toRole = extractEntityTypeName(navEnd.entitySet());
+    if (toRole == null) {
+      toRole = extractEntityTypeName(fallbackClass);
+    }
+    return "r_" + toRole;
+  }
+
+  public String extractRelationshipName(EdmNavigationProperty enp, Field field) {
+    String fromRole = extractRoleName(enp.from(), field.getDeclaringClass());
+    String toRole = extractRoleName(enp.to(), field.getType());
+
+    return extractRelationshipName(enp, fromRole, toRole);
+  }
+    
+  public String extractRelationshipName(EdmNavigationProperty enp, String fromRole, String toRole) {
+      String relationshipName = enp.association();
+      if(relationshipName.isEmpty()) {
+        if(fromRole.compareTo(toRole) > 0) {
+          relationshipName = toRole + "-" + fromRole;
+        } else {
+          relationshipName = fromRole + "-" + toRole;
+        }
+      }
+      return relationshipName;
+  }
+
   public static final class ODataAnnotationException extends ODataException {
 
     public ODataAnnotationException(String message) {
@@ -185,6 +236,78 @@ public class AnnotationHelper {
     }
 
     return instance;
+  }
+
+  public static class AnnotatedNavInfo {
+
+    private final Field fromField;
+    private final Field toField;
+    private final EdmNavigationProperty fromNavigation;
+    private final EdmNavigationProperty toNavigation;
+
+    public AnnotatedNavInfo(Field fromField, Field toField, EdmNavigationProperty fromNavigation,
+            EdmNavigationProperty toNavigation) {
+      this.fromField = fromField;
+      this.toField = toField;
+      this.fromNavigation = fromNavigation;
+      this.toNavigation = toNavigation;
+    }
+
+    public Field getFromField() {
+      return fromField;
+    }
+
+    public Field getToField() {
+      return toField;
+    }
+
+    public EdmMultiplicity getFromMultiplicity() {
+      EdmMultiplicity from = fromNavigation.from().multiplicity();
+      EdmMultiplicity to = toNavigation.to().multiplicity();
+
+      if (from.equals(to)) {
+        return from;
+      } else {
+        if (EdmMultiplicity.MANY == from || EdmMultiplicity.MANY == to) {
+          return EdmMultiplicity.MANY;
+        } else {
+          return EdmMultiplicity.ONE;
+        }
+      }
+    }
+
+    public EdmMultiplicity getToMultiplicity() {
+      EdmMultiplicity from = fromNavigation.to().multiplicity();
+      EdmMultiplicity to = toNavigation.from().multiplicity();
+
+      if (from.equals(to)) {
+        return from;
+      } else {
+        if (EdmMultiplicity.MANY == from || EdmMultiplicity.MANY == to) {
+          return EdmMultiplicity.MANY;
+        } else {
+          return EdmMultiplicity.ONE;
+        }
+      }
+    }
+  }
+
+  public AnnotatedNavInfo getCommonNavigationInfo(Class<?> sourceClass, Class<?> targetClass) {
+    List<Field> sourceFields = getAnnotatedFields(sourceClass, EdmNavigationProperty.class);
+    List<Field> targetFields = getAnnotatedFields(targetClass, EdmNavigationProperty.class);
+
+    for (Field targetField : targetFields) {
+      for (Field sourceField : sourceFields) {
+        EdmNavigationProperty sourceNav = sourceField.getAnnotation(EdmNavigationProperty.class);
+        EdmNavigationProperty targetNav = targetField.getAnnotation(EdmNavigationProperty.class);
+        String sourceAssociation = extractRelationshipName(sourceNav, sourceField);
+        String targetAssociation = extractRelationshipName(targetNav, targetField);
+        if (sourceAssociation.equals(targetAssociation)) {
+          return new AnnotatedNavInfo(sourceField, targetField, sourceNav, targetNav);
+        }
+      }
+    }
+    return null;
   }
 
   public Field getCommonNavigationFieldFromTarget(Class<?> sourceClass, Class<?> targetClass) {

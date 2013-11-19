@@ -495,38 +495,17 @@ public class AnnotationEdmProvider extends EdmProvider {
       navProp.setName(entityName);
       //
       NavigationEnd from = enp.from();
-      String fromRole = from.role();
-      if (fromRole.isEmpty()) {
-        fromRole = getCanonicalRole(from, field.getDeclaringClass());
-      }
+      String fromRole = ANNOTATION_HELPER.extractRoleName(from, field.getDeclaringClass());
       navProp.setFromRole(fromRole);
 
       NavigationEnd to = enp.to();
-      String toRole = to.role();
-      if (toRole.isEmpty()) {
-        toRole = getCanonicalRole(to, field.getType());
-      }
+      String toRole = ANNOTATION_HELPER.extractRoleName(to, field.getType());
       navProp.setToRole(toRole);
 
-      String relationshipName = enp.association();
-      if(relationshipName.isEmpty()) {
-        if(fromRole.compareTo(toRole) > 0) {
-          relationshipName = toRole + "-" + fromRole;
-        } else {
-          relationshipName = fromRole + "-" + toRole;
-        }
-      }
+      String relationshipName = ANNOTATION_HELPER.extractRelationshipName(enp, fromRole, toRole);
       navProp.setRelationship(new FullQualifiedName(namespace, relationshipName));
 
       return navProp;
-    }
-
-    private String getCanonicalRole(NavigationEnd navEnd, Class<?> fallbackClass) {
-        String toRole = ANNOTATION_HELPER.extractEntityTypeName(navEnd.entitySet());
-        if(toRole == null) {
-          toRole = ANNOTATION_HELPER.extractEntityTypeName(fallbackClass);
-        }
-        return "r_" + toRole;
     }
 
     private EdmSimpleTypeKind getEdmSimpleType(Class<?> type) {
@@ -576,10 +555,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       NavigationEnd from = navigation.from();
       AssociationEnd fromEnd = new AssociationEnd();
       fromEnd.setRole(navProperty.getFromRole());
-      String typeName = extractEntitTypeName(from);
-      if (typeName.isEmpty()) {
-        typeName = ANNOTATION_HELPER.extractEntityTypeName(field.getDeclaringClass());
-      }
+      String typeName = ANNOTATION_HELPER.extractEntitTypeName(from, field.getDeclaringClass());
       fromEnd.setType(new FullQualifiedName(namespace, typeName));
       fromEnd.setMultiplicity(from.multiplicity());
       association.setEnd1(fromEnd);
@@ -587,10 +563,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       NavigationEnd to = navigation.to();
       AssociationEnd toEnd = new AssociationEnd();
       toEnd.setRole(navProperty.getToRole());
-      String toTypeName = extractEntitTypeName(to);
-      if (toTypeName.isEmpty()) {
-        toTypeName = ANNOTATION_HELPER.extractEntityTypeName(field.getType());
-      }
+      String toTypeName = ANNOTATION_HELPER.extractEntitTypeName(to, field.getType());
       toEnd.setType(new FullQualifiedName(namespace, toTypeName));
 
       EdmMultiplicity toMultiplicity = to.multiplicity();
@@ -615,18 +588,6 @@ public class AnnotationEdmProvider extends EdmProvider {
     
     private boolean isAnnotatedEntity(Class<?> clazz) {
       return ANNOTATION_HELPER.isEdmTypeAnnotated(clazz);
-    }
-
-    private String extractEntitTypeName(NavigationEnd navEnd) {
-      Class<?> entityTypeClass = navEnd.entitySet();
-      if(entityTypeClass == Object.class) {
-        return "";
-      }
-      EdmEntityType type = entityTypeClass.getAnnotation(EdmEntityType.class);
-      if(type == null) {
-        return "";
-      }
-      return type.name();
     }
   }
 
