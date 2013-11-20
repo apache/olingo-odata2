@@ -1000,14 +1000,20 @@ public class ListsProcessor extends ODataSingleProcessor {
         } catch (final ODataNotFoundException e) {
           relatedData = null;
         }
-        result.setEntryData(getStructuralTypeValueMap(relatedData, entityType));
+        
+        if(relatedData == null) {
+          result.setEntryData(new HashMap<String, Object>());
+          return result;
+        } else {
+          result.setEntryData(getStructuralTypeValueMap(relatedData, entityType));
 
-        EntityProviderWriteProperties inlineProperties =
-            EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).callbacks(
-                getCallbacks(relatedData, entityType)).expandSelectTree(context.getCurrentExpandSelectTreeNode())
-                .build();
-        result.setInlineProperties(inlineProperties);
-        return result;
+          EntityProviderWriteProperties inlineProperties =
+              EntityProviderWriteProperties.serviceRoot(getContext().getPathInfo().getServiceRoot()).callbacks(
+                  getCallbacks(relatedData, entityType)).expandSelectTree(context.getCurrentExpandSelectTreeNode())
+                  .build();
+          result.setInlineProperties(inlineProperties);
+          return result;
+        }
       } catch (final ODataException e) {
         throw new ODataApplicationException(e.getLocalizedMessage(), Locale.ROOT, e);
       }

@@ -138,13 +138,13 @@ public class AnnotationInMemoryDs implements ListsDataSource {
         }
       }
       
-      if(navigationInfo.getToMultiplicity() == EdmMultiplicity.ONE) {
-        if(resultData.isEmpty()) {
-          return null;
-        }
+      if(resultData.isEmpty()) {
+        return null;
+      } else if(navigationInfo.getToMultiplicity() == EdmMultiplicity.ONE) {
         return resultData.get(0);
+      } else {
+        return resultData;
       }
-      return resultData;
     } else {
       throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
     }
@@ -262,13 +262,6 @@ public class AnnotationInMemoryDs implements ListsDataSource {
       throw new ODataRuntimeException("Error for getting value of field '"
               + field + "' at instance '" + instance + "'.", e);
     }
-  }
-
-  private Field extractSourceField(DataStore sourceStore, DataStore targetStore) {
-    Class sourceDataTypeClass = sourceStore.getDataTypeClass();
-    Class targetDataTypeClass = targetStore.getDataTypeClass();
-    
-    return ANNOTATION_HELPER.getCommonNavigationFieldFromTarget(sourceDataTypeClass, targetDataTypeClass);
   }
 
   private AnnotationHelper.AnnotatedNavInfo extractNavigationInfo(DataStore sourceStore, DataStore targetStore) {
