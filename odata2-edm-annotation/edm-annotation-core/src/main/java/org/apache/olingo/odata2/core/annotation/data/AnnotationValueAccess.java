@@ -23,8 +23,11 @@ import org.apache.olingo.odata2.api.data.ValueAccess;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataHttpException;
+import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
+import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  *
@@ -40,11 +43,18 @@ public class AnnotationValueAccess implements ValueAccess {
    */
   @Override
   public <T> Object getPropertyValue(final T data, final EdmProperty property) throws ODataException {
+    if(data == null) {
+      if(property.getFacets() == null || property.getFacets().isNullable()) {
+        return null;
+      }
+      throw new ODataRuntimeException("Invalid value for data '" + data + "' and property '" + property + "'.");
+    }
+    
     if(data instanceof Collection) {
       Collection c = (Collection) data;
       for (Object object : c) {
-        if(annotationHelper.isEdmAnnotated(data)) {
-          return annotationHelper.getValueForProperty(data, property.getName());
+        if(annotationHelper.isEdmAnnotated(object)) {
+          return annotationHelper.getValueForProperty(object, property.getName());
         }
       }
     }
