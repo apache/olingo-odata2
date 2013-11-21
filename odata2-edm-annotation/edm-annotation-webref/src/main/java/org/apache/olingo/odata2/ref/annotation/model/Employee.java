@@ -20,44 +20,47 @@ package org.apache.olingo.odata2.ref.annotation.model;
 
 import java.text.DateFormat;
 import java.util.Calendar;
+
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFacets;
+import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
-import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
-import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
-import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 
 /**
  *  
  */
-@EdmEntityType(name="Employee", namespace=ModelSharedConstants.NAMESPACE_1)
-@EdmEntitySet(name= "Employees")
+@EdmEntityType(name = "Employee", namespace = ModelSharedConstants.NAMESPACE_1)
+@EdmEntitySet(name = "Employees")
 public class Employee {
   private static int counter = 1;
   @EdmKey
-  @EdmProperty(name="EmployeeId", type = EdmSimpleTypeKind.String)
+  @EdmProperty(name = "EmployeeId", type = EdmSimpleTypeKind.String)
   private String employeeId;
-  @EdmProperty(name="EmployeeName")
+  @EdmProperty(name = "EmployeeName")
   private String employeeName;
   @EdmProperty
   private int age;
-  @EdmNavigationProperty(name="ne_Manager", association="ManagerEmployees",
-          from = @NavigationEnd(role="r_Employees", entitySet=Manager.class, multiplicity=EdmMultiplicity.MANY))//,
-//          to = @NavigationEnd(type = "Manager"))
+  @EdmNavigationProperty(name = "ne_Manager", association = "ManagerEmployees")
   private Manager manager;
-  @EdmNavigationProperty(name = "ne_Team", association="TeamEmployees", 
-          from = @NavigationEnd(role = "r_Employees", entitySet = Employee.class, multiplicity = EdmMultiplicity.MANY),
-          to = @NavigationEnd(role = "r_Team",  entitySet = Team.class)
-  )
+  @EdmNavigationProperty(name = "ne_Team", association = "TeamEmployees")
   private Team team;
+  @EdmNavigationProperty(name = "ne_Room")
   private Room room;
+  @EdmMediaResourceMimeType
   private String imageType;
+  @EdmMediaResourceContent
   private byte[] image;
+  @EdmProperty(name = "ImageUrl")
   private String imageUrl;
+  @EdmProperty(name = "EntryDate", type = EdmSimpleTypeKind.DateTime,
+      facets = @EdmFacets(nullable = true))
   private Calendar entryDate;
-  @EdmProperty(name="Location")
+  @EdmProperty(name = "Location", facets = @EdmFacets(nullable = false))
   private Location location;
 
   public String getId() {
@@ -157,7 +160,7 @@ public class Employee {
 
   @Override
   public int hashCode() {
-    if(employeeId == null) {
+    if (employeeId == null) {
       return 0;
     }
     return employeeId.hashCode();

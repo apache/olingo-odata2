@@ -22,15 +22,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface EdmNavigationProperty {
-  String name();
-  String association() default ""; // if not set -> will be generated
 
-  //
-  NavigationEnd from() default @NavigationEnd;
-  NavigationEnd to() default @NavigationEnd;
+  String name() default "";
+  Class<?> toType() default Object.class;
+  String association() default ""; // if not set -> will be generated
+  String toRole() default ""; // if not set -> will be generated
+  EdmMultiplicity toMultiplicity() default EdmMultiplicity.ONE;
 }

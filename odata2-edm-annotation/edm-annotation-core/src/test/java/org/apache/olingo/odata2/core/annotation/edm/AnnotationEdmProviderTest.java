@@ -86,7 +86,7 @@ public class AnnotationEdmProviderTest {
     final List<PropertyRef> employeeKeys = employee.getKey().getKeys();
     assertEquals(1, employeeKeys.size());
     assertEquals("EmployeeId", employeeKeys.get(0).getName());
-    assertEquals(4, employee.getProperties().size());
+    assertEquals(6, employee.getProperties().size());
     assertEquals(3, employee.getNavigationProperties().size());
 
     List<Schema> schemas = localAep.getSchemas();
@@ -165,7 +165,7 @@ public class AnnotationEdmProviderTest {
 
   private void validateAssociation(Association association) {
     String name = association.getName();
-    if(name.equals("RoomEmployees")) {
+    if(name.equals("r_Employee-r_Room")) {
       validateAssociation(association, 
               "r_Room", EdmMultiplicity.ONE, defaultFqn("Room"),
               "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
@@ -176,8 +176,8 @@ public class AnnotationEdmProviderTest {
     } else if(name.equals("ManagerEmployees")) {
         validateAssociation(association, 
                 "r_Manager", EdmMultiplicity.ONE, defaultFqn("Manager"),
-                "r_Employees", EdmMultiplicity.MANY, defaultFqn("Employee"));
-    } else if(name.equals("r_Employee-r_Team")) {
+                "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
+    } else if(name.equals("TeamEmployees")) {
         validateAssociation(association, 
                 "r_Team", EdmMultiplicity.ONE, defaultFqn("Team"),
                 "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
@@ -227,16 +227,16 @@ public class AnnotationEdmProviderTest {
     final List<PropertyRef> employeeKeys = employee.getKey().getKeys();
     assertEquals(1, employeeKeys.size());
     assertEquals("EmployeeId", employeeKeys.get(0).getName());
-    assertEquals(4, employee.getProperties().size());
+    assertEquals(6, employee.getProperties().size());
     assertEquals(3, employee.getNavigationProperties().size());
 
     for (NavigationProperty navigationProperty : employee.getNavigationProperties()) {
       if (navigationProperty.getName().equals("ne_Manager")) {
-        validateNavProperty(navigationProperty, "ManagerEmployees", "r_Employees", "r_Manager");
+        validateNavProperty(navigationProperty, "ManagerEmployees", "r_Employee", "r_Manager");
       } else if (navigationProperty.getName().equals("ne_Team")) {
-        validateNavProperty(navigationProperty, "r_Employee-r_Team", "r_Employee", "r_Team");
+        validateNavProperty(navigationProperty, "TeamEmployees", "r_Employee", "r_Team");
       } else if (navigationProperty.getName().equals("ne_Room")) {
-        validateNavProperty(navigationProperty, "RoomEmployees", "r_Employee", "r_Room");
+        validateNavProperty(navigationProperty, "r_Employee-r_Room", "r_Employee", "r_Room");
       } else {
         fail("Got unexpected navigation property with name '" + navigationProperty.getName() + "'.");
       }
@@ -254,7 +254,7 @@ public class AnnotationEdmProviderTest {
     assertEquals(1, team.getProperties().size());
     assertEquals(1, team.getNavigationProperties().size());
     NavigationProperty navigationProperty= team.getNavigationProperties().get(0);
-    validateNavProperty(navigationProperty, "r_Employee-r_Team", "r_Team", "r_Employee");
+    validateNavProperty(navigationProperty, "TeamEmployees", "r_Team", "r_Employee");
   }
 
   @Test
@@ -335,7 +335,7 @@ public class AnnotationEdmProviderTest {
     
     for (NavigationProperty navigationProperty : navigationProperties) {
       if(navigationProperty.getName().equals("nr_Employees")) {
-        validateNavProperty(navigationProperty, "RoomEmployees", "r_Room", "r_Employee");
+        validateNavProperty(navigationProperty, "r_Employee-r_Room", "r_Room", "r_Employee");
       } else if(navigationProperty.getName().equals("nr_Building")) {
         validateNavProperty(navigationProperty, "BuildingRooms", "r_Room", "r_Building");
       } else {

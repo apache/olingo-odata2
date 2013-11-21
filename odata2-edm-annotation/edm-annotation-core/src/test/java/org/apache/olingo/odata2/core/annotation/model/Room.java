@@ -17,13 +17,11 @@ package org.apache.olingo.odata2.core.annotation.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
-import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
-import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 
 /**
  *
@@ -36,12 +34,9 @@ public class Room extends RefBase {
   private Integer seats;
   @EdmProperty
   private Integer version;
-  @EdmNavigationProperty(name = "nr_Building", association = "BuildingRooms",
-          from = @NavigationEnd(role = "r_Room", multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name = "nr_Building", association = "BuildingRooms")
   private Building building;
-  @EdmNavigationProperty(name = "nr_Employees", association = "RoomEmployees",
-//          from = @NavigationEnd(role = "r_Room", entitySet = Room.class, multiplicity = EdmMultiplicity.ONE),
-          to = @NavigationEnd(entitySet = Employee.class, multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name = "nr_Employees")
   private List<Employee> employees = new ArrayList<Employee>();
 
   public Room(final int id, final String name) {
@@ -84,7 +79,7 @@ public class Room extends RefBase {
   @Override
   public boolean equals(final Object obj) {
     return this == obj
-            || obj != null && getClass() == obj.getClass() && id == ((Room) obj).id;
+        || obj != null && getClass() == obj.getClass() && id == ((Room) obj).id;
   }
 
   @Override

@@ -28,11 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
-import org.apache.olingo.odata2.api.annotation.edm.ds.EntityCreate;
-import org.apache.olingo.odata2.api.annotation.edm.ds.EntityDelete;
-import org.apache.olingo.odata2.api.annotation.edm.ds.EntityRead;
-import org.apache.olingo.odata2.api.annotation.edm.ds.EntitySetRead;
-import org.apache.olingo.odata2.api.annotation.edm.ds.EntityUpdate;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
@@ -47,25 +42,26 @@ public class DataStore<T> {
   private final Class<T> dataTypeClass;
 
   private int idCounter = 1;
-  
+
   private static class InMemoryDataStore {
     private static final Map<Class<?>, DataStore<?>> c2ds = new HashMap<Class<?>, DataStore<?>>();
+
     @SuppressWarnings("unchecked")
     static DataStore<?> getInstance(Class<?> clz) {
       DataStore<?> ds = c2ds.get(clz);
-      if(ds == null) {
+      if (ds == null) {
         ds = new DataStore<Object>((Class<Object>) clz);
         c2ds.put(clz, ds);
       }
       return ds;
     }
   }
-  
+
   @SuppressWarnings("unchecked")
   public static <T> DataStore<T> createInMemory(Class<T> clazz) {
     return (DataStore<T>) InMemoryDataStore.getInstance(clazz);
   }
-  
+
   private DataStore(List<T> wrapStore, Class<T> clz) {
     dataStore = wrapStore;
     dataTypeClass = clz;
@@ -74,15 +70,15 @@ public class DataStore<T> {
   private DataStore(Class<T> clz) {
     this(new ArrayList<T>(), clz);
   }
-  
+
   public Class<T> getDataTypeClass() {
     return dataTypeClass;
   }
-  
+
   public String getEntityTypeName() {
     return ANNOTATION_HELPER.extractEntityTypeName(dataTypeClass);
   }
-  
+
   public T createInstance() {
     try {
       return dataTypeClass.newInstance();
@@ -92,8 +88,7 @@ public class DataStore<T> {
       throw new ODataRuntimeException("Unable to create instance of class '" + dataTypeClass + "'.", e);
     }
   }
-  
-  @EntityRead
+
   public T read(T obj) {
     List<Object> objKeys = getKeys(obj);
     for (T stored : dataStore) {
@@ -104,19 +99,18 @@ public class DataStore<T> {
     return null;
   }
 
-  @EntitySetRead
   public Collection<T> read() {
     return Collections.unmodifiableCollection(dataStore);
   }
 
-  @EntityCreate
   public T create(T object) throws DataStoreException {
-    createKeys(object);
+    if (read(object) != null || getKeys(object).contains(null)) {
+      createKeys(object);
+    }
     dataStore.add(object);
     return object;
   }
 
-  @EntityUpdate
   public T update(T object) {
     T stored = read(object);
     dataStore.remove(stored);
@@ -124,55 +118,54 @@ public class DataStore<T> {
     return object;
   }
 
-  @EntityDelete
   public T delete(T object) {
     T stored = read(object);
-    if(stored != null) {    
+    if (stored != null) {
       dataStore.remove(stored);
     }
     return stored;
   }
-  
+
   private List<Object> getKeys(T object) {
     Map<String, Object> keys = ANNOTATION_HELPER.getValueForAnnotatedFields(object, EdmKey.class);
-    
+
     // XXX: list should be in a defined order -> better to create an 'Key' object which is comparable 
-    List<Object> keyList = new ArrayList(keys.values());
+    List<Object> keyList = new ArrayList<Object>(keys.values());
     return keyList;
   }
-  
+
   private T createKeys(T object) throws DataStoreException {
     List<Field> fields = ANNOTATION_HELPER.getAnnotatedFields(object, EdmKey.class);
-    if(fields.isEmpty()) {
+    if (fields.isEmpty()) {
       throw new DataStoreException("No EdmKey annotated fields found for class " + object.getClass());
     }
     Map<String, Object> fieldName2KeyValue = new HashMap<String, Object>();
-    
+
     for (Field field : fields) {
       Object key = createKey(field);
       fieldName2KeyValue.put(ANNOTATION_HELPER.getCanonicalName(field), key);
     }
-    
+
     ANNOTATION_HELPER.setValuesToAnnotatedFields(fieldName2KeyValue, object, EdmKey.class);
-    
+
     return object;
   }
 
   private Object createKey(Field field) {
     Class<?> type = field.getType();
-    
-    if(type == String.class) {
+
+    if (type == String.class) {
       return String.valueOf(idCounter++);
-    } else if(type == Integer.class || type == int.class) {
+    } else if (type == Integer.class || type == int.class) {
       return Integer.valueOf(idCounter++);
-    } else if(type == Long.class || type == long.class) {
+    } else if (type == Long.class || type == long.class) {
       return Long.valueOf(idCounter++);
     }
-    
+
     throw new UnsupportedOperationException("Automated key generation for type '" + type
-            + "' is not supported (caused on field '" + field + "').");
+        + "' is not supported (caused on field '" + field + "').");
   }
-  
+
   public static class DataStoreException extends ODataApplicationException {
 
     public DataStoreException(String message) {

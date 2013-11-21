@@ -67,21 +67,27 @@ th, td { border: 1px solid; padding: 20px; }
 					<li><a href="ReferenceScenario.svc/Employees" target="_blank">Employees</a></li>
 					<li><a href="ReferenceScenario.svc/Managers" target="_blank">Managers</a></li>
 					<li><a href="ReferenceScenario.svc/Buildings" target="_blank">Buildings</a></li>
+					<li><a href="ReferenceScenario.svc/Buildings/?$expand=nb_Rooms" 
+                 target="_blank">Buildings/?$expand=nb_Rooms</a></li>
 					<li><a href="ReferenceScenario.svc/Rooms" target="_blank">Rooms</a></li>
+					<li><a href="ReferenceScenario.svc/Rooms/?$orderby=Name" target="_blank">Rooms/?$orderby=Name</a></li>
 					<li><a href="ReferenceScenario.svc/Photos" target="_blank">Photos</a></li>
-				</ul>
+					<li><a href="ReferenceScenario.svc/Photos/?$filter=Type%20eq%20'PNG'" 
+                 target="_blank">Photos/?$filter=Type eq 'PNG'</a></li>
+        </ul>
 				<h3>Entities</h3>
 				<ul>
-					<li><a href="ReferenceScenario.svc/Employees('1')"
-						target="_blank">Employees('1')</a></li>
-					<li><a href="ReferenceScenario.svc/Managers('1')"
-						target="_blank">Managers('1')</a></li>
-					<li><a href="ReferenceScenario.svc/Buildings(1)"
-						target="_blank">Buildings(1)</a></li>
+					<li><a href="ReferenceScenario.svc/Employees('1')" target="_blank">Employees('1')</a></li>
+					<li><a href="ReferenceScenario.svc/Managers('1')" target="_blank">Managers('1')</a></li>
+					<li><a href="ReferenceScenario.svc/Buildings(1)" target="_blank">Buildings(1)</a></li>
+					<li><a href="ReferenceScenario.svc/Buildings(1)/nb_Rooms" target="_blank">Buildings(1)/nb_Rooms</a></li>
 					<li><a href="ReferenceScenario.svc/Rooms('1')" target="_blank">Rooms('1')</a></li>
- 					<li><a href="ReferenceScenario.svc/Photos(Name='1',Type='2')"
-                           target="_blank">Photos(Name='1',Type='2')</a></li>
-				</ul>
+					<li><a href="ReferenceScenario.svc/Rooms('1')/nr_Building" target="_blank">Rooms('1')/nr_Building</a></li>
+ 					<li><a href="ReferenceScenario.svc/Photos(Name='Small%20picture',Type='GIF')"
+                           target="_blank">Photos(Name='Small%20picture',Type='GIF')</a></li>
+ 					<li><a href="ReferenceScenario.svc/Photos(Name='Big%20picture',Type='JPEG')/$value"
+                           target="_blank">Photos(Name='Big%20picture',Type='JPEG')/$value</a></li>
+        </ul>
 			</td>
 			<td valign="top">
 				&nbsp;

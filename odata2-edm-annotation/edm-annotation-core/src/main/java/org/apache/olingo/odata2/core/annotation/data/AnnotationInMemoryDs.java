@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
@@ -46,7 +45,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
     List<Class<?>> foundClasses = ClassHelper.loadClasses(packageToScan, new ClassHelper.ClassValidator() {
       @Override
       public boolean isClassValid(Class<?> c) {
-        return null != c.getAnnotation(EdmEntityType.class);
+        return null != c.getAnnotation(org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet.class);
       }
     });
 
@@ -58,8 +57,9 @@ public class AnnotationInMemoryDs implements ListsDataSource {
     for (Class<?> clz : foundClasses) {
 
       DataStore<Object> dhs = (DataStore<Object>) DataStore.createInMemory(clz);
-      String entityTypeName = ANNOTATION_HELPER.extractEntityTypeName(clz);
-      dataStores.put(entityTypeName, dhs);
+      org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet entitySet =
+          clz.getAnnotation(org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet.class);
+      dataStores.put(entitySet.name(), dhs);
     }
   }
 
@@ -69,11 +69,11 @@ public class AnnotationInMemoryDs implements ListsDataSource {
 
   @Override
   public List<?> readData(EdmEntitySet entitySet) throws ODataNotImplementedException,
-          ODataNotFoundException, EdmException, ODataApplicationException {
+      ODataNotFoundException, EdmException, ODataApplicationException {
 
     DataStore<Object> holder = getDataStore(entitySet);
     if (holder != null) {
-      return new ArrayList(holder.read());
+      return new ArrayList<Object>(holder.read());
     }
 
     throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
@@ -81,7 +81,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
 
   @Override
   public Object readData(EdmEntitySet entitySet, Map<String, Object> keys)
-          throws ODataNotFoundException, EdmException, ODataApplicationException {
+      throws ODataNotFoundException, EdmException, ODataApplicationException {
 
     DataStore<Object> store = getDataStore(entitySet);
     if (store != null) {
@@ -99,71 +99,72 @@ public class AnnotationInMemoryDs implements ListsDataSource {
 
   @Override
   public Object readData(EdmFunctionImport function, Map<String, Object> parameters, Map<String, Object> keys)
-          throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+      throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
   }
 
   @Override
   public Object readRelatedData(EdmEntitySet sourceEntitySet, Object sourceData, EdmEntitySet targetEntitySet,
-          Map<String, Object> targetKeys)
-          throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+      Map<String, Object> targetKeys)
+      throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
 
-    if (targetKeys.isEmpty()) {
-      String sourceName = sourceEntitySet.getEntityType().getName();
-      DataStore sourceStore = dataStores.get(sourceName);
+    DataStore<?> sourceStore = dataStores.get(sourceEntitySet.getName());
+    DataStore<?> targetStore = dataStores.get(targetEntitySet.getName());
 
-      String targetName = targetEntitySet.getEntityType().getName();
-      DataStore targetStore = dataStores.get(targetName);
+    Field sourceField = extractSourceField(sourceStore, targetStore);
+    if (sourceField == null) {
+      throw new ODataRuntimeException("Missing source field for related data (sourceStore='" + sourceStore
+              + "', targetStore='" + targetStore + "').");
+    }
 
-      AnnotationHelper.AnnotatedNavInfo navigationInfo = extractNavigationInfo(sourceStore, targetStore);
-
-      Field sourceFieldAtTarget = navigationInfo.getToField();
-      if (sourceFieldAtTarget == null) {
-        throw new ODataRuntimeException("Missing source field for related data.");
-      }
-
-      Collection targetData = targetStore.read();
-      List resultData = new ArrayList();
-      for (Object targetInstance : targetData) {
-        Object targetNavigationInstance = getValue(sourceFieldAtTarget, targetInstance);
-        if(targetNavigationInstance instanceof Collection) {
-          Collection c = (Collection) targetNavigationInstance;
-          for (Object object : c) {
-            if (ANNOTATION_HELPER.keyMatch(sourceData, object)) {
-              resultData.add(targetInstance);
-            }
+    Object navigationInstance = getValue(sourceField, sourceData);
+    List<Object> resultData = new ArrayList<Object>();
+    for (Object targetInstance : targetStore.read()) {
+      if (navigationInstance instanceof Collection) {
+        for (Object object : (Collection<?>) navigationInstance) {
+          if (ANNOTATION_HELPER.keyMatch(targetInstance, object)) {
+            resultData.add(targetInstance);
           }
-        } else if (ANNOTATION_HELPER.keyMatch(sourceData, targetNavigationInstance)) {
-          resultData.add(targetInstance);
         }
+      } else if (ANNOTATION_HELPER.keyMatch(targetInstance, navigationInstance)) {
+        resultData.add(targetInstance);
       }
-      
-      if(resultData.isEmpty()) {
-        return null;
-      } else if(navigationInfo.getToMultiplicity() == EdmMultiplicity.ONE) {
-        return resultData.get(0);
-      } else {
+    }
+
+    EdmNavigationProperty navProperty = sourceField.getAnnotation(EdmNavigationProperty.class);
+    if (navProperty.toMultiplicity() == EdmMultiplicity.MANY) {
+      if (targetKeys.isEmpty()) {
         return resultData;
+      } else {
+        for (Object result : resultData) {
+          if (ANNOTATION_HELPER.keyMatch(result, targetKeys)) {
+            return result;
+          }
+        }
+        return null;
       }
     } else {
-      throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+      if (resultData.isEmpty()) {
+        return null;
+      }
+      return resultData.get(0);
     }
   }
 
   @Override
   public BinaryData readBinaryData(EdmEntitySet entitySet, Object mediaLinkEntryData)
-          throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+      throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
 
     Object data = ANNOTATION_HELPER.getValueForField(mediaLinkEntryData, EdmMediaResourceContent.class);
     Object mimeType = ANNOTATION_HELPER.getValueForField(mediaLinkEntryData, EdmMediaResourceMimeType.class);
 
-    BinaryData db = new BinaryData((byte[])data, String.valueOf(mimeType));
+    BinaryData db = new BinaryData((byte[]) data, String.valueOf(mimeType));
     return db;
   }
 
   @Override
   public Object newDataObject(EdmEntitySet entitySet)
-          throws ODataNotImplementedException, EdmException, ODataApplicationException {
+      throws ODataNotImplementedException, EdmException, ODataApplicationException {
 
     DataStore<Object> dataStore = getDataStore(entitySet);
     if (dataStore != null) {
@@ -175,7 +176,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
 
   @Override
   public void writeBinaryData(EdmEntitySet entitySet, Object mediaLinkEntryData, BinaryData binaryData)
-          throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+      throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
 
   }
@@ -199,7 +200,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
 
   @Override
   public void deleteData(EdmEntitySet entitySet, Map<String, Object> keys)
-          throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+      throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     DataStore<Object> dataStore = getDataStore(entitySet);
     Object keyInstance = dataStore.createInstance();
     ANNOTATION_HELPER.setKeyFields(keyInstance, keys);
@@ -208,7 +209,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
 
   @Override
   public void createData(EdmEntitySet entitySet, Object data)
-          throws ODataNotImplementedException, EdmException, ODataApplicationException {
+      throws ODataNotImplementedException, EdmException, ODataApplicationException {
 
     DataStore<Object> dataStore = getDataStore(entitySet);
     dataStore.create(data);
@@ -216,18 +217,17 @@ public class AnnotationInMemoryDs implements ListsDataSource {
 
   @Override
   public void deleteRelation(EdmEntitySet sourceEntitySet, Object sourceData, EdmEntitySet targetEntitySet,
-          Map<String, Object> targetKeys)
-          throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+      Map<String, Object> targetKeys)
+      throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
   }
 
   @Override
   public void writeRelation(EdmEntitySet sourceEntitySet, Object sourceData, EdmEntitySet targetEntitySet,
-          Map<String, Object> targetKeys)
-          throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
+      Map<String, Object> targetKeys)
+      throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
   }
-
 
   /**
    * Returns corresponding DataStore for EdmEntitySet or if no data store is registered an
@@ -240,9 +240,9 @@ public class AnnotationInMemoryDs implements ListsDataSource {
    * @throws  ODataRuntimeException if no DataStore is found
    */
   private DataStore<Object> getDataStore(EdmEntitySet entitySet) throws EdmException {
-    final String name = entitySet.getEntityType().getName();
+    final String name = entitySet.getName();
     DataStore<Object> dataStore = dataStores.get(name);
-    if(dataStore == null) {
+    if (dataStore == null) {
       throw new ODataRuntimeException("No DataStore found for entity set '" + entitySet + "'.");
     }
     return dataStore;
@@ -257,17 +257,17 @@ public class AnnotationInMemoryDs implements ListsDataSource {
       return value;
     } catch (IllegalArgumentException e) {
       throw new ODataRuntimeException("Error for getting value of field '"
-              + field + "' at instance '" + instance + "'.", e);
+          + field + "' at instance '" + instance + "'.", e);
     } catch (IllegalAccessException e) {
       throw new ODataRuntimeException("Error for getting value of field '"
-              + field + "' at instance '" + instance + "'.", e);
+          + field + "' at instance '" + instance + "'.", e);
     }
   }
 
-  private AnnotationHelper.AnnotatedNavInfo extractNavigationInfo(DataStore sourceStore, DataStore targetStore) {
-    Class sourceDataTypeClass = sourceStore.getDataTypeClass();
-    Class targetDataTypeClass = targetStore.getDataTypeClass();
-    
-    return ANNOTATION_HELPER.getCommonNavigationInfo(sourceDataTypeClass, targetDataTypeClass);
+  private Field extractSourceField(DataStore<?> sourceStore, DataStore<?> targetStore) {
+    Class<?> sourceDataTypeClass = sourceStore.getDataTypeClass();
+    Class<?> targetDataTypeClass = targetStore.getDataTypeClass();
+
+    return ANNOTATION_HELPER.getCommonNavigationInfo(sourceDataTypeClass, targetDataTypeClass).getFromField();
   }
 }

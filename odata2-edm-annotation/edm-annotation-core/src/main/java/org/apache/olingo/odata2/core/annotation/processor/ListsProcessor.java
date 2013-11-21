@@ -1001,9 +1001,8 @@ public class ListsProcessor extends ODataSingleProcessor {
           relatedData = null;
         }
         
-        if(relatedData == null) {
-          result.setEntryData(new HashMap<String, Object>());
-          return result;
+        if (relatedData == null) {
+          result.setEntryData(Collections.<String, Object> emptyMap());
         } else {
           result.setEntryData(getStructuralTypeValueMap(relatedData, entityType));
 
@@ -1012,8 +1011,8 @@ public class ListsProcessor extends ODataSingleProcessor {
                   getCallbacks(relatedData, entityType)).expandSelectTree(context.getCurrentExpandSelectTreeNode())
                   .build();
           result.setInlineProperties(inlineProperties);
-          return result;
         }
+        return result;
       } catch (final ODataException e) {
         throw new ODataApplicationException(e.getLocalizedMessage(), Locale.ROOT, e);
       }
