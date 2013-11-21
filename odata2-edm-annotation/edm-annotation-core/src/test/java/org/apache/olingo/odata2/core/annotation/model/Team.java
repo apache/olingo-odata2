@@ -20,31 +20,29 @@ package org.apache.olingo.odata2.core.annotation.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
-import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 
 /**
 *  
 */
-@EdmEntityType(name="Team", namespace = ModelSharedConstants.NAMESPACE_1) 
+@EdmEntityType(name = "Team", namespace = ModelSharedConstants.NAMESPACE_1)
 @EdmEntitySet(name = "Teams")
 public class Team extends RefBase {
   @EdmProperty(type = EdmSimpleTypeKind.Boolean)
   private Boolean isScrumTeam;
-  @EdmNavigationProperty(name = "ne_Teams", 
-          to = @NavigationEnd(entitySet = Employee.class, multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name = "nt_Employees", association = "TeamEmployees", toMultiplicity = EdmMultiplicity.MANY)
   private List<Employee> employees = new ArrayList<Employee>();
 
   public Team() {
     super(-1, null);
   }
-  
+
   public Team(final int id, final String name) {
     super(id, name);
   }
@@ -56,7 +54,7 @@ public class Team extends RefBase {
   public void setScrumTeam(final Boolean isScrumTeam) {
     this.isScrumTeam = isScrumTeam;
   }
-  
+
   public void addEmployee(Employee e) {
     this.employees.add(e);
   }

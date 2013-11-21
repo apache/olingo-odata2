@@ -26,14 +26,13 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
-import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 
 /**
  *  
  */
-@EdmEntityType(name="Building", namespace=ModelSharedConstants.NAMESPACE_1) 
+@EdmEntityType(name = "Building", namespace = ModelSharedConstants.NAMESPACE_1)
 @EdmEntitySet(name = "Buildings")
 public class Building {
   @EdmKey
@@ -41,9 +40,10 @@ public class Building {
   private int id;
   @EdmProperty
   private String name;
+  @EdmProperty(name = "Image", type = EdmSimpleTypeKind.Binary)
   private byte[] image;
-  @EdmNavigationProperty(name="nb_rooms", association="BuildingRooms",
-          to = @NavigationEnd(role = "r_Room", entitySet=Room.class, multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name = "nb_Rooms", toType = Room.class,
+      association = "BuildingRooms", toMultiplicity = EdmMultiplicity.MANY)
   private List<Room> rooms = new ArrayList<Room>();
 
   public String getId() {
@@ -73,7 +73,7 @@ public class Building {
   public void addRoom(Room room) {
     rooms.add(room);
   }
-  
+
   public List<Room> getRooms() {
     return rooms;
   }

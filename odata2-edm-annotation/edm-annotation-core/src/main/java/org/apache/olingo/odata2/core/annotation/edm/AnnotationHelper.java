@@ -16,7 +16,9 @@ package org.apache.olingo.odata2.core.annotation.edm;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -29,7 +31,6 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
-import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
@@ -43,6 +44,13 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
  */
 public class AnnotationHelper {
 
+  /**
+   * Compare keys of both instances.
+   * 
+   * @param firstInstance
+   * @param secondInstance
+   * @return 
+   */
   public boolean keyMatch(Object firstInstance, Object secondInstance) {
     if (firstInstance == null || secondInstance == null) {
       return false;
@@ -53,13 +61,29 @@ public class AnnotationHelper {
     Map<String, Object> firstKeyFields = getValueForAnnotatedFields(firstInstance, EdmKey.class);
     Map<String, Object> secondKeyFields = getValueForAnnotatedFields(secondInstance, EdmKey.class);
 
-    if (firstKeyFields.size() != secondKeyFields.size()) {
+    return keyValuesMatch(firstKeyFields, secondKeyFields);
+  }
+
+  /**
+   * Compare keys of instance with key values in map.
+   * 
+   * @param instance
+   * @param keyName2Value
+   * @return 
+   */
+  public boolean keyMatch(Object instance, Map<String, Object> keyName2Value) {
+    Map<String, Object> instanceKeyFields = getValueForAnnotatedFields(instance, EdmKey.class);
+    return keyValuesMatch(instanceKeyFields, keyName2Value);
+  }
+
+  private boolean keyValuesMatch(Map<String, Object> firstKeyValues, Map<String, Object> secondKeyValues) {
+    if (firstKeyValues.size() != secondKeyValues.size()) {
       return false;
     } else {
-      Set<Map.Entry<String, Object>> entries = firstKeyFields.entrySet();
+      Set<Map.Entry<String, Object>> entries = firstKeyValues.entrySet();
       for (Map.Entry<String, Object> entry : entries) {
         Object firstKey = entry.getValue();
-        Object secondKey = secondKeyFields.get(entry.getKey());
+        Object secondKey = secondKeyValues.get(entry.getKey());
         if (!isEqual(firstKey, secondKey)) {
           return false;
         }
@@ -67,7 +91,7 @@ public class AnnotationHelper {
       return true;
     }
   }
-
+  
   private boolean isEqual(Object firstKey, Object secondKey) {
     if (firstKey == null) {
       if (secondKey == null) {
@@ -80,19 +104,20 @@ public class AnnotationHelper {
     }
   }
 
-  public String extractEntitTypeName(NavigationEnd navEnd, Class<?> fallbackClass) {
-    Class<?> entityTypeClass = navEnd.entitySet();
+  public String extractEntitTypeName(EdmNavigationProperty enp, Class<?> fallbackClass) {
+    Class<?> entityTypeClass = enp.toType();
+    return extractEntityTypeName(entityTypeClass == Object.class ? fallbackClass : entityTypeClass);
+  }
+
+  public String extractEntitTypeName(EdmNavigationProperty enp, Field field) {
+    Class<?> entityTypeClass = enp.toType();
     if (entityTypeClass == Object.class) {
-      return extractEntityTypeName(fallbackClass);
+      Class<?> toClass = field.getType();
+      return extractEntityTypeName((toClass.isArray() || Collection.class.isAssignableFrom(toClass) ?
+          (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0] : toClass));
+    } else {
+      return extractEntityTypeName(entityTypeClass);
     }
-    EdmEntityType type = entityTypeClass.getAnnotation(EdmEntityType.class);
-    if (type == null) {
-      return null;
-    }
-    if(type.name().isEmpty()) {
-      return extractEntityTypeName(fallbackClass);
-    }
-    return type.name();
   }
 
   /**
@@ -165,7 +190,7 @@ public class AnnotationHelper {
       EdmNavigationProperty navProperty = field.getAnnotation(EdmNavigationProperty.class);
       if (navProperty == null) {
         throw new EdmAnnotationException("Given field '" + field
-                + "' has no EdmProperty or EdmNavigationProperty annotation.");
+            + "' has no EdmProperty or EdmNavigationProperty annotation.");
       }
       return navProperty.name();
     }
@@ -180,53 +205,54 @@ public class AnnotationHelper {
     return propertyName;
   }
 
-  public String extractRoleName(NavigationEnd navigationEnd, Class<?> fallbackClass) {
-      String role = navigationEnd.role();
-      if (role.isEmpty()) {
-        role = getCanonicalRole(navigationEnd, fallbackClass);
-      }
-      return role;
+  public String extractFromRoleName(EdmNavigationProperty enp, Field field) {
+    return getCanonicalRole(field.getDeclaringClass());
   }
-  
-  public String getCanonicalRole(NavigationEnd navEnd, Class<?> fallbackClass) {
-    String toRole = extractEntityTypeName(navEnd.entitySet());
-    if (toRole == null) {
-      toRole = extractEntityTypeName(fallbackClass);
+
+  public String extractToRoleName(EdmNavigationProperty enp, Field field) {
+    String role = enp.toRole();
+    if (role.isEmpty()) {
+      role = getCanonicalRole(
+          field.getType().isArray() || Collection.class.isAssignableFrom(field.getType()) ?
+              (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0] : field.getType());
     }
+    return role;
+  }
+
+  public String getCanonicalRole(Class<?> fallbackClass) {
+    String toRole = extractEntityTypeName(fallbackClass);
     return "r_" + toRole;
   }
 
   public String extractRelationshipName(EdmNavigationProperty enp, Field field) {
-    String fromRole = extractRoleName(enp.from(), field.getDeclaringClass());
-    String toRole = extractRoleName(enp.to(), field.getType());
-
-    return extractRelationshipName(enp, fromRole, toRole);
-  }
-    
-  public String extractRelationshipName(EdmNavigationProperty enp, String fromRole, String toRole) {
-      String relationshipName = enp.association();
-      if(relationshipName.isEmpty()) {
-        if(fromRole.compareTo(toRole) > 0) {
-          relationshipName = toRole + "-" + fromRole;
-        } else {
-          relationshipName = fromRole + "-" + toRole;
-        }
+    String relationshipName = enp.association();
+    if (relationshipName.isEmpty()) {
+      final String fromRole = extractFromRoleName(enp, field);
+      final String toRole = extractToRoleName(enp, field);
+      if (fromRole.compareTo(toRole) > 0) {
+        relationshipName = toRole + "-" + fromRole;
+      } else {
+        relationshipName = fromRole + "-" + toRole;
       }
-      return relationshipName;
+    }
+    return relationshipName;
   }
 
-  public static final class ODataAnnotationException extends ODataException {
+  public EdmMultiplicity getMultiplicity(EdmNavigationProperty enp, Field field) {
+    EdmMultiplicity multiplicity = enp.toMultiplicity();
+    final boolean isCollectionType = field.getType().isArray() || Collection.class.isAssignableFrom(field.getType());
 
-    public ODataAnnotationException(String message) {
-      super(message);
+    if (multiplicity == EdmMultiplicity.ONE && isCollectionType) {
+      return EdmMultiplicity.MANY;
     }
+    return multiplicity;
   }
 
   public <T> T setKeyFields(T instance, Map<String, Object> keys) {
     List<Field> fields = getAnnotatedFields(instance, EdmKey.class);
     if (fields.size() != keys.size()) {
       throw new IllegalStateException("Wrong amount of key properties. Expected read keys = "
-              + fields + " given key predicates = " + keys);
+          + fields + " given key predicates = " + keys);
     }
 
     for (Field field : fields) {
@@ -238,15 +264,21 @@ public class AnnotationHelper {
     return instance;
   }
 
-  public static class AnnotatedNavInfo {
+  public static final class ODataAnnotationException extends ODataException {
+    public ODataAnnotationException(String message) {
+      super(message);
+    }
+  }
 
+  
+  public class AnnotatedNavInfo {
     private final Field fromField;
     private final Field toField;
     private final EdmNavigationProperty fromNavigation;
     private final EdmNavigationProperty toNavigation;
 
     public AnnotatedNavInfo(Field fromField, Field toField, EdmNavigationProperty fromNavigation,
-            EdmNavigationProperty toNavigation) {
+        EdmNavigationProperty toNavigation) {
       this.fromField = fromField;
       this.toField = toField;
       this.fromNavigation = fromNavigation;
@@ -262,33 +294,11 @@ public class AnnotationHelper {
     }
 
     public EdmMultiplicity getFromMultiplicity() {
-      EdmMultiplicity from = fromNavigation.from().multiplicity();
-      EdmMultiplicity to = toNavigation.to().multiplicity();
-
-      if (from.equals(to)) {
-        return from;
-      } else {
-        if (EdmMultiplicity.MANY == from || EdmMultiplicity.MANY == to) {
-          return EdmMultiplicity.MANY;
-        } else {
-          return EdmMultiplicity.ONE;
-        }
-      }
+      return getMultiplicity(toNavigation, toField);
     }
 
     public EdmMultiplicity getToMultiplicity() {
-      EdmMultiplicity from = fromNavigation.to().multiplicity();
-      EdmMultiplicity to = toNavigation.from().multiplicity();
-
-      if (from.equals(to)) {
-        return from;
-      } else {
-        if (EdmMultiplicity.MANY == from || EdmMultiplicity.MANY == to) {
-          return EdmMultiplicity.MANY;
-        } else {
-          return EdmMultiplicity.ONE;
-        }
-      }
+      return getMultiplicity(fromNavigation, fromField);
     }
   }
 
@@ -296,30 +306,14 @@ public class AnnotationHelper {
     List<Field> sourceFields = getAnnotatedFields(sourceClass, EdmNavigationProperty.class);
     List<Field> targetFields = getAnnotatedFields(targetClass, EdmNavigationProperty.class);
 
-    for (Field targetField : targetFields) {
-      for (Field sourceField : sourceFields) {
-        EdmNavigationProperty sourceNav = sourceField.getAnnotation(EdmNavigationProperty.class);
-        EdmNavigationProperty targetNav = targetField.getAnnotation(EdmNavigationProperty.class);
-        String sourceAssociation = extractRelationshipName(sourceNav, sourceField);
-        String targetAssociation = extractRelationshipName(targetNav, targetField);
+    for (Field sourceField : sourceFields) {
+      final EdmNavigationProperty sourceNav = sourceField.getAnnotation(EdmNavigationProperty.class);
+      final String sourceAssociation = extractRelationshipName(sourceNav, sourceField);
+      for (Field targetField : targetFields) {
+        final EdmNavigationProperty targetNav = targetField.getAnnotation(EdmNavigationProperty.class);
+        final String targetAssociation = extractRelationshipName(targetNav, targetField);
         if (sourceAssociation.equals(targetAssociation)) {
           return new AnnotatedNavInfo(sourceField, targetField, sourceNav, targetNav);
-        }
-      }
-    }
-    return null;
-  }
-
-  public Field getCommonNavigationFieldFromTarget(Class<?> sourceClass, Class<?> targetClass) {
-    List<Field> sourceFields = getAnnotatedFields(sourceClass, EdmNavigationProperty.class);
-    List<Field> targetFields = getAnnotatedFields(targetClass, EdmNavigationProperty.class);
-
-    for (Field targetField : targetFields) {
-      for (Field sourcField : sourceFields) {
-        EdmNavigationProperty sourceNav = sourcField.getAnnotation(EdmNavigationProperty.class);
-        EdmNavigationProperty targetNav = targetField.getAnnotation(EdmNavigationProperty.class);
-        if (sourceNav.association().equals(targetNav.association())) {
-          return targetField;
         }
       }
     }
@@ -334,7 +328,7 @@ public class AnnotationHelper {
     Field field = getFieldForPropertyName(instance, propertyName, instance.getClass(), true);
     if (field == null) {
       throw new ODataAnnotationException("No field for property '" + propertyName
-              + "' found at class '" + instance.getClass() + "'.");
+          + "' found at class '" + instance.getClass() + "'.");
     }
     return field.getType();
   }
@@ -347,7 +341,7 @@ public class AnnotationHelper {
     Field field = getFieldForPropertyName(instance, propertyName, instance.getClass(), true);
     if (field == null) {
       throw new ODataAnnotationException("No field for property '" + propertyName
-              + "' found at class '" + instance.getClass() + "'.");
+          + "' found at class '" + instance.getClass() + "'.");
     }
     return getFieldValue(instance, field);
   }
@@ -362,7 +356,7 @@ public class AnnotationHelper {
   }
 
   private Field getFieldForPropertyName(Object instance, String propertyName,
-          Class<?> resultClass, boolean inherited) {
+      Class<?> resultClass, boolean inherited) {
     if (instance == null) {
       return null;
     }
@@ -402,17 +396,17 @@ public class AnnotationHelper {
   }
 
   private Object getValueForField(Object instance, Class<?> resultClass,
-          Class<? extends Annotation> annotation, boolean inherited) {
+      Class<? extends Annotation> annotation, boolean inherited) {
     return getValueForField(instance, null, resultClass, annotation, inherited);
   }
 
   public Map<String, Object> getValueForAnnotatedFields(Object instance,
-          Class<? extends Annotation> annotation) {
+      Class<? extends Annotation> annotation) {
     return getValueForAnnotatedFields(instance, instance.getClass(), annotation, true);
   }
 
   private Map<String, Object> getValueForAnnotatedFields(Object instance, Class<?> resultClass,
-          Class<? extends Annotation> annotation, boolean inherited) {
+      Class<? extends Annotation> annotation, boolean inherited) {
     if (instance == null) {
       return null;
     }
@@ -423,7 +417,9 @@ public class AnnotationHelper {
     for (Field field : fields) {
       if (field.getAnnotation(annotation) != null) {
         Object value = getFieldValue(instance, field);
-        fieldName2Value.put(field.getName(), value);
+        final EdmProperty property = field.getAnnotation(EdmProperty.class);
+        final String name = property == null || property.name().isEmpty() ? field.getName() : property.name();
+        fieldName2Value.put(name, value);
       }
     }
 
@@ -437,7 +433,7 @@ public class AnnotationHelper {
   }
 
   public void setValuesToAnnotatedFields(Map<String, Object> fieldName2Value, Object instance,
-          Class<? extends Annotation> annotation) {
+      Class<? extends Annotation> annotation) {
     List<Field> fields = getAnnotatedFields(instance, annotation);
 
     // XXX: refactore
@@ -470,7 +466,7 @@ public class AnnotationHelper {
    * @return
    */
   private List<Field> getAnnotatedFields(Class<?> resultClass,
-          Class<? extends Annotation> annotation, boolean inherited) {
+      Class<? extends Annotation> annotation, boolean inherited) {
     if (resultClass == null) {
       return null;
     }
@@ -494,7 +490,7 @@ public class AnnotationHelper {
   }
 
   private Object getValueForField(Object instance, String fieldName, Class<?> resultClass,
-          Class<? extends Annotation> annotation, boolean inherited) {
+      Class<? extends Annotation> annotation, boolean inherited) {
     if (instance == null) {
       return null;
     }
@@ -502,7 +498,7 @@ public class AnnotationHelper {
     Field[] fields = resultClass.getDeclaredFields();
     for (Field field : fields) {
       if (field.getAnnotation(annotation) != null
-              && (fieldName == null || field.getName().equals(fieldName))) {
+          && (fieldName == null || field.getName().equals(fieldName))) {
         return getFieldValue(instance, field);
       }
     }
@@ -532,8 +528,8 @@ public class AnnotationHelper {
   private void setFieldValue(Object instance, Field field, Object propertyValue) {
     try {
       if (propertyValue != null
-              && field.getType() != propertyValue.getClass()
-              && propertyValue.getClass() == String.class) {
+          && field.getType() != propertyValue.getClass()
+          && propertyValue.getClass() == String.class) {
         propertyValue = convert(field, (String) propertyValue);
       }
       boolean access = field.isAccessible();
@@ -548,15 +544,15 @@ public class AnnotationHelper {
   }
 
   public Object convert(Field field, String propertyValue) {
-    Class fieldClass = field.getType();
+    Class<?> fieldClass = field.getType();
     try {
       EdmProperty property = field.getAnnotation(EdmProperty.class);
       EdmSimpleTypeKind type = property.type();
       return type.getEdmSimpleTypeInstance().valueOfString(propertyValue,
-              EdmLiteralKind.DEFAULT, null, fieldClass);
+          EdmLiteralKind.DEFAULT, null, fieldClass);
     } catch (EdmSimpleTypeException ex) {
       throw new ODataRuntimeException("Conversion failed for string property with error: "
-              + ex.getMessage(), ex);
+          + ex.getMessage(), ex);
     }
   }
 

@@ -14,8 +14,8 @@
  */
 package org.apache.olingo.odata2.ref.annotation.processor;
 
-import org.apache.olingo.odata2.core.annotation.data.AnnotationValueAccess;
-import org.apache.olingo.odata2.core.annotation.data.AnnotationInMemoryDs;
+import java.util.Calendar;
+
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.ODataDebugCallback;
 import org.apache.olingo.odata2.api.ODataService;
@@ -28,10 +28,15 @@ import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataErrorCallback;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.annotation.data.AnnotationInMemoryDs;
+import org.apache.olingo.odata2.core.annotation.data.AnnotationValueAccess;
 import org.apache.olingo.odata2.core.annotation.data.DataStore;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationEdmProvider;
 import org.apache.olingo.odata2.core.annotation.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.annotation.model.Building;
+import org.apache.olingo.odata2.ref.annotation.model.Employee;
+import org.apache.olingo.odata2.ref.annotation.model.Location;
+import org.apache.olingo.odata2.ref.annotation.model.Manager;
 import org.apache.olingo.odata2.ref.annotation.model.Photo;
 import org.apache.olingo.odata2.ref.annotation.model.ResourceHelper;
 import org.apache.olingo.odata2.ref.annotation.model.Room;
@@ -75,7 +80,7 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
   /*
   * Helper classes and methods
   */
-  
+
   /**
    * 
    */
@@ -133,6 +138,31 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
     roomDs.create(createRoom("Big blue room", 40, 1, blueBuilding));
     roomDs.create(createRoom("Huge blue room", 120, 1, blueBuilding));
     roomDs.create(createRoom("Huge yellow room", 120, 1, yellowBuilding));
+
+    DataStore<Employee> employeeDataStore = dataSource.getDataStore(Employee.class);
+    employeeDataStore.create(createEmployee("first Employee",
+        new Location("Norge", "8392", "Ä"), 42, null,
+        photoDs.read().iterator().next().getImage(), photoDs.read().iterator().next().getImageType(),
+        "http://localhost/image/first.png",
+        null, teamDs.read().iterator().next(), roomDs.read().iterator().next()));
+  }
+
+  private Employee createEmployee(final String name,
+      Location location, final int age, final Calendar date,
+      final byte[] image, final String imageType, final String imageUrl,
+      Manager manager, Team team, Room room) {
+    Employee employee = new Employee();
+    employee.setEmployeeName(name);
+    employee.setLocation(location);
+    employee.setAge(age);
+    employee.setEntryDate(date);
+    employee.setImage(image);
+    employee.setImageType(imageType);
+    employee.setImageUri(imageUrl);
+    employee.setManager(manager);
+    employee.setTeam(team);
+    employee.setRoom(room);
+    return employee;
   }
 
   private Team createTeam(String teamName, boolean isScrumTeam) {

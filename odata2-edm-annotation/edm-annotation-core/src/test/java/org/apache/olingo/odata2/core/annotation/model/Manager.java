@@ -20,24 +20,24 @@ package org.apache.olingo.odata2.core.annotation.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
-import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
+import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 
 /**
  *
  */
-@EdmEntityType(name = "Manager", namespace = ModelSharedConstants.NAMESPACE_1) 
+@EdmEntityType(name = "Manager", namespace = ModelSharedConstants.NAMESPACE_1)
 @EdmEntitySet(name = "Managers")
 public class Manager extends Employee {
 
   @EdmNavigationProperty(name = "nm_Employees", association = "ManagerEmployees",
-          to = @NavigationEnd(role = "r_Employees", entitySet = Employee.class))
+      toMultiplicity = EdmMultiplicity.MANY)
   private List<Employee> employees = new ArrayList<Employee>();
 
-  public Manager(final int id, final String name) {
+  public Manager(final String id, final String name) {
     super(id, name);
   }
 

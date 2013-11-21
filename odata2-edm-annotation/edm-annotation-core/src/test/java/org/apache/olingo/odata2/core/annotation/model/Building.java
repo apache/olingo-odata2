@@ -21,31 +21,33 @@ package org.apache.olingo.odata2.core.annotation.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
-import org.apache.olingo.odata2.api.annotation.edm.NavigationEnd;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 
 /**
  *  
  */
-@EdmEntityType(name="Building", namespace=ModelSharedConstants.NAMESPACE_1) 
+@EdmEntityType(name = "Building", namespace = ModelSharedConstants.NAMESPACE_1)
 @EdmEntitySet(name = "Buildings")
 public class Building {
   @EdmKey
-  @EdmProperty(type = EdmSimpleTypeKind.String)
+  @EdmProperty(type = EdmSimpleTypeKind.Int32)
   private String id;
   @EdmProperty
   private String name;
+  @EdmProperty(name = "Image", type = EdmSimpleTypeKind.Binary)
   private byte[] image;
-  @EdmNavigationProperty(name="nb_rooms", association="BuildingRooms",
-          to = @NavigationEnd(role = "r_Room", entitySet=Room.class, multiplicity = EdmMultiplicity.MANY))
+  @EdmNavigationProperty(name = "nb_Rooms", toType = Room.class,
+      association = "BuildingRooms", toMultiplicity = EdmMultiplicity.MANY)
   private List<Room> rooms = new ArrayList<Room>();
+
+  public Building() {}
 
   public String getId() {
     return id;
@@ -77,10 +79,7 @@ public class Building {
 
   @Override
   public int hashCode() {
-    if(id == null) {
-      return 0;
-    }
-    return id.hashCode();
+      return id == null ? 0 : id.hashCode();
   }
 
   @Override
