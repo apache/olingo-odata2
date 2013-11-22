@@ -22,6 +22,8 @@ import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 
+import javax.servlet.http.HttpServlet;
+
 import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
@@ -96,8 +98,8 @@ public class TestServer {
   public void startServer(final Class<? extends ODataServiceFactory> factoryClass) {
     try {
       for (int port = PORT_MIN; port <= PORT_MAX; port += PORT_INC) {
-        final ServletContextHandler contextHandler = createContextHandler(factoryClass);
-
+        //final ServletContextHandler contextHandler = createContextHandler(factoryClass);
+        final ServletContextHandler contextHandler = createODataContextHandler(factoryClass);
         try {
           final InetSocketAddress isa = new InetSocketAddress(DEFAULT_HOST, port);
           server = new Server(isa);
@@ -138,6 +140,23 @@ public class TestServer {
     return contextHandler;
   }
 
+  private ServletContextHandler createODataContextHandler(final Class<? extends ODataServiceFactory> factoryClass) 
+      throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    String odataServlet = "org.apache.olingo.odata2.core.servlet.ODataServlet";
+    final HttpServlet httpServlet = (HttpServlet) Class.forName(odataServlet).newInstance();
+    final ServletHolder odataServletHolder = new ServletHolder(httpServlet);
+    odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
+
+    if (pathSplit > 0) {
+      odataServletHolder.setInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL, Integer.toString(pathSplit));
+    }
+
+    final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    contextHandler.setContextPath("/abc");
+    contextHandler.addServlet(odataServletHolder, path + "/*");
+    return contextHandler;
+  }
+  
   public void startServer(final ODataService service) {
     startServer(FitStaticServiceFactory.class);
 
