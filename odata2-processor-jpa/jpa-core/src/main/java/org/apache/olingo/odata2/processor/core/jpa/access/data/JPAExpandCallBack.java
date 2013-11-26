@@ -73,8 +73,11 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       navigationLinks = context.getCurrentExpandSelectTreeNode().getLinks();
       if (navigationLinks.size() > 0) {
         currentNavPropertyList = new ArrayList<EdmNavigationProperty>();
-        currentNavPropertyList.add(getNextNavigationProperty(context.getSourceEntitySet().getEntityType(), context
-            .getNavigationProperty()));
+        EdmNavigationProperty nextNavProperty =
+            getNextNavigationProperty(context.getSourceEntitySet().getEntityType(), context.getNavigationProperty());
+        if (nextNavProperty != null) {
+          currentNavPropertyList.add(nextNavProperty);
+        }
         HashMap<String, Object> navigationMap =
             jpaResultParser.parse2EdmNavigationValueMap(inlinedEntry, currentNavPropertyList);
         edmPropertyValueMap.putAll(navigationMap);
@@ -112,8 +115,11 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       result.setFeedData(edmEntityList);
       if (context.getCurrentExpandSelectTreeNode().getLinks().size() > 0) {
         currentNavPropertyList = new ArrayList<EdmNavigationProperty>();
-        currentNavPropertyList.add(getNextNavigationProperty(context.getSourceEntitySet().getEntityType(), context
-            .getNavigationProperty()));
+        EdmNavigationProperty nextNavProperty =
+            getNextNavigationProperty(context.getSourceEntitySet().getEntityType(), context.getNavigationProperty());
+        if (nextNavProperty != null) {
+          currentNavPropertyList.add(nextNavProperty);
+        }
         int count = 0;
         for (Object object : listOfItems) {
           HashMap<String, Object> navigationMap =
@@ -134,18 +140,16 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
 
   private EdmNavigationProperty getNextNavigationProperty(final EdmEntityType sourceEntityType,
       final EdmNavigationProperty navigationProperty) throws EdmException {
-    int count;
     for (ArrayList<NavigationPropertySegment> navPropSegments : expandList) {
-      count = 0;
-      for (NavigationPropertySegment navPropSegment : navPropSegments) {
-        EdmNavigationProperty navProperty = navPropSegment.getNavigationProperty();
+      int size = navPropSegments.size();
+      for (int i = 0; i < size; i++) {
+        EdmNavigationProperty navProperty = navPropSegments.get(i).getNavigationProperty();
         if (navProperty.getFromRole().equalsIgnoreCase(sourceEntityType.getName())
             && navProperty.getName().equals(navigationProperty.getName())) {
-          return navPropSegments.get(count + 1).getNavigationProperty();
-        } else {
-          count++;
+          if (i < size - 1) {
+            return navPropSegments.get(i + 1).getNavigationProperty();
+          }
         }
-
       }
     }
     return null;

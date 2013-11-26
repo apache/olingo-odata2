@@ -94,10 +94,11 @@ public final class ODataJPAResponseBuilder {
       expandList = resultsView.getExpand();
       if (expandList != null && expandList.size() != 0) {
         int count = 0;
+        List<EdmNavigationProperty> edmNavPropertyList = constructListofNavProperty(expandList);
         for (Object jpaEntity : jpaEntities) {
           Map<String, Object> relationShipMap = edmEntityList.get(count);
           HashMap<String, Object> navigationMap =
-              jpaResultParser.parse2EdmNavigationValueMap(jpaEntity, constructListofNavProperty(expandList));
+              jpaResultParser.parse2EdmNavigationValueMap(jpaEntity, edmNavPropertyList);
           relationShipMap.putAll(navigationMap);
           count++;
         }
@@ -429,7 +430,7 @@ public final class ODataJPAResponseBuilder {
 
   /*
    * This method handles $inlinecount request. It also modifies the list of results in case of
-   * $inlinecount and $top/$skip combinations. Specific to LinksUriInfo. 
+   * $inlinecount and $top/$skip combinations. Specific to LinksUriInfo.
    * 
    * @param edmEntityList
    * 
@@ -501,7 +502,7 @@ public final class ODataJPAResponseBuilder {
 
   /*
    * This method handles $inlinecount request. It also modifies the list of results in case of
-   * $inlinecount and $top/$skip combinations. Specific to Entity Set. 
+   * $inlinecount and $top/$skip combinations. Specific to Entity Set.
    */
   private static Integer getInlineCountForNonFilterQueryEntitySet(final List<Map<String, Object>> edmEntityList,
       final GetEntitySetUriInfo resultsView) {
