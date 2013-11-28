@@ -213,7 +213,8 @@ public class AbstractRefTest extends AbstractFitTest {
   }
 
   protected void checkMediaType(final HttpResponse response, final String expectedMediaType) {
-    assertEquals(expectedMediaType, response.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+    assertEquals(expectedMediaType.toUpperCase(), 
+        response.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue().toUpperCase());
   }
 
   protected void checkEtag(final HttpResponse response, final String expectedEtag) {

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
@@ -29,13 +30,17 @@ import org.apache.olingo.odata2.core.commons.Decoder;
 public class RestUtil {
   private static final String REG_EX_QUALITY_FACTOR = "q=((?:1\\.0{0,3})|(?:0\\.[0-9]{0,2}[1-9]))";
   private static final String REG_EX_OPTIONAL_WHITESPACE = "\\s?";
-  private static final Pattern REG_EX_ACCEPT = Pattern.compile("([a-z\\*]+/[a-z0-9\\+\\*\\-=;\\s]+)");
+  private static final Pattern REG_EX_ACCEPT = Pattern.compile("([a-z\\*\\s]+/[a-z0-9\\+\\*\\-=;\\s]+)");
   private static final Pattern REG_EX_ACCEPT_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT + "(?:;"
+      + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QUALITY_FACTOR + ")?");
+  private static final Pattern REG_EX_ACCEPT_LANGUAGES = Pattern
+      .compile("((?:[a-z]{1,8})|(?:\\*))\\-?([a-zA-Z]{1,8})?");
+  private static final Pattern REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT_LANGUAGES + "(?:;"
       + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QUALITY_FACTOR + ")?");
 
   public static List<String> extractAcceptHeaders(final String header) {
     List<String> acceptHeaders = new ArrayList<String>();
-    if (header != null) {
+    if (header != null && !header.isEmpty()) {
       Scanner acceptHeaderScanner = new Scanner(header).useDelimiter(",\\s?");
       while (acceptHeaderScanner.hasNext()) {
         if (acceptHeaderScanner.hasNext(REG_EX_ACCEPT_WITH_Q_FACTOR)) {
@@ -126,9 +131,9 @@ public class RestUtil {
       throws ODataException {
     /* String pathInfoString = servletRequest.getContextPath()+servletRequest.getServletPath()
      * +servletRequest.getPathInfo();*/
-    String pathInfoString = servletRequest.getPathInfo();
-
-    if (pathInfoString.startsWith("/")) {
+    //  String pathInfoString = servletRequest.getPathInfo();
+    String pathInfoString = extractPathInfo(servletRequest);
+    while (pathInfoString.startsWith("/")) {
       pathInfoString = pathInfoString.substring(1);
     }
     List<String> segments = Arrays.asList(pathInfoString.split("/"));
@@ -163,6 +168,23 @@ public class RestUtil {
     return pathInfo;
   }
 
+  private static String extractPathInfo(final HttpServletRequest servletRequest) {
+    String pathInfoString;
+    final String requestUri = servletRequest.getRequestURI();
+    pathInfoString = requestUri;
+    int index = requestUri.indexOf(servletRequest.getContextPath());
+
+    if (index >= 0) {
+      pathInfoString = pathInfoString.substring(servletRequest.getContextPath().length());
+    }
+
+    int indexServletPath = requestUri.indexOf(servletRequest.getServletPath());
+    if (indexServletPath > 0) {
+      pathInfoString = pathInfoString.substring(servletRequest.getServletPath().length());
+    }
+    return pathInfoString;
+  }
+
   private static List<PathSegment> convertPathSegmentList(final List<String> pathSegments) {
     ArrayList<PathSegment> converted = new ArrayList<PathSegment>();
     for (final String pathSegment : pathSegments) {
@@ -188,6 +210,41 @@ public class RestUtil {
       throw new ODataUnsupportedMediaTypeException(
           ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE.addContent(contentType));
     }
+  }
+
+  public static Map<String, String> extractQueryParameters(final String queryString) {
+    Map<String, String> queryParametersMap = new HashMap<String, String>();
+    if (queryString != null) {
+      List<String> qParameters = Arrays.asList(Decoder.decode(queryString).split("\\&"));
+      for (String param : qParameters) {
+        String[] p = param.split("=");
+        queryParametersMap.put(p[0], p[1]);
+      }
+    }
+    return queryParametersMap;
+  }
+
+  public static List<Locale> extractAcceptableLanguage(final String acceptableLanguageHeader) {
+    List<Locale> acceptLanguages = new ArrayList<Locale>();
+    if (acceptableLanguageHeader != null) {
+      Scanner acceptLanguageScanner = new Scanner(acceptableLanguageHeader).useDelimiter(",\\s?");
+      while (acceptLanguageScanner.hasNext()) {
+        if (acceptLanguageScanner.hasNext(REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR)) {
+          acceptLanguageScanner.next(REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR);
+          MatchResult result = acceptLanguageScanner.match();
+          String language = result.group(1);
+          String country = result.group(2);
+          //        //double qualityFactor = result.group(2) != null ? Double.parseDouble(result.group(2)) : 1d;
+          if (country == null) {
+            acceptLanguages.add(new Locale(language));
+          } else {
+            acceptLanguages.add(new Locale(language, country));
+          }
+        }
+      }
+      acceptLanguageScanner.close();
+    }
+    return acceptLanguages;
   }
 
 }

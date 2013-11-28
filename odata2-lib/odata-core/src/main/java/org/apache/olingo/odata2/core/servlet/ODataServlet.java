@@ -1,11 +1,11 @@
 package org.apache.olingo.odata2.core.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +31,7 @@ public class ODataServlet extends HttpServlet {
   private int pathSplit = 0;
 
   @Override
-  public void init() throws ServletException {
+  protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
     final String factoryClassName = getInitParameter(ODataServiceFactory.FACTORY_LABEL);
     if (factoryClassName == null) {
       throw new ODataRuntimeException("config missing: org.apache.olingo.odata2.processor.factory");
@@ -45,24 +45,25 @@ public class ODataServlet extends HttpServlet {
     if (pathSplitAsString != null) {
       pathSplit = Integer.parseInt(pathSplitAsString);
     }
-  }
+    String method = req.getMethod();
+    if (method.equals("GET")) {
+      handleRequest(req, ODataHttpMethod.GET, resp);
 
-  @Override
-  protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
-      throws ServletException, IOException {
-    handleRequest(req, ODataHttpMethod.GET, resp);
-  }
+    } else if (method.equals("POST")) {
+      handleRequest(req, ODataHttpMethod.POST, resp);
 
-  @Override
-  protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
-      throws ServletException, IOException {
-    handleRequest(req, ODataHttpMethod.POST, resp);
-  }
+    } else if (method.equals("PUT")) {
+      handleRequest(req, ODataHttpMethod.PUT, resp);
 
-  @Override
-  protected void doPut(final HttpServletRequest req, final HttpServletResponse resp)
-      throws ServletException, IOException {
-    handleRequest(req, ODataHttpMethod.PUT, resp);
+    } else if (method.equals("DELETE")) {
+      handleRequest(req, ODataHttpMethod.DELETE, resp);
+
+    } else if (method.equals("PATCH")) {
+      handleRequest(req, ODataHttpMethod.PATCH, resp);
+    }
+    else if (method.equals("MERGE")) {
+      handleRequest(req, ODataHttpMethod.MERGE, resp);
+    }
   }
 
   private void handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp)
@@ -71,9 +72,9 @@ public class ODataServlet extends HttpServlet {
       ODataRequest request = ODataRequest.method(method)
           .contentType(RestUtil.extractRequestContentType(req.getContentType()).toContentTypeString())
           .acceptHeaders(RestUtil.extractAcceptHeaders(req.getHeader("Accept")))
-          .acceptableLanguages(new ArrayList<Locale>())
+          .acceptableLanguages(RestUtil.extractAcceptableLanguage(req.getHeader("Accept-Language")))
           .pathInfo(RestUtil.buildODataPathInfo(req, pathSplit))
-          .queryParameters(new HashMap<String, String>())
+          .queryParameters(RestUtil.extractQueryParameters(req.getQueryString()))
           .requestHeaders(RestUtil.extractHeaders(req))
           .body(req.getInputStream())
           .build();
@@ -95,6 +96,26 @@ public class ODataServlet extends HttpServlet {
     resp.setContentType(response.getContentHeader());
     for (String headerName : response.getHeaderNames()) {
       resp.setHeader(headerName, response.getHeader(headerName));
+    }
+
+    Object entity = response.getEntity();
+    if (entity != null) {
+      OutputStream out = resp.getOutputStream();
+      int curByte = -1;
+      if (entity instanceof InputStream) {
+        while ((curByte = ((InputStream) entity).read()) != -1) {
+          out.write((char) curByte);
+        }
+        out.flush();
+        //((InputStream) entity).close();
+      } else if (entity instanceof String) {
+        Reader sr = new StringReader((String) entity);
+        while ((curByte = sr.read()) > -1) {
+          out.write(curByte);
+        }
+        out.flush();
+      }
+      // out.close();
     }
   }
 
