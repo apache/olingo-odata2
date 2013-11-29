@@ -269,6 +269,22 @@ th,td {
 						target="_blank">Materials(112L)/StoreDetails</a></li>
 
 				</ul>
+				<h3>$expand</h3>
+				<ul>
+					<li><a
+						href="SalesOrderProcessing.svc/SalesOrders?$expand=SalesOrderLineItemDetails"
+						target="_blank">SalesOrders?$expand=SalesOrderLineItemDetails</a></li>
+					<li><a
+						href="SalesOrderProcessing.svc/SalesOrders(2L)?$expand=SalesOrderLineItemDetails"
+						target="_blank">SalesOrders(2L)?$expand=SalesOrderLineItemDetails</a></li>
+					<li><a
+						href="SalesOrderProcessing.svc/SalesOrders?$expand=SalesOrderLineItemDetails/MaterialDetails,SalesOrderLineItemDetails/MaterialDetails/StoreDetails,NotesDetails"
+						target="_blank">SalesOrders?$expand=SalesOrderLineItemDetails/MaterialDetails,SalesOrderLineItemDetails/MaterialDetails/StoreDetails,NotesDetails</a></li>
+					<li><a
+						href="SalesOrderProcessing.svc/SalesOrders(2L)?$expand=SalesOrderLineItemDetails/MaterialDetails,SalesOrderLineItemDetails/MaterialDetails/StoreDetails,NotesDetails"
+						target="_blank">SalesOrders(2L)?$expand=SalesOrderLineItemDetails/MaterialDetails,SalesOrderLineItemDetails/MaterialDetails/StoreDetails,NotesDetails</a></li>
+
+				</ul>
 			</td>
 			<td valign="top">&nbsp;</td>
 			<td valign="bottom">
