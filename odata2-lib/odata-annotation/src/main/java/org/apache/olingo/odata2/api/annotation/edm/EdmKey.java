@@ -23,7 +23,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * <p>Annotation for definition of an EdmProperty as EdmKey for the EdmEntityType which contains the EdmProperty.</p>
+ * This annotation can not be parameterized, all values like name are defined via the {@link EdmProperty} annotation.
+ * In addition the EdmKey annotation has to be used in conjunction with an EdmProperty annotation on a field
+ * within a EdmEntityType annotated class.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface EdmKey {
-}
+public @interface EdmKey {}

@@ -23,6 +23,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ *  @deprecated: As of Olingo version 1.1.x, replaced by {@link EdmFacets}.
+ */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface Facets {

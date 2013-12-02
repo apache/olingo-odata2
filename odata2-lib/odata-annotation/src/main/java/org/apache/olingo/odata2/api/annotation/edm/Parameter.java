@@ -23,6 +23,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @deprecated: As of Olingo version 1.1.x, replaced by @link {@link EdmFunctionImportParameter} 
+ * within {@link EdmFunctionImport}.
+ */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Parameter {

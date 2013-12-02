@@ -79,7 +79,6 @@ public class AnnotationEdmProvider extends EdmProvider {
   private final Map<String, ContainerBuilder> containerName2ContainerBuilder = new HashMap<String, ContainerBuilder>();
   private final Map<String, Schema> namespace2Schema = new HashMap<String, Schema>();
   private EntityContainer defaultContainer;
-  private String DEFAULT_CONTAINER_NAME = "DefaultContainer";
 
   public AnnotationEdmProvider(Collection<Class<?>> annotatedClasses) {
 
@@ -251,24 +250,27 @@ public class AnnotationEdmProvider extends EdmProvider {
   }
 
   private void updateSchema(Class<?> aClass, EdmEntityType et) {
-    String namespace = et.namespace();
-    SchemaBuilder b = namespace2SchemaBuilder.get(namespace);
-    if (b == null) {
-      b = SchemaBuilder.init(namespace);
-      namespace2SchemaBuilder.put(namespace, b);
-    }
+    SchemaBuilder b = getSchemaBuilder(et.namespace(), aClass);
     TypeBuilder typeBuilder = TypeBuilder.init(et, aClass);
     b.addEntityType(typeBuilder.buildEntityType());
     b.addAssociations(typeBuilder.buildAssociations());
   }
 
-  private void updateSchema(Class<?> aClass, EdmComplexType et) {
-    String namespace = et.namespace();
-    SchemaBuilder b = namespace2SchemaBuilder.get(namespace);
-    if (b == null) {
-      b = SchemaBuilder.init(namespace);
-      namespace2SchemaBuilder.put(namespace, b);
+  private SchemaBuilder getSchemaBuilder(String namespace, Class<?> aClass) {
+    String usedNamespace = namespace;
+    if(usedNamespace.isEmpty()) {
+      usedNamespace = ANNOTATION_HELPER.getCanonicalNamespace(aClass);
     }
+    SchemaBuilder builder = namespace2SchemaBuilder.get(usedNamespace);
+    if (builder == null) {
+      builder = SchemaBuilder.init(usedNamespace);
+      namespace2SchemaBuilder.put(usedNamespace, builder);
+    }
+    return builder;
+  }
+
+  private void updateSchema(Class<?> aClass, EdmComplexType et) {
+    SchemaBuilder b = getSchemaBuilder(et.namespace(), aClass);
     TypeBuilder typeBuilder = TypeBuilder.init(et, aClass);
     b.addComplexType(typeBuilder.buildComplexType());
   }
@@ -276,15 +278,15 @@ public class AnnotationEdmProvider extends EdmProvider {
   private void handleEntityContainer(Class<?> aClass) {
     EdmEntityType entityType = aClass.getAnnotation(EdmEntityType.class);
     if (entityType != null) {
-      String containerName = DEFAULT_CONTAINER_NAME;
+      FullQualifiedName typeName = createFqnForEntityType(aClass, entityType);
+      String containerName = ANNOTATION_HELPER.extractContainerName(aClass);
       ContainerBuilder builder = containerName2ContainerBuilder.get(containerName);
       if (builder == null) {
-        builder = ContainerBuilder.init(entityType.namespace(), containerName);
+        builder = ContainerBuilder.init(typeName.getNamespace(), containerName);
         containerName2ContainerBuilder.put(containerName, builder);
       }
       EdmEntitySet entitySet = aClass.getAnnotation(EdmEntitySet.class);
       if (entitySet != null) {
-        FullQualifiedName typeName = createFqnForEntityType(aClass, entityType);
         builder.addEntitySet(createEntitySet(typeName, entitySet));
       }
     }
@@ -295,12 +297,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   }
 
   private FullQualifiedName createFqnForEntityType(Class<?> annotatedClass, EdmEntityType entityType) {
-    String name = entityType.name();
-    if (name.isEmpty()) {
-      return new FullQualifiedName(entityType.namespace(), annotatedClass.getSimpleName());
-    } else {
-      return new FullQualifiedName(entityType.namespace(), entityType.name());
-    }
+    return ANNOTATION_HELPER.extractEntityTypeFqn(annotatedClass);
   }
 
   private void finish() {
@@ -339,21 +336,17 @@ public class AnnotationEdmProvider extends EdmProvider {
     private final List<NavigationProperty> navProperties = new ArrayList<NavigationProperty>();
     private final List<Association> associations = new ArrayList<Association>();
 
-    //    public TypeBuilder(String namespace, String name) {
-    //      this.namespace = namespace;
-    //      this.name = name;
-    //    }
     public TypeBuilder(FullQualifiedName fqn) {
       this.namespace = fqn.getNamespace();
       this.name = fqn.getName();
     }
 
     public static TypeBuilder init(EdmEntityType entity, Class<?> aClass) {
-      return new TypeBuilder(ANNOTATION_HELPER.extractEntityTypeFqn(aClass)).withClass(aClass);
+      return new TypeBuilder(ANNOTATION_HELPER.extractEntityTypeFqn(entity, aClass)).withClass(aClass);
     }
 
     public static TypeBuilder init(EdmComplexType entity, Class<?> aClass) {
-      return new TypeBuilder(ANNOTATION_HELPER.extractComplexTypeFqn(aClass)).withClass(aClass);
+      return new TypeBuilder(ANNOTATION_HELPER.extractComplexTypeFqn(entity, aClass)).withClass(aClass);
     }
 
     private TypeBuilder withClass(Class<?> aClass) {
@@ -414,8 +407,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       if (baseEntityType != null) {
         complexType.setBaseType(baseEntityType);
       }
-      return complexType.setName(name)
-          .setProperties(properties);
+      return complexType.setName(name).setProperties(properties);
     }
 
     public EntityType buildEntityType() {

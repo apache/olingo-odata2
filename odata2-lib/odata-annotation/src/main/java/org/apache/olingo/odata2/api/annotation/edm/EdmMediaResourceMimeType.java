@@ -23,7 +23,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * <p>Annotation for definition of an {@link EdmProperty} as <b>mime type for the media resource</b> 
+ * of the {@link EdmEntityType} which contains the {@link EdmProperty}.
+ * The value of the {@link EdmMediaResourceMimeType} annotated field will be used as <code>Content-Type</code>
+ * of the media content response (of an OData <code>$value</code> request).
+ * </p>
+ * This annotation can not be parameterized, all values like name are defined via the {@link EdmProperty} annotation.
+ * In addition the {@link EdmMediaResourceMimeType} annotation has to be used in conjunction with an 
+ * {@link EdmProperty} annotation on a field within an {@link EdmEntityType} annotated class.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface EdmMediaResourceMimeType {
-}
+public @interface EdmMediaResourceMimeType {}

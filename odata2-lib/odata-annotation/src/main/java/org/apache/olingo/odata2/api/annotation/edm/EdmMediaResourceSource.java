@@ -23,7 +23,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * <p>Annotation for definition of an {@link EdmProperty} as <b>media resource source</b> for the {@link EdmEntityType} 
+ * which contains the {@link EdmProperty}. 
+ * This annotation can not be parameterized, all values like name are defined via the {@link EdmProperty} annotation.
+ * In addition the {@link EdmMediaResourceSource} annotation has to be used in conjunction with an 
+ * {@link EdmProperty} annotation on a field within an {@link EdmEntityType} annotated class.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface EdmMediaResourceSource {
-}
+public @interface EdmMediaResourceSource {}
