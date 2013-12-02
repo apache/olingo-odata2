@@ -828,7 +828,12 @@ public class XmlMetadataConsumer {
       if (reader.isStartElement()) {
         annotationElements.add(readAnnotationElement(reader));
       } else if (reader.isCharacters()) {
-        aElement.setText(reader.getText());
+        String elementText = "";
+        do {
+          elementText = elementText + reader.getText();
+          reader.next();
+        } while (reader.isCharacters());
+        aElement.setText(elementText);
       }
     }
     if (!annotationElements.isEmpty()) {
@@ -1015,7 +1020,7 @@ public class XmlMetadataConsumer {
 
   private void validateAssociationEnd(final AssociationSetEnd end, final Association association)
       throws EntityProviderException {
-    if (!(association.getEnd1().getRole().equals(end.getRole()) ^
+    if (!(association.getEnd1().getRole().equals(end.getRole()) ^ 
         association.getEnd2().getRole().equals(end.getRole()))) {
       throw new EntityProviderException(EntityProviderException.COMMON.addContent("Invalid Association"));
     }
