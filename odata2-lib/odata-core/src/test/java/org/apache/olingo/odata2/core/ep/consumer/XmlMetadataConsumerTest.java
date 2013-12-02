@@ -62,12 +62,11 @@ import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
-import org.apache.olingo.odata2.core.ep.AbstractXmlProducerTestHelper;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 import org.junit.Test;
 
-public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
+public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
 
   public XmlMetadataConsumerTest(final StreamWriterImplType type) {
     super(type);
@@ -180,23 +179,23 @@ public class XmlMetadataConsumerTest extends AbstractXmlProducerTestHelper {
 
   @Test
   public void stringValueForMaxLegthFacet() throws Exception {
-      XmlMetadataConsumer parser = new XmlMetadataConsumer();
-      XMLStreamReader reader = createStreamReader(xmlWithStringValueForMaxLengthFacet);
-      DataServices result = parser.readMetadata(reader, true);
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(xmlWithStringValueForMaxLengthFacet);
+    DataServices result = parser.readMetadata(reader, true);
 
-      List<Property> properties = result.getSchemas().get(0).getEntityTypes().get(0).getProperties();
-      assertEquals(2, properties.size());
+    List<Property> properties = result.getSchemas().get(0).getEntityTypes().get(0).getProperties();
+    assertEquals(2, properties.size());
 
-      Property property = getForName(properties, "Id");
-      EdmFacets facets = property.getFacets();
-      assertEquals(new Integer(Integer.MAX_VALUE), facets.getMaxLength());
+    Property property = getForName(properties, "Id");
+    EdmFacets facets = property.getFacets();
+    assertEquals(new Integer(Integer.MAX_VALUE), facets.getMaxLength());
 
-      property = getForName(properties, "Name");
-      facets = property.getFacets();
-      assertEquals(new Integer(Integer.MAX_VALUE), facets.getMaxLength());
+    property = getForName(properties, "Name");
+    facets = property.getFacets();
+    assertEquals(new Integer(Integer.MAX_VALUE), facets.getMaxLength());
   }
 
-  private Property getForName(List<Property> properties, String propertyName) {
+  private Property getForName(final List<Property> properties, final String propertyName) {
     for (Property property : properties) {
       if (property.getName().equals(propertyName)) {
         return property;
