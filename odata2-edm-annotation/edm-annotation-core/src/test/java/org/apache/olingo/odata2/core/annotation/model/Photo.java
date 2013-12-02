@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.annotation.model;
 
 import java.util.Arrays;
+
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
@@ -27,8 +28,6 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceSource;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
-import org.apache.olingo.odata2.core.annotation.model.ModelSharedConstants;
-import org.apache.olingo.odata2.core.annotation.model.ResourceHelper;
 
 /**
  *  

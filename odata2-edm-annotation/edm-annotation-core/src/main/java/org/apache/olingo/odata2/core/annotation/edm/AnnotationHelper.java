@@ -44,6 +44,8 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
  */
 public class AnnotationHelper {
 
+  public static final String DEFAULT_CONTAINER_NAME = "DefaultContainer";
+
   /**
    * Compare keys of both instances.
    * 
@@ -131,18 +133,43 @@ public class AnnotationHelper {
     return extractTypeName(annotatedClass, EdmEntityType.class);
   }
 
+  public FullQualifiedName extractEntityTypeFqn(EdmEntityType type, Class<?> annotatedClass) {
+    if(type.namespace().isEmpty()) {
+      return new FullQualifiedName(generateNamespace(annotatedClass), extractEntityTypeName(annotatedClass));
+    }
+    return new FullQualifiedName(type.namespace(), extractEntityTypeName(annotatedClass));
+  }
+  
   public FullQualifiedName extractEntityTypeFqn(Class<?> annotatedClass) {
     EdmEntityType type = annotatedClass.getAnnotation(EdmEntityType.class);
-    return new FullQualifiedName(type.namespace(), extractEntityTypeName(annotatedClass));
+    if(type == null) {
+      return null;
+    }
+    return extractEntityTypeFqn(type, annotatedClass);
   }
 
   public FullQualifiedName extractComplexTypeFqn(Class<?> annotatedClass) {
     EdmComplexType type = annotatedClass.getAnnotation(EdmComplexType.class);
+    if(type == null) {
+      return null;
+    }
+    return extractComplexTypeFqn(type, annotatedClass);
+  }
+
+  public FullQualifiedName extractComplexTypeFqn(EdmComplexType type, Class<?> annotatedClass) {
+    if(type.namespace().isEmpty()) {
+      return new FullQualifiedName(generateNamespace(annotatedClass), extractComplexTypeName(annotatedClass));
+    }
     return new FullQualifiedName(type.namespace(), extractComplexTypeName(annotatedClass));
   }
 
   public String extractComplexTypeName(Class<?> annotatedClass) {
     return extractTypeName(annotatedClass, EdmComplexType.class);
+  }
+  
+  public String generateNamespace(Class<?> annotatedClass) {
+    String packageName = annotatedClass.getPackage().getName();
+    return packageName;
   }
 
   /**
@@ -600,5 +627,20 @@ public class AnnotationHelper {
     public EdmAnnotationException(String message) {
       super(message);
     }
+  }
+
+  public String getCanonicalNamespace(Class<?> aClass) {
+    return generateNamespace(aClass);
+  }
+
+  public String extractContainerName(Class<?> aClass) {
+    EdmEntitySet entitySet = aClass.getAnnotation(EdmEntitySet.class);
+    if(entitySet != null) {
+      String containerName = entitySet.container();
+      if(!containerName.isEmpty()) {
+        return containerName;
+      }
+    }
+    return DEFAULT_CONTAINER_NAME;
   }
 }

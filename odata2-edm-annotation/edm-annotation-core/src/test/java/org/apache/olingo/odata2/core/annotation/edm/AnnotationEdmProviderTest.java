@@ -16,15 +16,20 @@
 package org.apache.olingo.odata2.core.annotation.edm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -41,6 +46,7 @@ import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
+import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.core.annotation.model.Building;
 import org.apache.olingo.odata2.core.annotation.model.City;
 import org.apache.olingo.odata2.core.annotation.model.Employee;
@@ -51,7 +57,6 @@ import org.apache.olingo.odata2.core.annotation.model.Photo;
 import org.apache.olingo.odata2.core.annotation.model.RefBase;
 import org.apache.olingo.odata2.core.annotation.model.Room;
 import org.apache.olingo.odata2.core.annotation.model.Team;
-import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
 /**
@@ -59,8 +64,19 @@ import org.junit.Test;
  */
 public class AnnotationEdmProviderTest {
 
-  private final Collection<Class<?>> annotatedClasses = new ArrayList<Class<?>>();
+  @EdmEntityType
+  @EdmEntitySet
+  private static final class GeneratedNamesTestClass {}
+
+  @EdmComplexType
+  private static final class GeneratedNamesComplexTestClass {}
+
+  @EdmEntityType(namespace="MyTestNamespace")
+  @EdmEntitySet(container="MyTestContainer")
+  private static final class DefinedNamesTestClass {}
+
   private final AnnotationEdmProvider aep;
+  private final Collection<Class<?>> annotatedClasses = new ArrayList<Class<?>>();
 
   public AnnotationEdmProviderTest() {
     annotatedClasses.add(RefBase.class);
@@ -74,6 +90,69 @@ public class AnnotationEdmProviderTest {
     annotatedClasses.add(Team.class);
 
     aep = new AnnotationEdmProvider(annotatedClasses);
+  }
+
+  @Test
+  public void defaultNamespaceGeneration() throws ODataException {
+    Collection<Class<?>> localAnnotatedClasses = new ArrayList<Class<?>>();
+    localAnnotatedClasses.add(GeneratedNamesTestClass.class); 
+    AnnotationEdmProvider localAep = new AnnotationEdmProvider(localAnnotatedClasses);
+    // validate 
+    EntityType testType = localAep.getEntityType(new FullQualifiedName(
+            GeneratedNamesTestClass.class.getPackage().getName(), 
+            GeneratedNamesTestClass.class.getSimpleName()));
+    assertNotNull("Requested entity not found.", testType);
+    assertEquals("GeneratedNamesTestClass", testType.getName());
+    assertNull("This should not have a base type", testType.getBaseType());
+  }
+
+  @Test
+  public void defaultNamespaceGenerationComplexType() throws ODataException {
+    Collection<Class<?>> localAnnotatedClasses = new ArrayList<Class<?>>();
+    localAnnotatedClasses.add(GeneratedNamesComplexTestClass.class); 
+    AnnotationEdmProvider localAep = new AnnotationEdmProvider(localAnnotatedClasses);
+    // validate 
+    ComplexType testType = localAep.getComplexType(new FullQualifiedName(
+            GeneratedNamesComplexTestClass.class.getPackage().getName(), 
+            GeneratedNamesComplexTestClass.class.getSimpleName()));
+    assertNotNull("Requested entity not found.", testType);
+    assertEquals("GeneratedNamesComplexTestClass", testType.getName());
+    assertNull("This should not have a base type", testType.getBaseType());
+  }
+
+  @Test
+  public void defaultContainerNameGeneration() throws ODataException {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    AnnotationEdmProvider localAep = 
+      new AnnotationEdmProvider((Collection) Arrays.asList(GeneratedNamesTestClass.class));
+    
+    EntityContainerInfo containerInfo = localAep.getEntityContainerInfo(null);
+    assertNotNull(containerInfo);
+    assertEquals("DefaultContainer", containerInfo.getName());
+  }
+
+
+  @Test
+  public void defaultNamespaceDefined() throws ODataException {
+    Collection<Class<?>> localAnnotatedClasses = new ArrayList<Class<?>>();
+    localAnnotatedClasses.add(DefinedNamesTestClass.class); 
+    AnnotationEdmProvider localAep = new AnnotationEdmProvider(localAnnotatedClasses);
+    // validate 
+    EntityType testClass = localAep.getEntityType(new FullQualifiedName("MyTestNamespace",
+        DefinedNamesTestClass.class.getSimpleName()));
+    assertNotNull("Requested entity not found.", testClass);
+    assertEquals("DefinedNamesTestClass", testClass.getName());
+    assertNull("This should not have a base type", testClass.getBaseType());
+  }
+
+  @Test
+  public void defaultContainerNameDefined() throws ODataException {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    AnnotationEdmProvider localAep = new AnnotationEdmProvider((Collection) Arrays.asList(DefinedNamesTestClass.class));
+    
+    EntityContainerInfo containerInfo = localAep.getEntityContainerInfo(null);
+    assertNotNull(containerInfo);
+    assertEquals("MyTestContainer", containerInfo.getName());
   }
 
   @Test

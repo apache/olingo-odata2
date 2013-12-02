@@ -23,34 +23,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.olingo.odata2.api.annotation.edmx.HttpMethod;
-import org.apache.olingo.odata2.api.annotation.edmx.HttpMethod.Name;
-
 /**
- *  * @deprecated: As of Olingo version 1.1.x, replaced by {@link EdmFunctionImport}.
+ * <p>Additional documentation for an EDM element.</p>
  */
-@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface FunctionImport {
-
-  enum ReturnType {
-    SCALAR, ENTITY_TYPE, COMPLEX_TYPE, NONE
-  }
-
-  enum Multiplicity {
-    MANY, ONE
-  }
-
-  String name() default "";
-
-  String entitySet() default "";
-
-  ReturnType returnType();
-
-  Multiplicity multiplicity() default Multiplicity.ONE;
-
-  HttpMethod httpMethod() default @HttpMethod(name = Name.GET);
-
-  Documentation documentation() default @Documentation;
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface EdmDocumentation {
+  /**
+   * Define a summary for this documentation.
+   * 
+   * @return summary of documentation for EDM element
+   */
+  String summary() default "";
+  /**
+   * Complete description for this documentation.
+   * 
+   * @return description of documentation for EDM element
+   */
+  String longDescription() default "";
 }

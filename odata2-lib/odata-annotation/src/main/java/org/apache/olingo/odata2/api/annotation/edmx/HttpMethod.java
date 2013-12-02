@@ -23,6 +23,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImport;
+
+/**
+ *  @deprecated: As of Olingo version 1.1.x, replaced by HttpMethod enum within {@link EdmFunctionImport}.
+ */
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface HttpMethod {
