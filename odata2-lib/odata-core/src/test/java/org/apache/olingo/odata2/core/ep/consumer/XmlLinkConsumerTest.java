@@ -33,7 +33,11 @@ import org.junit.Test;
 /**
  *  
  */
-public class XmlLinkConsumerTest extends AbstractConsumerTest {
+public class XmlLinkConsumerTest extends AbstractXmlConsumerTest {
+
+  public XmlLinkConsumerTest(final StreamWriterImplType type) {
+    super(type);
+  }
 
   private static final String SERVICE_ROOT = "http://localhost:80/odata/";
   private static final String MANAGER_1_EMPLOYEES =
@@ -45,13 +49,6 @@ public class XmlLinkConsumerTest extends AbstractConsumerTest {
           + "</links>";
   private static final String SINGLE_LINK =
       "<uri xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">" + SERVICE_ROOT + "Employees('6')</uri>";
-
-  public XmlLinkConsumerTest() {
-    // CHECKSTYLE:OFF:Regexp
-    System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory"); // NOSONAR
-    System.setProperty("javax.xml.stream.XMLOutputFactory", "com.ctc.wstx.stax.WstxOutputFactory"); // NOSONAR
-    // CHECKSTYLE:ON
-  }
 
   @Test
   public void readLink() throws Exception {
@@ -74,8 +71,16 @@ public class XmlLinkConsumerTest extends AbstractConsumerTest {
 
   @Test
   public void readEmptyList() throws Exception {
-    final String xml = "<?xml version=\"1.1\" encoding=\"UTF-8\"?>"
-        + "<links xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\" />";
+    final String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><links xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\"/>";
+    final List<String> links = new XmlLinkConsumer().readLinks(createReaderForTest(xml, true), null);
+    assertNotNull(links);
+    assertTrue(links.isEmpty());
+  }
+
+  @Test
+  public void readEmptyList2() throws Exception {
+    final String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "<links xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\"></links>";
     final List<String> links = new XmlLinkConsumer().readLinks(createReaderForTest(xml, true), null);
     assertNotNull(links);
     assertTrue(links.isEmpty());

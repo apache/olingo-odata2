@@ -104,21 +104,19 @@ public class XmlFeedConsumer {
       } else if (FormatXml.M_COUNT.equals(reader.getLocalName())) {
         reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_M_2007_08, FormatXml.M_COUNT);
 
-        reader.next();
-        if (reader.hasText()) {
-          String inlineCountString = reader.getText();
-          try {
-            int inlineCountNumber = Integer.valueOf(inlineCountString);
-            if (inlineCountNumber >= 0) {
-              metadata.setInlineCount(inlineCountNumber);
-            } else {
-              throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID
-                  .addContent(inlineCountNumber));
-            }
-          } catch (NumberFormatException e) {
-            throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID.addContent(""), e);
+        String inlineCountString = reader.getElementText();
+        try {
+          int inlineCountNumber = Integer.valueOf(inlineCountString);
+          if (inlineCountNumber >= 0) {
+            metadata.setInlineCount(inlineCountNumber);
+          } else {
+            throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID
+                .addContent(inlineCountNumber));
           }
+        } catch (NumberFormatException e) {
+          throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID.addContent(""), e);
         }
+
       } else if (FormatXml.ATOM_LINK.equals(reader.getLocalName())) {
         reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_LINK);
 
