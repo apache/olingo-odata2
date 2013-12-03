@@ -59,12 +59,7 @@ public class XmlLinkConsumer {
   private String readTag(final XMLStreamReader reader, final String namespaceURI, final String localName)
       throws XMLStreamException {
     reader.require(XMLStreamConstants.START_ELEMENT, namespaceURI, localName);
-
-    reader.next();
-    reader.require(XMLStreamConstants.CHARACTERS, null, null);
-    final String result = reader.getText();
-
-    reader.nextTag();
+    final String result = reader.getElementText();
     reader.require(XMLStreamConstants.END_ELEMENT, namespaceURI, localName);
 
     return result;
@@ -88,10 +83,8 @@ public class XmlLinkConsumer {
       throws EntityProviderException {
     try {
       List<String> links = new ArrayList<String>();
-
-      reader.next();
+      reader.nextTag();
       reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_D_2007_08, FormatXml.D_LINKS);
-
       reader.nextTag();
       while (!reader.isEndElement()) {
         if (reader.getLocalName().equals(FormatXml.M_COUNT)) {
@@ -104,7 +97,6 @@ public class XmlLinkConsumer {
       }
 
       reader.require(XMLStreamConstants.END_ELEMENT, Edm.NAMESPACE_D_2007_08, FormatXml.D_LINKS);
-
       return links;
     } catch (final XMLStreamException e) {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()

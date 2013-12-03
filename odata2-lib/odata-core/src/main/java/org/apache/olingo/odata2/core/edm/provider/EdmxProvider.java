@@ -42,8 +42,6 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.consumer.XmlMetadataConsumer;
 
-import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
-
 public class EdmxProvider extends EdmProvider {
   private DataServices dataServices;
 

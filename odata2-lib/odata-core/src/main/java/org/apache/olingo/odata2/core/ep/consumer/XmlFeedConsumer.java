@@ -104,9 +104,8 @@ public class XmlFeedConsumer {
       } else if (FormatXml.M_COUNT.equals(reader.getLocalName())) {
         reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_M_2007_08, FormatXml.M_COUNT);
 
-        reader.next();
-        if (reader.hasText()) {
-          String inlineCountString = reader.getText();
+        String inlineCountString = reader.getElementText();
+        if (inlineCountString != null) {
           try {
             int inlineCountNumber = Integer.valueOf(inlineCountString);
             if (inlineCountNumber >= 0) {

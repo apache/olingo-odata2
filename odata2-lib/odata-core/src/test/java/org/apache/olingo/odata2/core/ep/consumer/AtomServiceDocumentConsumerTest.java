@@ -43,10 +43,12 @@ import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.apache.olingo.odata2.api.servicedocument.Workspace;
 import org.junit.Test;
 
-/**
- *  
- */
-public class AtomServiceDocumentConsumerTest {
+public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
+
+  public AtomServiceDocumentConsumerTest(final StreamWriterImplType type) {
+    super(type);
+  }
+
   private static final String NAMESPACE = "http://www.foo.bar/Data";
   private static final String PREFIX = "foo";
 
