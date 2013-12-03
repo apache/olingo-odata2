@@ -185,11 +185,11 @@ public class EdmMockUtilV2 {
     EasyMock.expect(navigationProperty.getType()).andReturn(edmEntityType).anyTimes();
     EasyMock.expect(navigationProperty.getMultiplicity()).andReturn(multiplicity);
     EasyMock.expect(navigationProperty.getMapping()).andReturn(
-        (EdmMapping) mockEdmMapping(null, null, navigationPropertyName));
+        (EdmMapping) mockEdmMapping(null, null, navigationPropertyName)).anyTimes();
     EasyMock.expect(navigationProperty.getToRole()).andReturn("TO");
     EasyMock.expect(navigationProperty.getRelationship()).andReturn(mockEdmAssociation(navigationPropertyName));
     if (multiplicity.equals(EdmMultiplicity.ONE)) {
-      EasyMock.expect(navigationProperty.getName()).andReturn(JPATypeMock.NAVIGATION_PROPERTY_X);
+      EasyMock.expect(navigationProperty.getName()).andReturn(JPATypeMock.NAVIGATION_PROPERTY_X).anyTimes();
     }
 
     EasyMock.replay(navigationProperty);

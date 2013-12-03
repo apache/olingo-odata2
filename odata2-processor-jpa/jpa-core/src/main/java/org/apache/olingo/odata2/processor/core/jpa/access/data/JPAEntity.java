@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.processor.core.jpa.access.data;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -134,25 +135,26 @@ public class JPAEntity {
         case NAVIGATION:
         case ENTITY:
           structuralType = (EdmStructuralType) edmTyped.getType();
+          EdmNavigationProperty navProperty = (EdmNavigationProperty) edmTyped;
           accessModifier =
-              jpaEntityParser.getAccessModifier(jpaEntity, (EdmNavigationProperty) edmTyped,
+              jpaEntityParser.getAccessModifier(jpaEntity, navProperty,
                   JPAEntityParser.ACCESS_MODIFIER_SET);
-          EdmEntitySet edmRelatedEntitySet = oDataEntitySet.getRelatedEntitySet((EdmNavigationProperty) edmTyped);
+          EdmEntitySet edmRelatedEntitySet = oDataEntitySet.getRelatedEntitySet(navProperty);
           List<ODataEntry> relatedEntries = (List<ODataEntry>) oDataEntryProperties.get(propertyName);
-          List<Object> relatedJPAEntites = new ArrayList<Object>();
+          Collection<Object> relatedJPAEntites = instantiateRelatedJPAEntities(jpaEntity, navProperty);
           JPAEntity relatedEntity = new JPAEntity((EdmEntityType) structuralType, edmRelatedEntitySet);
           for (ODataEntry oDataEntry : relatedEntries) {
             relatedEntity.create(oDataEntry);
             relatedJPAEntites.add(relatedEntity.getJPAEntity());
           }
-          EdmNavigationProperty navProperty = (EdmNavigationProperty) edmTyped;
+
           switch (navProperty.getMultiplicity()) {
           case MANY:
             accessModifier.invoke(jpaEntity, relatedJPAEntites);
             break;
           case ONE:
           case ZERO_TO_ONE:
-            accessModifier.invoke(jpaEntity, relatedJPAEntites.get(0));
+            accessModifier.invoke(jpaEntity, relatedJPAEntites.iterator().next());
             break;
           }
 
@@ -172,6 +174,21 @@ public class JPAEntity {
     }
   }
 
+  @SuppressWarnings("unchecked")
+  private Collection<Object> instantiateRelatedJPAEntities(final Object jpaEntity,
+      final EdmNavigationProperty navProperty)
+      throws InstantiationException,
+      IllegalAccessException, EdmException, ODataJPARuntimeException, IllegalArgumentException,
+      InvocationTargetException {
+    Method accessModifier =
+        jpaEntityParser.getAccessModifier(jpaEntity, navProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
+    Collection<Object> relatedJPAEntities = (Collection<Object>) accessModifier.invoke(jpaEntity);
+    if (relatedJPAEntities == null) {
+      relatedJPAEntities = new ArrayList<Object>();
+    }
+    return relatedJPAEntities;
+  }
+
   public void create(final ODataEntry oDataEntry) throws ODataJPARuntimeException {
     if (oDataEntry == null) {
       throw ODataJPARuntimeException
@@ -189,29 +206,6 @@ public class JPAEntity {
     write(oDataEntryProperties, true);
   }
 
-  private void normalizeInlineEntries(final Map<String, Object> oDataEntryProperties) throws ODataJPARuntimeException {
-    List<ODataEntry> entries = null;
-    try {
-      for (String navigationPropertyName : oDataEntityType.getNavigationPropertyNames()) {
-        Object inline = oDataEntryProperties.get(navigationPropertyName);
-        if (inline instanceof ODataFeed) {
-          entries = ((ODataFeed) inline).getEntries();
-        } else if (inline instanceof ODataEntry) {
-          entries = new ArrayList<ODataEntry>();
-          entries.add((ODataEntry) inline);
-        }
-        if (entries != null) {
-          oDataEntryProperties.put(navigationPropertyName, entries);
-          entries = null;
-        }
-      }
-    } catch (EdmException e) {
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
-    }
-  }
-
   public void update(final ODataEntry oDataEntry) throws ODataJPARuntimeException {
     if (oDataEntry == null) {
       throw ODataJPARuntimeException
@@ -223,6 +217,14 @@ public class JPAEntity {
 
   public void update(final Map<String, Object> oDataEntryProperties) throws ODataJPARuntimeException {
     write(oDataEntryProperties, false);
+  }
+
+  public HashMap<EdmNavigationProperty, EdmEntitySet> getInlineJPAEntities() {
+    return inlinedEntities;
+  }
+
+  public void setJPAEntity(final Object jpaEntity) {
+    this.jpaEntity = jpaEntity;
   }
 
   @SuppressWarnings("unchecked")
@@ -328,11 +330,26 @@ public class JPAEntity {
     return jpaType.newInstance();
   }
 
-  public HashMap<EdmNavigationProperty, EdmEntitySet> getInlineJPAEntities() {
-    return inlinedEntities;
-  }
-
-  public void setJPAEntity(final Object jpaEntity) {
-    this.jpaEntity = jpaEntity;
+  private void normalizeInlineEntries(final Map<String, Object> oDataEntryProperties) throws ODataJPARuntimeException {
+    List<ODataEntry> entries = null;
+    try {
+      for (String navigationPropertyName : oDataEntityType.getNavigationPropertyNames()) {
+        Object inline = oDataEntryProperties.get(navigationPropertyName);
+        if (inline instanceof ODataFeed) {
+          entries = ((ODataFeed) inline).getEntries();
+        } else if (inline instanceof ODataEntry) {
+          entries = new ArrayList<ODataEntry>();
+          entries.add((ODataEntry) inline);
+        }
+        if (entries != null) {
+          oDataEntryProperties.put(navigationPropertyName, entries);
+          entries = null;
+        }
+      }
+    } catch (EdmException e) {
+      throw ODataJPARuntimeException
+          .throwException(ODataJPARuntimeException.GENERAL
+              .addContent(e.getMessage()), e);
+    }
   }
 }
