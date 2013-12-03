@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 
 /**
  *  
@@ -37,9 +37,8 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 @EdmEntityType(name = "Employee", namespace = ModelSharedConstants.NAMESPACE_1)
 @EdmEntitySet(name = "Employees")
 public class Employee {
-  private static int counter = 1;
   @EdmKey
-  @EdmProperty(name = "EmployeeId", type = EdmSimpleTypeKind.String)
+  @EdmProperty(name = "EmployeeId", type = EdmType.STRING)
   private String employeeId;
   @EdmProperty(name = "EmployeeName")
   private String employeeName;
@@ -57,7 +56,7 @@ public class Employee {
   private byte[] image;
   @EdmProperty(name = "ImageUrl")
   private String imageUrl;
-  @EdmProperty(name = "EntryDate", type = EdmSimpleTypeKind.DateTime,
+  @EdmProperty(name = "EntryDate", type = EdmType.DATE_TIME,
       facets = @EdmFacets(nullable = true))
   private Calendar entryDate;
   @EdmProperty(name = "Location", facets = @EdmFacets(nullable = false))

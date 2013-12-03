@@ -615,7 +615,7 @@ public class AnnotationHelper {
     Class<?> fieldClass = field.getType();
     try {
       EdmProperty property = field.getAnnotation(EdmProperty.class);
-      EdmSimpleTypeKind type = property.type();
+      EdmSimpleTypeKind type = mapTypeKind(property.type());
       return type.getEdmSimpleTypeInstance().valueOfString(propertyValue,
           EdmLiteralKind.DEFAULT, null, fieldClass);
     } catch (EdmSimpleTypeException ex) {
@@ -663,7 +663,36 @@ public class AnnotationHelper {
     return content.substring(0, 1).toUpperCase(Locale.ENGLISH) + content.substring(1);
   }
 
+  public EdmSimpleTypeKind mapTypeKind(org.apache.olingo.odata2.api.annotation.edm.EdmType type) {
+    switch (type) {
+      case BINARY: return EdmSimpleTypeKind.Binary;
+      case BOOLEAN: return EdmSimpleTypeKind.Boolean;
+      case BYTE: return EdmSimpleTypeKind.Byte;
+      case COMPLEX: return EdmSimpleTypeKind.Null;
+      case DATE_TIME: return EdmSimpleTypeKind.DateTime;
+      case DATE_TIME_OFFSET: return EdmSimpleTypeKind.DateTimeOffset;
+      case DECIMAL: return EdmSimpleTypeKind.Decimal;
+      case DOUBLE: return EdmSimpleTypeKind.Double;
+      case GUID: return EdmSimpleTypeKind.Guid;
+      case INT16: return EdmSimpleTypeKind.Int16;
+      case INT32: return EdmSimpleTypeKind.Int32;
+      case INT64: return EdmSimpleTypeKind.Int64;
+      case NULL: return EdmSimpleTypeKind.Null;
+      case SBYTE: return EdmSimpleTypeKind.SByte;
+      case SINGLE: return EdmSimpleTypeKind.Single;
+      case STRING: return EdmSimpleTypeKind.String;
+      case TIME: return EdmSimpleTypeKind.Time;
+      default: throw new ODataRuntimeException("Unknown type '" + type
+        + "' for mapping to EdmSimpleTypeKind.");
+    }
+  }
+  
+  /**
+   * 
+   */
   private static class EdmAnnotationException extends RuntimeException {
+
+    private static final long serialVersionUID = 42L;
 
     public EdmAnnotationException(String message) {
       super(message);

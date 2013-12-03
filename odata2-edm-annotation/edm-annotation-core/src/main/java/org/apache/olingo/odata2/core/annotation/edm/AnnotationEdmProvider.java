@@ -39,8 +39,8 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
+import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
@@ -453,11 +453,11 @@ public class AnnotationEdmProvider extends EdmProvider {
       String entityName = ANNOTATION_HELPER.getPropertyName(field);
       sp.setName(entityName);
       //
-      EdmSimpleTypeKind type = ep.type();
-      if (type == EdmSimpleTypeKind.Null) {
-        type = getEdmSimpleType(field.getType());
+      EdmType type = ep.type();
+      if (type == EdmType.NULL) {
+        type = getEdmType(field.getType());
       }
-      sp.setType(type);
+      sp.setType(ANNOTATION_HELPER.mapTypeKind(type));
 
       return sp;
     }
@@ -494,37 +494,70 @@ public class AnnotationEdmProvider extends EdmProvider {
       return navProp;
     }
 
-    private EdmSimpleTypeKind getEdmSimpleType(Class<?> type) {
+//    private EdmSimpleTypeKind getEdmSimpleType(Class<?> type) {
+//      if (type == String.class) {
+//        return EdmType.String;
+//      } else if (type == boolean.class || type == Boolean.class) {
+//        return EdmType.Boolean;
+//      } else if (type == byte.class || type == Byte.class) {
+//        return EdmType.SByte;
+//      } else if (type == short.class || type == Short.class) {
+//        return EdmType.Int16;
+//      } else if (type == int.class || type == Integer.class) {
+//        return EdmType.Int32;
+//      } else if (type == long.class || type == Long.class) {
+//        return EdmType.Int64;
+//      } else if (type == double.class || type == Double.class) {
+//        return EdmType.Double;
+//      } else if (type == float.class || type == Float.class) {
+//        return EdmType.Single;
+//      } else if (type == BigInteger.class || type == BigDecimal.class) {
+//        return EdmType.Decimal;
+//      } else if (type == Byte[].class || type == byte[].class) {
+//        return EdmType.Binary;
+//      } else if (type == Date.class) {
+//        return EdmType.DateTime;
+//      } else if (type == Calendar.class) {
+//        return EdmType.DateTimeOffset;
+//      } else if (type == UUID.class) {
+//        return EdmType.Guid;
+//      } else {
+//        throw new UnsupportedOperationException("Not yet supported type '" + type + "'.");
+//      }
+//    }
+    
+    private EdmType getEdmType(Class<?> type) {
       if (type == String.class) {
-        return EdmSimpleTypeKind.String;
+        return EdmType.STRING;
       } else if (type == boolean.class || type == Boolean.class) {
-        return EdmSimpleTypeKind.Boolean;
+        return EdmType.BOOLEAN;
       } else if (type == byte.class || type == Byte.class) {
-        return EdmSimpleTypeKind.SByte;
+        return EdmType.SBYTE;
       } else if (type == short.class || type == Short.class) {
-        return EdmSimpleTypeKind.Int16;
+        return EdmType.INT16;
       } else if (type == int.class || type == Integer.class) {
-        return EdmSimpleTypeKind.Int32;
+        return EdmType.INT32;
       } else if (type == long.class || type == Long.class) {
-        return EdmSimpleTypeKind.Int64;
+        return EdmType.INT64;
       } else if (type == double.class || type == Double.class) {
-        return EdmSimpleTypeKind.Double;
+        return EdmType.DOUBLE;
       } else if (type == float.class || type == Float.class) {
-        return EdmSimpleTypeKind.Single;
+        return EdmType.SINGLE;
       } else if (type == BigInteger.class || type == BigDecimal.class) {
-        return EdmSimpleTypeKind.Decimal;
+        return EdmType.DECIMAL;
       } else if (type == Byte[].class || type == byte[].class) {
-        return EdmSimpleTypeKind.Binary;
+        return EdmType.BINARY;
       } else if (type == Date.class) {
-        return EdmSimpleTypeKind.DateTime;
+        return EdmType.DATE_TIME;
       } else if (type == Calendar.class) {
-        return EdmSimpleTypeKind.DateTimeOffset;
+        return EdmType.DATE_TIME_OFFSET;
       } else if (type == UUID.class) {
-        return EdmSimpleTypeKind.Guid;
+        return EdmType.GUID;
       } else {
         throw new UnsupportedOperationException("Not yet supported type '" + type + "'.");
       }
     }
+
 
     private Class<?> checkForBaseEntityClass(Class<?> aClass) {
       Class<?> superClass = aClass.getSuperclass();
