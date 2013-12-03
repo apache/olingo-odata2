@@ -275,12 +275,18 @@ public class AnnotationHelper {
     return multiplicity;
   }
 
+
+  /**
+   * Set key fields based on values in map.
+   * If an key field is not available or <code>NULL</code> in the map 
+   * it will be not set as <code>NULL</code> at the instance object.
+   * 
+   * @param instance
+   * @param keys
+   * @return
+   */
   public <T> T setKeyFields(T instance, Map<String, Object> keys) {
     List<Field> fields = getAnnotatedFields(instance, EdmKey.class);
-    if (fields.size() != keys.size()) {
-      throw new IllegalStateException("Wrong amount of key properties. Expected read keys = "
-          + fields + " given key predicates = " + keys);
-    }
 
     for (Field field : fields) {
       String propertyName = getPropertyName(field);
@@ -327,12 +333,17 @@ public class AnnotationHelper {
     public EdmMultiplicity getToMultiplicity() {
       return getMultiplicity(fromNavigation, fromField);
     }
+    
+    public boolean isBiDirectional() {
+      return toNavigation != null;
+    }
   }
 
   public AnnotatedNavInfo getCommonNavigationInfo(Class<?> sourceClass, Class<?> targetClass) {
     List<Field> sourceFields = getAnnotatedFields(sourceClass, EdmNavigationProperty.class);
     List<Field> targetFields = getAnnotatedFields(targetClass, EdmNavigationProperty.class);
 
+    // first try via association name to get full navigation information
     for (Field sourceField : sourceFields) {
       final EdmNavigationProperty sourceNav = sourceField.getAnnotation(EdmNavigationProperty.class);
       final String sourceAssociation = extractRelationshipName(sourceNav, sourceField);
@@ -344,6 +355,18 @@ public class AnnotationHelper {
         }
       }
     }
+    
+    // if nothing was found assume none bi-directinal navigation
+    String targetEntityTypeName = extractEntityTypeName(targetClass);
+    for (Field sourceField : sourceFields) {
+      final EdmNavigationProperty sourceNav = sourceField.getAnnotation(EdmNavigationProperty.class);
+      final String navTargetEntityName = extractEntitTypeName(sourceNav, sourceField);
+      
+      if (navTargetEntityName.equals(targetEntityTypeName)) {
+        return new AnnotatedNavInfo(sourceField, null, sourceNav, null);
+      }
+    }
+    
     return null;
   }
 

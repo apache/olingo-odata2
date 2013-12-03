@@ -39,19 +39,11 @@ public class AnnotationsInMemoryDsTest {
   private final AnnotationInMemoryDs datasource;
   private AnnotationEdmProvider edmProvider;
   private static final String DEFAULT_CONTAINER = ModelSharedConstants.CONTAINER_1;
-  private static final String DEFAULT_NAMESPACE = ModelSharedConstants.NAMESPACE_1;
 
   public AnnotationsInMemoryDsTest() {
     datasource = new AnnotationInMemoryDs(Building.class.getPackage().getName());
     edmProvider = new AnnotationEdmProvider(Building.class.getPackage().getName());
   }
-
-  //  @Test(expected = ODataApplicationException.class)
-  //  public void invalidEntity() throws Exception {
-  //    EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
-  //
-  //    datasource.createData(edmEntitySet, this);
-  //  }
 
   @Test
   public void createSimpleEntity() throws Exception {

@@ -33,6 +33,7 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
+import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper.AnnotatedNavInfo;
 import org.apache.olingo.odata2.core.annotation.edm.ClassHelper;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
@@ -111,7 +112,9 @@ public class AnnotationInMemoryDs implements ListsDataSource {
     DataStore<?> sourceStore = dataStores.get(sourceEntitySet.getName());
     DataStore<?> targetStore = dataStores.get(targetEntitySet.getName());
 
-    Field sourceField = extractSourceField(sourceStore, targetStore);
+    AnnotatedNavInfo navInfo = ANNOTATION_HELPER.getCommonNavigationInfo(
+        sourceStore.getDataTypeClass(), targetStore.getDataTypeClass());
+    Field sourceField = navInfo.getFromField();
     if (sourceField == null) {
       throw new ODataRuntimeException("Missing source field for related data (sourceStore='" + sourceStore
               + "', targetStore='" + targetStore + "').");
@@ -131,8 +134,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
       }
     }
 
-    EdmNavigationProperty navProperty = sourceField.getAnnotation(EdmNavigationProperty.class);
-    if (navProperty.toMultiplicity() == EdmMultiplicity.MANY) {
+    if (navInfo.getToMultiplicity() == EdmMultiplicity.MANY) {
       if (targetKeys.isEmpty()) {
         return resultData;
       } else {
@@ -223,10 +225,63 @@ public class AnnotationInMemoryDs implements ListsDataSource {
   }
 
   @Override
-  public void writeRelation(EdmEntitySet sourceEntitySet, Object sourceData, EdmEntitySet targetEntitySet,
-      Map<String, Object> targetKeys)
+  public void writeRelation(EdmEntitySet sourceEntitySet, Object sourceEntity, EdmEntitySet targetEntitySet,
+      Map<String, Object> targetEntityValues)
       throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
-    throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+    // get common data
+    DataStore<Object> sourceStore = dataStores.get(sourceEntitySet.getName());
+    DataStore<Object> targetStore = dataStores.get(targetEntitySet.getName());
+
+    AnnotatedNavInfo commonNavInfo = ANNOTATION_HELPER.getCommonNavigationInfo(
+        sourceStore.getDataTypeClass(), targetStore.getDataTypeClass());
+    
+    // get and validate source fields
+    Field sourceField = commonNavInfo.getFromField();
+    if (sourceField == null) {
+      throw new ODataRuntimeException("Missing source field for related data (sourceStore='" + sourceStore
+              + "', targetStore='" + targetStore + "').");
+    }
+    
+    // get related target entity
+    Object targetEntity = targetStore.createInstance();
+    ANNOTATION_HELPER.setKeyFields(targetEntity, targetEntityValues);
+    targetEntity = targetStore.read(targetEntity);
+    
+    // set at source
+    setValueAtNavigationField(sourceEntity, sourceField, targetEntity);
+    // set at target
+    Field targetField = commonNavInfo.getToField();
+    if(targetField != null) {
+      setValueAtNavigationField(targetEntity, targetField, sourceEntity);
+    }
+  }
+
+  /**
+   * Set (Multiplicity != *) or add (Multiplicity == *) <code>value</code> at <code>field</code>
+   * of <code>instance</code>. 
+   * 
+   * @param instance
+   * @param field
+   * @param value
+   * @throws EdmException
+   */
+  private void setValueAtNavigationField(Object instance, Field field, Object value) 
+      throws EdmException {
+    Class<?> fieldTypeClass = field.getType();
+    if (Collection.class.isAssignableFrom(fieldTypeClass)) {
+      @SuppressWarnings("unchecked")
+      Collection<Object> collection = (Collection<Object>) ANNOTATION_HELPER.getValueForField(
+          instance, field.getName(), EdmNavigationProperty.class);
+      if(collection == null) {
+        collection = new ArrayList<Object>();
+        setValue(instance, field, collection);
+      }
+      collection.add(value);
+    } else if(fieldTypeClass.isArray()) {
+      throw new ODataRuntimeException("Write relations for internal used arrays is not supported.");
+    } else {
+      setValue(instance, field, value);
+    }
   }
 
   /**
@@ -264,10 +319,18 @@ public class AnnotationInMemoryDs implements ListsDataSource {
     }
   }
 
-  private Field extractSourceField(DataStore<?> sourceStore, DataStore<?> targetStore) {
-    Class<?> sourceDataTypeClass = sourceStore.getDataTypeClass();
-    Class<?> targetDataTypeClass = targetStore.getDataTypeClass();
-
-    return ANNOTATION_HELPER.getCommonNavigationInfo(sourceDataTypeClass, targetDataTypeClass).getFromField();
+  private void setValue(Object instance, Field field, Object value) {
+    try {
+      boolean access = field.isAccessible();
+      field.setAccessible(true);
+      field.set(instance, value);
+      field.setAccessible(access);
+    } catch (IllegalArgumentException e) {
+      throw new ODataRuntimeException("Error for setting value of field: '"
+          + field + "' at instance: '" + instance + "'.", e);
+    } catch (IllegalAccessException e) {
+      throw new ODataRuntimeException("Error for setting value of field: '"
+          + field + "' at instance: '" + instance + "'.", e);
+    }
   }
 }
