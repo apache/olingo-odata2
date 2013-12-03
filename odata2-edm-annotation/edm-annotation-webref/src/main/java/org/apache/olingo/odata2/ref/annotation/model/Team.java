@@ -25,8 +25,8 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
+import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 
 /**
 *  
@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 @EdmEntityType(name = "Team", namespace = ModelSharedConstants.NAMESPACE_1)
 @EdmEntitySet(name = "Teams")
 public class Team extends RefBase {
-  @EdmProperty(type = EdmSimpleTypeKind.Boolean)
+  @EdmProperty(type = EdmType.BOOLEAN)
   private Boolean isScrumTeam;
   @EdmNavigationProperty(name = "nt_Employees", association = "TeamEmployees", toMultiplicity = EdmMultiplicity.MANY)
   private List<Employee> employees = new ArrayList<Employee>();

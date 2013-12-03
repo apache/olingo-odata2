@@ -27,8 +27,8 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
+import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 
 /**
  *  
@@ -37,11 +37,11 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 @EdmEntitySet(name = "Buildings")
 public class Building {
   @EdmKey
-  @EdmProperty(type = EdmSimpleTypeKind.Int32)
+  @EdmProperty(type = EdmType.INT32)
   private String id;
   @EdmProperty
   private String name;
-  @EdmProperty(name = "Image", type = EdmSimpleTypeKind.Binary)
+  @EdmProperty(name = "Image", type = EdmType.BINARY)
   private byte[] image;
   @EdmNavigationProperty(name = "nb_Rooms", toType = Room.class,
       association = "BuildingRooms", toMultiplicity = EdmMultiplicity.MANY)

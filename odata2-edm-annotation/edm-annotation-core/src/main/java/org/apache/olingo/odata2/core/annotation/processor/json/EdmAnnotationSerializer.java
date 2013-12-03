@@ -25,11 +25,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 
+import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
+import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
@@ -178,8 +179,8 @@ public class EdmAnnotationSerializer {
   }
 
   private EdmSimpleTypeKind getDefaultSimpleTypeKind(Field field, EdmProperty property) {
-    final EdmSimpleTypeKind type = property.type();
-    if (type == EdmSimpleTypeKind.Null) {
+    final EdmType type = property.type();
+    if (type == EdmType.NULL) {
       Class<?> fieldType = field.getType();
       if (fieldType == String.class) {
         return EdmSimpleTypeKind.String;
@@ -189,11 +190,12 @@ public class EdmAnnotationSerializer {
         return EdmSimpleTypeKind.Int32;
       }
     }
-    return type;
+    return ANNOTATION_HELPER.mapTypeKind(type);
   }
 
   private Class<?> getType(EdmProperty property) {
-    Class<?> defaultType = property.type().getEdmSimpleTypeInstance().getDefaultType();
+    EdmSimpleTypeKind type = ANNOTATION_HELPER.mapTypeKind(property.type());
+    Class<?> defaultType = type.getEdmSimpleTypeInstance().getDefaultType();
     return defaultType;
   }
 

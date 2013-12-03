@@ -19,9 +19,9 @@
 package org.apache.olingo.odata2.ref.annotation.model;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
+import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 
 /**
  *
@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 public abstract class RefBase {
   @EdmProperty(name="Name")
   protected String name;
-  @EdmProperty(name="Id", type = EdmSimpleTypeKind.String)
+  @EdmProperty(name="Id", type = EdmType.STRING)
   @EdmKey
   protected String id;
 

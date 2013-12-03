@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.ref.annotation.model;
 
 import java.util.Arrays;
+
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
@@ -26,7 +27,7 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceSource;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 
 /**
  *  
@@ -46,7 +47,7 @@ public class Photo {
   @EdmProperty
   @EdmMediaResourceSource
   private String imageUrl = "http://localhost/someResource.png";
-  @EdmProperty(type = EdmSimpleTypeKind.Binary)
+  @EdmProperty(type = EdmType.BINARY)
   @EdmMediaResourceContent
   private byte[] image = ResourceHelper.generateImage();
 
