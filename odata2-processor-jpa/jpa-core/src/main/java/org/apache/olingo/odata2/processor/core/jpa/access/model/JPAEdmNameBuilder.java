@@ -440,7 +440,10 @@ public class JPAEdmNameBuilder {
         .getType();
 
     Attribute<?, ?> jpaAttribute = propertyView.getJPAAttribute();
-    navProp.setMapping(new Mapping().setInternalName(jpaAttribute.getName()));
+    JPAEdmMapping mapping = new JPAEdmMappingImpl();
+    ((Mapping) mapping).setInternalName(jpaAttribute.getName());
+    mapping.setJPAType(jpaAttribute.getJavaType());
+    navProp.setMapping((Mapping) mapping);
 
     String jpaEntityTypeName = propertyView.getJPAEdmEntityTypeView()
         .getJPAEntityType().getName();

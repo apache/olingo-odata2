@@ -422,15 +422,15 @@ public final class JPAEntityParser {
 
     try {
 
-      String name = getAccessModifierName(navigationProperty.getName(),
-          navigationProperty.getMapping(), accessModifier);
+      JPAEdmMapping navPropMapping = (JPAEdmMapping) navigationProperty.getMapping();
+      String name = getAccessModifierName(navigationProperty.getName(), (EdmMapping) navPropMapping, accessModifier);
 
       Class<?>[] params = null;
       if (accessModifier.equals(ACCESS_MODIFIER_SET)) {
         EdmAssociationEnd end = navigationProperty.getRelationship().getEnd(navigationProperty.getToRole());
         switch (end.getMultiplicity()) {
         case MANY:
-          params = new Class<?>[] { List.class };
+          params = new Class<?>[] { navPropMapping.getJPAType() };
           break;
         case ONE:
           params = new Class<?>[] { ((JPAEdmMapping) end.getEntityType().getMapping()).getJPAType() };

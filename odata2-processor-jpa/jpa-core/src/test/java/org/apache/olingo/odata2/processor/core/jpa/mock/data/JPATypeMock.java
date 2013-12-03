@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.mock.data;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +42,7 @@ public class JPATypeMock {
   private String mString;
   private Calendar mDateTime;
   private JPARelatedTypeMock mRelatedEntity;
-  private List<JPARelatedTypeMock> mRelatedEntities;
+  private List<JPARelatedTypeMock> mRelatedEntities = new ArrayList<JPATypeMock.JPARelatedTypeMock>();
 
   public String getMString() {
     return mString;
