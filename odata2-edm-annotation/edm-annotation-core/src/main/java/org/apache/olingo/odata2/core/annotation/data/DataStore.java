@@ -146,7 +146,7 @@ public class DataStore<T> {
       fieldName2KeyValue.put(ANNOTATION_HELPER.getCanonicalName(field), key);
     }
 
-    ANNOTATION_HELPER.setValuesToAnnotatedFields(fieldName2KeyValue, object, EdmKey.class);
+    ANNOTATION_HELPER.setValuesToAnnotatedFields(object, EdmKey.class, fieldName2KeyValue);
 
     return object;
   }
@@ -167,6 +167,7 @@ public class DataStore<T> {
   }
 
   public static class DataStoreException extends ODataApplicationException {
+    private static final long serialVersionUID = 42L;
 
     public DataStoreException(String message) {
       this(message, null);

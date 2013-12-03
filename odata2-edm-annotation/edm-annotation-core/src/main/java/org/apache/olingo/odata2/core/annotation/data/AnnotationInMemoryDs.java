@@ -34,6 +34,7 @@ import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper.AnnotatedNavInfo;
+import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper.ODataAnnotationException;
 import org.apache.olingo.odata2.core.annotation.edm.ClassHelper;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
@@ -173,14 +174,22 @@ public class AnnotationInMemoryDs implements ListsDataSource {
       return dataStore.createInstance();
     }
 
-    throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+    throw new ODataRuntimeException("No DataStore found for entitySet with name: " + entitySet.getName());
   }
 
   @Override
-  public void writeBinaryData(EdmEntitySet entitySet, Object mediaLinkEntryData, BinaryData binaryData)
+  public void writeBinaryData(EdmEntitySet entitySet, Object mediaEntityInstance, BinaryData binaryData)
       throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
-    throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
 
+    try {
+      ANNOTATION_HELPER.setValueForAnnotatedField(
+          mediaEntityInstance, EdmMediaResourceContent.class, binaryData.getData());
+      ANNOTATION_HELPER.setValueForAnnotatedField(
+          mediaEntityInstance, EdmMediaResourceMimeType.class, binaryData.getMimeType());
+    } catch (ODataAnnotationException e) {
+      throw new ODataRuntimeException("Invalid media resource annotation at entity set '" + entitySet.getName() 
+          + "' with message '" + e.getMessage() + "'.", e);
+    }
   }
 
   /**

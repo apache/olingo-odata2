@@ -298,6 +298,8 @@ public class AnnotationHelper {
   }
 
   public static final class ODataAnnotationException extends ODataException {
+    private static final long serialVersionUID = 1L;
+
     public ODataAnnotationException(String message) {
       super(message);
     }
@@ -482,8 +484,23 @@ public class AnnotationHelper {
     return fieldName2Value;
   }
 
-  public void setValuesToAnnotatedFields(Map<String, Object> fieldName2Value, Object instance,
-      Class<? extends Annotation> annotation) {
+  public void setValueForAnnotatedField(Object instance, Class<? extends Annotation> annotation, Object value) 
+      throws ODataAnnotationException {
+    List<Field> fields = getAnnotatedFields(instance, annotation);
+
+    if(fields.isEmpty()) {
+      throw new ODataAnnotationException("No field found for annotation '" + annotation
+          + "' on instance '" + instance + "'.");
+    } else if(fields.size() > 1) {
+      throw new ODataAnnotationException("More then one field found for annotation '" + annotation
+          + "' on instance '" + instance + "'.");
+    }
+
+    setFieldValue(instance, fields.get(0), value);
+  }
+
+  public void setValuesToAnnotatedFields(Object instance,
+      Class<? extends Annotation> annotation, Map<String, Object> fieldName2Value) {
     List<Field> fields = getAnnotatedFields(instance, annotation);
 
     // XXX: refactore
@@ -575,16 +592,17 @@ public class AnnotationHelper {
     }
   }
 
-  private void setFieldValue(Object instance, Field field, Object propertyValue) {
+  private void setFieldValue(Object instance, Field field, Object value) {
     try {
-      if (propertyValue != null
-          && field.getType() != propertyValue.getClass()
-          && propertyValue.getClass() == String.class) {
-        propertyValue = convert(field, (String) propertyValue);
+      Object usedValue = value;
+      if (value != null
+          && field.getType() != value.getClass()
+          && value.getClass() == String.class) {
+        usedValue = convert(field, (String) value);
       }
       boolean access = field.isAccessible();
       field.setAccessible(true);
-      field.set(instance, propertyValue);
+      field.set(instance, usedValue);
       field.setAccessible(access);
     } catch (IllegalArgumentException ex) { // should never happen
       throw new ODataRuntimeException(ex);

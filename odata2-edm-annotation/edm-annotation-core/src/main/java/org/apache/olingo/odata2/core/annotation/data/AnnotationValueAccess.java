@@ -39,7 +39,9 @@ public class AnnotationValueAccess implements ValueAccess {
    */
   @Override
   public <T> Object getPropertyValue(final T data, final EdmProperty property) throws ODataException {
-    if (annotationHelper.isEdmAnnotated(data)) {
+    if(data == null) {
+      return null;
+    } else if (annotationHelper.isEdmAnnotated(data)) {
       return annotationHelper.getValueForProperty(data, property.getName());
     }
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
