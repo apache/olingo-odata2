@@ -117,10 +117,7 @@ public class XmlFeedConsumer {
           } catch (NumberFormatException e) {
             throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID.addContent(""), e);
           }
-        } catch (NumberFormatException e) {
-          throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID.addContent(""), e);
         }
-
       } else if (FormatXml.ATOM_LINK.equals(reader.getLocalName())) {
         reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_LINK);
 
