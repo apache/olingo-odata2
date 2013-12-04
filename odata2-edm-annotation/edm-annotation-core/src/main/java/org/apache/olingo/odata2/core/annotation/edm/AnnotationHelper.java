@@ -690,7 +690,7 @@ public class AnnotationHelper {
 
   public EdmMultiplicity mapMultiplicity(Multiplicity multiplicity) {
     switch (multiplicity) {
-    case ZERO_TO_ONE: return EdmMultiplicity.ZERO_TO_ONE;
+    case ZERO_OR_ONE: return EdmMultiplicity.ZERO_TO_ONE;
     case ONE: return EdmMultiplicity.ONE;
     case MANY: return EdmMultiplicity.MANY;
     default: throw new ODataRuntimeException("Unknown type '" + multiplicity + "' for mapping to EdmMultiplicity.");
