@@ -35,15 +35,14 @@ public @interface EdmNavigationProperty {
    * <p>EdmMultiplicity indicates the number of entity type instances
    * an association end can relate to:
    * <dl>
-   * <dt>0..1</dt><dd>one or none</dd>
-   * <dt> 1</dt><dd>exactly one</dd>
-   * <dt> *</dt><dd>many</dd>
+   * <dt>ZERO_OR_ONE (0..1)</dt><dd>value is exactly one but can be null (i.e. <code>nullable = true</code>)</dd>
+   * <dt>ONE (1)</dt><dd>value is exactly one (i.e. <code>nullable = false</code>)</dd>
+   * <dt>MANY (*)</dt><dd>many values (which includes zero values (e.g. empty collection))</dd>
    * </dl>
    * </p>
-   * 
    */
   public enum Multiplicity {
-    ZERO_TO_ONE, ONE, MANY;
+    ZERO_OR_ONE, ONE, MANY;
   }
   
   
