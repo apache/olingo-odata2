@@ -47,9 +47,9 @@ public class DataStore<T> {
     private static final Map<Class<?>, DataStore<?>> c2ds = new HashMap<Class<?>, DataStore<?>>();
 
     @SuppressWarnings("unchecked")
-    static DataStore<?> getInstance(Class<?> clz) {
+    static DataStore<?> getInstance(Class<?> clz, boolean createNewInstance) {
       DataStore<?> ds = c2ds.get(clz);
-      if (ds == null) {
+      if (createNewInstance || ds == null) {
         ds = new DataStore<Object>((Class<Object>) clz);
         c2ds.put(clz, ds);
       }
@@ -59,11 +59,16 @@ public class DataStore<T> {
 
   @SuppressWarnings("unchecked")
   public static <T> DataStore<T> createInMemory(Class<T> clazz) {
-    return (DataStore<T>) InMemoryDataStore.getInstance(clazz);
+    return (DataStore<T>) InMemoryDataStore.getInstance(clazz, true);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> DataStore<T> createInMemory(Class<T> clazz, boolean keepExisting) {
+    return (DataStore<T>) InMemoryDataStore.getInstance(clazz, !keepExisting);
   }
 
   private DataStore(List<T> wrapStore, Class<T> clz) {
-    dataStore = wrapStore;
+    dataStore = Collections.synchronizedList(wrapStore);
     dataTypeClass = clz;
   }
 
@@ -104,26 +109,33 @@ public class DataStore<T> {
   }
 
   public T create(T object) throws DataStoreException {
-    if (read(object) != null || getKeys(object).contains(null)) {
-      createKeys(object);
+    synchronized (dataStore) {
+      if (read(object) != null || getKeys(object).contains(null)) {
+        createKeys(object);
+        return this.create(object);
+      }
+      dataStore.add(object);
     }
-    dataStore.add(object);
     return object;
   }
 
   public T update(T object) {
-    T stored = read(object);
-    dataStore.remove(stored);
-    dataStore.add(object);
+    synchronized (dataStore) {
+      T stored = read(object);
+      dataStore.remove(stored);
+      dataStore.add(object);
+    }
     return object;
   }
 
   public T delete(T object) {
-    T stored = read(object);
-    if (stored != null) {
-      dataStore.remove(stored);
+    synchronized (dataStore) {
+      T stored = read(object);
+      if (stored != null) {
+        dataStore.remove(stored);
+      }
+      return stored;
     }
-    return stored;
   }
 
   private List<Object> getKeys(T object) {

@@ -24,6 +24,7 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationEdmProvider;
+import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
 import org.apache.olingo.odata2.core.annotation.model.Building;
 import org.apache.olingo.odata2.core.annotation.model.ModelSharedConstants;
 import org.apache.olingo.odata2.core.annotation.model.Photo;
@@ -41,7 +42,7 @@ public class AnnotationsInMemoryDsTest {
   private static final String DEFAULT_CONTAINER = ModelSharedConstants.CONTAINER_1;
 
   public AnnotationsInMemoryDsTest() {
-    datasource = new AnnotationInMemoryDs(Building.class.getPackage().getName());
+    datasource = new AnnotationInMemoryDs(Building.class.getPackage().getName(), false);
     edmProvider = new AnnotationEdmProvider(Building.class.getPackage().getName());
   }
 
@@ -58,8 +59,57 @@ public class AnnotationsInMemoryDsTest {
 
     Building read = (Building) datasource.readData(edmEntitySet, keys);
     Assert.assertEquals("Common Building", read.getName());
+    Assert.assertEquals("1", read.getId());
   }
 
+  
+  @Test
+  public void createSimpleEntityWithOwnKey() throws Exception {
+    EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
+
+    Building building = new Building();
+    building.setName("Common Building");
+    AnnotationHelper ah = new AnnotationHelper();
+    ah.setValueForProperty(building, "Id", "42");
+    datasource.createData(edmEntitySet, building);
+
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", "42");
+
+    Building read = (Building) datasource.readData(edmEntitySet, keys);
+    Assert.assertEquals("Common Building", read.getName());
+    Assert.assertEquals("42", read.getId());
+  }
+
+  @Test
+  public void createSimpleEntityWithDuplicateKey() throws Exception {
+    EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
+    AnnotationHelper ah = new AnnotationHelper();
+
+    Building building = new Building();
+    building.setName("Common Building");
+    ah.setValueForProperty(building, "Id", "42");
+    datasource.createData(edmEntitySet, building);
+    //
+    Building buildingDuplicate = new Building();
+    buildingDuplicate.setName("Duplicate Building");
+    ah.setValueForProperty(buildingDuplicate, "Id", "42");
+    datasource.createData(edmEntitySet, buildingDuplicate);
+
+    Map<String, Object> keys42 = new HashMap<String, Object>();
+    keys42.put("Id", "42");
+    Building read42 = (Building) datasource.readData(edmEntitySet, keys42);
+    Assert.assertEquals("Common Building", read42.getName());
+    Assert.assertEquals("42", read42.getId());
+
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", "1");
+    Building read = (Building) datasource.readData(edmEntitySet, keys);
+    Assert.assertEquals("Duplicate Building", read.getName());
+    Assert.assertEquals("1", read.getId());
+}
+
+  
   @Test
   public void createEntityTwoKeys() throws Exception {
     EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Photos");
@@ -97,34 +147,30 @@ public class AnnotationsInMemoryDsTest {
     datasource.createData(edmEntitySet, photo);
 
     Map<String, Object> keys = new HashMap<String, Object>();
-    keys.put("Name", "1");
-    keys.put("ImageFormat", "2");
+    keys.put("Name", "BigPicture");
+    keys.put("ImageFormat", "PNG");
 
     Photo read = (Photo) datasource.readData(edmEntitySet, keys);
-    Assert.assertEquals("1", read.getName());
-    Assert.assertEquals("2", read.getType());
+    Assert.assertEquals("BigPicture", read.getName());
+    Assert.assertEquals("PNG", read.getType());
     Assert.assertEquals("image/png", read.getImageType());
     Assert.assertEquals("https://localhost/image.png", read.getImageUri());
 
     // update
     Photo updatedPhoto = new Photo();
-    //    updatedPhoto.setName(nameKeyValue);
-    //    updatedPhoto.setType(typeKeyValue);
-    updatedPhoto.setName("1");
-    updatedPhoto.setType("2");
+    updatedPhoto.setName(nameKeyValue);
+    updatedPhoto.setType(typeKeyValue);
     updatedPhoto.setImageUri("https://localhost/image.jpg");
     updatedPhoto.setImageType("image/jpg");
     datasource.updateData(edmEntitySet, updatedPhoto);
 
     Map<String, Object> updatedKeys = new HashMap<String, Object>();
-    //    updatedKeys.put("Name", nameKeyValue);
-    //    updatedKeys.put("ImageFormat", typeKeyValue);
-    updatedKeys.put("Name", "1");
-    updatedKeys.put("ImageFormat", "2");
+    updatedKeys.put("Name", nameKeyValue);
+    updatedKeys.put("ImageFormat", typeKeyValue);
 
     Photo readUpdated = (Photo) datasource.readData(edmEntitySet, updatedKeys);
-    Assert.assertEquals("1", readUpdated.getName());
-    Assert.assertEquals("2", readUpdated.getType());
+    Assert.assertEquals("BigPicture", readUpdated.getName());
+    Assert.assertEquals("PNG", readUpdated.getType());
     Assert.assertEquals("image/jpg", readUpdated.getImageType());
     Assert.assertEquals("https://localhost/image.jpg", readUpdated.getImageUri());
   }
