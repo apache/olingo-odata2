@@ -24,9 +24,9 @@ import java.util.List;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
+import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty.Multiplicity;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmType;
-import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 
 /**
 *  
@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 public class Team extends RefBase {
   @EdmProperty(type = EdmType.BOOLEAN)
   private Boolean isScrumTeam;
-  @EdmNavigationProperty(name = "nt_Employees", association = "TeamEmployees", toMultiplicity = EdmMultiplicity.MANY)
+  @EdmNavigationProperty(name = "nt_Employees", association = "TeamEmployees", toMultiplicity = Multiplicity.MANY)
   private List<Employee> employees = new ArrayList<Employee>();
 
   public Boolean isScrumTeam() {
