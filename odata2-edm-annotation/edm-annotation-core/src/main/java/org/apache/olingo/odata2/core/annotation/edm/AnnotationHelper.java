@@ -30,6 +30,7 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
+import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty.Multiplicity;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
@@ -266,7 +267,7 @@ public class AnnotationHelper {
   }
 
   public EdmMultiplicity getMultiplicity(EdmNavigationProperty enp, Field field) {
-    EdmMultiplicity multiplicity = enp.toMultiplicity();
+    EdmMultiplicity multiplicity = mapMultiplicity(enp.toMultiplicity());
     final boolean isCollectionType = field.getType().isArray() || Collection.class.isAssignableFrom(field.getType());
 
     if (multiplicity == EdmMultiplicity.ONE && isCollectionType) {
@@ -684,6 +685,15 @@ public class AnnotationHelper {
       case TIME: return EdmSimpleTypeKind.Time;
       default: throw new ODataRuntimeException("Unknown type '" + type
         + "' for mapping to EdmSimpleTypeKind.");
+    }
+  }
+
+  public EdmMultiplicity mapMultiplicity(Multiplicity multiplicity) {
+    switch (multiplicity) {
+    case ZERO_TO_ONE: return EdmMultiplicity.ZERO_TO_ONE;
+    case ONE: return EdmMultiplicity.ONE;
+    case MANY: return EdmMultiplicity.MANY;
+    default: throw new ODataRuntimeException("Unknown type '" + multiplicity + "' for mapping to EdmMultiplicity.");
     }
   }
   

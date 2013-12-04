@@ -24,9 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>Annotation for definition of an {@link EdmFunctionImportParameter} for an {@link EdmFunctionImport}
- * which contains the {@link EdmFunctionImportParameter} as a parameter.</p>
- * The EdmProperty annotation has to be used on a parameter within a {@link EdmFunctionImport} annotated method.
+ * <p>Annotation for definition of an EdmFunctionImportParameter for an EdmFunctionImport
+ * which contains the EdmFunctionImportParameter as a parameter.</p>
+ * The EdmProperty annotation has to be used on a parameter within a EdmFunctionImport annotated method.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

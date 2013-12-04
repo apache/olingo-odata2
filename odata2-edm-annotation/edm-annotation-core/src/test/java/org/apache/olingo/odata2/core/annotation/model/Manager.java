@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
-import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
+import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty.Multiplicity;
 
 /**
  *
@@ -34,7 +34,7 @@ import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 public class Manager extends Employee {
 
   @EdmNavigationProperty(name = "nm_Employees", association = "ManagerEmployees",
-      toMultiplicity = EdmMultiplicity.MANY)
+      toMultiplicity = Multiplicity.MANY)
   private List<Employee> employees = new ArrayList<Employee>();
 
   public Manager(final String id, final String name) {
