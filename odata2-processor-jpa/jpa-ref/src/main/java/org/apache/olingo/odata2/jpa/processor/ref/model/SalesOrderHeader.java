@@ -21,7 +21,9 @@ package org.apache.olingo.odata2.jpa.processor.ref.model;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
@@ -101,7 +103,7 @@ public class SalesOrderHeader {
   private double netAmount;
 
   @OneToMany(mappedBy = "salesOrderHeader", cascade = CascadeType.ALL)
-  private List<SalesOrderItem> salesOrderItem = new ArrayList<SalesOrderItem>();
+  private Set<SalesOrderItem> salesOrderItem = new HashSet<SalesOrderItem>();
 
   @OneToMany(mappedBy = "salesOrderHeader", cascade = CascadeType.ALL)
   private List<Note> notes = new ArrayList<Note>();
@@ -192,11 +194,11 @@ public class SalesOrderHeader {
     this.netAmount = netAmount;
   }
 
-  public List<SalesOrderItem> getSalesOrderItem() {
+  public Set<SalesOrderItem> getSalesOrderItem() {
     return salesOrderItem;
   }
 
-  public void setSalesOrderItem(final List<SalesOrderItem> salesOrderItem) {
+  public void setSalesOrderItem(final Set<SalesOrderItem> salesOrderItem) {
     this.salesOrderItem = salesOrderItem;
   }
 

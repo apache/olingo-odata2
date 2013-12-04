@@ -33,9 +33,10 @@ import org.apache.olingo.odata2.api.servicedocument.Collection;
 import org.apache.olingo.odata2.api.servicedocument.ExtensionElement;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.apache.olingo.odata2.api.servicedocument.Workspace;
+import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.Test;
 
-public class ServiceDocumentConsumerTest {
+public class ServiceDocumentConsumerTest extends BaseTest {
 
   @Test
   public void test() throws EntityProviderException {

@@ -26,6 +26,7 @@ import java.io.InputStream;
 import junit.framework.Assert;
 
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
@@ -33,7 +34,26 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.junit.Test;
 
-public class XmlFeedConsumerTest extends AbstractConsumerTest {
+public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
+
+  public XmlFeedConsumerTest(final StreamWriterImplType type) {
+    super(type);
+  }
+
+  @Test
+  public void readLargeEmployeesFeed() throws Exception {
+    InputStream file = getFileAsStream("LargeEmployeeFeed.xml");
+    assertNotNull(file);
+
+    ODataFeed feed =
+        EntityProvider.readFeed("application/atom+xml", MockFacade.getMockEdm().getDefaultEntityContainer()
+            .getEntitySet(
+                "Employees"), file, DEFAULT_PROPERTIES);
+    assertNotNull(feed);
+
+    FeedMetadata feedMetadata = feed.getFeedMetadata();
+    assertNotNull(feedMetadata);
+  }
 
   @Test
   public void readEmployeesFeedWithInlineCountValid() throws Exception {

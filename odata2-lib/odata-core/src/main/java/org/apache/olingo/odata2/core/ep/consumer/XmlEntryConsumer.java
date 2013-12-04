@@ -552,11 +552,7 @@ public class XmlEntryConsumer {
 
   private void readId(final XMLStreamReader reader) throws EntityProviderException, XMLStreamException {
     reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_ID);
-    reader.next();
-    if (reader.isCharacters()) {
-      entryMetadata.setId(reader.getText());
-    }
-    reader.nextTag();
+    entryMetadata.setId(reader.getElementText());
     reader.require(XMLStreamConstants.END_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_ID);
   }
 

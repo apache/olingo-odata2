@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.processor.core.jpa.access.data;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +105,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     EdmNavigationProperty currentNavigationProperty = context.getNavigationProperty();
     try {
       @SuppressWarnings({ "unchecked" })
-      List<Object> listOfItems = (List<Object>) inlinedEntry.get(context.getNavigationProperty().getName());
+      Collection<Object> listOfItems = (Collection<Object>) inlinedEntry.get(context.getNavigationProperty().getName());
       if (nextEntitySet == null) {
         nextEntitySet = context.getSourceEntitySet().getRelatedEntitySet(currentNavigationProperty);
       }

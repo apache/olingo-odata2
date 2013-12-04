@@ -184,30 +184,16 @@ public class AtomServiceDocumentConsumer {
 
   private TitleImpl parseTitle(final XMLStreamReader reader) throws XMLStreamException {
     reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_TITLE);
-    String text = "";
-    while (reader.hasNext()
-        && !(reader.isEndElement() && Edm.NAMESPACE_ATOM_2005.equals(reader.getNamespaceURI()) && FormatXml.ATOM_TITLE
-            .equals(reader.getLocalName()))) {
-      if (reader.isCharacters()) {
-        text += reader.getText();
-      }
-      reader.next();
-    }
+    String text = reader.getElementText();
+    reader.require(XMLStreamConstants.END_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_TITLE);
     return new TitleImpl().setText(text);
   }
 
   private AcceptImpl parseAccept(final XMLStreamReader reader) throws XMLStreamException {
     reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_APP_2007, FormatXml.APP_ACCEPT);
     CommonAttributesImpl commonAttributes = parseCommonAttribute(reader);
-    String text = "";
-    while (reader.hasNext()
-        && !(reader.isEndElement() && Edm.NAMESPACE_APP_2007.equals(reader.getNamespaceURI()) && FormatXml.APP_ACCEPT
-            .equals(reader.getLocalName()))) {
-      if (reader.isCharacters()) {
-        text += reader.getText();
-      }
-      reader.next();
-    }
+    String text = reader.getElementText();
+    reader.require(XMLStreamConstants.END_ELEMENT, Edm.NAMESPACE_APP_2007, FormatXml.APP_ACCEPT);
     return new AcceptImpl().setCommonAttributes(commonAttributes).setText(text);
   }
 
@@ -291,10 +277,15 @@ public class AtomServiceDocumentConsumer {
         && !(reader.isEndElement() && extElement.getName() != null && extElement.getName()
             .equals(reader.getLocalName()))) {
       reader.next();
-      if (reader.isCharacters()) {
-        extElement.setText(reader.getText());
-      } else if (reader.isStartElement()) {
+      if (reader.isStartElement()) {
         extensionElements.add(parseExtensionElement(reader));
+      } else if (reader.isCharacters()) {
+        String extElementText = "";
+        do {
+          extElementText = extElementText + reader.getText();
+          reader.next();
+        } while (reader.isCharacters());
+        extElement.setText(extElementText);
       }
     }
     extElement.setElements(extensionElements);

@@ -44,7 +44,11 @@ import org.junit.Test;
 /**
  *  
  */
-public class XmlPropertyConsumerTest extends AbstractConsumerTest {
+public class XmlPropertyConsumerTest extends AbstractXmlConsumerTest {
+
+  public XmlPropertyConsumerTest(final StreamWriterImplType type) {
+    super(type);
+  }
 
   @Test
   public void readIntegerProperty() throws Exception {
