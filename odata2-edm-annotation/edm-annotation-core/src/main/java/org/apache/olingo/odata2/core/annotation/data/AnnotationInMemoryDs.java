@@ -42,8 +42,14 @@ public class AnnotationInMemoryDs implements ListsDataSource {
 
   private static final AnnotationHelper ANNOTATION_HELPER = new AnnotationHelper();
   private final Map<String, DataStore<Object>> dataStores = new HashMap<String, DataStore<Object>>();
+  private final boolean persistInMemory;
 
   public AnnotationInMemoryDs(String packageToScan) {
+    this(packageToScan, true);
+  }
+  
+  public AnnotationInMemoryDs(String packageToScan, boolean persistInMemory) {
+    this.persistInMemory = persistInMemory;
     List<Class<?>> foundClasses = ClassHelper.loadClasses(packageToScan, new ClassHelper.ClassValidator() {
       @Override
       public boolean isClassValid(Class<?> c) {
@@ -58,7 +64,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
   private void init(List<Class<?>> foundClasses) {
     for (Class<?> clz : foundClasses) {
 
-      DataStore<Object> dhs = (DataStore<Object>) DataStore.createInMemory(clz);
+      DataStore<Object> dhs = (DataStore<Object>) getDataStore(clz);
       org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet entitySet =
           clz.getAnnotation(org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet.class);
       dataStores.put(entitySet.name(), dhs);
@@ -66,7 +72,7 @@ public class AnnotationInMemoryDs implements ListsDataSource {
   }
 
   public <T> DataStore<T> getDataStore(Class<T> clazz) {
-    return DataStore.createInMemory(clazz);
+    return DataStore.createInMemory(clazz, persistInMemory);
   }
 
   @Override

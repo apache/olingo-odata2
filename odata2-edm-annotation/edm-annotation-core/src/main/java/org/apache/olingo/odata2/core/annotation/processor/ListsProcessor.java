@@ -1578,8 +1578,12 @@ public class ListsProcessor extends ODataSingleProcessor {
     for (final String propertyName : type.getPropertyNames()) {
       final EdmProperty property = (EdmProperty) type.getProperty(propertyName);
       if (type instanceof EdmEntityType && ((EdmEntityType) type).getKeyProperties().contains(property)) {
-        continue;
+        Object v = valueAccess.getPropertyValue(data, property);
+        if(v != null) {
+          continue;
+        }
       }
+      
       if (!merge || valueMap != null && valueMap.containsKey(propertyName)) {
         final Object value = valueMap == null ? null : valueMap.get(propertyName);
         if (property.isSimple()) {
