@@ -32,10 +32,10 @@ import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
-import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
-import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper.AnnotatedNavInfo;
-import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper.ODataAnnotationException;
-import org.apache.olingo.odata2.core.annotation.edm.ClassHelper;
+import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper;
+import org.apache.olingo.odata2.core.annotation.util.ClassHelper;
+import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper.AnnotatedNavInfo;
+import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper.ODataAnnotationException;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class AnnotationInMemoryDs implements ListsDataSource {

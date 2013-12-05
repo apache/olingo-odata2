@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.annotation.edm;
+package org.apache.olingo.odata2.core.annotation.util;
 
 import java.io.File;
 import java.io.FileFilter;
