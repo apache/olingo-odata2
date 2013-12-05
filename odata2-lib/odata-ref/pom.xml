@@ -93,7 +93,7 @@
 		</dependency>
         <dependency>
           <groupId>org.apache.olingo</groupId>
-          <artifactId>olingo-odata2-edm-annotation-core-incubating</artifactId>
+          <artifactId>olingo-odata2-annotation-processor-core-incubating</artifactId>
           <version>${project.version}</version>
         </dependency>
 		<dependency>
