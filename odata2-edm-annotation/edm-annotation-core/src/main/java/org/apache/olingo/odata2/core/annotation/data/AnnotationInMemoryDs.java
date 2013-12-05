@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
-import org.apache.olingo.odata2.api.data.ListsDataSource;
+import org.apache.olingo.odata2.api.data.DataSource;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
@@ -38,7 +38,7 @@ import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper.AnnotatedN
 import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper.ODataAnnotationException;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
-public class AnnotationInMemoryDs implements ListsDataSource {
+public class AnnotationInMemoryDs implements DataSource {
 
   private static final AnnotationHelper ANNOTATION_HELPER = new AnnotationHelper();
   private final Map<String, DataStore<Object>> dataStores = new HashMap<String, DataStore<Object>>();

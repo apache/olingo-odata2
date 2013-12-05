@@ -36,8 +36,9 @@ import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.InlineCount;
-import org.apache.olingo.odata2.api.data.ListsDataSource;
-import org.apache.olingo.odata2.api.data.ListsDataSource.BinaryData;
+import org.apache.olingo.odata2.api.data.DataSource;
+import org.apache.olingo.odata2.api.data.DataSource.BinaryData;
+import org.apache.olingo.odata2.api.data.DataSourceProcessor;
 import org.apache.olingo.odata2.api.data.ValueAccess;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
@@ -81,7 +82,6 @@ import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
-import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.NavigationSegment;
@@ -117,21 +117,17 @@ import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 
 /**
  * Implementation of the centralized parts of OData processing,
- * allowing to use the simplified {@link ListsDataSource} for the
+ * allowing to use the simplified {@link DataSource} for the
  * actual data handling.
  * 
  */
-public class ListsProcessor extends ODataSingleProcessor {
+public class ListsProcessor extends DataSourceProcessor {
 
   // TODO: Paging size should be configurable.
   private static final int SERVER_PAGING_SIZE = 100;
 
-  private final ListsDataSource dataSource;
-  private final ValueAccess valueAccess;
-
-  public ListsProcessor(final ListsDataSource dataSource, final ValueAccess valueAccess) {
-    this.dataSource = dataSource;
-    this.valueAccess = valueAccess;
+  public ListsProcessor(final DataSource dataSource, final ValueAccess valueAccess) {
+    super(dataSource, valueAccess);
   }
 
   @Override

@@ -96,10 +96,10 @@ public class EntryXmlReadOnlyTest extends AbstractRefXmlTest {
   public void entryWithSpecialKey() throws Exception {
     // Ugly hack to create an entity with a key containing special characters just for this test.
     ListsProcessor processor = (ListsProcessor) getService().getEntityProcessor();
-    Field field = processor.getClass().getDeclaredField("dataSource");
+    Field field = getField(processor.getClass(), "dataSource");
     field.setAccessible(true);
     ScenarioDataSource dataSource = (ScenarioDataSource) field.get(processor);
-    field = dataSource.getClass().getDeclaredField("dataContainer");
+    field = getField(dataSource.getClass(), "dataContainer");
     field.setAccessible(true);
     DataContainer dataContainer = (DataContainer) field.get(dataSource);
     // Add a new Photo where the "Type" property is set to, space-separated,
@@ -116,6 +116,17 @@ public class EntryXmlReadOnlyTest extends AbstractRefXmlTest {
     assertXpathEvaluatesTo("strange Photo", "/atom:entry/m:properties/d:Name", body);
     assertXpathEvaluatesTo(expected, "/atom:entry/atom:link[@rel=\"edit\"]/@href", body);
     assertXpathEvaluatesTo(expected + "/$value", "/atom:entry/atom:link[@rel=\"edit-media\"]/@href", body);
+  }
+
+  private Field getField(Class<?> clazz, String string) throws Exception {
+    try {
+      return clazz.getDeclaredField(string);
+    } catch (NoSuchFieldException e) {
+      if(clazz == Object.class) {
+        throw e;
+      }
+      return getField(clazz.getSuperclass(), string);
+    }
   }
 
   @Test
