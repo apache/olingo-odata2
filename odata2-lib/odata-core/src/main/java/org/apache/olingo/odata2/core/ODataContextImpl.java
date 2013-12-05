@@ -284,12 +284,8 @@ public class ODataContextImpl implements ODataContext {
   }
 
   private boolean checkDebugMode(final Map<String, String> queryParameters) {
-    if (getQueryDebugValue(queryParameters) == null) {
-      return false;
-    } else {
-      final ODataDebugCallback callback = getServiceFactory().getCallback(ODataDebugCallback.class);
-      return callback != null && callback.isDebugEnabled();
-    }
+    final ODataDebugCallback callback = getServiceFactory().getCallback(ODataDebugCallback.class);
+    return callback == null ? getQueryDebugValue(queryParameters) != null : callback.isDebugEnabled();
   }
 
   private static String getQueryDebugValue(final Map<String, String> queryParameters) {

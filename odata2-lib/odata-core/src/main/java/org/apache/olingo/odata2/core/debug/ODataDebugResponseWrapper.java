@@ -42,7 +42,6 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 /**
  * Wraps an OData response into an OData response containing additional
  * information useful for support purposes.
- * 
  */
 public class ODataDebugResponseWrapper {
 
@@ -53,22 +52,20 @@ public class ODataDebugResponseWrapper {
   private final ODataResponse response;
   private final UriInfo uriInfo;
   private final Exception exception;
-  private final boolean isJson;
 
   public ODataDebugResponseWrapper(final ODataContext context, final ODataResponse response, final UriInfo uriInfo,
-      final Exception exception, final String debugValue) {
+      final Exception exception) {
     this.context = context;
     this.response = response;
     this.uriInfo = uriInfo;
     this.exception = exception;
-    isJson = ODATA_DEBUG_JSON.equals(debugValue);
   }
 
   public ODataResponse wrapResponse() {
     try {
       return ODataResponse.status(HttpStatusCodes.OK)
-          .entity(isJson ? wrapInJson(createParts()) : null)
-          .contentHeader(isJson ? HttpContentType.APPLICATION_JSON : null)
+          .entity(wrapInJson(createParts()))
+          .contentHeader(HttpContentType.APPLICATION_JSON)
           .build();
     } catch (final ODataException e) {
       throw new ODataRuntimeException("Should not happen", e);
