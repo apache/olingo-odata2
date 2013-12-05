@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
-import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
+import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**

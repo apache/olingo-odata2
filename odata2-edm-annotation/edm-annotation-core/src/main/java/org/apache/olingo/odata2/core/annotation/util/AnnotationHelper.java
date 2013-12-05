@@ -12,7 +12,7 @@
  * specific language governing permissions and limitations under the License.
  * ****************************************************************************
  */
-package org.apache.olingo.odata2.core.annotation.edm;
+package org.apache.olingo.odata2.core.annotation.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

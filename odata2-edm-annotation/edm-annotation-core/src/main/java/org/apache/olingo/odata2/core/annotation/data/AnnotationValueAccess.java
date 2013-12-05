@@ -23,7 +23,7 @@ import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
-import org.apache.olingo.odata2.core.annotation.edm.AnnotationHelper;
+import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper;
 
 /**
  *

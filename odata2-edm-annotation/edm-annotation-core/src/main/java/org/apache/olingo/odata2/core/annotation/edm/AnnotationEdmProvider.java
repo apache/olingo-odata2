@@ -64,6 +64,8 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.api.edm.provider.Using;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper;
+import org.apache.olingo.odata2.core.annotation.util.ClassHelper;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
