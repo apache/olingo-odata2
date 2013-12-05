@@ -43,7 +43,7 @@ import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
  * </p>
  * 
  */
-public interface ListsDataSource {
+public interface DataSource {
 
   /**
    * Retrieves the whole data list for the specified entity set.

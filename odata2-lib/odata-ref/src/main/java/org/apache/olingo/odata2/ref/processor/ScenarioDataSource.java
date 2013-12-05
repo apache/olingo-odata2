@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.olingo.odata2.api.commons.HttpContentType;
-import org.apache.olingo.odata2.api.data.ListsDataSource;
+import org.apache.olingo.odata2.api.data.DataSource;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
@@ -48,7 +48,7 @@ import org.apache.olingo.odata2.ref.model.Team;
  * Data for the reference scenario
  * 
  */
-public class ScenarioDataSource implements ListsDataSource {
+public class ScenarioDataSource implements DataSource {
 
   private static final String ENTITYSET_1_1 = "Employees";
   private static final String ENTITYSET_1_2 = "Teams";
