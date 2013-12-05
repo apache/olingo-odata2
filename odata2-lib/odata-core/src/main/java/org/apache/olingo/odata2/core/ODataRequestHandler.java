@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.ODataDebugResponseWrapperCallback;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.ODataServiceVersion;
@@ -148,15 +149,22 @@ public class ODataRequestHandler {
       odataResponse = extendedResponse.build();
     } catch (final Exception e) {
       exception = e;
-      odataResponse =
-          new ODataExceptionWrapper(context, request.getQueryParameters(), request.getAcceptHeaders())
-              .wrapInExceptionResponse(e);
+      odataResponse = new ODataExceptionWrapper(context, request.getQueryParameters(), request.getAcceptHeaders())
+          .wrapInExceptionResponse(e);
     }
     context.stopRuntimeMeasurement(timingHandle);
 
-    final String debugValue = getDebugValue(context, request.getQueryParameters());
-    return debugValue == null ? odataResponse : new ODataDebugResponseWrapper(context, odataResponse, uriInfo,
-        exception, debugValue).wrapResponse();
+    if (context.isInDebugMode()) {
+      if (getQueryDebugValue(request.getQueryParameters()) == null) {
+        ODataDebugResponseWrapperCallback callback =
+            context.getServiceFactory().getCallback(ODataDebugResponseWrapperCallback.class);
+        return callback == null ? odataResponse : callback.handle(context, request, odataResponse, uriInfo, exception);
+      } else {
+        return new ODataDebugResponseWrapper(context, odataResponse, uriInfo, exception).wrapResponse();
+      }
+    } else {
+      return odataResponse;
+    }
   }
 
   private HttpStatusCodes getStatusCode(final ODataResponse odataResponse, final ODataHttpMethod method,
@@ -514,10 +522,6 @@ public class ODataRequestHandler {
       }
     }
     return concurrency;
-  }
-
-  private static String getDebugValue(final ODataContext context, final Map<String, String> queryParameters) {
-    return context.isInDebugMode() ? getQueryDebugValue(queryParameters) : null;
   }
 
   private static String getQueryDebugValue(final Map<String, String> queryParameters) {
