@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-odata2-edm-annotation-incubating</artifactId>
+    <artifactId>olingo-odata2-annotation-processor-incubating</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
 
@@ -23,8 +23,8 @@
     </parent>
 
     <modules>
-        <module>edm-annotation-api</module>
-        <module>edm-annotation-core</module>
-        <module>edm-annotation-webref</module>
+        <module>annotation-processor-api</module>
+        <module>annotation-processor-core</module>
+        <module>annotation-processor-webref</module>
     </modules>
 </project>
