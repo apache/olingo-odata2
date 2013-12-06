@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 
 /**
  * Default EDM Provider which is to be extended by the application
@@ -38,7 +37,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public EntityContainerInfo getEntityContainerInfo(final String name) throws ODataException {
-    throw new ODataNotImplementedException();
+    return null;
   }
 
   /**
@@ -48,7 +47,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public EntityType getEntityType(final FullQualifiedName edmFQName) throws ODataException {
-    throw new ODataNotImplementedException();
+    return null;
   }
 
   /**
@@ -58,7 +57,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public ComplexType getComplexType(final FullQualifiedName edmFQName) throws ODataException {
-    throw new ODataNotImplementedException();
+    return null;
   }
 
   /**
@@ -68,7 +67,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public Association getAssociation(final FullQualifiedName edmFQName) throws ODataException {
-    throw new ODataNotImplementedException();
+    return null;
   }
 
   /**
@@ -79,7 +78,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public EntitySet getEntitySet(final String entityContainer, final String name) throws ODataException {
-    throw new ODataNotImplementedException();
+    return null;
   }
 
   /**
@@ -94,7 +93,7 @@ public abstract class EdmProvider {
    */
   public AssociationSet getAssociationSet(final String entityContainer, final FullQualifiedName association,
       final String sourceEntitySetName, final String sourceEntitySetRole) throws ODataException {
-    throw new ODataNotImplementedException();
+    return null;
   }
 
   /**
@@ -105,7 +104,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public FunctionImport getFunctionImport(final String entityContainer, final String name) throws ODataException {
-    throw new ODataNotImplementedException();
+    return null;
   }
 
   /**
@@ -114,7 +113,7 @@ public abstract class EdmProvider {
    * @throws ODataException
    */
   public List<Schema> getSchemas() throws ODataException {
-    throw new ODataNotImplementedException();
+    return null;
   }
 
   /**
