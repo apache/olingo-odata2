@@ -42,7 +42,6 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata2.api.edm.provider.FunctionImportParameter;
 import org.apache.olingo.odata2.api.edm.provider.ReturnType;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
-import org.eclipse.jetty.http.HttpMethods;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -83,12 +82,12 @@ public class EdmFunctionImportImplProvTest extends BaseTest {
     parameters.add(parameter);
 
     FunctionImport functionImportFoo =
-        new FunctionImport().setName("foo").setHttpMethod(HttpMethods.GET).setReturnType(fooReturnType).setEntitySet(
+        new FunctionImport().setName("foo").setHttpMethod("GET").setReturnType(fooReturnType).setEntitySet(
             "fooEntitySet").setParameters(parameters);
     when(edmProvider.getFunctionImport("Container", "foo")).thenReturn(functionImportFoo);
     edmFunctionImport = new EdmFunctionImportImplProv(edmImplProv, functionImportFoo, edmEntityContainer);
 
-    FunctionImport functionImportBar = new FunctionImport().setName("bar").setHttpMethod(HttpMethods.GET);
+    FunctionImport functionImportBar = new FunctionImport().setName("bar").setHttpMethod("GET");
     when(edmProvider.getFunctionImport("Container", "bar")).thenReturn(functionImportBar);
     edmFunctionImportWithoutParameters =
         new EdmFunctionImportImplProv(edmImplProv, functionImportBar, edmEntityContainer);
@@ -98,8 +97,7 @@ public class EdmFunctionImportImplProvTest extends BaseTest {
   @Test
   public void functionImport() throws Exception {
     assertEquals("foo", edmFunctionImport.getName());
-    assertEquals(HttpMethods.GET, edmFunctionImport.getHttpMethod());
-
+    assertEquals("GET", edmFunctionImport.getHttpMethod());
   }
 
   @Test
