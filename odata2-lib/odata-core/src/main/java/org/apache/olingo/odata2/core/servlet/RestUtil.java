@@ -30,7 +30,7 @@ import org.apache.olingo.odata2.core.commons.Decoder;
 public class RestUtil {
   private static final String REG_EX_QUALITY_FACTOR = "q=((?:1\\.0{0,3})|(?:0\\.[0-9]{0,2}[1-9]))";
   private static final String REG_EX_OPTIONAL_WHITESPACE = "\\s?";
-  private static final Pattern REG_EX_ACCEPT = Pattern.compile("([a-z\\*\\s]+/[a-z0-9\\+\\*\\-=;\\s]+)");
+  private static final Pattern REG_EX_ACCEPT = Pattern.compile("((?:\\*)|(?:[a-z\\*\\s]+/[a-zA-Z0-9\\+\\*\\-=;\\s]+))");
   private static final Pattern REG_EX_ACCEPT_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT + "(?:;"
       + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QUALITY_FACTOR + ")?");
   private static final Pattern REG_EX_ACCEPT_LANGUAGES = Pattern
