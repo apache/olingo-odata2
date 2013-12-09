@@ -21,9 +21,11 @@ package org.apache.olingo.odata2.core.annotation.util;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  *
@@ -90,6 +92,34 @@ public class ClassHelper {
     
     return annotatedClasses;
   }
+  
+  public static Object getFieldValue(Object instance, Field field) {
+    try {
+      boolean access = field.isAccessible();
+      field.setAccessible(true);
+      Object value = field.get(instance);
+      field.setAccessible(access);
+      return value;
+    } catch (IllegalArgumentException ex) { // should never happen
+      throw new ODataRuntimeException(ex);
+    } catch (IllegalAccessException ex) { // should never happen
+      throw new ODataRuntimeException(ex);
+    }
+  }
+
+  public static void setFieldValue(Object instance, Field field, Object value) {
+    try {
+      boolean access = field.isAccessible();
+      field.setAccessible(true);
+      field.set(instance, value);
+      field.setAccessible(access);
+    } catch (IllegalArgumentException ex) { // should never happen
+      throw new ODataRuntimeException(ex);
+    } catch (IllegalAccessException ex) { // should never happen
+      throw new ODataRuntimeException(ex);
+    }
+  }
+
 
   private static File[] listSubFolder(File folder) {
     File[] subfolders = folder.listFiles(FOLDER_FILTER);
