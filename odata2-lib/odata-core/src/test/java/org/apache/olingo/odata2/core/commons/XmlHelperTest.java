@@ -28,6 +28,11 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.junit.Test;
 
 public class XmlHelperTest {
@@ -46,6 +51,23 @@ public class XmlHelperTest {
           "<extract>" +
           "  <data>&rules;</data>" +
           "</extract>";
+
+  public static String XML_LOL =
+      "<?xml version=\"1.0\"?>" +
+          "    <!DOCTYPE lolz [" +
+          "        <!ENTITY lol \"lol\">" +
+          "        <!ELEMENT lolz (#PCDATA)>" +
+          "        <!ENTITY lol1 \"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\">" +
+          "        <!ENTITY lol2 \"&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;\">" +
+          "        <!ENTITY lol3 \"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\">" +
+          "        <!ENTITY lol4 \"&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;\">" +
+          "        <!ENTITY lol5 \"&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;\">" +
+          "        <!ENTITY lol6 \"&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;\">" +
+          "        <!ENTITY lol7 \"&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;\">" +
+          "        <!ENTITY lol8 \"&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;\">" +
+          "        <!ENTITY lol9 \"&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;\">" +
+          "    ]>" +
+          "    <lolz>&lol9;</lolz>";
 
   @Test
   public void createReader() throws Exception {
@@ -93,6 +115,32 @@ public class XmlHelperTest {
 
     streamReader = factory.createXMLStreamReader(content, "UTF-8");
     return streamReader;
+  }
+
+  @Test(expected = XMLStreamException.class)
+  public void lolWithProtection() throws Exception {
+    InputStream content = new ByteArrayInputStream(XML_LOL.getBytes("UTF-8"));
+    XMLStreamReader streamReader = XmlHelper.createStreamReader(content);
+
+    while (streamReader.hasNext()) {
+      streamReader.next();
+    }
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void lolApiWithProtection() throws Exception {
+    InputStream content = new ByteArrayInputStream(XML_LOL.getBytes("UTF-8"));
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+
+    EntityProvider.readEntry("application/xml", entitySet, content, EntityProviderReadProperties.init().build());
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void xxeApiWithProtection() throws Exception {
+    InputStream content = new ByteArrayInputStream(XML_XXE.getBytes("UTF-8"));
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+
+    EntityProvider.readEntry("application/xml", entitySet, content, EntityProviderReadProperties.init().build());
   }
 
 }
