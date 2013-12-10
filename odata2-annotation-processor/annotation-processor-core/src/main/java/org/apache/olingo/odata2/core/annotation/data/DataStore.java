@@ -51,7 +51,7 @@ public class DataStore<T> {
     private static final Map<Class<?>, DataStore<?>> c2ds = new HashMap<Class<?>, DataStore<?>>();
 
     @SuppressWarnings("unchecked")
-    static DataStore<?> getInstance(Class<?> clz, boolean createNewInstance) {
+    static synchronized DataStore<?> getInstance(Class<?> clz, boolean createNewInstance) {
       DataStore<?> ds = c2ds.get(clz);
       if (createNewInstance || ds == null) {
         ds = new DataStore<Object>((Class<Object>) clz);
