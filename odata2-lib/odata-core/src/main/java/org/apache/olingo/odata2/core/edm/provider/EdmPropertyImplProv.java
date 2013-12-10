@@ -29,6 +29,7 @@ import org.apache.olingo.odata2.api.edm.provider.Property;
 public abstract class EdmPropertyImplProv extends EdmElementImplProv implements EdmProperty, EdmAnnotatable {
 
   private Property property;
+  private EdmAnnotations annotations;
 
   public EdmPropertyImplProv(final EdmImplProv edm, final FullQualifiedName propertyName, final Property property)
       throws EdmException {
@@ -48,6 +49,9 @@ public abstract class EdmPropertyImplProv extends EdmElementImplProv implements 
 
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(property.getAnnotationAttributes(), property.getAnnotationElements());
+    if (annotations == null) {
+      annotations = new EdmAnnotationsImplProv(property.getAnnotationAttributes(), property.getAnnotationElements());
+    }
+    return annotations;
   }
 }

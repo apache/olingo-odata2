@@ -25,7 +25,7 @@ package org.apache.olingo.odata2.api.edm;
  * <p>EdmAssociationSetEnd defines one side of the relationship of two entity sets.
  * 
  */
-public interface EdmAssociationSetEnd {
+public interface EdmAssociationSetEnd extends EdmAnnotatable {
 
   /**
    * Get the role name

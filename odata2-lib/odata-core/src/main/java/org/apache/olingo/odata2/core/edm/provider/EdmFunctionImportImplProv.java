@@ -48,6 +48,7 @@ public class EdmFunctionImportImplProv extends EdmNamedImplProv implements EdmFu
   private Map<String, EdmParameter> edmParameters;
   private Map<String, FunctionImportParameter> parameters;
   private List<String> parametersList;
+  private EdmAnnotations annotations;
 
   public EdmFunctionImportImplProv(final EdmImplProv edm, final FunctionImport functionImport,
       final EdmEntityContainer edmEntityContainer) throws EdmException {
@@ -133,7 +134,11 @@ public class EdmFunctionImportImplProv extends EdmNamedImplProv implements EdmFu
 
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(functionImport.getAnnotationAttributes(), functionImport.getAnnotationElements());
+    if (annotations == null) {
+      annotations =
+          new EdmAnnotationsImplProv(functionImport.getAnnotationAttributes(), functionImport.getAnnotationElements());
+    }
+    return annotations;
   }
 
   @Override

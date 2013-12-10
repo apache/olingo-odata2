@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
+import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmStructuralType;
@@ -48,6 +49,7 @@ public abstract class EdmStructuralTypeImplProv extends EdmNamedImplProv impleme
   protected Map<String, EdmTyped> edmProperties;
   private Map<String, Property> properties;
   private List<String> edmPropertyNames;
+  private EdmAnnotations annotations;
 
   public EdmStructuralTypeImplProv(final EdmImplProv edm, final ComplexType structuralType,
       final EdmTypeKind edmTypeKind, final String namespace) throws EdmException {
@@ -169,5 +171,14 @@ public abstract class EdmStructuralTypeImplProv extends EdmNamedImplProv impleme
     } catch (final EdmException e) {
       return null;
     }
+  }
+
+  @Override
+  public EdmAnnotations getAnnotations() throws EdmException {
+    if (annotations == null) {
+      annotations =
+          new EdmAnnotationsImplProv(structuralType.getAnnotationAttributes(), structuralType.getAnnotationElements());
+    }
+    return annotations;
   }
 }

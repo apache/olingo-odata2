@@ -20,9 +20,6 @@ package org.apache.olingo.odata2.api.edm;
 
 import java.util.List;
 
-import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
-import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
-
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * A CSDL AnnotationElement element
@@ -64,13 +61,13 @@ public interface EdmAnnotationElement {
    * 
    * @return child elements of this {@link EdmAnnotationElement}
    */
-  List<AnnotationElement> getChildElements();
+  List<EdmAnnotationElement> getChildElements();
 
   /**
    * Get the attributes of this custom element
    * 
    * @return the attributes of this {@link EdmAnnotationElement}
    */
-  List<AnnotationAttribute> getAttributes();
+  List<EdmAnnotationAttribute> getAttributes();
 
 }

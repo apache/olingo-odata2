@@ -173,16 +173,16 @@ public class EdmxProvider extends EdmProvider {
   public List<Schema> getSchemas() throws ODataException {
     return dataServices.getSchemas();
   }
-  
+
   @Override
-  public List<AliasInfo> getAliasInfos(){
+  public List<AliasInfo> getAliasInfos() {
     List<AliasInfo> aliasInfos = new ArrayList<AliasInfo>();
-    for(Schema schema : dataServices.getSchemas()){
-      if(schema.getAlias() != null){
+    for (Schema schema : dataServices.getSchemas()) {
+      if (schema.getAlias() != null) {
         aliasInfos.add(new AliasInfo().setAlias(schema.getAlias()).setNamespace(schema.getNamespace()));
       }
     }
-    
+
     return aliasInfos;
   }
 }

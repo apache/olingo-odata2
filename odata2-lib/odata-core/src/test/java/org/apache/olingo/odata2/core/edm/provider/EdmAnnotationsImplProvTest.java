@@ -30,15 +30,16 @@ import org.apache.olingo.odata2.api.edm.EdmAnnotationElement;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 public class EdmAnnotationsImplProvTest extends BaseTest {
 
-  private static EdmAnnotationsImplProv annotationsProvider;
+  private EdmAnnotationsImplProv annotationsProvider;
+  private EdmAnnotationsImplProv annotationsProviderWithNullEementAndAttributes;
 
-  @BeforeClass
-  public static void getEdmEntityContainerImpl() throws Exception {
+  @Before
+  public void getEdmEntityContainerImpl() throws Exception {
 
     List<AnnotationAttribute> annotationAttributes = new ArrayList<AnnotationAttribute>();
     AnnotationAttribute attribute =
@@ -53,6 +54,15 @@ public class EdmAnnotationsImplProvTest extends BaseTest {
 
     annotationsProvider = new EdmAnnotationsImplProv(annotationAttributes, annotationElements);
 
+    annotationsProviderWithNullEementAndAttributes = new EdmAnnotationsImplProv(null, null);
+  }
+
+  @Test
+  public void nullElmentsAndAttributes() {
+    assertNull(annotationsProviderWithNullEementAndAttributes.getAnnotationAttributes());
+    assertNull(annotationsProviderWithNullEementAndAttributes.getAnnotationElements());
+    assertNull(annotationsProviderWithNullEementAndAttributes.getAnnotationAttribute("name", "namespace"));
+    assertNull(annotationsProviderWithNullEementAndAttributes.getAnnotationElement("name", "namespace"));
   }
 
   @Test
@@ -108,6 +118,8 @@ public class EdmAnnotationsImplProvTest extends BaseTest {
     assertEquals("namespace", element.getNamespace());
     assertEquals("prefix", element.getPrefix());
     assertEquals("xmlData", element.getText());
+
+    assertNull(element.getChildElements());
   }
 
   @Test

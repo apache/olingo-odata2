@@ -30,6 +30,7 @@ public class EdmAssociationSetEndImplProv implements EdmAssociationSetEnd, EdmAn
   private EdmEntitySet entitySet;
   private String role;
   private AssociationSetEnd end;
+  private EdmAnnotations annotations;
 
   public EdmAssociationSetEndImplProv(final AssociationSetEnd end, final EdmEntitySet entitySet) throws EdmException {
     this.end = end;
@@ -49,6 +50,9 @@ public class EdmAssociationSetEndImplProv implements EdmAssociationSetEnd, EdmAn
 
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(end.getAnnotationAttributes(), end.getAnnotationElements());
+    if (annotations == null) {
+      annotations = new EdmAnnotationsImplProv(end.getAnnotationAttributes(), end.getAnnotationElements());
+    }
+    return annotations;
   }
 }

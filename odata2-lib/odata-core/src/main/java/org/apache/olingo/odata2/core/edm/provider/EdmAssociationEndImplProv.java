@@ -31,6 +31,7 @@ public class EdmAssociationEndImplProv implements EdmAssociationEnd, EdmAnnotata
 
   private EdmImplProv edm;
   private AssociationEnd associationEnd;
+  private EdmAnnotations annotations;
 
   public EdmAssociationEndImplProv(final EdmImplProv edm, final AssociationEnd associationEnd) throws EdmException {
     this.edm = edm;
@@ -59,7 +60,10 @@ public class EdmAssociationEndImplProv implements EdmAssociationEnd, EdmAnnotata
 
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(associationEnd.getAnnotationAttributes(), associationEnd.getAnnotationElements());
+    if (annotations == null) {
+      annotations =
+          new EdmAnnotationsImplProv(associationEnd.getAnnotationAttributes(), associationEnd.getAnnotationElements());
+    }
+    return annotations;
   }
-
 }

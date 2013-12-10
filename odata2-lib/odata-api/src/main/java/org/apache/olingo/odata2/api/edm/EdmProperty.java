@@ -24,7 +24,7 @@ package org.apache.olingo.odata2.api.edm;
  * @org.apache.olingo.odata2.DoNotImplement
  * 
  */
-public interface EdmProperty extends EdmElement {
+public interface EdmProperty extends EdmElement, EdmAnnotatable {
 
   /**
    * Get customizable feed mappings for this property

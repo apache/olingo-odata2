@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmCustomizableFeedMappings;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -165,10 +164,5 @@ public class EdmEntityTypeImplProv extends EdmStructuralTypeImplProv implements 
 
   protected EdmTyped createNavigationProperty(final NavigationProperty property) throws EdmException {
     return new EdmNavigationPropertyImplProv(edm, property);
-  }
-
-  @Override
-  public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(entityType.getAnnotationAttributes(), entityType.getAnnotationElements());
   }
 }

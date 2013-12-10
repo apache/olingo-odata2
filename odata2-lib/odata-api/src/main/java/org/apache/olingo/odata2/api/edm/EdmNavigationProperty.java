@@ -25,7 +25,7 @@ package org.apache.olingo.odata2.api.edm;
  * <p>EdmNavigationProperty allows navigation from one entity type to another via a relationship.
  * 
  */
-public interface EdmNavigationProperty extends EdmTyped, EdmMappable {
+public interface EdmNavigationProperty extends EdmTyped, EdmMappable, EdmAnnotatable {
 
   /**
    * Get the relationship of the navigation property

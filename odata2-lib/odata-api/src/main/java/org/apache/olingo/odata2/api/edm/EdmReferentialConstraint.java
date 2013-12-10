@@ -23,7 +23,7 @@ package org.apache.olingo.odata2.api.edm;
  * A CSDL ReferentialConstraint element
  * 
  */
-public interface EdmReferentialConstraint {
+public interface EdmReferentialConstraint extends EdmAnnotatable {
 
   /**
    * Get the principal end element

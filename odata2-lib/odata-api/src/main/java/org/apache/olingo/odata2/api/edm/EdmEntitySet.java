@@ -24,7 +24,7 @@ package org.apache.olingo.odata2.api.edm;
  * <p>EdmEntitySet is the container for entity type instances as described in the OData protocol.
  * 
  */
-public interface EdmEntitySet extends EdmMappable, EdmNamed {
+public interface EdmEntitySet extends EdmMappable, EdmNamed, EdmAnnotatable {
 
   /**
    * Get the entity type

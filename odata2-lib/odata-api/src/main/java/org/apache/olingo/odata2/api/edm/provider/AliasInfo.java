@@ -37,7 +37,7 @@ public class AliasInfo {
    * @param alias
    * @return {@link AliasInfo} for method chaining
    */
-  public AliasInfo setAlias(String alias) {
+  public AliasInfo setAlias(final String alias) {
     this.alias = alias;
     return this;
   }
@@ -53,7 +53,7 @@ public class AliasInfo {
    * @param namespace
    * @return {@link AliasInfo} for method chaining
    */
-  public AliasInfo setNamespace(String namespace) {
+  public AliasInfo setNamespace(final String namespace) {
     this.namespace = namespace;
     return this;
   }

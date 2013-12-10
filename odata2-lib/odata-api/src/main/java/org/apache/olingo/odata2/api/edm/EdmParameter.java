@@ -25,6 +25,6 @@ package org.apache.olingo.odata2.api.edm;
  * in {@link org.apache.olingo.odata2.api.edm.provider.FunctionImport} or in the OData protocol.
  * 
  */
-public interface EdmParameter extends EdmElement {
+public interface EdmParameter extends EdmElement, EdmAnnotatable {
 
 }

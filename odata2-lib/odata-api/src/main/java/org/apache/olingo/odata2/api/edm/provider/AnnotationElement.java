@@ -20,13 +20,11 @@ package org.apache.olingo.odata2.api.edm.provider;
 
 import java.util.List;
 
-import org.apache.olingo.odata2.api.edm.EdmAnnotationElement;
-
 /**
  * Objects of this class represent an annotation element.
  * 
  */
-public class AnnotationElement implements EdmAnnotationElement {
+public class AnnotationElement {
 
   private String namespace;
   private String prefix;
@@ -35,32 +33,26 @@ public class AnnotationElement implements EdmAnnotationElement {
   private List<AnnotationElement> childElements;
   private List<AnnotationAttribute> attributes;
 
-  @Override
   public String getNamespace() {
     return namespace;
   }
 
-  @Override
   public String getPrefix() {
     return prefix;
   }
 
-  @Override
   public String getName() {
     return name;
   }
 
-  @Override
   public String getText() {
     return text;
   }
 
-  @Override
   public List<AnnotationElement> getChildElements() {
     return childElements;
   }
 
-  @Override
   public List<AnnotationAttribute> getAttributes() {
     return attributes;
   }

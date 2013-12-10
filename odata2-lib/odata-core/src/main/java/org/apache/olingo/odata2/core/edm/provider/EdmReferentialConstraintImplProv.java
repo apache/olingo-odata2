@@ -18,14 +18,17 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
+import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
+import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.odata2.api.edm.EdmReferentialConstraintRole;
 import org.apache.olingo.odata2.api.edm.provider.ReferentialConstraint;
 import org.apache.olingo.odata2.api.edm.provider.ReferentialConstraintRole;
 
-public class EdmReferentialConstraintImplProv implements EdmReferentialConstraint {
+public class EdmReferentialConstraintImplProv implements EdmReferentialConstraint, EdmAnnotatable {
   private ReferentialConstraint referentialConstraint;
+  private EdmAnnotations annotations;
 
   public EdmReferentialConstraintImplProv(final ReferentialConstraint referentialConstraint) throws EdmException {
     this.referentialConstraint = referentialConstraint;
@@ -41,6 +44,16 @@ public class EdmReferentialConstraintImplProv implements EdmReferentialConstrain
   public EdmReferentialConstraintRole getDependent() throws EdmException {
     ReferentialConstraintRole dependent = referentialConstraint.getDependent();
     return new EdmReferentialConstraintRoleImplProv(dependent);
+  }
+
+  @Override
+  public EdmAnnotations getAnnotations() throws EdmException {
+    if (annotations == null) {
+      annotations =
+          new EdmAnnotationsImplProv(referentialConstraint.getAnnotationAttributes(), referentialConstraint
+              .getAnnotationElements());
+    }
+    return annotations;
   }
 
 }

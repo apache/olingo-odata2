@@ -32,7 +32,7 @@ public interface EdmAnnotations {
    * 
    * @return List of {@link EdmAnnotationElement}
    */
-  List<? extends EdmAnnotationElement> getAnnotationElements();
+  List<EdmAnnotationElement> getAnnotationElements();
 
   /**
    * Get annotation element by full qualified name
@@ -49,7 +49,7 @@ public interface EdmAnnotations {
    * 
    * @return List of {@link EdmAnnotationAttribute}
    */
-  List<? extends EdmAnnotationAttribute> getAnnotationAttributes();
+  List<EdmAnnotationAttribute> getAnnotationAttributes();
 
   /**
    * Get annotation attribute by full qualified name
