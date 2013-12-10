@@ -26,10 +26,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper;
+import org.apache.olingo.odata2.core.annotation.util.ClassHelper;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
@@ -38,8 +41,9 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 public class DataStore<T> {
 
   private static final AnnotationHelper ANNOTATION_HELPER = new AnnotationHelper();
-  private final List<T> dataStore;
+  private final Map<KeyElement, T> dataStore;
   private final Class<T> dataTypeClass;
+  private final KeyAccess keyAccess;
 
   private int idCounter = 1;
 
@@ -67,13 +71,19 @@ public class DataStore<T> {
     return (DataStore<T>) InMemoryDataStore.getInstance(clazz, !keepExisting);
   }
 
-  private DataStore(List<T> wrapStore, Class<T> clz) {
-    dataStore = Collections.synchronizedList(wrapStore);
+  private DataStore(Map<KeyElement, T> wrapStore, Class<T> clz) {
+    dataStore = Collections.synchronizedMap(wrapStore);
     dataTypeClass = clz;
+    try {
+      keyAccess = new KeyAccess(clz);
+    } catch (DataStoreException ex) {
+      // FIXME: replace exception with correct error handling
+      throw new RuntimeException("");
+    }
   }
 
   private DataStore(Class<T> clz) {
-    this(new ArrayList<T>(), clz);
+    this(new HashMap<KeyElement, T>(), clz);
   }
 
   public Class<T> getDataTypeClass() {
@@ -95,88 +105,138 @@ public class DataStore<T> {
   }
 
   public T read(T obj) {
-    List<Object> objKeys = getKeys(obj);
-    for (T stored : dataStore) {
-      if (objKeys.equals(getKeys(stored))) {
-        return stored;
-      }
-    }
-    return null;
+    KeyElement objKeys = getKeys(obj);
+    return dataStore.get(objKeys);
   }
 
   public Collection<T> read() {
-    return Collections.unmodifiableCollection(dataStore);
+    return Collections.unmodifiableCollection(dataStore.values());
   }
 
   public T create(T object) throws DataStoreException {
     synchronized (dataStore) {
-      if (read(object) != null || getKeys(object).contains(null)) {
+      KeyElement keyElement = getKeys(object);
+      if (dataStore.get(keyElement) != null || !keyElement.allKeysSet()) {
         createKeys(object);
         return this.create(object);
       }
-      dataStore.add(object);
+      dataStore.put(keyElement, object);
     }
     return object;
   }
 
   public T update(T object) {
     synchronized (dataStore) {
-      T stored = read(object);
-      dataStore.remove(stored);
-      dataStore.add(object);
+      KeyElement keyElement = getKeys(object);
+      dataStore.remove(keyElement);
+      dataStore.put(keyElement, object);
     }
     return object;
   }
 
   public T delete(T object) {
     synchronized (dataStore) {
-      T stored = read(object);
-      if (stored != null) {
-        dataStore.remove(stored);
-      }
-      return stored;
+      KeyElement keyElement = getKeys(object);
+      return dataStore.remove(keyElement);
     }
   }
 
-  private List<Object> getKeys(T object) {
-    Map<String, Object> keys = ANNOTATION_HELPER.getValueForAnnotatedFields(object, EdmKey.class);
+  private class KeyElement {
+    private final List<Object> keyValues;
+    private int cachedHashCode;
 
-    // XXX: list should be in a defined order -> better to create an 'Key' object which is comparable 
-    List<Object> keyList = new ArrayList<Object>(keys.values());
-    return keyList;
+    public KeyElement(int size) {
+      keyValues = new ArrayList<Object>(size);
+    }
+
+    public KeyElement() {
+      this(2);
+    }
+
+    private void addValue(Object keyValue) {
+      keyValues.add(keyValue);
+      cachedHashCode = keyValues.hashCode();
+    }
+    
+    boolean allKeysSet() {
+      return !keyValues.contains(null);
+    }
+
+    @Override
+    public int hashCode() {
+      return cachedHashCode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final KeyElement other = (KeyElement) obj;
+      if (this.keyValues != other.keyValues && (this.keyValues == null || !this.keyValues.equals(other.keyValues))) {
+        return false;
+      }
+      return true;
+    }
+  }
+  
+  private class KeyAccess {
+    List<Field> keyFields;
+    
+    KeyAccess(Class<?> clazz) throws DataStoreException {
+      keyFields = ANNOTATION_HELPER.getAnnotatedFields(clazz, EdmKey.class);
+      if (keyFields.isEmpty()) {
+        throw new DataStoreException("No EdmKey annotated fields found for class " + clazz);
+      }
+    }
+    
+    KeyElement getKeyValues(T object) {
+      KeyElement keyElement = new KeyElement(keyFields.size());
+      for (Field field : keyFields) {
+        Object keyValue = ClassHelper.getFieldValue(object, field);
+        keyElement.addValue(keyValue);
+      }
+
+      return keyElement;
+    }
+    
+    T createKeys(T object) throws DataStoreException {
+      for (Field field : keyFields) {
+        Object key = createKey(field);
+        ClassHelper.setFieldValue(object, field, key);
+      }
+
+      return object;
+    }
+    
+    private Object createKey(Field field) {
+      Class<?> type = field.getType();
+
+      if (type == String.class) {
+        return String.valueOf(idCounter++);
+      } else if (type == Integer.class || type == int.class) {
+        return Integer.valueOf(idCounter++);
+      } else if (type == Long.class || type == long.class) {
+        return Long.valueOf(idCounter++);
+      }
+
+      throw new UnsupportedOperationException("Automated key generation for type '" + type
+          + "' is not supported (caused on field '" + field + "').");
+    }
+  }
+  
+  private KeyElement getKeys(T object) {
+    return keyAccess.getKeyValues(object);
   }
 
   private T createKeys(T object) throws DataStoreException {
-    List<Field> fields = ANNOTATION_HELPER.getAnnotatedFields(object, EdmKey.class);
-    if (fields.isEmpty()) {
-      throw new DataStoreException("No EdmKey annotated fields found for class " + object.getClass());
-    }
-    Map<String, Object> fieldName2KeyValue = new HashMap<String, Object>();
-
-    for (Field field : fields) {
-      Object key = createKey(field);
-      fieldName2KeyValue.put(ANNOTATION_HELPER.getCanonicalName(field), key);
-    }
-
-    ANNOTATION_HELPER.setValuesToAnnotatedFields(object, EdmKey.class, fieldName2KeyValue);
-
-    return object;
+    return keyAccess.createKeys(object);
   }
 
-  private Object createKey(Field field) {
-    Class<?> type = field.getType();
-
-    if (type == String.class) {
-      return String.valueOf(idCounter++);
-    } else if (type == Integer.class || type == int.class) {
-      return Integer.valueOf(idCounter++);
-    } else if (type == Long.class || type == long.class) {
-      return Long.valueOf(idCounter++);
-    }
-
-    throw new UnsupportedOperationException("Automated key generation for type '" + type
-        + "' is not supported (caused on field '" + field + "').");
-  }
+  
 
   public static class DataStoreException extends ODataApplicationException {
     private static final long serialVersionUID = 42L;
