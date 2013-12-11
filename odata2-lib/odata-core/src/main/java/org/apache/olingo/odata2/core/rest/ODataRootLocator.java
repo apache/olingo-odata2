@@ -130,7 +130,7 @@ public class ODataRootLocator {
       } else {
         final String factoryClassName = servletConfig.getInitParameter(ODataServiceFactory.FACTORY_LABEL);
         if (factoryClassName == null) {
-          throw new ODataRuntimeException("servlet config missing: org.apache.olingo.odata2.processor.factory");
+          throw new ODataRuntimeException("Servlet config missing: " + ODataServiceFactory.FACTORY_LABEL);
         }
 
         ClassLoader cl = (ClassLoader) servletRequest.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
@@ -143,7 +143,7 @@ public class ODataRootLocator {
       ODataServiceFactory serviceFactory = (ODataServiceFactory) factoryClass.newInstance();
       return serviceFactory;
     } catch (Exception e) {
-      throw new ODataRuntimeException(e);
+      throw new ODataRuntimeException("Exception during ODataServiceFactory creation occured.", e);
     }
   }
 
