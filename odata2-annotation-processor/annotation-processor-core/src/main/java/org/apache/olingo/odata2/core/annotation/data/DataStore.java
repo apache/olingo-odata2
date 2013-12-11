@@ -26,8 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
@@ -45,13 +44,11 @@ public class DataStore<T> {
   private final Class<T> dataTypeClass;
   private final KeyAccess keyAccess;
 
-  private int idCounter = 1;
-
   private static class InMemoryDataStore {
     private static final Map<Class<?>, DataStore<?>> c2ds = new HashMap<Class<?>, DataStore<?>>();
 
     @SuppressWarnings("unchecked")
-    static synchronized DataStore<?> getInstance(Class<?> clz, boolean createNewInstance) {
+    static synchronized DataStore<?> getInstance(Class<?> clz, boolean createNewInstance) throws DataStoreException {
       DataStore<?> ds = c2ds.get(clz);
       if (createNewInstance || ds == null) {
         ds = new DataStore<Object>((Class<Object>) clz);
@@ -62,27 +59,22 @@ public class DataStore<T> {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> DataStore<T> createInMemory(Class<T> clazz) {
+  public static <T> DataStore<T> createInMemory(Class<T> clazz) throws DataStoreException {
     return (DataStore<T>) InMemoryDataStore.getInstance(clazz, true);
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> DataStore<T> createInMemory(Class<T> clazz, boolean keepExisting) {
+  public static <T> DataStore<T> createInMemory(Class<T> clazz, boolean keepExisting) throws DataStoreException {
     return (DataStore<T>) InMemoryDataStore.getInstance(clazz, !keepExisting);
   }
 
-  private DataStore(Map<KeyElement, T> wrapStore, Class<T> clz) {
+  private DataStore(Map<KeyElement, T> wrapStore, Class<T> clz) throws DataStoreException {
     dataStore = Collections.synchronizedMap(wrapStore);
     dataTypeClass = clz;
-    try {
-      keyAccess = new KeyAccess(clz);
-    } catch (DataStoreException ex) {
-      // FIXME: replace exception with correct error handling
-      throw new RuntimeException("");
-    }
+    keyAccess = new KeyAccess(clz);
   }
 
-  private DataStore(Class<T> clz) {
+  private DataStore(Class<T> clz) throws DataStoreException {
     this(new HashMap<KeyElement, T>(), clz);
   }
 
@@ -112,13 +104,17 @@ public class DataStore<T> {
   public Collection<T> read() {
     return Collections.unmodifiableCollection(dataStore.values());
   }
-
+  
   public T create(T object) throws DataStoreException {
+    KeyElement keyElement = getKeys(object);
+    return create(object, keyElement);
+  }
+    
+  private T create(T object, KeyElement keyElement) throws DataStoreException {
     synchronized (dataStore) {
-      KeyElement keyElement = getKeys(object);
-      if (dataStore.get(keyElement) != null || !keyElement.allKeysSet()) {
-        createKeys(object);
-        return this.create(object);
+      if (keyElement.keyValuesMissing() || dataStore.get(keyElement) != null) {
+        KeyElement newKey = createSetAndGetKeys(object);
+        return this.create(object, newKey);
       }
       dataStore.put(keyElement, object);
     }
@@ -126,8 +122,8 @@ public class DataStore<T> {
   }
 
   public T update(T object) {
+    KeyElement keyElement = getKeys(object);
     synchronized (dataStore) {
-      KeyElement keyElement = getKeys(object);
       dataStore.remove(keyElement);
       dataStore.put(keyElement, object);
     }
@@ -135,31 +131,35 @@ public class DataStore<T> {
   }
 
   public T delete(T object) {
+    KeyElement keyElement = getKeys(object);
     synchronized (dataStore) {
-      KeyElement keyElement = getKeys(object);
       return dataStore.remove(keyElement);
     }
   }
 
   private class KeyElement {
+    private int cachedHashCode = 42;
     private final List<Object> keyValues;
-    private int cachedHashCode;
 
     public KeyElement(int size) {
       keyValues = new ArrayList<Object>(size);
     }
 
     public KeyElement() {
-      this(2);
+      this(3);
     }
 
     private void addValue(Object keyValue) {
       keyValues.add(keyValue);
-      cachedHashCode = keyValues.hashCode();
+      cachedHashCode = 89 * cachedHashCode + (keyValue != null ? keyValue.hashCode() : 0);
+    }
+    
+    boolean keyValuesMissing() {
+      return keyValues.contains(null);
     }
     
     boolean allKeysSet() {
-      return !keyValues.contains(null);
+      return !keyValuesMissing();
     }
 
     @Override
@@ -181,10 +181,17 @@ public class DataStore<T> {
       }
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "KeyElement{" + "cachedHashCode=" + cachedHashCode + ", keyValues=" + keyValues +  '}';
+    }
   }
   
   private class KeyAccess {
-    List<Field> keyFields;
+    final List<Field> keyFields;
+    final AtomicInteger idCounter = new AtomicInteger(1);
+
     
     KeyAccess(Class<?> clazz) throws DataStoreException {
       keyFields = ANNOTATION_HELPER.getAnnotatedFields(clazz, EdmKey.class);
@@ -212,15 +219,27 @@ public class DataStore<T> {
       return object;
     }
     
+    KeyElement createSetAndGetKeys(T object) throws DataStoreException {
+      KeyElement keyElement = new KeyElement(keyFields.size());
+      for (Field field : keyFields) {
+        Object key = createKey(field);
+        ClassHelper.setFieldValue(object, field, key);
+        keyElement.addValue(key);
+      }
+
+      return keyElement;
+    }
+
+    
     private Object createKey(Field field) {
       Class<?> type = field.getType();
 
       if (type == String.class) {
-        return String.valueOf(idCounter++);
+        return String.valueOf(idCounter.getAndIncrement());
       } else if (type == Integer.class || type == int.class) {
-        return Integer.valueOf(idCounter++);
+        return Integer.valueOf(idCounter.getAndIncrement());
       } else if (type == Long.class || type == long.class) {
-        return Long.valueOf(idCounter++);
+        return Long.valueOf(idCounter.getAndIncrement());
       }
 
       throw new UnsupportedOperationException("Automated key generation for type '" + type
@@ -232,10 +251,9 @@ public class DataStore<T> {
     return keyAccess.getKeyValues(object);
   }
 
-  private T createKeys(T object) throws DataStoreException {
-    return keyAccess.createKeys(object);
+  private KeyElement createSetAndGetKeys(T object) throws DataStoreException {
+    return keyAccess.createSetAndGetKeys(object);
   }
-
   
 
   public static class DataStoreException extends ODataApplicationException {

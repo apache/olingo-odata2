@@ -30,6 +30,7 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
+import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper;
@@ -44,11 +45,11 @@ public class AnnotationInMemoryDs implements DataSource {
   private final Map<String, DataStore<Object>> dataStores = new HashMap<String, DataStore<Object>>();
   private final boolean persistInMemory;
 
-  public AnnotationInMemoryDs(String packageToScan) {
+  public AnnotationInMemoryDs(String packageToScan) throws ODataException {
     this(packageToScan, true);
   }
   
-  public AnnotationInMemoryDs(String packageToScan, boolean persistInMemory) {
+  public AnnotationInMemoryDs(String packageToScan, boolean persistInMemory) throws ODataException {
     this.persistInMemory = persistInMemory;
     List<Class<?>> foundClasses = ClassHelper.loadClasses(packageToScan, new ClassHelper.ClassValidator() {
       @Override
@@ -61,18 +62,21 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   @SuppressWarnings("unchecked")
-  private void init(List<Class<?>> foundClasses) {
-    for (Class<?> clz : foundClasses) {
-
-      DataStore<Object> dhs = (DataStore<Object>) getDataStore(clz);
-      org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet entitySet =
-          clz.getAnnotation(org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet.class);
-      dataStores.put(entitySet.name(), dhs);
+  private void init(List<Class<?>> foundClasses) throws ODataException {
+    try {
+      for (Class<?> clz : foundClasses) {
+        DataStore<Object> dhs = (DataStore<Object>) DataStore.createInMemory(clz, persistInMemory);
+        String entitySetName = ANNOTATION_HELPER.extractEntitySetName(clz);
+        dataStores.put(entitySetName, dhs);
+      }
+    } catch (DataStore.DataStoreException e) {
+      throw new ODataException("Error in DataStore initilization with message: " + e.getMessage(), e);
     }
   }
 
   public <T> DataStore<T> getDataStore(Class<T> clazz) {
-    return DataStore.createInMemory(clazz, persistInMemory);
+    String entitySetName = ANNOTATION_HELPER.extractEntitySetName(clazz);
+    return (DataStore<T>) dataStores.get(entitySetName);
   }
 
   @Override

@@ -134,6 +134,31 @@ public class AnnotationHelper {
     return extractTypeName(annotatedClass, EdmEntityType.class);
   }
 
+  /**
+   * Returns <code>NULL</code> if given class is not annotated. 
+   * If annotated the entity set name is returned and if
+   * no name is set a default name is generated based on the simple class name.
+   *
+   * @param annotatedClass
+   * @return
+   */
+  public String extractEntitySetName(Class<?> annotatedClass) {
+    if (annotatedClass == Object.class) {
+      return null;
+    }
+    EdmEntitySet entitySet = annotatedClass.getAnnotation(EdmEntitySet.class);
+    if (entitySet == null) {
+      return null;
+    }
+
+    String name = entitySet.name();
+    if (name.isEmpty()) {
+      return getCanonicalName(annotatedClass) + "Set";
+    }
+    return name;
+  }
+ 
+
   public FullQualifiedName extractEntityTypeFqn(EdmEntityType type, Class<?> annotatedClass) {
     if(type.namespace().isEmpty()) {
       return new FullQualifiedName(generateNamespace(annotatedClass), extractEntityTypeName(annotatedClass));
@@ -299,10 +324,14 @@ public class AnnotationHelper {
   }
 
   public static final class ODataAnnotationException extends ODataException {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 42L;
 
     public ODataAnnotationException(String message) {
       super(message);
+    }
+
+    public ODataAnnotationException(String message, Exception cause) {
+      super(message, cause);
     }
   }
 

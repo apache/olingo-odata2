@@ -289,13 +289,14 @@ public class AnnotationEdmProvider extends EdmProvider {
       }
       EdmEntitySet entitySet = aClass.getAnnotation(EdmEntitySet.class);
       if (entitySet != null) {
-        builder.addEntitySet(createEntitySet(typeName, entitySet));
+        builder.addEntitySet(createEntitySet(typeName, aClass));
       }
     }
   }
 
-  private EntitySet createEntitySet(FullQualifiedName typeName, EdmEntitySet entitySet) {
-    return new EntitySet().setName(entitySet.name()).setEntityType(typeName);
+  private EntitySet createEntitySet(FullQualifiedName typeName, Class<?> entitySetClass) {
+    String entitySetName = ANNOTATION_HELPER.extractEntitySetName(entitySetClass);
+    return new EntitySet().setName(entitySetName).setEntityType(typeName);
   }
 
   private FullQualifiedName createFqnForEntityType(Class<?> annotatedClass, EdmEntityType entityType) {

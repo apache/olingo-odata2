@@ -38,10 +38,10 @@ import org.mockito.Mockito;
 public class AnnotationsInMemoryDsTest {
 
   private final AnnotationInMemoryDs datasource;
-  private AnnotationEdmProvider edmProvider;
+  private final AnnotationEdmProvider edmProvider;
   private static final String DEFAULT_CONTAINER = ModelSharedConstants.CONTAINER_1;
 
-  public AnnotationsInMemoryDsTest() {
+  public AnnotationsInMemoryDsTest() throws ODataException {
     datasource = new AnnotationInMemoryDs(Building.class.getPackage().getName(), false);
     edmProvider = new AnnotationEdmProvider(Building.class.getPackage().getName());
   }
