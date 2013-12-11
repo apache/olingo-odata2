@@ -77,9 +77,27 @@ public class RestUtil {
     }
   }
 
+  /**
+   * Return http header value.
+   * consider first header value only
+   * avoid using jax-rs 2.0 (getHeaderString())
+   * @param name header name
+   * @param headers JAX-RS header map
+   * @return header value or null
+   */
+  private static String getSafeHeader(String name, javax.ws.rs.core.HttpHeaders headers) {
+    List<String> header = headers.getRequestHeader(name);
+    if (header != null && !header.isEmpty()) {
+      return header.get(0);
+    } else {
+      return null;
+    }
+  }
+
   public static ContentType extractRequestContentType(final SubLocatorParameter param)
       throws ODataUnsupportedMediaTypeException {
-    final String contentType = param.getHttpHeaders().getHeaderString(HttpHeaders.CONTENT_TYPE);
+
+    String contentType = getSafeHeader(HttpHeaders.CONTENT_TYPE, param.getHttpHeaders());
     if (contentType == null || contentType.isEmpty()) {
       // RFC 2616, 7.2.1:
       // "Any HTTP/1.1 message containing an entity-body SHOULD include a
@@ -91,7 +109,7 @@ public class RestUtil {
       return ContentType.create(contentType);
     } else {
       throw new ODataUnsupportedMediaTypeException(
-              ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE.addContent(contentType));
+          ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE.addContent(contentType));
     }
   }
 
@@ -151,18 +169,10 @@ public class RestUtil {
     Map<String, String> headerMap = new HashMap<String, String>();
 
     for (final String key : headers.keySet()) {
-      List<String> header = httpHeaders.getRequestHeader(key);
-      if (header != null && !header.isEmpty()) {
-        /*
-         * consider first header value only
-         * avoid using jax-rs 2.0 (getHeaderString())
-         */
-        String value = header.get(0);
-        if (value != null && !"".equals(value)) {
-          headerMap.put(key, value);
-        }
+      String value = getSafeHeader(key, httpHeaders);
+      if (value != null && !"".equals(value)) {
+        headerMap.put(key, value);
       }
-
     }
     return headerMap;
   }
