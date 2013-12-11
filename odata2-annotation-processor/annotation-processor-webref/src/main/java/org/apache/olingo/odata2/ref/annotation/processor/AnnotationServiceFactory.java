@@ -45,28 +45,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * ODataServiceFactory implemantion based on ListProcessor 
+ * in combination with Annotation-Support-Classes for EdmProvider, DataSource and ValueAccess.
  */
-public class AnnotationPocServiceFactory extends ODataServiceFactory {
+public class AnnotationServiceFactory extends ODataServiceFactory {
 
-  private static boolean isInitialized = false;
+  /**
+   * Instance holder for all annotation relevant instances which should be used as singleton
+   * instances within the ODataApplication (ODataService)
+   */
+  private static class AnnotationInstances {
+    final static String MODEL_PACKAGE = "org.apache.olingo.odata2.ref.annotation.model";
+    final static AnnotationEdmProvider EDM_PROVIDER;
+    final static AnnotationInMemoryDs DATA_SOURCE;
+    final static AnnotationValueAccess VALUE_ACCESS;
+
+    static {
+      try {
+        EDM_PROVIDER = new AnnotationEdmProvider(MODEL_PACKAGE);
+        DATA_SOURCE = new AnnotationInMemoryDs(MODEL_PACKAGE);
+        VALUE_ACCESS = new AnnotationValueAccess();
+
+        initializeSampleData(DATA_SOURCE);
+      } catch (ODataApplicationException ex) {
+        throw new RuntimeException("Exception during sample data generation.", ex);
+      } catch (ODataException ex) {
+        throw new RuntimeException("Exception during data source initialization generation.", ex);
+      }
+    }
+  }
 
   @Override
   public ODataService createService(final ODataContext context) throws ODataException {
-
-    String modelPackage = "org.apache.olingo.odata2.ref.annotation.model";
-    AnnotationEdmProvider annotationEdmProvider = new AnnotationEdmProvider(modelPackage);
-    AnnotationInMemoryDs annotationScenarioDs = new AnnotationInMemoryDs(modelPackage);
-    AnnotationValueAccess annotationValueAccess = new AnnotationValueAccess();
-
-    if (!isInitialized) {
-      initializeSampleData(annotationScenarioDs);
-      isInitialized = true;
-    }
-
     // Edm via Annotations and ListProcessor via AnnotationDS with AnnotationsValueAccess
-    return createODataSingleProcessorService(annotationEdmProvider,
-            new ListsProcessor(annotationScenarioDs, annotationValueAccess));
+    return createODataSingleProcessorService(AnnotationInstances.EDM_PROVIDER,
+            new ListsProcessor(AnnotationInstances.DATA_SOURCE, AnnotationInstances.VALUE_ACCESS));
   }
 
   @SuppressWarnings("unchecked")
@@ -107,7 +120,7 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
 
   }
 
-  private void initializeSampleData(AnnotationInMemoryDs dataSource) throws ODataApplicationException {
+  private static void initializeSampleData(AnnotationInMemoryDs dataSource) throws ODataApplicationException {
     DataStore<Team> teamDs = dataSource.getDataStore(Team.class);
     teamDs.create(createTeam("Team Alpha", true));
     teamDs.create(createTeam("Team Beta", false));
@@ -147,7 +160,7 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
         null, teamDs.read().iterator().next(), roomDs.read().iterator().next()));
   }
 
-  private Employee createEmployee(final String name,
+  private static Employee createEmployee(final String name,
       Location location, final int age, final Calendar date,
       final byte[] image, final String imageType, final String imageUrl,
       Manager manager, Team team, Room room) {
@@ -165,20 +178,20 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
     return employee;
   }
 
-  private Team createTeam(String teamName, boolean isScrumTeam) {
+  private static Team createTeam(String teamName, boolean isScrumTeam) {
     Team team = new Team();
     team.setName(teamName);
     team.setScrumTeam(isScrumTeam);
     return team;
   }
 
-  private Building createBuilding(String buildingName) {
+  private static Building createBuilding(String buildingName) {
     Building b = new Building();
     b.setName(buildingName);
     return b;
   }
 
-  private Photo createPhoto(String name, ResourceHelper.Format format) {
+  private static Photo createPhoto(String name, ResourceHelper.Format format) {
     Photo p = new Photo();
     p.setName(name);
     p.setImageUri("http://localhost/image/" + name);
@@ -188,7 +201,7 @@ public class AnnotationPocServiceFactory extends ODataServiceFactory {
     return p;
   }
 
-  private Room createRoom(String name, int seats, int version, Building building) {
+  private static Room createRoom(String name, int seats, int version, Building building) {
     Room r = new Room();
     r.setName(name);
     r.setSeats(seats);
