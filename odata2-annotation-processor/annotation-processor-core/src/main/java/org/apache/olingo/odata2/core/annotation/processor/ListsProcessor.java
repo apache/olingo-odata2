@@ -1219,11 +1219,21 @@ public class ListsProcessor extends DataSourceProcessor {
         try {
           int result = 0;
           for (final OrderExpression expression : orderBy.getOrders()) {
-            result = evaluateExpression(entity1, expression.getExpression()).compareTo(
-                evaluateExpression(entity2, expression.getExpression()));
+            String first = evaluateExpression(entity1, expression.getExpression());
+            String second = evaluateExpression(entity2, expression.getExpression());
+            
+            if (first != null && second != null) {
+              result = first.compareTo(second);
+            } else if (first == null && second != null) {
+              result = 1;
+            } else if (first != null && second == null) {
+              result = -1;
+            }
+
             if (expression.getSortOrder() == SortOrder.desc) {
               result = -result;
             }
+            
             if (result != 0) {
               break;
             }
