@@ -750,7 +750,7 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
     executeAndValidateHeaderRequest(ODataHttpMethod.PUT, UriType.URI5, null, null,
         HttpStatusCodes.PRECONDITION_REQUIRED);
     // executeAndValidateHeaderRequest(ODataHttpMethod.PUT, UriType.URI6A, null, null,
-    //     HttpStatusCodes.PRECONDITION_REQUIRED);
+    // HttpStatusCodes.PRECONDITION_REQUIRED);
     executeAndValidateHeaderRequest(ODataHttpMethod.PUT, UriType.URI17, null, null,
         HttpStatusCodes.PRECONDITION_REQUIRED);
   }

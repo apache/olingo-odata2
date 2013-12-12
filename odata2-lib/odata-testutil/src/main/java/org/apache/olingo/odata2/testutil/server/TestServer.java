@@ -77,7 +77,7 @@ public class TestServer {
 
   private Server server;
 
-  public void startServer(final Class<? extends ODataServiceFactory> factoryClass, int fixedPort) {
+  public void startServer(final Class<? extends ODataServiceFactory> factoryClass, final int fixedPort) {
     try {
       final ServletContextHandler contextHandler = createContextHandler(factoryClass);
       final InetSocketAddress isa = new InetSocketAddress(DEFAULT_HOST, fixedPort);

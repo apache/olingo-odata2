@@ -85,7 +85,7 @@ public class RestUtil {
    * @param headers JAX-RS header map
    * @return header value or null
    */
-  private static String getSafeHeader(String name, javax.ws.rs.core.HttpHeaders headers) {
+  private static String getSafeHeader(final String name, final javax.ws.rs.core.HttpHeaders headers) {
     List<String> header = headers.getRequestHeader(name);
     if (header != null && !header.isEmpty()) {
       return header.get(0);
@@ -254,7 +254,7 @@ public class RestUtil {
     }
   }
 
-  private static URI buildRequestUri(HttpServletRequest servletRequest) {
+  private static URI buildRequestUri(final HttpServletRequest servletRequest) {
     URI requestUri;
 
     StringBuffer buf = servletRequest.getRequestURL();

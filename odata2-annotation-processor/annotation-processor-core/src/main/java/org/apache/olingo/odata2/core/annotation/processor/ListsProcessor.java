@@ -996,7 +996,7 @@ public class ListsProcessor extends DataSourceProcessor {
         } catch (final ODataNotFoundException e) {
           relatedData = null;
         }
-        
+
         if (relatedData == null) {
           result.setEntryData(Collections.<String, Object> emptyMap());
         } else {
@@ -1221,7 +1221,7 @@ public class ListsProcessor extends DataSourceProcessor {
           for (final OrderExpression expression : orderBy.getOrders()) {
             String first = evaluateExpression(entity1, expression.getExpression());
             String second = evaluateExpression(entity2, expression.getExpression());
-            
+
             if (first != null && second != null) {
               result = first.compareTo(second);
             } else if (first == null && second != null) {
@@ -1233,7 +1233,7 @@ public class ListsProcessor extends DataSourceProcessor {
             if (expression.getSortOrder() == SortOrder.desc) {
               result = -result;
             }
-            
+
             if (result != 0) {
               break;
             }
@@ -1498,7 +1498,7 @@ public class ListsProcessor extends DataSourceProcessor {
     return dataObject;
   }
 
-  private void handleMimeType(Object data, EdmMapping mapping, Map<String, Object> valueMap)
+  private void handleMimeType(final Object data, final EdmMapping mapping, final Map<String, Object> valueMap)
       throws ODataException {
     final String mimeTypeName = mapping.getMimeType();
     if (mimeTypeName != null) {
@@ -1585,11 +1585,11 @@ public class ListsProcessor extends DataSourceProcessor {
       final EdmProperty property = (EdmProperty) type.getProperty(propertyName);
       if (type instanceof EdmEntityType && ((EdmEntityType) type).getKeyProperties().contains(property)) {
         Object v = valueAccess.getPropertyValue(data, property);
-        if(v != null) {
+        if (v != null) {
           continue;
         }
       }
-      
+
       if (!merge || valueMap != null && valueMap.containsKey(propertyName)) {
         final Object value = valueMap == null ? null : valueMap.get(propertyName);
         if (property.isSimple()) {

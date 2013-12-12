@@ -70,7 +70,7 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  * Provider for the entity data model used in the reference scenario
- *
+ * 
  */
 public class AnnotationEdmProvider extends EdmProvider {
 
@@ -82,7 +82,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   private final Map<String, Schema> namespace2Schema = new HashMap<String, Schema>();
   private EntityContainer defaultContainer;
 
-  public AnnotationEdmProvider(Collection<Class<?>> annotatedClasses) {
+  public AnnotationEdmProvider(final Collection<Class<?>> annotatedClasses) {
 
     this.annotatedClasses = new ArrayList<Class<?>>(annotatedClasses.size());
     for (Class<?> aClass : annotatedClasses) {
@@ -94,10 +94,10 @@ public class AnnotationEdmProvider extends EdmProvider {
     init();
   }
 
-  public AnnotationEdmProvider(String packageToScan) {
-    this.annotatedClasses = ClassHelper.loadClasses(packageToScan, new ClassHelper.ClassValidator() {
+  public AnnotationEdmProvider(final String packageToScan) {
+    annotatedClasses = ClassHelper.loadClasses(packageToScan, new ClassHelper.ClassValidator() {
       @Override
-      public boolean isClassValid(Class<?> c) {
+      public boolean isClassValid(final Class<?> c) {
         return ANNOTATION_HELPER.isEdmAnnotated(c);
       }
     });
@@ -115,7 +115,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   }
 
   @Override
-  public Association getAssociation(FullQualifiedName edmFQName) throws ODataException {
+  public Association getAssociation(final FullQualifiedName edmFQName) throws ODataException {
     Schema schema = namespace2Schema.get(edmFQName.getNamespace());
     if (schema != null) {
       List<Association> associations = schema.getAssociations();
@@ -129,8 +129,8 @@ public class AnnotationEdmProvider extends EdmProvider {
   }
 
   @Override
-  public AssociationSet getAssociationSet(String entityContainer, FullQualifiedName association,
-      String sourceEntitySetName, String sourceEntitySetRole) throws ODataException {
+  public AssociationSet getAssociationSet(final String entityContainer, final FullQualifiedName association,
+      final String sourceEntitySetName, final String sourceEntitySetRole) throws ODataException {
     EntityContainer container = name2Container.get(entityContainer);
     if (container != null) {
       List<AssociationSet> associations = container.getAssociationSets();
@@ -153,7 +153,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   }
 
   @Override
-  public ComplexType getComplexType(FullQualifiedName edmFQName) throws ODataException {
+  public ComplexType getComplexType(final FullQualifiedName edmFQName) throws ODataException {
     Schema schema = namespace2Schema.get(edmFQName.getNamespace());
     if (schema != null) {
       List<ComplexType> complexTypes = schema.getComplexTypes();
@@ -167,7 +167,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   }
 
   @Override
-  public EntityContainerInfo getEntityContainerInfo(String name) throws ODataException {
+  public EntityContainerInfo getEntityContainerInfo(final String name) throws ODataException {
     EntityContainer container = name2Container.get(name);
     if (container == null) {
       // use default container (if set)
@@ -188,7 +188,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   }
 
   @Override
-  public EntitySet getEntitySet(String entityContainer, String name) throws ODataException {
+  public EntitySet getEntitySet(final String entityContainer, final String name) throws ODataException {
     EntityContainer container = name2Container.get(entityContainer);
     if (container != null) {
       List<EntitySet> entitySets = container.getEntitySets();
@@ -203,7 +203,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   }
 
   @Override
-  public EntityType getEntityType(FullQualifiedName edmFQName) throws ODataException {
+  public EntityType getEntityType(final FullQualifiedName edmFQName) throws ODataException {
     Schema schema = namespace2Schema.get(edmFQName.getNamespace());
     if (schema != null) {
       List<EntityType> complexTypes = schema.getEntityTypes();
@@ -217,7 +217,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   }
 
   @Override
-  public FunctionImport getFunctionImport(String entityContainer, String name) throws ODataException {
+  public FunctionImport getFunctionImport(final String entityContainer, final String name) throws ODataException {
     EntityContainer container = name2Container.get(entityContainer);
     if (container != null) {
       List<FunctionImport> functionImports = container.getFunctionImports();
@@ -240,7 +240,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   //
   private Map<String, SchemaBuilder> namespace2SchemaBuilder = new HashMap<String, SchemaBuilder>();
 
-  private void updateSchema(Class<?> aClass) {
+  private void updateSchema(final Class<?> aClass) {
     EdmEntityType et = aClass.getAnnotation(EdmEntityType.class);
     if (et != null) {
       updateSchema(aClass, et);
@@ -251,16 +251,16 @@ public class AnnotationEdmProvider extends EdmProvider {
     }
   }
 
-  private void updateSchema(Class<?> aClass, EdmEntityType et) {
+  private void updateSchema(final Class<?> aClass, final EdmEntityType et) {
     SchemaBuilder b = getSchemaBuilder(et.namespace(), aClass);
     TypeBuilder typeBuilder = TypeBuilder.init(et, aClass);
     b.addEntityType(typeBuilder.buildEntityType());
     b.addAssociations(typeBuilder.buildAssociations());
   }
 
-  private SchemaBuilder getSchemaBuilder(String namespace, Class<?> aClass) {
+  private SchemaBuilder getSchemaBuilder(final String namespace, final Class<?> aClass) {
     String usedNamespace = namespace;
-    if(usedNamespace.isEmpty()) {
+    if (usedNamespace.isEmpty()) {
       usedNamespace = ANNOTATION_HELPER.getCanonicalNamespace(aClass);
     }
     SchemaBuilder builder = namespace2SchemaBuilder.get(usedNamespace);
@@ -271,13 +271,13 @@ public class AnnotationEdmProvider extends EdmProvider {
     return builder;
   }
 
-  private void updateSchema(Class<?> aClass, EdmComplexType et) {
+  private void updateSchema(final Class<?> aClass, final EdmComplexType et) {
     SchemaBuilder b = getSchemaBuilder(et.namespace(), aClass);
     TypeBuilder typeBuilder = TypeBuilder.init(et, aClass);
     b.addComplexType(typeBuilder.buildComplexType());
   }
 
-  private void handleEntityContainer(Class<?> aClass) {
+  private void handleEntityContainer(final Class<?> aClass) {
     EdmEntityType entityType = aClass.getAnnotation(EdmEntityType.class);
     if (entityType != null) {
       FullQualifiedName typeName = createFqnForEntityType(aClass, entityType);
@@ -294,12 +294,12 @@ public class AnnotationEdmProvider extends EdmProvider {
     }
   }
 
-  private EntitySet createEntitySet(FullQualifiedName typeName, Class<?> entitySetClass) {
+  private EntitySet createEntitySet(final FullQualifiedName typeName, final Class<?> entitySetClass) {
     String entitySetName = ANNOTATION_HELPER.extractEntitySetName(entitySetClass);
     return new EntitySet().setName(entitySetName).setEntityType(typeName);
   }
 
-  private FullQualifiedName createFqnForEntityType(Class<?> annotatedClass, EdmEntityType entityType) {
+  private FullQualifiedName createFqnForEntityType(final Class<?> annotatedClass, final EdmEntityType entityType) {
     return ANNOTATION_HELPER.extractEntityTypeFqn(annotatedClass);
   }
 
@@ -339,24 +339,24 @@ public class AnnotationEdmProvider extends EdmProvider {
     private final List<NavigationProperty> navProperties = new ArrayList<NavigationProperty>();
     private final List<Association> associations = new ArrayList<Association>();
 
-    public TypeBuilder(FullQualifiedName fqn) {
-      this.namespace = fqn.getNamespace();
-      this.name = fqn.getName();
+    public TypeBuilder(final FullQualifiedName fqn) {
+      namespace = fqn.getNamespace();
+      name = fqn.getName();
     }
 
-    public static TypeBuilder init(EdmEntityType entity, Class<?> aClass) {
+    public static TypeBuilder init(final EdmEntityType entity, final Class<?> aClass) {
       return new TypeBuilder(ANNOTATION_HELPER.extractEntityTypeFqn(entity, aClass)).withClass(aClass);
     }
 
-    public static TypeBuilder init(EdmComplexType entity, Class<?> aClass) {
+    public static TypeBuilder init(final EdmComplexType entity, final Class<?> aClass) {
       return new TypeBuilder(ANNOTATION_HELPER.extractComplexTypeFqn(entity, aClass)).withClass(aClass);
     }
 
-    private TypeBuilder withClass(Class<?> aClass) {
+    private TypeBuilder withClass(final Class<?> aClass) {
       baseEntityType = createBaseEntityFqn(aClass);
 
       if (Modifier.isAbstract(aClass.getModifiers())) {
-        this.isAbstract = true;
+        isAbstract = true;
       }
 
       Field[] fields = aClass.getDeclaredFields();
@@ -385,22 +385,22 @@ public class AnnotationEdmProvider extends EdmProvider {
       return this;
     }
 
-    public TypeBuilder addProperty(PropertyRef property) {
+    public TypeBuilder addProperty(final PropertyRef property) {
       keyProperties.add(property);
       return this;
     }
 
-    public TypeBuilder addProperty(Property property) {
+    public TypeBuilder addProperty(final Property property) {
       properties.add(property);
       return this;
     }
 
-    public TypeBuilder addNavigationProperty(NavigationProperty property) {
+    public TypeBuilder addNavigationProperty(final NavigationProperty property) {
       navProperties.add(property);
       return this;
     }
 
-    public TypeBuilder setAbstract(boolean isAbstract) {
+    public TypeBuilder setAbstract(final boolean isAbstract) {
       this.isAbstract = isAbstract;
       return this;
     }
@@ -434,7 +434,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       return Collections.unmodifiableCollection(associations);
     }
 
-    private PropertyRef createKeyProperty(EdmProperty et, Field field) {
+    private PropertyRef createKeyProperty(final EdmProperty et, final Field field) {
       PropertyRef keyProperty = new PropertyRef();
       String entityName = et.name();
       if (entityName.isEmpty()) {
@@ -443,7 +443,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       return keyProperty.setName(entityName);
     }
 
-    private Property createProperty(EdmProperty ep, Field field, String defaultNamespace) {
+    private Property createProperty(final EdmProperty ep, final Field field, final String defaultNamespace) {
       if (isAnnotatedEntity(field.getType())) {
         return createComplexProperty(field, defaultNamespace);
       } else {
@@ -451,7 +451,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       }
     }
 
-    private Property createSimpleProperty(EdmProperty ep, Field field) {
+    private Property createSimpleProperty(final EdmProperty ep, final Field field) {
       SimpleProperty sp = new SimpleProperty();
       String entityName = ANNOTATION_HELPER.getPropertyName(field);
       sp.setName(entityName);
@@ -465,7 +465,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       return sp;
     }
 
-    private Property createComplexProperty(Field field, String defaultNamespace) {
+    private Property createComplexProperty(final Field field, final String defaultNamespace) {
       ComplexProperty cp = new ComplexProperty();
       // settings from property
       String entityName = ANNOTATION_HELPER.getPropertyName(field);
@@ -482,7 +482,8 @@ public class AnnotationEdmProvider extends EdmProvider {
       return cp;
     }
 
-    private NavigationProperty createNavigationProperty(String namespace, EdmNavigationProperty enp, Field field) {
+    private NavigationProperty createNavigationProperty(final String namespace, final EdmNavigationProperty enp,
+        final Field field) {
       NavigationProperty navProp = new NavigationProperty();
       navProp.setName(ANNOTATION_HELPER.getPropertyName(field));
       String fromRole = ANNOTATION_HELPER.extractFromRoleName(enp, field);
@@ -528,8 +529,8 @@ public class AnnotationEdmProvider extends EdmProvider {
 //        throw new UnsupportedOperationException("Not yet supported type '" + type + "'.");
 //      }
 //    }
-    
-    private EdmType getEdmType(Class<?> type) {
+
+    private EdmType getEdmType(final Class<?> type) {
       if (type == String.class) {
         return EdmType.STRING;
       } else if (type == boolean.class || type == Boolean.class) {
@@ -561,8 +562,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       }
     }
 
-
-    private Class<?> checkForBaseEntityClass(Class<?> aClass) {
+    private Class<?> checkForBaseEntityClass(final Class<?> aClass) {
       Class<?> superClass = aClass.getSuperclass();
       if (superClass == Object.class) {
         return null;
@@ -576,7 +576,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       }
     }
 
-    private FullQualifiedName createBaseEntityFqn(Class<?> aClass) {
+    private FullQualifiedName createBaseEntityFqn(final Class<?> aClass) {
       Class<?> baseEntityClass = checkForBaseEntityClass(aClass);
       if (baseEntityClass == null) {
         return null;
@@ -584,7 +584,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       return ANNOTATION_HELPER.extractEntityTypeFqn(baseEntityClass);
     }
 
-    private Association createAssociation(Field field, NavigationProperty navProperty) {
+    private Association createAssociation(final Field field, final NavigationProperty navProperty) {
       Association association = new Association();
       EdmNavigationProperty navigation = field.getAnnotation(EdmNavigationProperty.class);
 
@@ -607,11 +607,11 @@ public class AnnotationEdmProvider extends EdmProvider {
       return association;
     }
 
-    private String getCanonicalName(Field field) {
+    private String getCanonicalName(final Field field) {
       return ANNOTATION_HELPER.getCanonicalName(field);
     }
 
-    private boolean isAnnotatedEntity(Class<?> clazz) {
+    private boolean isAnnotatedEntity(final Class<?> clazz) {
       return ANNOTATION_HELPER.isEdmTypeAnnotated(clazz);
     }
   }
@@ -619,7 +619,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   static class SchemaBuilder {
 
     final private String namespace;
-    //    private String alias;
+    // private String alias;
     private final List<Using> usings = new ArrayList<Using>();
     private final List<EntityType> entityTypes = new ArrayList<EntityType>();
     private final List<ComplexType> complexTypes = new ArrayList<ComplexType>();
@@ -628,30 +628,30 @@ public class AnnotationEdmProvider extends EdmProvider {
     private final List<AnnotationAttribute> annotationAttributes = new ArrayList<AnnotationAttribute>();
     private final List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
 
-    private SchemaBuilder(String namespace) {
+    private SchemaBuilder(final String namespace) {
       this.namespace = namespace;
     }
 
-    public static SchemaBuilder init(String namespace) {
+    public static SchemaBuilder init(final String namespace) {
       return new SchemaBuilder(namespace);
     }
 
-    public SchemaBuilder addEntityType(EntityType type) {
+    public SchemaBuilder addEntityType(final EntityType type) {
       entityTypes.add(type);
       return this;
     }
 
-    public SchemaBuilder addEntityContainer(EntityContainer container) {
+    public SchemaBuilder addEntityContainer(final EntityContainer container) {
       entityContainers.add(container);
       return this;
     }
 
-    public SchemaBuilder addComplexType(ComplexType createEntityType) {
+    public SchemaBuilder addComplexType(final ComplexType createEntityType) {
       complexTypes.add(createEntityType);
       return this;
     }
 
-    public void addAssociations(Collection<Association> associations) {
+    public void addAssociations(final Collection<Association> associations) {
       for (Association association : associations) {
         final String relationshipName = association.getName();
         if (name2Associations.containsKey(relationshipName)) {
@@ -661,7 +661,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       }
     }
 
-    private Association mergeAssociations(Association associationOne, Association associationTwo) {
+    private Association mergeAssociations(final Association associationOne, final Association associationTwo) {
       AssociationEnd oneEnd1 = associationOne.getEnd1();
       AssociationEnd oneEnd2 = associationOne.getEnd2();
       AssociationEnd twoEnd1 = associationTwo.getEnd1();
@@ -706,9 +706,9 @@ public class AnnotationEdmProvider extends EdmProvider {
     private final List<AssociationSet> associationSets = new ArrayList<AssociationSet>();
     private final List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
 
-    //    private Documentation documentation;
+    // private Documentation documentation;
 
-    private ContainerBuilder(String namespace, String containerName) {
+    private ContainerBuilder(final String namespace, final String containerName) {
       this.namespace = namespace;
       name = containerName;
     }
@@ -717,21 +717,16 @@ public class AnnotationEdmProvider extends EdmProvider {
       return namespace;
     }
 
-    public static ContainerBuilder init(String namespace, String containerName) {
+    public static ContainerBuilder init(final String namespace, final String containerName) {
       return new ContainerBuilder(namespace, containerName);
     }
 
-    public ContainerBuilder setDefaultContainer(boolean isDefault) {
-      defaultContainer = isDefault;
-      return this;
-    }
-
-    public ContainerBuilder addEntitySet(EntitySet entitySet) {
+    public ContainerBuilder addEntitySet(final EntitySet entitySet) {
       entitySets.add(entitySet);
       return this;
     }
 
-    public void addAssociationSets(Collection<Association> associations) {
+    public void addAssociationSets(final Collection<Association> associations) {
       for (Association association : associations) {
         AssociationSet as = new AssociationSet();
         as.setName(association.getName());
@@ -762,7 +757,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       return ec;
     }
 
-    private String getEntitySetName(AssociationEnd end) {
+    private String getEntitySetName(final AssociationEnd end) {
       for (EntitySet entitySet : entitySets) {
         if (entitySet.getEntityType().equals(end.getType())) {
           return entitySet.getName();

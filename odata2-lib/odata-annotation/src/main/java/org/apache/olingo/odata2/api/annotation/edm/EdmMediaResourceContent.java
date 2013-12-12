@@ -24,14 +24,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>Annotation for definition of an {@link EdmProperty} as <b>media resource content</b> for the 
- * {@link EdmEntityType} 
- * which contains the {@link EdmProperty}. Additionally an {@link EdmEntityType} will be flagged in the EDM as 
+ * <p>Annotation for definition of an {@link EdmProperty} as <b>media resource content</b> for the {@link EdmEntityType}
+ * which contains the {@link EdmProperty}. Additionally an {@link EdmEntityType} will be flagged in the EDM as
  * <code>hasStream == true</code> if an {@link EdmProperty} in conjunction with the {@link EdmMediaResourceContent}
  * annotation is defined.</p>
  * This annotation can not be parameterized, all values like name are defined via the {@link EdmProperty} annotation.
- * In addition the {@link EdmMediaResourceContent} annotation has to be used in conjunction with an 
- * {@link EdmProperty} annotation on a field within an {@link EdmEntityType} annotated class.
+ * In addition the {@link EdmMediaResourceContent} annotation has to be used in conjunction with an {@link EdmProperty}
+ * annotation on a field within an {@link EdmEntityType} annotated class.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

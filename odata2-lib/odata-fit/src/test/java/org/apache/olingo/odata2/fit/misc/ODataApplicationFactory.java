@@ -18,8 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.misc;
 
-import javax.ws.rs.ext.Provider;
-
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;

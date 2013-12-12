@@ -79,7 +79,7 @@ public class Building {
 
   @Override
   public int hashCode() {
-      return id == null ? 0 : id.hashCode();
+    return id == null ? 0 : id.hashCode();
   }
 
   @Override

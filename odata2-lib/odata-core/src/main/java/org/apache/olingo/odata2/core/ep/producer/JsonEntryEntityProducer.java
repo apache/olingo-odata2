@@ -254,15 +254,4 @@ public class JsonEntryEntityProducer {
   public String getLocation() {
     return location;
   }
-
-  private String extractKey(final Map<String, Object> data, final String mediaResourceMimeTypeKey)
-      throws EntityProviderException {
-    Object key = data.get(mediaResourceMimeTypeKey);
-    if (key == null || key instanceof String) {
-      return (String) key;
-    } else {
-      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
-          .addContent("Key must be of type String"));
-    }
-  }
 }

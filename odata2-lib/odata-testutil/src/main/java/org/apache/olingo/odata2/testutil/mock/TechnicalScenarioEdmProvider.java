@@ -266,7 +266,7 @@ public class TechnicalScenarioEdmProvider extends EdmProvider {
   }
 
   @Override
-  public FunctionImport getFunctionImport(final String entityContainer, final String name) 
+  public FunctionImport getFunctionImport(final String entityContainer, final String name)
       throws ODataMessageException {
     return null;
   }

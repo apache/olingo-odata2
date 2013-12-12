@@ -284,7 +284,7 @@ public class ODataRequestHandler {
         throw new ODataMethodNotAllowedException(ODataMethodNotAllowedException.DISPATCH);
       } else {
         if (uriInfo.getFormat() != null) {
-          //          throw new ODataMethodNotAllowedException(ODataMethodNotAllowedException.DISPATCH);
+          // throw new ODataMethodNotAllowedException(ODataMethodNotAllowedException.DISPATCH);
           throw new ODataBadRequestException(ODataBadRequestException.INVALID_SYNTAX);
         }
       }

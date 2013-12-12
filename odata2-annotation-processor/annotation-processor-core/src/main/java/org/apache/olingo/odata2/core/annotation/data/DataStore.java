@@ -48,7 +48,8 @@ public class DataStore<T> {
     private static final Map<Class<?>, DataStore<?>> c2ds = new HashMap<Class<?>, DataStore<?>>();
 
     @SuppressWarnings("unchecked")
-    static synchronized DataStore<?> getInstance(Class<?> clz, boolean createNewInstance) throws DataStoreException {
+    static synchronized DataStore<?> getInstance(final Class<?> clz, final boolean createNewInstance)
+        throws DataStoreException {
       DataStore<?> ds = c2ds.get(clz);
       if (createNewInstance || ds == null) {
         ds = new DataStore<Object>((Class<Object>) clz);
@@ -59,22 +60,23 @@ public class DataStore<T> {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> DataStore<T> createInMemory(Class<T> clazz) throws DataStoreException {
+  public static <T> DataStore<T> createInMemory(final Class<T> clazz) throws DataStoreException {
     return (DataStore<T>) InMemoryDataStore.getInstance(clazz, true);
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> DataStore<T> createInMemory(Class<T> clazz, boolean keepExisting) throws DataStoreException {
+  public static <T> DataStore<T> createInMemory(final Class<T> clazz, final boolean keepExisting)
+      throws DataStoreException {
     return (DataStore<T>) InMemoryDataStore.getInstance(clazz, !keepExisting);
   }
 
-  private DataStore(Map<KeyElement, T> wrapStore, Class<T> clz) throws DataStoreException {
+  private DataStore(final Map<KeyElement, T> wrapStore, final Class<T> clz) throws DataStoreException {
     dataStore = Collections.synchronizedMap(wrapStore);
     dataTypeClass = clz;
     keyAccess = new KeyAccess(clz);
   }
 
-  private DataStore(Class<T> clz) throws DataStoreException {
+  private DataStore(final Class<T> clz) throws DataStoreException {
     this(new HashMap<KeyElement, T>(), clz);
   }
 
@@ -96,7 +98,7 @@ public class DataStore<T> {
     }
   }
 
-  public T read(T obj) {
+  public T read(final T obj) {
     KeyElement objKeys = getKeys(obj);
     return dataStore.get(objKeys);
   }
@@ -104,13 +106,13 @@ public class DataStore<T> {
   public Collection<T> read() {
     return Collections.unmodifiableCollection(dataStore.values());
   }
-  
-  public T create(T object) throws DataStoreException {
+
+  public T create(final T object) throws DataStoreException {
     KeyElement keyElement = getKeys(object);
     return create(object, keyElement);
   }
-    
-  private T create(T object, KeyElement keyElement) throws DataStoreException {
+
+  private T create(final T object, final KeyElement keyElement) throws DataStoreException {
     synchronized (dataStore) {
       if (keyElement.keyValuesMissing() || dataStore.get(keyElement) != null) {
         KeyElement newKey = createSetAndGetKeys(object);
@@ -121,7 +123,7 @@ public class DataStore<T> {
     return object;
   }
 
-  public T update(T object) {
+  public T update(final T object) {
     KeyElement keyElement = getKeys(object);
     synchronized (dataStore) {
       dataStore.remove(keyElement);
@@ -130,7 +132,7 @@ public class DataStore<T> {
     return object;
   }
 
-  public T delete(T object) {
+  public T delete(final T object) {
     KeyElement keyElement = getKeys(object);
     synchronized (dataStore) {
       return dataStore.remove(keyElement);
@@ -141,25 +143,17 @@ public class DataStore<T> {
     private int cachedHashCode = 42;
     private final List<Object> keyValues;
 
-    public KeyElement(int size) {
+    public KeyElement(final int size) {
       keyValues = new ArrayList<Object>(size);
     }
 
-    public KeyElement() {
-      this(3);
-    }
-
-    private void addValue(Object keyValue) {
+    private void addValue(final Object keyValue) {
       keyValues.add(keyValue);
       cachedHashCode = 89 * cachedHashCode + (keyValue != null ? keyValue.hashCode() : 0);
     }
-    
+
     boolean keyValuesMissing() {
       return keyValues.contains(null);
-    }
-    
-    boolean allKeysSet() {
-      return !keyValuesMissing();
     }
 
     @Override
@@ -168,7 +162,7 @@ public class DataStore<T> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (obj == null) {
         return false;
       }
@@ -184,23 +178,22 @@ public class DataStore<T> {
 
     @Override
     public String toString() {
-      return "KeyElement{" + "cachedHashCode=" + cachedHashCode + ", keyValues=" + keyValues +  '}';
+      return "KeyElement{" + "cachedHashCode=" + cachedHashCode + ", keyValues=" + keyValues + '}';
     }
   }
-  
+
   private class KeyAccess {
     final List<Field> keyFields;
     final AtomicInteger idCounter = new AtomicInteger(1);
 
-    
-    KeyAccess(Class<?> clazz) throws DataStoreException {
+    KeyAccess(final Class<?> clazz) throws DataStoreException {
       keyFields = ANNOTATION_HELPER.getAnnotatedFields(clazz, EdmKey.class);
       if (keyFields.isEmpty()) {
         throw new DataStoreException("No EdmKey annotated fields found for class " + clazz);
       }
     }
-    
-    KeyElement getKeyValues(T object) {
+
+    KeyElement getKeyValues(final T object) {
       KeyElement keyElement = new KeyElement(keyFields.size());
       for (Field field : keyFields) {
         Object keyValue = ClassHelper.getFieldValue(object, field);
@@ -209,17 +202,8 @@ public class DataStore<T> {
 
       return keyElement;
     }
-    
-    T createKeys(T object) throws DataStoreException {
-      for (Field field : keyFields) {
-        Object key = createKey(field);
-        ClassHelper.setFieldValue(object, field, key);
-      }
 
-      return object;
-    }
-    
-    KeyElement createSetAndGetKeys(T object) throws DataStoreException {
+    KeyElement createSetAndGetKeys(final T object) throws DataStoreException {
       KeyElement keyElement = new KeyElement(keyFields.size());
       for (Field field : keyFields) {
         Object key = createKey(field);
@@ -230,8 +214,7 @@ public class DataStore<T> {
       return keyElement;
     }
 
-    
-    private Object createKey(Field field) {
+    private Object createKey(final Field field) {
       Class<?> type = field.getType();
 
       if (type == String.class) {
@@ -246,24 +229,23 @@ public class DataStore<T> {
           + "' is not supported (caused on field '" + field + "').");
     }
   }
-  
-  private KeyElement getKeys(T object) {
+
+  private KeyElement getKeys(final T object) {
     return keyAccess.getKeyValues(object);
   }
 
-  private KeyElement createSetAndGetKeys(T object) throws DataStoreException {
+  private KeyElement createSetAndGetKeys(final T object) throws DataStoreException {
     return keyAccess.createSetAndGetKeys(object);
   }
-  
 
   public static class DataStoreException extends ODataApplicationException {
     private static final long serialVersionUID = 42L;
 
-    public DataStoreException(String message) {
+    public DataStoreException(final String message) {
       this(message, null);
     }
 
-    public DataStoreException(String message, Throwable cause) {
+    public DataStoreException(final String message, final Throwable cause) {
       super(message, Locale.ENGLISH, cause);
     }
   }

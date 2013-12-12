@@ -33,13 +33,13 @@ public class AnnotationValueAccess implements ValueAccess {
 
   /**
    * Retrieves the value of an EDM property for the given data object.
-   * @param data     the Java data object
+   * @param data the Java data object
    * @param property the requested {@link EdmProperty}
    * @return the requested property value
    */
   @Override
   public <T> Object getPropertyValue(final T data, final EdmProperty property) throws ODataException {
-    if(data == null) {
+    if (data == null) {
       return null;
     } else if (annotationHelper.isEdmAnnotated(data)) {
       return annotationHelper.getValueForProperty(data, property.getName());
@@ -49,12 +49,12 @@ public class AnnotationValueAccess implements ValueAccess {
 
   /**
    * Sets the value of an EDM property for the given data object.
-   * @param data     the Java data object
+   * @param data the Java data object
    * @param property the {@link EdmProperty}
-   * @param value    the new value of the property
+   * @param value the new value of the property
    */
   @Override
-  public <T, V> void setPropertyValue(T data, final EdmProperty property, final V value) throws ODataException {
+  public <T, V> void setPropertyValue(final T data, final EdmProperty property, final V value) throws ODataException {
     if (annotationHelper.isEdmAnnotated(data)) {
       annotationHelper.setValueForProperty(data, property.getName(), value);
     } else {
@@ -64,10 +64,11 @@ public class AnnotationValueAccess implements ValueAccess {
 
   /**
    * Retrieves the Java type of an EDM property for the given data object.
-   * @param data     the Java data object
+   * @param data the Java data object
    * @param property the requested {@link EdmProperty}
    * @return the requested Java type
    */
+  @Override
   public <T> Class<?> getPropertyType(final T data, final EdmProperty property) throws ODataException {
     if (annotationHelper.isEdmAnnotated(data)) {
       Class<?> fieldType = annotationHelper.getFieldTypeForProperty(data, property.getName());
@@ -81,10 +82,11 @@ public class AnnotationValueAccess implements ValueAccess {
 
   /**
    * Retrieves the value defined by a mapping object for the given data object.
-   * @param data     the Java data object
-   * @param mapping  the requested {@link EdmMapping}
+   * @param data the Java data object
+   * @param mapping the requested {@link EdmMapping}
    * @return the requested value
    */
+  @Override
   public <T> Object getMappingValue(final T data, final EdmMapping mapping) throws ODataException {
     if (mapping != null && mapping.getMediaResourceMimeTypeKey() != null) {
       return annotationHelper.getValueForProperty(data, mapping.getMediaResourceMimeTypeKey());
@@ -94,11 +96,12 @@ public class AnnotationValueAccess implements ValueAccess {
 
   /**
    * Sets the value defined by a mapping object for the given data object.
-   * @param data     the Java data object
-   * @param mapping  the {@link EdmMapping}
-   * @param value    the new value
+   * @param data the Java data object
+   * @param mapping the {@link EdmMapping}
+   * @param value the new value
    */
-  public <T, V> void setMappingValue(T data, final EdmMapping mapping, final V value) throws ODataException {
+  @Override
+  public <T, V> void setMappingValue(final T data, final EdmMapping mapping, final V value) throws ODataException {
     if (mapping != null && mapping.getMediaResourceMimeTypeKey() != null) {
       annotationHelper.setValueForProperty(data, mapping.getMediaResourceMimeTypeKey(), value);
     }

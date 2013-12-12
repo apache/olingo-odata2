@@ -49,8 +49,8 @@ public final class ODataSubLocator {
   private ODataServiceFactory serviceFactory;
   private ODataRequest request;
 
-  private HttpServletRequest httpRequest; 
-  
+  private HttpServletRequest httpRequest;
+
   @GET
   public Response handleGet() throws ODataException {
     return handle(ODataHttpMethod.GET);
@@ -170,7 +170,7 @@ public final class ODataSubLocator {
         .build();
 
     subLocator.httpRequest = param.getServletRequest();
-    
+
     return subLocator;
   }
 

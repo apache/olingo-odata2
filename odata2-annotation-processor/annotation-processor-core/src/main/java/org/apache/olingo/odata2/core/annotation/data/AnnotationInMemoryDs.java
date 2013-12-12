@@ -4,13 +4,13 @@
  * file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
  * License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- *****************************************************************************
+ ***************************************************************************** 
  */
 package org.apache.olingo.odata2.core.annotation.data;
 
@@ -34,9 +34,9 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper;
-import org.apache.olingo.odata2.core.annotation.util.ClassHelper;
 import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper.AnnotatedNavInfo;
 import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper.ODataAnnotationException;
+import org.apache.olingo.odata2.core.annotation.util.ClassHelper;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class AnnotationInMemoryDs implements DataSource {
@@ -45,15 +45,15 @@ public class AnnotationInMemoryDs implements DataSource {
   private final Map<String, DataStore<Object>> dataStores = new HashMap<String, DataStore<Object>>();
   private final boolean persistInMemory;
 
-  public AnnotationInMemoryDs(String packageToScan) throws ODataException {
+  public AnnotationInMemoryDs(final String packageToScan) throws ODataException {
     this(packageToScan, true);
   }
-  
-  public AnnotationInMemoryDs(String packageToScan, boolean persistInMemory) throws ODataException {
+
+  public AnnotationInMemoryDs(final String packageToScan, final boolean persistInMemory) throws ODataException {
     this.persistInMemory = persistInMemory;
     List<Class<?>> foundClasses = ClassHelper.loadClasses(packageToScan, new ClassHelper.ClassValidator() {
       @Override
-      public boolean isClassValid(Class<?> c) {
+      public boolean isClassValid(final Class<?> c) {
         return null != c.getAnnotation(org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet.class);
       }
     });
@@ -62,7 +62,7 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   @SuppressWarnings("unchecked")
-  private void init(List<Class<?>> foundClasses) throws ODataException {
+  private void init(final List<Class<?>> foundClasses) throws ODataException {
     try {
       for (Class<?> clz : foundClasses) {
         DataStore<Object> dhs = (DataStore<Object>) DataStore.createInMemory(clz, persistInMemory);
@@ -74,13 +74,13 @@ public class AnnotationInMemoryDs implements DataSource {
     }
   }
 
-  public <T> DataStore<T> getDataStore(Class<T> clazz) {
+  public <T> DataStore<T> getDataStore(final Class<T> clazz) {
     String entitySetName = ANNOTATION_HELPER.extractEntitySetName(clazz);
     return (DataStore<T>) dataStores.get(entitySetName);
   }
 
   @Override
-  public List<?> readData(EdmEntitySet entitySet) throws ODataNotImplementedException,
+  public List<?> readData(final EdmEntitySet entitySet) throws ODataNotImplementedException,
       ODataNotFoundException, EdmException, ODataApplicationException {
 
     DataStore<Object> holder = getDataStore(entitySet);
@@ -92,7 +92,7 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   @Override
-  public Object readData(EdmEntitySet entitySet, Map<String, Object> keys)
+  public Object readData(final EdmEntitySet entitySet, final Map<String, Object> keys)
       throws ODataNotFoundException, EdmException, ODataApplicationException {
 
     DataStore<Object> store = getDataStore(entitySet);
@@ -110,14 +110,16 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   @Override
-  public Object readData(EdmFunctionImport function, Map<String, Object> parameters, Map<String, Object> keys)
+  public Object readData(final EdmFunctionImport function, final Map<String, Object> parameters,
+      final Map<String, Object> keys)
       throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
   }
 
   @Override
-  public Object readRelatedData(EdmEntitySet sourceEntitySet, Object sourceData, EdmEntitySet targetEntitySet,
-      Map<String, Object> targetKeys)
+  public Object readRelatedData(final EdmEntitySet sourceEntitySet, final Object sourceData,
+      final EdmEntitySet targetEntitySet,
+      final Map<String, Object> targetKeys)
       throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
 
     DataStore<?> sourceStore = dataStores.get(sourceEntitySet.getName());
@@ -128,7 +130,7 @@ public class AnnotationInMemoryDs implements DataSource {
     Field sourceField = navInfo.getFromField();
     if (sourceField == null) {
       throw new ODataRuntimeException("Missing source field for related data (sourceStore='" + sourceStore
-              + "', targetStore='" + targetStore + "').");
+          + "', targetStore='" + targetStore + "').");
     }
 
     Object navigationInstance = getValue(sourceField, sourceData);
@@ -165,7 +167,7 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   @Override
-  public BinaryData readBinaryData(EdmEntitySet entitySet, Object mediaLinkEntryData)
+  public BinaryData readBinaryData(final EdmEntitySet entitySet, final Object mediaLinkEntryData)
       throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
 
     Object data = ANNOTATION_HELPER.getValueForField(mediaLinkEntryData, EdmMediaResourceContent.class);
@@ -176,7 +178,7 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   @Override
-  public Object newDataObject(EdmEntitySet entitySet)
+  public Object newDataObject(final EdmEntitySet entitySet)
       throws ODataNotImplementedException, EdmException, ODataApplicationException {
 
     DataStore<Object> dataStore = getDataStore(entitySet);
@@ -188,7 +190,8 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   @Override
-  public void writeBinaryData(EdmEntitySet entitySet, Object mediaEntityInstance, BinaryData binaryData)
+  public void writeBinaryData(final EdmEntitySet entitySet, final Object mediaEntityInstance,
+      final BinaryData binaryData)
       throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
 
     try {
@@ -197,7 +200,7 @@ public class AnnotationInMemoryDs implements DataSource {
       ANNOTATION_HELPER.setValueForAnnotatedField(
           mediaEntityInstance, EdmMediaResourceMimeType.class, binaryData.getMimeType());
     } catch (ODataAnnotationException e) {
-      throw new ODataRuntimeException("Invalid media resource annotation at entity set '" + entitySet.getName() 
+      throw new ODataRuntimeException("Invalid media resource annotation at entity set '" + entitySet.getName()
           + "' with message '" + e.getMessage() + "'.", e);
     }
   }
@@ -212,15 +215,15 @@ public class AnnotationInMemoryDs implements DataSource {
    * @throws org.apache.olingo.odata2.api.edm.EdmException
    * @throws org.apache.olingo.odata2.api.exception.ODataApplicationException
    */
-  public Object updateData(EdmEntitySet entitySet, Object data)
-          throws ODataNotImplementedException, EdmException, ODataApplicationException {
+  public Object updateData(final EdmEntitySet entitySet, final Object data)
+      throws ODataNotImplementedException, EdmException, ODataApplicationException {
 
     DataStore<Object> dataStore = getDataStore(entitySet);
     return dataStore.update(data);
   }
 
   @Override
-  public void deleteData(EdmEntitySet entitySet, Map<String, Object> keys)
+  public void deleteData(final EdmEntitySet entitySet, final Map<String, Object> keys)
       throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     DataStore<Object> dataStore = getDataStore(entitySet);
     Object keyInstance = dataStore.createInstance();
@@ -229,7 +232,7 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   @Override
-  public void createData(EdmEntitySet entitySet, Object data)
+  public void createData(final EdmEntitySet entitySet, final Object data)
       throws ODataNotImplementedException, EdmException, ODataApplicationException {
 
     DataStore<Object> dataStore = getDataStore(entitySet);
@@ -237,15 +240,17 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   @Override
-  public void deleteRelation(EdmEntitySet sourceEntitySet, Object sourceData, EdmEntitySet targetEntitySet,
-      Map<String, Object> targetKeys)
+  public void deleteRelation(final EdmEntitySet sourceEntitySet, final Object sourceData,
+      final EdmEntitySet targetEntitySet,
+      final Map<String, Object> targetKeys)
       throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
   }
 
   @Override
-  public void writeRelation(EdmEntitySet sourceEntitySet, Object sourceEntity, EdmEntitySet targetEntitySet,
-      Map<String, Object> targetEntityValues)
+  public void writeRelation(final EdmEntitySet sourceEntitySet, final Object sourceEntity,
+      final EdmEntitySet targetEntitySet,
+      final Map<String, Object> targetEntityValues)
       throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
     // get common data
     DataStore<Object> sourceStore = dataStores.get(sourceEntitySet.getName());
@@ -253,50 +258,50 @@ public class AnnotationInMemoryDs implements DataSource {
 
     AnnotatedNavInfo commonNavInfo = ANNOTATION_HELPER.getCommonNavigationInfo(
         sourceStore.getDataTypeClass(), targetStore.getDataTypeClass());
-    
+
     // get and validate source fields
     Field sourceField = commonNavInfo.getFromField();
     if (sourceField == null) {
       throw new ODataRuntimeException("Missing source field for related data (sourceStore='" + sourceStore
-              + "', targetStore='" + targetStore + "').");
+          + "', targetStore='" + targetStore + "').");
     }
-    
+
     // get related target entity
     Object targetEntity = targetStore.createInstance();
     ANNOTATION_HELPER.setKeyFields(targetEntity, targetEntityValues);
     targetEntity = targetStore.read(targetEntity);
-    
+
     // set at source
     setValueAtNavigationField(sourceEntity, sourceField, targetEntity);
     // set at target
     Field targetField = commonNavInfo.getToField();
-    if(targetField != null) {
+    if (targetField != null) {
       setValueAtNavigationField(targetEntity, targetField, sourceEntity);
     }
   }
 
   /**
    * Set (Multiplicity != *) or add (Multiplicity == *) <code>value</code> at <code>field</code>
-   * of <code>instance</code>. 
+   * of <code>instance</code>.
    * 
    * @param instance
    * @param field
    * @param value
    * @throws EdmException
    */
-  private void setValueAtNavigationField(Object instance, Field field, Object value) 
+  private void setValueAtNavigationField(final Object instance, final Field field, final Object value)
       throws EdmException {
     Class<?> fieldTypeClass = field.getType();
     if (Collection.class.isAssignableFrom(fieldTypeClass)) {
       @SuppressWarnings("unchecked")
       Collection<Object> collection = (Collection<Object>) ANNOTATION_HELPER.getValueForField(
           instance, field.getName(), EdmNavigationProperty.class);
-      if(collection == null) {
+      if (collection == null) {
         collection = new ArrayList<Object>();
         setValue(instance, field, collection);
       }
       collection.add(value);
-    } else if(fieldTypeClass.isArray()) {
+    } else if (fieldTypeClass.isArray()) {
       throw new ODataRuntimeException("Write relations for internal used arrays is not supported.");
     } else {
       setValue(instance, field, value);
@@ -309,11 +314,11 @@ public class AnnotationInMemoryDs implements DataSource {
    * Never returns NULL.
    * 
    * @param entitySet for which the corresponding DataStore is returned
-   * @return a DataStore object 
-   * @throws EdmException 
-   * @throws  ODataRuntimeException if no DataStore is found
+   * @return a DataStore object
+   * @throws EdmException
+   * @throws ODataRuntimeException if no DataStore is found
    */
-  private DataStore<Object> getDataStore(EdmEntitySet entitySet) throws EdmException {
+  private DataStore<Object> getDataStore(final EdmEntitySet entitySet) throws EdmException {
     final String name = entitySet.getName();
     DataStore<Object> dataStore = dataStores.get(name);
     if (dataStore == null) {
@@ -322,7 +327,7 @@ public class AnnotationInMemoryDs implements DataSource {
     return dataStore;
   }
 
-  private Object getValue(Field field, Object instance) {
+  private Object getValue(final Field field, final Object instance) {
     try {
       boolean access = field.isAccessible();
       field.setAccessible(true);
@@ -338,7 +343,7 @@ public class AnnotationInMemoryDs implements DataSource {
     }
   }
 
-  private void setValue(Object instance, Field field, Object value) {
+  private void setValue(final Object instance, final Field field, final Object value) {
     try {
       boolean access = field.isAccessible();
       field.setAccessible(true);

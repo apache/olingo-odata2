@@ -118,11 +118,11 @@ public class EntryXmlReadOnlyTest extends AbstractRefXmlTest {
     assertXpathEvaluatesTo(expected + "/$value", "/atom:entry/atom:link[@rel=\"edit-media\"]/@href", body);
   }
 
-  private Field getField(Class<?> clazz, String string) throws Exception {
+  private Field getField(final Class<?> clazz, final String string) throws Exception {
     try {
       return clazz.getDeclaredField(string);
     } catch (NoSuchFieldException e) {
-      if(clazz == Object.class) {
+      if (clazz == Object.class) {
         throw e;
       }
       return getField(clazz.getSuperclass(), string);

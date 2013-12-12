@@ -1,12 +1,12 @@
 /*
  * Copyright 2013 The Apache Software Foundation.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,7 +62,6 @@ public class AnnotationsInMemoryDsTest {
     Assert.assertEquals("1", read.getId());
   }
 
-  
   @Test
   public void createSimpleEntityWithOwnKey() throws Exception {
     EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
@@ -107,9 +106,8 @@ public class AnnotationsInMemoryDsTest {
     Building read = (Building) datasource.readData(edmEntitySet, keys);
     Assert.assertEquals("Duplicate Building", read.getName());
     Assert.assertEquals("1", read.getId());
-}
+  }
 
-  
   @Test
   public void createEntityTwoKeys() throws Exception {
     EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Photos");
@@ -133,8 +131,9 @@ public class AnnotationsInMemoryDsTest {
   }
 
   @Test
-  //  @Ignore("Rethink update method")
-  public void createAndUpdateEntityTwoKeys() throws Exception {
+  // @Ignore("Rethink update method")
+      public
+      void createAndUpdateEntityTwoKeys() throws Exception {
     EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Photos");
 
     Photo photo = new Photo();
@@ -175,7 +174,7 @@ public class AnnotationsInMemoryDsTest {
     Assert.assertEquals("https://localhost/image.jpg", readUpdated.getImageUri());
   }
 
-  private EdmEntitySet createMockedEdmEntitySet(String entitySetName) throws ODataException {
+  private EdmEntitySet createMockedEdmEntitySet(final String entitySetName) throws ODataException {
     EntitySet entitySet = edmProvider.getEntitySet(DEFAULT_CONTAINER, entitySetName);
     FullQualifiedName entityType = entitySet.getEntityType();
 

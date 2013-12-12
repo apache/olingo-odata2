@@ -21,7 +21,6 @@ package org.apache.olingo.odata2.core.annotation.model;
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 
-
 /**
  *  
  */

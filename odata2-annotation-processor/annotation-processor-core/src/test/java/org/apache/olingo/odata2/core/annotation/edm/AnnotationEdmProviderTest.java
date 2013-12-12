@@ -1,12 +1,12 @@
 /*
  * Copyright 2013 The Apache Software Foundation.
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,8 +71,8 @@ public class AnnotationEdmProviderTest {
   @EdmComplexType
   private static final class GeneratedNamesComplexTestClass {}
 
-  @EdmEntityType(namespace="MyTestNamespace")
-  @EdmEntitySet(container="MyTestContainer")
+  @EdmEntityType(namespace = "MyTestNamespace")
+  @EdmEntitySet(container = "MyTestContainer")
   private static final class DefinedNamesTestClass {}
 
   private final AnnotationEdmProvider aep;
@@ -95,12 +95,12 @@ public class AnnotationEdmProviderTest {
   @Test
   public void defaultNamespaceGeneration() throws ODataException {
     Collection<Class<?>> localAnnotatedClasses = new ArrayList<Class<?>>();
-    localAnnotatedClasses.add(GeneratedNamesTestClass.class); 
+    localAnnotatedClasses.add(GeneratedNamesTestClass.class);
     AnnotationEdmProvider localAep = new AnnotationEdmProvider(localAnnotatedClasses);
-    // validate 
+    // validate
     EntityType testType = localAep.getEntityType(new FullQualifiedName(
-            GeneratedNamesTestClass.class.getPackage().getName(), 
-            GeneratedNamesTestClass.class.getSimpleName()));
+        GeneratedNamesTestClass.class.getPackage().getName(),
+        GeneratedNamesTestClass.class.getSimpleName()));
     assertNotNull("Requested entity not found.", testType);
     assertEquals("GeneratedNamesTestClass", testType.getName());
     assertNull("This should not have a base type", testType.getBaseType());
@@ -109,12 +109,12 @@ public class AnnotationEdmProviderTest {
   @Test
   public void defaultNamespaceGenerationComplexType() throws ODataException {
     Collection<Class<?>> localAnnotatedClasses = new ArrayList<Class<?>>();
-    localAnnotatedClasses.add(GeneratedNamesComplexTestClass.class); 
+    localAnnotatedClasses.add(GeneratedNamesComplexTestClass.class);
     AnnotationEdmProvider localAep = new AnnotationEdmProvider(localAnnotatedClasses);
-    // validate 
+    // validate
     ComplexType testType = localAep.getComplexType(new FullQualifiedName(
-            GeneratedNamesComplexTestClass.class.getPackage().getName(), 
-            GeneratedNamesComplexTestClass.class.getSimpleName()));
+        GeneratedNamesComplexTestClass.class.getPackage().getName(),
+        GeneratedNamesComplexTestClass.class.getSimpleName()));
     assertNotNull("Requested entity not found.", testType);
     assertEquals("GeneratedNamesComplexTestClass", testType.getName());
     assertNull("This should not have a base type", testType.getBaseType());
@@ -123,21 +123,20 @@ public class AnnotationEdmProviderTest {
   @Test
   public void defaultContainerNameGeneration() throws ODataException {
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    AnnotationEdmProvider localAep = 
-      new AnnotationEdmProvider((Collection) Arrays.asList(GeneratedNamesTestClass.class));
-    
+    AnnotationEdmProvider localAep =
+        new AnnotationEdmProvider((Collection) Arrays.asList(GeneratedNamesTestClass.class));
+
     EntityContainerInfo containerInfo = localAep.getEntityContainerInfo(null);
     assertNotNull(containerInfo);
     assertEquals("DefaultContainer", containerInfo.getName());
   }
 
-
   @Test
   public void defaultNamespaceDefined() throws ODataException {
     Collection<Class<?>> localAnnotatedClasses = new ArrayList<Class<?>>();
-    localAnnotatedClasses.add(DefinedNamesTestClass.class); 
+    localAnnotatedClasses.add(DefinedNamesTestClass.class);
     AnnotationEdmProvider localAep = new AnnotationEdmProvider(localAnnotatedClasses);
-    // validate 
+    // validate
     EntityType testClass = localAep.getEntityType(new FullQualifiedName("MyTestNamespace",
         DefinedNamesTestClass.class.getSimpleName()));
     assertNotNull("Requested entity not found.", testClass);
@@ -149,7 +148,7 @@ public class AnnotationEdmProviderTest {
   public void defaultContainerNameDefined() throws ODataException {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     AnnotationEdmProvider localAep = new AnnotationEdmProvider((Collection) Arrays.asList(DefinedNamesTestClass.class));
-    
+
     EntityContainerInfo containerInfo = localAep.getEntityContainerInfo(null);
     assertNotNull(containerInfo);
     assertEquals("MyTestContainer", containerInfo.getName());
@@ -182,21 +181,21 @@ public class AnnotationEdmProviderTest {
     assertEquals(1, schemas.size());
     EntityContainerInfo info = aep.getEntityContainerInfo(ModelSharedConstants.CONTAINER_1);
     assertTrue(info.isDefaultEntityContainer());
-    
+
     FunctionImport funImp = aep.getFunctionImport(ModelSharedConstants.CONTAINER_1, "NoImport");
     assertNull(funImp);
 
     final FullQualifiedName associationFqn = new FullQualifiedName(
-            ModelSharedConstants.NAMESPACE_1, "NoAssociation");
+        ModelSharedConstants.NAMESPACE_1, "NoAssociation");
     Association noAssociation = aep.getAssociation(associationFqn);
     assertNull(noAssociation);
-    
+
     AssociationSet noAssociationSet = aep.getAssociationSet(
-            ModelSharedConstants.CONTAINER_1, associationFqn, "NoSrc", "NoSrcEntity");
+        ModelSharedConstants.CONTAINER_1, associationFqn, "NoSrc", "NoSrcEntity");
     assertNull(noAssociationSet);
-    
+
     AssociationSet asBuildingRooms = aep.getAssociationSet(
-            ModelSharedConstants.CONTAINER_1, defaultFqn("BuildingRooms"), "Buildings", "r_Building");
+        ModelSharedConstants.CONTAINER_1, defaultFqn("BuildingRooms"), "Buildings", "r_Building");
     assertNotNull(asBuildingRooms);
     assertEquals("Buildings", asBuildingRooms.getEnd1().getEntitySet());
     assertEquals("r_Building", asBuildingRooms.getEnd1().getRole());
@@ -229,7 +228,7 @@ public class AnnotationEdmProviderTest {
     assertEquals(ModelSharedConstants.CONTAINER_1, container.getName());
     final List<EntitySet> entitySets = container.getEntitySets();
     assertEquals(6, entitySets.size());
-    
+
     List<Association> associations = schema.getAssociations();
     assertEquals(4, associations.size());
     for (Association association : associations) {
@@ -237,58 +236,57 @@ public class AnnotationEdmProviderTest {
       validateAssociation(association);
     }
   }
-  
-  private FullQualifiedName defaultFqn(String name) {
+
+  private FullQualifiedName defaultFqn(final String name) {
     return new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, name);
   }
 
-  private void validateAssociation(Association association) {
+  private void validateAssociation(final Association association) {
     String name = association.getName();
-    if(name.equals("r_Employee-r_Room")) {
-      validateAssociation(association, 
-              "r_Room", EdmMultiplicity.ONE, defaultFqn("Room"),
-              "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
-    } else if(name.equals("BuildingRooms")) {
-        validateAssociation(association, 
-                "r_Building", EdmMultiplicity.ONE, defaultFqn("Building"),
-                "r_Room", EdmMultiplicity.MANY, defaultFqn("Room"));
-    } else if(name.equals("ManagerEmployees")) {
-        validateAssociation(association, 
-                "r_Manager", EdmMultiplicity.ONE, defaultFqn("Manager"),
-                "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
-    } else if(name.equals("TeamEmployees")) {
-        validateAssociation(association, 
-                "r_Team", EdmMultiplicity.ONE, defaultFqn("Team"),
-                "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
+    if (name.equals("r_Employee-r_Room")) {
+      validateAssociation(association,
+          "r_Room", EdmMultiplicity.ONE, defaultFqn("Room"),
+          "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
+    } else if (name.equals("BuildingRooms")) {
+      validateAssociation(association,
+          "r_Building", EdmMultiplicity.ONE, defaultFqn("Building"),
+          "r_Room", EdmMultiplicity.MANY, defaultFqn("Room"));
+    } else if (name.equals("ManagerEmployees")) {
+      validateAssociation(association,
+          "r_Manager", EdmMultiplicity.ONE, defaultFqn("Manager"),
+          "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
+    } else if (name.equals("TeamEmployees")) {
+      validateAssociation(association,
+          "r_Team", EdmMultiplicity.ONE, defaultFqn("Team"),
+          "r_Employee", EdmMultiplicity.MANY, defaultFqn("Employee"));
     } else {
-        fail("Got unknown association to validate with name '" + name + "'.");
+      fail("Got unknown association to validate with name '" + name + "'.");
     }
   }
 
-  private void validateAssociation(Association association, 
-          String fromRole, EdmMultiplicity fromMulti, FullQualifiedName fromType, 
-          String toRole, EdmMultiplicity toMulti, FullQualifiedName toType) {
+  private void validateAssociation(final Association association,
+      final String fromRole, final EdmMultiplicity fromMulti, final FullQualifiedName fromType,
+      final String toRole, final EdmMultiplicity toMulti, final FullQualifiedName toType) {
 
-    AssociationEnd[] ends = new AssociationEnd[]{association.getEnd1(),association.getEnd2()};
+    AssociationEnd[] ends = new AssociationEnd[] { association.getEnd1(), association.getEnd2() };
     for (AssociationEnd associationEnd : ends) {
-      if(associationEnd.getRole().equals(fromRole)) {
+      if (associationEnd.getRole().equals(fromRole)) {
         validateAssociationEnd(associationEnd, fromRole, fromMulti, fromType);
-      } else if(associationEnd.getRole().equals(toRole)) {
+      } else if (associationEnd.getRole().equals(toRole)) {
         validateAssociationEnd(associationEnd, toRole, toMulti, toType);
       } else {
-        fail("Unexpected navigation end '" + associationEnd.getRole() 
-                + "' for association with name '" + association.getName() + "'.");
+        fail("Unexpected navigation end '" + associationEnd.getRole()
+            + "' for association with name '" + association.getName() + "'.");
       }
     }
   }
 
-    private void validateAssociationEnd(AssociationEnd associationEnd, 
-          String role, EdmMultiplicity multiplicity, FullQualifiedName type) {
+  private void validateAssociationEnd(final AssociationEnd associationEnd,
+      final String role, final EdmMultiplicity multiplicity, final FullQualifiedName type) {
     assertEquals(role, associationEnd.getRole());
     assertEquals(multiplicity, associationEnd.getMultiplicity());
     assertEquals(type, associationEnd.getType());
   }
-
 
   @Test
   public void entitySetTeams() throws Exception {
@@ -320,7 +318,7 @@ public class AnnotationEdmProviderTest {
         fail("Got unexpected navigation property with name '" + navigationProperty.getName() + "'.");
       }
     }
-}
+  }
 
   @Test
   public void entityTypeTeam() throws Exception {
@@ -332,7 +330,7 @@ public class AnnotationEdmProviderTest {
 
     assertEquals(1, team.getProperties().size());
     assertEquals(1, team.getNavigationProperties().size());
-    NavigationProperty navigationProperty= team.getNavigationProperties().get(0);
+    NavigationProperty navigationProperty = team.getNavigationProperties().get(0);
     validateNavProperty(navigationProperty, "TeamEmployees", "r_Team", "r_Employee");
   }
 
@@ -358,7 +356,7 @@ public class AnnotationEdmProviderTest {
     assertEquals("Name", name.getName());
     PropertyRef imageFormat = getPropertyRef(keyReferences, "ImageFormat");
     assertEquals("ImageFormat", imageFormat.getName());
-    
+
 //    assertEquals(0, photo.getNavigationProperties().size());
     assertNull(photo.getNavigationProperties());
   }
@@ -397,7 +395,7 @@ public class AnnotationEdmProviderTest {
 
     // validate location complex type
     ComplexType locationType = aep.getComplexType(
-            new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, "c_Location"));
+        new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, "c_Location"));
     assertEquals("c_Location", locationType.getName());
     assertEquals(2, locationType.getProperties().size());
   }
@@ -411,21 +409,21 @@ public class AnnotationEdmProviderTest {
     assertEquals(2, room.getProperties().size());
     final List<NavigationProperty> navigationProperties = room.getNavigationProperties();
     assertEquals(2, navigationProperties.size());
-    
+
     for (NavigationProperty navigationProperty : navigationProperties) {
-      if(navigationProperty.getName().equals("nr_Employees")) {
+      if (navigationProperty.getName().equals("nr_Employees")) {
         validateNavProperty(navigationProperty, "r_Employee-r_Room", "r_Room", "r_Employee");
-      } else if(navigationProperty.getName().equals("nr_Building")) {
+      } else if (navigationProperty.getName().equals("nr_Building")) {
         validateNavProperty(navigationProperty, "BuildingRooms", "r_Room", "r_Building");
       } else {
         fail("Got unexpected navigation property with name '" + navigationProperty.getName() + "'.");
       }
     }
   }
-  
-  private void validateNavProperty(NavigationProperty navigationProperty, String name,
-          String relationship, String fromRole, String toRole) {
-    if(name != null) {
+
+  private void validateNavProperty(final NavigationProperty navigationProperty, final String name,
+      final String relationship, final String fromRole, final String toRole) {
+    if (name != null) {
       assertEquals(name, navigationProperty.getName());
     }
     FullQualifiedName fqn = new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, relationship);
@@ -433,28 +431,28 @@ public class AnnotationEdmProviderTest {
     assertEquals("Wrong fromRole for navigation property.", fromRole, navigationProperty.getFromRole());
     assertEquals("Wrong toRole for navigation property.", toRole, navigationProperty.getToRole());
   }
-  
-  private void validateNavProperty(NavigationProperty navigationProperty, 
-          String relationship, String fromRole, String toRole) {
+
+  private void validateNavProperty(final NavigationProperty navigationProperty,
+      final String relationship, final String fromRole, final String toRole) {
     validateNavProperty(navigationProperty, null, relationship, fromRole, toRole);
   }
-  
-  private boolean containsProperty(List<Property> properties, String propertyName) {
+
+  private boolean containsProperty(final List<Property> properties, final String propertyName) {
     return getProperty(properties, propertyName) != null;
   }
 
-  private Property getProperty(List<Property> properties, String name) {
+  private Property getProperty(final List<Property> properties, final String name) {
     for (Property property : properties) {
-      if(name.equals(property.getName())) {
+      if (name.equals(property.getName())) {
         return property;
       }
     }
     return null;
   }
-  
-  private PropertyRef getPropertyRef(List<PropertyRef> properties, String name) {
+
+  private PropertyRef getPropertyRef(final List<PropertyRef> properties, final String name) {
     for (PropertyRef property : properties) {
-      if(name.equals(property.getName())) {
+      if (name.equals(property.getName())) {
         return property;
       }
     }

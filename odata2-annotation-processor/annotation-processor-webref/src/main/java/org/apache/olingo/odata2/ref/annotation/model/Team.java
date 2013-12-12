@@ -47,8 +47,8 @@ public class Team extends RefBase {
     this.isScrumTeam = isScrumTeam;
   }
 
-  public void addEmployee(Employee e) {
-    this.employees.add(e);
+  public void addEmployee(final Employee e) {
+    employees.add(e);
   }
 
   public List<Employee> getEmployees() {

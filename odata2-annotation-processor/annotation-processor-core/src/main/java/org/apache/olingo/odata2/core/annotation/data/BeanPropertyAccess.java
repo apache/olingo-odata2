@@ -42,7 +42,7 @@ public class BeanPropertyAccess implements ValueAccess {
   }
 
   @Override
-  public <T, V> void setPropertyValue(T data, final EdmProperty property, final V value) throws ODataException {
+  public <T, V> void setPropertyValue(final T data, final EdmProperty property, final V value) throws ODataException {
     final String methodName = getSetterMethodName(getGetterMethodName(property));
     if (methodName != null) {
       setValue(data, methodName, value);
@@ -63,7 +63,7 @@ public class BeanPropertyAccess implements ValueAccess {
   }
 
   @Override
-  public <T, V> void setMappingValue(T data, final EdmMapping mapping, final V value) throws ODataException {
+  public <T, V> void setMappingValue(final T data, final EdmMapping mapping, final V value) throws ODataException {
     if (mapping != null && mapping.getMimeType() != null) {
       setValue(data, getSetterMethodName(mapping.getMimeType()), value);
     }
@@ -77,7 +77,7 @@ public class BeanPropertyAccess implements ValueAccess {
   }
 
   private boolean isBooleanProperty(final EdmProperty property) throws EdmException {
-    return property.isSimple() 
+    return property.isSimple()
         && property.getType() == EdmSimpleTypeKind.Boolean.getEdmSimpleTypeInstance();
   }
 

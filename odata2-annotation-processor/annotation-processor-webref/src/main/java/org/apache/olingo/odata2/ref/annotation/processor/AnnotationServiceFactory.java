@@ -4,13 +4,13 @@
  * file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
  * License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- *****************************************************************************
+ ***************************************************************************** 
  */
 package org.apache.olingo.odata2.ref.annotation.processor;
 
@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ODataServiceFactory implemantion based on ListProcessor 
+ * ODataServiceFactory implemantion based on ListProcessor
  * in combination with Annotation-Support-Classes for EdmProvider, DataSource and ValueAccess.
  */
 public class AnnotationServiceFactory extends ODataServiceFactory {
@@ -79,20 +79,20 @@ public class AnnotationServiceFactory extends ODataServiceFactory {
   public ODataService createService(final ODataContext context) throws ODataException {
     // Edm via Annotations and ListProcessor via AnnotationDS with AnnotationsValueAccess
     return createODataSingleProcessorService(AnnotationInstances.EDM_PROVIDER,
-            new ListsProcessor(AnnotationInstances.DATA_SOURCE, AnnotationInstances.VALUE_ACCESS));
+        new ListsProcessor(AnnotationInstances.DATA_SOURCE, AnnotationInstances.VALUE_ACCESS));
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
     return (T) (callbackInterface.isAssignableFrom(ScenarioErrorCallback.class)
-            ? new ScenarioErrorCallback() : callbackInterface.isAssignableFrom(ODataDebugCallback.class)
+        ? new ScenarioErrorCallback() : callbackInterface.isAssignableFrom(ODataDebugCallback.class)
             ? new ScenarioDebugCallback() : super.getCallback(callbackInterface));
   }
 
   /*
-  * Helper classes and methods
-  */
+   * Helper classes and methods
+   */
 
   /**
    * 
@@ -120,7 +120,7 @@ public class AnnotationServiceFactory extends ODataServiceFactory {
 
   }
 
-  private static void initializeSampleData(AnnotationInMemoryDs dataSource) throws ODataApplicationException {
+  private static void initializeSampleData(final AnnotationInMemoryDs dataSource) throws ODataApplicationException {
     DataStore<Team> teamDs = dataSource.getDataStore(Team.class);
     teamDs.create(createTeam("Team Alpha", true));
     teamDs.create(createTeam("Team Beta", false));
@@ -161,9 +161,9 @@ public class AnnotationServiceFactory extends ODataServiceFactory {
   }
 
   private static Employee createEmployee(final String name,
-      Location location, final int age, final Calendar date,
+      final Location location, final int age, final Calendar date,
       final byte[] image, final String imageType, final String imageUrl,
-      Manager manager, Team team, Room room) {
+      final Manager manager, final Team team, final Room room) {
     Employee employee = new Employee();
     employee.setEmployeeName(name);
     employee.setLocation(location);
@@ -178,20 +178,20 @@ public class AnnotationServiceFactory extends ODataServiceFactory {
     return employee;
   }
 
-  private static Team createTeam(String teamName, boolean isScrumTeam) {
+  private static Team createTeam(final String teamName, final boolean isScrumTeam) {
     Team team = new Team();
     team.setName(teamName);
     team.setScrumTeam(isScrumTeam);
     return team;
   }
 
-  private static Building createBuilding(String buildingName) {
+  private static Building createBuilding(final String buildingName) {
     Building b = new Building();
     b.setName(buildingName);
     return b;
   }
 
-  private static Photo createPhoto(String name, ResourceHelper.Format format) {
+  private static Photo createPhoto(final String name, final ResourceHelper.Format format) {
     Photo p = new Photo();
     p.setName(name);
     p.setImageUri("http://localhost/image/" + name);
@@ -201,15 +201,15 @@ public class AnnotationServiceFactory extends ODataServiceFactory {
     return p;
   }
 
-  private static Room createRoom(String name, int seats, int version, Building building) {
+  private static Room createRoom(final String name, final int seats, final int version, final Building building) {
     Room r = new Room();
     r.setName(name);
     r.setSeats(seats);
     r.setVersion(version);
     r.setBuilding(building);
-    
+
     building.addRoom(r);
-    
+
     return r;
   }
 }

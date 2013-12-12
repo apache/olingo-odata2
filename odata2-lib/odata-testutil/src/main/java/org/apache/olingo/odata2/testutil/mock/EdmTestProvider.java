@@ -104,12 +104,12 @@ public class EdmTestProvider extends EdmProvider {
   private static final String SCHEMA_ALIAS = "Self";
 
   @Override
-  public List<AliasInfo> getAliasInfos(){
+  public List<AliasInfo> getAliasInfos() {
     List<AliasInfo> aliasInfos = new ArrayList<AliasInfo>();
     aliasInfos.add(new AliasInfo().setAlias(SCHEMA_ALIAS).setNamespace(NAMESPACE_1));
     return aliasInfos;
   }
-  
+
   @Override
   public List<Schema> getSchemas() throws ODataException {
     final List<Schema> schemas = new ArrayList<Schema>();

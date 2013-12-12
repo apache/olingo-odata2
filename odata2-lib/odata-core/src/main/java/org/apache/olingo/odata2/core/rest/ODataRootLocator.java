@@ -121,8 +121,9 @@ public class ODataRootLocator {
     return ODataSubLocator.create(param);
   }
 
-  public static ODataServiceFactory createServiceFactoryFromContext(Application app, HttpServletRequest servletRequest,
-      ServletConfig servletConfig) {
+  public static ODataServiceFactory createServiceFactoryFromContext(final Application app,
+      final HttpServletRequest servletRequest,
+      final ServletConfig servletConfig) {
     try {
       Class<?> factoryClass;
       if (app instanceof AbstractODataApplication) {

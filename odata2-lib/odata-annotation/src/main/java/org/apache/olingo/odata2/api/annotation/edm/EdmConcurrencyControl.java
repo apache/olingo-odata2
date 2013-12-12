@@ -25,10 +25,10 @@ import java.lang.annotation.Target;
 
 /**
  * Related to <code>ConcurrencyMode</code> in OData specification.
- * If a property is annotated with {@link EdmConcurrencyControl} 
- * this is equivalent with <code>ConcurrencyMode = FIXED</code>.
- * Default of a property not annotated with {@link EdmConcurrencyControl} 
- * this is equivalent with  <code>ConcurrencyMode = NONE</code>.
+ * If a property is annotated with {@link EdmConcurrencyControl} this is equivalent with <code>ConcurrencyMode =
+ * FIXED</code>.
+ * Default of a property not annotated with {@link EdmConcurrencyControl} this is equivalent with <code>ConcurrencyMode
+ * = NONE</code>.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
