@@ -163,7 +163,7 @@ public class JPAEdmNameBuilder {
       if (managedType != null) {
         Class<?> clazz = managedType.getJavaType();
         try {
-          Field field = clazz.getDeclaredField(jpaAttributeName);
+          Field field = clazz.getField(jpaAttributeName);
           Column column = field.getAnnotation(Column.class);
           if (column != null) {
             mapping.setJPAColumnName(column.name());

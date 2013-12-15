@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.processor.core.jpa.access.model;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,6 +52,9 @@ public class JPATypeConvertor {
    * 
    * @see EdmSimpleTypeKind
    */
+  
+  private static final String OBJECT_TYPE = "java.lang.Object";
+  
   public static EdmSimpleTypeKind
       convertToEdmSimpleType(final Class<?> jpaType, final Attribute<?, ?> currentAttribute)
           throws ODataJPAModelException {
@@ -81,14 +85,12 @@ public class JPATypeConvertor {
     } else if ((jpaType.equals(Date.class)) || (jpaType.equals(Calendar.class))) {
       try {
         if ((currentAttribute != null)
-            && (currentAttribute.getDeclaringType().getJavaType().getDeclaredField(currentAttribute.getName())
-                .getAnnotation(Temporal.class).value() == TemporalType.TIME)) {
+            && (determineTemporalType(currentAttribute.getDeclaringType().getJavaType(), currentAttribute.getName())
+              == TemporalType.TIME)) {
           return EdmSimpleTypeKind.Time;
         } else {
           return EdmSimpleTypeKind.DateTime;
         }
-      } catch (NoSuchFieldException e) {
-        throw ODataJPAModelException.throwException(ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
       } catch (SecurityException e) {
         throw ODataJPAModelException.throwException(ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
       }
@@ -97,5 +99,21 @@ public class JPATypeConvertor {
     }
     throw ODataJPAModelException.throwException(ODataJPAModelException.TYPE_NOT_SUPPORTED
         .addContent(jpaType.toString()), null);
+  }
+
+  private static TemporalType determineTemporalType(final Class<?> type, final String fieldName)
+      throws ODataJPAModelException {
+    if (type != null && !type.getName().equals(OBJECT_TYPE)) {
+      try {
+        Field field = type.getField(fieldName);
+        return field.getAnnotation(Temporal.class).value();
+      } catch (NoSuchFieldException e) {
+        determineTemporalType(type.getSuperclass(), fieldName);
+      } catch (SecurityException e) {
+        throw ODataJPAModelException.throwException(ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
+      }
+    }
+    return null;
+
   }
 }
