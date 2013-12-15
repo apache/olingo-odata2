@@ -52,9 +52,9 @@ public class JPATypeConvertor {
    * 
    * @see EdmSimpleTypeKind
    */
-  
+
   private static final String OBJECT_TYPE = "java.lang.Object";
-  
+
   public static EdmSimpleTypeKind
       convertToEdmSimpleType(final Class<?> jpaType, final Attribute<?, ?> currentAttribute)
           throws ODataJPAModelException {

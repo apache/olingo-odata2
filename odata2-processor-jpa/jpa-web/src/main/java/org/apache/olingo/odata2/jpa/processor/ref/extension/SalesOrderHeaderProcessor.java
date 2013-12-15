@@ -24,14 +24,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
-import org.apache.olingo.odata2.api.annotation.edm.Facets;
-import org.apache.olingo.odata2.api.annotation.edm.FunctionImport;
-import org.apache.olingo.odata2.api.annotation.edm.FunctionImport.Multiplicity;
-import org.apache.olingo.odata2.api.annotation.edm.FunctionImport.ReturnType;
-import org.apache.olingo.odata2.api.annotation.edm.Parameter;
-import org.apache.olingo.odata2.api.annotation.edm.Parameter.Mode;
-import org.apache.olingo.odata2.api.annotation.edmx.HttpMethod;
-import org.apache.olingo.odata2.api.annotation.edmx.HttpMethod.Name;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFacets;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImport;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImport.HttpMethod;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImport.ReturnType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImport.ReturnType.Type;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImportParameter;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.jpa.processor.ref.model.Address;
 import org.apache.olingo.odata2.jpa.processor.ref.model.SalesOrderHeader;
@@ -47,10 +45,11 @@ public class SalesOrderHeaderProcessor {
   }
 
   @SuppressWarnings("unchecked")
-  @FunctionImport(name = "FindAllSalesOrders", entitySet = "SalesOrders", returnType = ReturnType.ENTITY_TYPE,
-      multiplicity = Multiplicity.MANY)
+  @EdmFunctionImport(name = "FindAllSalesOrders", entitySet = "SalesOrders", returnType = @ReturnType(
+      type = Type.ENTITY, isCollection = true))
   public List<SalesOrderHeader> findAllSalesOrders(
-      @Parameter(name = "DeliveryStatusCode", facets = @Facets(maxLength = 2)) final String status) {
+      @EdmFunctionImportParameter(name = "DeliveryStatusCode",
+          facets = @EdmFacets(maxLength = 2)) final String status) {
 
     Query q = em
         .createQuery("SELECT E1 from SalesOrderHeader E1 WHERE E1.deliveryStatus = '"
@@ -60,11 +59,11 @@ public class SalesOrderHeaderProcessor {
     return soList;
   }
 
-  @FunctionImport(name = "CheckATP", returnType = ReturnType.SCALAR, multiplicity = Multiplicity.ONE,
-      httpMethod = @HttpMethod(name = Name.GET))
+  @EdmFunctionImport(name = "CheckATP", returnType = @ReturnType(type = Type.SIMPLE, isCollection = false),
+      httpMethod = HttpMethod.GET)
   public boolean checkATP(
-      @Parameter(name = "SoID", facets = @Facets(nullable = false), mode = Mode.IN) final Long soID,
-      @Parameter(name = "LiId", facets = @Facets(nullable = false), mode = Mode.IN) final Long lineItemID) {
+      @EdmFunctionImportParameter(name = "SoID", facets = @EdmFacets(nullable = false)) final Long soID,
+      @EdmFunctionImportParameter(name = "LiId", facets = @EdmFacets(nullable = false)) final Long lineItemID) {
     if (soID == 2L) {
       return false;
     } else {
@@ -72,9 +71,9 @@ public class SalesOrderHeaderProcessor {
     }
   }
 
-  @FunctionImport(returnType = ReturnType.ENTITY_TYPE, entitySet = "SalesOrders")
+  @EdmFunctionImport(returnType = @ReturnType(type = Type.ENTITY, isCollection = true), entitySet = "SalesOrders")
   public SalesOrderHeader calculateNetAmount(
-      @Parameter(name = "SoID", facets = @Facets(nullable = false)) final Long soID)
+      @EdmFunctionImportParameter(name = "SoID", facets = @EdmFacets(nullable = false)) final Long soID)
       throws ODataException {
 
     if (soID <= 0L) {
@@ -98,9 +97,9 @@ public class SalesOrderHeaderProcessor {
   }
 
   @SuppressWarnings("unchecked")
-  @FunctionImport(returnType = ReturnType.COMPLEX_TYPE)
+  @EdmFunctionImport(returnType = @ReturnType(type = Type.COMPLEX))
   public Address getAddress(
-      @Parameter(name = "SoID", facets = @Facets(nullable = false)) final Long soID) {
+      @EdmFunctionImportParameter(name = "SoID", facets = @EdmFacets(nullable = false)) final Long soID) {
     Query q = em
         .createQuery("SELECT E1 from SalesOrderHeader E1 WHERE E1.soId = "
             + soID + "l");
@@ -111,16 +110,6 @@ public class SalesOrderHeaderProcessor {
     } else {
       return null;
     }
-  }
-
-  /*
-   * This method will not be transformed into Function Import Function Import
-   * with return type as void is not supported yet.
-   */
-  @FunctionImport(returnType = ReturnType.NONE)
-  public void process(
-      @Parameter(name = "SoID", facets = @Facets(nullable = false)) final Long soID) {
-    return;
   }
 
 }

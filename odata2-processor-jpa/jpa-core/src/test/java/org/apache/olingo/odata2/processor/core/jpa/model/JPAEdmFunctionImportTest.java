@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.olingo.odata2.api.annotation.edm.Parameter.Mode;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
@@ -47,7 +46,7 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmMapping;
 import org.apache.olingo.odata2.processor.core.jpa.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.processor.core.jpa.mock.ODataJPAContextMock;
 import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPACustomProcessorMock;
-import org.apache.olingo.odata2.processor.core.jpa.mock.model.JPACustomProcessorNegativeMock;
+import org.apache.olingo.odata2.processor.core.jpa.mock.model._JPACustomProcessorNegativeMock;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -89,11 +88,9 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       assertEquals(2, funcImpList.size());
       assertEquals("Param1", funcImpList.get(0).getName());
       assertEquals(EdmSimpleTypeKind.String, funcImpList.get(0).getType());
-      assertEquals(Mode.IN.toString(), funcImpList.get(0).getMode());
 
       assertEquals("Param3", funcImpList.get(1).getName());
       assertEquals(EdmSimpleTypeKind.Double, funcImpList.get(1).getType());
-      assertEquals(Mode.IN.toString(), funcImpList.get(1).getMode());
 
     }
 
@@ -165,12 +162,6 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
     List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
 
     assertEquals(functionImportList.size(), 0);
-
-    // FunctionImport functionImport = functionImportList.get(0);
-    // assertEquals(functionImport.getName(), "method4");
-    // assertNotNull(functionImport.getMapping());
-    //
-    // assertNull(functionImport.getReturnType());
 
   }
 
@@ -488,31 +479,31 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
     } else if (VARIANT == 4) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method4" });
     } else if (VARIANT == 5) {
-      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method5" });
+      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method5" });
     } else if (VARIANT == 6) {
-      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method6" });
+      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method6" });
     } else if (VARIANT == 7) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method7" });
     } else if (VARIANT == 8) {
-      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method8" });
+      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method8" });
     } else if (VARIANT == 9) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method9" });
     } else if (VARIANT == 10) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method10" });
     } else if (VARIANT == 11) {
-      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method11" });
+      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method11" });
     } else if (VARIANT == 12) {
-      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method12" });
+      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method12" });
     } else if (VARIANT == 13) {
-      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method13" });
+      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method13" });
     } else if (VARIANT == 14) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method1" });
     } else if (VARIANT == 15) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method3" });
     } else if (VARIANT == 16) {
-      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method16" });
+      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method16" });
     } else if (VARIANT == 17) {
-      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method17" });
+      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method17" });
     } else {
       return null;
     }

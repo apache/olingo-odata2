@@ -25,10 +25,11 @@ import org.apache.olingo.odata2.api.annotation.edm.FunctionImport.Multiplicity;
 import org.apache.olingo.odata2.api.annotation.edm.FunctionImport.ReturnType;
 import org.apache.olingo.odata2.api.annotation.edm.Parameter;
 
-public class JPACustomProcessorNegativeMock {
+@Deprecated
+public class _JPACustomProcessorNegativeMock {
 
   @FunctionImport(returnType = ReturnType.ENTITY_TYPE, multiplicity = Multiplicity.MANY)
-  public List<JPACustomProcessorNegativeMock> method5() {
+  public List<_JPACustomProcessorNegativeMock> method5() {
     return null;
   }
 
@@ -38,12 +39,12 @@ public class JPACustomProcessorNegativeMock {
   }
 
   @FunctionImport(returnType = ReturnType.ENTITY_TYPE, entitySet = "MockSet", multiplicity = Multiplicity.MANY)
-  public JPACustomProcessorNegativeMock method8() {
+  public _JPACustomProcessorNegativeMock method8() {
     return null;
   }
 
   @FunctionImport(returnType = ReturnType.COMPLEX_TYPE, multiplicity = Multiplicity.ONE)
-  public JPACustomProcessorNegativeMock method11() {
+  public _JPACustomProcessorNegativeMock method11() {
     return null;
   }
 
