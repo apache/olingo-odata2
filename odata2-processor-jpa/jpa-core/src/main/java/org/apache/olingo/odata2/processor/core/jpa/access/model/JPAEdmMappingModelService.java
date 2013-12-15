@@ -137,7 +137,7 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   @Override
   public String mapJPARelationship(final String jpaEntityTypeName, final String jpaRelationshipName) {
     JPAEntityTypeMapType jpaEntityTypeMap = searchJPAEntityTypeMapType(jpaEntityTypeName);
-    if (jpaEntityTypeMap != null) {
+    if (jpaEntityTypeMap != null && jpaEntityTypeMap.getJPARelationships() != null) {
       for (JPARelationship jpaRealtionship : jpaEntityTypeMap.getJPARelationships().getJPARelationship()) {
         if (jpaRealtionship.getName().equals(jpaRelationshipName)) {
           return jpaRealtionship.getValue();
