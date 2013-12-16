@@ -28,7 +28,7 @@ public interface EdmAnnotatable {
   /**
    * Get all annotations applied to an EDM element
    * 
-   * @return {@link EdmAnnotations}
+   * @return {@link EdmAnnotations} never null
    * @throws EdmException
    */
   EdmAnnotations getAnnotations() throws EdmException;

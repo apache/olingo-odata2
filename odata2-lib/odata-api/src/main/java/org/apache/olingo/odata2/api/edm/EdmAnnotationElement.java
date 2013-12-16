@@ -59,14 +59,14 @@ public interface EdmAnnotationElement {
   /**
    * Get the child elements of the custom element
    * 
-   * @return child elements of this {@link EdmAnnotationElement}
+   * @return child elements of this {@link EdmAnnotationElement} or null if no child elements exist
    */
   List<EdmAnnotationElement> getChildElements();
 
   /**
    * Get the attributes of this custom element
    * 
-   * @return the attributes of this {@link EdmAnnotationElement}
+   * @return the attributes of this {@link EdmAnnotationElement} or null if no attributes exist
    */
   List<EdmAnnotationAttribute> getAttributes();
 

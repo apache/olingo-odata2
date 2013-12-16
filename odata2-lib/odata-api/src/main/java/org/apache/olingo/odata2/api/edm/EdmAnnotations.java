@@ -30,7 +30,7 @@ public interface EdmAnnotations {
   /**
    * Get all annotation elements for the CSDL element
    * 
-   * @return List of {@link EdmAnnotationElement}
+   * @return List of {@link EdmAnnotationElement} or null if no elements exist
    */
   List<EdmAnnotationElement> getAnnotationElements();
 
@@ -39,7 +39,7 @@ public interface EdmAnnotations {
    * 
    * @param name
    * @param namespace
-   * @return String
+   * @return {@link EdmAnnotationElement} or null if no element is found for this name
    */
 
   EdmAnnotationElement getAnnotationElement(String name, String namespace);
@@ -47,7 +47,7 @@ public interface EdmAnnotations {
   /**
    * Get all annotation attributes for the CSDL element
    * 
-   * @return List of {@link EdmAnnotationAttribute}
+   * @return List of {@link EdmAnnotationAttribute} or null if no attributes exist
    */
   List<EdmAnnotationAttribute> getAnnotationAttributes();
 
@@ -56,7 +56,7 @@ public interface EdmAnnotations {
    * 
    * @param name
    * @param namespace
-   * @return String
+   * @return {@link EdmAnnotationAttribute} or null if no attribute is found for this name
    */
   EdmAnnotationAttribute getAnnotationAttribute(String name, String namespace);
 }
