@@ -97,11 +97,13 @@ public class ClassHelper {
 
   public static Object getFieldValue(final Object instance, final Field field) {
     try {
-      boolean access = field.isAccessible();
-      field.setAccessible(true);
-      Object value = field.get(instance);
-      field.setAccessible(access);
-      return value;
+      synchronized (field) {
+        boolean access = field.isAccessible();
+        field.setAccessible(true);
+        Object value = field.get(instance);
+        field.setAccessible(access);
+        return value;
+      }
     } catch (IllegalArgumentException ex) { // should never happen
       throw new ODataRuntimeException(ex);
     } catch (IllegalAccessException ex) { // should never happen
@@ -111,10 +113,12 @@ public class ClassHelper {
 
   public static void setFieldValue(final Object instance, final Field field, final Object value) {
     try {
-      boolean access = field.isAccessible();
-      field.setAccessible(true);
-      field.set(instance, value);
-      field.setAccessible(access);
+      synchronized (field) {
+        boolean access = field.isAccessible();
+        field.setAccessible(true);
+        field.set(instance, value);
+        field.setAccessible(access);
+      }
     } catch (IllegalArgumentException ex) { // should never happen
       throw new ODataRuntimeException(ex);
     } catch (IllegalAccessException ex) { // should never happen
