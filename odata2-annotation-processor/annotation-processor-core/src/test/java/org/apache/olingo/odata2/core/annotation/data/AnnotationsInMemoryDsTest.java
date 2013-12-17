@@ -38,6 +38,7 @@ import org.apache.olingo.odata2.core.annotation.model.Photo;
 import org.apache.olingo.odata2.core.annotation.model.Room;
 import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -56,6 +57,7 @@ public class AnnotationsInMemoryDsTest {
   }
   
   @Test
+  @Ignore
   public void multiThreadedSyncOnBuildingsTest() throws Exception {
     final EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
 
@@ -87,6 +89,7 @@ public class AnnotationsInMemoryDsTest {
   }
   
   @Test
+  @Ignore
   public void multiThreadedSyncCreateReadTest() throws Exception {
     Collection<Class<?>> ac = new ArrayList<Class<?>>();
     ac.add(SimpleEntity.class);
