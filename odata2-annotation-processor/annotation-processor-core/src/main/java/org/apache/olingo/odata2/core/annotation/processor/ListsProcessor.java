@@ -896,24 +896,25 @@ public class ListsProcessor extends DataSourceProcessor {
     ODataContext context = getContext();
     final int timingHandle = context.startRuntimeMeasurement(getClass().getSimpleName(), "retrieveData");
 
-    data = functionImport == null ?
-        keys.isEmpty() ?
-            dataSource.readData(startEntitySet) : dataSource.readData(startEntitySet, keys) :
-        dataSource.readData(functionImport, functionImportParameters, keys);
-
-    EdmEntitySet currentEntitySet =
-        functionImport == null ? startEntitySet : functionImport.getEntitySet();
-    for (NavigationSegment navigationSegment : navigationSegments) {
-      data = dataSource.readRelatedData(
-          currentEntitySet,
-          data,
-          navigationSegment.getEntitySet(),
-          mapKey(navigationSegment.getKeyPredicates()));
-      currentEntitySet = navigationSegment.getEntitySet();
+    try {
+      data = functionImport == null ?
+          keys.isEmpty() ?
+              dataSource.readData(startEntitySet) : dataSource.readData(startEntitySet, keys) :
+          dataSource.readData(functionImport, functionImportParameters, keys);
+  
+      EdmEntitySet currentEntitySet =
+          functionImport == null ? startEntitySet : functionImport.getEntitySet();
+      for (NavigationSegment navigationSegment : navigationSegments) {
+        data = dataSource.readRelatedData(
+            currentEntitySet,
+            data,
+            navigationSegment.getEntitySet(),
+            mapKey(navigationSegment.getKeyPredicates()));
+        currentEntitySet = navigationSegment.getEntitySet();
+      }
+    } finally {
+      context.stopRuntimeMeasurement(timingHandle);
     }
-
-    context.stopRuntimeMeasurement(timingHandle);
-
     return data;
   }
 

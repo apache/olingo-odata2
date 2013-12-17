@@ -138,11 +138,11 @@ public class AnnotationInMemoryDs implements DataSource {
     for (Object targetInstance : targetStore.read()) {
       if (navigationInstance instanceof Collection) {
         for (Object object : (Collection<?>) navigationInstance) {
-          if (ANNOTATION_HELPER.keyMatch(targetInstance, object)) {
+          if (targetStore.isKeyEqualChecked(targetInstance, object)) {
             resultData.add(targetInstance);
           }
         }
-      } else if (ANNOTATION_HELPER.keyMatch(targetInstance, navigationInstance)) {
+      } else if (targetStore.isKeyEqualChecked(targetInstance, navigationInstance)) {
         resultData.add(targetInstance);
       }
     }
@@ -151,8 +151,10 @@ public class AnnotationInMemoryDs implements DataSource {
       if (targetKeys.isEmpty()) {
         return resultData;
       } else {
+        Object keyInstance = targetStore.createInstance();
+        ANNOTATION_HELPER.setKeyFields(keyInstance, targetKeys);
         for (Object result : resultData) {
-          if (ANNOTATION_HELPER.keyMatch(result, targetKeys)) {
+          if (targetStore.isKeyEqualChecked(result, keyInstance)) {
             return result;
           }
         }

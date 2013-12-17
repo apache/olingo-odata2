@@ -149,8 +149,7 @@ public class AnnotationsInMemoryDsTest {
         } catch (Exception ex) {
           ex.printStackTrace();
           throw new RuntimeException(ex);
-        }
-        finally {
+        } finally {
           latch.countDown();
         }
       }
@@ -161,7 +160,7 @@ public class AnnotationsInMemoryDsTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void readRelatedEntity() throws Exception {
+  public void readRelatedEntities() throws Exception {
     EdmEntitySet buildingsEntitySet = createMockedEdmEntitySet("Buildings");
     EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");
 
@@ -200,6 +199,47 @@ public class AnnotationsInMemoryDsTest {
       Assert.assertTrue(room.getName().matches("Room \\d*"));
       Assert.assertEquals("Common Building", room.getBuilding().getName());
     }
+  }
+
+  @Test
+  public void readRelatedTargetEntity() throws Exception {
+    EdmEntitySet buildingsEntitySet = createMockedEdmEntitySet("Buildings");
+    EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");
+
+    Building building = new Building();
+    building.setName("Common Building");
+
+    final int roomsCount = 10;
+    List<Room> rooms = new ArrayList<Room>();
+    for (int i = 0; i < roomsCount; i++) {
+      Room room = new Room(i, "Room " + i);
+      room.setBuilding(building);
+      datasource.createData(roomsEntitySet, room);
+      rooms.add(room);
+    }
+
+    building.getRooms().addAll(rooms);
+    datasource.createData(buildingsEntitySet, building);
+
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", "1");
+
+    Building read = (Building) datasource.readData(buildingsEntitySet, keys);
+    Assert.assertEquals("Common Building", read.getName());
+    Assert.assertEquals("1", read.getId());
+
+    // execute
+    Map<String, Object> targetKeys = new HashMap<String, Object>();
+    targetKeys.put("Id", 3);
+    Object relatedData = datasource.readRelatedData(
+        buildingsEntitySet, building, roomsEntitySet, targetKeys);
+
+    // validate
+    Assert.assertTrue("Result is no Room.", relatedData instanceof Room);
+    Room relatedRoom = (Room) relatedData;
+    Assert.assertEquals("3", relatedRoom.getId());
+    Assert.assertEquals("Room 3", relatedRoom.getName());
+    Assert.assertEquals("Common Building", relatedRoom.getBuilding().getName());
   }
 
   @Test

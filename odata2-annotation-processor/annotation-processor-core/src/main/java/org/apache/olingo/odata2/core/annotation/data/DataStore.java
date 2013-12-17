@@ -138,6 +138,47 @@ public class DataStore<T> {
       return dataStore.remove(keyElement);
     }
   }
+  
+  /**
+   * Are the key values equal for both instances.
+   * If all compared key values are <code>null</code> this also means equal.
+   * 
+   * @param first first instance to check for key equal
+   * @param second second instance to check for key equal
+   * @return <code>true</code> if object instance have equal keys set.
+   */
+  public boolean isKeyEqual(final T first, final T second) {
+    KeyElement firstKeys = getKeys(first);
+    KeyElement secondKeys = getKeys(second);
+    
+    return firstKeys.equals(secondKeys);
+  }
+  
+  /**
+   * Are the key values equal for both instances.
+   * If all compared key values are <code>null</code> this also means equal.
+   * Before object (keys) are compared it is validated that both object instance are NOT null
+   * and that both are from the same class as this {@link DataStore} (see {@link #dataTypeClass}).
+   * For the equal check on {@link #dataTypeClass} instances without validation see
+   * {@link #isKeyEqual(Object, Object)}.
+   * 
+   * @param first first instance to check for key equal
+   * @param second second instance to check for key equal
+   * @return <code>true</code> if object instance have equal keys set.
+   */
+  @SuppressWarnings("unchecked")
+  public boolean isKeyEqualChecked(Object first, Object second) throws DataStoreException {
+    if(first == null || second == null) {
+      throw new DataStoreException("Tried to compare null values which is not allowed.");
+    } else if(first.getClass() != dataTypeClass) {
+      throw new DataStoreException("First value is no instance from required class '" + dataTypeClass + "'.");
+    } else if(second.getClass() != dataTypeClass) {
+      throw new DataStoreException("Second value is no instance from required class '" + dataTypeClass + "'.");
+    }
+    
+    return isKeyEqual((T) first, (T) second);
+  }
+
 
   private class KeyElement {
     private int cachedHashCode = 42;
@@ -169,6 +210,7 @@ public class DataStore<T> {
       if (getClass() != obj.getClass()) {
         return false;
       }
+      @SuppressWarnings("unchecked")
       final KeyElement other = (KeyElement) obj;
       if (this.keyValues != other.keyValues && (this.keyValues == null || !this.keyValues.equals(other.keyValues))) {
         return false;

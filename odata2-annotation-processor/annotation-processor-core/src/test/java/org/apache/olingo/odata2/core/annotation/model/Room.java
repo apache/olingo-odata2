@@ -39,6 +39,10 @@ public class Room extends RefBase {
   @EdmNavigationProperty(name = "nr_Employees")
   private List<Employee> employees = new ArrayList<Employee>();
 
+  public Room() {
+    this(0, null);
+  }
+  
   public Room(final int id, final String name) {
     super(id, name);
   }
