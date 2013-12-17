@@ -114,7 +114,7 @@ public class DataStore<T> {
 
   private T create(final T object, final KeyElement keyElement) throws DataStoreException {
     synchronized (dataStore) {
-      if (keyElement.keyValuesMissing() || dataStore.get(keyElement) != null) {
+      if (keyElement.keyValuesMissing() || dataStore.containsKey(keyElement)) {
         KeyElement newKey = createSetAndGetKeys(object);
         return this.create(object, newKey);
       }

@@ -15,9 +15,17 @@
  */
 package org.apache.olingo.odata2.core.annotation.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
+import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
+import org.apache.olingo.odata2.api.data.DataSource;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
@@ -27,6 +35,7 @@ import org.apache.olingo.odata2.core.annotation.edm.AnnotationEdmProvider;
 import org.apache.olingo.odata2.core.annotation.model.Building;
 import org.apache.olingo.odata2.core.annotation.model.ModelSharedConstants;
 import org.apache.olingo.odata2.core.annotation.model.Photo;
+import org.apache.olingo.odata2.core.annotation.model.Room;
 import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,7 +54,139 @@ public class AnnotationsInMemoryDsTest {
     datasource = new AnnotationInMemoryDs(Building.class.getPackage().getName(), false);
     edmProvider = new AnnotationEdmProvider(Building.class.getPackage().getName());
   }
+  
+  @Test
+  public void multiThreadedSyncOnBuildingsTest() throws Exception {
+    final EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
 
+    List<Thread> threads = new ArrayList<Thread>();
+    int max = 500;
+    for (int i = 0; i < max; i++) {
+      threads.add(createBuildingThread(datasource, edmEntitySet, String.valueOf("10")));
+    }
+    
+    for (Thread thread : threads) {
+      thread.start();
+    }
+
+    TimeUnit.MILLISECONDS.sleep(1000);
+    
+    DataStore<Building> ds = datasource.getDataStore(Building.class);
+    Collection<Building> buildings = ds.read();
+    Assert.assertEquals(max, buildings.size());
+  }
+
+  @org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet
+  @org.apache.olingo.odata2.api.annotation.edm.EdmEntityType
+  private static class SimpleEntity {
+    @EdmKey
+    @EdmProperty
+    public Integer id;
+    @EdmProperty
+    public String name;
+  }
+  
+  @Test
+  public void multiThreadedSyncCreateReadTest() throws Exception {
+    Collection<Class<?>> ac = new ArrayList<Class<?>>();
+    ac.add(SimpleEntity.class);
+    final AnnotationInMemoryDs localDs = new AnnotationInMemoryDs(SimpleEntity.class.getPackage().getName(), true);
+    final AnnotationEdmProvider localProvider = new AnnotationEdmProvider(ac);
+    final EdmEntitySet edmEntitySet = createMockedEdmEntitySet(localProvider, "SimpleEntitySet");
+
+    List<Thread> threads = new ArrayList<Thread>();
+    int max = 500;
+    for (int i = 0; i < max; i++) {
+    Runnable run = new Runnable() {
+      @Override
+      public void run() {
+        SimpleEntity se = new SimpleEntity();
+        se.id = Integer.valueOf(String.valueOf(System.currentTimeMillis()).substring(8));
+        se.name = "Name: " + System.currentTimeMillis();
+        try {
+          localDs.createData(edmEntitySet, se);
+        } catch (Exception ex) {
+          throw new RuntimeException(ex);
+        }
+      }
+    };
+
+      threads.add(new Thread(run));
+    }
+    
+    for (Thread thread : threads) {
+      thread.start();
+    }
+
+    TimeUnit.MILLISECONDS.sleep(500);
+    
+    DataStore<SimpleEntity> ds = localDs.getDataStore(SimpleEntity.class);
+    Collection<SimpleEntity> buildings = ds.read();
+    Assert.assertEquals(max, buildings.size());
+  }
+
+  private Thread createBuildingThread(final DataSource datasource, final EdmEntitySet edmEntitySet, final String id) {
+    Runnable run = new Runnable() {
+      @Override
+      public void run() {
+        Building building = new Building();
+        building.setName("Common Building - " + System.currentTimeMillis());
+        building.setId(id);
+        try {
+          datasource.createData(edmEntitySet, building);
+        } catch (Exception ex) {
+          throw new RuntimeException(ex);
+        }
+      }
+    };
+
+    return new Thread(run);
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void readRelatedEntity() throws Exception {
+    EdmEntitySet buildingsEntitySet = createMockedEdmEntitySet("Buildings");
+    EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");
+
+    Building building = new Building();
+    building.setName("Common Building");
+    
+    final int roomsCount = 10;
+    List<Room> rooms = new ArrayList<Room>();
+    for (int i = 0; i < roomsCount; i++) {
+      Room room = new Room(i, "Room " + i);
+      room.setBuilding(building);
+      datasource.createData(roomsEntitySet, room);
+      rooms.add(room);
+    }
+    
+    building.getRooms().addAll(rooms);
+    datasource.createData(buildingsEntitySet, building);
+
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", "1");
+
+    Building read = (Building) datasource.readData(buildingsEntitySet, keys);
+    Assert.assertEquals("Common Building", read.getName());
+    Assert.assertEquals("1", read.getId());
+    
+    // execute
+    Object relatedData = datasource.readRelatedData(
+        buildingsEntitySet, building, roomsEntitySet, Collections.EMPTY_MAP);
+    
+    // validate
+    Assert.assertTrue("Result is no collection.", relatedData instanceof Collection);
+    Collection<Room> relatedRooms = (Collection<Room>) relatedData;
+    Assert.assertEquals(roomsCount, relatedRooms.size());
+    for (Room room : relatedRooms) {
+      Assert.assertNotNull(room.getId());
+      Assert.assertTrue(room.getName().matches("Room \\d*"));
+      Assert.assertEquals("Common Building", room.getBuilding().getName());
+    }
+  }
+
+  
   @Test
   public void createSimpleEntity() throws Exception {
     EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
@@ -131,9 +272,7 @@ public class AnnotationsInMemoryDsTest {
   }
 
   @Test
-  // @Ignore("Rethink update method")
-      public
-      void createAndUpdateEntityTwoKeys() throws Exception {
+  public void createAndUpdateEntityTwoKeys() throws Exception {
     EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Photos");
 
     Photo photo = new Photo();
@@ -175,6 +314,11 @@ public class AnnotationsInMemoryDsTest {
   }
 
   private EdmEntitySet createMockedEdmEntitySet(final String entitySetName) throws ODataException {
+    return createMockedEdmEntitySet(edmProvider, entitySetName);
+  }
+  
+  private EdmEntitySet createMockedEdmEntitySet(AnnotationEdmProvider edmProvider, final String entitySetName) 
+      throws ODataException {
     EntitySet entitySet = edmProvider.getEntitySet(DEFAULT_CONTAINER, entitySetName);
     FullQualifiedName entityType = entitySet.getEntityType();
 
