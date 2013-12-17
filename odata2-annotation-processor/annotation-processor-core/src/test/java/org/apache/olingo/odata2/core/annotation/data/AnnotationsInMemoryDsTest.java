@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
@@ -55,24 +56,27 @@ public class AnnotationsInMemoryDsTest {
     datasource = new AnnotationInMemoryDs(Building.class.getPackage().getName(), false);
     edmProvider = new AnnotationEdmProvider(Building.class.getPackage().getName());
   }
-  
+
   @Test
   @Ignore
   public void multiThreadedSyncOnBuildingsTest() throws Exception {
     final EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
+    CountDownLatch latch;
 
     List<Thread> threads = new ArrayList<Thread>();
     int max = 500;
+
+    latch = new CountDownLatch(max);
     for (int i = 0; i < max; i++) {
-      threads.add(createBuildingThread(datasource, edmEntitySet, String.valueOf("10")));
+      threads.add(createBuildingThread(latch, datasource, edmEntitySet, String.valueOf("10")));
     }
-    
+
     for (Thread thread : threads) {
       thread.start();
     }
 
-    TimeUnit.MILLISECONDS.sleep(1000);
-    
+    latch.await(60, TimeUnit.SECONDS);
+
     DataStore<Building> ds = datasource.getDataStore(Building.class);
     Collection<Building> buildings = ds.read();
     Assert.assertEquals(max, buildings.size());
@@ -87,7 +91,7 @@ public class AnnotationsInMemoryDsTest {
     @EdmProperty
     public String name;
   }
-  
+
   @Test
   @Ignore
   public void multiThreadedSyncCreateReadTest() throws Exception {
@@ -96,39 +100,44 @@ public class AnnotationsInMemoryDsTest {
     final AnnotationInMemoryDs localDs = new AnnotationInMemoryDs(SimpleEntity.class.getPackage().getName(), true);
     final AnnotationEdmProvider localProvider = new AnnotationEdmProvider(ac);
     final EdmEntitySet edmEntitySet = createMockedEdmEntitySet(localProvider, "SimpleEntitySet");
+    final CountDownLatch latch;
 
     List<Thread> threads = new ArrayList<Thread>();
     int max = 500;
+    latch = new CountDownLatch(max);
     for (int i = 0; i < max; i++) {
-    Runnable run = new Runnable() {
-      @Override
-      public void run() {
-        SimpleEntity se = new SimpleEntity();
-        se.id = Integer.valueOf(String.valueOf(System.currentTimeMillis()).substring(8));
-        se.name = "Name: " + System.currentTimeMillis();
-        try {
-          localDs.createData(edmEntitySet, se);
-        } catch (Exception ex) {
-          throw new RuntimeException(ex);
+      Runnable run = new Runnable() {
+        @Override
+        public void run() {
+          SimpleEntity se = new SimpleEntity();
+          se.id = Integer.valueOf(String.valueOf(System.currentTimeMillis()).substring(8));
+          se.name = "Name: " + System.currentTimeMillis();
+          try {
+            localDs.createData(edmEntitySet, se);
+          } catch (Exception ex) {
+            throw new RuntimeException(ex);
+          }finally{
+            latch.countDown();
+          }
         }
-      }
-    };
+      };
 
       threads.add(new Thread(run));
     }
-    
+
     for (Thread thread : threads) {
       thread.start();
     }
 
-    TimeUnit.MILLISECONDS.sleep(500);
-    
+    latch.await(60, TimeUnit.SECONDS);
+
     DataStore<SimpleEntity> ds = localDs.getDataStore(SimpleEntity.class);
     Collection<SimpleEntity> buildings = ds.read();
     Assert.assertEquals(max, buildings.size());
   }
 
-  private Thread createBuildingThread(final DataSource datasource, final EdmEntitySet edmEntitySet, final String id) {
+  private Thread createBuildingThread(final CountDownLatch latch, final DataSource datasource,
+      final EdmEntitySet edmEntitySet, final String id) {
     Runnable run = new Runnable() {
       @Override
       public void run() {
@@ -138,7 +147,11 @@ public class AnnotationsInMemoryDsTest {
         try {
           datasource.createData(edmEntitySet, building);
         } catch (Exception ex) {
+          ex.printStackTrace();
           throw new RuntimeException(ex);
+        }
+        finally {
+          latch.countDown();
         }
       }
     };
@@ -154,7 +167,7 @@ public class AnnotationsInMemoryDsTest {
 
     Building building = new Building();
     building.setName("Common Building");
-    
+
     final int roomsCount = 10;
     List<Room> rooms = new ArrayList<Room>();
     for (int i = 0; i < roomsCount; i++) {
@@ -163,7 +176,7 @@ public class AnnotationsInMemoryDsTest {
       datasource.createData(roomsEntitySet, room);
       rooms.add(room);
     }
-    
+
     building.getRooms().addAll(rooms);
     datasource.createData(buildingsEntitySet, building);
 
@@ -173,11 +186,11 @@ public class AnnotationsInMemoryDsTest {
     Building read = (Building) datasource.readData(buildingsEntitySet, keys);
     Assert.assertEquals("Common Building", read.getName());
     Assert.assertEquals("1", read.getId());
-    
+
     // execute
     Object relatedData = datasource.readRelatedData(
         buildingsEntitySet, building, roomsEntitySet, Collections.EMPTY_MAP);
-    
+
     // validate
     Assert.assertTrue("Result is no collection.", relatedData instanceof Collection);
     Collection<Room> relatedRooms = (Collection<Room>) relatedData;
@@ -189,7 +202,6 @@ public class AnnotationsInMemoryDsTest {
     }
   }
 
-  
   @Test
   public void createSimpleEntity() throws Exception {
     EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
@@ -319,8 +331,8 @@ public class AnnotationsInMemoryDsTest {
   private EdmEntitySet createMockedEdmEntitySet(final String entitySetName) throws ODataException {
     return createMockedEdmEntitySet(edmProvider, entitySetName);
   }
-  
-  private EdmEntitySet createMockedEdmEntitySet(AnnotationEdmProvider edmProvider, final String entitySetName) 
+
+  private EdmEntitySet createMockedEdmEntitySet(AnnotationEdmProvider edmProvider, final String entitySetName)
       throws ODataException {
     EntitySet entitySet = edmProvider.getEntitySet(DEFAULT_CONTAINER, entitySetName);
     FullQualifiedName entityType = entitySet.getEntityType();
