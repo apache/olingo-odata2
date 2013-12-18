@@ -175,8 +175,16 @@ public class AnnotationInMemoryDs implements DataSource {
     Object data = ANNOTATION_HELPER.getValueForField(mediaLinkEntryData, EdmMediaResourceContent.class);
     Object mimeType = ANNOTATION_HELPER.getValueForField(mediaLinkEntryData, EdmMediaResourceMimeType.class);
 
-    BinaryData db = new BinaryData((byte[]) data, String.valueOf(mimeType));
-    return db;
+    if(data == null && mimeType == null) {
+      DataStore<Object> dataStore = getDataStore(entitySet);
+      Object readEntry = dataStore.read(mediaLinkEntryData);
+      if(readEntry != null) {
+        data = ANNOTATION_HELPER.getValueForField(readEntry, EdmMediaResourceContent.class);
+        mimeType = ANNOTATION_HELPER.getValueForField(readEntry, EdmMediaResourceMimeType.class);
+      }
+    }
+    
+    return new BinaryData((byte[]) data, String.valueOf(mimeType));
   }
 
   @Override
@@ -197,10 +205,16 @@ public class AnnotationInMemoryDs implements DataSource {
       throws ODataNotImplementedException, ODataNotFoundException, EdmException, ODataApplicationException {
 
     try {
-      ANNOTATION_HELPER.setValueForAnnotatedField(
-          mediaEntityInstance, EdmMediaResourceContent.class, binaryData.getData());
-      ANNOTATION_HELPER.setValueForAnnotatedField(
-          mediaEntityInstance, EdmMediaResourceMimeType.class, binaryData.getMimeType());
+      DataStore<Object> dataStore = getDataStore(entitySet);
+      Object readEntry = dataStore.read(mediaEntityInstance);
+      if(readEntry == null) {
+        throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
+      } else {
+        ANNOTATION_HELPER.setValueForAnnotatedField(
+            mediaEntityInstance, EdmMediaResourceContent.class, binaryData.getData());
+        ANNOTATION_HELPER.setValueForAnnotatedField(
+            mediaEntityInstance, EdmMediaResourceMimeType.class, binaryData.getMimeType());
+      }
     } catch (ODataAnnotationException e) {
       throw new ODataRuntimeException("Invalid media resource annotation at entity set '" + entitySet.getName()
           + "' with message '" + e.getMessage() + "'.", e);

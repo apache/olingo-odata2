@@ -15,6 +15,7 @@
  */
 package org.apache.olingo.odata2.core.annotation.data;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.data.DataSource;
+import org.apache.olingo.odata2.api.data.DataSource.BinaryData;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
@@ -156,6 +158,58 @@ public class AnnotationsInMemoryDsTest {
     };
 
     return new Thread(run);
+  }
+  
+  @Test
+  public void readBinaryData() throws Exception {
+    EdmEntitySet entitySet = createMockedEdmEntitySet("Photos");
+
+    DataStore<Photo> photoDataStore = datasource.getDataStore(Photo.class);
+    Photo photo = new Photo();
+    photo.setName("SomePic");
+    photo.setType("PNG");
+    byte[] image = "binary".getBytes(Charset.defaultCharset());
+    photo.setImage(image);
+    photo.setImageType("image/png");
+    Photo createdPhoto = photoDataStore.create(photo);
+    
+//    datasource.createData(entitySet, data);
+
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Name", "SomePic");
+    keys.put("ImageFormat", "PNG");
+    photo = (Photo) datasource.readData(entitySet, keys);
+    BinaryData readPhoto = datasource.readBinaryData(entitySet, photo);
+    
+    Assert.assertEquals("binary", new String(readPhoto.getData(), Charset.defaultCharset()));
+    Assert.assertArrayEquals(image, readPhoto.getData());
+    Assert.assertEquals("image/png", readPhoto.getMimeType());
+  }
+
+  @Test
+  public void readBinaryDataDirect() throws Exception {
+    EdmEntitySet entitySet = createMockedEdmEntitySet("Photos");
+
+    DataStore<Photo> photoDataStore = datasource.getDataStore(Photo.class);
+    Photo photo = new Photo();
+    photo.setName("SomePic");
+    photo.setType("PNG");
+    byte[] image = "binary".getBytes(Charset.defaultCharset());
+    photo.setImage(image);
+    photo.setImageType("image/png");
+    Photo createdPhoto = photoDataStore.create(photo);
+    
+    photo = new Photo();
+    photo.setName("SomePic");
+    photo.setType("PNG");
+    photo.setImage(null);
+    photo.setImageType(null);
+
+    BinaryData readPhoto = datasource.readBinaryData(entitySet, photo);
+    
+    Assert.assertEquals("binary", new String(readPhoto.getData(), Charset.defaultCharset()));
+    Assert.assertArrayEquals(image, readPhoto.getData());
+    Assert.assertEquals("image/png", readPhoto.getMimeType());
   }
 
   @Test
