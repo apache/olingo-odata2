@@ -34,12 +34,14 @@ import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.core.annotation.edm.AnnotationEdmProvider;
 import org.apache.olingo.odata2.core.annotation.model.Building;
 import org.apache.olingo.odata2.core.annotation.model.ModelSharedConstants;
 import org.apache.olingo.odata2.core.annotation.model.Photo;
 import org.apache.olingo.odata2.core.annotation.model.Room;
 import org.apache.olingo.odata2.core.annotation.util.AnnotationHelper;
+import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -171,19 +173,20 @@ public class AnnotationsInMemoryDsTest {
     byte[] image = "binary".getBytes(Charset.defaultCharset());
     photo.setImage(image);
     photo.setImageType("image/png");
-    Photo createdPhoto = photoDataStore.create(photo);
-    
-//    datasource.createData(entitySet, data);
+    photoDataStore.create(photo);
 
     Map<String, Object> keys = new HashMap<String, Object>();
     keys.put("Name", "SomePic");
     keys.put("ImageFormat", "PNG");
-    photo = (Photo) datasource.readData(entitySet, keys);
-    BinaryData readPhoto = datasource.readBinaryData(entitySet, photo);
+    Photo toReadPhoto = (Photo) datasource.readData(entitySet, keys);
     
-    Assert.assertEquals("binary", new String(readPhoto.getData(), Charset.defaultCharset()));
-    Assert.assertArrayEquals(image, readPhoto.getData());
-    Assert.assertEquals("image/png", readPhoto.getMimeType());
+    // execute
+    BinaryData readBinaryData = datasource.readBinaryData(entitySet, toReadPhoto);
+
+    // validate
+    Assert.assertEquals("binary", new String(readBinaryData.getData(), Charset.defaultCharset()));
+    Assert.assertArrayEquals(image, readBinaryData.getData());
+    Assert.assertEquals("image/png", readBinaryData.getMimeType());
   }
 
   @Test
@@ -197,21 +200,142 @@ public class AnnotationsInMemoryDsTest {
     byte[] image = "binary".getBytes(Charset.defaultCharset());
     photo.setImage(image);
     photo.setImageType("image/png");
-    Photo createdPhoto = photoDataStore.create(photo);
+    photoDataStore.create(photo);
     
-    photo = new Photo();
-    photo.setName("SomePic");
-    photo.setType("PNG");
-    photo.setImage(null);
-    photo.setImageType(null);
+    Photo toReadPhoto = new Photo();
+    toReadPhoto.setName("SomePic");
+    toReadPhoto.setType("PNG");
+    toReadPhoto.setImage(null);
+    toReadPhoto.setImageType(null);
 
-    BinaryData readPhoto = datasource.readBinaryData(entitySet, photo);
+    BinaryData readBinaryData = datasource.readBinaryData(entitySet, toReadPhoto);
     
-    Assert.assertEquals("binary", new String(readPhoto.getData(), Charset.defaultCharset()));
-    Assert.assertArrayEquals(image, readPhoto.getData());
-    Assert.assertEquals("image/png", readPhoto.getMimeType());
+    Assert.assertEquals("binary", new String(readBinaryData.getData(), Charset.defaultCharset()));
+    Assert.assertArrayEquals(image, readBinaryData.getData());
+    Assert.assertEquals("image/png", readBinaryData.getMimeType());
   }
 
+  
+  @Test
+  public void writeBinaryData() throws Exception {
+    EdmEntitySet entitySet = createMockedEdmEntitySet("Photos");
+
+    DataStore<Photo> photoDataStore = datasource.getDataStore(Photo.class);
+
+    Photo toWritePhoto = new Photo();
+    toWritePhoto.setName("SomePic");
+    toWritePhoto.setType("PNG");
+    photoDataStore.create(toWritePhoto);
+    byte[] image = "binary".getBytes(Charset.defaultCharset());
+    String mimeType = "image/png";
+    BinaryData writeBinaryData = new BinaryData(image, mimeType);
+    // execute
+    datasource.writeBinaryData(entitySet, toWritePhoto, writeBinaryData);
+
+    // validate
+    Photo photoKey = new Photo();
+    photoKey.setName("SomePic");
+    photoKey.setType("PNG");
+    Photo storedPhoto = photoDataStore.read(photoKey);
+    Assert.assertEquals("binary", new String(storedPhoto.getImage(), Charset.defaultCharset()));
+    Assert.assertArrayEquals(image, storedPhoto.getImage());
+    Assert.assertEquals("image/png", storedPhoto.getImageType());
+  }
+
+  @Test(expected=ODataNotFoundException.class)
+  public void writeBinaryDataNotFound() throws Exception {
+    EdmEntitySet entitySet = createMockedEdmEntitySet("Photos");
+
+    Photo toWritePhoto = new Photo();
+    toWritePhoto.setName("SomePic");
+    toWritePhoto.setType("PNG");
+    byte[] image = "binary".getBytes(Charset.defaultCharset());
+    String mimeType = "image/png";
+    BinaryData writeBinaryData = new BinaryData(image, mimeType);
+    // execute
+    datasource.writeBinaryData(entitySet, toWritePhoto, writeBinaryData);
+  }
+
+  
+  @Test
+  public void newDataObject() throws Exception {
+    EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");
+    Room room = (Room) datasource.newDataObject(roomsEntitySet);
+    
+    Assert.assertNotNull(room);
+  }
+
+  @Test
+  public void readEntity() throws Exception {
+    EdmEntitySet buildingsEntitySet = createMockedEdmEntitySet("Buildings");
+    EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");
+
+    Building building = new Building();
+    building.setName("Common Building");
+
+    final int roomsCount = 3;
+    List<Room> rooms = new ArrayList<Room>();
+    for (int i = 0; i < roomsCount; i++) {
+      Room room = new Room(i, "Room " + i);
+      room.setBuilding(building);
+      datasource.createData(roomsEntitySet, room);
+      rooms.add(room);
+    }
+
+    building.getRooms().addAll(rooms);
+    datasource.createData(buildingsEntitySet, building);
+
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", "1");
+
+    // execute
+    Object relatedData = datasource.readData(buildingsEntitySet, keys);
+
+    // validate
+    Building readBuilding = (Building) relatedData;
+    Assert.assertEquals("Common Building", readBuilding.getName());
+    Assert.assertEquals("1", readBuilding.getId());
+    
+    Collection<Room> relatedRooms = readBuilding.getRooms();
+    Assert.assertEquals(roomsCount, relatedRooms.size());
+    for (Room room : relatedRooms) {
+      Assert.assertNotNull(room.getId());
+      Assert.assertTrue(room.getName().matches("Room \\d*"));
+      Assert.assertEquals("Common Building", room.getBuilding().getName());
+    }
+  }
+
+  @Test
+  public void readEntities() throws Exception {
+    EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");
+
+    Building building = new Building();
+    building.setName("Common Building");
+
+    final int roomsCount = 11;
+    List<Room> rooms = new ArrayList<Room>();
+    for (int i = 0; i < roomsCount; i++) {
+      Room room = new Room(i, "Room " + i);
+      room.setBuilding(building);
+      datasource.createData(roomsEntitySet, room);
+      rooms.add(room);
+    }
+
+    // execute
+    Object relatedData = datasource.readData(roomsEntitySet);
+
+    // validate
+    @SuppressWarnings("unchecked")
+    Collection<Room> relatedRooms = (Collection<Room>) relatedData;
+    Assert.assertEquals(roomsCount, relatedRooms.size());
+    for (Room room : relatedRooms) {
+      Assert.assertNotNull(room.getId());
+      Assert.assertTrue(room.getName().matches("Room \\d*"));
+      Assert.assertEquals("Common Building", room.getBuilding().getName());
+    }
+  }
+
+  
   @Test
   @SuppressWarnings("unchecked")
   public void readRelatedEntities() throws Exception {
@@ -421,6 +545,66 @@ public class AnnotationsInMemoryDsTest {
     Assert.assertEquals("image/jpg", readUpdated.getImageType());
     Assert.assertEquals("https://localhost/image.jpg", readUpdated.getImageUri());
   }
+  
+  
+  @Test
+  public void deleteSimpleEntity() throws Exception {
+    EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
+    DataStore<Building> datastore = datasource.getDataStore(Building.class);
+
+    Building building = new Building();
+    building.setName("Common Building");
+    datastore.create(building);
+
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", "1");
+
+    Building read = (Building) datasource.readData(edmEntitySet, keys);
+    Assert.assertEquals("Common Building", read.getName());
+    Assert.assertEquals("1", read.getId());
+
+    //
+    datasource.deleteData(edmEntitySet, keys);
+    
+    // validate
+    try {
+      Building readAfterDelete = (Building) datasource.readData(edmEntitySet, keys);
+      Assert.fail("Expected " + ODataNotFoundException.class + "was not thrown for '" + readAfterDelete + "'.");
+    } catch (ODataNotFoundException e) { }
+  }
+
+  @Test(expected=ODataRuntimeException.class)
+  public void unknownEntitySetForEntity() throws Exception {
+    String entitySetName = "Unknown";
+    FullQualifiedName entityType = new FullQualifiedName(DEFAULT_CONTAINER, entitySetName);
+
+    EdmEntitySet edmEntitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(edmEntitySet.getName()).thenReturn(entitySetName);
+    EdmEntityType edmEntityType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(edmEntitySet.getEntityType()).thenReturn(edmEntityType);
+    Mockito.when(edmEntityType.getName()).thenReturn(entityType.getName());
+      
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", "1");
+    //
+    datasource.readData(edmEntitySet, keys);
+  }
+
+  @Test(expected=ODataRuntimeException.class)
+  public void unknownEntitySetForEntities() throws Exception {
+    String entitySetName = "Unknown";
+    FullQualifiedName entityType = new FullQualifiedName(DEFAULT_CONTAINER, entitySetName);
+
+    EdmEntitySet edmEntitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(edmEntitySet.getName()).thenReturn(entitySetName);
+    EdmEntityType edmEntityType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(edmEntitySet.getEntityType()).thenReturn(edmEntityType);
+    Mockito.when(edmEntityType.getName()).thenReturn(entityType.getName());
+      
+    //
+    datasource.readData(edmEntitySet);
+  }
+
 
   private EdmEntitySet createMockedEdmEntitySet(final String entitySetName) throws ODataException {
     return createMockedEdmEntitySet(edmProvider, entitySetName);
