@@ -2,8 +2,6 @@ package org.apache.olingo.odata2.core.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +16,9 @@ import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataHttpException;
+import org.apache.olingo.odata2.api.exception.ODataMethodNotAllowedException;
+import org.apache.olingo.odata2.api.exception.ODataNotAcceptableException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
@@ -63,45 +64,28 @@ public class ODataServlet extends HttpServlet {
     if (req.getPathInfo() == null) {
       handleRedirect(req, resp);
     } else {
-      handle(req, resp, xHttpMethod);
+      handle(req, resp, xHttpMethod, xHttpMethodOverride);
     }
   }
 
-  private void handle(final HttpServletRequest req, final HttpServletResponse resp, final String xHttpMethod)
-      throws IOException {
+  private void handle(final HttpServletRequest req, final HttpServletResponse resp, final String xHttpMethod,
+      final String xHttpMethodOverride) throws IOException {
     String method = req.getMethod();
     if (ODataHttpMethod.GET.name().equals(method)) {
       handleRequest(req, ODataHttpMethod.GET, resp);
     } else if (ODataHttpMethod.POST.name().equals(method)) {
-      if (xHttpMethod == null) {
+      if (xHttpMethod == null && xHttpMethodOverride == null) {
         handleRequest(req, ODataHttpMethod.POST, resp);
+      } else if (xHttpMethod == null && xHttpMethodOverride != null) {
+        /* tunneling */
+        boolean methodHandled = methodForTunneling(req, resp, xHttpMethodOverride);
+        if (!methodHandled) {
+          createMethodNotAllowedResponse(req, ODataHttpException.COMMON, resp);
+        }
       } else {
         /* tunneling */
-        if ("MERGE".equals(xHttpMethod)) {
-          handleRequest(req, ODataHttpMethod.MERGE, resp);
-
-        } else if ("PATCH".equals(xHttpMethod)) {
-          handleRequest(req, ODataHttpMethod.PATCH, resp);
-
-        } else if ("DELETE".equals(xHttpMethod)) {
-          handleRequest(req, ODataHttpMethod.DELETE, resp);
-
-        } else if ("PUT".equals(xHttpMethod)) {
-          handleRequest(req, ODataHttpMethod.PUT, resp);
-
-        } else if ("GET".equals(xHttpMethod)) {
-          handleRequest(req, ODataHttpMethod.GET, resp);
-
-        } else if ("POST".equals(xHttpMethod)) {
-          handleRequest(req, ODataHttpMethod.POST, resp);
-
-        } else if ("HEAD".equals(xHttpMethod)) {
-          createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
-
-        } else if ("OPTIONS".equals(xHttpMethod)) {
-          createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
-
-        } else {
+        boolean methodHandled = methodForTunneling(req, resp, xHttpMethod);
+        if (!methodHandled) {
           createNotImplementedResponse(req, ODataNotImplementedException.TUNNELING, resp);
         }
       }
@@ -117,32 +101,50 @@ public class ODataServlet extends HttpServlet {
     } else if ("HEAD".equals(method) || "OPTIONS".equals(method)) {
       createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
     } else {
-      resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      createMethodNotAllowedResponse(req, ODataHttpException.COMMON, resp);
     }
   }
 
-  private void handleRedirect(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
-    String method = req.getMethod();
-    if (ODataHttpMethod.GET.name().equals(method) || ODataHttpMethod.POST.name().equals(method)
-        || ODataHttpMethod.PUT.name().equals(method) || ODataHttpMethod.DELETE.name().equals(method)
-        || ODataHttpMethod.PATCH.name().equals(method) || ODataHttpMethod.MERGE.name().equals(method)
-        || "HEAD".equals(method) || "OPTIONS".equals(method)) {
-      createResponse(resp, ODataResponse.status(HttpStatusCodes.TEMPORARY_REDIRECT)
-          .header(HttpHeaders.LOCATION, "/")
-          .build());
-    } else {
-      resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    }
+  private boolean methodForTunneling(final HttpServletRequest req, final HttpServletResponse resp,
+      final String xHttpMethod) throws IOException {
+    /* tunneling */
+    if (ODataHttpMethod.MERGE.name().equals(xHttpMethod)) {
+      handleRequest(req, ODataHttpMethod.MERGE, resp);
 
+    } else if (ODataHttpMethod.PATCH.name().equals(xHttpMethod)) {
+      handleRequest(req, ODataHttpMethod.PATCH, resp);
+
+    } else if (ODataHttpMethod.DELETE.name().equals(xHttpMethod)) {
+      handleRequest(req, ODataHttpMethod.DELETE, resp);
+
+    } else if (ODataHttpMethod.PUT.name().equals(xHttpMethod)) {
+      handleRequest(req, ODataHttpMethod.PUT, resp);
+
+    } else if (ODataHttpMethod.GET.name().equals(xHttpMethod)) {
+      handleRequest(req, ODataHttpMethod.GET, resp);
+
+    } else if (ODataHttpMethod.POST.name().equals(xHttpMethod)) {
+      handleRequest(req, ODataHttpMethod.POST, resp);
+
+    } else if ("HEAD".equals(xHttpMethod) || "OPTIONS".equals(xHttpMethod)) {
+      createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
+
+    } else {
+      return false;
+    }
+    return true;
   }
 
   private void handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp)
       throws IOException {
     try {
+      if (req.getHeader(HttpHeaders.ACCEPT) != null && req.getHeader(HttpHeaders.ACCEPT).isEmpty()) {
+        createNotAcceptableResponse(req, ODataNotAcceptableException.COMMON, resp);
+      }
       ODataRequest request = ODataRequest.method(method)
           .contentType(RestUtil.extractRequestContentType(req.getContentType()).toContentTypeString())
-          .acceptHeaders(RestUtil.extractAcceptHeaders(req.getHeader("Accept")))
-          .acceptableLanguages(RestUtil.extractAcceptableLanguage(req.getHeader("Accept-Language")))
+          .acceptHeaders(RestUtil.extractAcceptHeaders(req.getHeader(HttpHeaders.ACCEPT)))
+          .acceptableLanguages(RestUtil.extractAcceptableLanguage(req.getHeader(HttpHeaders.ACCEPT_LANGUAGE)))
           .pathInfo(RestUtil.buildODataPathInfo(req, pathSplit))
           .queryParameters(RestUtil.extractQueryParameters(req.getQueryString()))
           .requestHeaders(RestUtil.extractHeaders(req))
@@ -162,6 +164,26 @@ public class ODataServlet extends HttpServlet {
     }
   }
 
+  private void handleRedirect(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
+    String method = req.getMethod();
+    if (ODataHttpMethod.GET.name().equals(method) ||
+        ODataHttpMethod.POST.name().equals(method) ||
+        ODataHttpMethod.PUT.name().equals(method) ||
+        ODataHttpMethod.DELETE.name().equals(method) ||
+        ODataHttpMethod.PATCH.name().equals(method) ||
+        ODataHttpMethod.MERGE.name().equals(method) ||
+        "HEAD".equals(method) ||
+        "OPTIONS".equals(method)) {
+      ODataResponse odataResponse = ODataResponse.status(HttpStatusCodes.TEMPORARY_REDIRECT)
+          .header(HttpHeaders.LOCATION, "/")
+          .build();
+      createResponse(resp, odataResponse);
+    } else {
+      createMethodNotAllowedResponse(req, ODataHttpException.COMMON, resp);
+    }
+
+  }
+
   private void createResponse(final HttpServletResponse resp, final ODataResponse response) throws IOException {
 
     resp.setStatus(response.getStatus().getStatusCode());
@@ -175,19 +197,17 @@ public class ODataServlet extends HttpServlet {
       ServletOutputStream out = resp.getOutputStream();
       int curByte = -1;
       if (entity instanceof InputStream) {
-
         while ((curByte = ((InputStream) entity).read()) != -1) {
           out.write((char) curByte);
         }
-        out.flush();
-        out.close();
+        ((InputStream) entity).close();
       } else if (entity instanceof String) {
-        Reader sr = new StringReader((String) entity);
-        while ((curByte = sr.read()) > -1) {
-          out.write((char) curByte);
-        }
-        out.flush();
+        String body = (String) entity;
+        byte[] byteArray = body.getBytes("utf-8");
+        out.write(byteArray);
       }
+
+      out.flush();
       out.close();
     }
   }
@@ -200,6 +220,23 @@ public class ODataServlet extends HttpServlet {
     ODataResponse response =
         exceptionWrapper.wrapInExceptionResponse(new ODataNotImplementedException(messageReference));
     createResponse(resp, response);
+  }
+
+  private void createMethodNotAllowedResponse(final HttpServletRequest req, final MessageReference messageReference,
+      final HttpServletResponse resp) throws IOException {
+    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req);
+    ODataResponse response =
+        exceptionWrapper.wrapInExceptionResponse(new ODataMethodNotAllowedException(messageReference));
+    createResponse(resp, response);
+  }
+
+  private void createNotAcceptableResponse(final HttpServletRequest req, final MessageReference messageReference,
+      final HttpServletResponse resp) throws IOException {
+    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req);
+    ODataResponse response =
+        exceptionWrapper.wrapInExceptionResponse(new ODataNotAcceptableException(messageReference));
+    createResponse(resp, response);
+
   }
 
 }

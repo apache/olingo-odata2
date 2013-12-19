@@ -12,13 +12,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.UriBuilder;
 
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataUnsupportedMediaTypeException;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.PathSegment;
@@ -37,6 +38,7 @@ public class RestUtil {
       .compile("((?:[a-z]{1,8})|(?:\\*))\\-?([a-zA-Z]{1,8})?");
   private static final Pattern REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT_LANGUAGES + "(?:;"
       + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QUALITY_FACTOR + ")?");
+  private static final Pattern REG_EX_MATRIX_PARAMETER = Pattern.compile("([^=]*)(?:=(.*))?");
 
   public static List<String> extractAcceptHeaders(final String header) {
     List<String> acceptHeaders = new ArrayList<String>();
@@ -83,28 +85,25 @@ public class RestUtil {
   private static URI buildBaseUri(final HttpServletRequest req, final List<PathSegment> precedingPathSegments)
       throws ODataException {
     try {
-      String path = req.getContextPath() + req.getServletPath();
-      UriBuilder uriBuilder = UriBuilder.fromUri(path);
+      StringBuilder stringBuilder = new StringBuilder();
+      stringBuilder.append(req.getContextPath()).append(req.getServletPath());
       for (final PathSegment ps : precedingPathSegments) {
-        uriBuilder = uriBuilder.path(ps.getPath());
+        stringBuilder.append("/").append(ps.getPath());
         for (final String key : ps.getMatrixParameters().keySet()) {
-          final Object[] v = ps.getMatrixParameters().get(key).toArray();
-          uriBuilder = uriBuilder.matrixParam(key, v);
+          List<String> matrixParameters = ps.getMatrixParameters().get(key);
+          String matrixParameterString = ";" + key + "=";
+          for (String matrixParam : matrixParameters) {
+            matrixParameterString += Decoder.decode(matrixParam) + ",";
+          }
+          stringBuilder.append(matrixParameterString.substring(0, matrixParameterString.length() - 1));
         }
       }
 
-      /*
-       * workaround because of host name is cached by uriInfo
-       */
-      uriBuilder.host(req.getServerName()).port(req.getServerPort());
-      uriBuilder.scheme(req.getScheme());
-
-      String uriString = uriBuilder.build().toString();
-      if (!uriString.endsWith("/")) {
-        uriString = uriString + "/";
+      String path = stringBuilder.toString();
+      if (!path.endsWith("/")) {
+        path = path + "/";
       }
-
-      return new URI(uriString);
+      return new URI(req.getScheme(), null, req.getServerName(), req.getServerPort(), path, null, null);
     } catch (final URISyntaxException e) {
       throw new ODataException(e);
     }
@@ -129,18 +128,15 @@ public class RestUtil {
 
   private static PathInfoImpl splitPath(final HttpServletRequest servletRequest, final int pathSplit)
       throws ODataException {
-    /* String pathInfoString = servletRequest.getContextPath()+servletRequest.getServletPath()
-     * +servletRequest.getPathInfo();*/
-    //  String pathInfoString = servletRequest.getPathInfo();
+    PathInfoImpl pathInfo = new PathInfoImpl();
+    List<String> precedingPathSegments;
+    List<String> pathSegments;
+
     String pathInfoString = extractPathInfo(servletRequest);
     while (pathInfoString.startsWith("/")) {
       pathInfoString = pathInfoString.substring(1);
     }
-    List<String> segments = Arrays.asList(pathInfoString.split("/"));
-    PathInfoImpl pathInfo = new PathInfoImpl();
-
-    List<String> precedingPathSegments;
-    List<String> pathSegments;
+    List<String> segments = Arrays.asList(pathInfoString.split("/", -1));
 
     if (pathSplit == 0) {
       precedingPathSegments = Collections.emptyList();
@@ -161,11 +157,57 @@ public class RestUtil {
 
     List<PathSegment> odataSegments = new ArrayList<PathSegment>();
     for (final String segment : pathSegments) {
-      odataSegments.add(new ODataPathSegmentImpl(segment, null));
+
+      int index = segment.indexOf(";");
+      if (index < 0) {
+        odataSegments.add(new ODataPathSegmentImpl(segment, null));
+      } else {
+        String path = segment.substring(0, index);
+        Map<String, List<String>> parameterMap = extractMatrixParameter(segment, index);
+        if (!parameterMap.get("matrix").isEmpty()) {
+          System.out.println(parameterMap.get("matrix"));
+        }
+        throw new ODataNotFoundException(ODataNotFoundException.MATRIX.addContent(parameterMap.keySet(), path));
+      }
     }
     pathInfo.setODataPathSegment(odataSegments);
-
     return pathInfo;
+  }
+
+  private static List<PathSegment> convertPathSegmentList(final List<String> pathSegments) {
+    ArrayList<PathSegment> converted = new ArrayList<PathSegment>();
+    for (final String segment : pathSegments) {
+      int index = segment.indexOf(";");
+      if (index == -1) {
+        converted.add(new ODataPathSegmentImpl(Decoder.decode(segment), null));
+      } else {
+        String path = segment.substring(0, index);
+        Map<String, List<String>> parameterMap = extractMatrixParameter(segment, index);
+        converted.add(new ODataPathSegmentImpl(Decoder.decode(path), parameterMap));
+      }
+    }
+    return converted;
+  }
+
+  private static Map<String, List<String>> extractMatrixParameter(final String segment, final int index) {
+    List<String> matrixParameters = Arrays.asList(segment.substring(index + 1).split(";"));
+    String matrixParameterName = "";
+    String matrixParamaterValues = "";
+    Map<String, List<String>> parameterMap = new HashMap<String, List<String>>();
+
+    for (String matrixParameter : matrixParameters) {
+      List<String> values = Arrays.asList("");
+      Matcher matcher = REG_EX_MATRIX_PARAMETER.matcher(matrixParameter);
+      if (matcher.find()) {
+        matrixParameterName = matcher.group(1);
+        matrixParamaterValues = matcher.group(2);
+      }
+      if (matrixParamaterValues != null) {
+        values = Arrays.asList(matrixParamaterValues.split(","));
+      }
+      parameterMap.put(matrixParameterName, values);
+    }
+    return parameterMap;
   }
 
   private static String extractPathInfo(final HttpServletRequest servletRequest) {
@@ -183,16 +225,6 @@ public class RestUtil {
       pathInfoString = pathInfoString.substring(servletRequest.getServletPath().length());
     }
     return pathInfoString;
-  }
-
-  private static List<PathSegment> convertPathSegmentList(final List<String> pathSegments) {
-    ArrayList<PathSegment> converted = new ArrayList<PathSegment>();
-    for (final String pathSegment : pathSegments) {
-      final PathSegment segment =
-          new ODataPathSegmentImpl(Decoder.decode(pathSegment), null);
-      converted.add(segment);
-    }
-    return converted;
   }
 
   public static ContentType extractRequestContentType(final String contentType)
