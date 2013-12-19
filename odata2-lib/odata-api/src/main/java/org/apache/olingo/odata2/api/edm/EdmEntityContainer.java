@@ -25,7 +25,7 @@ package org.apache.olingo.odata2.api.edm;
  * <p>EdmEntityContainer hold the information of EntitySets, FunctionImports and AssociationSets contained
  * 
  */
-public interface EdmEntityContainer extends EdmNamed {
+public interface EdmEntityContainer extends EdmNamed, EdmAnnotatable {
 
   /**
    * @return <b>boolean</b> true if this is the default container

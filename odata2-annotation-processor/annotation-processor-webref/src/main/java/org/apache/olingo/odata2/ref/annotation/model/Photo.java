@@ -88,19 +88,19 @@ public class Photo {
   }
 
   public void setImageType(final String imageType) {
-    this.mimeType = imageType;
+    mimeType = imageType;
   }
 
   @Override
   public int hashCode() {
     int hash = 5;
-    hash = 83 * hash + (this.name != null ? this.name.hashCode() : 0);
-    hash = 83 * hash + (this.type != null ? this.type.hashCode() : 0);
+    hash = 83 * hash + (name != null ? name.hashCode() : 0);
+    hash = 83 * hash + (type != null ? type.hashCode() : 0);
     return hash;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (obj == null) {
       return false;
     }
@@ -108,15 +108,15 @@ public class Photo {
       return false;
     }
     final Photo other = (Photo) obj;
-    if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+    if ((name == null) ? (other.name != null) : !name.equals(other.name)) {
       return false;
     }
-    if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
+    if ((type == null) ? (other.type != null) : !type.equals(other.type)) {
       return false;
     }
     return true;
   }
-  
+
   @Override
   public String toString() {
     return "{\"Name\":\"" + name + "\","

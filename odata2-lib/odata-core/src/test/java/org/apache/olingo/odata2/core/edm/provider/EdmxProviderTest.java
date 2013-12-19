@@ -20,13 +20,19 @@ package org.apache.olingo.odata2.core.edm.provider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmAnnotationAttribute;
+import org.apache.olingo.odata2.api.edm.EdmAnnotationElement;
+import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
+import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
+import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
@@ -59,6 +65,123 @@ public class EdmxProviderTest {
 
     assertNotNull(edm.getComplexType("Self", "c_Location"));
     assertNotNull(edm.getComplexType("Self", "c_City"));
+  }
+
+  @Test
+  public void annotationsAtSimpleProperty() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmProperty property = (EdmProperty) edm.getEntityType("Self", "Employee").getProperty("EmployeeName");
+    assertNotNull(property);
+
+    EdmAnnotations annotations = property.getAnnotations();
+    assertNotNull(annotations);
+    List<EdmAnnotationAttribute> annotationAttributes = annotations.getAnnotationAttributes();
+    assertNotNull(annotationAttributes);
+
+    List<EdmAnnotationElement> annotationElements = annotations.getAnnotationElements();
+    assertNotNull(annotationElements);
+    assertEquals(2, annotationElements.size());
+
+    assertNull(annotationElements.get(0).getChildElements());
+  }
+
+  @Test
+  public void nullAnnotationsAtEntityType() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmAnnotations annotations = edm.getEntityType("Self", "Employee").getAnnotations();
+    checkNullAnnotations(annotations);
+  }
+
+  @Test
+  public void nullAnnotationsAtComplexType() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmAnnotations annotations = edm.getComplexType("Self", "c_Location").getAnnotations();
+    checkNullAnnotations(annotations);
+  }
+
+  @Test
+  public void nullAnnotationsAtSimpleProperty() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmProperty property = (EdmProperty) edm.getEntityType("Self", "Employee").getProperty("RoomId");
+    EdmAnnotations annotations = property.getAnnotations();
+    checkNullAnnotations(annotations);
+  }
+
+  @Test
+  public void nullAnnotationsAtComplexProperty() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmProperty property = (EdmProperty) edm.getEntityType("Self", "Employee").getProperty("Location");
+    EdmAnnotations annotations = property.getAnnotations();
+    checkNullAnnotations(annotations);
+  }
+
+  @Test
+  public void nullAnnotationsAtAssociation() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmAnnotations annotations = edm.getAssociation("Self", "BuildingRooms").getAnnotations();
+    checkNullAnnotations(annotations);
+  }
+
+  @Test
+  public void nullAnnotationsAtAssociationSet() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmEntitySet entitySet = edm.getDefaultEntityContainer().getEntitySet("Employees");
+    EdmAnnotations annotations =
+        edm.getDefaultEntityContainer().getAssociationSet(entitySet,
+            (EdmNavigationProperty) entitySet.getEntityType().getProperty("ne_Manager")).getAnnotations();
+    checkNullAnnotations(annotations);
+  }
+
+  @Test
+  public void nullAnnotationsAtEdmContainer() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmAnnotations annotations = edm.getDefaultEntityContainer().getAnnotations();
+    checkNullAnnotations(annotations);
+  }
+
+  @Test
+  public void nullAnnotationsAtFunctionImport() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmAnnotations annotations = edm.getDefaultEntityContainer().getFunctionImport("EmployeeSearch").getAnnotations();
+    checkNullAnnotations(annotations);
+  }
+
+  @Test
+  public void nullAnnotationsAtFunctionImportParameter() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmAnnotations annotations =
+        edm.getDefaultEntityContainer().getFunctionImport("EmployeeSearch").getParameter("q").getAnnotations();
+    checkNullAnnotations(annotations);
+  }
+
+  @Test
+  public void nullAnnotationsAtNavigationProperty() throws Exception {
+    Edm edm = createEdm();
+    assertNotNull(edm);
+    EdmNavigationProperty property =
+        (EdmNavigationProperty) edm.getEntityType("Self", "Employee").getProperty("ne_Manager");
+    EdmAnnotations annotations = property.getAnnotations();
+    checkNullAnnotations(annotations);
+  }
+
+  private void checkNullAnnotations(final EdmAnnotations annotations) {
+    assertNotNull(annotations);
+
+    List<EdmAnnotationAttribute> annotationAttributes = annotations.getAnnotationAttributes();
+    assertNull(annotationAttributes);
+
+    List<EdmAnnotationElement> annotationElements = annotations.getAnnotationElements();
+    assertNull(annotationElements);
   }
 
   @Test

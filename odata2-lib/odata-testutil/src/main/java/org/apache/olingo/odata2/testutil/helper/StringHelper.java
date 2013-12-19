@@ -85,7 +85,7 @@ public class StringHelper {
    * @return content as stream
    * @throws UnsupportedEncodingException if charset is not supported
    */
-  public static InputStream encapsulate(final String content, final String charset) 
+  public static InputStream encapsulate(final String content, final String charset)
       throws UnsupportedEncodingException {
     return new ByteArrayInputStream(content.getBytes(charset));
   }

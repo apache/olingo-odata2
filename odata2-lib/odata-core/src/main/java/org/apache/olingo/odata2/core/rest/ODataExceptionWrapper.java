@@ -82,7 +82,8 @@ public class ODataExceptionWrapper {
     }
   }
 
-  public ODataExceptionWrapper(final UriInfo uriInfo, final HttpHeaders httpHeaders, ODataErrorCallback errorCallback) {
+  public ODataExceptionWrapper(final UriInfo uriInfo, final HttpHeaders httpHeaders,
+      final ODataErrorCallback errorCallback) {
     contentType = getContentType(uriInfo, httpHeaders).toContentTypeString();
     messageLocale = MessageService.getSupportedLocale(getLanguages(httpHeaders), DEFAULT_RESPONSE_LOCALE);
     httpRequestHeaders = httpHeaders.getRequestHeaders();

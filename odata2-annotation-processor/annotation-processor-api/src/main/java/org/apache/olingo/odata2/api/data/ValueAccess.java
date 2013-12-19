@@ -29,7 +29,7 @@ public interface ValueAccess {
 
   /**
    * Retrieves the value of an EDM property for the given data object.
-   * @param data     the Java data object
+   * @param data the Java data object
    * @param property the requested {@link EdmProperty}
    * @return the requested property value
    */
@@ -37,15 +37,15 @@ public interface ValueAccess {
 
   /**
    * Sets the value of an EDM property for the given data object.
-   * @param data     the Java data object
+   * @param data the Java data object
    * @param property the {@link EdmProperty}
-   * @param value    the new value of the property
+   * @param value the new value of the property
    */
   public <T, V> void setPropertyValue(T data, final EdmProperty property, final V value) throws ODataException;
 
   /**
    * Retrieves the Java type of an EDM property for the given data object.
-   * @param data     the Java data object
+   * @param data the Java data object
    * @param property the requested {@link EdmProperty}
    * @return the requested Java type
    */
@@ -53,17 +53,17 @@ public interface ValueAccess {
 
   /**
    * Retrieves the value defined by a mapping object for the given data object.
-   * @param data     the Java data object
-   * @param mapping  the requested {@link EdmMapping}
+   * @param data the Java data object
+   * @param mapping the requested {@link EdmMapping}
    * @return the requested value
    */
   public <T> Object getMappingValue(final T data, final EdmMapping mapping) throws ODataException;
 
   /**
    * Sets the value defined by a mapping object for the given data object.
-   * @param data     the Java data object
-   * @param mapping  the {@link EdmMapping}
-   * @param value    the new value
+   * @param data the Java data object
+   * @param mapping the {@link EdmMapping}
+   * @param value the new value
    */
   public <T, V> void setMappingValue(T data, final EdmMapping mapping, final V value) throws ODataException;
 }

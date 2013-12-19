@@ -197,10 +197,10 @@ public abstract class UriParser {
    * with an entity-container name if not in the default entity container) and a
    * syntactically valid key that identifies a single entity; example:
    * <code>http://example.server.com/service.svc/Employees('42')</code>.</p>
-   * @param entitySet   the entity set the entity belongs to
-   * @param entityLink  the link as String
+   * @param entitySet the entity set the entity belongs to
+   * @param entityLink the link as String
    * @param serviceRoot the root URI of the service, may be <code>null</code>
-   *                    for a relative link URI
+   * for a relative link URI
    * @return a list of key predicates
    * @throws ODataException in case the link is malformed
    */
@@ -211,10 +211,10 @@ public abstract class UriParser {
 
   /**
    * Retrieves the key predicates from a canonical link to an entity.
-   * @param entitySet   the entity set the entity belongs to
-   * @param entityLink  the link as String
+   * @param entitySet the entity set the entity belongs to
+   * @param entityLink the link as String
    * @param serviceRoot the root URI of the service, may be <code>null</code>
-   *                    for a relative link URI
+   * for a relative link URI
    * @return a list of key predicates
    * @throws ODataException in case the link is malformed
    * @see #getKeyPredicatesFromEntityLink

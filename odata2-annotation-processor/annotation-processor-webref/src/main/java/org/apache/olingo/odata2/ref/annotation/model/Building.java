@@ -71,7 +71,7 @@ public class Building {
     }
   }
 
-  public void addRoom(Room room) {
+  public void addRoom(final Room room) {
     rooms.add(room);
   }
 

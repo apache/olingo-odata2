@@ -24,7 +24,7 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 /**
  *  
  */
-@EdmComplexType(name="c_City", namespace = ModelSharedConstants.NAMESPACE_1)
+@EdmComplexType(name = "c_City", namespace = ModelSharedConstants.NAMESPACE_1)
 public class City {
 
   @EdmProperty

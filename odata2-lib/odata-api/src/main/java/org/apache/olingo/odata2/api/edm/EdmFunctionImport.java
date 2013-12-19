@@ -32,7 +32,7 @@ import java.util.Collection;
  * <li>{@link EdmEntitySet}
  * 
  */
-public interface EdmFunctionImport extends EdmMappable, EdmNamed {
+public interface EdmFunctionImport extends EdmMappable, EdmNamed, EdmAnnotatable {
 
   /**
    * Get the parameter by name

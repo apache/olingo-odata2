@@ -26,11 +26,11 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 /**
  *
  */
-@EdmEntityType(name="Base", namespace=ModelSharedConstants.NAMESPACE_1)
+@EdmEntityType(name = "Base", namespace = ModelSharedConstants.NAMESPACE_1)
 public abstract class RefBase {
-  @EdmProperty(name="Name")
+  @EdmProperty(name = "Name")
   protected String name;
-  @EdmProperty(name="Id", type = EdmType.STRING)
+  @EdmProperty(name = "Id", type = EdmType.STRING)
   @EdmKey
   protected String id;
 
@@ -42,24 +42,24 @@ public abstract class RefBase {
     return id;
   }
 
-  public void setName(String name) {
+  public void setName(final String name) {
     this.name = name;
   }
 
-  public void setId(int id) {
+  public void setId(final int id) {
     this.id = String.valueOf(id);
   }
 
   @Override
   public int hashCode() {
-    if(id == null) {
+    if (id == null) {
       return -1;
     }
     return id.hashCode();
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (obj == null) {
       return false;
     }
@@ -67,10 +67,10 @@ public abstract class RefBase {
       return false;
     }
     final RefBase other = (RefBase) obj;
-    if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+    if ((name == null) ? (other.name != null) : !name.equals(other.name)) {
       return false;
     }
-    if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+    if ((id == null) ? (other.id != null) : !id.equals(other.id)) {
       return false;
     }
     return true;

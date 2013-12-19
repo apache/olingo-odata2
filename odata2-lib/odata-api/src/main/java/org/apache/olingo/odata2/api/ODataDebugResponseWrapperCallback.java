@@ -30,10 +30,10 @@ public interface ODataDebugResponseWrapperCallback extends ODataCallback {
 
   /**
    * Handles the output of a response helpful in case of debugging.
-   * @param context   generic context information
-   * @param request   the original request
-   * @param response  the original response
-   * @param uriInfo   structured parts of the request URI
+   * @param context generic context information
+   * @param request the original request
+   * @param response the original response
+   * @param uriInfo structured parts of the request URI
    * @param exception the exception in case of an error
    * @return the debug response
    */

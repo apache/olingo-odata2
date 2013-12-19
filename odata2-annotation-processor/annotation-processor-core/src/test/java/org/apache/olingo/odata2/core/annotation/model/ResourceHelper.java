@@ -22,7 +22,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+
 import javax.imageio.ImageIO;
 
 /**
@@ -30,19 +30,21 @@ import javax.imageio.ImageIO;
  */
 public class ResourceHelper {
 
-  public enum Format {BMP, JPEG, PNG, GIF};
-  
+  public enum Format {
+    BMP, JPEG, PNG, GIF
+  };
+
   public static byte[] generateImage() {
     return generateImage(Format.PNG);
   }
-  
-  public static byte[] generateImage(Format format) {
+
+  public static byte[] generateImage(final Format format) {
     try {
       int width = 320;
       int height = 320;
       BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
       WritableRaster raster = image.getRaster();
-      
+
       int mod = format.ordinal() + 2;
       for (int h = 0; h < height; h++) {
         for (int w = 0; w < width; w++) {
@@ -53,7 +55,7 @@ public class ResourceHelper {
           }
         }
       }
-      
+
       ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
       ImageIO.write(image, format.name(), out);
       return out.toByteArray();

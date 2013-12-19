@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.api.uri.expression;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
 
 /**
- * Represents a property expression in the expression tree 
+ * Represents a property expression in the expression tree
  * <br>
  * <br>
  * <p>A property expression node is inserted in the expression tree for any property.

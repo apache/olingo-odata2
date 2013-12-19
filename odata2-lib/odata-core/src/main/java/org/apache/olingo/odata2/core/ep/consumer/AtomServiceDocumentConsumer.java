@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -37,6 +36,7 @@ import org.apache.olingo.odata2.api.servicedocument.ExtensionAttribute;
 import org.apache.olingo.odata2.api.servicedocument.ExtensionElement;
 import org.apache.olingo.odata2.api.servicedocument.Fixed;
 import org.apache.olingo.odata2.api.servicedocument.Workspace;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 import org.apache.olingo.odata2.core.servicedocument.AcceptImpl;
 import org.apache.olingo.odata2.core.servicedocument.AtomInfoImpl;
@@ -311,25 +311,6 @@ public class AtomServiceDocumentConsumer {
   }
 
   public ServiceDocumentImpl parseXml(final InputStream in) throws EntityProviderException {
-    return readServiceDokument(createStreamReader(in));
+    return readServiceDokument(XmlHelper.createStreamReader(in));
   }
-
-  private XMLStreamReader createStreamReader(final InputStream in) throws EntityProviderException {
-    if (in != null) {
-      XMLInputFactory factory = XMLInputFactory.newInstance();
-      factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-      factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
-      XMLStreamReader streamReader;
-      try {
-        streamReader = factory.createXMLStreamReader(in);
-      } catch (XMLStreamException e) {
-        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-            .getSimpleName()), e);
-      }
-      return streamReader;
-    } else {
-      throw new EntityProviderException(EntityProviderException.INVALID_STATE.addContent("Null InputStream"));
-    }
-  }
-
 }

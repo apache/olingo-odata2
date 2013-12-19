@@ -51,7 +51,7 @@ public class UriNotMatchingException extends ODataNotFoundException {
     super(messageReference, errorCode);
   }
 
-  public UriNotMatchingException(final MessageReference messageReference, final Throwable cause, 
+  public UriNotMatchingException(final MessageReference messageReference, final Throwable cause,
       final String errorCode) {
     super(messageReference, cause, errorCode);
   }

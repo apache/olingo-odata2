@@ -34,6 +34,7 @@ public class EdmAssociationImplProv extends EdmNamedImplProv implements EdmAssoc
 
   private Association association;
   private String namespace;
+  private EdmAnnotations annotations;
 
   public EdmAssociationImplProv(final EdmImplProv edm, final Association association, final String namespace)
       throws EdmException {
@@ -68,7 +69,11 @@ public class EdmAssociationImplProv extends EdmNamedImplProv implements EdmAssoc
 
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(association.getAnnotationAttributes(), association.getAnnotationElements());
+    if (annotations == null) {
+      annotations =
+          new EdmAnnotationsImplProv(association.getAnnotationAttributes(), association.getAnnotationElements());
+    }
+    return annotations;
   }
 
   public EdmMultiplicity getEndMultiplicity(final String role) {

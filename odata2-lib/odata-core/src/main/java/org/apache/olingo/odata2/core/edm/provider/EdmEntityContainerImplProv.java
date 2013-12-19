@@ -49,6 +49,7 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
   private Map<String, EdmFunctionImport> edmFunctionImports;
   private EdmEntityContainer edmExtendedEntityContainer;
   private boolean isDefaultContainer;
+  private EdmAnnotations annotations;
 
   public EdmEntityContainerImplProv(final EdmImplProv edm, final EntityContainerInfo entityContainer)
       throws EdmException {
@@ -184,7 +185,10 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
 
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(entityContainer.getAnnotationAttributes(), entityContainer
-        .getAnnotationElements());
+    if (annotations == null) {
+      annotations = new EdmAnnotationsImplProv(entityContainer.getAnnotationAttributes(),
+          entityContainer.getAnnotationElements());
+    }
+    return annotations;
   }
 }

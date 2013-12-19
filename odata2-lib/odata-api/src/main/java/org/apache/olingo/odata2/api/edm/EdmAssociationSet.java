@@ -25,7 +25,7 @@ package org.apache.olingo.odata2.api.edm;
  * <p>EdmAssociationSet defines the relationship of two entity sets.
  * 
  */
-public interface EdmAssociationSet extends EdmNamed {
+public interface EdmAssociationSet extends EdmNamed, EdmAnnotatable {
 
   /**
    * Get the association

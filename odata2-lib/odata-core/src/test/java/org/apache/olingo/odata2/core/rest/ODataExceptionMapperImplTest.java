@@ -95,7 +95,7 @@ public class ODataExceptionMapperImplTest extends BaseTest {
 
     MultivaluedHashMap<String, String> httpHeaders = new MultivaluedHashMap<String, String>();
     when(exceptionMapper.httpHeaders.getRequestHeaders()).thenReturn(httpHeaders);
-    
+
     disableLogging();
 
   }

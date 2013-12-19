@@ -21,14 +21,17 @@ package org.apache.olingo.odata2.core.edm.provider;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
+import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmReferentialConstraintRole;
 import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata2.api.edm.provider.ReferentialConstraintRole;
 
-public class EdmReferentialConstraintRoleImplProv implements EdmReferentialConstraintRole {
+public class EdmReferentialConstraintRoleImplProv implements EdmReferentialConstraintRole, EdmAnnotatable {
   private ReferentialConstraintRole role;
   private List<String> refNames;
+  private EdmAnnotations annotations;
 
   public EdmReferentialConstraintRoleImplProv(final ReferentialConstraintRole role) throws EdmException {
     this.role = role;
@@ -50,4 +53,11 @@ public class EdmReferentialConstraintRoleImplProv implements EdmReferentialConst
     return refNames;
   }
 
+  @Override
+  public EdmAnnotations getAnnotations() throws EdmException {
+    if (annotations == null) {
+      annotations = new EdmAnnotationsImplProv(role.getAnnotationAttributes(), role.getAnnotationElements());
+    }
+    return annotations;
+  }
 }

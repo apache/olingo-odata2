@@ -33,6 +33,7 @@ public class EdmAssociationSetImplProv extends EdmNamedImplProv implements EdmAs
 
   private AssociationSet associationSet;
   private EdmEntityContainer edmEntityContainer;
+  private EdmAnnotations annotations;
 
   public EdmAssociationSetImplProv(final EdmImplProv edm, final AssociationSet associationSet,
       final EdmEntityContainer edmEntityContainer) throws EdmException {
@@ -78,7 +79,10 @@ public class EdmAssociationSetImplProv extends EdmNamedImplProv implements EdmAs
 
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(associationSet.getAnnotationAttributes(), associationSet.getAnnotationElements());
+    if (annotations == null) {
+      annotations =
+          new EdmAnnotationsImplProv(associationSet.getAnnotationAttributes(), associationSet.getAnnotationElements());
+    }
+    return annotations;
   }
-
 }

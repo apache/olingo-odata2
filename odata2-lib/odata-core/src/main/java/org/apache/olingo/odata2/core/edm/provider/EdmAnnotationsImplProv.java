@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.edm.EdmAnnotationAttribute;
@@ -29,29 +29,35 @@ import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
 
 public class EdmAnnotationsImplProv implements EdmAnnotations {
 
-  private List<AnnotationAttribute> annotationAttributes;
-  private List<? extends EdmAnnotationElement> annotationElements;
+  private List<EdmAnnotationAttribute> annotationAttributes;
+  private List<EdmAnnotationElement> annotationElements;
 
   public EdmAnnotationsImplProv(final List<AnnotationAttribute> annotationAttributes,
       final List<AnnotationElement> annotationElements) {
-    this.annotationAttributes = annotationAttributes;
-    this.annotationElements = annotationElements;
+    if (annotationAttributes != null) {
+      this.annotationAttributes = new ArrayList<EdmAnnotationAttribute>();
+      this.annotationAttributes.addAll(annotationAttributes);
+    }
+    if (annotationElements != null) {
+      this.annotationElements = new ArrayList<EdmAnnotationElement>();
+      for (AnnotationElement element : annotationElements) {
+        EdmAnnotationElement edmElement = new EdmAnnotationElementImplProv(element);
+        this.annotationElements.add(edmElement);
+      }
+    }
   }
 
   @Override
-  public List<? extends EdmAnnotationElement> getAnnotationElements() {
+  public List<EdmAnnotationElement> getAnnotationElements() {
     return annotationElements;
   }
 
   @Override
   public EdmAnnotationElement getAnnotationElement(final String name, final String namespace) {
     if (annotationElements != null) {
-      Iterator<? extends EdmAnnotationElement> annotationElementIterator = annotationElements.iterator();
-
-      while (annotationElementIterator.hasNext()) {
-        EdmAnnotationElement annotationElement = annotationElementIterator.next();
-        if (annotationElement.getName().equals(name) && annotationElement.getNamespace().equals(namespace)) {
-          return annotationElement;
+      for (EdmAnnotationElement element : annotationElements) {
+        if (element.getName().equals(name) && element.getNamespace().equals(namespace)) {
+          return element;
         }
       }
     }
@@ -59,19 +65,16 @@ public class EdmAnnotationsImplProv implements EdmAnnotations {
   }
 
   @Override
-  public List<? extends EdmAnnotationAttribute> getAnnotationAttributes() {
+  public List<EdmAnnotationAttribute> getAnnotationAttributes() {
     return annotationAttributes;
   }
 
   @Override
   public EdmAnnotationAttribute getAnnotationAttribute(final String name, final String namespace) {
-    if (annotationElements != null) {
-      Iterator<? extends EdmAnnotationAttribute> annotationAttributesIterator = annotationAttributes.iterator();
-
-      while (annotationAttributesIterator.hasNext()) {
-        EdmAnnotationAttribute annotationAttribute = annotationAttributesIterator.next();
-        if (annotationAttribute.getName().equals(name) && annotationAttribute.getNamespace().equals(namespace)) {
-          return annotationAttribute;
+    if (annotationAttributes != null) {
+      for (EdmAnnotationAttribute attribute : annotationAttributes) {
+        if (attribute.getName().equals(name) && attribute.getNamespace().equals(namespace)) {
+          return attribute;
         }
       }
     }

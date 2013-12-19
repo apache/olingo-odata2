@@ -32,6 +32,7 @@ import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
 public class EdmNavigationPropertyImplProv extends EdmTypedImplProv implements EdmNavigationProperty, EdmAnnotatable {
 
   private NavigationProperty navigationProperty;
+  private EdmAnnotations annotations;
 
   public EdmNavigationPropertyImplProv(final EdmImplProv edm, final NavigationProperty property) throws EdmException {
     super(edm, property.getName(), null, null);
@@ -66,8 +67,11 @@ public class EdmNavigationPropertyImplProv extends EdmTypedImplProv implements E
 
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(navigationProperty.getAnnotationAttributes(), navigationProperty
-        .getAnnotationElements());
+    if (annotations == null) {
+      annotations = new EdmAnnotationsImplProv(navigationProperty.getAnnotationAttributes(),
+          navigationProperty.getAnnotationElements());
+    }
+    return annotations;
   }
 
   @Override

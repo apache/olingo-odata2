@@ -23,6 +23,7 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.imageio.ImageIO;
 
 /**
@@ -30,11 +31,11 @@ import javax.imageio.ImageIO;
  */
 public class ResourceHelper {
 
-  public static byte[] loadAsByte(String resource) {
+  public static byte[] loadAsByte(final String resource) {
     return load(resource, new byte[0]);
   }
 
-  public static byte[] load(String resource, byte[] defaultResult) {
+  public static byte[] load(final String resource, final byte[] defaultResult) {
     InputStream instream = null;
     try {
       instream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
@@ -51,27 +52,29 @@ public class ResourceHelper {
     } catch (IOException e) {
       throw new RuntimeException(e);
     } finally {
-      if(instream != null) {
+      if (instream != null) {
         try {
           instream.close();
-        } catch (IOException ex) { }
+        } catch (IOException ex) {}
       }
     }
   }
 
-  public enum Format {BMP, JPEG, PNG, GIF};
-  
+  public enum Format {
+    BMP, JPEG, PNG, GIF
+  };
+
   public static byte[] generateImage() {
     return generateImage(Format.PNG);
   }
-  
-  public static byte[] generateImage(Format format) {
+
+  public static byte[] generateImage(final Format format) {
     try {
       int width = 320;
       int height = 320;
       BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
       WritableRaster raster = image.getRaster();
-      
+
       int mod = format.ordinal() + 2;
       for (int h = 0; h < height; h++) {
         for (int w = 0; w < width; w++) {
@@ -82,7 +85,7 @@ public class ResourceHelper {
           }
         }
       }
-      
+
       ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
       ImageIO.write(image, format.name(), out);
       return out.toByteArray();

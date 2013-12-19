@@ -25,7 +25,7 @@ package org.apache.olingo.odata2.api.edm;
  * <p>EdmAssociationEnd defines one side of the relationship of two entity types.
  * 
  */
-public interface EdmAssociationEnd {
+public interface EdmAssociationEnd extends EdmAnnotatable {
 
   /**
    * @return the role of this {@link EdmAssociationEnd} as a String.

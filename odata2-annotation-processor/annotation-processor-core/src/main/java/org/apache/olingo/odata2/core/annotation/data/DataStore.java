@@ -26,8 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
@@ -45,13 +44,12 @@ public class DataStore<T> {
   private final Class<T> dataTypeClass;
   private final KeyAccess keyAccess;
 
-  private int idCounter = 1;
-
   private static class InMemoryDataStore {
     private static final Map<Class<?>, DataStore<?>> c2ds = new HashMap<Class<?>, DataStore<?>>();
 
     @SuppressWarnings("unchecked")
-    static DataStore<?> getInstance(Class<?> clz, boolean createNewInstance) {
+    static synchronized DataStore<?> getInstance(final Class<?> clz, final boolean createNewInstance)
+        throws DataStoreException {
       DataStore<?> ds = c2ds.get(clz);
       if (createNewInstance || ds == null) {
         ds = new DataStore<Object>((Class<Object>) clz);
@@ -62,27 +60,23 @@ public class DataStore<T> {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> DataStore<T> createInMemory(Class<T> clazz) {
+  public static <T> DataStore<T> createInMemory(final Class<T> clazz) throws DataStoreException {
     return (DataStore<T>) InMemoryDataStore.getInstance(clazz, true);
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> DataStore<T> createInMemory(Class<T> clazz, boolean keepExisting) {
+  public static <T> DataStore<T> createInMemory(final Class<T> clazz, final boolean keepExisting)
+      throws DataStoreException {
     return (DataStore<T>) InMemoryDataStore.getInstance(clazz, !keepExisting);
   }
 
-  private DataStore(Map<KeyElement, T> wrapStore, Class<T> clz) {
+  private DataStore(final Map<KeyElement, T> wrapStore, final Class<T> clz) throws DataStoreException {
     dataStore = Collections.synchronizedMap(wrapStore);
     dataTypeClass = clz;
-    try {
-      keyAccess = new KeyAccess(clz);
-    } catch (DataStoreException ex) {
-      // FIXME: replace exception with correct error handling
-      throw new RuntimeException("");
-    }
+    keyAccess = new KeyAccess(clz);
   }
 
-  private DataStore(Class<T> clz) {
+  private DataStore(final Class<T> clz) throws DataStoreException {
     this(new HashMap<KeyElement, T>(), clz);
   }
 
@@ -104,7 +98,7 @@ public class DataStore<T> {
     }
   }
 
-  public T read(T obj) {
+  public T read(final T obj) {
     KeyElement objKeys = getKeys(obj);
     return dataStore.get(objKeys);
   }
@@ -113,53 +107,94 @@ public class DataStore<T> {
     return Collections.unmodifiableCollection(dataStore.values());
   }
 
-  public T create(T object) throws DataStoreException {
+  public T create(final T object) throws DataStoreException {
+    KeyElement keyElement = getKeys(object);
+    return create(object, keyElement);
+  }
+
+  private T create(final T object, final KeyElement keyElement) throws DataStoreException {
     synchronized (dataStore) {
-      KeyElement keyElement = getKeys(object);
-      if (dataStore.get(keyElement) != null || !keyElement.allKeysSet()) {
-        createKeys(object);
-        return this.create(object);
+      if (keyElement.keyValuesMissing() || dataStore.containsKey(keyElement)) {
+        KeyElement newKey = createSetAndGetKeys(object);
+        return this.create(object, newKey);
       }
       dataStore.put(keyElement, object);
     }
     return object;
   }
 
-  public T update(T object) {
+  public T update(final T object) {
+    KeyElement keyElement = getKeys(object);
     synchronized (dataStore) {
-      KeyElement keyElement = getKeys(object);
       dataStore.remove(keyElement);
       dataStore.put(keyElement, object);
     }
     return object;
   }
 
-  public T delete(T object) {
+  public T delete(final T object) {
+    KeyElement keyElement = getKeys(object);
     synchronized (dataStore) {
-      KeyElement keyElement = getKeys(object);
       return dataStore.remove(keyElement);
     }
   }
+  
+  /**
+   * Are the key values equal for both instances.
+   * If all compared key values are <code>null</code> this also means equal.
+   * 
+   * @param first first instance to check for key equal
+   * @param second second instance to check for key equal
+   * @return <code>true</code> if object instance have equal keys set.
+   */
+  public boolean isKeyEqual(final T first, final T second) {
+    KeyElement firstKeys = getKeys(first);
+    KeyElement secondKeys = getKeys(second);
+    
+    return firstKeys.equals(secondKeys);
+  }
+  
+  /**
+   * Are the key values equal for both instances.
+   * If all compared key values are <code>null</code> this also means equal.
+   * Before object (keys) are compared it is validated that both object instance are NOT null
+   * and that both are from the same class as this {@link DataStore} (see {@link #dataTypeClass}).
+   * For the equal check on {@link #dataTypeClass} instances without validation see
+   * {@link #isKeyEqual(Object, Object)}.
+   * 
+   * @param first first instance to check for key equal
+   * @param second second instance to check for key equal
+   * @return <code>true</code> if object instance have equal keys set.
+   */
+  @SuppressWarnings("unchecked")
+  public boolean isKeyEqualChecked(Object first, Object second) throws DataStoreException {
+    if(first == null || second == null) {
+      throw new DataStoreException("Tried to compare null values which is not allowed.");
+    } else if(first.getClass() != dataTypeClass) {
+      throw new DataStoreException("First value is no instance from required class '" + dataTypeClass + "'.");
+    } else if(second.getClass() != dataTypeClass) {
+      throw new DataStoreException("Second value is no instance from required class '" + dataTypeClass + "'.");
+    }
+    
+    return isKeyEqual((T) first, (T) second);
+  }
+
 
   private class KeyElement {
+    private int cachedHashCode = 42;
     private final List<Object> keyValues;
-    private int cachedHashCode;
 
-    public KeyElement(int size) {
+    public KeyElement(final int size) {
       keyValues = new ArrayList<Object>(size);
     }
 
-    public KeyElement() {
-      this(2);
+    private void addValue(final Object keyValue) {
+      keyValues.add(keyValue);
+      cachedHashCode = 89 * cachedHashCode + (keyValue != null ? keyValue.hashCode() : 0);
     }
 
-    private void addValue(Object keyValue) {
-      keyValues.add(keyValue);
-      cachedHashCode = keyValues.hashCode();
-    }
-    
-    boolean allKeysSet() {
-      return !keyValues.contains(null);
+    boolean keyValuesMissing() {
+      return keyValues.contains(null);
     }
 
     @Override
@@ -168,32 +203,39 @@ public class DataStore<T> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (obj == null) {
         return false;
       }
       if (getClass() != obj.getClass()) {
         return false;
       }
+      @SuppressWarnings("unchecked")
       final KeyElement other = (KeyElement) obj;
       if (this.keyValues != other.keyValues && (this.keyValues == null || !this.keyValues.equals(other.keyValues))) {
         return false;
       }
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "KeyElement{" + "cachedHashCode=" + cachedHashCode + ", keyValues=" + keyValues + '}';
+    }
   }
-  
+
   private class KeyAccess {
-    List<Field> keyFields;
-    
-    KeyAccess(Class<?> clazz) throws DataStoreException {
+    final List<Field> keyFields;
+    final AtomicInteger idCounter = new AtomicInteger(1);
+
+    KeyAccess(final Class<?> clazz) throws DataStoreException {
       keyFields = ANNOTATION_HELPER.getAnnotatedFields(clazz, EdmKey.class);
       if (keyFields.isEmpty()) {
         throw new DataStoreException("No EdmKey annotated fields found for class " + clazz);
       }
     }
-    
-    KeyElement getKeyValues(T object) {
+
+    KeyElement getKeyValues(final T object) {
       KeyElement keyElement = new KeyElement(keyFields.size());
       for (Field field : keyFields) {
         Object keyValue = ClassHelper.getFieldValue(object, field);
@@ -202,50 +244,50 @@ public class DataStore<T> {
 
       return keyElement;
     }
-    
-    T createKeys(T object) throws DataStoreException {
+
+    KeyElement createSetAndGetKeys(final T object) throws DataStoreException {
+      KeyElement keyElement = new KeyElement(keyFields.size());
       for (Field field : keyFields) {
         Object key = createKey(field);
         ClassHelper.setFieldValue(object, field, key);
+        keyElement.addValue(key);
       }
 
-      return object;
+      return keyElement;
     }
-    
-    private Object createKey(Field field) {
+
+    private Object createKey(final Field field) {
       Class<?> type = field.getType();
 
       if (type == String.class) {
-        return String.valueOf(idCounter++);
+        return String.valueOf(idCounter.getAndIncrement());
       } else if (type == Integer.class || type == int.class) {
-        return Integer.valueOf(idCounter++);
+        return Integer.valueOf(idCounter.getAndIncrement());
       } else if (type == Long.class || type == long.class) {
-        return Long.valueOf(idCounter++);
+        return Long.valueOf(idCounter.getAndIncrement());
       }
 
       throw new UnsupportedOperationException("Automated key generation for type '" + type
           + "' is not supported (caused on field '" + field + "').");
     }
   }
-  
-  private KeyElement getKeys(T object) {
+
+  private KeyElement getKeys(final T object) {
     return keyAccess.getKeyValues(object);
   }
 
-  private T createKeys(T object) throws DataStoreException {
-    return keyAccess.createKeys(object);
+  private KeyElement createSetAndGetKeys(final T object) throws DataStoreException {
+    return keyAccess.createSetAndGetKeys(object);
   }
-
-  
 
   public static class DataStoreException extends ODataApplicationException {
     private static final long serialVersionUID = 42L;
 
-    public DataStoreException(String message) {
+    public DataStoreException(final String message) {
       this(message, null);
     }
 
-    public DataStoreException(String message, Throwable cause) {
+    public DataStoreException(final String message, final Throwable cause) {
       super(message, Locale.ENGLISH, cause);
     }
   }

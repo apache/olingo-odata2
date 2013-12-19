@@ -25,45 +25,47 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  *
  */
 public class ClassHelper {
-  
+
   private static final File[] EMPTY_FILE_ARRAY = new File[0];
-  
+
   private static final FilenameFilter CLASSFILE_FILTER = new FilenameFilter() {
     @Override
-    public boolean accept(File dir, String name) {
+    public boolean accept(final File dir, final String name) {
       return name.endsWith(CLASSFILE_ENDING);
     }
+
     public static final String CLASSFILE_ENDING = ".class";
   };
-  
+
   private static final FileFilter FOLDER_FILTER = new FileFilter() {
     @Override
-    public boolean accept(File pathname) {
+    public boolean accept(final File pathname) {
       return pathname.isDirectory();
     }
   };
-  
-  public static final List<Class<?>> loadClasses(String packageToScan, ClassValidator cv) {
+
+  public static final List<Class<?>> loadClasses(final String packageToScan, final ClassValidator cv) {
     return loadClasses(packageToScan, CLASSFILE_FILTER, cv);
   }
 
-  
-  public static final List<Class<?>> loadClasses(String packageToScan, FilenameFilter ff, ClassValidator cv) {
+  public static final List<Class<?>> loadClasses(final String packageToScan, final FilenameFilter ff,
+      final ClassValidator cv) {
     final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     String folderToScan = packageToScan.replace(".", "/");
     URL url = classLoader.getResource(folderToScan);
-    if(url == null) {
+    if (url == null) {
       throw new IllegalArgumentException("No folder to scan found for package '" + packageToScan + "'.");
     }
     File folder = new File(url.getFile());
     File[] classFiles = folder.listFiles(ff);
-    if(classFiles == null) {
+    if (classFiles == null) {
       classFiles = EMPTY_FILE_ARRAY;
     }
 
@@ -77,11 +79,11 @@ public class ClassHelper {
           annotatedClasses.add(c);
         }
       } catch (ClassNotFoundException ex) {
-        throw new IllegalArgumentException("Exception during class loading of class '" + fqn + 
-                "' with message '" + ex.getMessage() + "'.");
+        throw new IllegalArgumentException("Exception during class loading of class '" + fqn +
+            "' with message '" + ex.getMessage() + "'.");
       }
     }
-    
+
     // recursive search
     File[] subfolders = listSubFolder(folder);
     for (File file : subfolders) {
@@ -89,17 +91,19 @@ public class ClassHelper {
       annotatedClasses.addAll(subFolderClazzes);
     }
     //
-    
+
     return annotatedClasses;
   }
-  
-  public static Object getFieldValue(Object instance, Field field) {
+
+  public static Object getFieldValue(final Object instance, final Field field) {
     try {
-      boolean access = field.isAccessible();
-      field.setAccessible(true);
-      Object value = field.get(instance);
-      field.setAccessible(access);
-      return value;
+      synchronized (field) {
+        boolean access = field.isAccessible();
+        field.setAccessible(true);
+        Object value = field.get(instance);
+        field.setAccessible(access);
+        return value;
+      }
     } catch (IllegalArgumentException ex) { // should never happen
       throw new ODataRuntimeException(ex);
     } catch (IllegalAccessException ex) { // should never happen
@@ -107,12 +111,14 @@ public class ClassHelper {
     }
   }
 
-  public static void setFieldValue(Object instance, Field field, Object value) {
+  public static void setFieldValue(final Object instance, final Field field, final Object value) {
     try {
-      boolean access = field.isAccessible();
-      field.setAccessible(true);
-      field.set(instance, value);
-      field.setAccessible(access);
+      synchronized (field) {
+        boolean access = field.isAccessible();
+        field.setAccessible(true);
+        field.set(instance, value);
+        field.setAccessible(access);
+      }
     } catch (IllegalArgumentException ex) { // should never happen
       throw new ODataRuntimeException(ex);
     } catch (IllegalAccessException ex) { // should never happen
@@ -120,15 +126,14 @@ public class ClassHelper {
     }
   }
 
-
-  private static File[] listSubFolder(File folder) {
+  private static File[] listSubFolder(final File folder) {
     File[] subfolders = folder.listFiles(FOLDER_FILTER);
-    if(subfolders == null) {
+    if (subfolders == null) {
       return EMPTY_FILE_ARRAY;
     }
     return subfolders;
   }
-  
+
   public interface ClassValidator {
     boolean isClassValid(Class<?> c);
   }

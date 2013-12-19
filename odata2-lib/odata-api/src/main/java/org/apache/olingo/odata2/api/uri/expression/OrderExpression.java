@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.api.uri.expression;
 
 /**
- * Represents a order expression in the expression tree 
+ * Represents a order expression in the expression tree
  * <br>
  * <br>
  * <p>A order expression node is inserted in the expression tree for any valid

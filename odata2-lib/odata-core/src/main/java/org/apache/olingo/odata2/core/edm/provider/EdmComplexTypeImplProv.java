@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
-import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
@@ -35,10 +34,4 @@ public class EdmComplexTypeImplProv extends EdmStructuralTypeImplProv implements
   public EdmComplexType getBaseType() throws EdmException {
     return (EdmComplexType) edmBaseType;
   }
-
-  @Override
-  public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(structuralType.getAnnotationAttributes(), structuralType.getAnnotationElements());
-  }
-
 }

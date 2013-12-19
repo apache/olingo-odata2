@@ -32,7 +32,7 @@ public abstract class DataSourceProcessor extends ODataSingleProcessor {
 
   protected final DataSource dataSource;
   protected final ValueAccess valueAccess;
-  
+
   /**
    * Initialize a {@link DataSourceProcessor} in combination with given {@link DataSource} (providing data objects)
    * and {@link ValueAccess} (accessing values of data objects).

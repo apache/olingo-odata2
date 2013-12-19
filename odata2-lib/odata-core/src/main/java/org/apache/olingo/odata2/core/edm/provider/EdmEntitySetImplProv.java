@@ -36,6 +36,7 @@ public class EdmEntitySetImplProv extends EdmNamedImplProv implements EdmEntityS
   private EntitySet entitySet;
   private EdmEntityContainer edmEntityContainer;
   private EdmEntityType edmEntityType;
+  private EdmAnnotationsImplProv annotations;
 
   public EdmEntitySetImplProv(final EdmImplProv edm, final EntitySet entitySet,
       final EdmEntityContainer edmEntityContainer) throws EdmException {
@@ -78,7 +79,10 @@ public class EdmEntitySetImplProv extends EdmNamedImplProv implements EdmEntityS
 
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
-    return new EdmAnnotationsImplProv(entitySet.getAnnotationAttributes(), entitySet.getAnnotationElements());
+    if (annotations == null) {
+      annotations = new EdmAnnotationsImplProv(entitySet.getAnnotationAttributes(), entitySet.getAnnotationElements());
+    }
+    return annotations;
   }
 
   @Override

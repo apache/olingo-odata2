@@ -160,8 +160,11 @@ public class XmlMetadataConsumer {
     if (schema.getAlias() != null) {
       aliasNamespaceMap.put(schema.getAlias(), schema.getNamespace());
     }
+    if (!annotationElements.isEmpty()) {
+      schema.setAnnotationElements(annotationElements);
+    }
     schema.setUsings(usings).setEntityTypes(entityTypes).setComplexTypes(complexTypes).setAssociations(associations)
-        .setEntityContainers(entityContainers).setAnnotationElements(annotationElements);
+        .setEntityContainers(entityContainers);
     return schema;
   }
 
@@ -187,7 +190,9 @@ public class XmlMetadataConsumer {
         annotationElements.add(readAnnotationElement(reader));
       }
     }
-    using.setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      using.setAnnotationElements(annotationElements);
+    }
 
     if (using.getAlias() != null) {
       aliasNamespaceMap.put(using.getAlias(), using.getNamespace());
@@ -231,8 +236,10 @@ public class XmlMetadataConsumer {
         }
       }
     }
-    container.setEntitySets(entitySets).setAssociationSets(associationSets).setFunctionImports(functionImports)
-        .setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      container.setAnnotationElements(annotationElements);
+    }
+    container.setEntitySets(entitySets).setAssociationSets(associationSets).setFunctionImports(functionImports);
 
     containerMap.put(new FullQualifiedName(currentNamespace, container.getName()), container);
     return container;
@@ -275,7 +282,10 @@ public class XmlMetadataConsumer {
         }
       }
     }
-    function.setParameters(functionParameters).setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      function.setAnnotationElements(annotationElements);
+    }
+    function.setParameters(functionParameters);
     return function;
   }
 
@@ -303,7 +313,9 @@ public class XmlMetadataConsumer {
         annotationElements.add(readAnnotationElement(reader));
       }
     }
-    functionParameter.setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      functionParameter.setAnnotationElements(annotationElements);
+    }
     return functionParameter;
   }
 
@@ -346,7 +358,9 @@ public class XmlMetadataConsumer {
     } else {
       associationSet.setEnd1(ends.get(0)).setEnd2(ends.get(1));
     }
-    associationSet.setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      associationSet.setAnnotationElements(annotationElements);
+    }
     return associationSet;
   }
 
@@ -373,7 +387,9 @@ public class XmlMetadataConsumer {
         annotationElements.add(readAnnotationElement(reader));
       }
     }
-    entitySet.setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      entitySet.setAnnotationElements(annotationElements);
+    }
     return entitySet;
   }
 
@@ -405,9 +421,10 @@ public class XmlMetadataConsumer {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
           .addContent("Count of association ends should be 2"));
     }
-
-    association.setEnd1(associationEnds.get(0)).setEnd2(associationEnds.get(1)).setAnnotationElements(
-        annotationElements);
+    if (!annotationElements.isEmpty()) {
+      association.setAnnotationElements(annotationElements);
+    }
+    association.setEnd1(associationEnds.get(0)).setEnd2(associationEnds.get(1));
     associationsMap.put(new FullQualifiedName(currentNamespace, association.getName()), association);
     return association;
   }
@@ -438,7 +455,9 @@ public class XmlMetadataConsumer {
         }
       }
     }
-    refConstraint.setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      refConstraint.setAnnotationElements(annotationElements);
+    }
     return refConstraint;
   }
 
@@ -463,7 +482,10 @@ public class XmlMetadataConsumer {
         }
       }
     }
-    rcRole.setPropertyRefs(propertyRefs).setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      rcRole.setAnnotationElements(annotationElements);
+    }
+    rcRole.setPropertyRefs(propertyRefs);
     return rcRole;
   }
 
@@ -497,7 +519,10 @@ public class XmlMetadataConsumer {
         }
       }
     }
-    complexType.setProperties(properties).setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      complexType.setAnnotationElements(annotationElements);
+    }
+    complexType.setProperties(properties);
     if (complexType.getName() != null) {
       FullQualifiedName fqName = new FullQualifiedName(currentNamespace, complexType.getName());
       complexTypesMap.put(fqName, complexType);
@@ -550,8 +575,10 @@ public class XmlMetadataConsumer {
         extractNamespaces(reader);
       }
     }
-    entityType.setKey(key).setProperties(properties).setNavigationProperties(navProperties).setAnnotationElements(
-        annotationElements);
+    if (!annotationElements.isEmpty()) {
+      entityType.setAnnotationElements(annotationElements);
+    }
+    entityType.setKey(key).setProperties(properties).setNavigationProperties(navProperties);
     if (entityType.getName() != null) {
       FullQualifiedName fqName = new FullQualifiedName(currentNamespace, entityType.getName());
       entityTypesMap.put(fqName, entityType);
@@ -581,8 +608,11 @@ public class XmlMetadataConsumer {
         }
       }
     }
-    return new Key().setKeys(keys).setAnnotationElements(annotationElements).setAnnotationAttributes(
-        annotationAttributes);
+    Key key = new Key().setKeys(keys).setAnnotationAttributes(annotationAttributes);
+    if (!annotationElements.isEmpty()) {
+      key.setAnnotationElements(annotationElements);
+    }
+    return key;
   }
 
   private PropertyRef readPropertyRef(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
@@ -599,7 +629,10 @@ public class XmlMetadataConsumer {
         annotationElements.add(readAnnotationElement(reader));
       }
     }
-    return propertyRef.setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      propertyRef.setAnnotationElements(annotationElements);
+    }
+    return propertyRef;
   }
 
   private NavigationProperty readNavigationProperty(final XMLStreamReader reader) throws XMLStreamException,
@@ -631,7 +664,9 @@ public class XmlMetadataConsumer {
         annotationElements.add(readAnnotationElement(reader));
       }
     }
-    navProperty.setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      navProperty.setAnnotationElements(annotationElements);
+    }
     navProperties.add(navProperty);
     return navProperty;
   }
@@ -664,7 +699,9 @@ public class XmlMetadataConsumer {
         annotationElements.add(readAnnotationElement(reader));
       }
     }
-    property.setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      property.setAnnotationElements(annotationElements);
+    }
     return property;
   }
 
@@ -796,7 +833,9 @@ public class XmlMetadataConsumer {
         }
       }
     }
-    associationEnd.setAnnotationElements(annotationElements);
+    if (!annotationElements.isEmpty()) {
+      associationEnd.setAnnotationElements(annotationElements);
+    }
     return associationEnd;
   }
 
@@ -821,7 +860,9 @@ public class XmlMetadataConsumer {
       }
       annotationAttributes.add(annotationAttribute);
     }
-    aElement.setAttributes(annotationAttributes);
+    if (!annotationAttributes.isEmpty()) {
+      aElement.setAttributes(annotationAttributes);
+    }
     while (reader.hasNext() && !(reader.isEndElement() && aElement.getName() != null
         && aElement.getName().equals(reader.getLocalName()))) {
       reader.next();

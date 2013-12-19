@@ -688,7 +688,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     assertNull(jsonMap.get("content_type"));
     assertNull(jsonMap.get("edit_media"));
   }
-  
+
   @SuppressWarnings("unchecked")
   @Test
   public void assureGetMimeTypeWinsOverGetMediaResourceMimeTypeKey() throws Exception {
@@ -720,7 +720,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     employeeData.put(mediaResourceMimeTypeKey, "wrong");
     String originalMimeTypeKey = "~originalType";
     employeeData.put(originalMimeTypeKey, "right");
-    
+
     EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     EdmMapping mapping = employeesSet.getEntityType().getMapping();
     when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);

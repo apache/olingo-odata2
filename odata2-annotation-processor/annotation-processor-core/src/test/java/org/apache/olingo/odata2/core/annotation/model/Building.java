@@ -53,6 +53,10 @@ public class Building {
     return id;
   }
 
+  public void setId(String id) {
+    this.id = id;
+  }
+
   public void setName(final String name) {
     this.name = name;
   }
@@ -79,7 +83,7 @@ public class Building {
 
   @Override
   public int hashCode() {
-      return id == null ? 0 : id.hashCode();
+    return id == null ? 0 : id.hashCode();
   }
 
   @Override

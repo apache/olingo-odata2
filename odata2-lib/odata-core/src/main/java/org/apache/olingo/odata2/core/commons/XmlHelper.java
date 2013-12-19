@@ -26,7 +26,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
-
 public class XmlHelper {
 
   /** Default used charset for reader */
@@ -43,7 +42,7 @@ public class XmlHelper {
 
       if (content instanceof InputStream) {
         streamReader = factory.createXMLStreamReader((InputStream) content, DEFAULT_CHARSET);
-        // verify charset encoding set in content is supported (if not set UTF-8 is used as defined in 
+        // verify charset encoding set in content is supported (if not set UTF-8 is used as defined in
         // v'http://www.w3.org/TR/2008/REC-xml-20081126/')
         String characterEncodingInContent = streamReader.getCharacterEncodingScheme();
         if (characterEncodingInContent != null && !DEFAULT_CHARSET.equalsIgnoreCase(characterEncodingInContent)) {
