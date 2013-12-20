@@ -5,12 +5,14 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeSet;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +33,10 @@ import org.apache.olingo.odata2.core.commons.Decoder;
 public class RestUtil {
   private static final String REG_EX_QUALITY_FACTOR = "q=((?:1\\.0{0,3})|(?:0\\.[0-9]{0,2}[1-9]))";
   private static final String REG_EX_OPTIONAL_WHITESPACE = "\\s?";
-  private static final Pattern REG_EX_ACCEPT = Pattern.compile("((?:\\*)|(?:[a-z\\*\\s]+/[a-zA-Z0-9\\+\\*\\-=;\\s]+))");
+  private static final Pattern REG_EX_ACCEPT = Pattern.compile("((?:[a-z\\*\\s]+/[a-zA-Z\\+\\*\\-=\\s]+"
+      + "(?:;\\s*[a-pr-zA-PR-Z][a-zA-Z0-9\\-\\s]*=[a-zA-Z0-9\\-\\s]+)*))");
+  //  private static final Pattern REG_EX_ACCEPT_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT + "(?:;"
+  //      + REG_EX_OPTIONAL_WHITESPACE + "q=([0-9]\\.?[0-9]{0,3}))?");
   private static final Pattern REG_EX_ACCEPT_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT + "(?:;"
       + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QUALITY_FACTOR + ")?");
   private static final Pattern REG_EX_ACCEPT_LANGUAGES = Pattern
@@ -40,17 +45,83 @@ public class RestUtil {
       + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QUALITY_FACTOR + ")?");
   private static final Pattern REG_EX_MATRIX_PARAMETER = Pattern.compile("([^=]*)(?:=(.*))?");
 
-  public static List<String> extractAcceptHeaders(final String header) {
-    List<String> acceptHeaders = new ArrayList<String>();
-    if (header != null && !header.isEmpty()) {
-      Scanner acceptHeaderScanner = new Scanner(header).useDelimiter(",\\s?");
-      while (acceptHeaderScanner.hasNext()) {
-        if (acceptHeaderScanner.hasNext(REG_EX_ACCEPT_WITH_Q_FACTOR)) {
-          acceptHeaderScanner.next(REG_EX_ACCEPT_WITH_Q_FACTOR);
-          MatchResult result = acceptHeaderScanner.match();
-          acceptHeaders.add(result.group(1));
+  public static ContentType extractRequestContentType(final String contentType)
+      throws ODataUnsupportedMediaTypeException {
+    if (contentType == null || contentType.isEmpty()) {
+      // RFC 2616, 7.2.1:
+      // "Any HTTP/1.1 message containing an entity-body SHOULD include a
+      // Content-Type header field defining the media type of that body. [...]
+      // If the media type remains unknown, the recipient SHOULD treat it
+      // as type "application/octet-stream"."
+      return ContentType.APPLICATION_OCTET_STREAM;
+    } else if (ContentType.isParseable(contentType)) {
+      return ContentType.create(contentType);
+    } else {
+      throw new ODataUnsupportedMediaTypeException(
+          ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE.addContent(contentType));
+    }
+  }
+
+  public static Map<String, String> extractQueryParameters(final String queryString) {
+    Map<String, String> queryParametersMap = new HashMap<String, String>();
+    if (queryString != null) {
+      List<String> queryParameters = Arrays.asList(Decoder.decode(queryString).split("\\&"));
+      for (String param : queryParameters) {
+        int indexOfEq = param.indexOf("=");
+        if (indexOfEq < 0) {
+          queryParametersMap.put(param, "");
+        } else {
+          queryParametersMap.put(param.substring(0, indexOfEq), param.substring(indexOfEq + 1));
         }
       }
+    }
+    return queryParametersMap;
+  }
+
+  public static List<Locale> extractAcceptableLanguage(final String acceptableLanguageHeader) {
+    List<Locale> acceptLanguages = new ArrayList<Locale>();
+    if (acceptableLanguageHeader != null) {
+      Scanner acceptLanguageScanner = new Scanner(acceptableLanguageHeader).useDelimiter(",\\s?");
+      while (acceptLanguageScanner.hasNext()) {
+        if (acceptLanguageScanner.hasNext(REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR)) {
+          acceptLanguageScanner.next(REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR);
+          MatchResult result = acceptLanguageScanner.match();
+          String language = result.group(1);
+          String country = result.group(2);
+          //        //double qualityFactor = result.group(2) != null ? Double.parseDouble(result.group(2)) : 1d;
+          if (country == null) {
+            acceptLanguages.add(new Locale(language));
+          } else {
+            acceptLanguages.add(new Locale(language, country));
+          }
+        }
+      }
+      acceptLanguageScanner.close();
+    }
+    return acceptLanguages;
+  }
+
+  public static List<String> extractAcceptHeaders(final String header) {
+    TreeSet<Accept> acceptTree = getAcceptTree();
+    List<String> acceptHeaders = new ArrayList<String>();
+    if (header != null && !header.isEmpty()) {
+      List<String> list = Arrays.asList(header.split(",\\s?"));
+      for (String el : list) {
+        Matcher matcher = REG_EX_ACCEPT_WITH_Q_FACTOR.matcher(el);
+        if (matcher.find()) {
+          String headerValue = matcher.group(1);
+          double qualityFactor = matcher.group(2) != null ? Double.parseDouble(matcher.group(2)) : 1d;
+          //double qualityFactor = Double.parseDouble(matcher.group(2));
+          //if(!matcher.group(2).matches(REG_EX_QUALITY_FACTOR)){
+          //  throw new ODataBadRequestException(ODataBadRequestException.INVALID_HEADER);
+          //}
+          Accept acceptHeader = new Accept(headerValue, qualityFactor);
+          acceptTree.add(acceptHeader);
+        }
+      }
+    }
+    for (Accept accept : acceptTree) {
+      acceptHeaders.add(accept.getValue());
     }
     return acceptHeaders;
   }
@@ -62,8 +133,8 @@ public class RestUtil {
       String headerName = headerNames.nextElement();
       List<String> headerValues = new ArrayList<String>();
       for (Enumeration<String> headers = req.getHeaders(headerName); headers.hasMoreElements();) {
-        String val = headers.nextElement();
-        headerValues.add(val);
+        String value = headers.nextElement();
+        headerValues.add(value);
       }
       if (requestHeaders.containsKey(headerName)) {
         requestHeaders.get(headerName).addAll(headerValues);
@@ -85,6 +156,7 @@ public class RestUtil {
   private static URI buildBaseUri(final HttpServletRequest req, final List<PathSegment> precedingPathSegments)
       throws ODataException {
     try {
+      URI baseUri;
       StringBuilder stringBuilder = new StringBuilder();
       stringBuilder.append(req.getContextPath()).append(req.getServletPath());
       for (final PathSegment ps : precedingPathSegments) {
@@ -103,7 +175,8 @@ public class RestUtil {
       if (!path.endsWith("/")) {
         path = path + "/";
       }
-      return new URI(req.getScheme(), null, req.getServerName(), req.getServerPort(), path, null, null);
+      baseUri = new URI(req.getScheme(), null, req.getServerName(), req.getServerPort(), path, null, null);
+      return baseUri;
     } catch (final URISyntaxException e) {
       throw new ODataException(e);
     }
@@ -111,17 +184,15 @@ public class RestUtil {
 
   private static URI buildRequestUri(final HttpServletRequest servletRequest) {
     URI requestUri;
-
-    StringBuffer buf = servletRequest.getRequestURL();
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append(servletRequest.getRequestURL());
     String queryString = servletRequest.getQueryString();
 
     if (queryString != null) {
-      buf.append("?");
-      buf.append(queryString);
+      stringBuilder.append("?").append(queryString);
     }
 
-    String requestUriString = buf.toString();
-
+    String requestUriString = stringBuilder.toString();
     requestUri = URI.create(requestUriString);
     return requestUri;
   }
@@ -164,9 +235,6 @@ public class RestUtil {
       } else {
         String path = segment.substring(0, index);
         Map<String, List<String>> parameterMap = extractMatrixParameter(segment, index);
-        if (!parameterMap.get("matrix").isEmpty()) {
-          System.out.println(parameterMap.get("matrix"));
-        }
         throw new ODataNotFoundException(ODataNotFoundException.MATRIX.addContent(parameterMap.keySet(), path));
       }
     }
@@ -227,56 +295,37 @@ public class RestUtil {
     return pathInfoString;
   }
 
-  public static ContentType extractRequestContentType(final String contentType)
-      throws ODataUnsupportedMediaTypeException {
-    if (contentType == null || contentType.isEmpty()) {
-      // RFC 2616, 7.2.1:
-      // "Any HTTP/1.1 message containing an entity-body SHOULD include a
-      // Content-Type header field defining the media type of that body. [...]
-      // If the media type remains unknown, the recipient SHOULD treat it
-      // as type "application/octet-stream"."
-      return ContentType.APPLICATION_OCTET_STREAM;
-    } else if (ContentType.isParseable(contentType)) {
-      return ContentType.create(contentType);
-    } else {
-      throw new ODataUnsupportedMediaTypeException(
-          ODataUnsupportedMediaTypeException.NOT_SUPPORTED_CONTENT_TYPE.addContent(contentType));
-    }
-  }
-
-  public static Map<String, String> extractQueryParameters(final String queryString) {
-    Map<String, String> queryParametersMap = new HashMap<String, String>();
-    if (queryString != null) {
-      List<String> qParameters = Arrays.asList(Decoder.decode(queryString).split("\\&"));
-      for (String param : qParameters) {
-        String[] p = param.split("=");
-        queryParametersMap.put(p[0], p[1]);
-      }
-    }
-    return queryParametersMap;
-  }
-
-  public static List<Locale> extractAcceptableLanguage(final String acceptableLanguageHeader) {
-    List<Locale> acceptLanguages = new ArrayList<Locale>();
-    if (acceptableLanguageHeader != null) {
-      Scanner acceptLanguageScanner = new Scanner(acceptableLanguageHeader).useDelimiter(",\\s?");
-      while (acceptLanguageScanner.hasNext()) {
-        if (acceptLanguageScanner.hasNext(REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR)) {
-          acceptLanguageScanner.next(REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR);
-          MatchResult result = acceptLanguageScanner.match();
-          String language = result.group(1);
-          String country = result.group(2);
-          //        //double qualityFactor = result.group(2) != null ? Double.parseDouble(result.group(2)) : 1d;
-          if (country == null) {
-            acceptLanguages.add(new Locale(language));
-          } else {
-            acceptLanguages.add(new Locale(language, country));
-          }
+  private static TreeSet<Accept> getAcceptTree() {
+    TreeSet<Accept> treeSet = new TreeSet<Accept>(new Comparator<Accept>() {
+      @Override
+      public int compare(final Accept o1, final Accept o2) {
+        if (o1.getQuality() <= o2.getQuality()) {
+          return 1;
+        } else {
+          return -1;
         }
       }
-      acceptLanguageScanner.close();
+    });
+    return treeSet;
+  }
+
+  private static class Accept {
+    private double quality;
+    private String value;
+
+    public Accept(final String headerValue, final double qualityFactor) {
+      value = headerValue;
+      quality = qualityFactor;
     }
-    return acceptLanguages;
+
+    public String getValue() {
+      return value;
+    }
+
+    public double getQuality() {
+      return quality;
+    }
+
   }
 
 }
