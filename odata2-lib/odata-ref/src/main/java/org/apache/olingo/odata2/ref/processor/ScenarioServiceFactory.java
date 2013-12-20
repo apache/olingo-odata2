@@ -18,14 +18,14 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.ref.processor;
 
+import org.apache.olingo.odata2.annotation.processor.core.ListsProcessor;
+import org.apache.olingo.odata2.annotation.processor.core.datasource.BeanPropertyAccess;
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.ODataDebugCallback;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
-import org.apache.olingo.odata2.core.annotation.data.BeanPropertyAccess;
-import org.apache.olingo.odata2.core.annotation.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.ref.model.DataContainer;
 

@@ -28,9 +28,9 @@ import java.lang.reflect.Field;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.olingo.odata2.annotation.processor.core.ListsProcessor;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
-import org.apache.olingo.odata2.core.annotation.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.model.DataContainer;
 import org.apache.olingo.odata2.ref.model.Photo;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
