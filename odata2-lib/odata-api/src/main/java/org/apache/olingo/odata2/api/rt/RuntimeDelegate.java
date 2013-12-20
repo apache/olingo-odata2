@@ -35,6 +35,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataRequest.ODataRequestBuilder;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
+import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode.ExpandSelectTreeNodeBuilder;
 import org.apache.olingo.odata2.api.uri.UriParser;
 
 /**
@@ -106,6 +107,8 @@ public abstract class RuntimeDelegate {
     protected abstract BatchQueryPartBuilder createBatchQueryRequestBuilder();
 
     protected abstract BatchChangeSetPartBuilder createBatchChangeSetRequest();
+
+    public abstract ExpandSelectTreeNodeBuilder createExpandSelectTreeNodeBuilder();
 
   }
 
@@ -209,5 +212,9 @@ public abstract class RuntimeDelegate {
 
   public static BatchChangeSetPartBuilder createBatchChangeSetPartBuilder() {
     return RuntimeDelegate.getInstance().createBatchChangeSetRequest();
+  }
+
+  public static ExpandSelectTreeNodeBuilder createExpandSelectTreeNodeBuilder() {
+    return RuntimeDelegate.getInstance().createExpandSelectTreeNodeBuilder();
   }
 }

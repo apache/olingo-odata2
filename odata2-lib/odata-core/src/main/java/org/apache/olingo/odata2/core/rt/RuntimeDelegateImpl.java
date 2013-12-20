@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.api.processor.ODataRequest.ODataRequestBuilder;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.api.rt.RuntimeDelegate.RuntimeDelegateInstance;
+import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode.ExpandSelectTreeNodeBuilder;
 import org.apache.olingo.odata2.api.uri.UriParser;
 import org.apache.olingo.odata2.core.ODataRequestImpl;
 import org.apache.olingo.odata2.core.ODataResponseImpl;
@@ -48,6 +49,7 @@ import org.apache.olingo.odata2.core.edm.provider.EdmImplProv;
 import org.apache.olingo.odata2.core.edm.provider.EdmxProvider;
 import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
+import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
 import org.apache.olingo.odata2.core.uri.UriParserImpl;
 
 /**
@@ -127,6 +129,12 @@ public class RuntimeDelegateImpl extends RuntimeDelegateInstance {
     BatchChangeSetPartImpl batchChangeSetRequest = new BatchChangeSetPartImpl();
     ;
     return batchChangeSetRequest.new BatchChangeSetRequestBuilderImpl();
+  }
+
+  @Override
+  public ExpandSelectTreeNodeBuilder createExpandSelectTreeNodeBuilder() {
+    ExpandSelectTreeNodeImpl expandSelectTreeNode = new ExpandSelectTreeNodeImpl();
+    return expandSelectTreeNode.new ExpandSelectTreeNodeBuilderImpl();
   }
 
 }

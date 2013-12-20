@@ -30,6 +30,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.CharBuffer;
 
+import org.apache.olingo.odata2.annotation.processor.core.ListsProcessor;
+import org.apache.olingo.odata2.annotation.processor.core.datasource.BeanPropertyAccess;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
@@ -38,8 +40,6 @@ import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.UriInfo;
-import org.apache.olingo.odata2.core.annotation.data.BeanPropertyAccess;
-import org.apache.olingo.odata2.core.annotation.processor.ListsProcessor;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.ref.model.DataContainer;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;

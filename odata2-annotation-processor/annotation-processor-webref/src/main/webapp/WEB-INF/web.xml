@@ -35,7 +35,7 @@
 		</init-param>
 		<init-param>
 			<param-name>org.apache.olingo.odata2.service.factory</param-name>
-			<param-value>org.apache.olingo.odata2.ref.annotation.processor.AnnotationServiceFactory</param-value>
+			<param-value>org.apache.olingo.odata2.annotation.processor.ref.AnnotationRefServiceFactory</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
