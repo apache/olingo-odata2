@@ -168,7 +168,7 @@ public class ExpandSelectTreeNodeImpl extends ExpandSelectTreeNode {
 
   public class ExpandSelectTreeNodeBuilderImpl extends ExpandSelectTreeNodeBuilder {
 
-    EdmEntitySet entitySet;
+    private EdmEntitySet entitySet;
     private List<String> selectedPropertyNames;
     private List<String> selectedNavigationPropertyNames;
     private Map<String, ExpandSelectTreeNode> customExpandedNavigationProperties;
@@ -184,58 +184,63 @@ public class ExpandSelectTreeNodeImpl extends ExpandSelectTreeNode {
     public ExpandSelectTreeNode build() throws EdmException {
       EdmEntityType entityType = entitySet.getEntityType();
       if (selectedPropertyNames != null) {
-        for (String propertyName : selectedPropertyNames) {
-          EdmTyped property = entityType.getProperty(propertyName);
-          if (property == null) {
-            throw new EdmException(EdmException.PROPERTYNOTFOUND.addContent(propertyName));
-          } else if (!(property instanceof EdmProperty)) {
-            throw new EdmException(EdmException.MUSTBEPROPERTY.addContent(propertyName));
-          }
-          addProperty((EdmProperty) property);
-        }
+        handleProperties(entityType);
       }
 
       if (selectedNavigationPropertyNames != null) {
         setAllKindFalse();
-        for (String navigationPropertyName : selectedNavigationPropertyNames) {
-          EdmTyped navigationProperty = entityType.getProperty(navigationPropertyName);
-          if (navigationProperty == null) {
-            throw new EdmException(EdmException.NAVIGATIONPROPERTYNOTFOUND.addContent(navigationPropertyName));
-          } else if (!(navigationProperty instanceof EdmNavigationProperty)) {
-            throw new EdmException(EdmException.MUSTBENAVIGATIONPROPERTY.addContent(navigationPropertyName));
-          }
-          putLink(navigationPropertyName, null);
-        }
+        handleLinks(entityType, selectedNavigationPropertyNames, null);
       }
 
       if (expandedNavigationPropertyNames != null) {
         ExpandSelectTreeNodeImpl subNode = new ExpandSelectTreeNodeImpl();
         subNode.setExplicitlySelected();
-        for (String navigationPropertyName : expandedNavigationPropertyNames) {
-          EdmTyped navigationProperty = entityType.getProperty(navigationPropertyName);
-          if (navigationProperty == null) {
-            throw new EdmException(EdmException.NAVIGATIONPROPERTYNOTFOUND.addContent(navigationPropertyName));
-          } else if (!(navigationProperty instanceof EdmNavigationProperty)) {
-            throw new EdmException(EdmException.MUSTBENAVIGATIONPROPERTY.addContent(navigationPropertyName));
-          }
-          putLink(navigationPropertyName, subNode);
-        }
+        handleLinks(entityType, expandedNavigationPropertyNames, subNode);
       }
 
       if (customExpandedNavigationProperties != null) {
-        for (Map.Entry<String, ExpandSelectTreeNode> entry : customExpandedNavigationProperties.entrySet()) {
-          EdmTyped navigationProperty = entityType.getProperty(entry.getKey());
-          if (navigationProperty == null) {
-            throw new EdmException(EdmException.NAVIGATIONPROPERTYNOTFOUND.addContent(entry.getKey()));
-          }
-          if (!(navigationProperty instanceof EdmNavigationProperty)) {
-            throw new EdmException(EdmException.MUSTBENAVIGATIONPROPERTY.addContent(entry.getKey()));
-          }
-          putLink(entry.getKey(), (ExpandSelectTreeNodeImpl) entry.getValue());
-        }
+        handleCustomLinks(entityType);
       }
 
       return ExpandSelectTreeNodeImpl.this;
+    }
+
+    private void handleCustomLinks(final EdmEntityType entityType) throws EdmException {
+      for (Map.Entry<String, ExpandSelectTreeNode> entry : customExpandedNavigationProperties.entrySet()) {
+        EdmTyped navigationProperty = entityType.getProperty(entry.getKey());
+        if (navigationProperty == null) {
+          throw new EdmException(EdmException.NAVIGATIONPROPERTYNOTFOUND.addContent(entry.getKey()));
+        }
+        if (!(navigationProperty instanceof EdmNavigationProperty)) {
+          throw new EdmException(EdmException.MUSTBENAVIGATIONPROPERTY.addContent(entry.getKey()));
+        }
+        putLink(entry.getKey(), (ExpandSelectTreeNodeImpl) entry.getValue());
+      }
+    }
+
+    private void handleLinks(final EdmEntityType entityType, final List<String> names,
+        final ExpandSelectTreeNodeImpl subNode) throws EdmException {
+      for (String navigationPropertyName : names) {
+        EdmTyped navigationProperty = entityType.getProperty(navigationPropertyName);
+        if (navigationProperty == null) {
+          throw new EdmException(EdmException.NAVIGATIONPROPERTYNOTFOUND.addContent(navigationPropertyName));
+        } else if (!(navigationProperty instanceof EdmNavigationProperty)) {
+          throw new EdmException(EdmException.MUSTBENAVIGATIONPROPERTY.addContent(navigationPropertyName));
+        }
+        putLink(navigationPropertyName, subNode);
+      }
+    }
+
+    private void handleProperties(final EdmEntityType entityType) throws EdmException {
+      for (String propertyName : selectedPropertyNames) {
+        EdmTyped property = entityType.getProperty(propertyName);
+        if (property == null) {
+          throw new EdmException(EdmException.PROPERTYNOTFOUND.addContent(propertyName));
+        } else if (!(property instanceof EdmProperty)) {
+          throw new EdmException(EdmException.MUSTBEPROPERTY.addContent(propertyName));
+        }
+        addProperty((EdmProperty) property);
+      }
     }
 
     @Override
