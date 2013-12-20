@@ -29,20 +29,10 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 
 /**
- * ODataServiceFactory implementation based on ListProcessor
+ * AnnotationServiceFactoryInstance (ODataServiceFactory) implementation based on ListProcessor
  * in combination with Annotation-Support-Classes for EdmProvider, DataSource and ValueAccess.
  */
 public class AnnotationServiceFactoryImpl implements AnnotationServiceFactoryInstance {
-
-  /**
-   * Create an instance which further can create an {@link ODataService}.
-   * 
-   * @return instance which further can create an {@link ODataService}.
-   */
-  public AnnotationServiceFactoryInstance createInstance() {
-    return new AnnotationServiceFactoryImpl();
-  }
-
   /**
    * {@inheritDoc}
    */

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.annotation.model;
+package org.apache.olingo.odata2.annotation.processor.core.model;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.olingo.odata2.core.annotation.edm;
+package org.apache.olingo.odata2.annotation.processor.core.edm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -27,7 +27,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.olingo.odata2.annotation.processor.core.edm.AnnotationEdmProvider;
+import org.apache.olingo.odata2.annotation.processor.core.model.Building;
+import org.apache.olingo.odata2.annotation.processor.core.model.City;
+import org.apache.olingo.odata2.annotation.processor.core.model.Employee;
+import org.apache.olingo.odata2.annotation.processor.core.model.Location;
+import org.apache.olingo.odata2.annotation.processor.core.model.Manager;
+import org.apache.olingo.odata2.annotation.processor.core.model.ModelSharedConstants;
+import org.apache.olingo.odata2.annotation.processor.core.model.Photo;
+import org.apache.olingo.odata2.annotation.processor.core.model.RefBase;
+import org.apache.olingo.odata2.annotation.processor.core.model.Room;
+import org.apache.olingo.odata2.annotation.processor.core.model.Team;
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
@@ -48,22 +57,14 @@ import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.core.annotation.model.Building;
-import org.apache.olingo.odata2.core.annotation.model.City;
-import org.apache.olingo.odata2.core.annotation.model.Employee;
-import org.apache.olingo.odata2.core.annotation.model.Location;
-import org.apache.olingo.odata2.core.annotation.model.Manager;
-import org.apache.olingo.odata2.core.annotation.model.ModelSharedConstants;
-import org.apache.olingo.odata2.core.annotation.model.Photo;
-import org.apache.olingo.odata2.core.annotation.model.RefBase;
-import org.apache.olingo.odata2.core.annotation.model.Room;
-import org.apache.olingo.odata2.core.annotation.model.Team;
 import org.junit.Test;
 
 /**
  *
  */
 public class AnnotationEdmProviderTest {
+
+  private static final String TEST_MODEL_PACKAGE = "org.apache.olingo.odata2.annotation.processor.core.model";
 
   @EdmEntityType
   @EdmEntitySet
@@ -157,7 +158,7 @@ public class AnnotationEdmProviderTest {
 
   @Test
   public void loadAnnotatedClassesFromPackage() throws Exception {
-    AnnotationEdmProvider localAep = new AnnotationEdmProvider("org.apache.olingo.odata2.core.annotation.model");
+    AnnotationEdmProvider localAep = new AnnotationEdmProvider(TEST_MODEL_PACKAGE);
 
     // validate employee
     EntityType employee = localAep.getEntityType(new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, "Employee"));
