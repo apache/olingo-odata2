@@ -32,6 +32,13 @@ public class EdmException extends ODataMessageException {
 
   public static final MessageReference COMMON = createMessageReference(EdmException.class, "COMMON");
   public static final MessageReference PROVIDERPROBLEM = createMessageReference(EdmException.class, "PROVIDERPROBLEM");
+  public static final MessageReference PROPERTYNOTFOUND =
+      createMessageReference(EdmException.class, "PROPERTYNOTFOUND");
+  public static final MessageReference NAVIGATIONPROPERTYNOTFOUND =
+      createMessageReference(EdmException.class, "NAVIGATIONPROPERTYNOTFOUND");
+  public static final MessageReference MUSTBENAVIGATIONPROPERTY =
+      createMessageReference(EdmException.class, "MUSTBENAVIGATIONPROPERTY");
+  public static final MessageReference MUSTBEPROPERTY = createMessageReference(EdmException.class, "MUSTBEPROPERTY");
 
   public EdmException(final MessageReference messageReference) {
     super(messageReference);

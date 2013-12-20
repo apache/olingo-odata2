@@ -34,6 +34,7 @@ import java.util.Map;
 
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
@@ -95,6 +96,29 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     AtomEntityProvider provider = createAtomEntityProvider();
     ODataResponse response =
         provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
+
+    String xmlString = verifyResponse(response);
+    assertXpathNotExists("/a:entry/m:properties", xmlString);
+    assertXpathExists("/a:entry/a:link", xmlString);
+    verifyEmployees(employeeXPathString, xmlString);
+  }
+
+  @Test
+  public void expandSelectedEmployeesWithBuilder() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    List<String> navigationPropertyNames = new ArrayList<String>();
+    navigationPropertyNames.add("nr_Employees");
+    ExpandSelectTreeNode selectTree =
+        ExpandSelectTreeNode.entitySet(entitySet).expandedLinks(navigationPropertyNames).build();
+
+    HashMap<String, ODataCallback> callbacksRoom = createCallbacks("Rooms");
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom)
+            .build();
+    AtomEntityProvider provider = createAtomEntityProvider();
+    ODataResponse response =
+        provider.writeEntry(entitySet, roomData,
             properties);
 
     String xmlString = verifyResponse(response);
