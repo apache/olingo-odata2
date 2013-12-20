@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.annotation.model;
+package org.apache.olingo.odata2.annotation.processor.core.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;

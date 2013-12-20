@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.olingo.odata2.core.annotation.model;
+package org.apache.olingo.odata2.annotation.processor.core.model;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;

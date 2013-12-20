@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.olingo.odata2.core.annotation.data;
+package org.apache.olingo.odata2.annotation.processor.core.datasource;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -30,6 +30,10 @@ import org.apache.olingo.odata2.annotation.processor.core.datasource.DataSource;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.DataStore;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.DataSource.BinaryData;
 import org.apache.olingo.odata2.annotation.processor.core.edm.AnnotationEdmProvider;
+import org.apache.olingo.odata2.annotation.processor.core.model.Building;
+import org.apache.olingo.odata2.annotation.processor.core.model.ModelSharedConstants;
+import org.apache.olingo.odata2.annotation.processor.core.model.Photo;
+import org.apache.olingo.odata2.annotation.processor.core.model.Room;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
@@ -39,10 +43,6 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
-import org.apache.olingo.odata2.core.annotation.model.Building;
-import org.apache.olingo.odata2.core.annotation.model.ModelSharedConstants;
-import org.apache.olingo.odata2.core.annotation.model.Photo;
-import org.apache.olingo.odata2.core.annotation.model.Room;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.junit.Assert;
 import org.junit.Ignore;
