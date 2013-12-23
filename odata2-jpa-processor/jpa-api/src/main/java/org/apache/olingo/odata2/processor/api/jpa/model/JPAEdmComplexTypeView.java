@@ -83,6 +83,8 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
    * The method add a JPA EDM complex type view to the container.
    * 
    * @param view
+   * @param isReferencedInKey
+   * is the complex type referenced in an Entity as a key property
    * is an instance of type {@link org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexTypeView}
    */
   public void addJPAEdmCompleTypeView(JPAEdmComplexTypeView view);
@@ -112,5 +114,24 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
    */
   public void expandEdmComplexType(ComplexType complexType, List<Property> expandedPropertyList,
       String embeddablePropertyName);
+
+  /**
+   * The method checks if the given EDM complex type is referenced as a Key property in any Entity
+   * @param complexTypeName
+   * EDM complex type name
+   * @return
+   * <ul><li><b>true</b> : if the complex type is referenced as an entity's key property</li>
+   * <li><b>false</b> : if the complex type is not referenced as an entity's key property</li>
+   * </ul>
+   * 
+   */
+  public boolean isReferencedInKey(String complexTypeName);
+  
+  /**
+   * The method sets the given EDM complex type as referenced in an Entity as a key property
+   * @param complexTypeName
+   *  EDM complex Type name
+   */
+  public void setReferencedInKey(String complexTypeName);
 
 }

@@ -264,10 +264,9 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
                 complexType.getName()));
 
             properties.add(currentComplexProperty);
-            List<String> nonKeyComplexTypes = schemaView.getNonKeyComplexTypeList();
-            if (!nonKeyComplexTypes.contains(currentComplexProperty.getType().getName()))
+            if (!complexTypeView.isReferencedInKey(currentComplexProperty.getType().getName()))
             {
-              schemaView.addNonKeyComplexName(currentComplexProperty.getType().getName());
+              complexTypeView.setReferencedInKey(currentComplexProperty.getType().getName());
             }
           }
 

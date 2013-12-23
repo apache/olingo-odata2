@@ -323,14 +323,6 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView, JPAEdmAsso
   }
 
   @Override
-  public List<String> getNonKeyComplexTypeList() {
-    return null;
-  }
-
-  @Override
-  public void addNonKeyComplexName(final String complexTypeName) {}
-
-  @Override
   public JPAEdmMappingModelAccess getJPAEdmMappingModelAccess() {
     return null;
   }
@@ -391,6 +383,18 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView, JPAEdmAsso
   public boolean isDefaultNamingSkipped() {
     // TODO Auto-generated method stub
     return false;
+  }
+
+  @Override
+  public boolean isReferencedInKey(String complexTypeName) {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public void setReferencedInKey(String complexTypeName) {
+    // TODO Auto-generated method stub
+
   }
 
 }

@@ -52,11 +52,15 @@ public class JPAEdmComplexType extends JPAEdmBaseViewImpl implements JPAEdmCompl
   private List<ComplexType> consistentComplextTypes = null;
   private boolean directBuild;
   private EmbeddableType<?> nestedComplexType = null;
+  private List<String> nonKeyComplexList = null;
 
   public JPAEdmComplexType(final JPAEdmSchemaView view) {
     super(view);
     schemaView = view;
     directBuild = true;
+    if (nonKeyComplexList == null) {
+      nonKeyComplexList = new ArrayList<String>();
+    }
   }
 
   public JPAEdmComplexType(final JPAEdmSchemaView view, final Attribute<?, ?> complexAttribute) {
@@ -69,6 +73,19 @@ public class JPAEdmComplexType extends JPAEdmBaseViewImpl implements JPAEdmCompl
       }
     }
     directBuild = false;
+    if (nonKeyComplexList == null) {
+      nonKeyComplexList = new ArrayList<String>();
+    }
+  }
+
+  @Override
+  public boolean isReferencedInKey(final String complexTypeName) {
+    return nonKeyComplexList.contains(complexTypeName);
+  }
+
+  @Override
+  public void setReferencedInKey(final String complexTypeName) {
+    nonKeyComplexList.add(complexTypeName);
   }
 
   @Override
@@ -151,7 +168,6 @@ public class JPAEdmComplexType extends JPAEdmBaseViewImpl implements JPAEdmCompl
         JPAEdmMapping oldMapping = (JPAEdmMapping) mapping;
         newMapping.setJPAColumnName(oldMapping.getJPAColumnName());
         newMapping.setInternalName(embeddablePropertyName + "." + mapping.getInternalName());
-        newMapping.setMimeType(mapping.getMimeType());
         newMapping.setObject(mapping.getObject());
         newMapping.setJPAType(oldMapping.getJPAType());
         newSimpleProperty.setMapping(newMapping);

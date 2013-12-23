@@ -24,9 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.metamodel.Attribute;
@@ -178,8 +176,8 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
   }
 
   @Override
-  public List<String> getNonKeyComplexTypeList() {
-    return new ArrayList<String>();
+  public boolean isReferencedInKey(final String complexType) {
+    return false;
   }
 
   @Override

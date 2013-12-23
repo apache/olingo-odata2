@@ -289,15 +289,33 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
 
           break;
         case COMPLEX:
+          String embeddableTypeName = null;
           ComplexType complexType = null;
+          boolean exists = false;
+
           if (returnType.isCollection() == false) {
-            complexType = jpaEdmComplexTypeView.searchEdmComplexType(methodReturnType.getName());
+            embeddableTypeName = methodReturnType.getName();
           } else {
-            complexType = jpaEdmComplexTypeView.searchEdmComplexType(getReturnTypeName(method));
+            embeddableTypeName = getReturnTypeName(method);
           }
-          if (complexType == null) {
-            throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND
-                .addContent(method.getDeclaringClass(), method.getName(), methodReturnType.getSimpleName()), null);
+
+          complexType = jpaEdmComplexTypeView.searchEdmComplexType(embeddableTypeName);
+
+          if (complexType == null) {// This could occure of non JPA Embeddable Types : Extension Scenario
+            List<ComplexType> complexTypeList = schemaView.getEdmSchema().getComplexTypes();
+            String[] complexTypeNameParts = embeddableTypeName.split("\\.");
+            String complexTypeName = complexTypeNameParts[complexTypeNameParts.length - 1];
+            for (ComplexType complexType1 : complexTypeList) {
+              if (complexType1.getName().equals(complexTypeName)) {
+                complexType = complexType1;
+                exists = true;
+                break;
+              }
+            }
+            if (exists == false) {
+              throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND
+                  .addContent(method.getDeclaringClass(), method.getName(), methodReturnType.getSimpleName()), null);
+            }
           }
           functionReturnType.setTypeName(JPAEdmNameBuilder.build(schemaView, complexType.getName()));
           break;

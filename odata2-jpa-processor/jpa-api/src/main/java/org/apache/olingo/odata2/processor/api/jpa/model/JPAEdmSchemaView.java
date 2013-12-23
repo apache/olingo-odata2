@@ -19,7 +19,6 @@
 package org.apache.olingo.odata2.processor.api.jpa.model;
 
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 
@@ -108,9 +107,5 @@ public interface JPAEdmSchemaView extends JPAEdmBaseView {
    * @return a HashMap of Class and the methods in the class
    */
   public HashMap<Class<?>, String[]> getRegisteredOperations();
-
-  public List<String> getNonKeyComplexTypeList();
-
-  public void addNonKeyComplexName(String complexTypeName);
 
 }

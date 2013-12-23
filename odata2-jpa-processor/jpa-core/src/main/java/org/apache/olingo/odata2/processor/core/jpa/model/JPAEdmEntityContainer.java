@@ -28,7 +28,6 @@ import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmAssociationSetView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityContainerView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntitySetView;
-import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmFunctionImportView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
 
@@ -137,14 +136,6 @@ public class JPAEdmEntityContainer extends JPAEdmBaseViewImpl implements JPAEdmE
       }
 
       JPAEdmNameBuilder.build(JPAEdmEntityContainer.this);
-      if (schemaView.getJPAEdmExtension() != null) {
-        JPAEdmFunctionImportView functionImportView = new JPAEdmFunctionImport(schemaView);
-        functionImportView.getBuilder().build();
-        if (functionImportView.getConsistentFunctionImportList() != null) {
-          currentEntityContainer.setFunctionImports(functionImportView.getConsistentFunctionImportList());
-        }
-      }
-
       consistentEntityContainerList.add(currentEntityContainer);
       isConsistent = true;
 

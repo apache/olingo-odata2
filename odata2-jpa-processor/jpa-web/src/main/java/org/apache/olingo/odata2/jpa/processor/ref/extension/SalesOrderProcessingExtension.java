@@ -18,15 +18,45 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.ref.extension;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.edm.provider.ComplexType;
+import org.apache.olingo.odata2.api.edm.provider.Property;
+import org.apache.olingo.odata2.api.edm.provider.Schema;
+import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 
 public class SalesOrderProcessingExtension implements JPAEdmExtension {
 
   @Override
-  public void extendJPAEdmSchema(final JPAEdmSchemaView arg0) {
-    // TODO Auto-generated method stub
+  public void extendJPAEdmSchema(final JPAEdmSchemaView view) {
+    Schema edmSchema = view.getEdmSchema();
+    edmSchema.getComplexTypes().add(getComplexType());
+  }
 
+  private ComplexType getComplexType() {
+    ComplexType complexType = new ComplexType();
+    
+    List<Property> properties = new ArrayList<Property>();
+    SimpleProperty property = new SimpleProperty();
+    
+    property.setName("Amount");
+    property.setType(EdmSimpleTypeKind.Double);
+    properties.add(property);
+    
+    property = new SimpleProperty();
+    property.setName("Currency");
+    property.setType(EdmSimpleTypeKind.String);
+    properties.add(property);
+    
+    complexType.setName("OrderValue");
+    complexType.setProperties(properties);
+    
+    return complexType;
+    
   }
 
   @Override

@@ -35,6 +35,8 @@ import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmComplexTypeView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityContainerView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntitySetView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmEntityTypeView;
+import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension;
+import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmFunctionImportView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmModelView;
 import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.processor.core.jpa.access.model.JPAEdmNameBuilder;
@@ -45,24 +47,10 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements JPAEdmSchemaView
   private JPAEdmComplexTypeView complexTypeView;
   private JPAEdmEntityContainerView entityContainerView;
   private JPAEdmAssociationView associationView = null;
-  private List<String> nonKeyComplexList = null;
   private HashMap<Class<?>, String[]> customOperations = null;
 
   public JPAEdmSchema(final JPAEdmModelView modelView) {
     super(modelView);
-    if (nonKeyComplexList == null) {
-      nonKeyComplexList = new ArrayList<String>();
-    }
-  }
-
-  @Override
-  public List<String> getNonKeyComplexTypeList() {
-    return nonKeyComplexList;
-  }
-
-  @Override
-  public void addNonKeyComplexName(final String complexTypeName) {
-    nonKeyComplexList.add(complexTypeName);
   }
 
   @Override
@@ -127,10 +115,6 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements JPAEdmSchemaView
       complexTypeView = new JPAEdmComplexType(JPAEdmSchema.this);
       complexTypeView.getBuilder().build();
 
-      if (getJPAEdmExtension() != null) {
-        getJPAEdmExtension().extendWithOperation(JPAEdmSchema.this);
-      }
-
       entityContainerView = new JPAEdmEntityContainer(JPAEdmSchema.this);
       entityContainerView.getBuilder().build();
       schema.setEntityContainers(entityContainerView.getConsistentEdmEntityContainerList());
@@ -146,7 +130,8 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements JPAEdmSchemaView
         List<ComplexType> complexTypes = complexTypeView.getConsistentEdmComplexTypes();
         List<ComplexType> existingComplexTypes = new ArrayList<ComplexType>();
         for (ComplexType complexType : complexTypes) {
-          if (complexType != null && nonKeyComplexList.contains(complexType.getName())) {// null check for exclude
+          if (complexType != null && complexTypeView.isReferencedInKey(complexType.getName())) {// null check for
+                                                                                                // exclude
             existingComplexTypes.add(complexType);
           }
         }
@@ -190,6 +175,19 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements JPAEdmSchemaView
         }
       }
 
+      JPAEdmExtension edmExtension = getJPAEdmExtension();
+      if (edmExtension != null) {
+        edmExtension.extendJPAEdmSchema(JPAEdmSchema.this);
+        edmExtension.extendWithOperation(JPAEdmSchema.this);
+
+        JPAEdmFunctionImportView functionImportView = new JPAEdmFunctionImport(JPAEdmSchema.this);
+        functionImportView.getBuilder().build();
+        if (functionImportView.getConsistentFunctionImportList() != null) {
+          entityContainerView.getEdmEntityContainer().setFunctionImports(
+              functionImportView.getConsistentFunctionImportList());
+        }
+
+      }
     }
 
   }
