@@ -19,10 +19,11 @@
 package org.apache.olingo.odata2.annotation.processor.ref;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
-import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import junit.framework.Assert;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
@@ -42,17 +43,32 @@ public class ServiceJsonTest extends AbstractRefTest {
   public void serviceDocumentDollarFormatJson() throws Exception {
     final HttpResponse response = callUri("?$format=json");
     // checkMediaType(response, HttpContentType.APPLICATION_JSON);
-    assertEquals("{\"d\":{\"EntitySets\":["
-        + "\"Buildings\",\"Employees\",\"Managers\",\"Photos\",\"Rooms\",\"Teams\"]}}",
-        getBody(response));
+    String body = getBody(response);
+
+    Assert.assertTrue(jsonDataResponseContains(body, "Buildings"));
+    Assert.assertTrue(jsonDataResponseContains(body, "Employees"));
+    Assert.assertTrue(jsonDataResponseContains(body, "Managers"));
+    Assert.assertTrue(jsonDataResponseContains(body, "Photos"));
+    Assert.assertTrue(jsonDataResponseContains(body, "Rooms"));
+    Assert.assertTrue(jsonDataResponseContains(body, "Teams"));
   }
 
+  private boolean jsonDataResponseContains(String content, String containingValue) {
+    return content.matches("\\{\"d\":\\{\"EntitySets\":\\[.*"
+        + containingValue + ".*\"\\]\\}\\}");
+  }
+  
   @Test
   public void serviceDocumentAcceptHeaderJson() throws Exception {
     final HttpResponse response = callUri("", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_JSON);
-    assertEquals("{\"d\":{\"EntitySets\":["
-        + "\"Buildings\",\"Employees\",\"Managers\",\"Photos\",\"Rooms\",\"Teams\"]}}",
-        getBody(response));
+    String body = getBody(response);
+
+    Assert.assertTrue(jsonDataResponseContains(body, "Buildings"));
+    Assert.assertTrue(jsonDataResponseContains(body, "Employees"));
+    Assert.assertTrue(jsonDataResponseContains(body, "Managers"));
+    Assert.assertTrue(jsonDataResponseContains(body, "Photos"));
+    Assert.assertTrue(jsonDataResponseContains(body, "Rooms"));
+    Assert.assertTrue(jsonDataResponseContains(body, "Teams"));
   }
 
   @Test
