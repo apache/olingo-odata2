@@ -113,20 +113,23 @@ public class SalesOrderHeaderProcessor {
   }
 
   @EdmFunctionImport(returnType = @ReturnType(type = Type.COMPLEX))
-  public OrderValue getOrderValue(
+  public OrderValue orderValue(
       @EdmFunctionImportParameter(name = "SoId", facets = @EdmFacets(nullable = false)) final Long soID) {
     Query q = em
         .createQuery("SELECT E1 from SalesOrderHeader E1 WHERE E1.soId = "
             + soID + "l");
-    @SuppressWarnings("unchecked")
-    List<SalesOrderHeader> soList = (List<SalesOrderHeader>) q
-        .getResultList();
-    OrderValue orderValue = new OrderValue();
-    if (!soList.isEmpty()) {
-
-      orderValue.setAmount(soList.get(0).getNetAmount());
-      orderValue.setCurrency(soList.get(0).getCurrencyCode());
+    if (q.getResultList().isEmpty()) {
+      return null;
     }
+    SalesOrderHeader so = (SalesOrderHeader) q.getResultList().get(0);
+    double amount = 0;
+    for (SalesOrderItem soi : so.getSalesOrderItem()) {
+      amount = amount
+          + (soi.getAmount() * soi.getDiscount() * soi.getQuantity());
+    }
+    OrderValue orderValue = new OrderValue();
+    orderValue.setAmount(amount);
+    orderValue.setCurrency(so.getCurrencyCode());
     return orderValue;
   }
 

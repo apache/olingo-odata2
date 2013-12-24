@@ -285,6 +285,15 @@ th,td {
 						target="_blank">SalesOrders(2L)?$expand=SalesOrderLineItemDetails/MaterialDetails,SalesOrderLineItemDetails/MaterialDetails/StoreDetails,NotesDetails</a></li>
 
 				</ul>
+				<h3>Function Imports</h3>
+				<ul>
+					<li><a
+						href="SalesOrderProcessing.svc/FindAllSalesOrders?DeliveryStatusCode='01'"
+						target="_blank">SalesOrderProcessing.svc/FindAllSalesOrders?DeliveryStatusCode='01'</a></li>
+					<li><a
+						href="SalesOrderProcessing.svc/orderValue?SoId=2L"
+						target="_blank">SalesOrderProcessing.svc/orderValue?SoId=2L</a></li>
+				</ul>
 			</td>
 			<td valign="top">&nbsp;</td>
 			<td valign="bottom">
