@@ -26,8 +26,8 @@ import org.apache.olingo.odata2.api.edm.provider.ComplexType;
 import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
-import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension;
-import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmSchemaView;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmSchemaView;
 
 public class SalesOrderProcessingExtension implements JPAEdmExtension {
 

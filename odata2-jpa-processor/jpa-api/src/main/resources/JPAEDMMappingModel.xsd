@@ -19,8 +19,8 @@
 -->
 <xs:schema attributeFormDefault="unqualified"
 	elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://www.apache.org/olingo/odata2/processor/api/jpa/model/mapping"
-	xmlns:tns="http://www.apache.org/olingo/odata2/processor/api/jpa/model/mapping">
+	targetNamespace="http://www.apache.org/olingo/odata2/jpa/processor/api/model/mapping"
+	xmlns:tns="http://www.apache.org/olingo/odata2/jpa/processor/api/model/mapping">
 
 	<xs:element name="JPAEDMMappingModel">
 		<xs:annotation>

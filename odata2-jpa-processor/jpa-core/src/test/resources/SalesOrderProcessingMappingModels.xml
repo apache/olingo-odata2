@@ -18,7 +18,7 @@
          under the License.
 -->
 <JPAEDMMappingModel
-	xmlns="http://www.apache.org/olingo/odata2/processor/api/jpa/model/mapping">
+	xmlns="http://www.apache.org/olingo/odata2/jpa/processor/api/model/mapping">
 	<PersistenceUnit name="salesorderprocessing">
 		<EDMSchemaNamespace>SalesOrderProcessing</EDMSchemaNamespace>
 		<JPAEntityTypes>
