@@ -23,6 +23,7 @@ import java.util.Locale;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAMessageService;
 
 /**
@@ -33,6 +34,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAMessageServi
  * <li>OData JPA Processor of type {@link org.apache.olingo.odata2.api.processor.ODataSingleProcessor}</li>
  * <li>JPA EDM Provider of type {@link org.apache.olingo.odata2.api.edm.provider.EdmProvider}</li>
  * <li>OData JPA Context {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext}</li>
+ * <li>OData JPA Response Builder {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder}</li>
  * </ul>
  * </p>
  * 
@@ -79,4 +81,14 @@ public interface ODataJPAAccessFactory {
    * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAMessageService}
    */
   public ODataJPAMessageService getODataJPAMessageService(Locale locale);
+
+  /**
+   * @param oDataJPAContext
+   * an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext}.
+   * The context should be initialized properly and cannot be null.
+   * 
+   * The method creates an instance of OData Response Builder for building OData Responses from a JPA Entity.
+   * @return an instance of type{@link org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder}
+   */
+  public ODataJPAResponseBuilder getODataJPAResponseBuilder(ODataJPAContext oDataJPAContext);
 }

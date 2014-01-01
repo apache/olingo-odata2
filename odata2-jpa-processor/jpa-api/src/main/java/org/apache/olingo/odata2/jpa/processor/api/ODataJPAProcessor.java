@@ -27,8 +27,8 @@ import org.apache.olingo.odata2.jpa.processor.api.factory.ODataJPAFactory;
  * Extend this class and implement an OData JPA processor if the default
  * behavior of OData JPA Processor library has to be overwritten.
  * 
- * 
- * 
+ * The class encapsulates a default processor for handling OData requests and
+ * a default builder to build an OData response. 
  * 
  */
 public abstract class ODataJPAProcessor extends ODataSingleProcessor {
@@ -43,6 +43,12 @@ public abstract class ODataJPAProcessor extends ODataSingleProcessor {
    * instance is created using {@link org.apache.olingo.odata2.jpa.processor.api.factory.JPAAccessFactory}.
    */
   protected JPAProcessor jpaProcessor;
+
+  /**
+   * An instance of {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder}. The instance
+   * is created using {@link org.apache.olingo.odata2.jpa.processor.api.factory.ODataJPAAccessFactory}.
+   */
+  protected ODataJPAResponseBuilder responseBuilder;
 
   public ODataJPAContext getOdataJPAContext() {
     return oDataJPAContext;
@@ -64,6 +70,8 @@ public abstract class ODataJPAProcessor extends ODataSingleProcessor {
     }
     this.oDataJPAContext = oDataJPAContext;
     jpaProcessor = ODataJPAFactory.createFactory().getJPAAccessFactory().getJPAProcessor(this.oDataJPAContext);
+    responseBuilder =
+        ODataJPAFactory.createFactory().getODataJPAAccessFactory().getODataJPAResponseBuilder(this.oDataJPAContext);
   }
 
 }

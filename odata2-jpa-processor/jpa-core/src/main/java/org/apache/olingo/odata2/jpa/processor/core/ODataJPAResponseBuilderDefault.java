@@ -59,15 +59,23 @@ import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAExpandCallBack;
 
-public final class ODataJPAResponseBuilder {
+public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBuilder {
+
+  private final ODataJPAContext oDataJPAContext;
+
+  public ODataJPAResponseBuilderDefault(final ODataJPAContext context) {
+    oDataJPAContext = context;
+  }
 
   /* Response for Read Entity Set */
-  public static <T> ODataResponse build(final List<T> jpaEntities, final GetEntitySetUriInfo resultsView,
-      final String contentType, final ODataJPAContext odataJPAContext) throws ODataJPARuntimeException {
+  @Override
+  public ODataResponse build(final GetEntitySetUriInfo resultsView, final List<Object> jpaEntities,
+      final String contentType) throws ODataJPARuntimeException {
 
     EdmEntityType edmEntityType = null;
     ODataResponse odataResponse = null;
@@ -106,7 +114,7 @@ public final class ODataJPAResponseBuilder {
 
       EntityProviderWriteProperties feedProperties = null;
 
-      feedProperties = getEntityProviderProperties(odataJPAContext, resultsView, edmEntityList);
+      feedProperties = getEntityProviderProperties(oDataJPAContext, resultsView, edmEntityList);
       odataResponse =
           EntityProvider.writeFeed(contentType, resultsView.getTargetEntitySet(), edmEntityList, feedProperties);
       odataResponse = ODataResponse.fromResponse(odataResponse).status(HttpStatusCodes.OK).build();
@@ -121,8 +129,9 @@ public final class ODataJPAResponseBuilder {
   }
 
   /* Response for Read Entity */
-  public static ODataResponse build(final Object jpaEntity, final GetEntityUriInfo resultsView,
-      final String contentType, final ODataJPAContext oDataJPAContext) throws ODataJPARuntimeException,
+  @Override
+  public ODataResponse build(final GetEntityUriInfo resultsView, final Object jpaEntity,
+      final String contentType) throws ODataJPARuntimeException,
       ODataNotFoundException {
 
     List<ArrayList<NavigationPropertySegment>> expandList = null;
@@ -170,7 +179,8 @@ public final class ODataJPAResponseBuilder {
   }
 
   /* Response for $count */
-  public static ODataResponse build(final long jpaEntityCount, final ODataJPAContext oDataJPAContext)
+  @Override
+  public ODataResponse build(final long jpaEntityCount)
       throws ODataJPARuntimeException {
 
     ODataResponse odataResponse = null;
@@ -185,8 +195,9 @@ public final class ODataJPAResponseBuilder {
 
   /* Response for Create Entity */
   @SuppressWarnings("unchecked")
-  public static ODataResponse build(final List<Object> createdObjectList, final PostUriInfo uriInfo,
-      final String contentType, final ODataJPAContext oDataJPAContext) throws ODataJPARuntimeException,
+  @Override
+  public ODataResponse build(final PostUriInfo uriInfo, final List<Object> createdObjectList,
+      final String contentType) throws ODataJPARuntimeException,
       ODataNotFoundException {
 
     if (createdObjectList == null || createdObjectList.size() == 0 || createdObjectList.get(0) == null) {
@@ -235,7 +246,8 @@ public final class ODataJPAResponseBuilder {
   }
 
   /* Response for Update Entity */
-  public static ODataResponse build(final Object updatedObject, final PutMergePatchUriInfo putUriInfo)
+  @Override
+  public ODataResponse build(final PutMergePatchUriInfo putUriInfo, final Object updatedObject)
       throws ODataJPARuntimeException, ODataNotFoundException {
     if (updatedObject == null) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
@@ -244,7 +256,8 @@ public final class ODataJPAResponseBuilder {
   }
 
   /* Response for Delete Entity */
-  public static ODataResponse build(final Object deletedObject, final DeleteUriInfo deleteUriInfo)
+  @Override
+  public ODataResponse build(final DeleteUriInfo deleteUriInfo, final Object deletedObject)
       throws ODataJPARuntimeException, ODataNotFoundException {
 
     if (deletedObject == null) {
@@ -254,7 +267,8 @@ public final class ODataJPAResponseBuilder {
   }
 
   /* Response for Function Import Single Result */
-  public static ODataResponse build(final Object result, final GetFunctionImportUriInfo resultsView)
+  @Override
+  public ODataResponse build(final GetFunctionImportUriInfo resultsView, final Object result)
       throws ODataJPARuntimeException {
 
     try {
@@ -281,8 +295,9 @@ public final class ODataJPAResponseBuilder {
   }
 
   /* Response for Function Import Multiple Result */
-  public static ODataResponse build(final List<Object> resultList, final GetFunctionImportUriInfo resultsView,
-      final String contentType, final ODataJPAContext oDataJPAContext) throws ODataJPARuntimeException,
+  @Override
+  public ODataResponse build(final GetFunctionImportUriInfo resultsView, final List<Object> resultList,
+      final String contentType) throws ODataJPARuntimeException,
       ODataNotFoundException {
 
     ODataResponse odataResponse = null;
@@ -344,8 +359,9 @@ public final class ODataJPAResponseBuilder {
   }
 
   /* Response for Read Entity Link */
-  public static ODataResponse build(final Object jpaEntity, final GetEntityLinkUriInfo resultsView,
-      final String contentType, final ODataJPAContext oDataJPAContext) throws ODataNotFoundException,
+  @Override
+  public ODataResponse build(final GetEntityLinkUriInfo resultsView, final Object jpaEntity,
+      final String contentType) throws ODataNotFoundException,
       ODataJPARuntimeException {
 
     if (jpaEntity == null) {
@@ -380,8 +396,9 @@ public final class ODataJPAResponseBuilder {
   }
 
   /* Response for Read Entity Links */
-  public static <T> ODataResponse build(final List<T> jpaEntities, final GetEntitySetLinksUriInfo resultsView,
-      final String contentType, final ODataJPAContext oDataJPAContext) throws ODataJPARuntimeException {
+  @Override
+  public ODataResponse build(final GetEntitySetLinksUriInfo resultsView, final List<Object> jpaEntities,
+      final String contentType) throws ODataJPARuntimeException {
     EdmEntityType edmEntityType = null;
     ODataResponse odataResponse = null;
 

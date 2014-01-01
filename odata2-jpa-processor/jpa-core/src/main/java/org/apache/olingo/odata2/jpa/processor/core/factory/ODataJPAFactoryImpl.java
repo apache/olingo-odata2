@@ -23,21 +23,23 @@ import java.util.Locale;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmMappingModelAccess;
-import org.apache.olingo.odata2.jpa.processor.api.access.JPAProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAMethodContext.JPAMethodContextBuilder;
+import org.apache.olingo.odata2.jpa.processor.api.access.JPAProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAMessageService;
 import org.apache.olingo.odata2.jpa.processor.api.factory.JPAAccessFactory;
 import org.apache.olingo.odata2.jpa.processor.api.factory.JPQLBuilderFactory;
 import org.apache.olingo.odata2.jpa.processor.api.factory.ODataJPAAccessFactory;
 import org.apache.olingo.odata2.jpa.processor.api.factory.ODataJPAFactory;
+import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextView;
-import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement.JPQLStatementBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmModelView;
 import org.apache.olingo.odata2.jpa.processor.core.ODataJPAContextImpl;
 import org.apache.olingo.odata2.jpa.processor.core.ODataJPAProcessorDefault;
+import org.apache.olingo.odata2.jpa.processor.core.ODataJPAResponseBuilderDefault;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAFunctionContext;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAProcessorImpl;
 import org.apache.olingo.odata2.jpa.processor.core.access.model.JPAEdmMappingModelService;
@@ -193,6 +195,11 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
     @Override
     public ODataJPAMessageService getODataJPAMessageService(final Locale locale) {
       return ODataJPAMessageServiceDefault.getInstance(locale);
+    }
+
+    @Override
+    public ODataJPAResponseBuilder getODataJPAResponseBuilder(final ODataJPAContext oDataJPAContext) {
+      return new ODataJPAResponseBuilderDefault(oDataJPAContext);
     }
 
   }

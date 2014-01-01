@@ -50,10 +50,10 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
   public ODataResponse readEntitySet(final GetEntitySetUriInfo uriParserResultView, final String contentType)
       throws ODataException {
 
-    List<?> jpaEntities = jpaProcessor.process(uriParserResultView);
+    List<Object> jpaEntities = jpaProcessor.process(uriParserResultView);
 
     ODataResponse oDataResponse =
-        ODataJPAResponseBuilder.build(jpaEntities, uriParserResultView, contentType, oDataJPAContext);
+        responseBuilder.build(uriParserResultView, jpaEntities, contentType);
 
     return oDataResponse;
   }
@@ -65,7 +65,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
     Object jpaEntity = jpaProcessor.process(uriParserResultView);
 
     ODataResponse oDataResponse =
-        ODataJPAResponseBuilder.build(jpaEntity, uriParserResultView, contentType, oDataJPAContext);
+        responseBuilder.build(uriParserResultView, jpaEntity, contentType);
 
     return oDataResponse;
   }
@@ -76,7 +76,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
 
     long jpaEntityCount = jpaProcessor.process(uriParserResultView);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntityCount, oDataJPAContext);
+    ODataResponse oDataResponse = responseBuilder.build(jpaEntityCount);
 
     return oDataResponse;
   }
@@ -87,7 +87,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
 
     long jpaEntityCount = jpaProcessor.process(uriInfo);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntityCount, oDataJPAContext);
+    ODataResponse oDataResponse = responseBuilder.build(jpaEntityCount);
 
     return oDataResponse;
   }
@@ -99,7 +99,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
     List<Object> createdJpaEntityList = jpaProcessor.process(uriParserResultView, content, requestContentType);
 
     ODataResponse oDataResponse =
-        ODataJPAResponseBuilder.build(createdJpaEntityList, uriParserResultView, contentType, oDataJPAContext);
+        responseBuilder.build(uriParserResultView, createdJpaEntityList, contentType);
 
     return oDataResponse;
   }
@@ -110,7 +110,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
 
     Object jpaEntity = jpaProcessor.process(uriParserResultView, content, requestContentType);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(jpaEntity, uriParserResultView);
+    ODataResponse oDataResponse = responseBuilder.build(uriParserResultView, jpaEntity);
 
     return oDataResponse;
   }
@@ -121,7 +121,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
 
     Object deletedObj = jpaProcessor.process(uriParserResultView, contentType);
 
-    ODataResponse oDataResponse = ODataJPAResponseBuilder.build(deletedObj, uriParserResultView);
+    ODataResponse oDataResponse = responseBuilder.build(uriParserResultView, deletedObj);
     return oDataResponse;
   }
 
@@ -132,7 +132,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
     List<Object> resultEntity = jpaProcessor.process(uriParserResultView);
 
     ODataResponse oDataResponse =
-        ODataJPAResponseBuilder.build(resultEntity, uriParserResultView, contentType, oDataJPAContext);
+        responseBuilder.build(uriParserResultView, resultEntity, contentType);
 
     return oDataResponse;
   }
@@ -144,7 +144,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
     List<Object> result = jpaProcessor.process(uriParserResultView);
 
     ODataResponse oDataResponse =
-        ODataJPAResponseBuilder.build(result, uriParserResultView, contentType, oDataJPAContext);
+        responseBuilder.build(uriParserResultView, result, contentType);
 
     return oDataResponse;
   }
@@ -156,7 +156,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
     Object jpaEntity = jpaProcessor.process(uriParserResultView);
 
     ODataResponse oDataResponse =
-        ODataJPAResponseBuilder.build(jpaEntity, uriParserResultView, contentType, oDataJPAContext);
+        responseBuilder.build(uriParserResultView, jpaEntity, contentType);
 
     return oDataResponse;
   }
@@ -168,7 +168,7 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
     List<Object> jpaEntity = jpaProcessor.process(uriParserResultView);
 
     ODataResponse oDataResponse =
-        ODataJPAResponseBuilder.build(jpaEntity, uriParserResultView, contentType, oDataJPAContext);
+        responseBuilder.build(uriParserResultView, jpaEntity, contentType);
 
     return oDataResponse;
   }

@@ -58,14 +58,22 @@ import org.apache.olingo.odata2.api.uri.SelectItem;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.jpa.processor.core.ODataJPAResponseBuilder;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmTestModelView;
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
+
+  private ODataJPAResponseBuilder responseBuilder;
+
+  @Before
+  public void init() {
+    responseBuilder = new ODataJPAResponseBuilderDefault(getODataJPAContext());
+  }
 
   /*
    * This Unit is supposed to test the building of Entity Provider Properties for query with $expand
@@ -80,12 +88,11 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     edmEntity.put("ID", 1);
     edmEntityList.add(edmEntity);
     // Invoking the private static method using reflection
-    Class<?> clazz = ODataJPAResponseBuilder.class;
+    Class<?> clazz = ODataJPAResponseBuilderDefault.class;
     Object[] actualParameters = { oDataJPAContext, getEntitySetUriInfo, edmEntityList };
     Class<?>[] formalParameters = { ODataJPAContext.class, GetEntitySetUriInfo.class, List.class };
     EntityProviderWriteProperties providerProperties = null;
     try {
-      ODataJPAResponseBuilder responseBuilder = (ODataJPAResponseBuilder) clazz.newInstance();
       Method method = clazz.getDeclaredMethod("getEntityProviderProperties", formalParameters);
       method.setAccessible(true);
       providerProperties = (EntityProviderWriteProperties) method.invoke(responseBuilder, actualParameters);
@@ -99,8 +106,6 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     } catch (IllegalAccessException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InvocationTargetException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    } catch (InstantiationException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
@@ -114,12 +119,11 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     // Getting the EntityUriInfo
     GetEntityUriInfo getEntityUriInfo = mockEntityUriInfoForExpand();
     ODataJPAContext oDataJPAContext = getODataJPAContext();
-    Class<?> clazz = ODataJPAResponseBuilder.class;
+    Class<?> clazz = ODataJPAResponseBuilderDefault.class;
     Object[] actualParameters = { oDataJPAContext, getEntityUriInfo };
     Class<?>[] formalParameters = { ODataJPAContext.class, GetEntityUriInfo.class };
     EntityProviderWriteProperties providerProperties = null;
     try {
-      ODataJPAResponseBuilder responseBuilder = (ODataJPAResponseBuilder) clazz.newInstance();
       Method method = clazz.getDeclaredMethod("getEntityProviderProperties", formalParameters);
       method.setAccessible(true);
       providerProperties = (EntityProviderWriteProperties) method.invoke(responseBuilder, actualParameters);
@@ -133,8 +137,6 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     } catch (IllegalAccessException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InvocationTargetException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    } catch (InstantiationException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
@@ -152,12 +154,11 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     navPropList2.add(getNavigationPropertySegment("DemoNavigationProperties21"));
     navPropList2.add(getNavigationPropertySegment("DemoNavigationProperties22"));
     expand.add(navPropList2);
-    Class<?> clazz = ODataJPAResponseBuilder.class;
+    Class<?> clazz = ODataJPAResponseBuilderDefault.class;
     Object[] actualParameters = { expand };
     Class<?>[] formalParameters = { List.class };
     List<EdmNavigationProperty> navigationProperties = null;
     try {
-      ODataJPAResponseBuilder responseBuilder = (ODataJPAResponseBuilder) clazz.newInstance();
       Method method = clazz.getDeclaredMethod("constructListofNavProperty", formalParameters);
       method.setAccessible(true);
       navigationProperties = (List<EdmNavigationProperty>) method.invoke(responseBuilder, actualParameters);
@@ -173,8 +174,6 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (InvocationTargetException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    } catch (InstantiationException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (EdmException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -184,8 +183,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   @Test
   public void testBuildListOfTGetEntitySetUriInfoStringODataJPAContext() {
     try {
-      assertNotNull(ODataJPAResponseBuilder.build(getJPAEntities(), getResultsView(), "application/xml",
-          getODataJPAContext()));
+      assertNotNull(responseBuilder.build(getResultsView(), getJPAEntities(), "application/xml"));
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -198,7 +196,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
       EntityType entity = new EntityType();
       entity.setName("SalesOrderHeader");
       try {
-        assertNotNull(ODataJPAResponseBuilder.build(getEntity(), getLocalGetURIInfo(), "xml", getODataJPAContext()));
+        assertNotNull(responseBuilder.build(getLocalGetURIInfo(), getEntity(), "xml"));
       } catch (ODataNotFoundException e) {
         assertTrue(true);
       }
@@ -206,7 +204,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
       assertTrue(true);// Nothing to do, Expected.
     }
     try {// Bad content type
-      assertNotNull(ODataJPAResponseBuilder.build(getJPAEntities(), getResultsView(), "xml", getODataJPAContext()));
+      assertNotNull(responseBuilder.build(getResultsView(), getJPAEntities(), "xml"));
     } catch (ODataJPARuntimeException e) {
       assertTrue(true);// Nothing to do, Expected.
     }
@@ -216,8 +214,8 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   @Test
   public void testBuildObjectGetEntityUriInfoStringODataJPAContext() throws ODataNotFoundException {
     try {
-      assertNotNull(ODataJPAResponseBuilder.build(new SalesOrderHeader(2, 10), getLocalGetURIInfo(), "application/xml",
-          getODataJPAContext()));
+      assertNotNull(responseBuilder.build(getLocalGetURIInfo(), (Object) new SalesOrderHeader(2, 10),
+          "application/xml"));
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -226,7 +224,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   @Test
   public void testBuildNullSelects() {// Bad content type
     try {
-      ODataJPAResponseBuilder.build(getJPAEntities(), getResultsViewWithNullSelects(), "xml", getODataJPAContext());
+      responseBuilder.build(getResultsViewWithNullSelects(), getJPAEntities(), "xml");
     } catch (ODataJPARuntimeException e) {
       assertTrue(true);// Nothing to do, Expected.
     } catch (Exception e) {
@@ -238,7 +236,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   public void testBuildGetCount() {
     ODataResponse objODataResponse = null;
     try {
-      objODataResponse = ODataJPAResponseBuilder.build(1, getODataJPAContext());
+      objODataResponse = responseBuilder.build(1);
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
