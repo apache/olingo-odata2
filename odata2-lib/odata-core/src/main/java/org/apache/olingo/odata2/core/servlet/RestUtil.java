@@ -11,9 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.TreeSet;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,18 +29,24 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Decoder;
 
 public class RestUtil {
-  private static final String REG_EX_QUALITY_FACTOR = "q=((?:1\\.0{0,3})|(?:0\\.[0-9]{0,2}[1-9]))";
   private static final String REG_EX_OPTIONAL_WHITESPACE = "\\s?";
-  private static final Pattern REG_EX_ACCEPT = Pattern.compile("((?:[a-z\\*\\s]+/[a-zA-Z\\+\\*\\-=\\s]+"
-      + "(?:;\\s*[a-pr-zA-PR-Z][a-zA-Z0-9\\-\\s]*=[a-zA-Z0-9\\-\\s]+)*))");
-  //  private static final Pattern REG_EX_ACCEPT_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT + "(?:;"
-  //      + REG_EX_OPTIONAL_WHITESPACE + "q=([0-9]\\.?[0-9]{0,3}))?");
-  private static final Pattern REG_EX_ACCEPT_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT + "(?:;"
-      + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QUALITY_FACTOR + ")?");
-  private static final Pattern REG_EX_ACCEPT_LANGUAGES = Pattern
-      .compile("((?:[a-z]{1,8})|(?:\\*))\\-?([a-zA-Z]{1,8})?");
-  private static final Pattern REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT_LANGUAGES + "(?:;"
-      + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QUALITY_FACTOR + ")?");
+
+  //RFC 2616, 3.9: qvalue = ("0"["." 0*3DIGIT]) | ("1"["." 0*3("0")])
+  private static final String REG_EX_QVALUE = "q=((?:1(?:\\.0{0,3})?)|(?:0(?:\\.[0-9]{0,3})?))";
+
+  //RFC 2616, 14.1: the media-range parameters
+  private static final String REG_EX_PARAMETER = "(?:;\\s*(?:(?:[^qQ].*)|(?:[qQ]\\s*=\\s*(?:[^01].*))))*";
+  private static final Pattern REG_EX_ACCEPT =
+      Pattern.compile("([a-z\\*\\s]+/[a-zA-Z\\+\\*\\-=\\s]+" + REG_EX_PARAMETER + ")");
+  private static final Pattern REG_EX_ACCEPT_WITH_Q_FACTOR =
+      Pattern.compile(REG_EX_ACCEPT + "(?:" + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QVALUE + ")?");
+
+  //RFC 2616, 14.4: language-range  = ((1*8ALPHA *("-" 1*8ALPHA)) | "*")
+  private static final Pattern REG_EX_ACCEPT_LANGUAGES =
+      Pattern.compile("((?:\\*)|(?:[a-z]{1,8}(?:\\-[a-zA-Z]{1,8})?))");
+  private static final Pattern REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR =
+      Pattern.compile(REG_EX_ACCEPT_LANGUAGES + "(?:;" + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QVALUE + ")?");
+
   private static final Pattern REG_EX_MATRIX_PARAMETER = Pattern.compile("([^=]*)(?:=(.*))?");
 
   public static ContentType extractRequestContentType(final String contentType)
@@ -62,61 +66,75 @@ public class RestUtil {
     }
   }
 
+  /*
+   * Parses query parameters.    
+   */
   public static Map<String, String> extractQueryParameters(final String queryString) {
     Map<String, String> queryParametersMap = new HashMap<String, String>();
     if (queryString != null) {
+      //At first the queryString will be decoded.
       List<String> queryParameters = Arrays.asList(Decoder.decode(queryString).split("\\&"));
       for (String param : queryParameters) {
-        int indexOfEq = param.indexOf("=");
-        if (indexOfEq < 0) {
+        int indexOfEqualSign = param.indexOf("=");
+        if (indexOfEqualSign < 0) {
           queryParametersMap.put(param, "");
         } else {
-          queryParametersMap.put(param.substring(0, indexOfEq), param.substring(indexOfEq + 1));
+          queryParametersMap.put(param.substring(0, indexOfEqualSign), param.substring(indexOfEqualSign + 1));
         }
       }
     }
     return queryParametersMap;
   }
 
+  /*
+   * Parses Accept-Language header. Returns a list sorted by quality parameter   
+   */
   public static List<Locale> extractAcceptableLanguage(final String acceptableLanguageHeader) {
     List<Locale> acceptLanguages = new ArrayList<Locale>();
-    if (acceptableLanguageHeader != null) {
-      Scanner acceptLanguageScanner = new Scanner(acceptableLanguageHeader).useDelimiter(",\\s?");
-      while (acceptLanguageScanner.hasNext()) {
-        if (acceptLanguageScanner.hasNext(REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR)) {
-          acceptLanguageScanner.next(REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR);
-          MatchResult result = acceptLanguageScanner.match();
-          String language = result.group(1);
-          String country = result.group(2);
-          //        //double qualityFactor = result.group(2) != null ? Double.parseDouble(result.group(2)) : 1d;
-          if (country == null) {
-            acceptLanguages.add(new Locale(language));
-          } else {
-            acceptLanguages.add(new Locale(language, country));
-          }
+    TreeSet<Accept> acceptTree = getAcceptTree();
+    if (acceptableLanguageHeader != null && !acceptableLanguageHeader.isEmpty()) {
+      List<String> list = Arrays.asList(acceptableLanguageHeader.split(",\\s?"));
+      for (String acceptLanguage : list) {
+        Matcher matcher = REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR.matcher(acceptLanguage);
+        if (matcher.find()) {
+          String language = matcher.group(1);
+          double qualityFactor = matcher.group(2) != null ? Double.parseDouble(matcher.group(2)) : 1d;
+          acceptTree.add(new Accept(language, qualityFactor));
         }
       }
-      acceptLanguageScanner.close();
+    }
+    for (Accept accept : acceptTree) {
+      String languageRange = accept.getValue();
+      //The languageRange has to be splitted in language tag and country tag         
+      int indexOfMinus = languageRange.indexOf("-");
+      Locale locale;
+      if (indexOfMinus < 0) {
+        // no country tag
+        locale = new Locale(languageRange);
+      } else {
+        String language = languageRange.substring(0, indexOfMinus);
+        String country = languageRange.substring(indexOfMinus + 1);
+        locale = new Locale(language, country);
+      }
+      acceptLanguages.add(locale);
     }
     return acceptLanguages;
   }
 
-  public static List<String> extractAcceptHeaders(final String header) {
+  /*
+   * Parses Accept header. Returns a list of media ranges sorted by quality parameter   
+   */
+  public static List<String> extractAcceptHeaders(final String acceptHeader) {
     TreeSet<Accept> acceptTree = getAcceptTree();
     List<String> acceptHeaders = new ArrayList<String>();
-    if (header != null && !header.isEmpty()) {
-      List<String> list = Arrays.asList(header.split(",\\s?"));
-      for (String el : list) {
-        Matcher matcher = REG_EX_ACCEPT_WITH_Q_FACTOR.matcher(el);
+    if (acceptHeader != null && !acceptHeader.isEmpty()) {
+      List<String> list = Arrays.asList(acceptHeader.split(",\\s?"));
+      for (String accept : list) {
+        Matcher matcher = REG_EX_ACCEPT_WITH_Q_FACTOR.matcher(accept);
         if (matcher.find()) {
           String headerValue = matcher.group(1);
           double qualityFactor = matcher.group(2) != null ? Double.parseDouble(matcher.group(2)) : 1d;
-          //double qualityFactor = Double.parseDouble(matcher.group(2));
-          //if(!matcher.group(2).matches(REG_EX_QUALITY_FACTOR)){
-          //  throw new ODataBadRequestException(ODataBadRequestException.INVALID_HEADER);
-          //}
-          Accept acceptHeader = new Accept(headerValue, qualityFactor);
-          acceptTree.add(acceptHeader);
+          acceptTree.add(new Accept(headerValue, qualityFactor));
         }
       }
     }
@@ -298,8 +316,8 @@ public class RestUtil {
   private static TreeSet<Accept> getAcceptTree() {
     TreeSet<Accept> treeSet = new TreeSet<Accept>(new Comparator<Accept>() {
       @Override
-      public int compare(final Accept o1, final Accept o2) {
-        if (o1.getQuality() <= o2.getQuality()) {
+      public int compare(final Accept header1, final Accept header2) {
+        if (header1.getQuality() <= header2.getQuality()) {
           return 1;
         } else {
           return -1;
@@ -309,6 +327,11 @@ public class RestUtil {
     return treeSet;
   }
 
+  /*
+   * The class is used in order to sort headers by "q" parameter.
+   * The object of this class contains a value of the Accept header or Accept-Language header and value of the 
+   * quality parameter.
+   */
   private static class Accept {
     private double quality;
     private String value;

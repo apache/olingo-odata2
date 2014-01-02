@@ -63,10 +63,10 @@ public class ODataServlet extends HttpServlet {
       }
     }
 
-    if (req.getPathInfo() == null) {
-      handleRedirect(req, resp);
-    } else {
+    if (req.getPathInfo() != null) {
       handle(req, resp, xHttpMethod, xHttpMethodOverride);
+    } else {
+      handleRedirect(req, resp);
     }
   }
 
