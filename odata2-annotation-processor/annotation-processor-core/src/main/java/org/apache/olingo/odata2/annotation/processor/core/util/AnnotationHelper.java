@@ -63,6 +63,11 @@ public class AnnotationHelper {
 
     Map<String, Object> firstKeyFields = getValueForAnnotatedFields(firstInstance, EdmKey.class);
     Map<String, Object> secondKeyFields = getValueForAnnotatedFields(secondInstance, EdmKey.class);
+    if(firstKeyFields.isEmpty() && secondKeyFields.isEmpty()) {
+      throw new ODataRuntimeException("Both object instances does not have EdmKey fields defined ["
+          + "firstClass=" + firstInstance.getClass().getName()
+          + " secondClass=" + secondInstance.getClass().getName() + "].");
+    }
 
     return keyValuesMatch(firstKeyFields, secondKeyFields);
   }
@@ -82,6 +87,8 @@ public class AnnotationHelper {
   private boolean keyValuesMatch(final Map<String, Object> firstKeyValues, final Map<String, Object> secondKeyValues) {
     if (firstKeyValues.size() != secondKeyValues.size()) {
       return false;
+    } else if(firstKeyValues.isEmpty()) {
+      throw new ODataRuntimeException("No keys given for key value matching.");
     } else {
       Set<Map.Entry<String, Object>> entries = firstKeyValues.entrySet();
       for (Map.Entry<String, Object> entry : entries) {
@@ -498,8 +505,7 @@ public class AnnotationHelper {
     for (Field field : fields) {
       if (field.getAnnotation(annotation) != null) {
         Object value = getFieldValue(instance, field);
-        final EdmProperty property = field.getAnnotation(EdmProperty.class);
-        final String name = property == null || property.name().isEmpty() ? field.getName() : property.name();
+        final String name = extractPropertyName(field);
         fieldName2Value.put(name, value);
       }
     }
@@ -511,6 +517,15 @@ public class AnnotationHelper {
     }
 
     return fieldName2Value;
+  }
+
+  private String extractPropertyName(Field field) {
+    final EdmProperty property = field.getAnnotation(EdmProperty.class);
+    if(property == null || property.name().isEmpty()) {
+      return getCanonicalName(field);
+    } else {
+      return property.name();
+    }
   }
 
   public void setValueForAnnotatedField(final Object instance, final Class<? extends Annotation> annotation,
@@ -641,7 +656,7 @@ public class AnnotationHelper {
     }
   }
 
-  public Object convert(final Field field, final String propertyValue) {
+  private Object convert(final Field field, final String propertyValue) {
     Class<?> fieldClass = field.getType();
     try {
       EdmProperty property = field.getAnnotation(EdmProperty.class);
@@ -649,8 +664,9 @@ public class AnnotationHelper {
       return type.getEdmSimpleTypeInstance().valueOfString(propertyValue,
           EdmLiteralKind.DEFAULT, null, fieldClass);
     } catch (EdmSimpleTypeException ex) {
-      throw new ODataRuntimeException("Conversion failed for string property with error: "
-          + ex.getMessage(), ex);
+      throw new ODataRuntimeException("Conversion failed for string property [" 
+          + propertyValue + "] on field ["
+          + field + "] with error: " + ex.getMessage(), ex);
     }
   }
 

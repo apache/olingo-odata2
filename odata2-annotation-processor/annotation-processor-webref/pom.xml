@@ -98,6 +98,12 @@ the License. -->
       <artifactId>slf4j-log4j12</artifactId>
       <version>${version.slf4j}</version>
     </dependency>
+    <dependency>
+        <groupId>org.apache.olingo</groupId>
+        <artifactId>olingo-odata2-testutil-incubating</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <profiles>

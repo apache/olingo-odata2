@@ -58,7 +58,7 @@
 				<configuration>
 					<instructions>
 						<Import-Package>*</Import-Package>
-						<Export-Package>org.apache.olingo.odata2.processor.core.jpa.factory;version=${project.version}</Export-Package>
+						<Export-Package>org.apache.olingo.odata2.jpa.processor.core.factory;version=${project.version}</Export-Package>
 						<Bundle-DocURL>${project.url}</Bundle-DocURL>
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>

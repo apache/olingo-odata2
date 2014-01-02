@@ -20,12 +20,12 @@ package org.apache.olingo.odata2.jpa.processor.ref.web;
 
 import java.util.ResourceBundle;
 
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAServiceFactory;
+import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
 import org.apache.olingo.odata2.jpa.processor.ref.extension.SalesOrderProcessingExtension;
 import org.apache.olingo.odata2.jpa.processor.ref.factory.JPAEntityManagerFactory;
-import org.apache.olingo.odata2.processor.api.jpa.ODataJPAContext;
-import org.apache.olingo.odata2.processor.api.jpa.ODataJPAServiceFactory;
-import org.apache.olingo.odata2.processor.api.jpa.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.processor.api.jpa.model.JPAEdmExtension;
 
 public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
   private static final String PUNIT_NAME = "salesorderprocessing";

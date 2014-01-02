@@ -25,9 +25,6 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.olingo.odata2.annotation.processor.core.datasource.AnnotationInMemoryDs;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.DataSource;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.DataStore;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.DataSource.BinaryData;
 import org.apache.olingo.odata2.annotation.processor.core.edm.AnnotationEdmProvider;
 import org.apache.olingo.odata2.annotation.processor.core.model.Building;
@@ -305,6 +302,26 @@ public class AnnotationsInMemoryDsTest {
       Assert.assertTrue(room.getName().matches("Room \\d*"));
       Assert.assertEquals("Common Building", room.getBuilding().getName());
     }
+  }
+
+  @Test(expected=ODataRuntimeException.class)
+  public void readUnknownEntity() throws Exception {
+    EdmEntitySet unknownEntitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(unknownEntitySet.getName()).thenReturn("UnknownEntity");
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", "1");
+
+    // execute
+    datasource.readData(unknownEntitySet, keys);
+  }
+
+  @Test(expected=ODataRuntimeException.class)
+  public void readUnknownEntities() throws Exception {
+    EdmEntitySet unknownEntitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(unknownEntitySet.getName()).thenReturn("UnknownEntity");
+
+    // execute
+    datasource.readData(unknownEntitySet);
   }
 
   @Test
@@ -608,6 +625,43 @@ public class AnnotationsInMemoryDsTest {
   }
 
 
+  @Test
+  public void writeRelations() throws Exception {
+    DataStore<Building> buildingStore = DataStore.createInMemory(Building.class, true);
+    DataStore<Room> roomStore = DataStore.createInMemory(Room.class, true);
+
+    EdmEntitySet buildingsEntitySet = createMockedEdmEntitySet("Buildings");
+    EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");
+
+    Building building = new Building();
+    building.setName("Common Building");
+    Building created = buildingStore.create(building);
+
+    Room room = new Room(42, "Room with Number");
+    room.setSeats(123);;
+    room.setVersion(4711);
+    roomStore.create(room);
+    
+    Map<String, Object> targetEntityKeyValues = new HashMap<String, Object>();
+    targetEntityKeyValues.put("Id", 42);
+    
+    // execute
+    datasource.writeRelation(buildingsEntitySet, building, roomsEntitySet, targetEntityKeyValues);
+    
+    // validate
+    Building readBuilding = buildingStore.read(created);
+    Room readRoom = roomStore.read(new Room(42, ""));
+    
+    List<Room> readRooms = readBuilding.getRooms();
+    Assert.assertEquals(1, readRooms.size());
+    Assert.assertEquals(readRoom, readRooms.get(0));
+    
+    Assert.assertEquals("42", readRoom.getId());
+    Assert.assertEquals(123, readRoom.getSeats());
+    Assert.assertEquals(4711, readRoom.getVersion());
+    Assert.assertEquals(readBuilding, readRoom.getBuilding());
+  }
+  
   private EdmEntitySet createMockedEdmEntitySet(final String entitySetName) throws ODataException {
     return createMockedEdmEntitySet(edmProvider, entitySetName);
   }
