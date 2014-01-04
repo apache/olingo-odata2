@@ -212,10 +212,14 @@ public class JPAEntity {
           .throwException(ODataJPARuntimeException.GENERAL, null);
     }
     Map<String, Object> oDataEntryProperties = oDataEntry.getProperties();
+    if(oDataEntry.containsInlineEntry()){
+      normalizeInlineEntries(oDataEntryProperties);
+    }
     write(oDataEntryProperties, false);
   }
 
   public void update(final Map<String, Object> oDataEntryProperties) throws ODataJPARuntimeException {
+    normalizeInlineEntries(oDataEntryProperties);
     write(oDataEntryProperties, false);
   }
 
