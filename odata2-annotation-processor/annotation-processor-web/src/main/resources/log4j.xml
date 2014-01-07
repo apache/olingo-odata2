@@ -27,10 +27,12 @@
         </layout>
     </appender>
 
-    <logger name="org.apache.olingo.odata2.ref" additivity="false">
+    <!-- 
+    <logger name="org.apache.olingo.odata2" additivity="false">
         <level value="trace" />
         <appender-ref ref="console" />
     </logger>
+    -->
     
     <root>
         <priority value="error" />

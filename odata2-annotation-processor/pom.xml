@@ -25,6 +25,7 @@
     <modules>
         <module>annotation-processor-api</module>
         <module>annotation-processor-core</module>
-        <module>annotation-processor-webref</module>
+        <module>annotation-processor-ref</module>
+        <module>annotation-processor-web</module>
     </modules>
 </project>
