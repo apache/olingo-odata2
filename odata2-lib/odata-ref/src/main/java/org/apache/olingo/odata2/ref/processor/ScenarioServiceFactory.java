@@ -18,8 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.ref.processor;
 
-import org.apache.olingo.odata2.annotation.processor.core.ListsProcessor;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.BeanPropertyAccess;
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.ODataDebugCallback;
 import org.apache.olingo.odata2.api.ODataService;
@@ -41,7 +39,7 @@ public class ScenarioServiceFactory extends ODataServiceFactory {
 
     return createODataSingleProcessorService(
         new ScenarioEdmProvider(),
-        new ListsProcessor(new ScenarioDataSource(dataContainer), new BeanPropertyAccess()));
+        new ListsProcessor(new ScenarioDataSource(dataContainer)));
   }
 
   @SuppressWarnings("unchecked")

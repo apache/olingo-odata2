@@ -31,8 +31,6 @@ import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.olingo.odata2.annotation.processor.core.ListsProcessor;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.BeanPropertyAccess;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
@@ -47,6 +45,8 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.ref.model.DataContainer;
+import org.apache.olingo.odata2.ref.processor.BeanPropertyAccess;
+import org.apache.olingo.odata2.ref.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.Before;

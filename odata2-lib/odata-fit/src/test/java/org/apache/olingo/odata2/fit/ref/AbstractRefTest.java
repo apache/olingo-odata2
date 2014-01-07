@@ -35,8 +35,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
-import org.apache.olingo.odata2.annotation.processor.core.ListsProcessor;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.BeanPropertyAccess;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
@@ -45,6 +43,7 @@ import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.ref.model.DataContainer;
 import org.apache.olingo.odata2.ref.model.Photo;
+import org.apache.olingo.odata2.ref.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
@@ -81,8 +80,7 @@ public class AbstractRefTest extends AbstractFitTest {
   protected ODataSingleProcessorService createService() {
     DataContainer dataContainer = new DataContainer();
     dataContainer.reset();
-    ODataSingleProcessor processor = new ListsProcessor(new ScenarioDataSource(dataContainer),
-        new BeanPropertyAccess());
+    ODataSingleProcessor processor = new ListsProcessor(new ScenarioDataSource(dataContainer));
     EdmProvider provider = new ScenarioEdmProvider();
 
     return new ODataSingleProcessorService(provider, processor) {};
