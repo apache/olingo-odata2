@@ -23,5 +23,6 @@
 
     <modules>
         <module>cars-service-archetype</module>
+        <module>cars-annotation-archetype</module>
     </modules>
 </project>
