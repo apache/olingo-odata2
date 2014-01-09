@@ -50,7 +50,8 @@ public class AnnotationInMemoryDs implements DataSource {
     this(annotatedClasses, true);
   }
 
-  public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses, final boolean persistInMemory) throws ODataException {
+  public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses, final boolean persistInMemory) 
+      throws ODataException {
     this.persistInMemory = persistInMemory;
     init(annotatedClasses);
   }
