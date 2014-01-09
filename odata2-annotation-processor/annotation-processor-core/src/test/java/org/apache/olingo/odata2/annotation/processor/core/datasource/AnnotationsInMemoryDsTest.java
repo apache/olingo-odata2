@@ -399,6 +399,64 @@ public class AnnotationsInMemoryDsTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
+  public void readRelatedEntity() throws Exception {
+    EdmEntitySet buildingsEntitySet = createMockedEdmEntitySet("Buildings");
+    EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");
+
+    Building building = new Building();
+    building.setName("Common Building");
+
+    Room room = new Room(12, "Room 12");
+    room.setBuilding(building);
+    datasource.createData(roomsEntitySet, room);
+    datasource.createData(buildingsEntitySet, building);
+
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", Integer.valueOf(12));
+    Room read = (Room) datasource.readData(roomsEntitySet, keys);
+    Assert.assertEquals("Room 12", read.getName());
+    Assert.assertEquals("12", read.getId());
+    
+    // execute
+    Object relatedData = datasource.readRelatedData(
+        roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
+
+    // validate
+    Assert.assertTrue("Result is no room.", relatedData instanceof Building);
+    Building b = (Building) relatedData;
+    Assert.assertEquals("Common Building", b.getName());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void readRelatedEntityWithNull() throws Exception {
+    EdmEntitySet buildingsEntitySet = createMockedEdmEntitySet("Buildings");
+    EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");
+
+    Building building = new Building();
+    building.setName("Common Building");
+    datasource.createData(buildingsEntitySet, building);
+
+    Room room = new Room(12, "Room 12");
+    room.setBuilding(null);
+    datasource.createData(roomsEntitySet, room);
+    //
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", Integer.valueOf(12));
+    Room read = (Room) datasource.readData(roomsEntitySet, keys);
+    Assert.assertEquals("Room 12", read.getName());
+    Assert.assertEquals("12", read.getId());
+
+    // execute
+    Object relatedData = datasource.readRelatedData(
+        roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
+
+    // validate
+    Assert.assertNull("Related data must be null.", relatedData);
+  }
+
+  @Test
   public void readRelatedTargetEntity() throws Exception {
     EdmEntitySet buildingsEntitySet = createMockedEdmEntitySet("Buildings");
     EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");

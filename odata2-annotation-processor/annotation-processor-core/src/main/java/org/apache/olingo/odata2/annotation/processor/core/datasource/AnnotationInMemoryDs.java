@@ -17,10 +17,12 @@ package org.apache.olingo.odata2.annotation.processor.core.datasource;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.annotation.processor.core.datasource.DataStore.DataStoreException;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper.AnnotatedNavInfo;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper.ODataAnnotationException;
@@ -44,11 +46,11 @@ public class AnnotationInMemoryDs implements DataSource {
   private final Map<String, DataStore<Object>> dataStores = new HashMap<String, DataStore<Object>>();
   private final boolean persistInMemory;
 
-  public AnnotationInMemoryDs(Collection<Class<?>> annotatedClasses) throws ODataException {
+  public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses) throws ODataException {
     this(annotatedClasses, true);
   }
 
-  public AnnotationInMemoryDs(Collection<Class<?>> annotatedClasses, boolean persistInMemory) throws ODataException {
+  public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses, final boolean persistInMemory) throws ODataException {
     this.persistInMemory = persistInMemory;
     init(annotatedClasses);
   }
@@ -82,6 +84,7 @@ public class AnnotationInMemoryDs implements DataSource {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public <T> DataStore<T> getDataStore(final Class<T> clazz) {
     String entitySetName = ANNOTATION_HELPER.extractEntitySetName(clazz);
     return (DataStore<T>) dataStores.get(entitySetName);
@@ -141,7 +144,26 @@ public class AnnotationInMemoryDs implements DataSource {
           + "', targetStore='" + targetStore + "').");
     }
 
+    List<Object> resultData = readResultData(targetStore, sourceData, sourceField);
+    return extractResultData(targetStore, targetKeys, navInfo, resultData);
+  }
+
+  /**
+   * Read the result data from the target store based on <code>sourceData</code> and <code>sourceField</code>
+   * 
+   * @param targetStore
+   * @param sourceData
+   * @param sourceField
+   * @return
+   * @throws DataStoreException
+   */
+  private List<Object> readResultData(final DataStore<?> targetStore, final Object sourceData, final Field sourceField)
+      throws DataStoreException {
     Object navigationInstance = getValue(sourceField, sourceData);
+    if (navigationInstance == null) {
+      return Collections.emptyList();
+    }
+
     List<Object> resultData = new ArrayList<Object>();
     for (Object targetInstance : targetStore.read()) {
       if (navigationInstance instanceof Collection) {
@@ -154,7 +176,22 @@ public class AnnotationInMemoryDs implements DataSource {
         resultData.add(targetInstance);
       }
     }
+    return resultData;
+  }
 
+  /**
+   * Extract the <code>result data</code> from the <code>resultData</code> list based on 
+   * <code>navigation information</code> and <code>targetKeys</code>.
+   * 
+   * @param targetStore
+   * @param targetKeys
+   * @param navInfo
+   * @param resultData
+   * @return
+   * @throws DataStoreException
+   */
+  private Object extractResultData(final DataStore<?> targetStore, final Map<String, Object> targetKeys,
+      final AnnotatedNavInfo navInfo, final List<Object> resultData) throws DataStoreException {
     if (navInfo.getToMultiplicity() == EdmMultiplicity.MANY) {
       if (targetKeys.isEmpty()) {
         return resultData;
@@ -183,15 +220,15 @@ public class AnnotationInMemoryDs implements DataSource {
     Object data = ANNOTATION_HELPER.getValueForField(mediaLinkEntryData, EdmMediaResourceContent.class);
     Object mimeType = ANNOTATION_HELPER.getValueForField(mediaLinkEntryData, EdmMediaResourceMimeType.class);
 
-    if(data == null && mimeType == null) {
+    if (data == null && mimeType == null) {
       DataStore<Object> dataStore = getDataStore(entitySet);
       Object readEntry = dataStore.read(mediaLinkEntryData);
-      if(readEntry != null) {
+      if (readEntry != null) {
         data = ANNOTATION_HELPER.getValueForField(readEntry, EdmMediaResourceContent.class);
         mimeType = ANNOTATION_HELPER.getValueForField(readEntry, EdmMediaResourceMimeType.class);
       }
     }
-    
+
     return new BinaryData((byte[]) data, String.valueOf(mimeType));
   }
 
@@ -215,7 +252,7 @@ public class AnnotationInMemoryDs implements DataSource {
     try {
       DataStore<Object> dataStore = getDataStore(entitySet);
       Object readEntry = dataStore.read(mediaEntityInstance);
-      if(readEntry == null) {
+      if (readEntry == null) {
         throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
       } else {
         ANNOTATION_HELPER.setValueForAnnotatedField(
