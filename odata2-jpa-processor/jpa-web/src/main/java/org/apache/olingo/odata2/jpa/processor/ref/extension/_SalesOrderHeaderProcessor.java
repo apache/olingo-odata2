@@ -108,7 +108,7 @@ public class _SalesOrderHeaderProcessor {
     List<SalesOrderHeader> soList = (List<SalesOrderHeader>) q
         .getResultList();
     if (!soList.isEmpty()) {
-      return soList.get(0).getBuyerAddress();
+      return soList.get(0).getCustomer().getAddress();
     } else {
       return null;
     }
