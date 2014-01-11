@@ -45,14 +45,14 @@ public class DataGenerator {
   /**
    * This is configuration property to hold comma separated names of Insert Files
    */
-  private static final String SQL_INSERT_CONFIG = "SQLInsertConfig";
+  private static final String SQL_INSERT_CONFIG = "SQL_Insert_Config";
 
   /**
    * This is key which will be used to fetch file names from SQL Insert Config File.
    */
   private static final String SQL_INSERT_FILE_NAMES_KEY = "insert_file_names";
 
-  private static final String SQL_DELETE_CONFIG = "DataDeleteSQLs";
+  private static final String SQL_DELETE_CONFIG = "SQL_Cleanup";
   private static final String SQL_DELETE_STATEMENTS_KEY = "delete_queries";
 
   public DataGenerator(final EntityManager entityManager) {

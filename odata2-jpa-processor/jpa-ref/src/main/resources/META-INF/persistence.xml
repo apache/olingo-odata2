@@ -20,6 +20,8 @@
 		<class>org.apache.olingo.odata2.jpa.processor.ref.model.Note</class>
 		<class>org.apache.olingo.odata2.jpa.processor.ref.model.Material</class>
 		<class>org.apache.olingo.odata2.jpa.processor.ref.model.Store</class>
+		<class>org.apache.olingo.odata2.jpa.processor.ref.model.Category</class>
+		<class>org.apache.olingo.odata2.jpa.processor.ref.model.Customer</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
 			<property name="javax.persistence.jdbc.url"

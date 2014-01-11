@@ -25,7 +25,9 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -34,7 +36,7 @@ public class Material {
 
   public Material() {}
 
-  public Material(final String materialName, final String typeCode, final double price,
+  public Material(final String materialName, final char[] typeCode, final double price,
       final String measurementUnit) {
     super();
     this.materialName = materialName;
@@ -51,7 +53,7 @@ public class Material {
   private String materialName;
 
   @Column(name = "TYPE_CODE")
-  private String typeCode;
+  private char[] typeCode = new char[2];
 
   @Column(name = "PRICE")
   private double price;
@@ -62,12 +64,24 @@ public class Material {
   @ManyToMany
   private List<Store> stores = new ArrayList<Store>();
 
+  @ManyToOne
+  @JoinColumn(name = "TYPE_CODE", referencedColumnName = "CODE")
+  private Category category;
+
   public long getMaterialId() {
     return materialId;
   }
 
   public void setMaterialId(final long materialId) {
     this.materialId = materialId;
+  }
+
+  public Category getCategory() {
+    return category;
+  }
+
+  public void setCategory(Category category) {
+    this.category = category;
   }
 
   public String getMaterialName() {
@@ -78,11 +92,11 @@ public class Material {
     this.materialName = materialName;
   }
 
-  public String getTypeCode() {
+  public char[] getTypeCode() {
     return typeCode;
   }
 
-  public void setTypeCode(final String typeCode) {
+  public void setTypeCode(final char[] typeCode) {
     this.typeCode = typeCode;
   }
 
