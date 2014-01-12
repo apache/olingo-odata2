@@ -33,7 +33,6 @@ import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
-import org.apache.olingo.odata2.jpa.processor.core.edm.ODataJPAEdmProvider;
 import org.apache.olingo.odata2.jpa.processor.core.mock.ODataJPAContextMock;
 import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmModel;
 import org.junit.BeforeClass;

@@ -16,27 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.jpa.processor.ref.extension;
+package org.apache.olingo.odata2.jpa.processor.core.mock;
 
-public class OrderValue {
+import org.apache.olingo.odata2.api.ODataService;
+import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.api.uri.PathInfo;
+import org.easymock.EasyMock;
 
-  private double amount;
-  private String currency;
+public class ODataContextMock {
 
-  public double getAmount() {
-    return amount;
+  private ODataService odataService;
+  private PathInfo pathInfo;
+
+  public void setODataService(final ODataService service) {
+    odataService = service;
   }
 
-  public void setAmount(final double amount) {
-    this.amount = amount;
+  public void setPathInfo(final PathInfo pathInfo) {
+    this.pathInfo = pathInfo;
   }
 
-  public String getCurrency() {
-    return currency;
-  }
-
-  public void setCurrency(final String currency) {
-    this.currency = currency;
+  public ODataContext mock() throws ODataException {
+    ODataContext context = EasyMock.createMock(ODataContext.class);
+    EasyMock.expect(context.getService()).andReturn(odataService).anyTimes();
+    EasyMock.expect(context.getPathInfo()).andReturn(pathInfo).anyTimes();
+    EasyMock.replay(context);
+    return context;
   }
 
 }

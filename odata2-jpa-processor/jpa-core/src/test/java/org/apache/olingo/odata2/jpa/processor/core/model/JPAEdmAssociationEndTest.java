@@ -37,7 +37,6 @@ import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.SimpleType;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.SimpleType.SimpleTypeA;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmAssociationEnd;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

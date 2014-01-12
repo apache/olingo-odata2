@@ -48,7 +48,7 @@ public class Address {
 
   @Column(name = "COUNTRY")
   private String country;
-  
+
   @Column(name = "PINCODE")
   private String pincode;
 
@@ -56,7 +56,7 @@ public class Address {
     return pincode;
   }
 
-  public void setPincode(String pincode) {
+  public void setPincode(final String pincode) {
     this.pincode = pincode;
   }
 

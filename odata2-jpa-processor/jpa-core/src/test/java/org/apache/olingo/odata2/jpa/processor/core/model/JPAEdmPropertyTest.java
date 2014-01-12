@@ -47,14 +47,13 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntityContainerVie
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntitySetView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.ComplexType;
+import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.SimpleType;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEmbeddableTypeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEntityTypeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAMetaModelMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAPluralAttributeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPASingularAttributeMock;
-import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.ComplexType;
-import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.SimpleType;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmProperty;
 import org.junit.Test;
 
 public class JPAEdmPropertyTest extends JPAEdmTestModelView {

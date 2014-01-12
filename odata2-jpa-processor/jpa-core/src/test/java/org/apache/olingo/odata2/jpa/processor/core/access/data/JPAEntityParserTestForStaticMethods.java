@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
 import java.lang.reflect.Method;
 
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.junit.Test;
 

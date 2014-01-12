@@ -168,7 +168,7 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
 
         if (roleType == RoleType.PRINCIPAL) {
           jpaAttributeType = jpaAttribute.getJavaType().getSimpleName();
-          if (jpaAttributeType.equals("List")) {
+          if (jpaAttribute.isCollection()) {
             Type type =
                 ((ParameterizedType) jpaAttribute.getJavaMember().getDeclaringClass().getDeclaredField(
                     jpaAttribute.getName()).getGenericType()).getActualTypeArguments()[0];

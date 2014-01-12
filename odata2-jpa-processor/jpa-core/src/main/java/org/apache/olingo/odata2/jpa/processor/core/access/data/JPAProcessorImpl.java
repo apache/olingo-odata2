@@ -33,6 +33,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityLinkUriInfo;
@@ -314,8 +315,8 @@ public class JPAProcessorImpl implements JPAProcessor {
             oDataEntityParser.parseEntry(oDataEntitySet, content, requestedContentType, false);
         virtualJPAEntity.create(oDataEntry);
         JPALink link = new JPALink(oDataJPAContext);
-        link.setSourceJPAEntity(jpaEntity);
-        link.create(createView, content, requestedContentType, requestedContentType);
+        link.setSourceJPAEntity(virtualJPAEntity.getJPAEntity());
+        link.create(createView, oDataEntry);
       } else if (properties != null) {
         virtualJPAEntity.create(properties);
       } else {
@@ -396,6 +397,9 @@ public class JPAProcessorImpl implements JPAProcessor {
     JPQLContextType contextType = null;
     try {
       if (uriParserResultView instanceof DeleteUriInfo) {
+        if (((UriInfo) uriParserResultView).isLinks()) {
+          return deleteLink(uriParserResultView);
+        }
         uriParserResultView = ((DeleteUriInfo) uriParserResultView);
         if (!((DeleteUriInfo) uriParserResultView).getStartEntitySet().getName()
             .equals(((DeleteUriInfo) uriParserResultView).getTargetEntitySet().getName())) {
@@ -409,21 +413,27 @@ public class JPAProcessorImpl implements JPAProcessor {
           ODataJPARuntimeException.GENERAL, e);
     }
 
-    // First read the entity with read operation.
     Object selectedObject = readEntity(uriParserResultView, contextType);
-    // Read operation done. This object would be passed on to entity manager for delete
     if (selectedObject != null) {
       try {
         em.getTransaction().begin();
         em.remove(selectedObject);
         em.flush();
         em.getTransaction().commit();
+
       } catch (Exception e) {
         throw ODataJPARuntimeException.throwException(
             ODataJPARuntimeException.ERROR_JPQL_DELETE_REQUEST, e);
       }
     }
     return selectedObject;
+  }
+
+  private Object deleteLink(final DeleteUriInfo uriParserResultView) throws ODataJPARuntimeException {
+    JPALink link = new JPALink(oDataJPAContext);
+    link.delete(uriParserResultView);
+    link.save();
+    return link.getTargetJPAEntity();
   }
 
   /* Process Get Entity Link Request */

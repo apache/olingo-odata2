@@ -98,7 +98,7 @@ public class SalesOrderHeader {
     return customerId;
   }
 
-  public void setCustomerId(Long customerId) {
+  public void setCustomerId(final Long customerId) {
     this.customerId = customerId;
   }
 
@@ -106,7 +106,7 @@ public class SalesOrderHeader {
     return customer;
   }
 
-  public void setCustomer(Customer customer) {
+  public void setCustomer(final Customer customer) {
     this.customer = customer;
   }
 

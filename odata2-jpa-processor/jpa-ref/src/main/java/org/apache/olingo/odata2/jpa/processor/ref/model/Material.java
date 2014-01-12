@@ -40,7 +40,6 @@ public class Material {
       final String measurementUnit) {
     super();
     this.materialName = materialName;
-    this.typeCode = typeCode;
     this.price = price;
     this.measurementUnit = measurementUnit;
   }
@@ -51,9 +50,6 @@ public class Material {
 
   @Column(name = "MATERIAL_NAME")
   private String materialName;
-
-  @Column(name = "TYPE_CODE")
-  private char[] typeCode = new char[2];
 
   @Column(name = "PRICE")
   private double price;
@@ -80,7 +76,7 @@ public class Material {
     return category;
   }
 
-  public void setCategory(Category category) {
+  public void setCategory(final Category category) {
     this.category = category;
   }
 
@@ -90,14 +86,6 @@ public class Material {
 
   public void setMaterialName(final String materialName) {
     this.materialName = materialName;
-  }
-
-  public char[] getTypeCode() {
-    return typeCode;
-  }
-
-  public void setTypeCode(final char[] typeCode) {
-    this.typeCode = typeCode;
   }
 
   public double getPrice() {

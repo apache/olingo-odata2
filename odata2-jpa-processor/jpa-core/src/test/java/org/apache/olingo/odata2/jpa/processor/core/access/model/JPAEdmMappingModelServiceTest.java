@@ -26,7 +26,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 
-import org.apache.olingo.odata2.jpa.processor.core.access.model.JPAEdmMappingModelService;
 import org.apache.olingo.odata2.jpa.processor.core.mock.ODataJPAContextMock;
 import org.junit.BeforeClass;
 import org.junit.Test;

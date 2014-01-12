@@ -1,5 +1,5 @@
 /*******************************************************************************
-
+ * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -48,9 +48,6 @@ import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.SimpleType;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.SimpleType.SimpleTypeA;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmAssociation;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmAssociationEnd;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmReferentialConstraint;
 import org.easymock.EasyMock;
 import org.junit.BeforeClass;
 import org.junit.Test;
