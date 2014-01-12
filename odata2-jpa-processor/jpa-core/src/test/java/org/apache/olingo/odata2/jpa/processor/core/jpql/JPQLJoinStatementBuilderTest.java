@@ -31,7 +31,6 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLJoinContextView;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
-import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLJoinStatementBuilder;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.AfterClass;

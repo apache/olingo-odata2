@@ -28,7 +28,6 @@ import javax.persistence.metamodel.Metamodel;
 
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAMetaModelMock;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmSchema;
 import org.junit.Before;
 import org.junit.Test;
 

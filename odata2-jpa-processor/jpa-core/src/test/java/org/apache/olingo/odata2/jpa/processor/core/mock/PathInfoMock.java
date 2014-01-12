@@ -16,53 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.jpa.processor.ref.model;
+package org.apache.olingo.odata2.jpa.processor.core.mock;
 
-import java.util.ArrayList;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import org.apache.olingo.odata2.api.uri.PathInfo;
+import org.apache.olingo.odata2.api.uri.PathSegment;
+import org.easymock.EasyMock;
 
-@Entity
-@Table(name = "T_CATEGORY")
-public class Category {
+public class PathInfoMock {
 
-  @Id
-  @Column(name = "CODE")
-  private char code[] = new char[2];
+  private List<PathSegment> pathSegments;
+  private URI uri;
 
-  @Column(name = "DESC")
-  private String description;
-
-  @OneToMany(mappedBy = "category")
-  private List<Material> materials = new ArrayList<Material>();
-
-  public List<Material> getMaterials() {
-    return materials;
+  public void setPathSegments(final List<PathSegment> pathSegments) {
+    this.pathSegments = pathSegments;
   }
 
-  public void setMaterials(final List<Material> materials) {
-    this.materials = materials;
+  public void setServiceRootURI(final String uriString) throws URISyntaxException {
+    uri = new URI(uriString);
   }
 
-  public char[] getCode() {
-    return code;
-  }
+  public PathInfo mock() {
+    PathInfo pathInfo = EasyMock.createMock(PathInfo.class);
+    EasyMock.expect(pathInfo.getODataSegments()).andReturn(pathSegments);
+    EasyMock.expect(pathInfo.getServiceRoot()).andReturn(uri);
 
-  public void setCode(final char[] code) {
-    this.code = code;
-  }
+    EasyMock.replay(pathInfo);
+    return pathInfo;
 
-  public String getDescription() {
-    return description;
   }
-
-  public void setDescription(final String description) {
-    this.description = description;
-  }
-
 }

@@ -40,7 +40,6 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackContext;
 import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
-import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAExpandCallBack;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.EdmMockUtil;
 import org.junit.Test;

@@ -27,11 +27,11 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmMappingModelAccess;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
+import org.apache.olingo.odata2.jpa.processor.api.model.mapping.JPAAttributeMapType.JPAAttribute;
 import org.apache.olingo.odata2.jpa.processor.api.model.mapping.JPAEdmMappingModel;
 import org.apache.olingo.odata2.jpa.processor.api.model.mapping.JPAEmbeddableTypeMapType;
 import org.apache.olingo.odata2.jpa.processor.api.model.mapping.JPAEntityTypeMapType;
 import org.apache.olingo.odata2.jpa.processor.api.model.mapping.JPAPersistenceUnitMapType;
-import org.apache.olingo.odata2.jpa.processor.api.model.mapping.JPAAttributeMapType.JPAAttribute;
 import org.apache.olingo.odata2.jpa.processor.api.model.mapping.JPARelationshipMapType.JPARelationship;
 
 public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {

@@ -42,7 +42,6 @@ import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAJoinClause;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLJoinSelectContext;
 import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLJoinSelectContext.JPQLJoinContextBuilder;
 import org.easymock.EasyMock;
 import org.junit.After;

@@ -48,7 +48,6 @@ import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.mock.ODataJPAContextMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model._JPACustomProcessorMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model._JPACustomProcessorNegativeMock;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmFunctionImport;
 import org.junit.Before;
 import org.junit.Test;
 

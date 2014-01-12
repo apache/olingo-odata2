@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.jpa.processor.api.factory.ODataJPAFactory;
  * behavior of OData JPA Processor library has to be overwritten.
  * 
  * The class encapsulates a default processor for handling OData requests and
- * a default builder to build an OData response. 
+ * a default builder to build an OData response.
  * 
  */
 public abstract class ODataJPAProcessor extends ODataSingleProcessor {

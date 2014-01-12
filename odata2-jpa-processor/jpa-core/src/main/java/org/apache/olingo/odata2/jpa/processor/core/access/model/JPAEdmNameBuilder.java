@@ -22,6 +22,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.PluralAttribute;
@@ -149,7 +150,6 @@ public class JPAEdmNameBuilder {
     view.getEdmSimpleProperty().setName(propertyName);
 
     JPAEdmMapping mapping = new JPAEdmMappingImpl();
-    ((Mapping) mapping).setInternalName(jpaAttributeName);
     mapping.setJPAType(jpaAttribute.getJavaType());
 
     AnnotatedElement annotatedElement = (AnnotatedElement) jpaAttribute.getJavaMember();
@@ -157,6 +157,12 @@ public class JPAEdmNameBuilder {
       Column column = annotatedElement.getAnnotation(Column.class);
       if (column != null) {
         mapping.setJPAColumnName(column.name());
+      } else {
+        JoinColumn joinColumn = annotatedElement.getAnnotation(JoinColumn.class);
+        if (joinColumn != null) {
+          mapping.setJPAColumnName(joinColumn.name());
+          jpaAttributeName += "." + view.getJPAReferencedAttribute().getName();
+        }
       }
     } else {
       ManagedType<?> managedType = jpaAttribute.getDeclaringType();
@@ -176,6 +182,7 @@ public class JPAEdmNameBuilder {
       }
 
     }
+    ((Mapping) mapping).setInternalName(jpaAttributeName);
     view.getEdmSimpleProperty().setMapping((Mapping) mapping);
   }
 

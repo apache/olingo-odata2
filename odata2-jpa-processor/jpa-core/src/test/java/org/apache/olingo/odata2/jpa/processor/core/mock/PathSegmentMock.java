@@ -16,53 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.jpa.processor.ref.model;
+package org.apache.olingo.odata2.jpa.processor.core.mock;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import org.apache.olingo.odata2.api.uri.PathSegment;
 
-@Entity
-@Table(name = "T_CATEGORY")
-public class Category {
+public class PathSegmentMock implements PathSegment {
 
-  @Id
-  @Column(name = "CODE")
-  private char code[] = new char[2];
+  private String path;
 
-  @Column(name = "DESC")
-  private String description;
-
-  @OneToMany(mappedBy = "category")
-  private List<Material> materials = new ArrayList<Material>();
-
-  public List<Material> getMaterials() {
-    return materials;
+  public void setPath(final String path) {
+    this.path = path;
   }
 
-  public void setMaterials(final List<Material> materials) {
-    this.materials = materials;
+  @Override
+  public String getPath() {
+    return path;
   }
 
-  public char[] getCode() {
-    return code;
-  }
-
-  public void setCode(final char[] code) {
-    this.code = code;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(final String description) {
-    this.description = description;
+  @Override
+  public Map<String, List<String>> getMatrixParameters() {
+    return null;
   }
 
 }

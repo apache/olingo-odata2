@@ -48,7 +48,6 @@ import org.apache.olingo.odata2.api.uri.expression.PropertyExpression;
 import org.apache.olingo.odata2.api.uri.expression.UnaryExpression;
 import org.apache.olingo.odata2.api.uri.expression.UnaryOperator;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.jpa.processor.core.ODataExpressionParser;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.easymock.EasyMock;
 import org.junit.Test;
