@@ -49,6 +49,17 @@ public class Address {
   @Column(name = "COUNTRY")
   private String country;
 
+  @Column(name = "PINCODE")
+  private String pincode;
+
+  public String getPincode() {
+    return pincode;
+  }
+
+  public void setPincode(final String pincode) {
+    this.pincode = pincode;
+  }
+
   public short getHouseNumber() {
     return houseNumber;
   }

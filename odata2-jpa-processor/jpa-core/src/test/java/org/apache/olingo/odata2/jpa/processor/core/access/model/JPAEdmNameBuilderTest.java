@@ -26,8 +26,6 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmComplexPropertyVie
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.jpa.processor.core.ODataJPAContextImpl;
-import org.apache.olingo.odata2.jpa.processor.core.access.model.JPAEdmMappingModelService;
-import org.apache.olingo.odata2.jpa.processor.core.access.model.JPAEdmNameBuilder;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEntityTypeMock;
 import org.easymock.EasyMock;

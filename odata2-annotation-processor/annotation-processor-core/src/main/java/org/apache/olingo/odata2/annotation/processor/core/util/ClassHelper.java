@@ -39,9 +39,9 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
  */
 public class ClassHelper {
 
-  private static final String JAR_FILE_ENDING = "jar!";
+  private static final String JAR_FILE_ENDING = "jar";
   private static final String JAR_RESOURCE_SEPARATOR = "!";
-  private static final char PATH_SEPARATOR = '/';
+  private static final char RESOURCE_SEPARATOR = '/';
   private static final char PACKAGE_SEPARATOR = '.';
   private static final File[] EMPTY_FILE_ARRAY = new File[0];
   private static final String CLASSFILE_ENDING = ".class";
@@ -67,18 +67,20 @@ public class ClassHelper {
   public static final List<Class<?>> loadClasses(final String packageToScan, final FilenameFilter ff,
       final ClassValidator cv) {
     final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    String folderToScan = packageToScan.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR);
+    String folderToScan = packageToScan.replace(PACKAGE_SEPARATOR, RESOURCE_SEPARATOR);
     URL url = classLoader.getResource(folderToScan);
     if (url == null) {
       throw new IllegalArgumentException("No folder to scan found for package '" + packageToScan + "'.");
     }
 
     final Collection<String> fqnForClasses;
-    if (url.getFile().contains(JAR_FILE_ENDING)) {
-      fqnForClasses = getClassFqnFromJar(url.getFile().substring(5));
-    } else {
-      File folder = new File(url.getFile());
+    File folder = new File(url.getFile());
+    if (folder.isDirectory()) {
       fqnForClasses = getClassFqnFromDir(ff, folder, packageToScan);
+    } else if (isJarFile(url)) {
+      fqnForClasses = getClassFqnFromJar(url.getFile().substring(5), packageToScan);
+    } else {
+      fqnForClasses = null;
     }
 
     if (fqnForClasses == null || fqnForClasses.isEmpty()) {
@@ -94,11 +96,22 @@ public class ClassHelper {
         }
       } catch (ClassNotFoundException ex) {
         throw new IllegalArgumentException("Exception during class loading of class '" + fqn +
+            " from resource '" + url.getFile() + "'" +
             "' with message '" + ex.getMessage() + "'.");
       }
     }
 
     return annotatedClasses;
+  }
+
+  private static boolean isJarFile(URL url) {
+    String filename = url.getFile();
+    int index = filename.indexOf(JAR_RESOURCE_SEPARATOR);
+    if (index > JAR_FILE_ENDING.length()) {
+      String fileEnding = filename.substring(index - JAR_FILE_ENDING.length(), index);
+      return JAR_FILE_ENDING.equalsIgnoreCase(fileEnding);
+    }
+    return false;
   }
 
   private static Collection<String> getClassFqnFromDir(final FilenameFilter ff, File folder, String packageToScan) {
@@ -117,33 +130,28 @@ public class ClassHelper {
     return classFiles;
   }
 
-  private static Collection<String> getClassFqnFromJar(String filepath) {
+  private static Collection<String> getClassFqnFromJar(String filepath, String packageToScan) {
+    JarFile jarFile = null;
+
+    final String jarFilePath;
     String[] split = filepath.split(JAR_RESOURCE_SEPARATOR);
     if (split.length == 2) {
-      return getClassFilesFromJar(split[0], split[1]);
+      jarFilePath = split[0];
+    } else {
+      throw new IllegalArgumentException("Illegal jar file path '" + filepath + "'.");
     }
-    throw new IllegalArgumentException("Illegal jar file path '" + filepath + "'.");
-  }
 
-  private static Collection<String> getClassFilesFromJar(String jarFilePath, String folderToScan) {
     try {
-      final String prefix;
-      if (folderToScan.startsWith(File.separator)) {
-        prefix = folderToScan.substring(1);
-      } else {
-        prefix = folderToScan;
-      }
-
-      JarFile jarFile = new JarFile(jarFilePath);
+      jarFile = new JarFile(jarFilePath);
       List<String> classFileNames = new ArrayList<String>();
       Enumeration<JarEntry> entries = jarFile.entries();
 
       while (entries.hasMoreElements()) {
         JarEntry je = entries.nextElement();
         String name = je.getName();
-        if (!je.isDirectory() && name.endsWith(CLASSFILE_ENDING) && name.startsWith(prefix)) {
+        if (!je.isDirectory() && name.matches(".*" + packageToScan + ".*" + CLASSFILE_ENDING)) {
           String className = name.substring(0, name.length() - CLASSFILE_ENDING.length());
-          classFileNames.add(className.replace(PATH_SEPARATOR, PACKAGE_SEPARATOR));
+          classFileNames.add(className.replace(RESOURCE_SEPARATOR, PACKAGE_SEPARATOR));
         }
       }
 
@@ -151,6 +159,14 @@ public class ClassHelper {
     } catch (IOException e) {
       throw new IllegalArgumentException("Exception during class loading from path '" + jarFilePath +
           "' with message '" + e.getMessage() + "'.");
+    } finally {
+      if (jarFile != null) {
+        try {
+          jarFile.close();
+        } catch (IOException e) {
+          throw new RuntimeException("Error during close of jar file: " + jarFile.getName() + "", e);
+        }
+      }
     }
   }
 

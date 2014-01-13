@@ -386,15 +386,21 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView, JPAEdmAsso
   }
 
   @Override
-  public boolean isReferencedInKey(String complexTypeName) {
+  public boolean isReferencedInKey(final String complexTypeName) {
     // TODO Auto-generated method stub
     return false;
   }
 
   @Override
-  public void setReferencedInKey(String complexTypeName) {
+  public void setReferencedInKey(final String complexTypeName) {
     // TODO Auto-generated method stub
 
+  }
+
+  @Override
+  public Attribute<?, ?> getJPAReferencedAttribute() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

@@ -40,7 +40,6 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmAssociationView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntityContainerView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntitySetView;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmAssociationSet;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -42,7 +42,6 @@ import org.apache.olingo.odata2.jpa.processor.core.mock.ODataJPAContextMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.ComplexType.ComplexTypeA;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmKey;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

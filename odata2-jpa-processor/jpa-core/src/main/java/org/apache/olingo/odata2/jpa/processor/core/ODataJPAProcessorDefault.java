@@ -191,4 +191,12 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
     return ODataResponse.newBuilder().build();
   }
 
+  @Override
+  public ODataResponse deleteEntityLink(final DeleteUriInfo uriParserResultView, final String contentType)
+      throws ODataException {
+
+    jpaProcessor.process(uriParserResultView, contentType);
+    return ODataResponse.newBuilder().build();
+
+  }
 }

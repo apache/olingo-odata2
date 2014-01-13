@@ -100,11 +100,20 @@ public class JPAEntity {
           jpaEntityParser.getJPAEmbeddableKeyMap(jpaEntity.getClass().getName());
       Set<String> propertyNames = null;
       if (embeddableKeys != null) {
-        setEmbeddableKeyProperty(embeddableKeys, oDataEntityType.getKeyProperties(), oDataEntryProperties, jpaEntity);
+        List<String> processedKeys =
+            setEmbeddableKeyProperty(embeddableKeys, oDataEntityType.getKeyProperties(), oDataEntryProperties,
+                jpaEntity);
+
         propertyNames = new HashSet<String>();
         propertyNames.addAll(oDataEntryProperties.keySet());
-        for (String propertyName : oDataEntityType.getKeyPropertyNames()) {
-          propertyNames.remove(propertyName);
+        if (processedKeys.isEmpty()) {
+          for (String key : embeddableKeys.keySet()) {
+            propertyNames.remove(key);
+          }
+        } else {
+          for (String propertyName : processedKeys) {
+            propertyNames.remove(propertyName);
+          }
         }
       } else {
         propertyNames = oDataEntryProperties.keySet();
@@ -212,7 +221,7 @@ public class JPAEntity {
           .throwException(ODataJPARuntimeException.GENERAL, null);
     }
     Map<String, Object> oDataEntryProperties = oDataEntry.getProperties();
-    if(oDataEntry.containsInlineEntry()){
+    if (oDataEntry.containsInlineEntry()) {
       normalizeInlineEntries(oDataEntryProperties);
     }
     write(oDataEntryProperties, false);
@@ -279,7 +288,7 @@ public class JPAEntity {
     }
   }
 
-  protected void setEmbeddableKeyProperty(final HashMap<String, String> embeddableKeys,
+  protected List<String> setEmbeddableKeyProperty(final HashMap<String, String> embeddableKeys,
       final List<EdmProperty> oDataEntryKeyProperties,
       final Map<String, Object> oDataEntryProperties, final Object entity)
       throws ODataJPARuntimeException, EdmException, IllegalAccessException, IllegalArgumentException,
@@ -288,6 +297,7 @@ public class JPAEntity {
     HashMap<String, Object> embeddableObjMap = new HashMap<String, Object>();
     List<EdmProperty> leftODataEntryKeyProperties = new ArrayList<EdmProperty>();
     HashMap<String, String> leftEmbeddableKeys = new HashMap<String, String>();
+    List<String> processedKeys = new ArrayList<String>();
 
     for (EdmProperty edmProperty : oDataEntryKeyProperties) {
       if (oDataEntryProperties.containsKey(edmProperty.getName()) == false) {
@@ -296,6 +306,9 @@ public class JPAEntity {
 
       String edmPropertyName = edmProperty.getName();
       String embeddableKeyNameComposite = embeddableKeys.get(edmPropertyName);
+      if (embeddableKeyNameComposite == null) {
+        continue;
+      }
       String embeddableKeyNameSplit[] = embeddableKeyNameComposite.split("\\.");
       String methodPartName = null;
       Method method = null;
@@ -320,10 +333,13 @@ public class JPAEntity {
         leftODataEntryKeyProperties.add(edmProperty);
         leftEmbeddableKeys
             .put(edmPropertyName, embeddableKeyNameComposite.split(embeddableKeyNameSplit[0] + ".", 2)[1]);
-        setEmbeddableKeyProperty(leftEmbeddableKeys, leftODataEntryKeyProperties, oDataEntryProperties, embeddableObj);
+        processedKeys.addAll(setEmbeddableKeyProperty(leftEmbeddableKeys, leftODataEntryKeyProperties,
+            oDataEntryProperties, embeddableObj));
       }
+      processedKeys.add(edmPropertyName);
 
     }
+    return processedKeys;
   }
 
   protected Object instantiateJPAEntity() throws InstantiationException, IllegalAccessException {

@@ -16,27 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.jpa.processor.ref.extension;
+package org.apache.olingo.odata2.jpa.processor.core.mock;
 
-public class OrderValue {
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
-  private double amount;
-  private String currency;
+import org.apache.olingo.odata2.api.uri.PathInfo;
+import org.apache.olingo.odata2.api.uri.PathSegment;
+import org.easymock.EasyMock;
 
-  public double getAmount() {
-    return amount;
+public class PathInfoMock {
+
+  private List<PathSegment> pathSegments;
+  private URI uri;
+
+  public void setPathSegments(final List<PathSegment> pathSegments) {
+    this.pathSegments = pathSegments;
   }
 
-  public void setAmount(final double amount) {
-    this.amount = amount;
+  public void setServiceRootURI(final String uriString) throws URISyntaxException {
+    uri = new URI(uriString);
   }
 
-  public String getCurrency() {
-    return currency;
-  }
+  public PathInfo mock() {
+    PathInfo pathInfo = EasyMock.createMock(PathInfo.class);
+    EasyMock.expect(pathInfo.getODataSegments()).andReturn(pathSegments);
+    EasyMock.expect(pathInfo.getServiceRoot()).andReturn(uri);
 
-  public void setCurrency(final String currency) {
-    this.currency = currency;
-  }
+    EasyMock.replay(pathInfo);
+    return pathInfo;
 
+  }
 }

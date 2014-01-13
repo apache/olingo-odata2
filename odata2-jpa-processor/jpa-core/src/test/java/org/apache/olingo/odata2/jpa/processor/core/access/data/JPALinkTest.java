@@ -16,27 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.jpa.processor.ref.extension;
+package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
-public class OrderValue {
-
-  private double amount;
-  private String currency;
-
-  public double getAmount() {
-    return amount;
-  }
-
-  public void setAmount(final double amount) {
-    this.amount = amount;
-  }
-
-  public String getCurrency() {
-    return currency;
-  }
-
-  public void setCurrency(final String currency) {
-    this.currency = currency;
-  }
+public class JPALinkTest {
 
 }

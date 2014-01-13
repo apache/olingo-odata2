@@ -26,8 +26,8 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmAssociationView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmReferentialConstraintRoleView;
-import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmReferentialConstraintView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmReferentialConstraintRoleView.RoleType;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmReferentialConstraintView;
 
 public class JPAEdmReferentialConstraint extends JPAEdmBaseViewImpl implements JPAEdmReferentialConstraintView {
 

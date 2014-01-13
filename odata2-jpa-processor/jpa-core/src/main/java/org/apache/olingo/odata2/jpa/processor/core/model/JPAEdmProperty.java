@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.model;
 
+import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,8 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
+import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
@@ -66,6 +71,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
   private SimpleProperty currentSimpleProperty = null;
   private ComplexProperty currentComplexProperty = null;
   private Attribute<?, ?> currentAttribute;
+  private Attribute<?, ?> currentRefAttribute;
   private boolean isBuildModeComplexType;
   private Map<String, Integer> associationCount;
 
@@ -118,6 +124,11 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
   }
 
   @Override
+  public Attribute<?, ?> getJPAReferencedAttribute() {
+    return currentRefAttribute;
+  }
+
+  @Override
   public ComplexProperty getEdmComplexProperty() {
     return currentComplexProperty;
   }
@@ -167,9 +178,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
      */
     @Override
     public void build() throws ODataJPAModelException, ODataJPARuntimeException {
-
       JPAEdmBuilder keyViewBuilder = null;
-
       properties = new ArrayList<Property>();
 
       List<Attribute<?, ?>> jpaAttributes = null;
@@ -200,29 +209,15 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
 
         switch (attributeType) {
         case BASIC:
-
           currentSimpleProperty = new SimpleProperty();
-          JPAEdmNameBuilder
-              .build((JPAEdmPropertyView) JPAEdmProperty.this, isBuildModeComplexType, skipDefaultNaming);
-
-          EdmSimpleTypeKind simpleTypeKind = JPATypeConvertor
-              .convertToEdmSimpleType(currentAttribute
-                  .getJavaType(), currentAttribute);
-
-          currentSimpleProperty.setType(simpleTypeKind);
-          JPAEdmFacets.setFacets(currentAttribute, currentSimpleProperty);
-
-          properties.add(currentSimpleProperty);
-
+          properties.add(buildSimpleProperty(currentAttribute, currentSimpleProperty));
           if (((SingularAttribute<?, ?>) currentAttribute).isId()) {
             if (keyView == null) {
               keyView = new JPAEdmKey(JPAEdmProperty.this);
               keyViewBuilder = keyView.getBuilder();
             }
-
             keyViewBuilder.build();
           }
-
           break;
         case EMBEDDED:
           ComplexType complexType = complexTypeView
@@ -234,7 +229,6 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
             complexTypeViewLocal.getBuilder().build();
             complexType = complexTypeViewLocal.getEdmComplexType();
             complexTypeView.addJPAEdmCompleTypeView(complexTypeViewLocal);
-
           }
 
           if (isBuildModeComplexType == false
@@ -275,6 +269,8 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         case ONE_TO_MANY:
         case ONE_TO_ONE:
         case MANY_TO_ONE:
+
+          addForeignKey(currentAttribute);
 
           JPAEdmAssociationEndView associationEndView = new JPAEdmAssociationEnd(entityTypeView, JPAEdmProperty.this);
           associationEndView.getBuilder().build();
@@ -323,6 +319,54 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         }
       }
 
+    }
+
+    private SimpleProperty buildSimpleProperty(final Attribute<?, ?> jpaAttribute, final SimpleProperty simpleProperty)
+        throws ODataJPAModelException,
+        ODataJPARuntimeException {
+
+      JPAEdmNameBuilder
+          .build((JPAEdmPropertyView) JPAEdmProperty.this, isBuildModeComplexType, skipDefaultNaming);
+      EdmSimpleTypeKind simpleTypeKind = JPATypeConvertor
+          .convertToEdmSimpleType(jpaAttribute
+              .getJavaType(), jpaAttribute);
+      simpleProperty.setType(simpleTypeKind);
+      JPAEdmFacets.setFacets(jpaAttribute, simpleProperty);
+
+      return simpleProperty;
+
+    }
+
+    private void addForeignKey(final Attribute<?, ?> jpaAttribute) throws ODataJPAModelException,
+        ODataJPARuntimeException {
+
+      AnnotatedElement annotatedElement = (AnnotatedElement) jpaAttribute.getJavaMember();
+      if (annotatedElement == null) {
+        return;
+      }
+      JoinColumn joinColumn = annotatedElement.getAnnotation(JoinColumn.class);
+      if (joinColumn == null) {
+        JoinColumns joinColumns = annotatedElement.getAnnotation(JoinColumns.class);
+        if (joinColumns != null) {
+          return;
+        }
+      } else {
+        if (joinColumn.insertable() && joinColumn.updatable()) {
+          EntityType<?> referencedEntityType = metaModel.entity(jpaAttribute.getJavaType());
+          for (Attribute<?, ?> referencedAttribute : referencedEntityType.getAttributes()) {
+            AnnotatedElement annotatedElement2 = (AnnotatedElement) referencedAttribute.getJavaMember();
+            if (annotatedElement2 != null) {
+              Column referencedColumn = annotatedElement2.getAnnotation(Column.class);
+              if (referencedColumn != null && referencedColumn.name().equals((joinColumn.referencedColumnName()))) {
+                currentRefAttribute = referencedAttribute;
+                currentSimpleProperty = new SimpleProperty();
+                properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty));
+                break;
+              }
+            }
+          }
+        }
+      }
     }
 
     @SuppressWarnings("rawtypes")
@@ -374,4 +418,5 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
     }
     return isExcluded;
   }
+
 }

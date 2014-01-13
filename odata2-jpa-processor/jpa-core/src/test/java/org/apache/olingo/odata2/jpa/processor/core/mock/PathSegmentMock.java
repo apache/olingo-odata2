@@ -16,27 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.jpa.processor.ref.extension;
+package org.apache.olingo.odata2.jpa.processor.core.mock;
 
-public class OrderValue {
+import java.util.List;
+import java.util.Map;
 
-  private double amount;
-  private String currency;
+import org.apache.olingo.odata2.api.uri.PathSegment;
 
-  public double getAmount() {
-    return amount;
+public class PathSegmentMock implements PathSegment {
+
+  private String path;
+
+  public void setPath(final String path) {
+    this.path = path;
   }
 
-  public void setAmount(final double amount) {
-    this.amount = amount;
+  @Override
+  public String getPath() {
+    return path;
   }
 
-  public String getCurrency() {
-    return currency;
-  }
-
-  public void setCurrency(final String currency) {
-    this.currency = currency;
+  @Override
+  public Map<String, List<String>> getMatrixParameters() {
+    return null;
   }
 
 }

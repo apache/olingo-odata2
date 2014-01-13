@@ -26,6 +26,7 @@ import java.util.UUID;
 import org.apache.olingo.odata2.api.edm.EdmAssociation;
 import org.apache.olingo.odata2.api.edm.EdmAssociationEnd;
 import org.apache.olingo.odata2.api.edm.EdmComplexType;
+import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -33,7 +34,7 @@ import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
-import org.apache.olingo.odata2.api.edm.EdmType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.Mapping;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
@@ -47,6 +48,19 @@ public class EdmMockUtilV2 {
 
   public static interface JPAEdmMappingMock extends JPAEdmMapping, EdmMapping {
 
+  }
+
+  public static EdmEntityContainer mockEdmEntityContainer(final String entityName) throws EdmException {
+    EdmEntityContainer entityContainer = EasyMock.createMock(EdmEntityContainer.class);
+    entityContainer = EasyMock.createMock(EdmEntityContainer.class);
+    EasyMock.expect(entityContainer.getEntitySet(JPATypeMock.ENTITY_NAME)).andReturn(
+        mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false));
+    EasyMock.expect(entityContainer.getFunctionImport(JPATypeMock.ENTITY_NAME)).andReturn(null);
+    EasyMock.expect(entityContainer.getEntitySet("JPATypeMockInvalid")).andReturn(null);
+    EasyMock.expect(entityContainer.getFunctionImport("JPATypeMockInvalid")).andReturn(null);
+    EasyMock.replay(entityContainer);
+
+    return entityContainer;
   }
 
   public static EdmEntityType mockEdmEntityType(final String entityName, final boolean withComplexType)
@@ -64,6 +78,7 @@ public class EdmMockUtilV2 {
     EasyMock.expect(entityType.getNavigationPropertyNames()).andReturn(mockNavigationPropertyNames(entityName));
     EasyMock.expect(entityType.getKind()).andReturn(EdmTypeKind.ENTITY);
     EasyMock.expect(entityType.getMapping()).andReturn((EdmMapping) mockEdmMapping(entityName, null, null));
+    EasyMock.expect(entityType.getKeyProperties()).andReturn(mockKeyProperties(entityName)).anyTimes();
     if (entityName.equals(JPATypeMock.ENTITY_NAME)) {
       EasyMock.expect(entityType.getProperty(JPATypeMock.PROPERTY_NAME_MINT)).andReturn(
           mockEdmProperty(entityName, JPATypeMock.PROPERTY_NAME_MINT)).anyTimes();
@@ -87,6 +102,13 @@ public class EdmMockUtilV2 {
     }
     EasyMock.replay(entityType);
     return entityType;
+  }
+
+  public static List<EdmProperty> mockKeyProperties(final String entityName) throws EdmException {
+    List<EdmProperty> edmProperties = new ArrayList<EdmProperty>();
+    edmProperties.add(mockEdmProperty(entityName, JPATypeMock.PROPERTY_NAME_MINT));
+
+    return edmProperties;
   }
 
   public static List<String> mockNavigationPropertyNames(final String entityName) {
@@ -211,9 +233,10 @@ public class EdmMockUtilV2 {
         propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MDOUBLE) ||
         propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MBYTEARRAY)) {
 
-      EdmType edmType = EasyMock.createMock(EdmType.class);
+      EdmSimpleType edmType = EasyMock.createMock(EdmSimpleType.class);
       EasyMock.expect(edmProperty.getType()).andReturn(edmType).anyTimes();
       EasyMock.expect(edmType.getKind()).andReturn(EdmTypeKind.SIMPLE).anyTimes();
+      EasyMock.expect(edmType.isCompatible(EasyMock.isA(EdmSimpleType.class))).andReturn(true).anyTimes();
       EasyMock.replay(edmType);
       EasyMock.expect(edmProperty.getName()).andReturn(propertyName).anyTimes();
       EasyMock.expect(edmProperty.getMapping()).andReturn((EdmMapping) mockEdmMapping(entityName, propertyName, null))
