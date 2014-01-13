@@ -135,7 +135,8 @@ public final class ODataEntityParser {
     return uriInfo;
   }
 
-  public UriInfo parseBindingLink(final String link, final Map<String, String> options) throws ODataJPARuntimeException {
+  public UriInfo parseBindingLink(final String link, final Map<String, String> options) 
+      throws ODataJPARuntimeException {
     final PathSegment pathSegment = getPathSegment(link);
     UriInfo uriInfo = null;
     try {
