@@ -115,6 +115,20 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
   }
 
   @Test
+  public void deletedEntriesEmpty() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+
+    deletedRoomData.clear();
+    
+    TombstoneCallback tombstoneCallback =
+        new TombstoneCallbackImpl(deletedRoomData, null);
+
+    final String json = writeRoomData(entitySet, tombstoneCallback);
+
+    assertTrue("Something wrong with empty deletedRoomData list!", json.contains("nr_Building\"}}}]}}"));
+  }
+
+  @Test
   public void deletedEntriesAndDeltaLink() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
 
