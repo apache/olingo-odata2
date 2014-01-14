@@ -50,4 +50,5 @@ public class FormatJson {
   public static final String VALUE = "value";
   public static final String INNER_ERROR = "innererror";
   public static final String DELTA = "__delta";
+  public static final String ODATA_CONTEXT = "@odata.context";
 }

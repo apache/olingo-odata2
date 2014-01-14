@@ -75,6 +75,16 @@ public class JsonFeedEntityProducer {
         }
         entryProducer.append(writer, entityInfo, entryData, false);
       }
+
+      if (callback != null) {
+        JsonDeletedEntryEntityProducer deletedEntryProducer = new JsonDeletedEntryEntityProducer(properties);
+        TombstoneCallbackResult callbackResult = callback.getTombstoneCallbackResult();
+        List<Map<String, Object>> deletedEntries = callbackResult.getDeletedEntriesData();
+        if (deletedEntries != null) {
+          deletedEntryProducer.append(writer, entityInfo, deletedEntries);
+        }
+      }
+
       jsonStreamWriter.endArray();
 
       appendNextLink(jsonStreamWriter);

@@ -1,12 +1,12 @@
 package org.apache.olingo.odata2.core.ep.producer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
@@ -75,8 +76,45 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
 
     TombstoneCallback tombstoneCallback =
+        new TombstoneCallbackImpl(null, BASE_URI + "Rooms?!deltatoken=1234");
+
+    final String json = writeRoomData(entitySet, tombstoneCallback);
+
+    assertTrue("Delta Link missing or wrong!", json
+        .contains("__delta\":\"http://host:80/service/Rooms?!deltatoken=1234"));
+  }
+
+  @Test
+  public void deletedEntries() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+
+    TombstoneCallback tombstoneCallback =
+        new TombstoneCallbackImpl(deletedRoomData, null);
+
+    final String json = writeRoomData(entitySet, tombstoneCallback);
+
+    assertTrue("Somthing wring with @odata.context!", json
+        .contains("{\"@odata.context\":\"$metadata#Rooms/$deletedEntity\",\""));
+    System.out.println(json);
+  }
+
+  @Test
+  public void deletedEntriesAndDeltaLink() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+
+    TombstoneCallback tombstoneCallback =
         new TombstoneCallbackImpl(deletedRoomData, BASE_URI + "Rooms?!deltatoken=1234");
 
+    final String json = writeRoomData(entitySet, tombstoneCallback);
+
+    assertTrue("Delta Link missing or wrong!", json
+        .contains("__delta\":\"http://host:80/service/Rooms?!deltatoken=1234"));
+    assertTrue("Somthing wring with @odata.context!", json
+        .contains("{\"@odata.context\":\"$metadata#Rooms/$deletedEntity\",\""));
+  }
+
+  private String writeRoomData(final EdmEntitySet entitySet, TombstoneCallback tombstoneCallback)
+      throws URISyntaxException, EntityProviderException, IOException {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
     callbacks.put(TombstoneCallback.CALLBACK_KEY_TOMBSTONE, tombstoneCallback);
 
@@ -91,9 +129,7 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
-
-    assertTrue("Delta Link missing or wrong!", json.contains("__delta\":\"http://host:80/service/Rooms?!deltatoken=1234"));
-    
+    return json;
   }
 
 }
