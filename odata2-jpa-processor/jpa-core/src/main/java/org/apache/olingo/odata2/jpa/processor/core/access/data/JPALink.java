@@ -147,24 +147,24 @@ public class JPALink {
     }
   }
 
-  private void delinkJPAEntities(final Object targetJPAEntity,
+  private void delinkJPAEntities(final Object jpaEntity,
       final List<Object> relatedJPAEntities,
       final EdmNavigationProperty targetNavigationProperty)
       throws ODataJPARuntimeException {
 
     try {
       JPAEntityParser entityParser = new JPAEntityParser();
-      Method setMethod = entityParser.getAccessModifier(targetJPAEntity,
+      Method setMethod = entityParser.getAccessModifier(jpaEntity,
           targetNavigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 
-      Method getMethod = entityParser.getAccessModifier(targetJPAEntity,
+      Method getMethod = entityParser.getAccessModifier(jpaEntity,
           targetNavigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
 
       if (getMethod.getReturnType().getTypeParameters() != null
           && getMethod.getReturnType().getTypeParameters().length != 0) {
-        setMethod.invoke(targetJPAEntity, relatedJPAEntities);
+        setMethod.invoke(jpaEntity, relatedJPAEntities);
       } else {
-        setMethod.invoke(targetJPAEntity, (Object) null);
+        setMethod.invoke(jpaEntity, (Object) null);
       }
     } catch (IllegalAccessException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
@@ -192,10 +192,32 @@ public class JPALink {
 
   }
 
+  public void create(final EdmEntitySet entitySet, final ODataEntry oDataEntry) throws ODataJPARuntimeException,
+      ODataJPAModelException {
+    List<String> navPropertyNames;
+    try {
+      navPropertyNames = entitySet.getEntityType().getNavigationPropertyNames();
+      for (String navPropertyName : navPropertyNames) {
+        List<String> links = oDataEntry.getMetadata().getAssociationUris(navPropertyName);
+        if (links != null && links.isEmpty() == false) {
+          for (String link : links) {
+            UriInfo bindingUriInfo = parser.parseBindingLink(link, new HashMap<String, String>());
+            targetJPAEntity = jpaProcessor.process((GetEntityUriInfo) bindingUriInfo);
+            linkJPAEntities(targetJPAEntity, sourceJPAEntity, (EdmNavigationProperty) entitySet.getEntityType()
+                .getProperty(
+                    navPropertyName));
+          }
+        }
+      }
+    } catch (EdmException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+    }
+
+  }
+
   public void create(final PostUriInfo uriInfo, final ODataEntry oDataEntry) throws ODataJPARuntimeException,
       ODataJPAModelException {
     try {
-      EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();
       int index = context.getODataContext().getPathInfo().getODataSegments().size() - 2;
       UriInfo parsedUriInfo = parser.parseURISegment(index, index + 1);
       Object targetJPAEntity = null;
@@ -210,22 +232,8 @@ public class JPALink {
             .getNavigationProperty());
       }
 
-      List<String> navPropertyNames;
-      navPropertyNames = targetEntitySet.getEntityType().getNavigationPropertyNames();
+      create(uriInfo.getTargetEntitySet(), oDataEntry);
 
-      for (String navPropertyName : navPropertyNames) {
-        List<String> links = oDataEntry.getMetadata().getAssociationUris(navPropertyName);
-        if (links != null && links.isEmpty() == false) {
-          for (String link : links) {
-            UriInfo bindingUriInfo = parser.parseBindingLink(link, new HashMap<String, String>());
-            targetJPAEntity = jpaProcessor.process((GetEntityUriInfo) bindingUriInfo);
-
-            linkJPAEntities(targetJPAEntity, sourceJPAEntity, (EdmNavigationProperty) targetEntitySet.getEntityType()
-                .getProperty(
-                    navPropertyName));
-          }
-        }
-      }
     } catch (EdmException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     } catch (ODataException e) {

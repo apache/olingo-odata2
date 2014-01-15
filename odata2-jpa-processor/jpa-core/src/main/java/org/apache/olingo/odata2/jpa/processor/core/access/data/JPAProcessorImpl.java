@@ -305,7 +305,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
       final EdmEntitySet oDataEntitySet = createView.getTargetEntitySet();
       final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
-      final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet);
+      final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet, oDataJPAContext);
       final List<Object> createList = new ArrayList<Object>();
       Object jpaEntity = null;
 
@@ -368,7 +368,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
       final EdmEntitySet oDataEntitySet = updateView.getTargetEntitySet();
       final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
-      final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet);
+      final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet, oDataJPAContext);
       virtualJPAEntity.setJPAEntity(jpaEntity);
 
       if (content != null) {
