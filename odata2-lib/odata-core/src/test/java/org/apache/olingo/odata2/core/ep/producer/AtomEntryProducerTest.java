@@ -491,6 +491,22 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
   }
 
   @Test
+  public void serializeAtomEntryWithSimplePropertyTypeInformation() throws Exception {
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).includeSimplePropertyType(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+    ODataResponse response =
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData, properties);
+    String xmlString = verifyResponse(response);
+
+    assertXpathExists("/a:entry/a:content/m:properties", xmlString);
+    assertXpathExists("/a:entry/a:content/m:properties/d:Id[@m:type=\"Edm.String\"]", xmlString);
+    assertXpathExists("/a:entry/a:content/m:properties/d:Name[@m:type=\"Edm.String\"]", xmlString);
+    assertXpathExists("/a:entry/a:content/m:properties/d:Seats[@m:type=\"Edm.Int16\"]", xmlString);
+    assertXpathExists("/a:entry/a:content/m:properties/d:Version[@m:type=\"Edm.Int16\"]", xmlString);
+  }
+
+  @Test
   public void serializeEntryId() throws IOException, XpathException, SAXException, XMLStreamException,
       FactoryConfigurationError, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();

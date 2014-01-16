@@ -202,7 +202,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
-      XmlPropertyEntityProducer ps = new XmlPropertyEntityProducer();
+      XmlPropertyEntityProducer ps = new XmlPropertyEntityProducer(false);
       ps.append(writer, propertyInfo, value);
 
       writer.flush();

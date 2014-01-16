@@ -70,7 +70,8 @@ public class ProducerConsumerIntegrationTest {
     assertEquals("Neu \n Schwanstein蝴蝶", properties2.get("Name"));
   }
 
-  private Map<String, Object> execute(Map<String, Object> localRoomData, EdmEntitySet roomSet, String contentType)
+  private Map<String, Object> execute(final Map<String, Object> localRoomData, final EdmEntitySet roomSet,
+      final String contentType)
       throws EntityProviderException {
     ODataResponse response = EntityProvider.writeEntry(contentType, roomSet, localRoomData, DEFAULT_WRITE_PROPERTIES);
     InputStream content = (InputStream) response.getEntity();
