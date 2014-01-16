@@ -43,6 +43,17 @@ public class AnnotationValueAccessTest {
     Assert.assertEquals(String.class, type);
   }
 
+  @Test
+  public void getPropertyTypeNullData() throws ODataException {
+    AnnotationValueAccess ava = new AnnotationValueAccess();
+    EdmProperty property = mockProperty("Name");
+
+    Class<?> type = ava.getPropertyType(null, property);
+    
+    Assert.assertNull(type);
+  }
+
+  
   @Test(expected=ODataNotImplementedException.class)
   public void getPropertyTypeNotAnnotated() throws ODataException {
     AnnotationValueAccess ava = new AnnotationValueAccess();
@@ -135,6 +146,17 @@ public class AnnotationValueAccessTest {
     ava.setPropertyValue(data, property, null);
     
     Assert.assertNull(null, data.name);
+  }
+
+  @Test
+  public void setPropertyDataNull() throws ODataException {
+    AnnotationValueAccess ava = new AnnotationValueAccess();
+    SimpleEntity data = null;
+    EdmProperty property = mockProperty("Name");
+    
+    ava.setPropertyValue(data, property, null);
+    
+    // no exception is thrown, all fine
   }
 
   @Test
