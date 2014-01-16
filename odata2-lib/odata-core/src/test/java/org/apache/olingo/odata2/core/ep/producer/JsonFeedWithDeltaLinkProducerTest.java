@@ -147,13 +147,16 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
         .contains("{\"@odata.context\":\"$metadata#Rooms/$deletedEntity\",\""));
     assertTrue(
         "Somthing wrong with deleted entry!",
-        json.contains("{\"@odata.context\":\"$metadata#Rooms/$deletedEntity\",\"id\":\"http://host:80/service/Rooms('3')\"}"));
+        json.contains("{\"@odata.context\":\"$metadata#Rooms/$deletedEntity\",\"id\":\"http://"
+            + "host:80/service/Rooms('3')\"}"));
     assertTrue(
         "Somthing wrong with deleted entry!",
-        json.contains("{\"@odata.context\":\"$metadata#Rooms/$deletedEntity\",\"id\":\"http://host:80/service/Rooms('4')\"}"));
+        json.contains("{\"@odata.context\":\"$metadata#Rooms/$deletedEntity\",\"id\":\"http://"
+            + "host:80/service/Rooms('4')\"}"));
     assertTrue(
         "Somthing wrong with deleted entry!",
-        json.contains("{\"@odata.context\":\"$metadata#Rooms/$deletedEntity\",\"id\":\"http://host:80/service/Rooms('5')\"}"));
+        json.contains("{\"@odata.context\":\"$metadata#Rooms/$deletedEntity\",\"id\":\"http://"
+            + "host:80/service/Rooms('5')\"}"));
   }
 
   private String writeRoomData(final EdmEntitySet entitySet, TombstoneCallback tombstoneCallback)
