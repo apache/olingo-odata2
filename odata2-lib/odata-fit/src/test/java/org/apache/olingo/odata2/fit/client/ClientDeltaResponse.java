@@ -75,7 +75,6 @@ public class ClientDeltaResponse extends AbstractFitTest {
   }
 
   @Test
-//  @Ignore
   public void testEntity() throws Exception {
     ODataFeed feed = client.readFeed("Container1", "Rooms", "application/atom+xml");
     assertNotNull(feed);
