@@ -314,9 +314,6 @@ public class JPAProcessorImpl implements JPAProcessor {
         final ODataEntry oDataEntry =
             oDataEntityParser.parseEntry(oDataEntitySet, content, requestedContentType, false);
         virtualJPAEntity.create(oDataEntry);
-        JPALink link = new JPALink(oDataJPAContext);
-        link.setSourceJPAEntity(virtualJPAEntity.getJPAEntity());
-        link.create(createView, oDataEntry);
       } else if (properties != null) {
         virtualJPAEntity.create(properties);
       } else {

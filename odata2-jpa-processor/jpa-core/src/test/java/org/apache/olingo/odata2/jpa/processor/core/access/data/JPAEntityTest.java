@@ -112,7 +112,6 @@ public class JPAEntityTest {
     assertTrue(jpaTypeMock.getMDateTime().equals(ODataEntryMockUtil.VALUE_DATE_TIME));
 
     JPARelatedTypeMock relatedType = jpaTypeMock.getMRelatedEntity();
-    assertNotNull(jpaTypeMock.getMRelatedEntity());
     assertEquals(relatedType.getMByte(), ODataEntryMockUtil.VALUE_MBYTE);
     assertEquals(relatedType.getMByteArray(), ODataEntryMockUtil.VALUE_MBYTEARRAY);
     assertEquals(relatedType.getMDouble(), ODataEntryMockUtil.VALUE_MDOUBLE, 0.0);
@@ -146,7 +145,7 @@ public class JPAEntityTest {
       EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, null);
+      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, ODataJPAContextMock.mockODataJPAContext());
       JPATypeMock jpaTypeMock = new JPATypeMock();
       jpaEntity.setJPAEntity(jpaTypeMock);
       jpaEntity.update(ODataEntryMockUtil.mockODataEntry(JPATypeMock.ENTITY_NAME));

@@ -30,116 +30,104 @@ import javax.persistence.Transient;
 @Table(name = "T_SALESORDERITEM")
 public class SalesOrderItem {
 
-	public SalesOrderItem() {
-	}
+  public SalesOrderItem() {}
 
-	public SalesOrderItem(final int quantity, final double amount,
-			final double discount, final Material material) {
-		super();
-		this.quantity = quantity;
-		this.amount = amount;
-		this.discount = discount;
-		this.material = material;
-	}
+  public SalesOrderItem(final int quantity, final double amount,
+      final double discount, final Material material) {
+    super();
+    this.quantity = quantity;
+    this.amount = amount;
+    this.discount = discount;
+    this.material = material;
+  }
 
-	@EmbeddedId
-	private SalesOrderItemKey salesOrderItemKey;
+  @EmbeddedId
+  private SalesOrderItemKey salesOrderItemKey;
 
-	@Column(name = "Material_Id", nullable = false)
-	private long matId;
+  @Column
+  private int quantity;
 
-	@Column
-	private int quantity;
+  @Column
+  private double amount;
 
-	@Column
-	private double amount;
+  @Column
+  private double discount;
 
-	@Column
-	private double discount;
+  @Transient
+  private double netAmount;
 
-	@Transient
-	private double netAmount;
-	
-	@Column
-	private boolean delivered;
+  @Column
+  private boolean delivered;
 
-	public Boolean isDelivered() {
-		return delivered;
-	}
+  public Boolean isDelivered() {
+    return delivered;
+  }
 
-	public void setDelivered(final Boolean deliveryStatus) {
-		this.delivered = deliveryStatus;
-	}
+  public void setDelivered(final Boolean deliveryStatus) {
+    this.delivered = deliveryStatus;
+  }
 
-	@JoinColumn(name = "Material_Id", referencedColumnName = "MATERIAL_ID", insertable = false, updatable = false)
-	@ManyToOne
-	private Material material;
+  @JoinColumn(name = "Material_Id", referencedColumnName = "MATERIAL_ID")
+  @ManyToOne
+  private Material material;
 
-	@JoinColumn(name = "Sales_Order_Id", referencedColumnName = "SO_ID", insertable = false, updatable = false)
-	@ManyToOne
-	private SalesOrderHeader salesOrderHeader;
+  @JoinColumn(name = "Sales_Order_Id", referencedColumnName = "SO_ID", insertable = false, updatable = false)
+  @ManyToOne
+  private SalesOrderHeader salesOrderHeader;
 
-	public SalesOrderItemKey getSalesOrderItemKey() {
-		return salesOrderItemKey;
-	}
+  public SalesOrderItemKey getSalesOrderItemKey() {
+    return salesOrderItemKey;
+  }
 
-	public void setSalesOrderItemKey(final SalesOrderItemKey salesOrderItemKey) {
-		this.salesOrderItemKey = salesOrderItemKey;
-	}
+  public void setSalesOrderItemKey(final SalesOrderItemKey salesOrderItemKey) {
+    this.salesOrderItemKey = salesOrderItemKey;
+  }
 
-	public long getMatId() {
-		return matId;
-	}
+  public int getQuantity() {
+    return quantity;
+  }
 
-	public void setMatId(final long matId) {
-		this.matId = matId;
-	}
+  public void setQuantity(final int quantity) {
+    this.quantity = quantity;
+  }
 
-	public int getQuantity() {
-		return quantity;
-	}
+  public double getAmount() {
+    return amount;
+  }
 
-	public void setQuantity(final int quantity) {
-		this.quantity = quantity;
-	}
+  public void setAmount(final double amount) {
+    this.amount = amount;
+  }
 
-	public double getAmount() {
-		return amount;
-	}
+  public double getDiscount() {
+    return discount;
+  }
 
-	public void setAmount(final double amount) {
-		this.amount = amount;
-	}
+  public void setDiscount(final double discount) {
+    this.discount = discount;
+  }
 
-	public double getDiscount() {
-		return discount;
-	}
+  public double getNetAmount() {
+    return netAmount;
+  }
 
-	public void setDiscount(final double discount) {
-		this.discount = discount;
-	}
+  public void setNetAmount(final double netAmount) {
+    this.netAmount = netAmount;
+  }
 
-	public double getNetAmount() {
-		return netAmount;
-	}
+  public Material getMaterial() {
+    return material;
+  }
 
-	public void setNetAmount(final double netAmount) {
-		this.netAmount = netAmount;
-	}
+  public void setMaterial(final Material material) {
+    this.material = material;
+  }
 
-	public Material getMaterial() {
-		return material;
-	}
+  public SalesOrderHeader getSalesOrderHeader() {
+    return salesOrderHeader;
+  }
 
-	public void setMaterial(final Material material) {
-		this.material = material;
-	}
-
-	public SalesOrderHeader getSalesOrderHeader() {
-		return salesOrderHeader;
-	}
-
-	public void setSalesOrderHeader(final SalesOrderHeader salesOrderHeader) {
-		this.salesOrderHeader = salesOrderHeader;
-	}
+  public void setSalesOrderHeader(final SalesOrderHeader salesOrderHeader) {
+    this.salesOrderHeader = salesOrderHeader;
+  }
 }
