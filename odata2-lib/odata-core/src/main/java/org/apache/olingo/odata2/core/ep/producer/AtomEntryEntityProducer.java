@@ -140,7 +140,7 @@ public class AtomEntryEntityProducer {
     for (String tpName : noneSyndicationTargetPaths) {
       EntityPropertyInfo info = eia.getTargetPathInfo(tpName);
       final String name = info.getName();
-      XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer();
+      XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties.isIncludeSimplePropertyType());
       aps.appendCustomProperty(writer, name, info, data.get(name));
     }
   }
@@ -564,7 +564,7 @@ public class AtomEntryEntityProducer {
 
           if (isNotMappedViaCustomMapping(propertyInfo)) {
             Object value = data.get(propertyName);
-            XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer();
+            XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties.isIncludeSimplePropertyType());
             aps.append(writer, propertyInfo.getName(), propertyInfo, value);
           }
         }

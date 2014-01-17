@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.ODataCallback;
@@ -39,6 +40,7 @@ import org.apache.olingo.odata2.api.ep.callback.WriteEntryCallbackContext;
 import org.apache.olingo.odata2.api.ep.callback.WriteEntryCallbackResult;
 import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackContext;
 import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
+import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
@@ -56,7 +58,8 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
   }
 
   @Override
-  public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context) {
+  public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context)
+      throws ODataApplicationException {
     WriteEntryCallbackResult result = new WriteEntryCallbackResult();
     Map<String, Object> entry = context.getEntryData();
     Map<String, Object> edmPropertyValueMap = null;
@@ -86,16 +89,17 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       }
       result.setInlineProperties(getInlineEntityProviderProperties(context));
     } catch (EdmException e) {
-
+      throw new ODataApplicationException(e.getMessage(), Locale.getDefault(), e);
     } catch (ODataJPARuntimeException e) {
-
+      throw new ODataApplicationException(e.getMessage(), Locale.getDefault(), e);
     }
 
     return result;
   }
 
   @Override
-  public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context) {
+  public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+      throws ODataApplicationException {
     WriteFeedCallbackResult result = new WriteFeedCallbackResult();
     HashMap<String, Object> inlinedEntry = (HashMap<String, Object>) context.getEntryData();
     List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
@@ -132,9 +136,9 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       }
       result.setInlineProperties(getInlineEntityProviderProperties(context));
     } catch (EdmException e) {
-
+      throw new ODataApplicationException(e.getMessage(), Locale.getDefault(), e);
     } catch (ODataJPARuntimeException e) {
-
+      throw new ODataApplicationException(e.getMessage(), Locale.getDefault(), e);
     }
     return result;
   }

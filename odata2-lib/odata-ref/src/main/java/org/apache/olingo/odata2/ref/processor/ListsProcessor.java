@@ -178,12 +178,9 @@ public class ListsProcessor extends ODataSingleProcessor {
         sortInDefaultOrder(entitySet, data);
       }
 
-      // TODO: Percent-encode "next" link.
-      nextLink = context.getPathInfo().getServiceRoot().relativize(context.getPathInfo().getRequestUri()).toString()
-          .replaceAll("\\$skiptoken=.+?&?", "")
-          .replaceAll("\\$skip=.+?&?", "")
-          .replaceFirst("(?:\\?|&)$", ""); // Remove potentially trailing "?" or "&" left over from remove actions
-                                           // above.
+      nextLink = context.getPathInfo().getServiceRoot().relativize(context.getPathInfo().getRequestUri()).toString();
+      nextLink = percentEncodeNextLink(nextLink);
+
       nextLink += (nextLink.contains("?") ? "&" : "?")
           + "$skiptoken=" + getSkipToken(entitySet, data.get(SERVER_PAGING_SIZE));
 
@@ -215,6 +212,16 @@ public class ListsProcessor extends ODataSingleProcessor {
     return ODataResponse.fromResponse(response).build();
   }
 
+  String percentEncodeNextLink(String link) {
+    if(link == null) {
+      return null;
+    }
+       
+    return link.replaceAll("\\$skiptoken=.+?(?:&|$)", "")
+        .replaceAll("\\$skip=.+?(?:&|$)", "")
+        .replaceFirst("(?:\\?|&)$", ""); // Remove potentially trailing "?" or "&" left over from remove actions
+  }
+  
   @Override
   public ODataResponse countEntitySet(final GetEntitySetCountUriInfo uriInfo, final String contentType)
       throws ODataException {

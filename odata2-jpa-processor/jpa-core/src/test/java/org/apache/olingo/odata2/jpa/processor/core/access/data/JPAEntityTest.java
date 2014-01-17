@@ -28,6 +28,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.jpa.processor.core.mock.ODataJPAContextMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.EdmMockUtilV2;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.JPATypeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.JPATypeMock.JPARelatedTypeMock;
@@ -46,7 +47,7 @@ public class JPAEntityTest {
       EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, true);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
+      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, null);
       jpaEntity.create(ODataEntryMockUtil.mockODataEntryWithComplexType(JPATypeMock.ENTITY_NAME));
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
@@ -75,7 +76,7 @@ public class JPAEntityTest {
       EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
+      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, null);
       jpaEntity.create(ODataEntryMockUtil.mockODataEntry(JPATypeMock.ENTITY_NAME));
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
@@ -96,7 +97,7 @@ public class JPAEntityTest {
       EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
+      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, ODataJPAContextMock.mockODataJPAContext());
       jpaEntity.create(ODataEntryMockUtil.mockODataEntryWithInline(JPATypeMock.ENTITY_NAME));
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
@@ -124,7 +125,7 @@ public class JPAEntityTest {
       EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
+      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, null);
       jpaEntity.create(ODataEntryMockUtil.mockODataEntryProperties(JPATypeMock.ENTITY_NAME));
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
@@ -145,7 +146,7 @@ public class JPAEntityTest {
       EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
+      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, null);
       JPATypeMock jpaTypeMock = new JPATypeMock();
       jpaEntity.setJPAEntity(jpaTypeMock);
       jpaEntity.update(ODataEntryMockUtil.mockODataEntry(JPATypeMock.ENTITY_NAME));
@@ -168,7 +169,7 @@ public class JPAEntityTest {
       EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
       EdmEntityType edmEntityType = edmEntitySet.getEntityType();
 
-      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet);
+      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, null);
       JPATypeMock jpaTypeMock = new JPATypeMock();
       jpaEntity.setJPAEntity(jpaTypeMock);
       jpaEntity.update(ODataEntryMockUtil.mockODataEntryProperties(JPATypeMock.ENTITY_NAME));

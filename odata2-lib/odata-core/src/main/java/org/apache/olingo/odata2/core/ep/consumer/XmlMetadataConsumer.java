@@ -1061,8 +1061,8 @@ public class XmlMetadataConsumer {
 
   private void validateAssociationEnd(final AssociationSetEnd end, final Association association)
       throws EntityProviderException {
-    if (!(association.getEnd1().getRole().equals(end.getRole()) ^ 
-        association.getEnd2().getRole().equals(end.getRole()))) {
+    if (!(association.getEnd1().getRole().equals(end.getRole()) ^ association
+        .getEnd2().getRole().equals(end.getRole()))) {
       throw new EntityProviderException(EntityProviderException.COMMON.addContent("Invalid Association"));
     }
   }

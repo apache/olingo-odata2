@@ -40,6 +40,12 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
  */
 public class XmlPropertyEntityProducer {
 
+  private final boolean inculdeSimplePropertyType;
+
+  public XmlPropertyEntityProducer(final boolean inculdeSimplePropertyType) {
+    this.inculdeSimplePropertyType = inculdeSimplePropertyType;
+  }
+
   /**
    * Append {@link Object} <code>value</code> based on {@link EntityPropertyInfo} to {@link XMLStreamWriter} in an
    * already existing XML structure inside the d namespace.
@@ -187,6 +193,11 @@ public class XmlPropertyEntityProducer {
     }
 
     final EdmSimpleType type = (EdmSimpleType) prop.getType();
+    if (inculdeSimplePropertyType) {
+      String fqnTypeName = type.getNamespace() + Edm.DELIMITER + type.getName();
+      writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.ATOM_TYPE, fqnTypeName);
+    }
+
     final String valueAsString = type.valueToString(contentValue, EdmLiteralKind.DEFAULT, prop.getFacets());
     if (valueAsString == null) {
       writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.ATOM_NULL, FormatXml.ATOM_VALUE_TRUE);

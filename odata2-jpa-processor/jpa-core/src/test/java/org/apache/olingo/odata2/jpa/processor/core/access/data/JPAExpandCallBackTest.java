@@ -38,6 +38,7 @@ import org.apache.olingo.odata2.api.ep.callback.WriteEntryCallbackContext;
 import org.apache.olingo.odata2.api.ep.callback.WriteEntryCallbackResult;
 import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackContext;
 import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
+import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
@@ -64,6 +65,8 @@ public class JPAExpandCallBackTest {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalAccessException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataApplicationException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
 
@@ -84,6 +87,8 @@ public class JPAExpandCallBackTest {
     } catch (IllegalArgumentException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalAccessException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataApplicationException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }

@@ -38,6 +38,7 @@ import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 
@@ -49,11 +50,14 @@ public class JPAEntity {
   private Class<?> jpaType = null;
   private HashMap<String, Method> accessModifiersWrite = null;
   private JPAEntityParser jpaEntityParser = null;
+  private ODataJPAContext oDataJPAContext;
   public HashMap<EdmNavigationProperty, EdmEntitySet> inlinedEntities = null;
 
-  public JPAEntity(final EdmEntityType oDataEntityType, final EdmEntitySet oDataEntitySet) {
+  public JPAEntity(final EdmEntityType oDataEntityType, final EdmEntitySet oDataEntitySet, 
+      final ODataJPAContext context) {
     this.oDataEntityType = oDataEntityType;
     this.oDataEntitySet = oDataEntitySet;
+    oDataJPAContext = context;
     try {
       JPAEdmMapping mapping = (JPAEdmMapping) oDataEntityType.getMapping();
       jpaType = mapping.getJPAType();
@@ -151,10 +155,12 @@ public class JPAEntity {
           EdmEntitySet edmRelatedEntitySet = oDataEntitySet.getRelatedEntitySet(navProperty);
           List<ODataEntry> relatedEntries = (List<ODataEntry>) oDataEntryProperties.get(propertyName);
           Collection<Object> relatedJPAEntites = instantiateRelatedJPAEntities(jpaEntity, navProperty);
-          JPAEntity relatedEntity = new JPAEntity((EdmEntityType) structuralType, edmRelatedEntitySet);
+          JPAEntity relatedEntity = new JPAEntity((EdmEntityType) structuralType, edmRelatedEntitySet, oDataJPAContext);
           for (ODataEntry oDataEntry : relatedEntries) {
             relatedEntity.create(oDataEntry);
             relatedJPAEntites.add(relatedEntity.getJPAEntity());
+            JPALink link = new JPALink(oDataJPAContext);
+            link.create(edmRelatedEntitySet, oDataEntry);
           }
 
           switch (navProperty.getMultiplicity()) {

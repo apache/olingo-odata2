@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.jpa.processor.ref.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -42,7 +43,7 @@ public class Customer {
   @Embedded
   private Address address;
 
-  @OneToMany(mappedBy = "customer")
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
   private List<SalesOrderHeader> orders = new ArrayList<SalesOrderHeader>();
 
   public Long getId() {

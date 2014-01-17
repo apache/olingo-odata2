@@ -65,6 +65,22 @@ public class AtomFeedProducerTest extends AbstractProviderTest {
   }
 
   @Test
+  public void testWithIncludeSimplePropertyTypes() throws Exception {
+    AtomEntityProvider ser = createAtomEntityProvider();
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).includeSimplePropertyType(true).build();
+    ODataResponse response = ser.writeFeed(view.getTargetEntitySet(), roomsData, properties);
+    String xmlString = verifyResponse(response);
+
+    assertXpathExists("/a:feed", xmlString);
+    assertXpathExists("/a:feed/a:entry/a:content/m:properties", xmlString);
+    assertXpathExists("/a:feed/a:entry/a:content/m:properties/d:Id[@m:type=\"Edm.String\"]", xmlString);
+    assertXpathExists("/a:feed/a:entry/a:content/m:properties/d:Name[@m:type=\"Edm.String\"]", xmlString);
+    assertXpathExists("/a:feed/a:entry/a:content/m:properties/d:Seats[@m:type=\"Edm.Int16\"]", xmlString);
+    assertXpathExists("/a:feed/a:entry/a:content/m:properties/d:Version[@m:type=\"Edm.Int16\"]", xmlString);
+  }
+
+  @Test
   public void testFeedNamespaces() throws Exception {
     AtomEntityProvider ser = createAtomEntityProvider();
     EntityProviderWriteProperties properties =

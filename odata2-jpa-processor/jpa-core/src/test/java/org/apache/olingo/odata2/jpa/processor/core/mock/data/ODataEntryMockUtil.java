@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.JPATypeMock.JPARelatedTypeMock;
@@ -50,7 +51,11 @@ public class ODataEntryMockUtil {
     ODataEntry oDataEntry = EasyMock.createMock(ODataEntry.class);
     EasyMock.expect(oDataEntry.getProperties()).andReturn(mockODataEntryProperties(entityName)).anyTimes();
 
-    EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(false);
+    EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(false).anyTimes();
+    EntryMetadata entryMetadata = EasyMock.createMock(EntryMetadata.class);
+    EasyMock.expect(entryMetadata.getAssociationUris(EasyMock.isA(String.class))).andReturn(null).anyTimes();
+    EasyMock.replay(entryMetadata);
+    EasyMock.expect(oDataEntry.getMetadata()).andReturn(entryMetadata).anyTimes();
     EasyMock.replay(oDataEntry);
     return oDataEntry;
   }
@@ -60,7 +65,7 @@ public class ODataEntryMockUtil {
     EasyMock.expect(oDataEntry.getProperties()).andReturn(mockODataEntryPropertiesWithComplexType(entityName))
         .anyTimes();
 
-    EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(false);
+    EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(false).anyTimes();
     EasyMock.replay(oDataEntry);
     return oDataEntry;
   }
@@ -117,9 +122,9 @@ public class ODataEntryMockUtil {
     ODataEntry oDataEntry = EasyMock.createMock(ODataEntry.class);
     EasyMock.expect(oDataEntry.getProperties()).andReturn(mockODataEntryPropertiesWithInline(entityName)).anyTimes();
     if (entityName.equals(JPATypeMock.ENTITY_NAME)) {
-      EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(true);
+      EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(true).anyTimes();
     } else {
-      EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(false);
+      EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(false).anyTimes();
     }
     EasyMock.replay(oDataEntry);
     return oDataEntry;

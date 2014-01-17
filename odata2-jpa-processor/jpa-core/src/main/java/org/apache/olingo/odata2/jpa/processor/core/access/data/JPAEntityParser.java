@@ -28,6 +28,8 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmStructuralType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
@@ -41,6 +43,7 @@ public final class JPAEntityParser {
   private static short MAX_SIZE = 10;
   public static final String ACCESS_MODIFIER_GET = "get";
   public static final String ACCESS_MODIFIER_SET = "set";
+  private static final String ACCESS_MODIFIER_IS = "is";
 
   private HashMap<String, HashMap<String, Method>> jpaEntityAccessMap = null;
   private HashMap<String, HashMap<String, String>> jpaEmbeddableKeyMap = null;
@@ -266,37 +269,60 @@ public final class JPAEntityParser {
 
     HashMap<String, Method> accessModifierMap = new HashMap<String, Method>();
     HashMap<String, String> embeddableKey = new HashMap<String, String>();
+    Method acceserMethod = null;
+    EdmProperty property = null;
     try {
       for (String propertyName : structuralType.getPropertyNames()) {
+        try {
+          property = (EdmProperty) structuralType
+              .getProperty(propertyName);
 
-        EdmProperty property = (EdmProperty) structuralType
-            .getProperty(propertyName);
-
-        String name = getAccessModifierName(property.getName(),
-            property.getMapping(), accessModifier);
-        String[] nameParts = name.split("\\.");
-        if (nameParts.length > 1) {
-          embeddableKey.put(propertyName, name);
-        } else {
-          if (accessModifier.equals(ACCESS_MODIFIER_SET)) {
-            JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
-            accessModifierMap.put(
-                propertyName,
-                jpaEntity.getClass().getMethod(name, new Class<?>[] { jpaEdmMapping.getJPAType() }));
+          String name = getAccessModifierName(property.getName(),
+              property.getMapping(), accessModifier);
+          String[] nameParts = name.split("\\.");
+          if (nameParts.length > 1) {
+            embeddableKey.put(propertyName, name);
           } else {
-            accessModifierMap.put(
-                propertyName,
-                jpaEntity.getClass().getMethod(name,
-                    (Class<?>[]) null));
+            if (accessModifier.equals(ACCESS_MODIFIER_SET)) {
+              JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
+              accessModifierMap.put(
+                  propertyName,
+                  jpaEntity.getClass().getMethod(name, new Class<?>[] { jpaEdmMapping.getJPAType() }));
+            } else {
+              acceserMethod = jpaEntity.getClass().getMethod(name, (Class<?>[]) null);
+            }
           }
+
+        } catch (EdmException exp) {
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, exp);
+        } catch (NoSuchMethodException e1) {
+          try {
+            EdmSimpleType edmSimpleType = (EdmSimpleType) property.getType();
+            if (edmSimpleType == EdmSimpleTypeKind.Boolean.getEdmSimpleTypeInstance()
+                && accessModifier.equals("get")) {
+              String nameWithIs = getAccessModifierName(property.getName(),
+                  property.getMapping(), ACCESS_MODIFIER_IS);
+              acceserMethod = jpaEntity.getClass().getMethod(nameWithIs, (Class<?>[]) null);
+            }
+          } catch (EdmException exp) {
+            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, exp);
+          } catch (NoSuchMethodException exp) {
+            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, exp);
+          } catch (SecurityException exp) {
+            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, exp);
+          }
+        } catch (SecurityException e1) {
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e1);
         }
+        if (acceserMethod != null){
+          accessModifierMap.put(
+              propertyName,
+              acceserMethod);
+        }
+
       }
-    } catch (NoSuchMethodException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
-    } catch (SecurityException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
-    } catch (EdmException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (EdmException exp) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, exp);
     }
 
     if (!embeddableKey.isEmpty()) {

@@ -69,6 +69,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .mediaResourceMimeType("image/png")
         .nextLink("http://localhost")
         .selfLink(selfLink)
+        .includeSimplePropertyType(true)
         .build();
 
     assertEquals("Wrong amount of callbacks.", 1, properties.getCallbacks().size());
@@ -80,6 +81,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertEquals("Wrong inline count type.", InlineCount.ALLPAGES, properties.getInlineCountType());
     assertEquals("Wrong inline count.", Integer.valueOf(1), properties.getInlineCount());
     assertEquals("Wrong nextLink", "http://localhost", properties.getNextLink());
+    assertTrue("Simple property types should be true", properties.isIncludeSimplePropertyType());
   }
 
   @Test
@@ -107,6 +109,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .mediaResourceMimeType("image/png")
         .nextLink("http://localhost")
         .selfLink(selfLink)
+        .includeSimplePropertyType(true)
         .build();
 
     //
@@ -123,5 +126,6 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertEquals("Wrong inline count type.", InlineCount.ALLPAGES, fromProperties.getInlineCountType());
     assertEquals("Wrong inline count.", Integer.valueOf(1), fromProperties.getInlineCount());
     assertEquals("Wrong nextLink", "http://localhost", fromProperties.getNextLink());
+    assertTrue("Simple property types should be true", fromProperties.isIncludeSimplePropertyType());
   }
 }
