@@ -76,9 +76,14 @@ public class AnnotationInMemoryDs implements DataSource {
   private void init(final Collection<Class<?>> annotatedClasses) throws ODataException {
     try {
       for (Class<?> clz : annotatedClasses) {
-        DataStore<Object> dhs = (DataStore<Object>) DataStore.createInMemory(clz, persistInMemory);
         String entitySetName = ANNOTATION_HELPER.extractEntitySetName(clz);
-        dataStores.put(entitySetName, dhs);
+        if(entitySetName != null) {
+          DataStore<Object> dhs = (DataStore<Object>) DataStore.createInMemory(clz, persistInMemory);
+          dataStores.put(entitySetName, dhs);
+        } else if(!ANNOTATION_HELPER.isEdmAnnotated(clz)) {
+          throw new ODataException("Found not annotated class during DataStore initilization of type: " 
+                  + clz.getName());
+        }
       }
     } catch (DataStore.DataStoreException e) {
       throw new ODataException("Error in DataStore initilization with message: " + e.getMessage(), e);
