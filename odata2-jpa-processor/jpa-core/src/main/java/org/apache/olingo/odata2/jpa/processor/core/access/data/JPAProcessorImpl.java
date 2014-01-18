@@ -270,34 +270,33 @@ public class JPAProcessorImpl implements JPAProcessor {
 
   /* Process Create Entity Request */
   @Override
-  public <T> List<T> process(final PostUriInfo createView, final InputStream content,
+  public Object process(final PostUriInfo createView, final InputStream content,
       final String requestedContentType) throws ODataJPAModelException,
       ODataJPARuntimeException {
     return processCreate(createView, content, null, requestedContentType);
   }
 
   @Override
-  public <T> List<T> process(final PostUriInfo createView, final Map<String, Object> content)
+  public Object process(final PostUriInfo createView, final Map<String, Object> content)
       throws ODataJPAModelException, ODataJPARuntimeException {
     return processCreate(createView, null, content, null);
   }
 
   /* Process Update Entity Request */
   @Override
-  public <T> Object process(final PutMergePatchUriInfo updateView,
+  public Object process(final PutMergePatchUriInfo updateView,
       final InputStream content, final String requestContentType)
       throws ODataJPAModelException, ODataJPARuntimeException {
     return processUpdate(updateView, content, null, requestContentType);
   }
 
   @Override
-  public <T> Object process(final PutMergePatchUriInfo updateView, final Map<String, Object> content)
+  public Object process(final PutMergePatchUriInfo updateView, final Map<String, Object> content)
       throws ODataJPAModelException, ODataJPARuntimeException {
     return processUpdate(updateView, null, content, null);
   }
 
-  @SuppressWarnings("unchecked")
-  private <T> List<T> processCreate(final PostUriInfo createView, final InputStream content,
+  private Object processCreate(final PostUriInfo createView, final InputStream content,
       final Map<String, Object> properties,
       final String requestedContentType) throws ODataJPAModelException,
       ODataJPARuntimeException {
@@ -306,7 +305,6 @@ public class JPAProcessorImpl implements JPAProcessor {
       final EdmEntitySet oDataEntitySet = createView.getTargetEntitySet();
       final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
       final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet, oDataJPAContext);
-      final List<Object> createList = new ArrayList<Object>();
       Object jpaEntity = null;
 
       if (content != null) {
@@ -327,10 +325,8 @@ public class JPAProcessorImpl implements JPAProcessor {
       if (em.contains(jpaEntity)) {
         em.getTransaction().commit();
 
-        createList.add(virtualJPAEntity.getJPAEntity());
-        createList.add(virtualJPAEntity.getInlineJPAEntities());
+        return jpaEntity;
 
-        return (List<T>) createList;
       }
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(

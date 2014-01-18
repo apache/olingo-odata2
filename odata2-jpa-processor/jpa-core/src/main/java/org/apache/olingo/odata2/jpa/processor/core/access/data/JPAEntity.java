@@ -53,7 +53,6 @@ public class JPAEntity {
   private HashMap<String, Method> accessModifiersWrite = null;
   private JPAEntityParser jpaEntityParser = null;
   private ODataJPAContext oDataJPAContext;
-  public HashMap<EdmNavigationProperty, EdmEntitySet> inlinedEntities = null;
   public HashMap<String, List<Object>> relatedJPAEntityMap = null;
 
   public JPAEntity(final EdmEntityType oDataEntityType, final EdmEntitySet oDataEntitySet,
@@ -157,10 +156,6 @@ public class JPAEntity {
             EdmNavigationProperty navProperty = (EdmNavigationProperty) edmTyped;
             EdmEntitySet edmRelatedEntitySet = oDataEntitySet.getRelatedEntitySet(navProperty);
             List<ODataEntry> relatedEntries = (List<ODataEntry>) oDataEntryProperties.get(propertyName);
-            if (inlinedEntities == null) {
-              inlinedEntities = new HashMap<EdmNavigationProperty, EdmEntitySet>();
-            }
-
             if (relatedJPAEntityMap == null) {
               relatedJPAEntityMap = new HashMap<String, List<Object>>();
             }
@@ -173,7 +168,6 @@ public class JPAEntity {
               relatedJPAEntities.add(relatedEntity.getJPAEntity());
             }
             relatedJPAEntityMap.put(navProperty.getName(), relatedJPAEntities);
-            inlinedEntities.put((EdmNavigationProperty) edmTyped, edmRelatedEntitySet);
           }
         default:
           continue;
@@ -275,10 +269,6 @@ public class JPAEntity {
   public void update(final Map<String, Object> oDataEntryProperties) throws ODataJPARuntimeException {
     normalizeInlineEntries(oDataEntryProperties);
     write(oDataEntryProperties, false);
-  }
-
-  public HashMap<EdmNavigationProperty, EdmEntitySet> getInlineJPAEntities() {
-    return inlinedEntities;
   }
 
   public void setJPAEntity(final Object jpaEntity) {
