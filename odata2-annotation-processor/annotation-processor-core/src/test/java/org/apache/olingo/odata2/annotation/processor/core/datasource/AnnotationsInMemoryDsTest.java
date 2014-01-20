@@ -68,7 +68,7 @@ public class AnnotationsInMemoryDsTest {
     ANNOTATED_ENTITY_SET_CLASSES.add(Manager.class);
     ANNOTATED_ENTITY_SET_CLASSES.add(Photo.class);
     ANNOTATED_ENTITY_SET_CLASSES.add(Room.class);
-    ANNOTATED_ENTITY_SET_CLASSES.add(Team.  class);
+    ANNOTATED_ENTITY_SET_CLASSES.add(Team.class);
     
     ANNOTATED_MODEL_CLASSES.addAll(ANNOTATED_ENTITY_SET_CLASSES);
     ANNOTATED_MODEL_CLASSES.add(Location.class);
@@ -746,8 +746,8 @@ public class AnnotationsInMemoryDsTest {
 
   @Test
   public void writeRelations() throws Exception {
-    DataStore<Building> buildingStore = DataStore.createInMemory(Building.class, true);
-    DataStore<Room> roomStore = DataStore.createInMemory(Room.class, true);
+    DataStore<Building> buildingStore = InMemoryDataStore.createInMemory(Building.class, true);
+    DataStore<Room> roomStore = InMemoryDataStore.createInMemory(Room.class, true);
 
     EdmEntitySet buildingsEntitySet = createMockedEdmEntitySet("Buildings");
     EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");

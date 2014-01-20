@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.odata2.annotation.processor.core.datasource.DataStore.DataStoreException;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper.AnnotatedNavInfo;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper.ODataAnnotationException;
@@ -44,6 +43,7 @@ public class AnnotationInMemoryDs implements DataSource {
 
   private static final AnnotationHelper ANNOTATION_HELPER = new AnnotationHelper();
   private final Map<String, DataStore<Object>> dataStores = new HashMap<String, DataStore<Object>>();
+  private final DataStoreFactory dataStoreFactory;
   private final boolean persistInMemory;
 
   public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses) throws ODataException {
@@ -53,6 +53,8 @@ public class AnnotationInMemoryDs implements DataSource {
   public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses, final boolean persistInMemory) 
       throws ODataException {
     this.persistInMemory = persistInMemory;
+    this.dataStoreFactory = new DataStoreFactory();
+    
     init(annotatedClasses);
   }
 
@@ -62,6 +64,8 @@ public class AnnotationInMemoryDs implements DataSource {
 
   public AnnotationInMemoryDs(final String packageToScan, final boolean persistInMemory) throws ODataException {
     this.persistInMemory = persistInMemory;
+    this.dataStoreFactory = new DataStoreFactory();
+
     List<Class<?>> foundClasses = ClassHelper.loadClasses(packageToScan, new ClassHelper.ClassValidator() {
       @Override
       public boolean isClassValid(final Class<?> c) {
@@ -78,14 +82,14 @@ public class AnnotationInMemoryDs implements DataSource {
       for (Class<?> clz : annotatedClasses) {
         String entitySetName = ANNOTATION_HELPER.extractEntitySetName(clz);
         if(entitySetName != null) {
-          DataStore<Object> dhs = (DataStore<Object>) DataStore.createInMemory(clz, persistInMemory);
+          DataStore<Object> dhs = (DataStore<Object>) dataStoreFactory.createInstance(clz, persistInMemory);
           dataStores.put(entitySetName, dhs);
         } else if(!ANNOTATION_HELPER.isEdmAnnotated(clz)) {
           throw new ODataException("Found not annotated class during DataStore initilization of type: " 
                   + clz.getName());
         }
       }
-    } catch (DataStore.DataStoreException e) {
+    } catch (DataStoreException e) {
       throw new ODataException("Error in DataStore initilization with message: " + e.getMessage(), e);
     }
   }
@@ -377,7 +381,7 @@ public class AnnotationInMemoryDs implements DataSource {
 
   /**
    * Returns corresponding DataStore for EdmEntitySet or if no data store is registered an
-   * ODataRuntimeException is thrown.
+ ODataRuntimeException is thrown.
    * Never returns NULL.
    * 
    * @param entitySet for which the corresponding DataStore is returned

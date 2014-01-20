@@ -15,18 +15,23 @@
 package org.apache.olingo.odata2.annotation.processor.ref;
 
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.olingo.odata2.annotation.processor.api.AnnotationServiceFactory;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.DataStore;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.DataStore.DataStoreException;
+import org.apache.olingo.odata2.annotation.processor.core.datasource.InMemoryDataStore;
+import org.apache.olingo.odata2.annotation.processor.core.datasource.DataStoreException;
 import org.apache.olingo.odata2.annotation.processor.ref.model.Building;
+import org.apache.olingo.odata2.annotation.processor.ref.model.City;
 import org.apache.olingo.odata2.annotation.processor.ref.model.Employee;
 import org.apache.olingo.odata2.annotation.processor.ref.model.Location;
 import org.apache.olingo.odata2.annotation.processor.ref.model.Manager;
 import org.apache.olingo.odata2.annotation.processor.ref.model.Photo;
+import org.apache.olingo.odata2.annotation.processor.ref.model.RefBase;
 import org.apache.olingo.odata2.annotation.processor.ref.model.ResourceHelper;
 import org.apache.olingo.odata2.annotation.processor.ref.model.Room;
 import org.apache.olingo.odata2.annotation.processor.ref.model.Team;
+import org.apache.olingo.odata2.annotation.processor.ref.model.jpa.Animal;
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.ODataDebugCallback;
 import org.apache.olingo.odata2.api.ODataService;
@@ -54,12 +59,26 @@ public class AnnotationRefServiceFactory extends ODataServiceFactory {
    */
   private static class AnnotationInstances {
     final static String MODEL_PACKAGE = "org.apache.olingo.odata2.annotation.processor.ref.model";
-
+    final static Set<Class<?>> ANNOTATED_MODEL_CLASSES = new HashSet<Class<?>>();
+    static {
+      ANNOTATED_MODEL_CLASSES.add(Building.class);
+      ANNOTATED_MODEL_CLASSES.add(City.class);
+      ANNOTATED_MODEL_CLASSES.add(Employee.class);
+      ANNOTATED_MODEL_CLASSES.add(Location.class);
+      ANNOTATED_MODEL_CLASSES.add(Manager.class);
+      ANNOTATED_MODEL_CLASSES.add(Photo.class);
+      ANNOTATED_MODEL_CLASSES.add(RefBase.class);
+      ANNOTATED_MODEL_CLASSES.add(Room.class);
+      ANNOTATED_MODEL_CLASSES.add(Team.class);
+      // JPA 
+      ANNOTATED_MODEL_CLASSES.add(Animal.class);
+    }
     final static ODataService ANNOTATION_ODATA_SERVICE;
     
     static {
       try {
-        ANNOTATION_ODATA_SERVICE = AnnotationServiceFactory.createAnnotationService(MODEL_PACKAGE);
+//        ANNOTATION_ODATA_SERVICE = AnnotationServiceFactory.createAnnotationService(MODEL_PACKAGE);
+        ANNOTATION_ODATA_SERVICE = AnnotationServiceFactory.createAnnotationService(ANNOTATED_MODEL_CLASSES);
         initializeSampleData();
       } catch (ODataApplicationException ex) {
         throw new RuntimeException("Exception during sample data generation.", ex);
@@ -116,19 +135,19 @@ public class AnnotationRefServiceFactory extends ODataServiceFactory {
 
   }
 
-  private static <T> DataStore<T> getDataStore(Class<T> clz) throws DataStoreException {
-    return DataStore.createInMemory(clz, true);
+  private static <T> InMemoryDataStore<T> getDataStore(Class<T> clz) throws DataStoreException {
+    return InMemoryDataStore.createInMemory(clz, true);
   }
   
   private static void initializeSampleData() throws ODataApplicationException {
-    DataStore<Team> teamDs = getDataStore(Team.class);
+    InMemoryDataStore<Team> teamDs = getDataStore(Team.class);
     teamDs.create(createTeam("Team Alpha", true));
     teamDs.create(createTeam("Team Beta", false));
     teamDs.create(createTeam("Team Gamma", false));
     teamDs.create(createTeam("Team Omega", true));
     teamDs.create(createTeam("Team Zeta", true));
 
-    DataStore<Building> buildingsDs = getDataStore(Building.class);
+    InMemoryDataStore<Building> buildingsDs = getDataStore(Building.class);
     Building redBuilding = createBuilding("Red Building");
     buildingsDs.create(redBuilding);
     Building greenBuilding = createBuilding("Green Building");
@@ -138,13 +157,13 @@ public class AnnotationRefServiceFactory extends ODataServiceFactory {
     Building yellowBuilding = createBuilding("Yellow Building");
     buildingsDs.create(yellowBuilding);
 
-    DataStore<Photo> photoDs = getDataStore(Photo.class);
+    InMemoryDataStore<Photo> photoDs = getDataStore(Photo.class);
     photoDs.create(createPhoto("Small picture", ResourceHelper.Format.GIF));
     photoDs.create(createPhoto("Medium picture", ResourceHelper.Format.PNG));
     photoDs.create(createPhoto("Big picture", ResourceHelper.Format.JPEG));
     photoDs.create(createPhoto("Huge picture", ResourceHelper.Format.BMP));
 
-    DataStore<Room> roomDs = getDataStore(Room.class);
+    InMemoryDataStore<Room> roomDs = getDataStore(Room.class);
     roomDs.create(createRoom("Tiny red room", 5, 1, redBuilding));
     roomDs.create(createRoom("Small red room", 20, 1, redBuilding));
     roomDs.create(createRoom("Small green room", 20, 1, greenBuilding));
@@ -152,7 +171,7 @@ public class AnnotationRefServiceFactory extends ODataServiceFactory {
     roomDs.create(createRoom("Huge blue room", 120, 1, blueBuilding));
     roomDs.create(createRoom("Huge yellow room", 120, 1, yellowBuilding));
 
-    DataStore<Employee> employeeDataStore = getDataStore(Employee.class);
+    InMemoryDataStore<Employee> employeeDataStore = getDataStore(Employee.class);
     employeeDataStore.create(createEmployee("first Employee",
         new Location("Norge", "8392", "Ä"), 42, null,
         photoDs.read().iterator().next().getImage(), photoDs.read().iterator().next().getImageType(),

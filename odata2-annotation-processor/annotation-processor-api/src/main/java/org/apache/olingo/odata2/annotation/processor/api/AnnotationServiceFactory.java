@@ -80,7 +80,7 @@ public abstract class AnnotationServiceFactory {
      * <code>org.apache.olingo.olingo-odata2-api-annotation</code> module
      * (see package <code>org.apache.olingo.odata2.api.annotation.edm</code>) to define the model and access the data.
      * 
-     * @param modelPackage classes (which are annotated) which will be used for EDM definition and data access.
+     * @param annotatedClasses classes (which are annotated) which will be used for EDM definition and data access.
      * @return service an {@link ODataService} based on on an EDM and Processor which are using annotations 
      *            for model definition and data access.
      * @throws ODataException if an error during initialization occurs
@@ -107,7 +107,7 @@ public abstract class AnnotationServiceFactory {
    * <code>org.apache.olingo.olingo-odata2-api-annotation</code> module
    * (see package <code>org.apache.olingo.odata2.api.annotation.edm</code>) to define the model and access the data.
    * 
-   * @param modelPackage classes (which are annotated) which will be used for EDM definition and data access.
+   * @param annotatedClasses classes (which are annotated) which will be used for EDM definition and data access.
    * @return service an {@link ODataService} based on on an EDM and Processor which are using annotations 
    *            for model definition and data access.
    * @throws ODataException if an error during initialization occurs
