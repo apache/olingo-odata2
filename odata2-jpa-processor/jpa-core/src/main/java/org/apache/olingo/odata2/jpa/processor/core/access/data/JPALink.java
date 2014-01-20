@@ -154,10 +154,10 @@ public class JPALink {
 
     try {
       JPAEntityParser entityParser = new JPAEntityParser();
-      Method setMethod = entityParser.getAccessModifier(jpaEntity,
+      Method setMethod = entityParser.getAccessModifier(jpaEntity.getClass(),
           targetNavigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 
-      Method getMethod = entityParser.getAccessModifier(jpaEntity,
+      Method getMethod = entityParser.getAccessModifier(jpaEntity.getClass(),
           targetNavigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
 
       if (getMethod.getReturnType().getTypeParameters() != null
@@ -300,12 +300,12 @@ public class JPALink {
     }
     try {
       JPAEntityParser entityParser = new JPAEntityParser();
-      Method setMethod = entityParser.getAccessModifier(sourceJPAEntity,
+      Method setMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
           navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 
       switch (navigationProperty.getMultiplicity()) {
       case MANY:
-        Method getMethod = entityParser.getAccessModifier(sourceJPAEntity,
+        Method getMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
             navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
         Collection<Object> relatedEntities = (Collection<Object>) getMethod.invoke(sourceJPAEntity);
         relatedEntities.addAll(targetJPAEntities);

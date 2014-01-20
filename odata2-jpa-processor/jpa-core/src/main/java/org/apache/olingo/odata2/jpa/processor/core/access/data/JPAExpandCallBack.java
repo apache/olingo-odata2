@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
+import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.ODataEntityProviderPropertiesBuilder;
 import org.apache.olingo.odata2.api.ep.callback.OnWriteEntryContent;
@@ -50,6 +51,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
   private URI baseUri;
   private List<ArrayList<NavigationPropertySegment>> expandList;
   private EdmEntitySet nextEntitySet = null;
+  private HashMap<String, List<EdmProperty>> edmPropertyMap = new HashMap<String, List<EdmProperty>>();
 
   private JPAExpandCallBack(final URI baseUri, final List<ArrayList<NavigationPropertySegment>> expandList) {
     super();
@@ -97,28 +99,63 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     return result;
   }
 
+  private List<EdmProperty> getEdmProperties(EdmEntitySet entitySet, ExpandSelectTreeNode expandTreeNode)
+      throws ODataApplicationException {
+
+    try {
+      String name = entitySet.getName();
+      if (edmPropertyMap.containsKey(name)) {
+        return edmPropertyMap.get(name);
+      }
+      List<EdmProperty> edmProperties = new ArrayList<EdmProperty>();
+      edmProperties.addAll(expandTreeNode.getProperties());
+      boolean hit = false;
+      for (EdmProperty keyProperty : entitySet.getEntityType().getKeyProperties()) {
+        hit = false;
+        for (EdmProperty property : edmProperties) {
+          if (property.getName().equals(keyProperty.getName())) {
+            hit = true;
+            break;
+          }
+        }
+        if (hit == false) {
+          edmProperties.add(keyProperty);
+        }
+      }
+      edmPropertyMap.put(name, edmProperties);
+      return edmProperties;
+    } catch (EdmException e) {
+      throw new ODataApplicationException(e.getMessage(), Locale.getDefault(), e);
+    }
+  }
+
   @Override
   public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
       throws ODataApplicationException {
     WriteFeedCallbackResult result = new WriteFeedCallbackResult();
     HashMap<String, Object> inlinedEntry = (HashMap<String, Object>) context.getEntryData();
     List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
-    Map<String, Object> edmPropertyValueMap = null;
     JPAEntityParser jpaResultParser = new JPAEntityParser();
     List<EdmNavigationProperty> currentNavPropertyList = null;
     EdmNavigationProperty currentNavigationProperty = context.getNavigationProperty();
+    ExpandSelectTreeNode currentExpandTreeNode = context.getCurrentExpandSelectTreeNode();
+
     try {
       @SuppressWarnings({ "unchecked" })
       Collection<Object> listOfItems = (Collection<Object>) inlinedEntry.get(context.getNavigationProperty().getName());
       if (nextEntitySet == null) {
         nextEntitySet = context.getSourceEntitySet().getRelatedEntitySet(currentNavigationProperty);
       }
-      for (Object object : listOfItems) {
-        edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(object, nextEntitySet.getEntityType());
-        edmEntityList.add(edmPropertyValueMap);
+      if (currentExpandTreeNode.getProperties().size() > 0) {
+        edmEntityList =
+            jpaResultParser.parse2EdmEntityList(listOfItems, getEdmProperties(nextEntitySet,
+                currentExpandTreeNode));
+      } else {
+        edmEntityList = jpaResultParser.parse2EdmEntityList(listOfItems, nextEntitySet.getEntityType());
       }
       result.setFeedData(edmEntityList);
-      if (context.getCurrentExpandSelectTreeNode().getLinks().size() > 0) {
+
+      if (currentExpandTreeNode.getLinks().size() > 0) {
         currentNavPropertyList = new ArrayList<EdmNavigationProperty>();
         EdmNavigationProperty nextNavProperty =
             getNextNavigationProperty(context.getSourceEntitySet().getEntityType(), context.getNavigationProperty());

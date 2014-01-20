@@ -83,21 +83,14 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
     try {
       edmEntityType = resultsView.getTargetEntitySet().getEntityType();
-      List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
-      Map<String, Object> edmPropertyValueMap = null;
+      List<Map<String, Object>> edmEntityList = null;
       JPAEntityParser jpaResultParser = new JPAEntityParser();
       final List<SelectItem> selectedItems = resultsView.getSelect();
       if (selectedItems != null && selectedItems.size() > 0) {
-        for (Object jpaEntity : jpaEntities) {
-          edmPropertyValueMap =
-              jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, buildSelectItemList(selectedItems, edmEntityType));
-          edmEntityList.add(edmPropertyValueMap);
-        }
+        edmEntityList =
+            jpaResultParser.parse2EdmEntityList(jpaEntities, buildSelectItemList(selectedItems, edmEntityType));
       } else {
-        for (Object jpaEntity : jpaEntities) {
-          edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType);
-          edmEntityList.add(edmPropertyValueMap);
-        }
+        edmEntityList = jpaResultParser.parse2EdmEntityList(jpaEntities, edmEntityType);
       }
       expandList = resultsView.getExpand();
       if (expandList != null && expandList.size() != 0) {
@@ -572,7 +565,9 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     List<EdmProperty> selectPropertyList = new ArrayList<EdmProperty>();
     try {
       for (SelectItem selectItem : selectItems) {
-        selectPropertyList.add(selectItem.getProperty());
+        if (selectItem.getNavigationPropertySegments().size() <= 0) {
+          selectPropertyList.add(selectItem.getProperty());
+        }
       }
       for (EdmProperty keyProperty : entity.getKeyProperties()) {
         flag = true;
