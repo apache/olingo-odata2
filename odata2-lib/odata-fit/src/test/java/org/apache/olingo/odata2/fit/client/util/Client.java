@@ -37,7 +37,8 @@ public class Client {
 
   private Edm edm;
 
-  public Client(String serviceUrl, Proxy.Type protocol, String proxy, int port) throws IOException, ODataException, HttpException {
+  public Client(String serviceUrl, Proxy.Type protocol, String proxy, int port) throws IOException, ODataException,
+      HttpException {
     this.serviceUrl = serviceUrl;
     this.protocol = protocol;
     this.proxy = proxy;
@@ -56,7 +57,8 @@ public class Client {
     edm = getEdmInternal();
   }
 
-  public Client(String serviceUrl, Proxy.Type protocol, String proxy, int port, String username, String password) throws IOException, ODataException, HttpException {
+  public Client(String serviceUrl, Proxy.Type protocol, String proxy, int port, String username, String password)
+      throws IOException, ODataException, HttpException {
     this.serviceUrl = serviceUrl;
     this.protocol = protocol;
     this.proxy = proxy;
@@ -80,7 +82,7 @@ public class Client {
   }
 
   private Edm getEdmInternal() throws IOException, ODataException, HttpException {
-    HttpURLConnection connection = connect(METADATA, APPLICATION_XML, "GET");
+    HttpURLConnection connection = connect(METADATA, null, APPLICATION_XML, "GET");
     edm = EntityProvider.readMetadata((InputStream) connection.getContent(), false);
     return edm;
   }
@@ -100,7 +102,13 @@ public class Client {
     return edm.getServiceMetadata().getEntitySetInfos();
   }
 
-  public ODataFeed readFeed(String entityContainerName, String entitySetName, String contentType) throws IOException, ODataException, HttpException {
+  public ODataFeed readFeed(String entityContainerName, String entitySetName, String contentType) throws IOException,
+      ODataException, HttpException {
+    return readFeed(entityContainerName, entitySetName, contentType, null);
+  }
+
+  public ODataFeed readFeed(String entityContainerName, String entitySetName, String contentType, String query)
+      throws IOException, ODataException, HttpException {
     EdmEntityContainer entityContainer = edm.getEntityContainer(entityContainerName);
     String relativeUri;
     if (entityContainer.isDefaultEntityContainer()) {
@@ -109,12 +117,15 @@ public class Client {
       relativeUri = entityContainerName + "." + entitySetName;
     }
 
-    InputStream content = (InputStream) connect(relativeUri, contentType, "GET").getContent();
-    return EntityProvider.readFeed(contentType, entityContainer.getEntitySet(entitySetName), content, EntityProviderReadProperties.init().build());
+    InputStream content = (InputStream) connect(relativeUri, query, contentType, "GET").getContent();
+    return EntityProvider.readFeed(contentType, entityContainer.getEntitySet(entitySetName), content,
+        EntityProviderReadProperties.init().build());
   }
 
-  private HttpURLConnection connect(String relativeUri, String contentType, String httpMethod) throws IOException, HttpException {
-    URL url = new URL(serviceUrl + relativeUri);
+  private HttpURLConnection connect(String relativeUri, String query, String contentType, String httpMethod)
+      throws IOException,
+      HttpException {
+    URL url = new URL(serviceUrl + relativeUri + (query != null ? "?" + query : ""));
     HttpURLConnection connection;
     if (useProxy) {
       Proxy proxy = new Proxy(protocol, new InetSocketAddress(this.proxy, port));

@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.ep.feed;
 
 import java.util.List;
 
+import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
@@ -28,11 +29,19 @@ public class ODataFeedImpl implements ODataFeed {
 
   private final List<ODataEntry> entries;
   private final FeedMetadata feedMetadata;
+  private boolean isDeltaFeed = false;
+  private List<EntryMetadata> deletedEntries = null;
 
   public ODataFeedImpl(final List<ODataEntry> entries, final FeedMetadata feedMetadata) {
     this.entries = entries;
     this.feedMetadata = feedMetadata;
+  }
 
+  public ODataFeedImpl(final List<ODataEntry> entries, final FeedMetadata feedMetadata, boolean isDeltaFeed,
+      List<EntryMetadata> deletedEntries) {
+    this(entries, feedMetadata);
+    this.isDeltaFeed = isDeltaFeed;
+    this.deletedEntries = deletedEntries;
   }
 
   @Override
@@ -43,6 +52,16 @@ public class ODataFeedImpl implements ODataFeed {
   @Override
   public FeedMetadata getFeedMetadata() {
     return feedMetadata;
+  }
+
+  @Override
+  public boolean isDeltaFeed() {
+    return isDeltaFeed;
+  }
+
+  @Override
+  public List<EntryMetadata> getDeletedEntries() {
+    return deletedEntries;
   }
 
 }

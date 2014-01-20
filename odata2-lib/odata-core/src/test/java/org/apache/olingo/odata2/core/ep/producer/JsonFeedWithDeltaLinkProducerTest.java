@@ -52,7 +52,7 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
       EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).build();
 
   private ArrayList<Map<String, Object>> deletedRoomData;
-  protected ArrayList<Map<String, Object>> roomsData;
+  private ArrayList<Map<String, Object>> roomsData;
 
   private Gson gson = new Gson();
 
