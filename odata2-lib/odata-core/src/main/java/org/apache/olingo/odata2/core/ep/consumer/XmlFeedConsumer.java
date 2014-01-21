@@ -34,6 +34,7 @@ import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
+import org.apache.olingo.odata2.core.ep.entry.EntryMetadataImpl;
 import org.apache.olingo.odata2.core.ep.feed.FeedMetadataImpl;
 import org.apache.olingo.odata2.core.ep.feed.ODataFeedImpl;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
@@ -110,6 +111,19 @@ public class XmlFeedConsumer {
       if (FormatXml.ATOM_ENTRY.equals(reader.getLocalName())) {
         ODataEntry entry = xec.readEntry(reader, eia, entryReadProperties);
         results.add(entry);
+      } else if (FormatXml.ATOM_TOMBSTONE_DELETED_ENTRY.equals(reader.getLocalName())) {
+        EntryMetadataImpl deletedEntryMetadata = new EntryMetadataImpl();
+        
+        String uri = reader.getAttributeValue(FormatXml.ATOM_TOMBSTONE_NAMESPACE, FormatXml.ATOM_TOMBSTONE_REF);
+        String date = reader.getAttributeValue(FormatXml.ATOM_TOMBSTONE_NAMESPACE, FormatXml.ATOM_TOMBSTONE_WHEN);
+        String id = uri;
+        
+        reader.nextTag();
+        
+        deletedEntryMetadata.setUri(uri);
+        deletedEntryMetadata.setId(id);
+        
+        deletedEntries.add(deletedEntryMetadata);
       } else if (FormatXml.M_COUNT.equals(reader.getLocalName())) {
         reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_M_2007_08, FormatXml.M_COUNT);
 

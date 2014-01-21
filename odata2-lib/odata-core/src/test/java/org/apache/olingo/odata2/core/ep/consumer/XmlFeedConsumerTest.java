@@ -152,5 +152,9 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
     assertTrue(feed.isDeltaFeed());
     
     assertNotNull(feed.getDeletedEntries());
+    assertNotNull(feed.getEntries());
+    
+    assertEquals(1, feed.getEntries().size());
+    assertEquals(1, feed.getDeletedEntries().size());
   }
 }
