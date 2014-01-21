@@ -19,22 +19,32 @@
 package org.apache.olingo.odata2.core.debug;
 
 import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
- *  
+ * Response debug information.
  */
 public class DebugInfoResponse implements DebugInfo {
 
+  private final ODataResponse response;
+  private final String serviceRoot;
   private final HttpStatusCodes status;
   private final Map<String, String> headers;
 
-  public DebugInfoResponse(final HttpStatusCodes status, final Map<String, String> headers) {
-    this.status = status;
-    this.headers = headers;
+  public DebugInfoResponse(final ODataResponse response, final String serviceRoot) {
+    this.response = response;
+    this.serviceRoot = serviceRoot;
+    status = response.getStatus();
+    headers = new HashMap<String, String>();
+    for (final String name : response.getHeaderNames()) {
+      headers.put(name, response.getHeader(name));
+    }
   }
 
   @Override
@@ -43,7 +53,7 @@ public class DebugInfoResponse implements DebugInfo {
   }
 
   @Override
-  public void appendJson(final JsonStreamWriter jsonStreamWriter) throws IOException {
+  public void appendJson(JsonStreamWriter jsonStreamWriter) throws IOException {
     jsonStreamWriter.beginObject();
 
     if (status != null) {
@@ -58,20 +68,31 @@ public class DebugInfoResponse implements DebugInfo {
       if (status != null) {
         jsonStreamWriter.separator();
       }
+      jsonStreamWriter.name("headers");
+      ODataDebugResponseWrapper.appendJsonTable(jsonStreamWriter, headers);
+    }
 
-      jsonStreamWriter.name("headers")
-          .beginObject();
-      boolean first = true;
-      for (final String name : headers.keySet()) {
-        if (!first) {
-          jsonStreamWriter.separator();
-        }
-        first = false;
-        jsonStreamWriter.namedStringValue(name, headers.get(name));
+    if (response.getContentHeader() != null && response.getEntity() != null) {
+      if (status != null || !headers.isEmpty()) {
+        jsonStreamWriter.separator();
       }
-      jsonStreamWriter.endObject();
+      jsonStreamWriter.name("body");
+      new DebugInfoBody(response, serviceRoot).appendJson(jsonStreamWriter);
     }
 
     jsonStreamWriter.endObject();
+  }
+
+  @Override
+  public void appendHtml(Writer writer) throws IOException {
+    writer.append("<h2>Status Code</h2>\n")
+        .append("<p>").append(Integer.toString(status.getStatusCode())).append(' ')
+        .append(status.getInfo()).append("</p>\n")
+        .append("<h2>Response Headers</h2>\n");
+    ODataDebugResponseWrapper.appendHtmlTable(writer, headers);
+    if (response.getContentHeader() != null && response.getEntity() != null) {
+      writer.append("<h2>Response Body</h2>\n");
+      new DebugInfoBody(response, serviceRoot).appendHtml(writer);
+    }
   }
 }

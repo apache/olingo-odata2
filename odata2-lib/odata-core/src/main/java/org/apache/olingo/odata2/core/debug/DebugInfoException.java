@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.debug;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Locale;
 
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
@@ -26,7 +27,7 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 import org.apache.olingo.odata2.core.exception.MessageService;
 
 /**
- *  
+ * Exception debug information.
  */
 public class DebugInfoException implements DebugInfo {
 
@@ -52,12 +53,7 @@ public class DebugInfoException implements DebugInfo {
     while (throwable != null) {
       jsonStreamWriter.beginObject()
           .namedStringValueRaw("class", throwable.getClass().getCanonicalName()).separator()
-          .namedStringValue(
-              "message",
-              throwable instanceof ODataMessageException ?
-                  MessageService.getMessage(locale, ((ODataMessageException) throwable).getMessageReference())
-                      .getText() :
-                  throwable.getLocalizedMessage())
+          .namedStringValue("message", getMessageText(throwable))
           .separator();
 
       jsonStreamWriter.name("invocation");
@@ -93,5 +89,51 @@ public class DebugInfoException implements DebugInfo {
         .namedStringValueRaw("method", stackTraceElement.getMethodName()).separator()
         .name("line").unquotedValue(Integer.toString(stackTraceElement.getLineNumber()))
         .endObject();
+  }
+
+  @Override
+  public void appendHtml(Writer writer) throws IOException {
+    appendException(exception, writer);
+    writer.append("<h2>Stacktrace</h2>\n");
+    int count = 0;
+    for (final StackTraceElement stackTraceElement : exception.getStackTrace()) {
+      appendStackTraceElement(stackTraceElement, ++count == 1, count == exception.getStackTrace().length, writer);
+    }
+  }
+
+  private void appendException(final Throwable throwable, Writer writer) throws IOException {
+    if (throwable.getCause() != null) {
+      appendException(throwable.getCause(), writer);
+    }
+    final StackTraceElement details = throwable.getStackTrace()[0];
+    writer.append("<h2>").append(throwable.getClass().getCanonicalName()).append("</h2>\n")
+        .append("<p>")
+        .append(ODataDebugResponseWrapper.escapeHtml(getMessageText(throwable)))
+        .append("</p>\n");
+    appendStackTraceElement(details, true, true, writer);
+  }
+
+  private void appendStackTraceElement(final StackTraceElement stackTraceElement,
+      final boolean isFirst, final boolean isLast, Writer writer) throws IOException {
+    if (isFirst) {
+      writer.append("<table>\n<thead>\n")
+          .append("<tr>\n<th class=\"name\">Class</th>\n")
+          .append("<th class=\"name\">Method</th>\n")
+          .append("<th class=\"value\">Line number in class</th>\n</tr>\n")
+          .append("</thead>\n<tbody>\n");
+    }
+    writer.append("<tr>\n<td class=\"name\">").append(stackTraceElement.getClassName()).append("</td>\n")
+        .append("<td class=\"name\">").append(stackTraceElement.getMethodName()).append("</td>\n")
+        .append("<td class=\"value\">").append(Integer.toString(stackTraceElement.getLineNumber()))
+        .append("</td>\n</tr>\n");
+    if (isLast) {
+      writer.append("</tbody>\n</table>\n");
+    }
+  }
+
+  private String getMessageText(final Throwable throwable) {
+    return throwable instanceof ODataMessageException ?
+        MessageService.getMessage(locale, ((ODataMessageException) throwable).getMessageReference()).getText() :
+        throwable.getLocalizedMessage() == null ? "Exception text missing" : throwable.getLocalizedMessage();
   }
 }

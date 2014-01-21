@@ -45,6 +45,8 @@ public interface HttpContentType {
   public static final String TEXT_PLAIN = "text/plain";
   public static final String TEXT_PLAIN_UTF8 = TEXT_PLAIN + ";charset=utf-8";
 
+  public static final String TEXT_HTML = "text/html";
+
   public static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
 
   public static final String APPLICATION_HTTP = "application/http";

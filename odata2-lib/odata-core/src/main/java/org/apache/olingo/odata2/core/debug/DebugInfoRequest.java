@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.debug;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -26,17 +27,20 @@ import java.util.Map;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
- *  
+ * Request debug information.
  */
 public class DebugInfoRequest implements DebugInfo {
 
   private final String method;
   private final URI uri;
+  private final String protocol;
   private final Map<String, List<String>> headers;
 
-  public DebugInfoRequest(final String method, final URI uri, final Map<String, List<String>> headers) {
+  public DebugInfoRequest(final String method, final URI uri, final String protocol,
+      final Map<String, List<String>> headers) {
     this.method = method;
     this.uri = uri;
+    this.protocol = protocol;
     this.headers = headers;
   }
 
@@ -48,8 +52,9 @@ public class DebugInfoRequest implements DebugInfo {
   @Override
   public void appendJson(final JsonStreamWriter jsonStreamWriter) throws IOException {
     jsonStreamWriter.beginObject()
-        .namedStringValueRaw("method", method).separator()
-        .namedStringValue("uri", uri.toString());
+        .namedStringValueRaw("method", method.toString()).separator()
+        .namedStringValue("uri", uri.toString()).separator()
+        .namedStringValue("protocol", protocol);
 
     if (!headers.isEmpty()) {
       jsonStreamWriter.separator()
@@ -58,6 +63,9 @@ public class DebugInfoRequest implements DebugInfo {
       boolean first = true;
       for (final String name : headers.keySet()) {
         for (final String value : headers.get(name)) {
+          if (value == null) {
+            continue;
+          }
           if (!first) {
             jsonStreamWriter.separator();
           }
@@ -69,5 +77,29 @@ public class DebugInfoRequest implements DebugInfo {
     }
 
     jsonStreamWriter.endObject();
+  }
+
+  @Override
+  public void appendHtml(Writer writer) throws IOException {
+    writer.append("<h2>Request Method</h2>\n")
+        .append("<p>").append(method).append("</p>\n")
+        .append("<h2>Request URI</h2>\n")
+        .append("<p>").append(ODataDebugResponseWrapper.escapeHtml(uri.toString())).append("</p>\n")
+        .append("<h2>Request Protocol</h2>\n")
+        .append("<p>").append(protocol).append("</p>\n");
+    writer.append("<h2>Request Headers</h2>\n")
+        .append("<table>\n<thead>\n")
+        .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
+        .append("</thead>\n<tbody>\n");
+    for (final String name : headers.keySet()) {
+      for (final String value : headers.get(name)) {
+        if (value != null) {
+          writer.append("<tr><td class=\"name\">").append(name).append("</td>")
+              .append("<td class=\"value\">").append(ODataDebugResponseWrapper.escapeHtml(value))
+              .append("</td></tr>\n");
+        }
+      }
+    }
+    writer.append("</tbody>\n</table>\n");
   }
 }
