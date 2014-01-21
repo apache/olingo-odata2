@@ -1,10 +1,12 @@
 package org.apache.olingo.odata2.fit.client;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,40 +41,7 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
   private static final String DELTATOKEN_1234 = "!deltatoken=1234";
 
   private Client client;
-
-  private ArrayList<Map<String, Object>> createRoomData() {
-
-    Map<String, Object> roomData1 = new HashMap<String, Object>();
-    roomData1.put("Id", "1");
-    roomData1.put("Seats", 123);
-    roomData1.put("Version", 1);
-    Map<String, Object> roomData2 = new HashMap<String, Object>();
-    roomData2.put("Id", "2");
-    roomData2.put("Seats", 66);
-    roomData2.put("Version", 2);
-
-    ArrayList<Map<String, Object>> roomsData = new ArrayList<Map<String, Object>>();
-    roomsData.add(roomData1);
-    roomsData.add(roomData2);
-
-    return roomsData;
-  }
-
-  private ArrayList<Map<String, Object>> createDeletedRoomData() {
-    Map<String, Object> roomData1 = new HashMap<String, Object>();
-    roomData1.put("Id", "3");
-    roomData1.put("Seats", 123);
-    roomData1.put("Version", 1);
-    Map<String, Object> roomData2 = new HashMap<String, Object>();
-    roomData2.put("Id", "4");
-    roomData2.put("Seats", 66);
-    roomData2.put("Version", 2);
-
-    ArrayList<Map<String, Object>> deletedRoomData = new ArrayList<Map<String, Object>>();
-    deletedRoomData.add(roomData1);
-    deletedRoomData.add(roomData2);
-    return deletedRoomData;
-  }
+  StubProcessor processor;
 
   @Before
   @Override
@@ -83,11 +52,20 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
 
-    createRoomData();
+  @Override
+  protected ODataService createService() throws ODataException {
+    EdmProvider provider = new ScenarioEdmProvider();
+    processor = new StubProcessor();
+
+    return new ODataSingleProcessorService(provider, processor);
   }
 
   private class StubProcessor extends ODataSingleProcessor {
+
+    private int roomDataCount = 2;
+    private int deletedRoomDataCount = 2;
 
     @Override
     public ODataResponse readEntitySet(GetEntitySetUriInfo uriInfo, String contentType) throws ODataException {
@@ -125,14 +103,35 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
 
       }
     }
-  }
 
-  @Override
-  protected ODataService createService() throws ODataException {
-    EdmProvider provider = new ScenarioEdmProvider();
-    ODataSingleProcessor processor = new StubProcessor();
+    private ArrayList<Map<String, Object>> createRoomData() {
+      ArrayList<Map<String, Object>> roomsData = new ArrayList<Map<String, Object>>();
 
-    return new ODataSingleProcessorService(provider, processor);
+      for (int i = 1; i <= roomDataCount; i++) {
+        Map<String, Object> roomData = new HashMap<String, Object>();
+        roomData.put("Id", String.valueOf(i));
+        roomData.put("Seats", i);
+        roomData.put("Version", i);
+        roomsData.add(roomData);
+      }
+
+      return roomsData;
+    }
+
+    private ArrayList<Map<String, Object>> createDeletedRoomData() {
+      ArrayList<Map<String, Object>> deletedRoomData = new ArrayList<Map<String, Object>>();
+
+      for (int i = roomDataCount + 1; i < roomDataCount + 1 + deletedRoomDataCount; i++) {
+        Map<String, Object> roomData = new HashMap<String, Object>();
+        roomData.put("Id", String.valueOf(i));
+        roomData.put("Seats", i);
+        roomData.put("Version", i);
+
+        deletedRoomData.add(roomData);
+      }
+
+      return deletedRoomData;
+    }
   }
 
   @Test
@@ -183,15 +182,50 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
     assertEquals("uri4", deletedEntries.get(1).getUri());
   }
 
+  private void testDeltaFeedWithZeroEntries(String contentType) throws Exception {
+    processor.roomDataCount = 0;
+    processor.deletedRoomDataCount = 0;
+
+    ODataFeed feed = client.readFeed("Container1", "Rooms", contentType);
+    String deltaLink = feed.getFeedMetadata().getDeltaLink();
+
+    assertNotNull(feed);
+    assertEquals(0, feed.getEntries().size());
+    assertEquals(getEndpoint().toASCIIString() + "Rooms?" + DELTATOKEN_1234, feed.getFeedMetadata().getDeltaLink());
+    assertFalse(feed.isDeltaFeed());
+
+    URI uri = new URI(deltaLink);
+    String query = uri.getQuery();
+    ODataFeed deltaFeed = client.readFeed("Container1", "Rooms", contentType, query);
+
+    assertNotNull(deltaFeed);
+    assertEquals(0, deltaFeed.getEntries().size());
+    assertEquals(uri.toASCIIString(), deltaFeed.getFeedMetadata().getDeltaLink());
+
+    assertTrue(deltaFeed.isDeltaFeed());
+    List<EntryMetadata> deletedEntries = deltaFeed.getDeletedEntries();
+    assertNotNull(deletedEntries);
+    assertEquals(0, deletedEntries.size());
+  }
+
   @Test
   public void testDeltaFeedWithDeltaLinkXml() throws Exception {
     testDeltaFeedWithDeltaLink("application/atom+xml");
   }
 
   @Test
-  @Ignore("not implemented")
   public void testFeedWithDeltaLinkJson() throws Exception {
     testDeltaFeedWithDeltaLink("application/json");
+  }
+
+  @Test
+  public void testDeltaFeedWithZeroEntriesXml() throws Exception {
+    testDeltaFeedWithZeroEntries("application/atom+xml");
+  }
+
+  @Test
+  public void testFeedWithZeroEntriesJson() throws Exception {
+    testDeltaFeedWithZeroEntries("application/json");
   }
 
 }

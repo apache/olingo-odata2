@@ -30,6 +30,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
@@ -96,6 +97,14 @@ public class XmlFeedConsumer {
     FeedMetadataImpl metadata = new FeedMetadataImpl();
     XmlEntryConsumer xec = new XmlEntryConsumer();
     List<ODataEntry> results = new ArrayList<ODataEntry>();
+    List<EntryMetadata> deletedEntries = null;
+
+    boolean isDeltaFeed = false;
+    String tombstonePrefix = reader.getNamespaceContext().getPrefix(FormatXml.ATOM_TOMBSTONE_NAMESPACE);
+    if (tombstonePrefix != null) {
+      isDeltaFeed = true;
+      deletedEntries = new ArrayList<EntryMetadata>();
+    }
 
     while (reader.hasNext() && !isFeedEndTag(reader)) {
       if (FormatXml.ATOM_ENTRY.equals(reader.getLocalName())) {
@@ -136,7 +145,7 @@ public class XmlFeedConsumer {
       }
       readTillNextStartTag(reader);
     }
-    return new ODataFeedImpl(results, metadata);
+    return new ODataFeedImpl(results, metadata, isDeltaFeed, deletedEntries);
   }
 
   private void readTillNextStartTag(final XMLStreamReader reader) throws XMLStreamException {

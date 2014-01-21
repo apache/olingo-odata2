@@ -50,8 +50,8 @@ public interface ODataFeed {
 
   /**
    * Delta responses can contain changed feed data and deleted entries metadata. A delta response it the result of
-   * a delta link.
-   * @return metadata of deleted entries in case of feed is result of a delta response
+   * a delta link. If the feed is not a delta feed then the list of deleted entries is null.
+   * @return metadata of deleted entries in case of feed is result of a delta response or null 
    */
   public List<EntryMetadata> getDeletedEntries();
 

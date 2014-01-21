@@ -91,4 +91,6 @@ public class FormatXml {
   public static final String ATOM_TOMBSTONE_REF = "ref";
   public static final String ATOM_TOMBSTONE_WHEN = "when";
   public static final String ATOM_TOMBSTONE_DELETED_ENTRY = "deleted-entry";
+  public static final String ATOM_TOMBSTONE_NAMESPACE = "http://purl.org/atompub/tombstones/1.0";
+  public static final String ATOM_TOMBSTONE_PREFIX = "at";
 }

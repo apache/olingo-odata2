@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.core.ep.consumer;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.io.InputStream;
 
@@ -50,6 +50,8 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
             .getEntitySet(
                 "Employees"), file, DEFAULT_PROPERTIES);
     assertNotNull(feed);
+    assertFalse(feed.isDeltaFeed());
+    assertNull(feed.getDeletedEntries());
 
     FeedMetadata feedMetadata = feed.getFeedMetadata();
     assertNotNull(feedMetadata);
@@ -71,6 +73,8 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
 
     ODataFeed feed = xec.readFeed(entitySet, reqContent, consumerProperties);
     assertNotNull(feed);
+    assertFalse(feed.isDeltaFeed());
+    assertNull(feed.getDeletedEntries());
 
     FeedMetadata feedMetadata = feed.getFeedMetadata();
     assertNotNull(feedMetadata);
@@ -86,7 +90,6 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
   public void readEmployeesFeedWithInlineCountNegative() throws Exception {
     // prepare
     String content = readFile("feed_employees_full.xml").replace("<m:count>6</m:count>", "<m:count>-1</m:count>");
-    ;
     assertNotNull(content);
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
@@ -111,7 +114,6 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
   public void readEmployeesFeedWithInlineCountLetters() throws Exception {
     // prepare
     String content = readFile("feed_employees_full.xml").replace("<m:count>6</m:count>", "<m:count>AAA</m:count>");
-    ;
     assertNotNull(content);
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
@@ -130,5 +132,25 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
     }
 
     Assert.fail("Exception expected");
+  }
+
+  @Test
+  public void readDeltaFeed() throws Exception {
+    // prepare
+    String content = readFile("feed_with_deleted_entries.xml");
+    assertNotNull(content);
+
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    InputStream reqContent = createContentAsStream(content);
+
+    XmlEntityConsumer xec = new XmlEntityConsumer();
+    EntityProviderReadProperties consumerProperties = EntityProviderReadProperties.init().build();
+
+    ODataFeed feed = xec.readFeed(entitySet, reqContent, consumerProperties);
+    
+    assertNotNull(feed);
+    assertTrue(feed.isDeltaFeed());
+    
+    assertNotNull(feed.getDeletedEntries());
   }
 }
