@@ -27,7 +27,7 @@
         </fileSet>
         <fileSet>
             <outputDirectory>/</outputDirectory>
-            <directory>${basedir}/../../odata2-processor-jpa/jpa-web/target/</directory>
+            <directory>${basedir}/../../odata2-jpa-processor/jpa-web/target/</directory>
             <includes>
                 <include>**/*.war</include>
             </includes>
