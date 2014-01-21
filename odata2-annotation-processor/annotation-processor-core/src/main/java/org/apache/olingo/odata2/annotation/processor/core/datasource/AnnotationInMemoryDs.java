@@ -50,7 +50,7 @@ public class AnnotationInMemoryDs implements DataSource {
     this(annotatedClasses, true);
   }
 
-  public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses, final boolean persistInMemory) 
+  public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses, final boolean persistInMemory)
       throws ODataException {
     this.persistInMemory = persistInMemory;
     init(annotatedClasses);
@@ -77,12 +77,12 @@ public class AnnotationInMemoryDs implements DataSource {
     try {
       for (Class<?> clz : annotatedClasses) {
         String entitySetName = ANNOTATION_HELPER.extractEntitySetName(clz);
-        if(entitySetName != null) {
+        if (entitySetName != null) {
           DataStore<Object> dhs = (DataStore<Object>) DataStore.createInMemory(clz, persistInMemory);
           dataStores.put(entitySetName, dhs);
-        } else if(!ANNOTATION_HELPER.isEdmAnnotated(clz)) {
-          throw new ODataException("Found not annotated class during DataStore initilization of type: " 
-                  + clz.getName());
+        } else if (!ANNOTATION_HELPER.isEdmAnnotated(clz)) {
+          throw new ODataException("Found not annotated class during DataStore initilization of type: "
+              + clz.getName());
         }
       }
     } catch (DataStore.DataStoreException e) {
@@ -186,7 +186,7 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   /**
-   * Extract the <code>result data</code> from the <code>resultData</code> list based on 
+   * Extract the <code>result data</code> from the <code>resultData</code> list based on
    * <code>navigation information</code> and <code>targetKeys</code>.
    * 
    * @param targetStore

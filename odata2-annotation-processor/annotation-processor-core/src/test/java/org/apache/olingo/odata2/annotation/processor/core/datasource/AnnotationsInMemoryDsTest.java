@@ -68,8 +68,8 @@ public class AnnotationsInMemoryDsTest {
     ANNOTATED_ENTITY_SET_CLASSES.add(Manager.class);
     ANNOTATED_ENTITY_SET_CLASSES.add(Photo.class);
     ANNOTATED_ENTITY_SET_CLASSES.add(Room.class);
-    ANNOTATED_ENTITY_SET_CLASSES.add(Team.  class);
-    
+    ANNOTATED_ENTITY_SET_CLASSES.add(Team.class);
+
     ANNOTATED_MODEL_CLASSES.addAll(ANNOTATED_ENTITY_SET_CLASSES);
     ANNOTATED_MODEL_CLASSES.add(Location.class);
     ANNOTATED_MODEL_CLASSES.add(City.class);
@@ -84,7 +84,7 @@ public class AnnotationsInMemoryDsTest {
     datasource = new AnnotationInMemoryDs(Building.class.getPackage().getName(), false);
     edmProvider = new AnnotationEdmProvider(Building.class.getPackage().getName());
   }
-  
+
   @Test
   public void initFromPackage() throws Exception {
     AnnotationInMemoryDs ds = new AnnotationInMemoryDs(Building.class.getPackage().getName(), false);
@@ -205,7 +205,7 @@ public class AnnotationsInMemoryDsTest {
   }
 
   private Thread createBuildingThread(final CountDownLatch latch, final DataSource datasource,
-          final EdmEntitySet edmEntitySet, final String id) {
+      final EdmEntitySet edmEntitySet, final String id) {
     Runnable run = new Runnable() {
       @Override
       public void run() {
@@ -447,7 +447,7 @@ public class AnnotationsInMemoryDsTest {
 
     // execute
     Object relatedData = datasource.readRelatedData(
-            buildingsEntitySet, building, roomsEntitySet, Collections.EMPTY_MAP);
+        buildingsEntitySet, building, roomsEntitySet, Collections.EMPTY_MAP);
 
     // validate
     Assert.assertTrue("Result is no collection.", relatedData instanceof Collection);
@@ -482,7 +482,7 @@ public class AnnotationsInMemoryDsTest {
 
     // execute
     Object relatedData = datasource.readRelatedData(
-            roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
+        roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
 
     // validate
     Assert.assertTrue("Result is no room.", relatedData instanceof Building);
@@ -512,7 +512,7 @@ public class AnnotationsInMemoryDsTest {
 
     // execute
     Object relatedData = datasource.readRelatedData(
-            roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
+        roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
 
     // validate
     Assert.assertNull("Related data must be null.", relatedData);
@@ -549,7 +549,7 @@ public class AnnotationsInMemoryDsTest {
     Map<String, Object> targetKeys = new HashMap<String, Object>();
     targetKeys.put("Id", 3);
     Object relatedData = datasource.readRelatedData(
-            buildingsEntitySet, building, roomsEntitySet, targetKeys);
+        buildingsEntitySet, building, roomsEntitySet, targetKeys);
 
     // validate
     Assert.assertTrue("Result is no Room.", relatedData instanceof Room);
@@ -708,8 +708,7 @@ public class AnnotationsInMemoryDsTest {
     try {
       Building readAfterDelete = (Building) datasource.readData(edmEntitySet, keys);
       Assert.fail("Expected " + ODataNotFoundException.class + "was not thrown for '" + readAfterDelete + "'.");
-    } catch (ODataNotFoundException e) {
-    }
+    } catch (ODataNotFoundException e) {}
   }
 
   @Test(expected = ODataRuntimeException.class)
@@ -757,7 +756,8 @@ public class AnnotationsInMemoryDsTest {
     Building created = buildingStore.create(building);
 
     Room room = new Room(42, "Room with Number");
-    room.setSeats(123);;
+    room.setSeats(123);
+    ;
     room.setVersion(4711);
     roomStore.create(room);
 
@@ -785,8 +785,8 @@ public class AnnotationsInMemoryDsTest {
     return createMockedEdmEntitySet(edmProvider, entitySetName);
   }
 
-  private EdmEntitySet createMockedEdmEntitySet(AnnotationEdmProvider edmProvider, final String entitySetName)
-          throws ODataException {
+  private EdmEntitySet createMockedEdmEntitySet(final AnnotationEdmProvider edmProvider, final String entitySetName)
+      throws ODataException {
     EntitySet entitySet = edmProvider.getEntitySet(DEFAULT_CONTAINER, entitySetName);
     FullQualifiedName entityType = entitySet.getEntityType();
 

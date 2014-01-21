@@ -67,7 +67,8 @@ public final class JPAEntityParser {
     return jpaEmbeddableKeyMap.get(jpaEntityName);
   }
 
-  public List<Map<String, Object>> parse2EdmEntityList(Collection<Object> jpaEntityList, List<EdmProperty> properties)
+  public List<Map<String, Object>> parse2EdmEntityList(final Collection<Object> jpaEntityList,
+      final List<EdmProperty> properties)
       throws ODataJPARuntimeException {
 
     if (jpaEntityList == null) {
@@ -261,7 +262,8 @@ public final class JPAEntityParser {
     return propertyValue;
   }
 
-  public Object getEmbeddablePropertyValue(final String methodName, Object jpaEntity) throws ODataJPARuntimeException {
+  public Object getEmbeddablePropertyValue(final String methodName, final Object jpaEntity)
+      throws ODataJPARuntimeException {
 
     String[] nameParts = methodName.split("\\.");
     Object propertyValue = jpaEntity;
@@ -391,8 +393,9 @@ public final class JPAEntityParser {
     }
   }
 
-  private HashMap<String, Method> getAccessModifiers(List<EdmProperty> edmProperties, Class<?> jpaEntityType,
-      String accessModifier) throws ODataJPARuntimeException {
+  private HashMap<String, Method> getAccessModifiers(final List<EdmProperty> edmProperties,
+      final Class<?> jpaEntityType,
+      final String accessModifier) throws ODataJPARuntimeException {
 
     HashMap<String, Method> accessModifierMap = jpaEntityAccessMap.get(jpaEntityType.getName());
     if (accessModifierMap == null) {
@@ -462,7 +465,7 @@ public final class JPAEntityParser {
     return accessModifierMap;
   }
 
-  private List<EdmProperty> getEdmProperties(EdmStructuralType structuralType) throws ODataJPARuntimeException {
+  private List<EdmProperty> getEdmProperties(final EdmStructuralType structuralType) throws ODataJPARuntimeException {
     List<EdmProperty> edmProperties = new ArrayList<EdmProperty>();
     try {
       for (String propertyName : structuralType.getPropertyNames()) {

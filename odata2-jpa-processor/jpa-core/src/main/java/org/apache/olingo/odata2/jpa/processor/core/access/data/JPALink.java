@@ -193,7 +193,7 @@ public class JPALink {
   }
 
   public void create(final EdmEntitySet entitySet, final ODataEntry oDataEntry,
-      List<String> navigationPropertyNames)
+      final List<String> navigationPropertyNames)
       throws ODataJPARuntimeException,
       ODataJPAModelException {
 

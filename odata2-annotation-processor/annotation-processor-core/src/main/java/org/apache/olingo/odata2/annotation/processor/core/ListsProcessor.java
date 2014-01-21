@@ -205,11 +205,11 @@ public class ListsProcessor extends DataSourceProcessor {
     return ODataResponse.fromResponse(response).build();
   }
 
-  String percentEncodeNextLink(String link) {
-    if(link == null) {
+  String percentEncodeNextLink(final String link) {
+    if (link == null) {
       return null;
     }
-       
+
     return link.replaceAll("\\$skiptoken=.+?(?:&|$)", "")
         .replaceAll("\\$skip=.+?(?:&|$)", "")
         .replaceFirst("(?:\\?|&)$", ""); // Remove potentially trailing "?" or "&" left over from remove actions
@@ -906,7 +906,7 @@ public class ListsProcessor extends DataSourceProcessor {
           keys.isEmpty() ?
               dataSource.readData(startEntitySet) : dataSource.readData(startEntitySet, keys) :
           dataSource.readData(functionImport, functionImportParameters, keys);
-  
+
       EdmEntitySet currentEntitySet =
           functionImport == null ? startEntitySet : functionImport.getEntitySet();
       for (NavigationSegment navigationSegment : navigationSegments) {

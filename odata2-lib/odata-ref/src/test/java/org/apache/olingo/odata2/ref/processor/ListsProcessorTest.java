@@ -26,9 +26,9 @@ import org.junit.Test;
  * 
  */
 public class ListsProcessorTest {
-  
+
   private ListsProcessor listsProcessor;
-  
+
   public ListsProcessorTest() {
     listsProcessor = new ListsProcessor(null);
   }
@@ -68,7 +68,7 @@ public class ListsProcessorTest {
     String url = "Rooms?$orderby=Seats%20desc&$skiptoken=213&$top=200";
     String result = listsProcessor.percentEncodeNextLink(url);
     Assert.assertEquals("Rooms?$orderby=Seats%20desc&$top=200", result);
-    
+
     String url2 = "Rooms?$orderby=Seats%20desc&$skiptoken=213";
     String result2 = listsProcessor.percentEncodeNextLink(url2);
     Assert.assertEquals("Rooms?$orderby=Seats%20desc", result2);

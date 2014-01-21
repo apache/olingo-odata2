@@ -56,7 +56,7 @@ public class AnnotationRefServiceFactory extends ODataServiceFactory {
     final static String MODEL_PACKAGE = "org.apache.olingo.odata2.annotation.processor.ref.model";
 
     final static ODataService ANNOTATION_ODATA_SERVICE;
-    
+
     static {
       try {
         ANNOTATION_ODATA_SERVICE = AnnotationServiceFactory.createAnnotationService(MODEL_PACKAGE);
@@ -116,10 +116,10 @@ public class AnnotationRefServiceFactory extends ODataServiceFactory {
 
   }
 
-  private static <T> DataStore<T> getDataStore(Class<T> clz) throws DataStoreException {
+  private static <T> DataStore<T> getDataStore(final Class<T> clz) throws DataStoreException {
     return DataStore.createInMemory(clz, true);
   }
-  
+
   private static void initializeSampleData() throws ODataApplicationException {
     DataStore<Team> teamDs = getDataStore(Team.class);
     teamDs.create(createTeam("Team Alpha", true));

@@ -33,16 +33,16 @@ public class ListsProcessorTest {
   private ListsProcessor listsProcessor;
   private DataSource mockedDataSource = Mockito.mock(DataSource.class);
   private ValueAccess mockedValueAccess = Mockito.mock(ValueAccess.class);
-  
+
   @Test
   public void init() throws ODataException {
     DataSource dataSource = new AnnotationInMemoryDs(Building.class.getPackage().getName());
     ValueAccess valueAccess = new AnnotationValueAccess();
     ListsProcessor lp = new ListsProcessor(dataSource, valueAccess);
-    
+
     Assert.assertNotNull(lp);
   }
-  
+
   public ListsProcessorTest() {
     listsProcessor = new ListsProcessor(mockedDataSource, mockedValueAccess);
   }
@@ -82,7 +82,7 @@ public class ListsProcessorTest {
     String url = "Rooms?$orderby=Seats%20desc&$skiptoken=213&$top=200";
     String result = listsProcessor.percentEncodeNextLink(url);
     Assert.assertEquals("Rooms?$orderby=Seats%20desc&$top=200", result);
-    
+
     String url2 = "Rooms?$orderby=Seats%20desc&$skiptoken=213";
     String result2 = listsProcessor.percentEncodeNextLink(url2);
     Assert.assertEquals("Rooms?$orderby=Seats%20desc", result2);

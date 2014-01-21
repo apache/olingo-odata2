@@ -64,7 +64,7 @@ public class SalesOrderItem {
   }
 
   public void setDelivered(final Boolean deliveryStatus) {
-    this.delivered = deliveryStatus;
+    delivered = deliveryStatus;
   }
 
   @JoinColumn(name = "Material_Id", referencedColumnName = "MATERIAL_ID")

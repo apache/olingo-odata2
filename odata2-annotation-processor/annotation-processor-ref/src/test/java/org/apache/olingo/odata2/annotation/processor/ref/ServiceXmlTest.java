@@ -41,7 +41,7 @@ public class ServiceXmlTest extends AbstractRefXmlTest {
     final HttpResponse response = callUri("/");
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_SVC_UTF8);
     final String body = getBody(response);
-    
+
     assertXpathEvaluatesTo("Employees", "/app:service/app:workspace/app:collection[@href=\"Employees\"]", body);
     assertXpathEvaluatesTo("Teams", "/app:service/app:workspace/app:collection[@href=\"Teams\"]", body);
     assertXpathEvaluatesTo("Rooms", "/app:service/app:workspace/app:collection[@href=\"Rooms\"]", body);

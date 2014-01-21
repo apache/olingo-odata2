@@ -39,7 +39,7 @@ public class AnnotationValueAccessTest {
     EdmProperty property = mockProperty("Name");
 
     Class<?> type = ava.getPropertyType(data, property);
-    
+
     Assert.assertEquals(String.class, type);
   }
 
@@ -49,20 +49,18 @@ public class AnnotationValueAccessTest {
     EdmProperty property = mockProperty("Name");
 
     Class<?> type = ava.getPropertyType(null, property);
-    
+
     Assert.assertNull(type);
   }
 
-  
-  @Test(expected=ODataNotImplementedException.class)
+  @Test(expected = ODataNotImplementedException.class)
   public void getPropertyTypeNotAnnotated() throws ODataException {
     AnnotationValueAccess ava = new AnnotationValueAccess();
     NotAnnotatedBean data = new NotAnnotatedBean();
-    data.name = "A Name";
     EdmProperty property = mockProperty("Name");
 
     Class<?> type = ava.getPropertyType(data, property);
-    
+
     Assert.assertEquals(String.class, type);
   }
 
@@ -74,7 +72,7 @@ public class AnnotationValueAccessTest {
     EdmProperty property = mockProperty("Name");
 
     Object value = ava.getPropertyValue(data, property);
-    
+
     Assert.assertEquals(String.class, value.getClass());
     Assert.assertEquals("A Name", value);
   }
@@ -86,7 +84,7 @@ public class AnnotationValueAccessTest {
     EdmProperty property = mockProperty("Name");
 
     Object value = ava.getPropertyValue(data, property);
-    
+
     Assert.assertNull(value);
   }
 
@@ -97,15 +95,14 @@ public class AnnotationValueAccessTest {
     EdmProperty property = mockProperty("Name");
 
     Object value = ava.getPropertyValue(data, property);
-    
+
     Assert.assertNull(value);
   }
 
-  @Test(expected=ODataNotImplementedException.class)
+  @Test(expected = ODataNotImplementedException.class)
   public void getPropertyValueNotAnnotated() throws ODataException {
     AnnotationValueAccess ava = new AnnotationValueAccess();
     NotAnnotatedBean data = new NotAnnotatedBean();
-    data.name = "A Name";
     EdmProperty property = mockProperty("Name");
 
     Object value = ava.getPropertyValue(data, property);
@@ -118,20 +115,19 @@ public class AnnotationValueAccessTest {
     SimpleEntity data = new SimpleEntity();
     data.name = "A Name";
     EdmProperty property = mockProperty("Name");
-    
+
     Object value = "Another Name";
     ava.setPropertyValue(data, property, value);
-    
+
     Assert.assertEquals("Another Name", data.name);
   }
 
-  @Test(expected=ODataNotImplementedException.class)
+  @Test(expected = ODataNotImplementedException.class)
   public void setPropertyValueNotAnnotated() throws ODataException {
     AnnotationValueAccess ava = new AnnotationValueAccess();
     NotAnnotatedBean data = new NotAnnotatedBean();
-    data.name = "A Name";
     EdmProperty property = mockProperty("Name");
-    
+
     Object value = "Another Name";
     ava.setPropertyValue(data, property, value);
   }
@@ -142,9 +138,9 @@ public class AnnotationValueAccessTest {
     SimpleEntity data = new SimpleEntity();
     data.name = "A Name";
     EdmProperty property = mockProperty("Name");
-    
+
     ava.setPropertyValue(data, property, null);
-    
+
     Assert.assertNull(null, data.name);
   }
 
@@ -153,9 +149,9 @@ public class AnnotationValueAccessTest {
     AnnotationValueAccess ava = new AnnotationValueAccess();
     SimpleEntity data = null;
     EdmProperty property = mockProperty("Name");
-    
+
     ava.setPropertyValue(data, property, null);
-    
+
     // no exception is thrown, all fine
   }
 
@@ -165,9 +161,9 @@ public class AnnotationValueAccessTest {
     SimpleEntity data = new SimpleEntity();
     data.myMappedProperty = "mapped property value";
     EdmMapping mapping = mockMapping("MyMappedProperty");
-    
+
     Object value = ava.getMappingValue(data, mapping);
-    
+
     Assert.assertEquals(String.class, value.getClass());
     Assert.assertEquals("mapped property value", value);
   }
@@ -178,9 +174,9 @@ public class AnnotationValueAccessTest {
     SimpleEntity data = new SimpleEntity();
     data.myMappedProperty = "property";
     EdmMapping mapping = null;
-    
+
     Object value = ava.getMappingValue(data, mapping);
-    
+
     Assert.assertNull(value);
   }
 
@@ -190,9 +186,9 @@ public class AnnotationValueAccessTest {
     SimpleEntity data = new SimpleEntity();
     data.myMappedProperty = null;
     EdmMapping mapping = mockMapping("MyMappedProperty");
-    
+
     Object value = ava.getMappingValue(data, mapping);
-    
+
     Assert.assertNull(value);
   }
 
@@ -202,10 +198,10 @@ public class AnnotationValueAccessTest {
     SimpleEntity data = new SimpleEntity();
     data.myMappedProperty = "mapped property value";
     EdmMapping mapping = mockMapping("MyMappedProperty");
-    
+
     Object value = "Changed mapped property value";
     ava.setMappingValue(data, mapping, value);
-    
+
     Assert.assertEquals("Changed mapped property value", data.myMappedProperty);
   }
 
@@ -215,10 +211,10 @@ public class AnnotationValueAccessTest {
     SimpleEntity data = new SimpleEntity();
     data.myMappedProperty = "mapped property value";
     EdmMapping mapping = mockMapping("MyMappedProperty");
-    
+
     Object value = null;
     ava.setMappingValue(data, mapping, value);
-    
+
     Assert.assertNull(data.myMappedProperty);
   }
 
@@ -228,20 +224,20 @@ public class AnnotationValueAccessTest {
     SimpleEntity data = new SimpleEntity();
     data.myMappedProperty = "mapped property value";
     EdmMapping mapping = null;
-    
+
     Object value = null;
     ava.setMappingValue(data, mapping, value);
-    
+
     Assert.assertEquals("mapped property value", data.myMappedProperty);
   }
-  
-  private EdmProperty mockProperty(String name) throws EdmException {
+
+  private EdmProperty mockProperty(final String name) throws EdmException {
     EdmProperty property = Mockito.mock(EdmProperty.class);
     Mockito.when(property.getName()).thenReturn(name);
     return property;
   }
 
-  private EdmMapping mockMapping(String mimeTypeKey) throws EdmException {
+  private EdmMapping mockMapping(final String mimeTypeKey) throws EdmException {
     EdmMapping mapping = Mockito.mock(EdmMapping.class);
     Mockito.when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mimeTypeKey);
     return mapping;
@@ -249,11 +245,11 @@ public class AnnotationValueAccessTest {
 
   @EdmEntityType
   private class SimpleEntity {
-    @org.apache.olingo.odata2.api.annotation.edm.EdmProperty String name;
-    @org.apache.olingo.odata2.api.annotation.edm.EdmProperty String myMappedProperty;
+    @org.apache.olingo.odata2.api.annotation.edm.EdmProperty
+    String name;
+    @org.apache.olingo.odata2.api.annotation.edm.EdmProperty
+    String myMappedProperty;
   }
-  
-  private class NotAnnotatedBean {
-    private String name;
-  }
+
+  private class NotAnnotatedBean {}
 }

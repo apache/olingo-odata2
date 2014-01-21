@@ -53,11 +53,11 @@ public class ServiceJsonTest extends AbstractRefTest {
     Assert.assertTrue(jsonDataResponseContains(body, "Teams"));
   }
 
-  private boolean jsonDataResponseContains(String content, String containingValue) {
+  private boolean jsonDataResponseContains(final String content, final String containingValue) {
     return content.matches("\\{\"d\":\\{\"EntitySets\":\\[.*"
         + containingValue + ".*\"\\]\\}\\}");
   }
-  
+
   @Test
   public void serviceDocumentAcceptHeaderJson() throws Exception {
     final HttpResponse response = callUri("", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_JSON);

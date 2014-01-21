@@ -37,7 +37,7 @@ public class AnnotationServiceFactoryImpl implements AnnotationServiceFactoryIns
    * {@inheritDoc}
    */
   @Override
-  public ODataService createAnnotationService(String modelPackage) throws ODataException {
+  public ODataService createAnnotationService(final String modelPackage) throws ODataException {
     AnnotationEdmProvider edmProvider = new AnnotationEdmProvider(modelPackage);
     AnnotationInMemoryDs dataSource = new AnnotationInMemoryDs(modelPackage);
     AnnotationValueAccess valueAccess = new AnnotationValueAccess();
@@ -51,7 +51,7 @@ public class AnnotationServiceFactoryImpl implements AnnotationServiceFactoryIns
    * {@inheritDoc}
    */
   @Override
-  public ODataService createAnnotationService(Collection<Class<?>> annotatedClasses) throws ODataException {
+  public ODataService createAnnotationService(final Collection<Class<?>> annotatedClasses) throws ODataException {
     AnnotationEdmProvider edmProvider = new AnnotationEdmProvider(annotatedClasses);
     AnnotationInMemoryDs dataSource = new AnnotationInMemoryDs(annotatedClasses);
     AnnotationValueAccess valueAccess = new AnnotationValueAccess();
