@@ -24,6 +24,7 @@
     <modules>
         <module>lib</module>
         <module>jpa</module>
+        <module>janos</module>
         <module>ref</module>
         <module>javadoc</module>
     </modules>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Lice nsed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file 
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file 
     distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you under 
     the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may 
     obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
@@ -8,48 +8,41 @@
     the License. -->
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-
-    <id>ref</id>
-
+    <id>janos</id>
     <formats>
         <format>zip</format>
     </formats>
-
     <includeBaseDirectory>false</includeBaseDirectory>
-
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <outputDirectory></outputDirectory>
+            <outputFileNameMapping>${artifact.groupId}-${artifact.artifactId}-${artifact.version}.${artifact.extension}</outputFileNameMapping>
+            <unpack>false</unpack>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <scope>compile</scope>
+            <includes>
+                <include>org.apache.olingo:olingo-odata2-core-incubating</include>
+                <include>org.apache.olingo:olingo-odata2-api-incubating</include>
+                <include>org.apache.olingo:olingo-odata2-api-annotation-incubating</include>
+                <include>org.apache.olingo:olingo-odata2-annotation-processor-api-incubating</include>
+                <include>org.apache.olingo:olingo-odata2-annotation-processor-core-incubating</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
     <fileSets>
-        <fileSet>
-            <outputDirectory>/</outputDirectory>
-            <directory>${basedir}/../../odata2-lib/odata-web/target/</directory>
-            <includes>
-                <include>**/*.war</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <outputDirectory>/</outputDirectory>
-            <directory>${basedir}/../../odata2-jpa-processor/jpa-web/target/</directory>
-            <includes>
-                <include>**/*.war</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <outputDirectory>/</outputDirectory>
-            <directory>${basedir}/../../odata2-annotation-processor/annotation-processor-web/target/</directory>
-            <includes>
-                <include>**/*.war</include>
-            </includes>
-        </fileSet>
         <fileSet>
             <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
             <outputDirectory>/</outputDirectory>
             <excludes>
-                <exclude>NOTICE</exclude>
                 <exclude>LICENSE</exclude>
-            </excludes>
+                <exclude>NOTICE</exclude>
+           </excludes>
         </fileSet>
         <fileSet>
             <directory>src/main/resources</directory>
             <outputDirectory>/</outputDirectory>
-         </fileSet>
+        </fileSet>
     </fileSets>
 </assembly>
