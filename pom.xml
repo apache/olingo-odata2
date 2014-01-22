@@ -154,6 +154,11 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>2.4</version>
                 </plugin>
+                <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>cobertura-maven-plugin</artifactId>
+                  <version>2.6</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -265,6 +270,17 @@
                         </resource>
                     </webResources>
                 </configuration>
+            </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>cobertura-maven-plugin</artifactId>
+              <configuration>
+                <instrumentation>
+                  <excludes>
+                    <exclude>org/apache/olingo/odata2/**/api/**/*.class</exclude>
+                  </excludes>
+                </instrumentation>
+              </configuration>
             </plugin>
         </plugins>
     </build>
