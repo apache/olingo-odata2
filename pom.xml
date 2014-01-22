@@ -278,6 +278,8 @@
                 <instrumentation>
                   <excludes>
                     <exclude>org/apache/olingo/odata2/**/api/**/*.class</exclude>
+                    <exclude>org/apache/olingo/odata2/**/ref/**/*.class</exclude>
+                    <exclude>org/apache/olingo/odata2/**/testutil/**/*.class</exclude>
                   </excludes>
                 </instrumentation>
               </configuration>
@@ -344,6 +346,8 @@
                                         <exclude>**/archetype-resources/**</exclude>
                                         <exclude>**/archetype-metadata.xml</exclude>
                                         <exclude>**/archetype.properties</exclude>
+                                        <exclude>**/nb-configuration.xml</exclude>
+                                        <exclude>**/glassfish-web.xml</exclude>
                                         <exclude>**/*.txt</exclude>
                                     </excludes>
                                 </configuration>
