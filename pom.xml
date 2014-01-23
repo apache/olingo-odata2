@@ -154,7 +154,12 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>2.4</version>
                 </plugin>
-             </plugins>
+                <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>cobertura-maven-plugin</artifactId>
+                  <version>2.6</version>
+                </plugin>
+            </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
@@ -266,6 +271,19 @@
                     </webResources>
                 </configuration>
             </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>cobertura-maven-plugin</artifactId>
+              <configuration>
+                <instrumentation>
+                  <excludes>
+                    <exclude>org/apache/olingo/odata2/**/api/**/*.class</exclude>
+                    <exclude>org/apache/olingo/odata2/**/ref/**/*.class</exclude>
+                    <exclude>org/apache/olingo/odata2/**/testutil/**/*.class</exclude>
+                  </excludes>
+                </instrumentation>
+              </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -328,6 +346,8 @@
                                         <exclude>**/archetype-resources/**</exclude>
                                         <exclude>**/archetype-metadata.xml</exclude>
                                         <exclude>**/archetype.properties</exclude>
+                                        <exclude>**/nb-configuration.xml</exclude>
+                                        <exclude>**/glassfish-web.xml</exclude>
                                         <exclude>**/*.txt</exclude>
                                     </excludes>
                                 </configuration>
@@ -359,7 +379,9 @@
                                             <head>Do not implement this interface or derive from class.</head>
                                         </tag>
                                     </tags>
-                                    <excludePackageNames>org.apache.olingo.odata2.core:org.apache.olingo.odata2.core.*:org.apache.olingo.odata2.processor.core:org.apache.olingo.odata2.processor.core.*:org.apache.olingo.odata2.testutil:org.apache.olingo.odata2.testutil.*</excludePackageNames>
+                                    <excludePackageNames>
+                                        org.apache.olingo.odata2.core:org.apache.olingo.odata2.core.*:org.apache.olingo.odata2.jpa.processor.core:org.apache.olingo.odata2.jpa.processor.core.*:org.apache.olingo.odata2.annotation.processor.core:org.apache.olingo.odata2.annotation.processor.core.*:org.apache.olingo.odata2.testutil:org.apache.olingo.odata2.testutil.*
+                                    </excludePackageNames>
                                     <additionalJOptions>
                                         <additionalJOption>-quiet</additionalJOption>
                                     </additionalJOptions>
@@ -374,11 +396,19 @@
                                         </group>
                                         <group>
                                             <title>OData JPA Processor</title>
-                                            <packages>org.apache.olingo.odata2.processor.api:org.apache.olingo.odata2.processor.api.*</packages>
+                                            <packages>org.apache.olingo.odata2.jpa.processor.api:org.apache.olingo.odata2.jpa.processor.api.*</packages>
+                                        </group>
+                                        <group>
+                                            <title>OData Annotation Processor</title>
+                                            <packages>org.apache.olingo.odata2.annotation.processor.api:org.apache.olingo.odata2.annotation.processor.api.*</packages>
                                         </group>
                                         <group>
                                             <title>OData JPA Reference Scenario</title>
                                             <packages>org.apache.olingo.odata2.jpa.processor.ref:org.apache.olingo.odata2.jpa.processor.ref.*</packages>
+                                        </group>
+                                        <group>
+                                            <title>OData Annotation Reference Scenario</title>
+                                            <packages>org.apache.olingo.odata2.annotation.processor.ref:org.apache.olingo.odata2.annotation.processor.ref.*</packages>
                                         </group>
                                     </groups>
                                 </configuration>
@@ -389,14 +419,14 @@
             </build>
         </profile>
     </profiles>
-	
-	<repositories>
-		<repository>
-			<id>oss.sonatype.org</id>
-			<name>OSS Sonatype Staging</name>
-			<url>https://oss.sonatype.org/content/groups/staging</url>
-		</repository>
-	</repositories>
+
+    <repositories>
+        <repository>
+            <id>oss.sonatype.org</id>
+            <name>OSS Sonatype Staging</name>
+            <url>https://oss.sonatype.org/content/groups/staging</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>

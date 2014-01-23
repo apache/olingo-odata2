@@ -63,15 +63,15 @@ public interface ODataJPAResponseBuilder {
       ODataNotFoundException;
 
   /**
-   * The method builds an OData response for an OData Create Request from a created List of JPA entities.
+   * The method builds an OData response for an OData Create Request from a created JPA entity.
    * @param postUriInfo is an information about the request URI
-   * @param createdObjectList is an empty or non empty list of created instances of JPA Entities
+   * @param createdObject is a null or non null instances of JPA Entity
    * @param contentType of the response
    * @return an instance of type {@link org.apache.olingo.odata2.api.processor.ODataResponse}
    * @throws ODataJPARuntimeException
    * @throws ODataNotFoundException
    */
-  public ODataResponse build(final PostUriInfo postUriInfo, final List<Object> createdObjectList,
+  public ODataResponse build(final PostUriInfo postUriInfo, final Object createdObject,
       final String contentType) throws ODataJPARuntimeException,
       ODataNotFoundException;
 

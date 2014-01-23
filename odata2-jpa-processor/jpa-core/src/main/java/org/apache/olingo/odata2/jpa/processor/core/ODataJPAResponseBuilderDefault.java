@@ -83,21 +83,14 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
     try {
       edmEntityType = resultsView.getTargetEntitySet().getEntityType();
-      List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
-      Map<String, Object> edmPropertyValueMap = null;
+      List<Map<String, Object>> edmEntityList = null;
       JPAEntityParser jpaResultParser = new JPAEntityParser();
       final List<SelectItem> selectedItems = resultsView.getSelect();
       if (selectedItems != null && selectedItems.size() > 0) {
-        for (Object jpaEntity : jpaEntities) {
-          edmPropertyValueMap =
-              jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, buildSelectItemList(selectedItems, edmEntityType));
-          edmEntityList.add(edmPropertyValueMap);
-        }
+        edmEntityList =
+            jpaResultParser.parse2EdmEntityList(jpaEntities, buildSelectItemList(selectedItems, edmEntityType));
       } else {
-        for (Object jpaEntity : jpaEntities) {
-          edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType);
-          edmEntityList.add(edmPropertyValueMap);
-        }
+        edmEntityList = jpaResultParser.parse2EdmEntityList(jpaEntities, edmEntityType);
       }
       expandList = resultsView.getExpand();
       if (expandList != null && expandList.size() != 0) {
@@ -194,13 +187,12 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
   }
 
   /* Response for Create Entity */
-  @SuppressWarnings("unchecked")
   @Override
-  public ODataResponse build(final PostUriInfo uriInfo, final List<Object> createdObjectList,
+  public ODataResponse build(final PostUriInfo uriInfo, final Object createdObject,
       final String contentType) throws ODataJPARuntimeException,
       ODataNotFoundException {
 
-    if (createdObjectList == null || createdObjectList.size() == 0 || createdObjectList.get(0) == null) {
+    if (createdObject == null) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
 
@@ -213,20 +205,11 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       Map<String, Object> edmPropertyValueMap = null;
 
       JPAEntityParser jpaResultParser = new JPAEntityParser();
-      edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(createdObjectList.get(0), edmEntityType);
+      edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(createdObject, edmEntityType);
 
-      List<ArrayList<NavigationPropertySegment>> expandList = null;
-      if (createdObjectList.get(1) != null
-          && ((Map<EdmNavigationProperty, EdmEntitySet>) createdObjectList.get(1)).size() > 0) {
-        expandList = getExpandList((Map<EdmNavigationProperty, EdmEntitySet>) createdObjectList.get(1));
-        HashMap<String, Object> navigationMap =
-            jpaResultParser.parse2EdmNavigationValueMap(createdObjectList.get(0),
-                constructListofNavProperty(expandList));
-        edmPropertyValueMap.putAll(navigationMap);
-      }
       EntityProviderWriteProperties feedProperties = null;
       try {
-        feedProperties = getEntityProviderPropertiesforPost(oDataJPAContext, uriInfo, expandList);
+        feedProperties = getEntityProviderPropertiesforPost(oDataJPAContext, uriInfo);
       } catch (ODataException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       }
@@ -564,47 +547,16 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
   }
 
   private static EntityProviderWriteProperties getEntityProviderPropertiesforPost(
-      final ODataJPAContext odataJPAContext, final PostUriInfo resultsView,
-      final List<ArrayList<NavigationPropertySegment>> expandList) throws ODataJPARuntimeException {
+      final ODataJPAContext odataJPAContext, final PostUriInfo resultsView) throws ODataJPARuntimeException {
     ODataEntityProviderPropertiesBuilder entityFeedPropertiesBuilder = null;
-    ExpandSelectTreeNode expandSelectTree = null;
     try {
       entityFeedPropertiesBuilder =
           EntityProviderWriteProperties.serviceRoot(odataJPAContext.getODataContext().getPathInfo().getServiceRoot());
-      expandSelectTree = UriParser.createExpandSelectTree(null, expandList);
-      entityFeedPropertiesBuilder.expandSelectTree(expandSelectTree);
-      entityFeedPropertiesBuilder.callbacks(JPAExpandCallBack.getCallbacks(odataJPAContext.getODataContext()
-          .getPathInfo().getServiceRoot(), expandSelectTree, expandList));
     } catch (ODataException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     }
 
     return entityFeedPropertiesBuilder.build();
-  }
-
-  private static List<ArrayList<NavigationPropertySegment>> getExpandList(
-      final Map<EdmNavigationProperty, EdmEntitySet> navPropEntitySetMap) {
-    List<ArrayList<NavigationPropertySegment>> expandList = new ArrayList<ArrayList<NavigationPropertySegment>>();
-    ArrayList<NavigationPropertySegment> navigationPropertySegmentList = new ArrayList<NavigationPropertySegment>();
-    for (Map.Entry<EdmNavigationProperty, EdmEntitySet> entry : navPropEntitySetMap.entrySet()) {
-      final EdmNavigationProperty edmNavigationProperty = entry.getKey();
-      final EdmEntitySet edmEntitySet = entry.getValue();
-      NavigationPropertySegment navigationPropertySegment = new NavigationPropertySegment() {
-
-        @Override
-        public EdmEntitySet getTargetEntitySet() {
-          return edmEntitySet;
-        }
-
-        @Override
-        public EdmNavigationProperty getNavigationProperty() {
-          return edmNavigationProperty;
-        }
-      };
-      navigationPropertySegmentList.add(navigationPropertySegment);
-    }
-    expandList.add(navigationPropertySegmentList);
-    return expandList;
   }
 
   private static List<EdmProperty> buildSelectItemList(final List<SelectItem> selectItems, final EdmEntityType entity)
@@ -613,7 +565,9 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     List<EdmProperty> selectPropertyList = new ArrayList<EdmProperty>();
     try {
       for (SelectItem selectItem : selectItems) {
-        selectPropertyList.add(selectItem.getProperty());
+        if (selectItem.getNavigationPropertySegments().size() <= 0) {
+          selectPropertyList.add(selectItem.getProperty());
+        }
       }
       for (EdmProperty keyProperty : entity.getKeyProperties()) {
         flag = true;

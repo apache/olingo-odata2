@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -81,26 +82,15 @@ public class SalesOrderHeader {
   @Column(precision = 8)
   private double netAmount;
 
-  @Column(name = "CUST_ID")
-  private Long customerId;
-
-  @OneToMany(mappedBy = "salesOrderHeader")
+  @OneToMany(mappedBy = "salesOrderHeader", cascade = CascadeType.ALL)
   private Set<SalesOrderItem> salesOrderItem = new HashSet<SalesOrderItem>();
 
   @OneToMany(mappedBy = "salesOrderHeader")
   private List<Note> notes = new ArrayList<Note>();
 
   @ManyToOne
-  @JoinColumn(name = "CUST_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+  @JoinColumn(name = "CUST_ID", referencedColumnName = "ID")
   private Customer customer;
-
-  public Long getCustomerId() {
-    return customerId;
-  }
-
-  public void setCustomerId(final Long customerId) {
-    this.customerId = customerId;
-  }
 
   public Customer getCustomer() {
     return customer;

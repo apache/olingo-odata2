@@ -10,7 +10,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>olingo-odata2-dist-ref-incubating</artifactId>
+    <artifactId>olingo-odata2-dist-janos-incubating</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
 
@@ -56,7 +56,7 @@
                                     <appendAssemblyId>true</appendAssemblyId>
                                     <descriptors>
                                         <descriptor>
-                                            src/main/assembly/ref-assembly.xml
+                                            src/main/assembly/janos-assembly.xml
                                         </descriptor>
                                     </descriptors>
                                 </configuration>
@@ -70,54 +70,34 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.olingo</groupId>
-            <artifactId>olingo-odata2-core-incubating</artifactId>
+            <artifactId>olingo-odata2-api-annotation-incubating</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.olingo</groupId>
             <artifactId>olingo-odata2-api-incubating</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.olingo</groupId>
-            <artifactId>olingo-odata2-jpa-processor-api-incubating</artifactId>
+            <artifactId>olingo-odata2-core-incubating</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.olingo</groupId>
-            <artifactId>olingo-odata2-jpa-processor-core-incubating</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.olingo</groupId>
-            <artifactId>olingo-odata2-jpa-processor-ref-incubating</artifactId>
-            <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.olingo</groupId>
             <artifactId>olingo-odata2-annotation-processor-api-incubating</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.olingo</groupId>
             <artifactId>olingo-odata2-annotation-processor-core-incubating</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.olingo</groupId>
-            <artifactId>olingo-odata2-annotation-processor-ref-incubating</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

@@ -75,7 +75,8 @@ public class EdmMockUtilV2 {
       EasyMock.expect(entityType.getPropertyNames()).andReturn(mockPropertyNamesWithComplexType(entityName)).anyTimes();
     }
 
-    EasyMock.expect(entityType.getNavigationPropertyNames()).andReturn(mockNavigationPropertyNames(entityName));
+    EasyMock.expect(entityType.getNavigationPropertyNames()).andReturn(mockNavigationPropertyNames(entityName))
+        .anyTimes();
     EasyMock.expect(entityType.getKind()).andReturn(EdmTypeKind.ENTITY);
     EasyMock.expect(entityType.getMapping()).andReturn((EdmMapping) mockEdmMapping(entityName, null, null));
     EasyMock.expect(entityType.getKeyProperties()).andReturn(mockKeyProperties(entityName)).anyTimes();

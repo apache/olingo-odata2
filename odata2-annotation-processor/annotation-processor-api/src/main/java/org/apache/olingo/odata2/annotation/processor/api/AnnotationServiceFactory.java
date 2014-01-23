@@ -113,7 +113,7 @@ public abstract class AnnotationServiceFactory {
    * for model definition and data access.
    * @throws ODataException if an error during initialization occurs
    */
-  public static ODataService createAnnotationService(final Collection<Class<?>> annotatedClasses)
+  public static ODataService createAnnotationService(final Collection<Class<?>> annotatedClasses) 
       throws ODataException {
     return getInstance().createAnnotationService(annotatedClasses);
   }

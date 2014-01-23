@@ -20,17 +20,25 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.olingo.odata2.annotation.processor.core.datasource.DataSource.BinaryData;
 import org.apache.olingo.odata2.annotation.processor.core.edm.AnnotationEdmProvider;
 import org.apache.olingo.odata2.annotation.processor.core.model.Building;
+import org.apache.olingo.odata2.annotation.processor.core.model.City;
+import org.apache.olingo.odata2.annotation.processor.core.model.Employee;
+import org.apache.olingo.odata2.annotation.processor.core.model.Location;
+import org.apache.olingo.odata2.annotation.processor.core.model.Manager;
 import org.apache.olingo.odata2.annotation.processor.core.model.ModelSharedConstants;
 import org.apache.olingo.odata2.annotation.processor.core.model.Photo;
+import org.apache.olingo.odata2.annotation.processor.core.model.RefBase;
 import org.apache.olingo.odata2.annotation.processor.core.model.Room;
+import org.apache.olingo.odata2.annotation.processor.core.model.Team;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
@@ -51,6 +59,23 @@ import org.mockito.Mockito;
  */
 public class AnnotationsInMemoryDsTest {
 
+  final static Set<Class<?>> ANNOTATED_MODEL_CLASSES = new HashSet<Class<?>>();
+  final static Set<Class<?>> ANNOTATED_ENTITY_SET_CLASSES = new HashSet<Class<?>>();
+
+  static {
+    ANNOTATED_ENTITY_SET_CLASSES.add(Building.class);
+    ANNOTATED_ENTITY_SET_CLASSES.add(Employee.class);
+    ANNOTATED_ENTITY_SET_CLASSES.add(Manager.class);
+    ANNOTATED_ENTITY_SET_CLASSES.add(Photo.class);
+    ANNOTATED_ENTITY_SET_CLASSES.add(Room.class);
+    ANNOTATED_ENTITY_SET_CLASSES.add(Team.class);
+
+    ANNOTATED_MODEL_CLASSES.addAll(ANNOTATED_ENTITY_SET_CLASSES);
+    ANNOTATED_MODEL_CLASSES.add(Location.class);
+    ANNOTATED_MODEL_CLASSES.add(City.class);
+    ANNOTATED_MODEL_CLASSES.add(RefBase.class);
+  }
+
   private final AnnotationInMemoryDs datasource;
   private final AnnotationEdmProvider edmProvider;
   private static final String DEFAULT_CONTAINER = ModelSharedConstants.CONTAINER_1;
@@ -58,6 +83,45 @@ public class AnnotationsInMemoryDsTest {
   public AnnotationsInMemoryDsTest() throws ODataException {
     datasource = new AnnotationInMemoryDs(Building.class.getPackage().getName(), false);
     edmProvider = new AnnotationEdmProvider(Building.class.getPackage().getName());
+  }
+
+  @Test
+  public void initFromPackage() throws Exception {
+    AnnotationInMemoryDs ds = new AnnotationInMemoryDs(Building.class.getPackage().getName(), false);
+    Assert.assertNotNull(ds);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void initFromNotExistingPackage() throws Exception {
+    AnnotationInMemoryDs ds = new AnnotationInMemoryDs("does.not.exist", false);
+    Assert.assertNotNull(ds);
+  }
+
+  @Test
+  public void initFromPackageWithoutAnnotatedClasses() throws Exception {
+    AnnotationInMemoryDs ds = new AnnotationInMemoryDs(this.getClass().getPackage().getName(), false);
+    Assert.assertNotNull(ds);
+  }
+
+  @Test
+  public void initFromClassCollectionEntitySets() throws Exception {
+    AnnotationInMemoryDs ds = new AnnotationInMemoryDs(ANNOTATED_ENTITY_SET_CLASSES, false);
+    Assert.assertNotNull(ds);
+  }
+
+  @Test
+  public void initFromClassCollectionModel() throws Exception {
+    AnnotationInMemoryDs ds = new AnnotationInMemoryDs(ANNOTATED_MODEL_CLASSES, false);
+    Assert.assertNotNull(ds);
+  }
+
+  @Test(expected = ODataException.class)
+  public void initFromClassCollectionNotAnnotated() throws Exception {
+    Set<Class<?>> annotatedClassesAndMore = new HashSet<Class<?>>(ANNOTATED_ENTITY_SET_CLASSES);
+    annotatedClassesAndMore.add(String.class);
+    annotatedClassesAndMore.add(Object.class);
+    AnnotationInMemoryDs ds = new AnnotationInMemoryDs(annotatedClassesAndMore, false);
+    Assert.assertNotNull(ds);
   }
 
   @Test
@@ -88,6 +152,7 @@ public class AnnotationsInMemoryDsTest {
   @org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet
   @org.apache.olingo.odata2.api.annotation.edm.EdmEntityType
   private static class SimpleEntity {
+
     @EdmKey
     @EdmProperty
     public Integer id;

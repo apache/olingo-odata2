@@ -160,7 +160,7 @@ public interface JPAProcessor {
    * @throws ODataJPARuntimeException
    */
 
-  public <T> List<T> process(PostUriInfo createView, InputStream content,
+  public Object process(PostUriInfo createView, InputStream content,
       String requestContentType) throws ODataJPAModelException,
       ODataJPARuntimeException;
 
@@ -177,7 +177,7 @@ public interface JPAProcessor {
    * @throws ODataJPARuntimeException
    */
 
-  public <T> List<T> process(PostUriInfo createView, Map<String, Object> content) throws ODataJPAModelException,
+  public Object process(PostUriInfo createView, Map<String, Object> content) throws ODataJPAModelException,
       ODataJPARuntimeException;
 
   /**
@@ -192,7 +192,7 @@ public interface JPAProcessor {
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException
    */
-  public <T> Object process(PutMergePatchUriInfo updateView,
+  public Object process(PutMergePatchUriInfo updateView,
       InputStream content, String requestContentType)
       throws ODataJPAModelException, ODataJPARuntimeException;
 
@@ -207,7 +207,7 @@ public interface JPAProcessor {
    * @throws ODataJPAModelException
    * @throws ODataJPARuntimeException
    */
-  public <T> Object process(PutMergePatchUriInfo updateView, Map<String, Object> content)
+  public Object process(PutMergePatchUriInfo updateView, Map<String, Object> content)
       throws ODataJPAModelException, ODataJPARuntimeException;
 
   /**

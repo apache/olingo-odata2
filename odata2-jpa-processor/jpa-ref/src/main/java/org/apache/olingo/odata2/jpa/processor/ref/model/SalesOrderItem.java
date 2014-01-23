@@ -44,9 +44,6 @@ public class SalesOrderItem {
   @EmbeddedId
   private SalesOrderItemKey salesOrderItemKey;
 
-  @Column(name = "Material_Id", nullable = false)
-  private long matId;
-
   @Column
   private int quantity;
 
@@ -70,7 +67,7 @@ public class SalesOrderItem {
     delivered = deliveryStatus;
   }
 
-  @JoinColumn(name = "Material_Id", referencedColumnName = "MATERIAL_ID", insertable = false, updatable = false)
+  @JoinColumn(name = "Material_Id", referencedColumnName = "MATERIAL_ID")
   @ManyToOne
   private Material material;
 
@@ -84,14 +81,6 @@ public class SalesOrderItem {
 
   public void setSalesOrderItemKey(final SalesOrderItemKey salesOrderItemKey) {
     this.salesOrderItemKey = salesOrderItemKey;
-  }
-
-  public long getMatId() {
-    return matId;
-  }
-
-  public void setMatId(final long matId) {
-    this.matId = matId;
   }
 
   public int getQuantity() {

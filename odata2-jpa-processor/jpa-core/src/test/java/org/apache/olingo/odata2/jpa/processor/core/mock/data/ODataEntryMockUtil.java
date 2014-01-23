@@ -51,11 +51,7 @@ public class ODataEntryMockUtil {
     ODataEntry oDataEntry = EasyMock.createMock(ODataEntry.class);
     EasyMock.expect(oDataEntry.getProperties()).andReturn(mockODataEntryProperties(entityName)).anyTimes();
 
-    EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(false).anyTimes();
-    EntryMetadata entryMetadata = EasyMock.createMock(EntryMetadata.class);
-    EasyMock.expect(entryMetadata.getAssociationUris(EasyMock.isA(String.class))).andReturn(null).anyTimes();
-    EasyMock.replay(entryMetadata);
-    EasyMock.expect(oDataEntry.getMetadata()).andReturn(entryMetadata).anyTimes();
+    enhanceMockODataEntry(oDataEntry, false, new ArrayList<String>());
     EasyMock.replay(oDataEntry);
     return oDataEntry;
   }
@@ -65,7 +61,7 @@ public class ODataEntryMockUtil {
     EasyMock.expect(oDataEntry.getProperties()).andReturn(mockODataEntryPropertiesWithComplexType(entityName))
         .anyTimes();
 
-    EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(false).anyTimes();
+    enhanceMockODataEntry(oDataEntry, false, new ArrayList<String>());
     EasyMock.replay(oDataEntry);
     return oDataEntry;
   }
@@ -122,11 +118,33 @@ public class ODataEntryMockUtil {
     ODataEntry oDataEntry = EasyMock.createMock(ODataEntry.class);
     EasyMock.expect(oDataEntry.getProperties()).andReturn(mockODataEntryPropertiesWithInline(entityName)).anyTimes();
     if (entityName.equals(JPATypeMock.ENTITY_NAME)) {
-      EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(true).anyTimes();
+      List<String> links = new ArrayList<String>();
+      links.add(JPATypeMock.ENTITY_NAME + "(" + ODataEntryMockUtil.VALUE_MINT + ")/"
+          + JPATypeMock.NAVIGATION_PROPERTY_X);
+      enhanceMockODataEntry(oDataEntry, true, links);
     } else {
-      EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(false).anyTimes();
+      enhanceMockODataEntry(oDataEntry, false, new ArrayList<String>());
     }
     EasyMock.replay(oDataEntry);
     return oDataEntry;
+  }
+
+  private static void
+      enhanceMockODataEntry(final ODataEntry oDataEntry, final boolean hasInline, final List<String> associationURIs) {
+    EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(hasInline).anyTimes();
+    EntryMetadata entryMetadata = EasyMock.createMock(EntryMetadata.class);
+    if (hasInline) {
+      EasyMock.expect(entryMetadata.getAssociationUris(JPATypeMock.NAVIGATION_PROPERTY_X)).andReturn(associationURIs)
+          .anyTimes();
+      EasyMock.expect(entryMetadata.getAssociationUris(JPATypeMock.NAVIGATION_PROPERTY_XS)).andReturn(
+          new ArrayList<String>())
+          .anyTimes();
+    } else {
+      EasyMock.expect(entryMetadata.getAssociationUris(EasyMock.isA(String.class))).andReturn(associationURIs)
+          .anyTimes();
+    }
+
+    EasyMock.replay(entryMetadata);
+    EasyMock.expect(oDataEntry.getMetadata()).andReturn(entryMetadata).anyTimes();
   }
 }
