@@ -52,13 +52,11 @@ import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
 import org.apache.olingo.odata2.core.ep.consumer.AbstractConsumerTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  *  
  */
-@Ignore
 public class ProviderFacadeImplTest extends AbstractConsumerTest {
 
   private static final String EMPLOYEE_1_XML =

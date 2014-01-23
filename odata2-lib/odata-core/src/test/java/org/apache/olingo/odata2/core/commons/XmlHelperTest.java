@@ -35,6 +35,7 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -86,6 +87,11 @@ public class XmlHelperTest {
           "  <data>&rules;</data>" +
           "</extract>";
 
+  @BeforeClass
+  public static void beforeClass() {
+    System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory"); // NOSONAR
+  }
+  
   @Test
   public void createReader() throws Exception {
     InputStream content = new ByteArrayInputStream(XML.getBytes("UTF-8"));
