@@ -161,11 +161,12 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   }
 
   @Override
-  public ODataDeltaFeed readDeltaFeed(String contentType, EdmEntitySet entitySet, InputStream content,
-      EntityProviderReadProperties properties)  throws EntityProviderException {
+  public ODataDeltaFeed readDeltaFeed(final String contentType, final EdmEntitySet entitySet,
+      final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     return create(contentType).readDeltaFeed(entitySet, content, properties);
   }
-  
+
   @Override
   public ODataEntry readEntry(final String contentType, final EdmEntitySet entitySet, final InputStream content,
       final EntityProviderReadProperties properties) throws EntityProviderException {

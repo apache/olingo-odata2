@@ -53,7 +53,7 @@ public class JPAEntity {
   private ODataJPAContext oDataJPAContext;
   public HashMap<EdmNavigationProperty, EdmEntitySet> inlinedEntities = null;
 
-  public JPAEntity(final EdmEntityType oDataEntityType, final EdmEntitySet oDataEntitySet, 
+  public JPAEntity(final EdmEntityType oDataEntityType, final EdmEntitySet oDataEntitySet,
       final ODataJPAContext context) {
     this.oDataEntityType = oDataEntityType;
     this.oDataEntitySet = oDataEntitySet;

@@ -363,8 +363,8 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
   }
 
   @Override
-  public ODataDeltaFeed readDeltaFeed(EdmEntitySet entitySet, InputStream content,
-      EntityProviderReadProperties properties) throws EntityProviderException {
+  public ODataDeltaFeed readDeltaFeed(final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     XmlEntityConsumer xec = new XmlEntityConsumer();
     return xec.readFeed(entitySet, content, properties);
   }

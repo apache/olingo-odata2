@@ -38,5 +38,5 @@ public interface DeletedEntryMetadata {
    * @return the when date
    */
   Date getWhen();
-  
+
 }

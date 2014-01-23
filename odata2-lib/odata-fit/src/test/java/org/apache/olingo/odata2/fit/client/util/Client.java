@@ -1,3 +1,21 @@
+/*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ ******************************************************************************/
 package org.apache.olingo.odata2.fit.client.util;
 
 import java.io.IOException;
@@ -38,46 +56,49 @@ public class Client {
 
   private Edm edm;
 
-  public Client(String serviceUrl, Proxy.Type protocol, String proxy, int port) throws IOException, ODataException,
+  public Client(final String serviceUrl, final Proxy.Type protocol, final String proxy, final int port)
+      throws IOException, ODataException,
       HttpException {
     this.serviceUrl = serviceUrl;
     this.protocol = protocol;
     this.proxy = proxy;
     this.port = port;
-    this.useProxy = true;
-    this.useAuthentication = false;
+    useProxy = true;
+    useAuthentication = false;
 
     edm = getEdmInternal();
   }
 
-  public Client(String serviceUrl) throws IOException, ODataException, HttpException {
+  public Client(final String serviceUrl) throws IOException, ODataException, HttpException {
     this.serviceUrl = serviceUrl;
-    this.useProxy = false;
-    this.useAuthentication = false;
+    useProxy = false;
+    useAuthentication = false;
 
     edm = getEdmInternal();
   }
 
-  public Client(String serviceUrl, Proxy.Type protocol, String proxy, int port, String username, String password)
+  public Client(final String serviceUrl, final Proxy.Type protocol, final String proxy, final int port,
+      final String username, final String password)
       throws IOException, ODataException, HttpException {
     this.serviceUrl = serviceUrl;
     this.protocol = protocol;
     this.proxy = proxy;
     this.port = port;
-    this.useProxy = true;
+    useProxy = true;
     this.username = username;
     this.password = password;
-    this.useAuthentication = true;
+    useAuthentication = true;
 
     edm = getEdmInternal();
   }
 
-  public Client(String serviceUrl, String username, String password) throws IOException, ODataException, HttpException {
+  public Client(final String serviceUrl, final String username, final String password) throws IOException,
+      ODataException, HttpException {
     this.serviceUrl = serviceUrl;
-    this.useProxy = false;
+    useProxy = false;
     this.username = username;
     this.password = password;
-    this.useAuthentication = true;
+    useAuthentication = true;
 
     edm = getEdmInternal();
   }
@@ -88,7 +109,7 @@ public class Client {
     return edm;
   }
 
-  private void checkStatus(HttpURLConnection connection) throws IOException, HttpException {
+  private void checkStatus(final HttpURLConnection connection) throws IOException, HttpException {
     if (400 <= connection.getResponseCode() && connection.getResponseCode() <= 599) {
       HttpStatusCodes httpStatusCode = HttpStatusCodes.fromStatusCode(connection.getResponseCode());
       throw new HttpException(httpStatusCode, httpStatusCode.getStatusCode() + " " + httpStatusCode.toString());
@@ -103,12 +124,14 @@ public class Client {
     return edm.getServiceMetadata().getEntitySetInfos();
   }
 
-  public ODataFeed readFeed(String entityContainerName, String entitySetName, String contentType) throws IOException,
+  public ODataFeed readFeed(final String entityContainerName, final String entitySetName, final String contentType)
+      throws IOException,
       ODataException, HttpException {
     return readFeed(entityContainerName, entitySetName, contentType, null);
   }
 
-  public ODataFeed readFeed(String entityContainerName, String entitySetName, String contentType, String query)
+  public ODataFeed readFeed(final String entityContainerName, final String entitySetName, final String contentType,
+      final String query)
       throws IOException, ODataException, HttpException {
     EdmEntityContainer entityContainer = edm.getEntityContainer(entityContainerName);
     String relativeUri;
@@ -123,7 +146,7 @@ public class Client {
         EntityProviderReadProperties.init().build());
   }
 
-  private HttpURLConnection connect(String absoluteUri, String contentType, String httpMethod)
+  private HttpURLConnection connect(final String absoluteUri, final String contentType, final String httpMethod)
       throws IOException,
       HttpException {
     URL url = new URL(absoluteUri);
@@ -139,7 +162,7 @@ public class Client {
 
     if (useAuthentication) {
       String authorization = "Basic ";
-      authorization += new String(Base64.encodeBase64((this.username + ":" + this.password).getBytes()));
+      authorization += new String(Base64.encodeBase64((username + ":" + password).getBytes()));
       connection.setRequestProperty("Authorization", authorization);
     }
 
@@ -150,7 +173,8 @@ public class Client {
     return connection;
   }
 
-  private HttpURLConnection connect(String relativeUri, String query, String contentType, String httpMethod)
+  private HttpURLConnection connect(final String relativeUri, final String query, final String contentType,
+      final String httpMethod)
       throws IOException,
       HttpException {
     URL url = new URL(serviceUrl + relativeUri + (query != null ? "?" + query : ""));
@@ -158,7 +182,8 @@ public class Client {
   }
 
   public ODataDeltaFeed
-      readDeltaFeed(String entityContainerName, String entitySetName, String contentType, String deltaLink)
+      readDeltaFeed(final String entityContainerName, final String entitySetName, final String contentType,
+          final String deltaLink)
           throws IOException, ODataException, HttpException {
 
     EdmEntityContainer entityContainer = edm.getEntityContainer(entityContainerName);

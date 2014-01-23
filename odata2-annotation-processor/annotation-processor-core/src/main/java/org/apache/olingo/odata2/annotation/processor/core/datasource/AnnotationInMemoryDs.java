@@ -50,7 +50,7 @@ public class AnnotationInMemoryDs implements DataSource {
     this(annotatedClasses, true);
   }
 
-  public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses, final boolean persistInMemory) 
+  public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses, final boolean persistInMemory)
       throws ODataException {
     this.persistInMemory = persistInMemory;
     init(annotatedClasses);
@@ -181,7 +181,7 @@ public class AnnotationInMemoryDs implements DataSource {
   }
 
   /**
-   * Extract the <code>result data</code> from the <code>resultData</code> list based on 
+   * Extract the <code>result data</code> from the <code>resultData</code> list based on
    * <code>navigation information</code> and <code>targetKeys</code>.
    * 
    * @param targetStore

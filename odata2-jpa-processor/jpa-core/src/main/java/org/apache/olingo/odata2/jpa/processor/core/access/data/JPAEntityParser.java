@@ -314,7 +314,7 @@ public final class JPAEntityParser {
         } catch (SecurityException e1) {
           throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e1);
         }
-        if (acceserMethod != null){
+        if (acceserMethod != null) {
           accessModifierMap.put(
               propertyName,
               acceserMethod);

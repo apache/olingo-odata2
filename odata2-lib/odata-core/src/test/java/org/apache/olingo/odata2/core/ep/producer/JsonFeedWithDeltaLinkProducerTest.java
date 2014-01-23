@@ -119,7 +119,7 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
 
     deletedRoomData.clear();
-    
+
     TombstoneCallback tombstoneCallback =
         new TombstoneCallbackImpl(deletedRoomData, null);
 
@@ -159,7 +159,7 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
             + "host:80/service/Rooms('5')\"}"));
   }
 
-  private String writeRoomData(final EdmEntitySet entitySet, TombstoneCallback tombstoneCallback)
+  private String writeRoomData(final EdmEntitySet entitySet, final TombstoneCallback tombstoneCallback)
       throws URISyntaxException, EntityProviderException, IOException {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
     callbacks.put(TombstoneCallback.CALLBACK_KEY_TOMBSTONE, tombstoneCallback);
@@ -181,7 +181,7 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
     return json;
   }
 
-  private void validate(String json) {
+  private void validate(final String json) {
     Object obj = gson.fromJson(json, Object.class);
     assertNotNull(obj);
   }

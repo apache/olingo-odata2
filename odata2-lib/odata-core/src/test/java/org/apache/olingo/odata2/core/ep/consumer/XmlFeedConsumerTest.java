@@ -144,12 +144,12 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
     EntityProviderReadProperties consumerProperties = EntityProviderReadProperties.init().build();
 
     ODataDeltaFeed deltaFeed = xec.readFeed(entitySet, reqContent, consumerProperties);
-    
+
     assertNotNull(deltaFeed);
-    
+
     assertNotNull(deltaFeed.getDeletedEntries());
     assertNotNull(deltaFeed.getEntries());
-    
+
     assertEquals(1, deltaFeed.getEntries().size());
     assertEquals(1, deltaFeed.getDeletedEntries().size());
   }

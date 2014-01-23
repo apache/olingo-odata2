@@ -71,7 +71,7 @@ public class AnnotationValueAccess implements ValueAccess {
    */
   @Override
   public <T> Class<?> getPropertyType(final T data, final EdmProperty property) throws ODataException {
-    if(data == null) {
+    if (data == null) {
       return null;
     } else if (annotationHelper.isEdmAnnotated(data)) {
       Class<?> fieldType = annotationHelper.getFieldTypeForProperty(data, property.getName());

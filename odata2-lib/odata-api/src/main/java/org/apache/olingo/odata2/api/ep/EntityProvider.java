@@ -663,8 +663,9 @@ public final class EntityProvider {
    * @return an {@link ODataDeltaFeed} object
    * @throws EntityProviderException if reading of data (de-serialization) fails
    */
-  public static ODataDeltaFeed readDeltaFeed(String contentType, EdmEntitySet entitySet, InputStream content,
-      EntityProviderReadProperties properties) throws EntityProviderException {
+  public static ODataDeltaFeed readDeltaFeed(final String contentType, final EdmEntitySet entitySet,
+      final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
     return createEntityProvider().readDeltaFeed(contentType, entitySet, content, properties);
   }
 

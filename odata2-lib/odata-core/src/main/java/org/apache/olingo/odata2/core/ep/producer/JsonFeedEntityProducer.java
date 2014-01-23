@@ -112,7 +112,7 @@ public class JsonFeedEntityProducer {
     }
   }
 
-  private void appendNextLink(JsonStreamWriter jsonStreamWriter) throws IOException {
+  private void appendNextLink(final JsonStreamWriter jsonStreamWriter) throws IOException {
     // Write "next" link.
     // To be compatible with other implementations out there, the link is
     // written directly after "__next" and not as "{"uri":"next link"}",
@@ -123,7 +123,8 @@ public class JsonFeedEntityProducer {
     }
   }
 
-  private void appendDeltaLink(TombstoneCallback callback, JsonStreamWriter jsonStreamWriter) throws IOException {
+  private void appendDeltaLink(final TombstoneCallback callback, final JsonStreamWriter jsonStreamWriter)
+      throws IOException {
     if (callback != null) {
       TombstoneCallbackResult callbackResult = callback.getTombstoneCallbackResult();
 

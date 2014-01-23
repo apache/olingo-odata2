@@ -63,7 +63,7 @@ public class AnnotationHelper {
 
     Map<String, Object> firstKeyFields = getValueForAnnotatedFields(firstInstance, EdmKey.class);
     Map<String, Object> secondKeyFields = getValueForAnnotatedFields(secondInstance, EdmKey.class);
-    if(firstKeyFields.isEmpty() && secondKeyFields.isEmpty()) {
+    if (firstKeyFields.isEmpty() && secondKeyFields.isEmpty()) {
       throw new ODataRuntimeException("Both object instances does not have EdmKey fields defined ["
           + "firstClass=" + firstInstance.getClass().getName()
           + " secondClass=" + secondInstance.getClass().getName() + "].");
@@ -87,7 +87,7 @@ public class AnnotationHelper {
   private boolean keyValuesMatch(final Map<String, Object> firstKeyValues, final Map<String, Object> secondKeyValues) {
     if (firstKeyValues.size() != secondKeyValues.size()) {
       return false;
-    } else if(firstKeyValues.isEmpty()) {
+    } else if (firstKeyValues.isEmpty()) {
       throw new ODataRuntimeException("No keys given for key value matching.");
     } else {
       Set<Map.Entry<String, Object>> entries = firstKeyValues.entrySet();
@@ -519,9 +519,9 @@ public class AnnotationHelper {
     return fieldName2Value;
   }
 
-  private String extractPropertyName(Field field) {
+  private String extractPropertyName(final Field field) {
     final EdmProperty property = field.getAnnotation(EdmProperty.class);
-    if(property == null || property.name().isEmpty()) {
+    if (property == null || property.name().isEmpty()) {
       return getCanonicalName(field);
     } else {
       return property.name();
@@ -664,7 +664,7 @@ public class AnnotationHelper {
       return type.getEdmSimpleTypeInstance().valueOfString(propertyValue,
           EdmLiteralKind.DEFAULT, null, fieldClass);
     } catch (EdmSimpleTypeException ex) {
-      throw new ODataRuntimeException("Conversion failed for string property [" 
+      throw new ODataRuntimeException("Conversion failed for string property ["
           + propertyValue + "] on field ["
           + field + "] with error: " + ex.getMessage(), ex);
     }

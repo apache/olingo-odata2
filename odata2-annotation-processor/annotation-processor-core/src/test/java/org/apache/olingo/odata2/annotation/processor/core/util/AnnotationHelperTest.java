@@ -196,7 +196,7 @@ public class AnnotationHelperTest {
   public void setValueForPropertyNullInstance() throws Exception {
     annotationHelper.setValueForProperty(null, "", null);
   }
-  
+
   @Test
   public void extractEntitySetNameObject() {
     Assert.assertNull(annotationHelper.extractEntitySetName(Object.class));
@@ -213,7 +213,7 @@ public class AnnotationHelperTest {
     Assert.assertEquals("RefScenario", fqn.getNamespace());
     Assert.assertEquals("c_Location", fqn.getName());
   }
-  
+
   @Test
   public void convert() throws Exception {
     ConversionProperty cp = new ConversionProperty();
@@ -223,7 +223,7 @@ public class AnnotationHelperTest {
     annotationHelper.setValueForProperty(cp, "FloatProp", "43");
     annotationHelper.setValueForProperty(cp, "DoubleProp", "42.00");
     annotationHelper.setValueForProperty(cp, "ByteProp", "1");
-    
+
     Assert.assertEquals("42", cp.stringProp);
     Assert.assertEquals(Integer.valueOf(420), cp.integerProp);
     Assert.assertEquals(Long.valueOf("4200"), cp.longProp);
@@ -242,7 +242,7 @@ public class AnnotationHelperTest {
 
     public SimpleEntity() {}
 
-    public SimpleEntity(Long id, String name) {
+    public SimpleEntity(final Long id, final String name) {
       this.id = id;
       this.name = name;
     }
@@ -256,15 +256,19 @@ public class AnnotationHelperTest {
   }
 
   private class ConversionProperty {
-    @EdmProperty(type=EdmType.STRING) String stringProp;
-    @EdmProperty(type=EdmType.INT32) Integer integerProp;
-    @EdmProperty(type=EdmType.INT64) Long longProp;
-    @EdmProperty(type=EdmType.DECIMAL) Float floatProp;
-    @EdmProperty(type=EdmType.DOUBLE) Double doubleProp;
-    @EdmProperty(type=EdmType.BYTE) Byte byteProp;
+    @EdmProperty(type = EdmType.STRING)
+    String stringProp;
+    @EdmProperty(type = EdmType.INT32)
+    Integer integerProp;
+    @EdmProperty(type = EdmType.INT64)
+    Long longProp;
+    @EdmProperty(type = EdmType.DECIMAL)
+    Float floatProp;
+    @EdmProperty(type = EdmType.DOUBLE)
+    Double doubleProp;
+    @EdmProperty(type = EdmType.BYTE)
+    Byte byteProp;
   }
-  
-  private class NotAnnotatedBean {
-    private String name;
-  }
+
+  private class NotAnnotatedBean {}
 }

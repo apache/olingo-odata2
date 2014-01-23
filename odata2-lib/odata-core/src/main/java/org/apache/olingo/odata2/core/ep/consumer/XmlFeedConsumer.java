@@ -157,7 +157,8 @@ public class XmlFeedConsumer {
     }
   }
 
-  private void readInlineCount(final XMLStreamReader reader, FeedMetadataImpl metadata) throws XMLStreamException,
+  private void readInlineCount(final XMLStreamReader reader, final FeedMetadataImpl metadata)
+      throws XMLStreamException,
       EntityProviderException {
     String inlineCountString = reader.getElementText();
     if (inlineCountString != null) {

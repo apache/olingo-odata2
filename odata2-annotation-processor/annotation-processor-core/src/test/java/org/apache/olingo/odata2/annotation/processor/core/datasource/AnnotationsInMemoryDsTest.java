@@ -119,7 +119,7 @@ public class AnnotationsInMemoryDsTest {
             localDs.createData(edmEntitySet, se);
           } catch (Exception ex) {
             throw new RuntimeException(ex);
-          }finally{
+          } finally {
             latch.countDown();
           }
         }
@@ -160,7 +160,7 @@ public class AnnotationsInMemoryDsTest {
 
     return new Thread(run);
   }
-  
+
   @Test
   public void readBinaryData() throws Exception {
     EdmEntitySet entitySet = createMockedEdmEntitySet("Photos");
@@ -178,7 +178,7 @@ public class AnnotationsInMemoryDsTest {
     keys.put("Name", "SomePic");
     keys.put("ImageFormat", "PNG");
     Photo toReadPhoto = (Photo) datasource.readData(entitySet, keys);
-    
+
     // execute
     BinaryData readBinaryData = datasource.readBinaryData(entitySet, toReadPhoto);
 
@@ -200,7 +200,7 @@ public class AnnotationsInMemoryDsTest {
     photo.setImage(image);
     photo.setImageType("image/png");
     photoDataStore.create(photo);
-    
+
     Photo toReadPhoto = new Photo();
     toReadPhoto.setName("SomePic");
     toReadPhoto.setType("PNG");
@@ -208,13 +208,12 @@ public class AnnotationsInMemoryDsTest {
     toReadPhoto.setImageType(null);
 
     BinaryData readBinaryData = datasource.readBinaryData(entitySet, toReadPhoto);
-    
+
     Assert.assertEquals("binary", new String(readBinaryData.getData(), Charset.defaultCharset()));
     Assert.assertArrayEquals(image, readBinaryData.getData());
     Assert.assertEquals("image/png", readBinaryData.getMimeType());
   }
 
-  
   @Test
   public void writeBinaryData() throws Exception {
     EdmEntitySet entitySet = createMockedEdmEntitySet("Photos");
@@ -241,7 +240,7 @@ public class AnnotationsInMemoryDsTest {
     Assert.assertEquals("image/png", storedPhoto.getImageType());
   }
 
-  @Test(expected=ODataNotFoundException.class)
+  @Test(expected = ODataNotFoundException.class)
   public void writeBinaryDataNotFound() throws Exception {
     EdmEntitySet entitySet = createMockedEdmEntitySet("Photos");
 
@@ -255,12 +254,11 @@ public class AnnotationsInMemoryDsTest {
     datasource.writeBinaryData(entitySet, toWritePhoto, writeBinaryData);
   }
 
-  
   @Test
   public void newDataObject() throws Exception {
     EdmEntitySet roomsEntitySet = createMockedEdmEntitySet("Rooms");
     Room room = (Room) datasource.newDataObject(roomsEntitySet);
-    
+
     Assert.assertNotNull(room);
   }
 
@@ -294,7 +292,7 @@ public class AnnotationsInMemoryDsTest {
     Building readBuilding = (Building) relatedData;
     Assert.assertEquals("Common Building", readBuilding.getName());
     Assert.assertEquals("1", readBuilding.getId());
-    
+
     Collection<Room> relatedRooms = readBuilding.getRooms();
     Assert.assertEquals(roomsCount, relatedRooms.size());
     for (Room room : relatedRooms) {
@@ -304,7 +302,7 @@ public class AnnotationsInMemoryDsTest {
     }
   }
 
-  @Test(expected=ODataRuntimeException.class)
+  @Test(expected = ODataRuntimeException.class)
   public void readUnknownEntity() throws Exception {
     EdmEntitySet unknownEntitySet = Mockito.mock(EdmEntitySet.class);
     Mockito.when(unknownEntitySet.getName()).thenReturn("UnknownEntity");
@@ -315,7 +313,7 @@ public class AnnotationsInMemoryDsTest {
     datasource.readData(unknownEntitySet, keys);
   }
 
-  @Test(expected=ODataRuntimeException.class)
+  @Test(expected = ODataRuntimeException.class)
   public void readUnknownEntities() throws Exception {
     EdmEntitySet unknownEntitySet = Mockito.mock(EdmEntitySet.class);
     Mockito.when(unknownEntitySet.getName()).thenReturn("UnknownEntity");
@@ -354,7 +352,6 @@ public class AnnotationsInMemoryDsTest {
     }
   }
 
-  
   @Test
   @SuppressWarnings("unchecked")
   public void readRelatedEntities() throws Exception {
@@ -417,7 +414,7 @@ public class AnnotationsInMemoryDsTest {
     Room read = (Room) datasource.readData(roomsEntitySet, keys);
     Assert.assertEquals("Room 12", read.getName());
     Assert.assertEquals("12", read.getId());
-    
+
     // execute
     Object relatedData = datasource.readRelatedData(
         roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
@@ -622,8 +619,7 @@ public class AnnotationsInMemoryDsTest {
     Assert.assertEquals("image/jpg", readUpdated.getImageType());
     Assert.assertEquals("https://localhost/image.jpg", readUpdated.getImageUri());
   }
-  
-  
+
   @Test
   public void deleteSimpleEntity() throws Exception {
     EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Buildings");
@@ -642,15 +638,15 @@ public class AnnotationsInMemoryDsTest {
 
     //
     datasource.deleteData(edmEntitySet, keys);
-    
+
     // validate
     try {
       Building readAfterDelete = (Building) datasource.readData(edmEntitySet, keys);
       Assert.fail("Expected " + ODataNotFoundException.class + "was not thrown for '" + readAfterDelete + "'.");
-    } catch (ODataNotFoundException e) { }
+    } catch (ODataNotFoundException e) {}
   }
 
-  @Test(expected=ODataRuntimeException.class)
+  @Test(expected = ODataRuntimeException.class)
   public void unknownEntitySetForEntity() throws Exception {
     String entitySetName = "Unknown";
     FullQualifiedName entityType = new FullQualifiedName(DEFAULT_CONTAINER, entitySetName);
@@ -660,14 +656,14 @@ public class AnnotationsInMemoryDsTest {
     EdmEntityType edmEntityType = Mockito.mock(EdmEntityType.class);
     Mockito.when(edmEntitySet.getEntityType()).thenReturn(edmEntityType);
     Mockito.when(edmEntityType.getName()).thenReturn(entityType.getName());
-      
+
     Map<String, Object> keys = new HashMap<String, Object>();
     keys.put("Id", "1");
     //
     datasource.readData(edmEntitySet, keys);
   }
 
-  @Test(expected=ODataRuntimeException.class)
+  @Test(expected = ODataRuntimeException.class)
   public void unknownEntitySetForEntities() throws Exception {
     String entitySetName = "Unknown";
     FullQualifiedName entityType = new FullQualifiedName(DEFAULT_CONTAINER, entitySetName);
@@ -677,11 +673,10 @@ public class AnnotationsInMemoryDsTest {
     EdmEntityType edmEntityType = Mockito.mock(EdmEntityType.class);
     Mockito.when(edmEntitySet.getEntityType()).thenReturn(edmEntityType);
     Mockito.when(edmEntityType.getName()).thenReturn(entityType.getName());
-      
+
     //
     datasource.readData(edmEntitySet);
   }
-
 
   @Test
   public void writeRelations() throws Exception {
@@ -696,35 +691,36 @@ public class AnnotationsInMemoryDsTest {
     Building created = buildingStore.create(building);
 
     Room room = new Room(42, "Room with Number");
-    room.setSeats(123);;
+    room.setSeats(123);
+    ;
     room.setVersion(4711);
     roomStore.create(room);
-    
+
     Map<String, Object> targetEntityKeyValues = new HashMap<String, Object>();
     targetEntityKeyValues.put("Id", 42);
-    
+
     // execute
     datasource.writeRelation(buildingsEntitySet, building, roomsEntitySet, targetEntityKeyValues);
-    
+
     // validate
     Building readBuilding = buildingStore.read(created);
     Room readRoom = roomStore.read(new Room(42, ""));
-    
+
     List<Room> readRooms = readBuilding.getRooms();
     Assert.assertEquals(1, readRooms.size());
     Assert.assertEquals(readRoom, readRooms.get(0));
-    
+
     Assert.assertEquals("42", readRoom.getId());
     Assert.assertEquals(123, readRoom.getSeats());
     Assert.assertEquals(4711, readRoom.getVersion());
     Assert.assertEquals(readBuilding, readRoom.getBuilding());
   }
-  
+
   private EdmEntitySet createMockedEdmEntitySet(final String entitySetName) throws ODataException {
     return createMockedEdmEntitySet(edmProvider, entitySetName);
   }
 
-  private EdmEntitySet createMockedEdmEntitySet(AnnotationEdmProvider edmProvider, final String entitySetName)
+  private EdmEntitySet createMockedEdmEntitySet(final AnnotationEdmProvider edmProvider, final String entitySetName)
       throws ODataException {
     EntitySet entitySet = edmProvider.getEntitySet(DEFAULT_CONTAINER, entitySetName);
     FullQualifiedName entityType = entitySet.getEntityType();

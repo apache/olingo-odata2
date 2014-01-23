@@ -115,7 +115,7 @@ import org.apache.olingo.odata2.ref.processor.ScenarioDataSource.BinaryData;
 
 /**
  * Implementation of the centralized parts of OData processing,
- * allowing to use the simplified {@link DataSource} for the
+ * allowing to use the simplified DataSource for the
  * actual data handling.
  * 
  */
@@ -129,7 +129,7 @@ public class ListsProcessor extends ODataSingleProcessor {
   public ListsProcessor(final ScenarioDataSource dataSource) {
     this(dataSource, new BeanPropertyAccess());
   }
-  
+
   public ListsProcessor(final ScenarioDataSource dataSource, final BeanPropertyAccess valueAccess) {
     this.dataSource = dataSource;
     this.valueAccess = valueAccess;
@@ -212,16 +212,16 @@ public class ListsProcessor extends ODataSingleProcessor {
     return ODataResponse.fromResponse(response).build();
   }
 
-  String percentEncodeNextLink(String link) {
-    if(link == null) {
+  String percentEncodeNextLink(final String link) {
+    if (link == null) {
       return null;
     }
-       
+
     return link.replaceAll("\\$skiptoken=.+?(?:&|$)", "")
         .replaceAll("\\$skip=.+?(?:&|$)", "")
         .replaceFirst("(?:\\?|&)$", ""); // Remove potentially trailing "?" or "&" left over from remove actions
   }
-  
+
   @Override
   public ODataResponse countEntitySet(final GetEntitySetCountUriInfo uriInfo, final String contentType)
       throws ODataException {
@@ -913,7 +913,7 @@ public class ListsProcessor extends ODataSingleProcessor {
           keys.isEmpty() ?
               dataSource.readData(startEntitySet) : dataSource.readData(startEntitySet, keys) :
           dataSource.readData(functionImport, functionImportParameters, keys);
-  
+
       EdmEntitySet currentEntitySet =
           functionImport == null ? startEntitySet : functionImport.getEntitySet();
       for (NavigationSegment navigationSegment : navigationSegments) {

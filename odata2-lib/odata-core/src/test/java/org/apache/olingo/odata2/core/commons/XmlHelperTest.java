@@ -89,9 +89,11 @@ public class XmlHelperTest {
 
   @BeforeClass
   public static void beforeClass() {
+    // CHECKSTYLE:OFF
     System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory"); // NOSONAR
+    // CHECKSTYLE:ON
   }
-  
+
   @Test
   public void createReader() throws Exception {
     InputStream content = new ByteArrayInputStream(XML.getBytes("UTF-8"));
@@ -190,7 +192,6 @@ public class XmlHelperTest {
       assertEquals(WstxParsingException.class, e.getCause().getClass());
     }
   }
-
 
   @Test
   @Ignore("not way to disable in parser")

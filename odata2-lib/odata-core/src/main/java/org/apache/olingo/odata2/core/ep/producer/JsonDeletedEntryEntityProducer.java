@@ -33,11 +33,12 @@ public class JsonDeletedEntryEntityProducer {
 
   private EntityProviderWriteProperties properties;
 
-  public JsonDeletedEntryEntityProducer(EntityProviderWriteProperties properties) {
+  public JsonDeletedEntryEntityProducer(final EntityProviderWriteProperties properties) {
     this.properties = properties;
   }
 
-  public void append(Writer writer, EntityInfoAggregator entityInfo, List<Map<String, Object>> deletedEntries)
+  public void append(final Writer writer, final EntityInfoAggregator entityInfo,
+      final List<Map<String, Object>> deletedEntries)
       throws EntityProviderException {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
     try {

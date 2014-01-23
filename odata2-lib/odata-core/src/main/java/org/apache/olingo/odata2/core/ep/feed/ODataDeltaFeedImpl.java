@@ -36,7 +36,7 @@ public class ODataDeltaFeedImpl implements ODataDeltaFeed {
   }
 
   public ODataDeltaFeedImpl(final List<ODataEntry> entries, final FeedMetadata feedMetadata,
-      List<DeletedEntryMetadata> deletedEntries) {
+      final List<DeletedEntryMetadata> deletedEntries) {
     this.entries = entries;
     this.feedMetadata = feedMetadata;
     this.deletedEntries = deletedEntries;

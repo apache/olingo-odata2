@@ -605,7 +605,7 @@ public class ScenarioDataSource {
       throw new ODataNotImplementedException();
     }
   }
-  
+
   /**
    * Container to store binary data (as byte array) and the associated MIME type.
    */
