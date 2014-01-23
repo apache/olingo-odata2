@@ -15,6 +15,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
 
@@ -122,10 +123,10 @@ public class Client {
         EntityProviderReadProperties.init().build());
   }
 
-  private HttpURLConnection connect(String relativeUri, String query, String contentType, String httpMethod)
+  private HttpURLConnection connect(String absoluteUri, String contentType, String httpMethod)
       throws IOException,
       HttpException {
-    URL url = new URL(serviceUrl + relativeUri + (query != null ? "?" + query : ""));
+    URL url = new URL(absoluteUri);
     HttpURLConnection connection;
     if (useProxy) {
       Proxy proxy = new Proxy(protocol, new InetSocketAddress(this.proxy, port));
@@ -147,5 +148,23 @@ public class Client {
     checkStatus(connection);
 
     return connection;
+  }
+
+  private HttpURLConnection connect(String relativeUri, String query, String contentType, String httpMethod)
+      throws IOException,
+      HttpException {
+    URL url = new URL(serviceUrl + relativeUri + (query != null ? "?" + query : ""));
+    return connect(url.toString(), contentType, httpMethod);
+  }
+
+  public ODataDeltaFeed
+      readDeltaFeed(String entityContainerName, String entitySetName, String contentType, String deltaLink)
+          throws IOException, ODataException, HttpException {
+
+    EdmEntityContainer entityContainer = edm.getEntityContainer(entityContainerName);
+
+    InputStream content = (InputStream) connect(deltaLink, contentType, "GET").getContent();
+    return EntityProvider.readDeltaFeed(contentType, entityContainer.getEntitySet(entitySetName), content,
+        EntityProviderReadProperties.init().build());
   }
 }

@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,20 +39,27 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
+import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
+import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.commons.ContentType;
+import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
+import org.apache.olingo.odata2.core.ep.consumer.AbstractConsumerTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  *  
  */
-public class ProviderFacadeImplTest {
+@Ignore
+public class ProviderFacadeImplTest extends AbstractConsumerTest {
 
   private static final String EMPLOYEE_1_XML =
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -90,6 +98,43 @@ public class ProviderFacadeImplTest {
           "<d:ImageUrl>Employee_1.png</d:ImageUrl>" +
           "</m:properties>" +
           "</entry>";
+
+  @Test
+  public void readDeltaFeed() throws Exception {
+
+    final String contentType = ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString();
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    InputStream content = getFileAsStream("feed_with_deleted_entries.xml");
+    EntityProviderReadProperties properties = EntityProviderReadProperties.init().build();
+
+    ODataDeltaFeed deltaFeed = new ProviderFacadeImpl().readDeltaFeed(contentType, entitySet, content, properties);
+    assertNotNull(deltaFeed);
+    assertNotNull(deltaFeed.getEntries());
+    assertNotNull(deltaFeed.getFeedMetadata());
+    assertEquals(1, deltaFeed.getEntries().size());
+    assertEquals(1, deltaFeed.getDeletedEntries().size());
+    assertEquals("http://host:123/odata/Rooms?$skiptoken=97", deltaFeed.getFeedMetadata().getDeltaLink());
+    assertEquals("http://host:123/odata/Rooms('2')", deltaFeed.getDeletedEntries().get(0).getUri());
+
+    Date when =
+        EdmDateTimeOffset.getInstance().valueOfString("2014-01-14T18:11:06.682+01:00", EdmLiteralKind.DEFAULT, null,
+            Date.class);
+    assertEquals(when, deltaFeed.getDeletedEntries().get(0).getWhen());
+  }
+
+  @Test
+  public void readFeed() throws Exception {
+    final String contentType = ContentType.APPLICATION_ATOM_XML_FEED.toContentTypeString();
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    InputStream content = getFileAsStream("feed_employees.xml");
+    EntityProviderReadProperties properties = EntityProviderReadProperties.init().build();
+
+    ODataFeed feed = new ProviderFacadeImpl().readFeed(contentType, entitySet, content, properties);
+    assertNotNull(feed);
+    assertNotNull(feed.getEntries());
+    assertNotNull(feed.getFeedMetadata());
+    assertEquals(6, feed.getEntries().size());
+  }
 
   @Test
   public void readEntry() throws Exception {

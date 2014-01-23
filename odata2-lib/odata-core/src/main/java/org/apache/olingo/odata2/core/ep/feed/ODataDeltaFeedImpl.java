@@ -20,27 +20,25 @@ package org.apache.olingo.odata2.core.ep.feed;
 
 import java.util.List;
 
-import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
+import org.apache.olingo.odata2.api.ep.entry.DeletedEntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
-import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 
-public class ODataFeedImpl implements ODataFeed {
+public class ODataDeltaFeedImpl implements ODataDeltaFeed {
 
   private final List<ODataEntry> entries;
   private final FeedMetadata feedMetadata;
-  private boolean isDeltaFeed = false;
-  private List<EntryMetadata> deletedEntries = null;
+  private final List<DeletedEntryMetadata> deletedEntries;
 
-  public ODataFeedImpl(final List<ODataEntry> entries, final FeedMetadata feedMetadata) {
-    this.entries = entries;
-    this.feedMetadata = feedMetadata;
+  public ODataDeltaFeedImpl(final List<ODataEntry> entries, final FeedMetadata feedMetadata) {
+    this(entries, feedMetadata, null);
   }
 
-  public ODataFeedImpl(final List<ODataEntry> entries, final FeedMetadata feedMetadata, boolean isDeltaFeed,
-      List<EntryMetadata> deletedEntries) {
-    this(entries, feedMetadata);
-    this.isDeltaFeed = isDeltaFeed;
+  public ODataDeltaFeedImpl(final List<ODataEntry> entries, final FeedMetadata feedMetadata,
+      List<DeletedEntryMetadata> deletedEntries) {
+    this.entries = entries;
+    this.feedMetadata = feedMetadata;
     this.deletedEntries = deletedEntries;
   }
 
@@ -55,12 +53,7 @@ public class ODataFeedImpl implements ODataFeed {
   }
 
   @Override
-  public boolean isDeltaFeed() {
-    return isDeltaFeed;
-  }
-
-  @Override
-  public List<EntryMetadata> getDeletedEntries() {
+  public List<DeletedEntryMetadata> getDeletedEntries() {
     return deletedEntries;
   }
 

@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.core.ep.consumer;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 
@@ -30,6 +30,7 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.junit.Test;
@@ -50,8 +51,6 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
             .getEntitySet(
                 "Employees"), file, DEFAULT_PROPERTIES);
     assertNotNull(feed);
-    assertFalse(feed.isDeltaFeed());
-    assertNull(feed.getDeletedEntries());
 
     FeedMetadata feedMetadata = feed.getFeedMetadata();
     assertNotNull(feedMetadata);
@@ -73,8 +72,6 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
 
     ODataFeed feed = xec.readFeed(entitySet, reqContent, consumerProperties);
     assertNotNull(feed);
-    assertFalse(feed.isDeltaFeed());
-    assertNull(feed.getDeletedEntries());
 
     FeedMetadata feedMetadata = feed.getFeedMetadata();
     assertNotNull(feedMetadata);
@@ -146,15 +143,14 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
     XmlEntityConsumer xec = new XmlEntityConsumer();
     EntityProviderReadProperties consumerProperties = EntityProviderReadProperties.init().build();
 
-    ODataFeed feed = xec.readFeed(entitySet, reqContent, consumerProperties);
+    ODataDeltaFeed deltaFeed = xec.readFeed(entitySet, reqContent, consumerProperties);
     
-    assertNotNull(feed);
-    assertTrue(feed.isDeltaFeed());
+    assertNotNull(deltaFeed);
     
-    assertNotNull(feed.getDeletedEntries());
-    assertNotNull(feed.getEntries());
+    assertNotNull(deltaFeed.getDeletedEntries());
+    assertNotNull(deltaFeed.getEntries());
     
-    assertEquals(1, feed.getEntries().size());
-    assertEquals(1, feed.getDeletedEntries().size());
+    assertEquals(1, deltaFeed.getEntries().size());
+    assertEquals(1, deltaFeed.getDeletedEntries().size());
   }
 }

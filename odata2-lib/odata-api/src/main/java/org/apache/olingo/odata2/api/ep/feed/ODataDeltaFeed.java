@@ -20,24 +20,17 @@ package org.apache.olingo.odata2.api.ep.feed;
 
 import java.util.List;
 
-import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.ep.entry.DeletedEntryMetadata;
 
-/**
- * An {@link ODataFeed} object contains a list of {@link ODataEntry}s and the metadata associated with this feed.
- * 
- * 
- */
-public interface ODataFeed {
+public interface ODataDeltaFeed extends ODataFeed {
 
   /**
-   * The returned list may be empty but never null.
-   * @return list of {@link ODataEntry}s
+   * Delta responses can contain changed feed data and deleted entries metadata. A delta response it the result of
+   * a delta link. If the feed is not a delta feed then the list of deleted entries is null.
+   * @return metadata of deleted entries in case of feed is result of a delta response or null 
    */
-  public List<ODataEntry> getEntries();
+  public List<DeletedEntryMetadata> getDeletedEntries();
 
-  /**
-   * @return {@link FeedMetadata} object
-   */
-  public FeedMetadata getFeedMetadata();
 
+  
 }

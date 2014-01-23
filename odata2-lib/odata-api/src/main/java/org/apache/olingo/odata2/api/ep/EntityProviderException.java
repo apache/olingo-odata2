@@ -99,6 +99,9 @@ public class EntityProviderException extends ODataMessageException {
   public static final MessageReference MISSING_RESULTS_ARRAY = createMessageReference(EntityProviderException.class,
       "MISSING_RESULTS_ARRAY");
 
+  public static final MessageReference INVALID_DELETED_ENTRY_METADATA = createMessageReference(
+      EntityProviderException.class, "INVALID_DELETED_ENTRY_METADATA");
+
   public EntityProviderException(final MessageReference messageReference) {
     super(messageReference);
   }

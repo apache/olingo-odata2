@@ -52,7 +52,7 @@ import org.apache.olingo.odata2.core.ep.entry.EntryMetadataImpl;
 import org.apache.olingo.odata2.core.ep.entry.MediaMetadataImpl;
 import org.apache.olingo.odata2.core.ep.entry.ODataEntryImpl;
 import org.apache.olingo.odata2.core.ep.feed.FeedMetadataImpl;
-import org.apache.olingo.odata2.core.ep.feed.ODataFeedImpl;
+import org.apache.olingo.odata2.core.ep.feed.ODataDeltaFeedImpl;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
 
@@ -376,7 +376,7 @@ public class XmlEntryConsumer {
   private Object extractODataEntity(final boolean isFeed, final List<ODataEntry> inlineEntries) {
     if (isFeed) {
       // TODO: fill metadata correctly with inline count and inline next link. Both are currently ignored.
-      return new ODataFeedImpl(inlineEntries, new FeedMetadataImpl());
+      return new ODataDeltaFeedImpl(inlineEntries, new FeedMetadataImpl());
     } else if (!inlineEntries.isEmpty()) {
       return inlineEntries.get(0);
     }

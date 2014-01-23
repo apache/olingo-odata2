@@ -41,6 +41,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
@@ -332,6 +333,12 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
   @Override
   public ServiceDocument readServiceDocument(final InputStream serviceDocument) throws EntityProviderException {
     return new JsonServiceDocumentConsumer().parseJson(serviceDocument);
+  }
+
+  @Override
+  public ODataDeltaFeed readDeltaFeed(EdmEntitySet entitySet, InputStream content,
+      EntityProviderReadProperties properties) throws EntityProviderException {
+    return null;
   }
 
 }

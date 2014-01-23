@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.EntityProviderReadPropertiesBuilder;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
-import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 
@@ -48,7 +48,7 @@ public class XmlEntityConsumer {
     super();
   }
 
-  public ODataFeed readFeed(final EdmEntitySet entitySet, final InputStream content,
+  public ODataDeltaFeed readFeed(final EdmEntitySet entitySet, final InputStream content,
       final EntityProviderReadProperties properties) throws EntityProviderException {
     XMLStreamReader reader = null;
     EntityProviderException cachedException = null;

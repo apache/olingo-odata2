@@ -1,9 +1,7 @@
 package org.apache.olingo.odata2.fit.client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,13 +18,14 @@ import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
-import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
+import org.apache.olingo.odata2.api.ep.callback.TombstoneCallbackResult;
+import org.apache.olingo.odata2.api.ep.entry.DeletedEntryMetadata;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
-import org.apache.olingo.odata2.core.ep.producer.TombstoneCallbackImpl;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.fit.client.util.Client;
@@ -160,26 +159,19 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
     assertNotNull(feed);
     assertEquals(2, feed.getEntries().size());
     assertEquals(getEndpoint().toASCIIString() + "Rooms?" + DELTATOKEN_1234, feed.getFeedMetadata().getDeltaLink());
-    assertFalse(feed.isDeltaFeed());
 
-    URI uri = new URI(deltaLink);
-    String query = uri.getQuery();
-    ODataFeed deltaFeed = client.readFeed("Container1", "Rooms", contentType, query);
+    ODataDeltaFeed deltaFeed = client.readDeltaFeed("Container1", "Rooms", contentType, deltaLink);
 
     assertNotNull(deltaFeed);
     assertEquals(2, deltaFeed.getEntries().size());
-    assertEquals(uri.toASCIIString(), deltaFeed.getFeedMetadata().getDeltaLink());
+    assertEquals(deltaLink, deltaFeed.getFeedMetadata().getDeltaLink());
 
-    assertTrue(deltaFeed.isDeltaFeed());
-    List<EntryMetadata> deletedEntries = deltaFeed.getDeletedEntries();
+    List<DeletedEntryMetadata> deletedEntries = deltaFeed.getDeletedEntries();
     assertNotNull(deletedEntries);
     assertEquals(2, deletedEntries.size());
 
-    assertEquals("3", deletedEntries.get(0).getId());
-    assertEquals("uri3", deletedEntries.get(0).getUri());
-
-    assertEquals("4", deletedEntries.get(1).getId());
-    assertEquals("uri4", deletedEntries.get(1).getUri());
+    assertEquals("http://localhost:19000/abc/ClientDeltaResponseTest/Rooms('3')", deletedEntries.get(0).getUri());
+    assertEquals("http://localhost:19000/abc/ClientDeltaResponseTest/Rooms('4')", deletedEntries.get(1).getUri());
   }
 
   private void testDeltaFeedWithZeroEntries(String contentType) throws Exception {
@@ -192,18 +184,14 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
     assertNotNull(feed);
     assertEquals(0, feed.getEntries().size());
     assertEquals(getEndpoint().toASCIIString() + "Rooms?" + DELTATOKEN_1234, feed.getFeedMetadata().getDeltaLink());
-    assertFalse(feed.isDeltaFeed());
 
-    URI uri = new URI(deltaLink);
-    String query = uri.getQuery();
-    ODataFeed deltaFeed = client.readFeed("Container1", "Rooms", contentType, query);
+    ODataDeltaFeed deltaFeed = client.readDeltaFeed("Container1", "Rooms", contentType, deltaLink);
 
     assertNotNull(deltaFeed);
     assertEquals(0, deltaFeed.getEntries().size());
-    assertEquals(uri.toASCIIString(), deltaFeed.getFeedMetadata().getDeltaLink());
+    assertEquals(deltaLink, deltaFeed.getFeedMetadata().getDeltaLink());
 
-    assertTrue(deltaFeed.isDeltaFeed());
-    List<EntryMetadata> deletedEntries = deltaFeed.getDeletedEntries();
+    List<DeletedEntryMetadata> deletedEntries = deltaFeed.getDeletedEntries();
     assertNotNull(deletedEntries);
     assertEquals(0, deletedEntries.size());
   }
@@ -214,6 +202,7 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
   }
 
   @Test
+  @Ignore
   public void testFeedWithDeltaLinkJson() throws Exception {
     testDeltaFeedWithDeltaLink("application/json");
   }
@@ -224,8 +213,29 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
   }
 
   @Test
+  @Ignore
   public void testFeedWithZeroEntriesJson() throws Exception {
     testDeltaFeedWithZeroEntries("application/json");
+  }
+
+  static public class TombstoneCallbackImpl implements TombstoneCallback {
+
+    private ArrayList<Map<String, Object>> deletedEntriesData;
+    private String deltaLink = null;
+
+    public TombstoneCallbackImpl(final ArrayList<Map<String, Object>> deletedEntriesData, final String deltaLink) {
+      this.deletedEntriesData = deletedEntriesData;
+      this.deltaLink = deltaLink;
+    }
+
+    @Override
+    public TombstoneCallbackResult getTombstoneCallbackResult() {
+      TombstoneCallbackResult result = new TombstoneCallbackResult();
+      result.setDeletedEntriesData(deletedEntriesData);
+      result.setDeltaLink(deltaLink);
+      return result;
+    }
+
   }
 
 }

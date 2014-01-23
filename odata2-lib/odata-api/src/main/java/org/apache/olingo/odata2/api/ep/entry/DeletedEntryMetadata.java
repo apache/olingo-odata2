@@ -16,28 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.api.ep.feed;
+package org.apache.olingo.odata2.api.ep.entry;
 
-import java.util.List;
-
-import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import java.util.Date;
 
 /**
- * An {@link ODataFeed} object contains a list of {@link ODataEntry}s and the metadata associated with this feed.
- * 
- * 
+ * Metadata of a deleted feed entry as defined in Atom Tombstone extension (RFC6721) or Json proprietary format.
  */
-public interface ODataFeed {
+public interface DeletedEntryMetadata {
 
   /**
-   * The returned list may be empty but never null.
-   * @return list of {@link ODataEntry}s
+   * Gets the URI of this deleted entry.
+   * 
+   * @return the URI
    */
-  public List<ODataEntry> getEntries();
+  String getUri();
 
   /**
-   * @return {@link FeedMetadata} object
+   * Gets the date when this entry was deleted.
+   * 
+   * @return the when date
    */
-  public FeedMetadata getFeedMetadata();
-
+  Date getWhen();
+  
 }
