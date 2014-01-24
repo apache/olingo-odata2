@@ -30,6 +30,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 
@@ -76,6 +77,12 @@ public class JsonEntityConsumer {
 
   public ODataFeed readFeed(final EdmEntitySet entitySet, final InputStream content,
       final EntityProviderReadProperties readProperties) throws EntityProviderException {
+    return readDeltaFeed(entitySet, content, readProperties);
+  }
+
+  public ODataDeltaFeed readDeltaFeed(final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties readProperties) throws EntityProviderException {
+
     JsonReader reader = null;
     EntityProviderException cachedException = null;
 
@@ -84,7 +91,7 @@ public class JsonEntityConsumer {
       reader = createJsonReader(content);
 
       JsonFeedConsumer jfc = new JsonFeedConsumer(reader, eia, readProperties);
-      ODataFeed result = jfc.readFeedStandalone();
+      ODataDeltaFeed result = jfc.readFeedStandalone();
 
       return result;
     } catch (UnsupportedEncodingException e) {

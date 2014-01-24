@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.Assert;
+
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -43,6 +45,7 @@ import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.api.ep.entry.DeletedEntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
@@ -153,6 +156,39 @@ public class ProviderFacadeImplTest extends AbstractConsumerTest {
     assertEquals(HttpContentType.APPLICATION_OCTET_STREAM, result.getMediaMetadata().getContentType());
     assertNotNull(result.getProperties());
     assertEquals(52, result.getProperties().get("Age"));
+  }
+
+  @Test
+  public void readDeltaFeedJson() throws Exception {
+
+    final String contentType = ContentType.APPLICATION_JSON.toContentTypeString();
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    InputStream content = getFileAsStream("JsonWithDeletedEntries.json");
+    EntityProviderReadProperties properties = EntityProviderReadProperties.init().build();
+
+    ODataDeltaFeed deltaFeed = new ProviderFacadeImpl().readDeltaFeed(contentType, entitySet, content, properties);
+    assertNotNull(deltaFeed);
+    assertNotNull(deltaFeed.getEntries());
+    assertNotNull(deltaFeed.getFeedMetadata());
+    assertEquals(1, deltaFeed.getEntries().size());
+    assertEquals("http://localhost:8080/ReferenceScenario.svc/Rooms?!deltatoken=4711",
+        deltaFeed.getFeedMetadata().getDeltaLink());
+
+    assertEquals(2, deltaFeed.getDeletedEntries().size());
+    List<DeletedEntryMetadata> deletedEntries = deltaFeed.getDeletedEntries();
+    assertEquals(2, deletedEntries.size());
+    for (DeletedEntryMetadata deletedEntry : deletedEntries) {
+      String uri = deletedEntry.getUri();
+      if (uri.contains("Rooms('4')")) {
+        assertEquals("http://host:80/service/Rooms('4')", deletedEntry.getUri());
+        assertEquals(new Date(3509636760000l), deletedEntry.getWhen());
+      } else if (uri.contains("Rooms('3')")) {
+        assertEquals("http://host:80/service/Rooms('3')", deletedEntry.getUri());
+        assertEquals(new Date(1300561560000l), deletedEntry.getWhen());
+      } else {
+        Assert.fail("Found unknown DeletedEntry with value: " + deletedEntry);
+      }
+    }
   }
 
   @Test

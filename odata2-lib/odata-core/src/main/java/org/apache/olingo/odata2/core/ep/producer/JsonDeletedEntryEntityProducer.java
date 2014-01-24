@@ -28,6 +28,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
+import org.apache.olingo.odata2.core.ep.util.JsonUtils;
 
 public class JsonDeletedEntryEntityProducer {
 
@@ -48,7 +49,7 @@ public class JsonDeletedEntryEntityProducer {
         for (Map<String, Object> deletedEntry : deletedEntries) {
           jsonStreamWriter.beginObject();
 
-          String odataContextValue = "$metadata#" + entityInfo.getEntitySetName() + "/$deletedEntity";
+          String odataContextValue = JsonUtils.createODataContextValueForTombstone(entityInfo.getEntitySetName());
           String selfLink = AtomEntryEntityProducer.createSelfLink(entityInfo, deletedEntry, null);
           String idValue = properties.getServiceRoot().toASCIIString() + selfLink;
 

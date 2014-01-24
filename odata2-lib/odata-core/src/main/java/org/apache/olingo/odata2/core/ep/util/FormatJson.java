@@ -51,4 +51,7 @@ public class FormatJson {
   public static final String INNER_ERROR = "innererror";
   public static final String DELTA = "__delta";
   public static final String ODATA_CONTEXT = "@odata.context";
+  public static final String DELTA_CONTEXT_PREFIX = "$metadata#";
+  public static final String DELTA_CONTEXT_POSTFIX = "/$deletedEntity";
+  public static final String DELTA_WHEN = "when";
 }

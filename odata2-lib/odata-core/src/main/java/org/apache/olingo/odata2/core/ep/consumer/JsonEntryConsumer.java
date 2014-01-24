@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.ep.consumer;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,10 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.callback.OnReadInlineContent;
@@ -36,12 +39,15 @@ import org.apache.olingo.odata2.api.ep.callback.ReadFeedResult;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
+import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.aggregator.NavigationPropertyInfo;
+import org.apache.olingo.odata2.core.ep.entry.DeletedEntryMetadataImpl;
 import org.apache.olingo.odata2.core.ep.entry.EntryMetadataImpl;
 import org.apache.olingo.odata2.core.ep.entry.MediaMetadataImpl;
 import org.apache.olingo.odata2.core.ep.entry.ODataEntryImpl;
+import org.apache.olingo.odata2.core.ep.feed.JsonFeedEntry;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
 
@@ -53,15 +59,18 @@ import com.google.gson.stream.JsonToken;
  */
 public class JsonEntryConsumer {
 
-  private final Map<String, Object> properties = new HashMap<String, Object>();
-  private final MediaMetadataImpl mediaMetadata = new MediaMetadataImpl();
-  private final EntryMetadataImpl entryMetadata = new EntryMetadataImpl();
-  private final ExpandSelectTreeNodeImpl expandSelectTree = new ExpandSelectTreeNodeImpl();
   private final Map<String, Object> typeMappings;
   private final EntityInfoAggregator eia;
   private final JsonReader reader;
   private final EntityProviderReadProperties readProperties;
-  private final ODataEntryImpl entryResult;
+
+  private ODataEntryImpl resultEntry;
+  private Map<String, Object> properties;
+  private MediaMetadataImpl mediaMetadata;
+  private EntryMetadataImpl entryMetadata;
+  private ExpandSelectTreeNodeImpl expandSelectTree;
+
+  private DeletedEntryMetadataImpl resultDeletedEntry;
 
   public JsonEntryConsumer(final JsonReader reader, final EntityInfoAggregator eia,
       final EntityProviderReadProperties readProperties) {
@@ -69,7 +78,6 @@ public class JsonEntryConsumer {
     this.eia = eia;
     this.readProperties = readProperties;
     this.reader = reader;
-    entryResult = new ODataEntryImpl(properties, mediaMetadata, entryMetadata, expandSelectTree);
   }
 
   public ODataEntry readSingleEntry() throws EntityProviderException {
@@ -101,14 +109,19 @@ public class JsonEntryConsumer {
           .getSimpleName()), e);
     }
 
-    return entryResult;
+    return resultEntry;
   }
 
-  public ODataEntry readFeedEntry() throws EdmException, EntityProviderException, IOException {
+  public JsonFeedEntry readFeedEntry() throws EdmException, EntityProviderException, IOException {
     reader.beginObject();
     readEntryContent();
     reader.endObject();
-    return entryResult;
+
+    if (resultDeletedEntry == null) {
+      return new JsonFeedEntry(resultEntry);
+    } else {
+      return new JsonFeedEntry(resultDeletedEntry);
+    }
   }
 
   private void readEntryContent() throws IOException, EdmException, EntityProviderException {
@@ -118,11 +131,41 @@ public class JsonEntryConsumer {
     }
   }
 
+  /**
+   * Ensure that instance field {@link #resultEntry} exists.
+   * If it not already exists create an instance (as well as all other necessary objects like:
+   * {@link #properties}, {@link #mediaMetadata}, {@link #entryMetadata}, {@link #expandSelectTree}).
+   */
+  private void ensureODataEntryExists() {
+    if (resultEntry == null) {
+      properties = new HashMap<String, Object>();
+      mediaMetadata = new MediaMetadataImpl();
+      entryMetadata = new EntryMetadataImpl();
+      expandSelectTree = new ExpandSelectTreeNodeImpl();
+
+      resultEntry = new ODataEntryImpl(properties, mediaMetadata, entryMetadata, expandSelectTree);
+    }
+  }
+
+  /**
+   * Ensure that instance field {@link #resultDeletedEntry} exists.
+   * If it not already exists create an instance.
+   */
+  private void ensureDeletedEntryMetadataExists() {
+    if (resultDeletedEntry == null) {
+      resultDeletedEntry = new DeletedEntryMetadataImpl();
+    }
+  }
+
   private void handleName(final String name) throws IOException, EdmException, EntityProviderException {
     if (FormatJson.METADATA.equals(name)) {
+      ensureODataEntryExists();
       readMetadata();
       validateMetadata();
+    } else if (FormatJson.ODATA_CONTEXT.equals(name)) {
+      readODataContext();
     } else {
+      ensureODataEntryExists();
       EntityPropertyInfo propertyInfo = eia.getPropertyInfo(name);
       if (propertyInfo != null) {
         JsonPropertyConsumer jpc = new JsonPropertyConsumer();
@@ -134,6 +177,38 @@ public class JsonEntryConsumer {
       } else {
         readNavigationProperty(name);
       }
+    }
+  }
+
+  private void readODataContext() throws IOException, EntityProviderException {
+    String contextValue = reader.nextString();
+    if (contextValue == null) {
+      throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(FormatJson.ODATA_CONTEXT)
+          .addContent(FormatJson.RESULTS));
+    }
+
+    if (contextValue.startsWith(FormatJson.DELTA_CONTEXT_PREFIX)
+        && contextValue.endsWith(FormatJson.DELTA_CONTEXT_POSTFIX)) {
+      while (reader.hasNext()) {
+        ensureDeletedEntryMetadataExists();
+        String name = reader.nextName();
+        String value = reader.nextString();
+        if (FormatJson.ID.equals(name)) {
+          resultDeletedEntry.setUri(value);
+        } else if (FormatJson.DELTA_WHEN.equals(name)) {
+          Date when = parseWhen(value);
+          resultDeletedEntry.setWhen(when);
+        }
+      }
+    }
+  }
+
+  private Date parseWhen(final String value) throws EntityProviderException {
+    try {
+      return EdmDateTimeOffset.getInstance().valueOfString(value, EdmLiteralKind.JSON, null, Date.class);
+    } catch (EdmSimpleTypeException e) {
+      throw new EntityProviderException(EntityProviderException.INVALID_DELETED_ENTRY_METADATA
+          .addContent("Unparsable format for when field value."));
     }
   }
 
@@ -240,7 +315,7 @@ public class JsonEntryConsumer {
             updateExpandSelectTree(navigationPropertyName, feed);
             if (callback == null) {
               properties.put(navigationPropertyName, feed);
-              entryResult.setContainsInlineEntry(true);
+              resultEntry.setContainsInlineEntry(true);
             } else {
               ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty, feed);
               callback.handleReadFeed(result);
@@ -251,7 +326,7 @@ public class JsonEntryConsumer {
             updateExpandSelectTree(navigationPropertyName, entry);
             if (callback == null) {
               properties.put(navigationPropertyName, entry);
-              entryResult.setContainsInlineEntry(true);
+              resultEntry.setContainsInlineEntry(true);
             } else {
               ReadEntryResult result = new ReadEntryResult(inlineReadProperties, navigationProperty, entry);
               callback.handleReadEntry(result);
@@ -286,7 +361,7 @@ public class JsonEntryConsumer {
       updateExpandSelectTree(navigationPropertyName, feed);
       if (callback == null) {
         properties.put(navigationPropertyName, feed);
-        entryResult.setContainsInlineEntry(true);
+        resultEntry.setContainsInlineEntry(true);
       } else {
         ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty, feed);
         try {
@@ -321,7 +396,7 @@ public class JsonEntryConsumer {
     handleName(name);
     // consume the rest of the entry content
     readEntryContent();
-    return entryResult;
+    return resultEntry;
   }
 
 }

@@ -338,7 +338,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
   @Override
   public ODataDeltaFeed readDeltaFeed(final EdmEntitySet entitySet, final InputStream content,
       final EntityProviderReadProperties properties) throws EntityProviderException {
-    return null;
+    return new JsonEntityConsumer().readDeltaFeed(entitySet, content, properties);
   }
 
 }
