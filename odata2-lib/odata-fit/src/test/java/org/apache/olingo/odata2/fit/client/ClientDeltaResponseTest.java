@@ -192,8 +192,7 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
     assertNotNull(deletedEntries);
     assertEquals(deletedRoomDataCount, deletedEntries.size());
 
-    for (int i = 0; i < deletedRoomDataCount; i++)
-    {
+    for (int i = 0; i < deletedRoomDataCount; i++) {
       assertEquals("http://localhost:19000/abc/ClientDeltaResponseTest/Rooms('" + (roomDataCount + i + 1) + "')",
           deletedEntries.get(i).getUri());
       assertNotNull(deletedEntries.get(i).getWhen());
