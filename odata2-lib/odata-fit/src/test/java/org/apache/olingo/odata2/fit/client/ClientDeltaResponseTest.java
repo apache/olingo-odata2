@@ -57,6 +57,9 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
 
   private static final String DELTATOKEN_1234 = "!deltatoken=1234";
 
+  private static int roomDataCount = 2;
+  private static int deletedRoomDataCount = 2;
+
   private Client client;
   StubProcessor processor;
 
@@ -80,9 +83,6 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
   }
 
   private class StubProcessor extends ODataSingleProcessor {
-
-    private int roomDataCount = 2;
-    private int deletedRoomDataCount = 2;
 
     @Override
     public ODataResponse readEntitySet(final GetEntitySetUriInfo uriInfo, final String contentType)
@@ -172,47 +172,54 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
   }
 
   private void testDeltaFeedWithDeltaLink(final String contentType) throws Exception {
+    roomDataCount = 3;
+    deletedRoomDataCount = 4;
+
     ODataFeed feed = client.readFeed("Container1", "Rooms", contentType);
     String deltaLink = feed.getFeedMetadata().getDeltaLink();
 
     assertNotNull(feed);
-    assertEquals(2, feed.getEntries().size());
+    assertEquals(roomDataCount, feed.getEntries().size());
     assertEquals(getEndpoint().toASCIIString() + "Rooms?" + DELTATOKEN_1234, feed.getFeedMetadata().getDeltaLink());
 
     ODataDeltaFeed deltaFeed = client.readDeltaFeed("Container1", "Rooms", contentType, deltaLink);
 
     assertNotNull(deltaFeed);
-    assertEquals(2, deltaFeed.getEntries().size());
+    assertEquals(roomDataCount, deltaFeed.getEntries().size());
     assertEquals(deltaLink, deltaFeed.getFeedMetadata().getDeltaLink());
 
     List<DeletedEntryMetadata> deletedEntries = deltaFeed.getDeletedEntries();
     assertNotNull(deletedEntries);
-    assertEquals(2, deletedEntries.size());
+    assertEquals(deletedRoomDataCount, deletedEntries.size());
 
-    assertEquals("http://localhost:19000/abc/ClientDeltaResponseTest/Rooms('3')", deletedEntries.get(0).getUri());
-    assertEquals("http://localhost:19000/abc/ClientDeltaResponseTest/Rooms('4')", deletedEntries.get(1).getUri());
+    for (int i = 0; i < deletedRoomDataCount; i++)
+    {
+      assertEquals("http://localhost:19000/abc/ClientDeltaResponseTest/Rooms('" + (roomDataCount + i + 1) + "')",
+          deletedEntries.get(i).getUri());
+      assertNotNull(deletedEntries.get(i).getWhen());
+    }
   }
 
   private void testDeltaFeedWithZeroEntries(final String contentType) throws Exception {
-    processor.roomDataCount = 0;
-    processor.deletedRoomDataCount = 0;
+    roomDataCount = 0;
+    deletedRoomDataCount = 0;
 
     ODataFeed feed = client.readFeed("Container1", "Rooms", contentType);
     String deltaLink = feed.getFeedMetadata().getDeltaLink();
 
     assertNotNull(feed);
-    assertEquals(0, feed.getEntries().size());
+    assertEquals(roomDataCount, feed.getEntries().size());
     assertEquals(getEndpoint().toASCIIString() + "Rooms?" + DELTATOKEN_1234, feed.getFeedMetadata().getDeltaLink());
 
     ODataDeltaFeed deltaFeed = client.readDeltaFeed("Container1", "Rooms", contentType, deltaLink);
 
     assertNotNull(deltaFeed);
-    assertEquals(0, deltaFeed.getEntries().size());
+    assertEquals(roomDataCount, deltaFeed.getEntries().size());
     assertEquals(deltaLink, deltaFeed.getFeedMetadata().getDeltaLink());
 
     List<DeletedEntryMetadata> deletedEntries = deltaFeed.getDeletedEntries();
     assertNotNull(deletedEntries);
-    assertEquals(0, deletedEntries.size());
+    assertEquals(deletedRoomDataCount, deletedEntries.size());
   }
 
   @Test
