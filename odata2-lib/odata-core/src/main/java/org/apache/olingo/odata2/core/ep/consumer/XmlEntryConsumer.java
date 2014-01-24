@@ -229,25 +229,22 @@ public class XmlEntryConsumer {
     final String etag = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, FormatXml.M_ETAG);
 
     // read to next tag to check if <link> contains any further tags
+    reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_LINK);
     reader.nextTag();
 
-    if (reader.isEndElement()) {
-      reader.require(XMLStreamConstants.END_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_LINK);
+    if (rel == null || uri == null) {
+      throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(
+          FormatXml.ATOM_HREF + "' and/or '" + FormatXml.ATOM_REL).addContent(FormatXml.ATOM_LINK));
+    } else if (rel.startsWith(Edm.NAMESPACE_REL_2007_08)) {
+      final String navigationPropertyName = rel.substring(Edm.NAMESPACE_REL_2007_08.length());
+      entryMetadata.putAssociationUri(navigationPropertyName, uri);
+    } else if (rel.equals(Edm.LINK_REL_EDIT_MEDIA)) {
+      mediaMetadata.setEditLink(uri);
+      mediaMetadata.setEtag(etag);
+    }
 
-      if (rel == null || uri == null) {
-        throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(
-            FormatXml.ATOM_HREF + "' and/or '" + FormatXml.ATOM_REL).addContent(FormatXml.ATOM_LINK));
-      } else if (rel.startsWith(Edm.NAMESPACE_REL_2007_08)) {
-        final String navigationPropertyName = rel.substring(Edm.NAMESPACE_REL_2007_08.length());
-        entryMetadata.putAssociationUri(navigationPropertyName, uri);
-      } else if (rel.equals(Edm.LINK_REL_EDIT_MEDIA)) {
-        mediaMetadata.setEditLink(uri);
-        mediaMetadata.setEtag(etag);
-      }
-    } else {
-      if (rel != null && rel.startsWith(Edm.NAMESPACE_REL_2007_08)) {
-        readInlineContent(reader, eia, readProperties, type, rel);
-      }
+    if (!reader.isEndElement() && rel != null && rel.startsWith(Edm.NAMESPACE_REL_2007_08)) {
+      readInlineContent(reader, eia, readProperties, type, rel);
     }
   }
 
