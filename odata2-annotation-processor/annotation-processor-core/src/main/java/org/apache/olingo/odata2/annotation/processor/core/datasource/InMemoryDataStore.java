@@ -153,8 +153,7 @@ public class InMemoryDataStore<T> implements DataStore<T> {
    * @param second second instance to check for key equal
    * @return <code>true</code> if object instance have equal keys set.
    */
-  @Override
-  public boolean isKeyEqual(final T first, final T second) {
+  private boolean isKeyEqual(final T first, final T second) {
     KeyElement firstKeys = getKeys(first);
     KeyElement secondKeys = getKeys(second);
     

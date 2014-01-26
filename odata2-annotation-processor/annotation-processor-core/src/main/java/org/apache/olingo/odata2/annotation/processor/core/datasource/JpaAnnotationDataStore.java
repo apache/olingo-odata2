@@ -30,17 +30,23 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
  */
 public class JpaAnnotationDataStore<T> implements DataStore<T> {
 
-  public static DataStore<?> createInstance(Class<?> clz) {
-    return new JpaAnnotationDataStore<Object>((Class<Object>) clz);
-  }
+  public static final String DEFAULT_PERSISTENCE_NAME = "JpaAnnotationDataStorePersistence";
 
-  protected Class<T> dataTypeClass;
   private static final AnnotationHelper ANNOTATION_HELPER = new AnnotationHelper();
 
+  protected Class<T> dataTypeClass;
   protected EntityManager entityManager;
 
-  public JpaAnnotationDataStore(final Class<T> clz) {
-    EntityManagerFactory emf = Persistence.createEntityManagerFactory("AnimalPersistence");
+  public static DataStore<?> createInstance(Class<?> clz) {
+    return createInstance(clz, DEFAULT_PERSISTENCE_NAME);
+  }
+
+  public static DataStore<?> createInstance(Class<?> clz, String persistenceName) {
+    return new JpaAnnotationDataStore<Object>((Class<Object>) clz, persistenceName);
+  }
+
+  private JpaAnnotationDataStore(final Class<T> clz, String persistenceName) {
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory(persistenceName);
     entityManager = emf.createEntityManager();
     this.dataTypeClass = clz;
   }
@@ -103,11 +109,6 @@ public class JpaAnnotationDataStore<T> implements DataStore<T> {
   }
 
   @Override
-  public boolean isKeyEqual(T first, T second) {
-    return ANNOTATION_HELPER.keyMatch(first, second);
-  }
-
-  @Override
   public boolean isKeyEqualChecked(Object first, Object second) throws DataStoreException {
     return ANNOTATION_HELPER.keyMatch(first, second);
   }
@@ -122,13 +123,24 @@ public class JpaAnnotationDataStore<T> implements DataStore<T> {
   public Collection<T> read() {
     TypedQuery<T> query = entityManager.createQuery(
             "select t from " + dataTypeClass.getSimpleName() + " t", dataTypeClass);
-//    Query query = entityManager.createQuery(
-//            "select t from " + dataTypeClass.getSimpleName() + " t");
     return query.getResultList();
   }
 
   @Override
   public T update(T object) {
-    return this.entityManager.merge(object);
+    EntityTransaction t = this.entityManager.getTransaction();
+    try {
+      t.begin();
+      object = this.entityManager.merge(object);
+      this.entityManager.flush();
+      t.commit();
+
+      return object;
+    } catch(Exception e) {
+      if(t != null && t.isActive()) {
+        t.rollback();
+      }
+    }
+    return null;
   }
 }

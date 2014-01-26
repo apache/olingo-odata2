@@ -15,7 +15,7 @@
  */
 package org.apache.olingo.odata2.annotation.processor.core;
 
-import org.apache.olingo.odata2.annotation.processor.core.datasource.AnnotationInMemoryDs;
+import org.apache.olingo.odata2.annotation.processor.core.datasource.AnnotationDataSource;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.AnnotationValueAccess;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.DataSource;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.ValueAccess;
@@ -36,7 +36,7 @@ public class ListsProcessorTest {
   
   @Test
   public void init() throws ODataException {
-    DataSource dataSource = new AnnotationInMemoryDs(Building.class.getPackage().getName());
+    DataSource dataSource = new AnnotationDataSource(Building.class.getPackage().getName());
     ValueAccess valueAccess = new AnnotationValueAccess();
     ListsProcessor lp = new ListsProcessor(dataSource, valueAccess);
     

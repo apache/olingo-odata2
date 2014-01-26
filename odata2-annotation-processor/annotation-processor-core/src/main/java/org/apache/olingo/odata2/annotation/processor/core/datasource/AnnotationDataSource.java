@@ -39,32 +39,34 @@ import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
-public class AnnotationInMemoryDs implements DataSource {
+public class AnnotationDataSource implements DataSource {
 
   private static final AnnotationHelper ANNOTATION_HELPER = new AnnotationHelper();
+  private static final String DEFAULT_PERSISTENCE = Boolean.TRUE.toString();
+
   private final Map<String, DataStore<Object>> dataStores = new HashMap<String, DataStore<Object>>();
   private final DataStoreFactory dataStoreFactory;
-  private final boolean persistInMemory;
 
-  public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses) throws ODataException {
-    this(annotatedClasses, true);
+  public AnnotationDataSource(final Collection<Class<?>> annotatedClasses) throws ODataException {
+    this(annotatedClasses, new DualDataStoreFactory());
+    dataStoreFactory.setDefaultProperty(DataStoreFactory.KEEP_PERSISTENT, DEFAULT_PERSISTENCE);
   }
 
-  public AnnotationInMemoryDs(final Collection<Class<?>> annotatedClasses, final boolean persistInMemory) 
+  public AnnotationDataSource(final Collection<Class<?>> annotatedClasses, final DataStoreFactory dataStoreFactory) 
       throws ODataException {
-    this.persistInMemory = persistInMemory;
-    this.dataStoreFactory = new DataStoreFactory();
+    this.dataStoreFactory = dataStoreFactory;
     
     init(annotatedClasses);
   }
 
-  public AnnotationInMemoryDs(final String packageToScan) throws ODataException {
-    this(packageToScan, true);
+  public AnnotationDataSource(final String packageToScan) throws ODataException {
+    this(packageToScan, new DualDataStoreFactory());
+    dataStoreFactory.setDefaultProperty(DataStoreFactory.KEEP_PERSISTENT, DEFAULT_PERSISTENCE);
   }
 
-  public AnnotationInMemoryDs(final String packageToScan, final boolean persistInMemory) throws ODataException {
-    this.persistInMemory = persistInMemory;
-    this.dataStoreFactory = new DataStoreFactory();
+  public AnnotationDataSource(final String packageToScan, final DataStoreFactory dataStoreFactory) 
+          throws ODataException {
+    this.dataStoreFactory = dataStoreFactory;
 
     List<Class<?>> foundClasses = ClassHelper.loadClasses(packageToScan, new ClassHelper.ClassValidator() {
       @Override
@@ -82,7 +84,7 @@ public class AnnotationInMemoryDs implements DataSource {
       for (Class<?> clz : annotatedClasses) {
         String entitySetName = ANNOTATION_HELPER.extractEntitySetName(clz);
         if(entitySetName != null) {
-          DataStore<Object> dhs = (DataStore<Object>) dataStoreFactory.createInstance(clz, persistInMemory);
+          DataStore<Object> dhs = (DataStore<Object>) dataStoreFactory.createDataStore(clz);
           dataStores.put(entitySetName, dhs);
         } else if(!ANNOTATION_HELPER.isEdmAnnotated(clz)) {
           throw new ODataException("Found not annotated class during DataStore initilization of type: " 

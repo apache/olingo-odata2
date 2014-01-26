@@ -16,21 +16,15 @@
 
 package org.apache.olingo.odata2.annotation.processor.core.datasource;
 
-import javax.persistence.Entity;
+import java.util.Map;
 
 /**
  *
  */
-public class DataStoreFactory {
- 
-  public DataStore<?> createInstance(Class<?> clz, boolean keepPersistent) throws DataStoreException {
-    if(isJpaAnnotated(clz)) {
-      return JpaAnnotationDataStore.createInstance(clz);
-    }
-    return InMemoryDataStore.createInMemory(clz, keepPersistent);
-  }
-
-  private boolean isJpaAnnotated(Class<?> clz) {
-    return clz.getAnnotation(Entity.class) != null;
-  }
+public interface DataStoreFactory {
+  static final String KEEP_PERSISTENT = "KEEP_PERSISTENT";
+  
+  void setDefaultProperty(String name, String value);
+  DataStore<?> createDataStore(Class<?> clz) throws DataStoreException;
+  DataStore<?> createDataStore(Class<?> clz, Map<String, String> properties) throws DataStoreException;
 }

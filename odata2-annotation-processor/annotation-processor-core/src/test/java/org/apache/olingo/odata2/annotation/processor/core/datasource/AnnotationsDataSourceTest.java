@@ -57,7 +57,7 @@ import org.mockito.Mockito;
 /**
  *
  */
-public class AnnotationsInMemoryDsTest {
+public class AnnotationsDataSourceTest {
 
   final static Set<Class<?>> ANNOTATED_MODEL_CLASSES = new HashSet<Class<?>>();
   final static Set<Class<?>> ANNOTATED_ENTITY_SET_CLASSES = new HashSet<Class<?>>();
@@ -76,42 +76,45 @@ public class AnnotationsInMemoryDsTest {
     ANNOTATED_MODEL_CLASSES.add(RefBase.class);
   }
 
-  private final AnnotationInMemoryDs datasource;
+  private final AnnotationDataSource datasource;
   private final AnnotationEdmProvider edmProvider;
   private static final String DEFAULT_CONTAINER = ModelSharedConstants.CONTAINER_1;
+  private final DualDataStoreFactory dataStoreFactory;
 
-  public AnnotationsInMemoryDsTest() throws ODataException {
-    datasource = new AnnotationInMemoryDs(Building.class.getPackage().getName(), false);
+  public AnnotationsDataSourceTest() throws ODataException {
+    dataStoreFactory = new DualDataStoreFactory();
+    dataStoreFactory.setDefaultProperty(DataStoreFactory.KEEP_PERSISTENT, Boolean.FALSE.toString());
+    datasource = new AnnotationDataSource(Building.class.getPackage().getName(), dataStoreFactory);
     edmProvider = new AnnotationEdmProvider(Building.class.getPackage().getName());
   }
   
   @Test
   public void initFromPackage() throws Exception {
-    AnnotationInMemoryDs ds = new AnnotationInMemoryDs(Building.class.getPackage().getName(), false);
+    AnnotationDataSource ds = new AnnotationDataSource(Building.class.getPackage().getName());
     Assert.assertNotNull(ds);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void initFromNotExistingPackage() throws Exception {
-    AnnotationInMemoryDs ds = new AnnotationInMemoryDs("does.not.exist", false);
+    AnnotationDataSource ds = new AnnotationDataSource("does.not.exist");
     Assert.assertNotNull(ds);
   }
 
   @Test
   public void initFromPackageWithoutAnnotatedClasses() throws Exception {
-    AnnotationInMemoryDs ds = new AnnotationInMemoryDs(this.getClass().getPackage().getName(), false);
+    AnnotationDataSource ds = new AnnotationDataSource(this.getClass().getPackage().getName());
     Assert.assertNotNull(ds);
   }
 
   @Test
   public void initFromClassCollectionEntitySets() throws Exception {
-    AnnotationInMemoryDs ds = new AnnotationInMemoryDs(ANNOTATED_ENTITY_SET_CLASSES, false);
+    AnnotationDataSource ds = new AnnotationDataSource(ANNOTATED_ENTITY_SET_CLASSES);
     Assert.assertNotNull(ds);
   }
 
   @Test
   public void initFromClassCollectionModel() throws Exception {
-    AnnotationInMemoryDs ds = new AnnotationInMemoryDs(ANNOTATED_MODEL_CLASSES, false);
+    AnnotationDataSource ds = new AnnotationDataSource(ANNOTATED_MODEL_CLASSES);
     Assert.assertNotNull(ds);
   }
 
@@ -120,7 +123,7 @@ public class AnnotationsInMemoryDsTest {
     Set<Class<?>> annotatedClassesAndMore = new HashSet<Class<?>>(ANNOTATED_ENTITY_SET_CLASSES);
     annotatedClassesAndMore.add(String.class);
     annotatedClassesAndMore.add(Object.class);
-    AnnotationInMemoryDs ds = new AnnotationInMemoryDs(annotatedClassesAndMore, false);
+    AnnotationDataSource ds = new AnnotationDataSource(annotatedClassesAndMore);
     Assert.assertNotNull(ds);
   }
 
@@ -165,7 +168,7 @@ public class AnnotationsInMemoryDsTest {
   public void multiThreadedSyncCreateReadTest() throws Exception {
     Collection<Class<?>> ac = new ArrayList<Class<?>>();
     ac.add(SimpleEntity.class);
-    final AnnotationInMemoryDs localDs = new AnnotationInMemoryDs(SimpleEntity.class.getPackage().getName(), true);
+    final AnnotationDataSource localDs = new AnnotationDataSource(SimpleEntity.class.getPackage().getName());
     final AnnotationEdmProvider localProvider = new AnnotationEdmProvider(ac);
     final EdmEntitySet edmEntitySet = createMockedEdmEntitySet(localProvider, "SimpleEntitySet");
     final CountDownLatch latch;

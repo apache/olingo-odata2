@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.annotation.processor.core;
 import java.util.Collection;
 
 import org.apache.olingo.odata2.annotation.processor.api.AnnotationServiceFactory.AnnotationServiceFactoryInstance;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.AnnotationInMemoryDs;
+import org.apache.olingo.odata2.annotation.processor.core.datasource.AnnotationDataSource;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.AnnotationValueAccess;
 import org.apache.olingo.odata2.annotation.processor.core.edm.AnnotationEdmProvider;
 import org.apache.olingo.odata2.api.ODataService;
@@ -39,7 +39,7 @@ public class AnnotationServiceFactoryImpl implements AnnotationServiceFactoryIns
   @Override
   public ODataService createAnnotationService(String modelPackage) throws ODataException {
     AnnotationEdmProvider edmProvider = new AnnotationEdmProvider(modelPackage);
-    AnnotationInMemoryDs dataSource = new AnnotationInMemoryDs(modelPackage);
+    AnnotationDataSource dataSource = new AnnotationDataSource(modelPackage);
     AnnotationValueAccess valueAccess = new AnnotationValueAccess();
 
     // Edm via Annotations and ListProcessor via AnnotationDS with AnnotationsValueAccess
@@ -53,7 +53,7 @@ public class AnnotationServiceFactoryImpl implements AnnotationServiceFactoryIns
   @Override
   public ODataService createAnnotationService(Collection<Class<?>> annotatedClasses) throws ODataException {
     AnnotationEdmProvider edmProvider = new AnnotationEdmProvider(annotatedClasses);
-    AnnotationInMemoryDs dataSource = new AnnotationInMemoryDs(annotatedClasses);
+    AnnotationDataSource dataSource = new AnnotationDataSource(annotatedClasses);
     AnnotationValueAccess valueAccess = new AnnotationValueAccess();
 
     // Edm via Annotations and ListProcessor via AnnotationDS with AnnotationsValueAccess
