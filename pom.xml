@@ -57,7 +57,9 @@
         <cxf.version>2.7.5</cxf.version>
         <jetty.version>7.5.4.v20111024</jetty.version>
         <httpclient.version>4.2.3</httpclient.version>
+        <httpcore.version>4.2.3</httpcore.version>
         <slf4j.version>1.7.1</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
         <commonscodec.version>1.6</commonscodec.version>
         <commonslang.version>3.1</commonslang.version>
         <gson.version>2.2.2</gson.version>
@@ -427,27 +429,24 @@
             <url>https://oss.sonatype.org/content/groups/staging</url>
         </repository>
     </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
-            <version>${xmlunit.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-
+    
+    <dependencyManagement>
+      <dependencies>
+          <dependency>
+              <groupId>junit</groupId>
+              <artifactId>junit</artifactId>
+              <version>${junit.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.mockito</groupId>
+              <artifactId>mockito-all</artifactId>
+              <version>${mockito.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>xmlunit</groupId>
+              <artifactId>xmlunit</artifactId>
+              <version>${xmlunit.version}</version>
+          </dependency>
+      </dependencies>
+    </dependencyManagement>
 </project>
