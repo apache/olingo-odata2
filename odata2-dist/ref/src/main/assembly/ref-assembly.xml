@@ -43,7 +43,6 @@
             <directory>${project.build.directory}/maven-shared-archive-resources/META-INF</directory>
             <outputDirectory>/</outputDirectory>
             <excludes>
-                <exclude>NOTICE</exclude>
                 <exclude>LICENSE</exclude>
             </excludes>
         </fileSet>
