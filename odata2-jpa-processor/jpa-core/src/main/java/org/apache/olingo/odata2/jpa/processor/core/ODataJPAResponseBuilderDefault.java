@@ -566,13 +566,18 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     try {
       for (SelectItem selectItem : selectItems) {
         if (selectItem.getNavigationPropertySegments().size() <= 0) {
-          selectPropertyList.add(selectItem.getProperty());
+          if (selectItem.isStar()) {
+            selectPropertyList.addAll(getEdmProperties(entity));
+            return selectPropertyList;
+          } else {
+            selectPropertyList.add(selectItem.getProperty());
+          }
         }
       }
       for (EdmProperty keyProperty : entity.getKeyProperties()) {
         flag = true;
         for (SelectItem selectedItem : selectItems) {
-          if (selectedItem.getProperty().equals(keyProperty)) {
+          if (selectedItem.isStar() == false && selectedItem.getProperty().equals(keyProperty)) {
             flag = false;
             break;
           }
@@ -595,6 +600,18 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       navigationPropertyList.add(navpropSegment.get(0).getNavigationProperty());
     }
     return navigationPropertyList;
+  }
+
+  private static List<EdmProperty> getEdmProperties(EdmStructuralType structuralType) throws ODataJPARuntimeException {
+    List<EdmProperty> edmProperties = new ArrayList<EdmProperty>();
+    try {
+      for (String propertyName : structuralType.getPropertyNames()) {
+        edmProperties.add((EdmProperty) structuralType.getProperty(propertyName));
+      }
+    } catch (EdmException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    }
+    return edmProperties;
   }
 
 }
