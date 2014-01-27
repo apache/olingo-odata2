@@ -20,7 +20,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<version.cxf>2.7.6</version.cxf>
 		<version.slf4j>1.7.1</version.slf4j>
-		<version.olingo>1.2.0-SNAPSHOT</version.olingo>
+		<version.olingo>1.1.0-RC02</version.olingo>
 	</properties>
 
 	<build>
