@@ -1569,9 +1569,17 @@ public class ListsProcessor extends DataSourceProcessor {
     for (final String propertyName : type.getPropertyNames()) {
       final EdmProperty property = (EdmProperty) type.getProperty(propertyName);
       if (property.isSimple()) {
-        typeMap.put(propertyName, valueAccess.getPropertyType(data, property));
+        Object value = valueAccess.getPropertyType(data, property);
+        if(value != null) {
+          typeMap.put(propertyName, value);
+        }
       } else {
-        typeMap.put(propertyName, getStructuralTypeTypeMap(valueAccess.getPropertyValue(data, property),
+        Object value = valueAccess.getPropertyValue(data, property);
+        if(value == null) {
+          Class<?> complexClass = valueAccess.getPropertyType(data, property);
+          value = createInstance(complexClass);
+        }
+        typeMap.put(propertyName, getStructuralTypeTypeMap(value,
             (EdmStructuralType) property.getType()));
       }
     }
@@ -1583,6 +1591,9 @@ public class ListsProcessor extends DataSourceProcessor {
 
   private <T> void setStructuralTypeValuesFromMap(final T data, final EdmStructuralType type,
       final Map<String, Object> valueMap, final boolean merge) throws ODataException {
+    if(data == null) {
+      throw new ODataException("Unable to set structural type values to NULL data.");
+    }
     ODataContext context = getContext();
     final int timingHandle =
         context.startRuntimeMeasurement(getClass().getSimpleName(), "setStructuralTypeValuesFromMap");
