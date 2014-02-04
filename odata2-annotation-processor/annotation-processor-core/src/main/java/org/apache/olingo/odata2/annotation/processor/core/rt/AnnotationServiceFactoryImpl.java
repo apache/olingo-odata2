@@ -16,11 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.annotation.processor.core;
+package org.apache.olingo.odata2.annotation.processor.core.rt;
 
 import java.util.Collection;
 
 import org.apache.olingo.odata2.annotation.processor.api.AnnotationServiceFactory.AnnotationServiceFactoryInstance;
+import org.apache.olingo.odata2.annotation.processor.core.ListsProcessor;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.AnnotationInMemoryDs;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.AnnotationValueAccess;
 import org.apache.olingo.odata2.annotation.processor.core.edm.AnnotationEdmProvider;
