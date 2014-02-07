@@ -40,6 +40,7 @@ import org.apache.olingo.odata2.annotation.processor.core.model.RefBase;
 import org.apache.olingo.odata2.annotation.processor.core.model.Room;
 import org.apache.olingo.odata2.annotation.processor.core.model.Team;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
+import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationRuntimeException;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -48,7 +49,6 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -367,7 +367,7 @@ public class AnnotationsInMemoryDsTest {
     }
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test(expected = AnnotationRuntimeException.class)
   public void readUnknownEntity() throws Exception {
     EdmEntitySet unknownEntitySet = Mockito.mock(EdmEntitySet.class);
     Mockito.when(unknownEntitySet.getName()).thenReturn("UnknownEntity");
@@ -378,7 +378,7 @@ public class AnnotationsInMemoryDsTest {
     datasource.readData(unknownEntitySet, keys);
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test(expected = AnnotationRuntimeException.class)
   public void readUnknownEntities() throws Exception {
     EdmEntitySet unknownEntitySet = Mockito.mock(EdmEntitySet.class);
     Mockito.when(unknownEntitySet.getName()).thenReturn("UnknownEntity");
@@ -711,7 +711,7 @@ public class AnnotationsInMemoryDsTest {
     } catch (ODataNotFoundException e) {}
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test(expected = AnnotationRuntimeException.class)
   public void unknownEntitySetForEntity() throws Exception {
     String entitySetName = "Unknown";
     FullQualifiedName entityType = new FullQualifiedName(DEFAULT_CONTAINER, entitySetName);
@@ -728,7 +728,7 @@ public class AnnotationsInMemoryDsTest {
     datasource.readData(edmEntitySet, keys);
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test(expected = AnnotationRuntimeException.class)
   public void unknownEntitySetForEntities() throws Exception {
     String entitySetName = "Unknown";
     FullQualifiedName entityType = new FullQualifiedName(DEFAULT_CONTAINER, entitySetName);

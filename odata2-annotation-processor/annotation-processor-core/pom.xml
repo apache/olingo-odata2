@@ -80,12 +80,15 @@
       <artifactId>olingo-odata2-api-incubating</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- 
+     -->
+    <!-- Test dependencies -->
     <dependency>
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-odata2-core-incubating</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
-    <!-- Test dependencies -->
     <dependency>
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-odata2-testutil-incubating</artifactId>

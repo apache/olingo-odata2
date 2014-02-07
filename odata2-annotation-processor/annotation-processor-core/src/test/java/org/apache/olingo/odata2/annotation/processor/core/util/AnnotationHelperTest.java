@@ -29,7 +29,6 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.junit.Test;
 
 /**
@@ -150,7 +149,7 @@ public class AnnotationHelperTest {
     Assert.assertFalse(result2);
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test(expected = AnnotationRuntimeException.class)
   public void keyMatchNegativeNotAnnotated() throws ODataException {
     NotAnnotatedBean firstInstance = new NotAnnotatedBean();
     NotAnnotatedBean secondInstance = new NotAnnotatedBean();
