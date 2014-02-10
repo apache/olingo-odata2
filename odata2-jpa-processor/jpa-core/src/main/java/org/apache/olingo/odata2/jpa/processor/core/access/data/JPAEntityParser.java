@@ -35,8 +35,6 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmStructuralType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
-import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
-import org.apache.olingo.odata2.api.uri.SelectItem;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 
@@ -82,39 +80,25 @@ public final class JPAEntityParser {
     return edmEntityList;
   }
 
-  @SuppressWarnings("unchecked")
-  public final <T> HashMap<String, Object> parse2EdmPropertyValueMap(final Object jpaEntity,
-      final List<T> selectPropertyList) throws ODataJPARuntimeException {
+  public final HashMap<String, Object> parse2EdmPropertyValueMap(final Object jpaEntity,
+      final List<EdmProperty> selectPropertyList) throws ODataJPARuntimeException {
 
     HashMap<String, Object> edmEntity = new HashMap<String, Object>();
     HashMap<String, Method> accessModifierMap = null;
     Object propertyValue = null;
-    EdmProperty property = null;
     String jpaEntityAccessKey = null;
 
-    if (selectPropertyList.get(0) instanceof EdmProperty) {
-      jpaEntityAccessKey = jpaEntity.getClass().getName();
-      if (!jpaEntityAccessMap.containsKey(jpaEntityAccessKey)) {
-        accessModifierMap =
-            getAccessModifiers((List<EdmProperty>) selectPropertyList, jpaEntity.getClass(), ACCESS_MODIFIER_GET);
-      } else {
-        accessModifierMap = jpaEntityAccessMap.get(jpaEntityAccessKey);
-      }
+    jpaEntityAccessKey = jpaEntity.getClass().getName();
+    if (!jpaEntityAccessMap.containsKey(jpaEntityAccessKey)) {
+      accessModifierMap =
+          getAccessModifiers((List<EdmProperty>) selectPropertyList, jpaEntity.getClass(), ACCESS_MODIFIER_GET);
+    } else {
+      accessModifierMap = jpaEntityAccessMap.get(jpaEntityAccessKey);
     }
 
-    for (Object item : selectPropertyList) {
+    for (EdmProperty property : selectPropertyList) {
       propertyValue = jpaEntity;
-      if (item instanceof SelectItem) {
-        SelectItem selectItem = (SelectItem) item;
-        for (NavigationPropertySegment navPropSegement : selectItem.getNavigationPropertySegments()) {
-          Method method =
-              getAccessModifier(propertyValue.getClass(), navPropSegement.getNavigationProperty(), ACCESS_MODIFIER_GET);
-          propertyValue = getPropertyValue(method, propertyValue);
-        }
-        property = selectItem.getProperty();
-      } else if (item instanceof EdmProperty) {
-        property = (EdmProperty) item;
-      }
+
       try {
         String propertyName = property.getName();
         Method method = accessModifierMap.get(propertyName);

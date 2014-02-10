@@ -24,10 +24,6 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <properties>
-    <version.slf4j>1.7.1</version.slf4j>
-  </properties>
-
   <build>
     <finalName>${project.artifactId}</finalName>
   </build>
@@ -54,15 +50,22 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <!-- Test dependencies -->
+    <dependency>
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-odata2-testutil-incubating</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${version.slf4j}</version>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <version>${xmlunit.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
