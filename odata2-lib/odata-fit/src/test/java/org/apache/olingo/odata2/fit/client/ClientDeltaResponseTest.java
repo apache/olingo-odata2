@@ -20,9 +20,9 @@ package org.apache.olingo.odata2.fit.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +50,6 @@ import org.apache.olingo.odata2.fit.client.util.Client;
 import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ClientDeltaResponseTest extends AbstractFitTest {
@@ -116,7 +115,7 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
         response = EntityProvider.writeFeed(contentType, uriInfo.getTargetEntitySet(), createRoomData(), properties);
 
         return response;
-      } catch (URISyntaxException e) {
+      } catch (Exception e) {
         throw new ODataRuntimeException(e);
 
       }
@@ -195,7 +194,12 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
     for (int i = 0; i < deletedRoomDataCount; i++) {
       assertEquals("http://localhost:19000/abc/ClientDeltaResponseTest/Rooms('" + (roomDataCount + i + 1) + "')",
           deletedEntries.get(i).getUri());
-      assertNotNull(deletedEntries.get(i).getWhen());
+
+      if ("application/json".equals(contentType)) {
+        assertNull(deletedEntries.get(i).getWhen());
+      } else {
+        assertNotNull(deletedEntries.get(i).getWhen());
+      }
     }
   }
 
@@ -227,7 +231,6 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
   }
 
   @Test
-  @Ignore
   public void testFeedWithDeltaLinkJson() throws Exception {
     testDeltaFeedWithDeltaLink("application/json");
   }
@@ -238,7 +241,6 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
   }
 
   @Test
-  @Ignore
   public void testFeedWithZeroEntriesJson() throws Exception {
     testDeltaFeedWithZeroEntries("application/json");
   }

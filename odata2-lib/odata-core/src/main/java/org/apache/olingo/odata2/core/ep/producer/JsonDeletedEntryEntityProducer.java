@@ -58,7 +58,7 @@ public class JsonDeletedEntryEntityProducer {
           jsonStreamWriter.namedStringValue(FormatJson.ID, idValue);
           jsonStreamWriter.endObject();
 
-          if (counter < deletedEntries.size()) {
+          if (counter < deletedEntries.size() - 1) {
             jsonStreamWriter.separator();
           }
 

@@ -112,6 +112,7 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
     final String json = writeRoomData(entitySet, tombstoneCallback);
 
     assertDeletedEntries(json);
+    assertTrue("Somthing wrong with closing brakets after deleted entries!", json.endsWith("}]}}"));
   }
 
   @Test
@@ -140,6 +141,9 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
     assertTrue("Delta Link missing or wrong!", json
         .contains("__delta\":\"http://host:80/service/Rooms?!deltatoken=1234"));
     assertDeletedEntries(json);
+
+    assertTrue("Somthing wrong with closing brakets after deleted entries!", json.contains("}],\"__delta"));
+
   }
 
   private void assertDeletedEntries(final String json) {
