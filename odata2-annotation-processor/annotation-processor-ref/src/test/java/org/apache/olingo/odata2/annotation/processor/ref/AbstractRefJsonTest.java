@@ -16,48 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.annotation.processor.ref.model;
+package org.apache.olingo.odata2.annotation.processor.ref;
 
-import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
-import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
+import com.google.gson.Gson;
+import com.google.gson.internal.StringMap;
+import com.google.gson.reflect.TypeToken;
 
 /**
  *  
  */
-@EdmComplexType(name = "c_City", namespace = ModelSharedConstants.NAMESPACE_1)
-public class City {
-
-  @EdmProperty
-  private String postalCode;
-  @EdmProperty
-  private String cityName;
-
-  public City() {}
-  
-  public City(final String postalCode, final String name) {
-    this.postalCode = postalCode;
-    cityName = name;
+public class AbstractRefJsonTest extends AbstractRefTest {
+  public StringMap<?> getStringMap(final String body) {
+    Gson gson = new Gson();
+    final StringMap<?> map = gson.fromJson(body, new TypeToken<StringMap<?>>() {}.getType());
+    if (map.get("d") instanceof StringMap<?>) {
+      return (StringMap<?>) map.get("d");
+    } else {
+      return map;
+    }
   }
-
-  public void setPostalCode(final String postalCode) {
-    this.postalCode = postalCode;
-  }
-
-  public String getPostalCode() {
-    return postalCode;
-  }
-
-  public void setCityName(final String cityName) {
-    this.cityName = cityName;
-  }
-
-  public String getCityName() {
-    return cityName;
-  }
-
-  @Override
-  public String toString() {
-    return String.format("%s, %s", cityName, postalCode);
-  }
-
 }

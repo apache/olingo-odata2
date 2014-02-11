@@ -405,18 +405,27 @@ public class AnnotationHelper {
     return null;
   }
 
+  public Class<?> getFieldTypeForProperty(final Class<?> clazz, final String propertyName)
+      throws ODataAnnotationException {
+    if (clazz == null) {
+      return null;
+    }
+
+    Field field = getFieldForPropertyName(propertyName, clazz, true);
+    if (field == null) {
+      throw new ODataAnnotationException("No field for property '" + propertyName
+          + "' found at class '" + clazz + "'.");
+    }
+    return field.getType();
+  }
+
   public Class<?> getFieldTypeForProperty(final Object instance, final String propertyName)
       throws ODataAnnotationException {
     if (instance == null) {
       return null;
     }
 
-    Field field = getFieldForPropertyName(instance, propertyName, instance.getClass(), true);
-    if (field == null) {
-      throw new ODataAnnotationException("No field for property '" + propertyName
-          + "' found at class '" + instance.getClass() + "'.");
-    }
-    return field.getType();
+    return getFieldTypeForProperty(instance.getClass(), propertyName);
   }
 
   public Object getValueForProperty(final Object instance, final String propertyName) throws ODataAnnotationException {
@@ -424,7 +433,7 @@ public class AnnotationHelper {
       return null;
     }
 
-    Field field = getFieldForPropertyName(instance, propertyName, instance.getClass(), true);
+    Field field = getFieldForPropertyName(propertyName, instance.getClass(), true);
     if (field == null) {
       throw new ODataAnnotationException("No field for property '" + propertyName
           + "' found at class '" + instance.getClass() + "'.");
@@ -434,19 +443,16 @@ public class AnnotationHelper {
 
   public void setValueForProperty(final Object instance, final String propertyName, final Object propertyValue) {
     if (instance != null) {
-      Field field = getFieldForPropertyName(instance, propertyName, instance.getClass(), true);
+      Field field = getFieldForPropertyName(propertyName, instance.getClass(), true);
       if (field != null) {
         setFieldValue(instance, field, propertyValue);
       }
     }
   }
 
-  private Field getFieldForPropertyName(final Object instance, final String propertyName,
+  private Field getFieldForPropertyName(final String propertyName,
       final Class<?> resultClass, final boolean inherited) {
-    if (instance == null) {
-      return null;
-    }
-
+    
     Field[] fields = resultClass.getDeclaredFields();
     for (Field field : fields) {
       EdmProperty property = field.getAnnotation(EdmProperty.class);
@@ -461,7 +467,7 @@ public class AnnotationHelper {
 
     Class<?> superClass = resultClass.getSuperclass();
     if (inherited && superClass != Object.class) {
-      return getFieldForPropertyName(instance, propertyName, superClass, true);
+      return getFieldForPropertyName(propertyName, superClass, true);
     }
 
     return null;

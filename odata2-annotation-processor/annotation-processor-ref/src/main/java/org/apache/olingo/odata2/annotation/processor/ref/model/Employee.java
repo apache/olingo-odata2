@@ -43,7 +43,7 @@ public class Employee {
   @EdmProperty(name = "EmployeeName")
   private String employeeName;
   @EdmProperty
-  private int age;
+  private Integer age;
   @EdmNavigationProperty(name = "ne_Manager", association = "ManagerEmployees")
   private Manager manager;
   @EdmNavigationProperty(name = "ne_Team", association = "TeamEmployees")
