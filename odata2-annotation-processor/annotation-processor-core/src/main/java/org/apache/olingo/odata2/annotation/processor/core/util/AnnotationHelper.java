@@ -38,7 +38,6 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  *
@@ -64,7 +63,7 @@ public class AnnotationHelper {
     Map<String, Object> firstKeyFields = getValueForAnnotatedFields(firstInstance, EdmKey.class);
     Map<String, Object> secondKeyFields = getValueForAnnotatedFields(secondInstance, EdmKey.class);
     if (firstKeyFields.isEmpty() && secondKeyFields.isEmpty()) {
-      throw new ODataRuntimeException("Both object instances does not have EdmKey fields defined ["
+      throw new AnnotationRuntimeException("Both object instances does not have EdmKey fields defined ["
           + "firstClass=" + firstInstance.getClass().getName()
           + " secondClass=" + secondInstance.getClass().getName() + "].");
     }
@@ -88,7 +87,7 @@ public class AnnotationHelper {
     if (firstKeyValues.size() != secondKeyValues.size()) {
       return false;
     } else if (firstKeyValues.isEmpty()) {
-      throw new ODataRuntimeException("No keys given for key value matching.");
+      throw new AnnotationRuntimeException("No keys given for key value matching.");
     } else {
       Set<Map.Entry<String, Object>> entries = firstKeyValues.entrySet();
       for (Map.Entry<String, Object> entry : entries) {
@@ -631,9 +630,9 @@ public class AnnotationHelper {
       field.setAccessible(access);
       return value;
     } catch (IllegalArgumentException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     } catch (IllegalAccessException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     }
   }
 
@@ -650,9 +649,9 @@ public class AnnotationHelper {
       field.set(instance, usedValue);
       field.setAccessible(access);
     } catch (IllegalArgumentException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     } catch (IllegalAccessException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     }
   }
 
@@ -664,7 +663,7 @@ public class AnnotationHelper {
       return type.getEdmSimpleTypeInstance().valueOfString(propertyValue,
           EdmLiteralKind.DEFAULT, null, fieldClass);
     } catch (EdmSimpleTypeException ex) {
-      throw new ODataRuntimeException("Conversion failed for string property ["
+      throw new AnnotationRuntimeException("Conversion failed for string property ["
           + propertyValue + "] on field ["
           + field + "] with error: " + ex.getMessage(), ex);
     }
@@ -746,7 +745,7 @@ public class AnnotationHelper {
     case TIME:
       return EdmSimpleTypeKind.Time;
     default:
-      throw new ODataRuntimeException("Unknown type '" + type
+      throw new AnnotationRuntimeException("Unknown type '" + type
           + "' for mapping to EdmSimpleTypeKind.");
     }
   }
@@ -760,7 +759,7 @@ public class AnnotationHelper {
     case MANY:
       return EdmMultiplicity.MANY;
     default:
-      throw new ODataRuntimeException("Unknown type '" + multiplicity + "' for mapping to EdmMultiplicity.");
+      throw new AnnotationRuntimeException("Unknown type '" + multiplicity + "' for mapping to EdmMultiplicity.");
     }
   }
 

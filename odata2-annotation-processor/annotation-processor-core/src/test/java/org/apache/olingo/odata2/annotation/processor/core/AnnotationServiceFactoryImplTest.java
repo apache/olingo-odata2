@@ -27,6 +27,7 @@ import org.apache.olingo.odata2.annotation.processor.core.model.Photo;
 import org.apache.olingo.odata2.annotation.processor.core.model.RefBase;
 import org.apache.olingo.odata2.annotation.processor.core.model.Room;
 import org.apache.olingo.odata2.annotation.processor.core.model.Team;
+import org.apache.olingo.odata2.annotation.processor.core.rt.AnnotationServiceFactoryImpl;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.junit.Test;

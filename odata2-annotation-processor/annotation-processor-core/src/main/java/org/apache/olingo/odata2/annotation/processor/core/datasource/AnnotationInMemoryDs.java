@@ -26,6 +26,7 @@ import org.apache.olingo.odata2.annotation.processor.core.datasource.DataStore.D
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper.AnnotatedNavInfo;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper.ODataAnnotationException;
+import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationRuntimeException;
 import org.apache.olingo.odata2.annotation.processor.core.util.ClassHelper;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
@@ -38,7 +39,6 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class AnnotationInMemoryDs implements DataSource {
 
@@ -146,7 +146,7 @@ public class AnnotationInMemoryDs implements DataSource {
         sourceStore.getDataTypeClass(), targetStore.getDataTypeClass());
     Field sourceField = navInfo.getFromField();
     if (sourceField == null) {
-      throw new ODataRuntimeException("Missing source field for related data (sourceStore='" + sourceStore
+      throw new AnnotationRuntimeException("Missing source field for related data (sourceStore='" + sourceStore
           + "', targetStore='" + targetStore + "').");
     }
 
@@ -247,7 +247,7 @@ public class AnnotationInMemoryDs implements DataSource {
       return dataStore.createInstance();
     }
 
-    throw new ODataRuntimeException("No DataStore found for entitySet with name: " + entitySet.getName());
+    throw new AnnotationRuntimeException("No DataStore found for entitySet with name: " + entitySet.getName());
   }
 
   @Override
@@ -267,7 +267,7 @@ public class AnnotationInMemoryDs implements DataSource {
             mediaEntityInstance, EdmMediaResourceMimeType.class, binaryData.getMimeType());
       }
     } catch (ODataAnnotationException e) {
-      throw new ODataRuntimeException("Invalid media resource annotation at entity set '" + entitySet.getName()
+      throw new AnnotationRuntimeException("Invalid media resource annotation at entity set '" + entitySet.getName()
           + "' with message '" + e.getMessage() + "'.", e);
     }
   }
@@ -329,7 +329,7 @@ public class AnnotationInMemoryDs implements DataSource {
     // get and validate source fields
     Field sourceField = commonNavInfo.getFromField();
     if (sourceField == null) {
-      throw new ODataRuntimeException("Missing source field for related data (sourceStore='" + sourceStore
+      throw new AnnotationRuntimeException("Missing source field for related data (sourceStore='" + sourceStore
           + "', targetStore='" + targetStore + "').");
     }
 
@@ -369,7 +369,7 @@ public class AnnotationInMemoryDs implements DataSource {
       }
       collection.add(value);
     } else if (fieldTypeClass.isArray()) {
-      throw new ODataRuntimeException("Write relations for internal used arrays is not supported.");
+      throw new AnnotationRuntimeException("Write relations for internal used arrays is not supported.");
     } else {
       setValue(instance, field, value);
     }
@@ -377,19 +377,19 @@ public class AnnotationInMemoryDs implements DataSource {
 
   /**
    * Returns corresponding DataStore for EdmEntitySet or if no data store is registered an
-   * ODataRuntimeException is thrown.
+   * AnnotationRuntimeException is thrown.
    * Never returns NULL.
    * 
    * @param entitySet for which the corresponding DataStore is returned
    * @return a DataStore object
    * @throws EdmException
-   * @throws ODataRuntimeException if no DataStore is found
+   * @throws AnnotationRuntimeException if no DataStore is found
    */
   private DataStore<Object> getDataStore(final EdmEntitySet entitySet) throws EdmException {
     final String name = entitySet.getName();
     DataStore<Object> dataStore = dataStores.get(name);
     if (dataStore == null) {
-      throw new ODataRuntimeException("No DataStore found for entity set '" + entitySet + "'.");
+      throw new AnnotationRuntimeException("No DataStore found for entity set '" + entitySet + "'.");
     }
     return dataStore;
   }
@@ -402,10 +402,10 @@ public class AnnotationInMemoryDs implements DataSource {
       field.setAccessible(access);
       return value;
     } catch (IllegalArgumentException e) {
-      throw new ODataRuntimeException("Error for getting value of field '"
+      throw new AnnotationRuntimeException("Error for getting value of field '"
           + field + "' at instance '" + instance + "'.", e);
     } catch (IllegalAccessException e) {
-      throw new ODataRuntimeException("Error for getting value of field '"
+      throw new AnnotationRuntimeException("Error for getting value of field '"
           + field + "' at instance '" + instance + "'.", e);
     }
   }
@@ -417,10 +417,10 @@ public class AnnotationInMemoryDs implements DataSource {
       field.set(instance, value);
       field.setAccessible(access);
     } catch (IllegalArgumentException e) {
-      throw new ODataRuntimeException("Error for setting value of field: '"
+      throw new AnnotationRuntimeException("Error for setting value of field: '"
           + field + "' at instance: '" + instance + "'.", e);
     } catch (IllegalAccessException e) {
-      throw new ODataRuntimeException("Error for setting value of field: '"
+      throw new AnnotationRuntimeException("Error for setting value of field: '"
           + field + "' at instance: '" + instance + "'.", e);
     }
   }

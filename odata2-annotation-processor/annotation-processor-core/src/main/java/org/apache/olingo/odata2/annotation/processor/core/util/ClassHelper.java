@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
-
 /**
  *
  */
@@ -181,9 +179,9 @@ public class ClassHelper {
         return value;
       }
     } catch (IllegalArgumentException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     } catch (IllegalAccessException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     }
   }
 
@@ -196,9 +194,9 @@ public class ClassHelper {
         field.setAccessible(access);
       }
     } catch (IllegalArgumentException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     } catch (IllegalAccessException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     }
   }
 

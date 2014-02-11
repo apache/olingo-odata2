@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 public abstract class AnnotationServiceFactory {
 
   private static final String IMPLEMENTATION =
-      "org.apache.olingo.odata2.annotation.processor.core.AnnotationServiceFactoryImpl";
+      "org.apache.olingo.odata2.annotation.processor.core.rt.AnnotationServiceFactoryImpl";
 
   /**
    * Create a runtime delegate instance from the core library. The core
