@@ -54,10 +54,12 @@ public class AnnotationValueAccess implements ValueAccess {
    */
   @Override
   public <T, V> void setPropertyValue(final T data, final EdmProperty property, final V value) throws ODataException {
-    if (annotationHelper.isEdmAnnotated(data)) {
-      annotationHelper.setValueForProperty(data, property.getName(), value);
-    } else {
-      throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+    if (data != null) {
+      if (annotationHelper.isEdmAnnotated(data)) {
+        annotationHelper.setValueForProperty(data, property.getName(), value);
+      } else {
+        throw new ODataNotImplementedException(ODataNotImplementedException.COMMON);
+      }
     }
   }
 
@@ -69,7 +71,9 @@ public class AnnotationValueAccess implements ValueAccess {
    */
   @Override
   public <T> Class<?> getPropertyType(final T data, final EdmProperty property) throws ODataException {
-    if (annotationHelper.isEdmAnnotated(data)) {
+    if (data == null) {
+      return null;
+    } else if (annotationHelper.isEdmAnnotated(data)) {
       Class<?> fieldType = annotationHelper.getFieldTypeForProperty(data, property.getName());
       if (fieldType == null) {
         throw new ODataException("No field type found for property " + property);

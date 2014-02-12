@@ -27,7 +27,7 @@ public class OrderValue {
     return amount;
   }
 
-  public void setAmount(double amount) {
+  public void setAmount(final double amount) {
     this.amount = amount;
   }
 
@@ -35,7 +35,7 @@ public class OrderValue {
     return currency;
   }
 
-  public void setCurrency(String currency) {
+  public void setCurrency(final String currency) {
     this.currency = currency;
   }
 

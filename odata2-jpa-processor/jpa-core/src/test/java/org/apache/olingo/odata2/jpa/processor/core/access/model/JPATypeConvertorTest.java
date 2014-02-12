@@ -26,7 +26,6 @@ import java.util.UUID;
 
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
-import org.apache.olingo.odata2.jpa.processor.core.access.model.JPATypeConvertor;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.junit.Test;
 

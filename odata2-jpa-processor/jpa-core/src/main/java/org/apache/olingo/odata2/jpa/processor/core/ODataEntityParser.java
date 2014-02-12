@@ -43,6 +43,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 public final class ODataEntityParser {
 
   private ODataJPAContext context;
+  private Edm edm;
 
   public ODataEntityParser(final ODataJPAContext context) {
     this.context = context;
@@ -63,21 +64,37 @@ public final class ODataEntityParser {
 
   }
 
-  public final UriInfo parseLinkURI() throws ODataJPARuntimeException {
+  public final UriInfo parseURISegmentWithCustomOptions(final int segmentFromIndex, final int segmentToIndex,
+      final Map<String, String> options) throws ODataJPARuntimeException {
     UriInfo uriInfo = null;
-
-    Edm edm;
+    if (segmentFromIndex == segmentToIndex || segmentFromIndex > segmentToIndex || segmentFromIndex < 0) {
+      return uriInfo;
+    }
     try {
-      edm = context.getODataContext().getService().getEntityDataModel();
-
+      edm = getEdm();
       List<PathSegment> pathSegments = context.getODataContext().getPathInfo().getODataSegments();
-      List<PathSegment> subPathSegments = pathSegments.subList(0, pathSegments.size() - 2);
+      List<PathSegment> subPathSegments = pathSegments.subList(segmentFromIndex, segmentToIndex);
+      uriInfo = UriParser.parse(edm, subPathSegments, options);
+    } catch (ODataException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+    }
+    return uriInfo;
+  }
 
+  public final UriInfo parseURISegment(final int segmentFromIndex, final int segmentToIndex)
+      throws ODataJPARuntimeException {
+    UriInfo uriInfo = null;
+    if (segmentFromIndex == segmentToIndex || segmentFromIndex > segmentToIndex || segmentFromIndex < 0) {
+      return uriInfo;
+    }
+    try {
+      edm = getEdm();
+      List<PathSegment> pathSegments = context.getODataContext().getPathInfo().getODataSegments();
+      List<PathSegment> subPathSegments = pathSegments.subList(segmentFromIndex, segmentToIndex);
       uriInfo = UriParser.parse(edm, subPathSegments, Collections.<String, String> emptyMap());
     } catch (ODataException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
-
     return uriInfo;
   }
 
@@ -86,78 +103,71 @@ public final class ODataEntityParser {
 
     String uriString = null;
     UriInfo uri = null;
-
     try {
       uriString = EntityProvider.readLink(contentType, entitySet, content);
       ODataContext odataContext = context.getODataContext();
       final String serviceRoot = odataContext.getPathInfo().getServiceRoot().toString();
-
       final String path =
           uriString.startsWith(serviceRoot.toString()) ? uriString.substring(serviceRoot.length()) : uriString;
-
-      final PathSegment pathSegment = new PathSegment() {
-        @Override
-        public String getPath() {
-          return path;
-        }
-
-        @Override
-        public Map<String, List<String>> getMatrixParameters() {
-          return null;
-        }
-      };
-
-      final Edm edm = odataContext.getService().getEntityDataModel();
-
+      final PathSegment pathSegment = getPathSegment(path);
+      edm = getEdm();
       uri = UriParser.parse(edm, Arrays.asList(pathSegment), Collections.<String, String> emptyMap());
-
     } catch (ODataException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
-
     return uri;
-
   }
 
-  public List<UriInfo> parseLinks(final EdmEntitySet entitySet, final InputStream content, final String contentType)
+  public UriInfo parseLinkSegments(final List<String> linkSegments, final Map<String, String> options)
       throws ODataJPARuntimeException {
-
-    List<String> uriList = new ArrayList<String>();
-    List<UriInfo> uriInfoList = new ArrayList<UriInfo>();
-
+    List<PathSegment> pathSegments = new ArrayList<PathSegment>();
+    for (String link : linkSegments) {
+      PathSegment pathSegment = getPathSegment(link);
+      pathSegments.add(pathSegment);
+    }
+    UriInfo uriInfo = null;
     try {
-
-      uriList = EntityProvider.readLinks(contentType, entitySet, content);
-      ODataContext odataContext = context.getODataContext();
-      final String serviceRoot = odataContext.getPathInfo().getServiceRoot().toString();
-      final int length = serviceRoot.length();
-      final Edm edm = odataContext.getService().getEntityDataModel();
-
-      for (String uriString : uriList) {
-        final String path = uriString.startsWith(serviceRoot) ? uriString.substring(length) : uriString;
-
-        final PathSegment pathSegment = new PathSegment() {
-          @Override
-          public String getPath() {
-            return path;
-          }
-
-          @Override
-          public Map<String, List<String>> getMatrixParameters() {
-            return null;
-          }
-        };
-
-        UriInfo uriInfo = UriParser.parse(edm, Arrays.asList(pathSegment), Collections.<String, String> emptyMap());
-        uriInfoList.add(uriInfo);
-      }
-    } catch (EntityProviderException e) {
-      return null;
+      edm = getEdm();
+      uriInfo = UriParser.parse(edm, pathSegments, options);
     } catch (ODataException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
-
-    return uriInfoList;
+    return uriInfo;
   }
 
+  public UriInfo parseBindingLink(final String link, final Map<String, String> options)
+      throws ODataJPARuntimeException {
+    final PathSegment pathSegment = getPathSegment(link);
+    UriInfo uriInfo = null;
+    try {
+      edm = getEdm();
+      uriInfo = UriParser.parse(edm, Arrays.asList(pathSegment), options);
+    } catch (ODataException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+    }
+    return uriInfo;
+  }
+
+  private Edm getEdm() throws ODataException {
+    if (edm == null) {
+      edm = context.getODataContext().getService().getEntityDataModel();
+    }
+    return edm;
+  }
+
+  private PathSegment getPathSegment(final String path) {
+    final PathSegment pathSegment = new PathSegment() {
+
+      @Override
+      public String getPath() {
+        return path;
+      }
+
+      @Override
+      public Map<String, List<String>> getMatrixParameters() {
+        return null;
+      }
+    };
+    return pathSegment;
+  }
 }

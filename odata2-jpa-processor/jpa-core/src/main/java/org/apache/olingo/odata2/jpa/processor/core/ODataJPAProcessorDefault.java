@@ -96,10 +96,10 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
   public ODataResponse createEntity(final PostUriInfo uriParserResultView, final InputStream content,
       final String requestContentType, final String contentType) throws ODataException {
 
-    List<Object> createdJpaEntityList = jpaProcessor.process(uriParserResultView, content, requestContentType);
+    Object createdJpaEntity = jpaProcessor.process(uriParserResultView, content, requestContentType);
 
     ODataResponse oDataResponse =
-        responseBuilder.build(uriParserResultView, createdJpaEntityList, contentType);
+        responseBuilder.build(uriParserResultView, createdJpaEntity, contentType);
 
     return oDataResponse;
   }
@@ -191,4 +191,12 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
     return ODataResponse.newBuilder().build();
   }
 
+  @Override
+  public ODataResponse deleteEntityLink(final DeleteUriInfo uriParserResultView, final String contentType)
+      throws ODataException {
+
+    jpaProcessor.process(uriParserResultView, contentType);
+    return ODataResponse.newBuilder().build();
+
+  }
 }

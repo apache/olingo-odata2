@@ -80,6 +80,15 @@ public interface JPAEdmPropertyView extends JPAEdmBaseView {
   Attribute<?, ?> getJPAAttribute();
 
   /**
+   * The method returns a JPA Attribute referenced by a JPA Attribute in the {@link javax.persistence.JoinColumn}
+   * annotation for the given JPA entity type .
+   * 
+   * @return an instance of type {@link javax.persistence.metamodel.Attribute
+   * <?, ?>}
+   */
+  Attribute<?, ?> getJPAReferencedAttribute();
+
+  /**
    * The method returns a JPA EDM navigation property view.
    * 
    * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmNavigationPropertyView}

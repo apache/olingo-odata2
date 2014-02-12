@@ -46,8 +46,6 @@ import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEmbeddableMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAMetaModelMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPASingularAttributeMock;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmComplexType;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

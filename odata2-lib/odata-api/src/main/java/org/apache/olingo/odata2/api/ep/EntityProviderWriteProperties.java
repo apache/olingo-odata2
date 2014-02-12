@@ -42,8 +42,17 @@ public class EntityProviderWriteProperties {
   private ExpandSelectTreeNode expandSelectTree;
   private Map<String, ODataCallback> callbacks = Collections.emptyMap();
   private URI selfLink;
+  private boolean includeSimplePropertyType;
 
   private EntityProviderWriteProperties() {}
+
+  /**
+   * Returns if type information of simple properties should be in the payload.
+   * @return true if information should be in the payload.
+   */
+  public final boolean isIncludeSimplePropertyType() {
+    return includeSimplePropertyType;
+  }
 
   /**
    * Gets the self link from an application. May be null.
@@ -115,6 +124,15 @@ public class EntityProviderWriteProperties {
 
   public static class ODataEntityProviderPropertiesBuilder {
     private final EntityProviderWriteProperties properties = new EntityProviderWriteProperties();
+
+    /**
+     * @param includeSimplePropertyType true to include simple property type information in the payload
+     */
+    public final ODataEntityProviderPropertiesBuilder includeSimplePropertyType(
+        final boolean includeSimplePropertyType) {
+      properties.includeSimplePropertyType = includeSimplePropertyType;
+      return this;
+    }
 
     /**
      * @param mediaResourceMimeType the mediaResourceMimeType to set
@@ -197,6 +215,7 @@ public class EntityProviderWriteProperties {
       this.properties.expandSelectTree = properties.getExpandSelectTree();
       this.properties.callbacks = properties.getCallbacks();
       this.properties.selfLink = properties.getSelfLink();
+      this.properties.includeSimplePropertyType = properties.includeSimplePropertyType;
       return this;
     }
   }

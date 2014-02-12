@@ -39,24 +39,24 @@ public class SalesOrderProcessingExtension implements JPAEdmExtension {
 
   private ComplexType getComplexType() {
     ComplexType complexType = new ComplexType();
-    
+
     List<Property> properties = new ArrayList<Property>();
     SimpleProperty property = new SimpleProperty();
-    
+
     property.setName("Amount");
     property.setType(EdmSimpleTypeKind.Double);
     properties.add(property);
-    
+
     property = new SimpleProperty();
     property.setName("Currency");
     property.setType(EdmSimpleTypeKind.String);
     properties.add(property);
-    
+
     complexType.setName("OrderValue");
     complexType.setProperties(properties);
-    
+
     return complexType;
-    
+
   }
 
   @Override

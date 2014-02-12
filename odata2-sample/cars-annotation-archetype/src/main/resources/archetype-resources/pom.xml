@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+  license agreements. See the NOTICE file distributed with this work for additional 
+  information regarding copyright ownership. The ASF licenses this file to 
+  you under the Apache License, Version 2.0 (the "License"); you may not use 
+  this file except in compliance with the License. You may obtain a copy of 
+  the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+  by applicable law or agreed to in writing, software distributed under the 
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+  OF ANY KIND, either express or implied. See the License for the specific 
+  language governing permissions and limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>${groupId}</groupId>
+  <artifactId>${artifactId}</artifactId>
+  <version>${version}</version>
+  <name>${project.artifactId}</name>
+
+  <packaging>war</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Plugin Versions -->
+    <version.compiler-plugin>2.3.2</version.compiler-plugin>
+    <version.deploy-plugin>2.8.1</version.deploy-plugin>
+    <version.eclipse-plugin>2.9</version.eclipse-plugin>
+    <version.jetty-plugin>9.0.6.v20130930</version.jetty-plugin>
+    <!-- Dependency Versions -->
+    <version.cxf>2.7.6</version.cxf>
+    <version.servlet-api>2.5</version.servlet-api>
+    <version.jaxrs-api>2.0-m10</version.jaxrs-api>
+    <version.slf4j>1.7.1</version.slf4j>
+    <version.olingo>1.2.0-SNAPSHOT</version.olingo>
+  </properties>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <defaultGoal>package jetty:run</defaultGoal>
+    <resources>
+      <resource>
+        <directory>src/main/version</directory>
+        <filtering>true</filtering>
+        <targetPath>../${project.build.finalName}/gen</targetPath>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>target/maven-shared-archive-resources</directory>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${version.compiler-plugin}</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>${version.deploy-plugin}</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>${version.eclipse-plugin}</version>
+        <configuration>
+          <addGroupIdToProjectName>true</addGroupIdToProjectName>
+          <addVersionToProjectName>true</addVersionToProjectName>
+          <wtpversion>2.0</wtpversion>
+          <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${version.jetty-plugin}</version>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <!-- Apache Olingo Library dependencies -->
+    <dependency>
+      <groupId>org.apache.olingo</groupId>
+      <artifactId>olingo-odata2-api-incubating</artifactId>
+      <version>${version.olingo}</version>
+    </dependency>
+    <dependency>
+      <artifactId>olingo-odata2-api-annotation-incubating</artifactId>
+      <groupId>org.apache.olingo</groupId>
+      <type>jar</type>
+      <version>${version.olingo}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.olingo</groupId>
+      <artifactId>olingo-odata2-core-incubating</artifactId>
+      <version>${version.olingo}</version>
+    </dependency>
+    <!-- Apache Olingo Annotation Processor Extension dependencies -->
+    <dependency>
+      <groupId>org.apache.olingo</groupId>
+      <artifactId>olingo-odata2-annotation-processor-api-incubating</artifactId>
+      <version>${version.olingo}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.olingo</groupId>
+      <artifactId>olingo-odata2-annotation-processor-core-incubating</artifactId>
+      <version>${version.olingo}</version>
+    </dependency>
+    <!-- Additional dependencies -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${version.slf4j}</version>
+    </dependency>
+    <!-- Servlet/REST dependencies -->
+    <dependency>
+      <!-- required because of auto detection of web facet 2.5 -->
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${version.servlet-api}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+      <version>${version.jaxrs-api}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+      <version>${version.cxf}</version>
+    </dependency>
+  </dependencies>
+</project>

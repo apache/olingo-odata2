@@ -44,6 +44,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
@@ -202,7 +203,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
-      XmlPropertyEntityProducer ps = new XmlPropertyEntityProducer();
+      XmlPropertyEntityProducer ps = new XmlPropertyEntityProducer(false);
       ps.append(writer, propertyInfo, value);
 
       writer.flush();
@@ -357,6 +358,12 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
   @Override
   public ODataFeed readFeed(final EdmEntitySet entitySet, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
+    return readDeltaFeed(entitySet, content, properties);
+  }
+
+  @Override
+  public ODataDeltaFeed readDeltaFeed(final EdmEntitySet entitySet, final InputStream content,
       final EntityProviderReadProperties properties) throws EntityProviderException {
     XmlEntityConsumer xec = new XmlEntityConsumer();
     return xec.readFeed(entitySet, content, properties);

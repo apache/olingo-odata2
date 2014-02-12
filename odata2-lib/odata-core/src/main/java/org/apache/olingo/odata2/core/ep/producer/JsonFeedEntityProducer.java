@@ -26,6 +26,8 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
+import org.apache.olingo.odata2.api.ep.callback.TombstoneCallbackResult;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
@@ -45,6 +47,8 @@ public class JsonFeedEntityProducer {
   public void append(final Writer writer, final EntityInfoAggregator entityInfo, final List<Map<String, Object>> data,
       final boolean isRootElement) throws EntityProviderException {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
+
+    TombstoneCallback callback = getTombstoneCallback();
 
     try {
       jsonStreamWriter.beginObject();
@@ -71,16 +75,20 @@ public class JsonFeedEntityProducer {
         }
         entryProducer.append(writer, entityInfo, entryData, false);
       }
+
+      if (callback != null) {
+        JsonDeletedEntryEntityProducer deletedEntryProducer = new JsonDeletedEntryEntityProducer(properties);
+        TombstoneCallbackResult callbackResult = callback.getTombstoneCallbackResult();
+        List<Map<String, Object>> deletedEntries = callbackResult.getDeletedEntriesData();
+        if (deletedEntries != null) {
+          deletedEntryProducer.append(writer, entityInfo, deletedEntries);
+        }
+      }
+
       jsonStreamWriter.endArray();
 
-      // Write "next" link.
-      // To be compatible with other implementations out there, the link is
-      // written directly after "__next" and not as "{"uri":"next link"}",
-      // deviating from the OData 2.0 specification.
-      if (properties.getNextLink() != null) {
-        jsonStreamWriter.separator()
-            .namedStringValue(FormatJson.NEXT, properties.getNextLink());
-      }
+      appendNextLink(jsonStreamWriter);
+      appendDeltaLink(callback, jsonStreamWriter);
 
       if (isRootElement) {
         jsonStreamWriter.endObject();
@@ -90,6 +98,40 @@ public class JsonFeedEntityProducer {
     } catch (final IOException e) {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
+    }
+  }
+
+  private TombstoneCallback getTombstoneCallback() {
+    if (properties.getCallbacks() != null
+        && properties.getCallbacks().containsKey(TombstoneCallback.CALLBACK_KEY_TOMBSTONE)) {
+      TombstoneCallback callback =
+          (TombstoneCallback) properties.getCallbacks().get(TombstoneCallback.CALLBACK_KEY_TOMBSTONE);
+      return callback;
+    } else {
+      return null;
+    }
+  }
+
+  private void appendNextLink(final JsonStreamWriter jsonStreamWriter) throws IOException {
+    // Write "next" link.
+    // To be compatible with other implementations out there, the link is
+    // written directly after "__next" and not as "{"uri":"next link"}",
+    // deviating from the OData 2.0 specification.
+    if (properties.getNextLink() != null) {
+      jsonStreamWriter.separator()
+          .namedStringValue(FormatJson.NEXT, properties.getNextLink());
+    }
+  }
+
+  private void appendDeltaLink(final TombstoneCallback callback, final JsonStreamWriter jsonStreamWriter)
+      throws IOException {
+    if (callback != null) {
+      TombstoneCallbackResult callbackResult = callback.getTombstoneCallbackResult();
+
+      String deltaLink = callbackResult.getDeltaLink();
+      if (deltaLink != null) {
+        jsonStreamWriter.separator().namedStringValue(FormatJson.DELTA, deltaLink);
+      }
     }
   }
 }

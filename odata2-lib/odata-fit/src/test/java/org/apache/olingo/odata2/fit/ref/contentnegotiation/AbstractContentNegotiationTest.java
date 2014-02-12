@@ -42,8 +42,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.olingo.odata2.annotation.processor.core.ListsProcessor;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.BeanPropertyAccess;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
@@ -56,6 +54,7 @@ import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.core.uri.UriType;
 import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.ref.model.DataContainer;
+import org.apache.olingo.odata2.ref.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
@@ -105,8 +104,7 @@ public abstract class AbstractContentNegotiationTest extends AbstractFitTest {
   protected ODataService createService() throws ODataException {
     DataContainer dataContainer = new DataContainer();
     dataContainer.init();
-    final ODataSingleProcessor processor = new ListsProcessor(new ScenarioDataSource(dataContainer),
-        new BeanPropertyAccess());
+    final ODataSingleProcessor processor = new ListsProcessor(new ScenarioDataSource(dataContainer));
     final EdmProvider provider = new ScenarioEdmProvider();
     return new ODataSingleProcessorService(provider, processor) {};
   }

@@ -33,6 +33,7 @@ import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
@@ -229,7 +230,7 @@ public final class EntityProvider {
      * Read (de-serialize) a data feed from <code>content</code> (as {@link InputStream}) in specified format (given as
      * <code>contentType</code>)
      * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide this data as
-     * {@link ODataEntry}.
+     * {@link ODataFeed}.
      * 
      * @param contentType format of content in the given input stream.
      * @param entitySet entity data model for entity set to be read
@@ -239,6 +240,22 @@ public final class EntityProvider {
      * @throws EntityProviderException if reading of data (de-serialization) fails
      */
     ODataFeed readFeed(String contentType, EdmEntitySet entitySet, InputStream content,
+        EntityProviderReadProperties properties) throws EntityProviderException;
+
+    /**
+     * Read (de-serialize) a delta data feed from <code>content</code> (as {@link InputStream}) in specified format
+     * (given as <code>contentType</code>)
+     * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide this data as
+     * {@link ODataDeltaFeed}.
+     * 
+     * @param contentType format of content in the given input stream.
+     * @param entitySet entity data model for entity set to be read
+     * @param content delta feed data in form of an {@link InputStream} which contains the data in specified format
+     * @param properties additional properties necessary for reading content from {@link InputStream} into {@link Map}.
+     * @return an {@link ODataDeltaFeed} object
+     * @throws EntityProviderException if reading of data (de-serialization) fails
+     */
+    ODataDeltaFeed readDeltaFeed(String contentType, EdmEntitySet entitySet, InputStream content,
         EntityProviderReadProperties properties) throws EntityProviderException;
 
     /**
@@ -631,6 +648,25 @@ public final class EntityProvider {
   public static ODataFeed readFeed(final String contentType, final EdmEntitySet entitySet, final InputStream content,
       final EntityProviderReadProperties properties) throws EntityProviderException {
     return createEntityProvider().readFeed(contentType, entitySet, content, properties);
+  }
+
+  /**
+   * Read (de-serialize) a delta data feed from <code>content</code> (as {@link InputStream}) in specified format
+   * (given as <code>contentType</code>) based on <code>entity data model</code> (given as {@link EdmEntitySet}) and
+   * provide this data as {@link ODataEntry} .
+   * 
+   * @param contentType format of content in the given input stream.
+   * @param entitySet entity data model for entity set to be read
+   * @param content feed data in form of an {@link InputStream} which contains the data in specified format
+   * @param properties additional properties necessary for reading content from {@link InputStream} into {@link Map}.
+   * Must not be null.
+   * @return an {@link ODataDeltaFeed} object
+   * @throws EntityProviderException if reading of data (de-serialization) fails
+   */
+  public static ODataDeltaFeed readDeltaFeed(final String contentType, final EdmEntitySet entitySet,
+      final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
+    return createEntityProvider().readDeltaFeed(contentType, entitySet, content, properties);
   }
 
   /**

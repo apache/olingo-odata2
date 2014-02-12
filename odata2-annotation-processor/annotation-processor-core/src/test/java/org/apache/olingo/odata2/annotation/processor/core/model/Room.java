@@ -42,7 +42,7 @@ public class Room extends RefBase {
   public Room() {
     this(0, null);
   }
-  
+
   public Room(final int id, final String name) {
     super(id, name);
   }

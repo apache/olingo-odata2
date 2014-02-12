@@ -18,8 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.commons;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -33,7 +35,11 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import com.ctc.wstx.exc.WstxParsingException;
 
 public class XmlHelperTest {
 
@@ -68,6 +74,25 @@ public class XmlHelperTest {
           "        <!ENTITY lol9 \"&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;\">" +
           "    ]>" +
           "    <lolz>&lol9;</lolz>";
+
+  public static String XML_DOCTYPE =
+      "<?xml version=\"1.0\" standalone=\"yes\"?>" +
+          "<!DOCTYPE hallo [<!ELEMENT hallo (#PCDATA)>]>" +
+          "<hallo>Hallo Welt!</hallo>";
+
+  public static String XML_PROCESSING =
+      "<?xml version=\"1.0\"?>" +
+          "<?apache include file=\"somefile.html\" ?>" +
+          "<extract>" +
+          "  <data>&rules;</data>" +
+          "</extract>";
+
+  @BeforeClass
+  public static void beforeClass() {
+    // CHECKSTYLE:OFF
+    System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory"); // NOSONAR
+    // CHECKSTYLE:ON
+  }
 
   @Test
   public void createReader() throws Exception {
@@ -127,20 +152,60 @@ public class XmlHelperTest {
     }
   }
 
-  @Test(expected = EntityProviderException.class)
+  @Test
   public void lolApiWithProtection() throws Exception {
-    InputStream content = new ByteArrayInputStream(XML_LOL.getBytes("UTF-8"));
-    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    try {
+      InputStream content = new ByteArrayInputStream(XML_LOL.getBytes("UTF-8"));
+      EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+      EntityProvider.readEntry("application/xml", entitySet, content, EntityProviderReadProperties.init().build());
 
-    EntityProvider.readEntry("application/xml", entitySet, content, EntityProviderReadProperties.init().build());
+      fail();
+    } catch (EntityProviderException e) {
+      assertEquals(WstxParsingException.class, e.getCause().getClass());
+    }
   }
 
-  @Test(expected = EntityProviderException.class)
+  @Test
   public void xxeApiWithProtection() throws Exception {
-    InputStream content = new ByteArrayInputStream(XML_XXE.getBytes("UTF-8"));
-    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    try {
+      InputStream content = new ByteArrayInputStream(XML_XXE.getBytes("UTF-8"));
+      EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
 
-    EntityProvider.readEntry("application/xml", entitySet, content, EntityProviderReadProperties.init().build());
+      EntityProvider.readEntry("application/xml", entitySet, content, EntityProviderReadProperties.init().build());
+
+      fail();
+    } catch (EntityProviderException e) {
+      assertEquals(WstxParsingException.class, e.getCause().getClass());
+    }
   }
 
+  @Test
+  public void xmlDoctypeApiWithProtection() throws Exception {
+    try {
+      InputStream content = new ByteArrayInputStream(XML_DOCTYPE.getBytes("UTF-8"));
+      EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+
+      EntityProvider.readEntry("application/xml", entitySet, content, EntityProviderReadProperties.init().build());
+
+      fail();
+    } catch (EntityProviderException e) {
+      assertEquals(WstxParsingException.class, e.getCause().getClass());
+    }
+  }
+
+  @Test
+  @Ignore("not way to disable in parser")
+  public void xmlProcessingApiWithProtection() throws Exception {
+    try {
+      InputStream content = new ByteArrayInputStream(XML_PROCESSING.getBytes("UTF-8"));
+      EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+
+      EntityProvider.readEntry("application/xml", entitySet, content, EntityProviderReadProperties.init().build());
+
+      fail();
+    } catch (EntityProviderException e) {
+      e.printStackTrace();
+      assertEquals(WstxParsingException.class, e.getCause().getClass());
+    }
+  }
 }

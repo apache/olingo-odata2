@@ -326,6 +326,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     EasyMock.expect(selectItem.getProperty()).andStubReturn(getEdmPropertyForSelect());
     List<NavigationPropertySegment> navigationSegmentList = new ArrayList<NavigationPropertySegment>();
     EasyMock.expect(selectItem.getNavigationPropertySegments()).andStubReturn(navigationSegmentList);
+    EasyMock.expect(selectItem.isStar()).andReturn(false).anyTimes();
     EasyMock.replay(selectItem);
     return selectItem;
   }

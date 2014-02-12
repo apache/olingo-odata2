@@ -66,7 +66,6 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.api.edm.provider.Using;
 import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  * Provider for the entity data model used in the reference scenario
@@ -82,7 +81,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   private final Map<String, Schema> namespace2Schema = new HashMap<String, Schema>();
   private EntityContainer defaultContainer;
 
-  public AnnotationEdmProvider(final Collection<Class<?>> annotatedClasses) {
+  public AnnotationEdmProvider(final Collection<Class<?>> annotatedClasses) throws ODataException {
 
     this.annotatedClasses = new ArrayList<Class<?>>(annotatedClasses.size());
     for (Class<?> aClass : annotatedClasses) {
@@ -94,7 +93,7 @@ public class AnnotationEdmProvider extends EdmProvider {
     init();
   }
 
-  public AnnotationEdmProvider(final String packageToScan) {
+  public AnnotationEdmProvider(final String packageToScan) throws ODataException {
     annotatedClasses = ClassHelper.loadClasses(packageToScan, new ClassHelper.ClassValidator() {
       @Override
       public boolean isClassValid(final Class<?> c) {
@@ -105,7 +104,7 @@ public class AnnotationEdmProvider extends EdmProvider {
     init();
   }
 
-  private void init() {
+  private void init() throws ODataException {
     for (Class<?> aClass : annotatedClasses) {
       updateSchema(aClass);
       handleEntityContainer(aClass);
@@ -303,7 +302,7 @@ public class AnnotationEdmProvider extends EdmProvider {
     return ANNOTATION_HELPER.extractEntityTypeFqn(annotatedClass);
   }
 
-  private void finish() {
+  private void finish() throws ODataException {
     //
     Collection<ContainerBuilder> containers = containerName2ContainerBuilder.values();
     for (ContainerBuilder containerBuilder : containers) {
@@ -726,7 +725,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       return this;
     }
 
-    public void addAssociationSets(final Collection<Association> associations) {
+    public void addAssociationSets(final Collection<Association> associations) throws ODataException {
       for (Association association : associations) {
         AssociationSet as = new AssociationSet();
         as.setName(association.getName());
@@ -757,13 +756,13 @@ public class AnnotationEdmProvider extends EdmProvider {
       return ec;
     }
 
-    private String getEntitySetName(final AssociationEnd end) {
+    private String getEntitySetName(final AssociationEnd end) throws ODataException {
       for (EntitySet entitySet : entitySets) {
         if (entitySet.getEntityType().equals(end.getType())) {
           return entitySet.getName();
         }
       }
-      throw new ODataRuntimeException("No entity set found for " + end.getType());
+      throw new ODataException("No entity set found for " + end.getType());
     }
   }
 }

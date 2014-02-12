@@ -28,9 +28,10 @@ import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PostPersist;
 import javax.persistence.Table;
@@ -43,14 +44,10 @@ public class SalesOrderHeader {
 
   public SalesOrderHeader() {}
 
-  public SalesOrderHeader(final Calendar creationDate, final int buyerId, final String buyerName,
-      final Address buyerAddress, final String currencyCode, final double netAmount,
+  public SalesOrderHeader(final Calendar creationDate, final String currencyCode, final double netAmount,
       final String deliveryStatus, final char[] shortText, final Character[] longText) {
     super();
     this.creationDate = creationDate;
-    this.buyerId = buyerId;
-    this.buyerName = buyerName;
-    this.buyerAddress = buyerAddress;
     this.currencyCode = currencyCode;
     this.deliveryStatus = deliveryStatus;
     this.shortText = shortText;
@@ -67,28 +64,11 @@ public class SalesOrderHeader {
   @Column
   private Character status;
 
-  public Character getStatus() {
-    return status;
-  }
-
-  public void setStatus(final Character status) {
-    this.status = status;
-  }
-
   @Column(name = "SHORT_TEXT", length = 20)
   private char[] shortText;
 
   @Column(name = "LONG_TEXT", length = 40)
   private Character[] longText;
-
-  @Column(name = "BUYER_ID")
-  private int buyerId;
-
-  @Column(name = "BUYER_NAME", length = 255)
-  private String buyerName;
-
-  @Embedded
-  private Address buyerAddress;
 
   @Column(name = "CURRENCY_CODE", length = 3)
   private String currencyCode;
@@ -105,8 +85,28 @@ public class SalesOrderHeader {
   @OneToMany(mappedBy = "salesOrderHeader", cascade = CascadeType.ALL)
   private Set<SalesOrderItem> salesOrderItem = new HashSet<SalesOrderItem>();
 
-  @OneToMany(mappedBy = "salesOrderHeader", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "salesOrderHeader")
   private List<Note> notes = new ArrayList<Note>();
+
+  @ManyToOne
+  @JoinColumn(name = "CUST_ID", referencedColumnName = "ID")
+  private Customer customer;
+
+  public Customer getCustomer() {
+    return customer;
+  }
+
+  public void setCustomer(final Customer customer) {
+    this.customer = customer;
+  }
+
+  public Character getStatus() {
+    return status;
+  }
+
+  public void setStatus(final Character status) {
+    this.status = status;
+  }
 
   public long getSoId() {
     return soId;
@@ -136,30 +136,6 @@ public class SalesOrderHeader {
     Calendar newCalendar = Calendar.getInstance();
     newCalendar.setTime(newDate);
     this.creationDate = newCalendar;
-  }
-
-  public int getBuyerId() {
-    return buyerId;
-  }
-
-  public void setBuyerId(final int buyerId) {
-    this.buyerId = buyerId;
-  }
-
-  public String getBuyerName() {
-    return buyerName;
-  }
-
-  public void setBuyerName(final String buyerName) {
-    this.buyerName = buyerName;
-  }
-
-  public Address getBuyerAddress() {
-    return buyerAddress;
-  }
-
-  public void setBuyerAddress(final Address buyerAddress) {
-    this.buyerAddress = buyerAddress;
   }
 
   public String getCurrencyCode() {

@@ -55,6 +55,9 @@ public class EdmMockUtil {
     Map<String, ExpandSelectTreeNode> links = new HashMap<String, ExpandSelectTreeNode>();
     links.put("SalesOrderLineItemDetails", nextExpandNode);
     EasyMock.expect(expandNode.getLinks()).andStubReturn(links);
+    List<EdmProperty> edmPropertyList = new ArrayList<EdmProperty>();
+    edmPropertyList.add(mockEdmPropertyOfTarget());
+    EasyMock.expect(expandNode.getProperties()).andReturn(edmPropertyList).anyTimes();
     EasyMock.replay(expandNode);
     return expandNode;
   }
@@ -63,6 +66,9 @@ public class EdmMockUtil {
     ExpandSelectTreeNode expandNode = EasyMock.createMock(ExpandSelectTreeNode.class);
     Map<String, ExpandSelectTreeNode> links = new HashMap<String, ExpandSelectTreeNode>();
     EasyMock.expect(expandNode.getLinks()).andStubReturn(links);
+    List<EdmProperty> edmPropertyList = new ArrayList<EdmProperty>();
+    edmPropertyList.add(mockEdmPropertyOfTarget());
+    EasyMock.expect(expandNode.getProperties()).andReturn(edmPropertyList).anyTimes();
     EasyMock.replay(expandNode);
     return expandNode;
   }
@@ -85,7 +91,6 @@ public class EdmMockUtil {
       writeContext.setNavigationProperty(mockNavigationProperty());
       writeContext.setSourceEntitySet(mockSourceEntitySet());
       writeContext.setEntryData(getFeedData());
-
     } catch (URISyntaxException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -132,7 +137,9 @@ public class EdmMockUtil {
       EasyMock.expect(entityType.getProperty("id")).andStubReturn(property1);
       EasyMock.expect(entityType.getProperty("description")).andStubReturn(mockEdmPropertyOfSource2());
       EasyMock.expect(entityType.getPropertyNames()).andStubReturn(propertyNames);
-
+      List<EdmProperty> keyProperties = new ArrayList<EdmProperty>();
+      keyProperties.add(property1);
+      EasyMock.expect(entityType.getKeyProperties()).andStubReturn(keyProperties);
     } catch (EdmException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -234,6 +241,7 @@ public class EdmMockUtil {
     EdmEntitySet entitySet = EasyMock.createMock(EdmEntitySet.class);
     try {
       EasyMock.expect(entitySet.getEntityType()).andStubReturn(mockTargetEdmEntityType());
+      EasyMock.expect(entitySet.getName()).andStubReturn("SalesOrderLineItems");
     } catch (EdmException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -289,6 +297,10 @@ public class EdmMockUtil {
       EdmProperty property = mockEdmPropertyOfTarget();
       EasyMock.expect(entityType.getProperty("price")).andStubReturn(property);
       EasyMock.expect(entityType.getPropertyNames()).andStubReturn(propertyNames);
+
+      List<EdmProperty> keyProperties = new ArrayList<EdmProperty>();
+      keyProperties.add(property);
+      EasyMock.expect(entityType.getKeyProperties()).andStubReturn(keyProperties);
 
     } catch (EdmException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);

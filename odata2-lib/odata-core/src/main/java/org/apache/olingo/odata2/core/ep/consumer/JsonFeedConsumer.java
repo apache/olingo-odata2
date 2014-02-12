@@ -25,11 +25,14 @@ import java.util.List;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.api.ep.entry.DeletedEntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.feed.FeedMetadataImpl;
-import org.apache.olingo.odata2.core.ep.feed.ODataFeedImpl;
+import org.apache.olingo.odata2.core.ep.feed.JsonFeedEntry;
+import org.apache.olingo.odata2.core.ep.feed.ODataDeltaFeedImpl;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 
 import com.google.gson.stream.JsonReader;
@@ -43,6 +46,7 @@ public class JsonFeedConsumer {
   private JsonReader reader;
   private EntityInfoAggregator eia;
   private EntityProviderReadProperties readProperties;
+  private List<DeletedEntryMetadata> deletedEntries = new ArrayList<DeletedEntryMetadata>();
   private List<ODataEntry> entries = new ArrayList<ODataEntry>();
   private FeedMetadataImpl feedMetadata = new FeedMetadataImpl();
   private boolean resultsArrayPresent = false;
@@ -54,7 +58,7 @@ public class JsonFeedConsumer {
     this.readProperties = readProperties;
   }
 
-  public ODataFeed readFeedStandalone() throws EntityProviderException {
+  public ODataDeltaFeed readFeedStandalone() throws EntityProviderException {
     try {
       readFeed();
 
@@ -74,7 +78,7 @@ public class JsonFeedConsumer {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
-    return new ODataFeedImpl(entries, feedMetadata);
+    return new ODataDeltaFeedImpl(entries, feedMetadata, deletedEntries);
   }
 
   private void readFeed() throws IOException, EdmException, EntityProviderException {
@@ -145,8 +149,12 @@ public class JsonFeedConsumer {
   private void readArrayContent() throws IOException, EdmException, EntityProviderException {
     reader.beginArray();
     while (reader.hasNext()) {
-      final ODataEntry entry = new JsonEntryConsumer(reader, eia, readProperties).readFeedEntry();
-      entries.add(entry);
+      final JsonFeedEntry entry = new JsonEntryConsumer(reader, eia, readProperties).readFeedEntry();
+      if (entry.isODataEntry()) {
+        entries.add(entry.getODataEntry());
+      } else {
+        deletedEntries.add(entry.getDeletedEntryMetadata());
+      }
     }
     reader.endArray();
   }
@@ -176,12 +184,12 @@ public class JsonFeedConsumer {
     handleName(name);
     // consume the rest of the entry content
     readFeedContent();
-    return new ODataFeedImpl(entries, feedMetadata);
+    return new ODataDeltaFeedImpl(entries, feedMetadata);
   }
 
   protected ODataFeed readInlineFeedStandalone() throws EdmException, EntityProviderException, IOException {
     readFeed();
-    return new ODataFeedImpl(entries, feedMetadata);
+    return new ODataDeltaFeedImpl(entries, feedMetadata);
   }
 
 }

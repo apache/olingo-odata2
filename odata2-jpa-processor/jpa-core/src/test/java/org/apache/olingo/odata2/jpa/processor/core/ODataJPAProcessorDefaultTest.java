@@ -69,7 +69,6 @@ import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.jpa.processor.core.ODataJPAProcessorDefault;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmTestModelView;
 import org.easymock.EasyMock;
@@ -227,6 +226,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     EasyMock.expect(objUriInfo.getInlineCount()).andStubReturn(getInlineCount());
     EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
     EasyMock.expect(objUriInfo.getKeyPredicates()).andStubReturn(getKeyPredicates());
+    EasyMock.expect(objUriInfo.isLinks()).andStubReturn(false);
     EasyMock.replay(objUriInfo);
     return objUriInfo;
   }

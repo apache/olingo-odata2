@@ -18,9 +18,11 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.mock;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.metamodel.Metamodel;
 
+import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.easymock.EasyMock;
 
@@ -34,11 +36,33 @@ public abstract class ODataJPAContextMock {
     ODataJPAContext odataJPAContext = EasyMock.createMock(ODataJPAContext.class);
     EasyMock.expect(odataJPAContext.getPersistenceUnitName()).andStubReturn(NAMESPACE);
     EasyMock.expect(odataJPAContext.getEntityManagerFactory()).andReturn(mockEntityManagerFactory());
+    EasyMock.expect(odataJPAContext.getEntityManager()).andReturn(mockEntityManager());
     EasyMock.expect(odataJPAContext.getJPAEdmMappingModel()).andReturn(MAPPING_MODEL);
     EasyMock.expect(odataJPAContext.getJPAEdmExtension()).andReturn(null);
     EasyMock.expect(odataJPAContext.getDefaultNaming()).andReturn(true);
+
     EasyMock.replay(odataJPAContext);
     return odataJPAContext;
+  }
+
+  public static ODataJPAContext mockODataJPAContext(final ODataContext context) {
+    ODataJPAContext odataJPAContext = EasyMock.createMock(ODataJPAContext.class);
+    EasyMock.expect(odataJPAContext.getPersistenceUnitName()).andStubReturn(NAMESPACE);
+    EasyMock.expect(odataJPAContext.getEntityManagerFactory()).andReturn(mockEntityManagerFactory());
+    EasyMock.expect(odataJPAContext.getJPAEdmMappingModel()).andReturn(MAPPING_MODEL);
+    EasyMock.expect(odataJPAContext.getJPAEdmExtension()).andReturn(null);
+    EasyMock.expect(odataJPAContext.getDefaultNaming()).andReturn(true);
+    EasyMock.expect(odataJPAContext.getODataContext()).andReturn(context).anyTimes();
+
+    EasyMock.replay(odataJPAContext);
+    return odataJPAContext;
+  }
+
+  private static EntityManager mockEntityManager() {
+    EntityManager em = EasyMock.createMock(EntityManager.class);
+    EasyMock.replay(em);
+    return em;
+
   }
 
   private static EntityManagerFactory mockEntityManagerFactory() {

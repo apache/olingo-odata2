@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -30,7 +32,14 @@ import javax.persistence.EntityTransaction;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.uri.KeyPredicate;
+import org.apache.olingo.odata2.api.uri.NavigationSegment;
 import org.apache.olingo.odata2.api.uri.UriInfo;
+import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
+import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
@@ -42,6 +51,11 @@ import org.apache.olingo.odata2.jpa.processor.api.factory.ODataJPAFactory;
 import org.apache.olingo.odata2.jpa.processor.core.ODataEntityParser;
 
 public class JPALink {
+
+  private static final String SPACE = " ";
+  private static final String ODATA_COMMAND_FILTER = "$filter";
+  private static final String ODATA_OPERATOR_AND = "and";
+  private static final String ODATA_OPERATOR_NE = "ne";
 
   private ODataJPAContext context;
   private JPAProcessor jpaProcessor;
@@ -59,80 +73,106 @@ public class JPALink {
     sourceJPAEntity = jpaEntity;
   }
 
+  public void setTargetJPAEntity(final Object jpaEntity) {
+    targetJPAEntity = jpaEntity;
+  }
+
+  public Object getTargetJPAEntity() {
+    return targetJPAEntity;
+  }
+
+  public Object getSourceJPAEntity() {
+    return sourceJPAEntity;
+  }
+
   public void create(final PostUriInfo uriInfo, final InputStream content, final String requestContentType,
       final String contentType) throws ODataJPARuntimeException, ODataJPAModelException {
+    modifyLink((UriInfo) uriInfo, content, requestContentType, contentType);
+  }
 
-    EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();
-    String targerEntitySetName;
-    EdmNavigationProperty navigationProperty = null;
+  public void update(final PutMergePatchUriInfo putUriInfo, final InputStream content, final String requestContentType,
+      final String contentType) throws ODataJPARuntimeException, ODataJPAModelException {
+    modifyLink((UriInfo) putUriInfo, content, requestContentType, contentType);
+  }
+
+  public void delete(final DeleteUriInfo uriInfo) throws ODataJPARuntimeException {
     try {
-      targerEntitySetName = targetEntitySet.getName();
-    } catch (EdmException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
-    }
 
-    List<UriInfo> uriInfoList = new ArrayList<UriInfo>();
+      int index = context.getODataContext().getPathInfo().getODataSegments().size() - 2;
 
-    if (((UriInfo) uriInfo).isLinks()) {
-      UriInfo getUriInfo = parser.parseLink(targetEntitySet, content, requestContentType);
-      uriInfoList = new ArrayList<UriInfo>();
-      uriInfoList.add(getUriInfo);
-      navigationProperty = uriInfo.getNavigationSegments().get(0).getNavigationProperty();
-    } else {
-      uriInfoList = parser.parseLinks(targetEntitySet, content, contentType);
-    }
+      List<String> linkSegments = new ArrayList<String>();
+      String customLinkSegment = context.getODataContext().getPathInfo().getODataSegments().get(0).getPath();
+      linkSegments.add(customLinkSegment);
+      customLinkSegment = uriInfo.getNavigationSegments().get(0).getNavigationProperty().getName();
+      linkSegments.add(customLinkSegment);
 
-    if (uriInfoList == null) {
-      return;
-    }
-    try {
-      for (UriInfo getUriInfo : uriInfoList) {
+      HashMap<String, String> options = new HashMap<String, String>();
+      List<KeyPredicate> keyPredicates = uriInfo.getNavigationSegments().get(0).getKeyPredicates();
+      StringBuffer condition = new StringBuffer();
+      String literal = null;
+      KeyPredicate keyPredicate = null;
+      int size = keyPredicates.size();
+      for (int i = 0; i < size; i++) {
+        keyPredicate = keyPredicates.get(i);
 
-        if (!getUriInfo.getTargetEntitySet().getName().equals(targerEntitySetName)) {
-          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RELATIONSHIP_INVALID, null);
-        }
-        if (!((UriInfo) uriInfo).isLinks()) {
-          navigationProperty = getUriInfo.getNavigationSegments().get(0).getNavigationProperty();
-        }
-
-        targetJPAEntity = jpaProcessor.process((GetEntityUriInfo) getUriInfo);
-        if (targetJPAEntity != null && ((UriInfo) uriInfo).isLinks()) {
-          getUriInfo = parser.parseLinkURI();
-          sourceJPAEntity = jpaProcessor.process((GetEntityUriInfo) getUriInfo);
-          if (sourceJPAEntity == null) {
-            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND
-                .addContent(getUriInfo.getTargetEntitySet().getName()), null);
-          }
-        }
-
-        JPAEntityParser entityParser = new JPAEntityParser();
-        Method setMethod =
-            entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
-
-        Method getMethod =
-            entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
-
-        if (getMethod.getReturnType().getTypeParameters() != null) {
-          @SuppressWarnings("unchecked")
-          List<Object> relatedEntities = (List<Object>) getMethod.invoke(sourceJPAEntity);
-          relatedEntities.add(targetJPAEntity);
-          setMethod.invoke(sourceJPAEntity, relatedEntities);
-        } else {
-          setMethod.invoke(sourceJPAEntity, targetJPAEntity);
+        literal = ((EdmSimpleType) keyPredicate.getProperty().getType()).toUriLiteral(keyPredicate.getLiteral());
+        condition.append(keyPredicate.getProperty().getName()).append(SPACE);
+        condition.append(ODATA_OPERATOR_NE).append(SPACE);
+        condition.append(literal).append(SPACE);
+        if (i != size - 1) {
+          condition.append(ODATA_OPERATOR_AND).append(SPACE);
         }
       }
-    } catch (IllegalAccessException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
-    } catch (IllegalArgumentException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
-    } catch (InvocationTargetException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+      options.put(ODATA_COMMAND_FILTER, condition.toString());
+
+      UriInfo parsedUriInfo = parser.parseLinkSegments(linkSegments, options);
+      List<Object> relatedEntities = jpaProcessor.process((GetEntitySetUriInfo) parsedUriInfo);
+
+      parsedUriInfo = parser.parseURISegment(0, index);
+      if (parsedUriInfo != null) {
+        targetJPAEntity = jpaProcessor.process((GetEntityUriInfo) parsedUriInfo);
+        if (targetJPAEntity == null) {
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND
+              .addContent(parsedUriInfo.getTargetEntitySet().getName()), null);
+        }
+        NavigationSegment navigationSegment = uriInfo.getNavigationSegments().get(0);
+        EdmNavigationProperty navigationProperty = navigationSegment.getNavigationProperty();
+        delinkJPAEntities(targetJPAEntity, relatedEntities, navigationProperty);
+      }
+
     } catch (EdmException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+    } catch (ODataException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
   }
 
-  public void delete() {}
+  private void delinkJPAEntities(final Object jpaEntity,
+      final List<Object> relatedJPAEntities,
+      final EdmNavigationProperty targetNavigationProperty)
+      throws ODataJPARuntimeException {
+
+    try {
+      JPAEntityParser entityParser = new JPAEntityParser();
+      Method setMethod = entityParser.getAccessModifier(jpaEntity.getClass(),
+          targetNavigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
+
+      Method getMethod = entityParser.getAccessModifier(jpaEntity.getClass(),
+          targetNavigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
+
+      if (getMethod.getReturnType().getTypeParameters() != null
+          && getMethod.getReturnType().getTypeParameters().length != 0) {
+        setMethod.invoke(jpaEntity, relatedJPAEntities);
+      } else {
+        setMethod.invoke(jpaEntity, (Object) null);
+      }
+    } catch (IllegalAccessException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (InvocationTargetException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    }
+
+  }
 
   public void save() {
     EntityManager em = context.getEntityManager();
@@ -140,86 +180,150 @@ public class JPALink {
 
     if (!tx.isActive()) {
       em.getTransaction().begin();
-      em.persist(sourceJPAEntity);
+      if (sourceJPAEntity != null) {
+        em.persist(sourceJPAEntity);
+      }
+      if (targetJPAEntity != null) {
+        em.persist(targetJPAEntity);
+        em.flush();
+      }
       em.getTransaction().commit();
     }
 
   }
 
-  public void update(final PutMergePatchUriInfo putUriInfo, final InputStream content, final String requestContentType,
-      final String contentType) throws ODataJPARuntimeException, ODataJPAModelException {
-    UriInfo uriInfo = (UriInfo) putUriInfo;
+  public void create(final EdmEntitySet entitySet, final ODataEntry oDataEntry,
+      final List<String> navigationPropertyNames)
+      throws ODataJPARuntimeException,
+      ODataJPAModelException {
 
-    EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();
-    String targerEntitySetName;
-    EdmNavigationProperty navigationProperty = null;
     try {
-      targerEntitySetName = targetEntitySet.getName();
-    } catch (EdmException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
-    }
+      for (String navPropertyName : navigationPropertyNames) {
+        List<String> links = oDataEntry.getMetadata().getAssociationUris(navPropertyName);
+        if (links != null && links.isEmpty() == false) {
+          EdmNavigationProperty navProperty = (EdmNavigationProperty) entitySet.getEntityType()
+              .getProperty(
+                  navPropertyName);
 
-    List<UriInfo> uriInfoList = new ArrayList<UriInfo>();
-
-    if (((UriInfo) uriInfo).isLinks()) {
-      UriInfo getUriInfo = parser.parseLink(targetEntitySet, content, requestContentType);
-      uriInfoList = new ArrayList<UriInfo>();
-      uriInfoList.add(getUriInfo);
-      navigationProperty = uriInfo.getNavigationSegments().get(0).getNavigationProperty();
-    } else {
-      uriInfoList = parser.parseLinks(targetEntitySet, content, contentType);
-    }
-
-    if (uriInfoList == null) {
-      return;
-    }
-    try {
-      for (UriInfo getUriInfo : uriInfoList) {
-
-        if (!getUriInfo.getTargetEntitySet().getName().equals(targerEntitySetName)) {
-          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RELATIONSHIP_INVALID, null);
-        }
-        if (!((UriInfo) uriInfo).isLinks()) {
-          navigationProperty = getUriInfo.getNavigationSegments().get(0).getNavigationProperty();
-        }
-
-        targetJPAEntity = jpaProcessor.process((GetEntityUriInfo) getUriInfo);
-        if (targetJPAEntity != null && ((UriInfo) uriInfo).isLinks()) {
-          getUriInfo = parser.parseLinkURI();
-          sourceJPAEntity = jpaProcessor.process((GetEntityUriInfo) getUriInfo);
-          if (sourceJPAEntity == null) {
-            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND
-                .addContent(getUriInfo.getTargetEntitySet().getName()), null);
+          for (String link : links) {
+            UriInfo bindingUriInfo = parser.parseBindingLink(link, new HashMap<String, String>());
+            targetJPAEntity = jpaProcessor.process((GetEntityUriInfo) bindingUriInfo);
+            List<Object> targetJPAEntities = new ArrayList<Object>();
+            targetJPAEntities.add(targetJPAEntity);
+            linkJPAEntities(targetJPAEntities, sourceJPAEntity, navProperty);
           }
         }
-
-        JPAEntityParser entityParser = new JPAEntityParser();
-        Method setMethod =
-            entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
-
-        Method getMethod =
-            entityParser.getAccessModifier(sourceJPAEntity, navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
-
-        if (getMethod.getReturnType().getTypeParameters() != null
-            && getMethod.getReturnType().getTypeParameters().length != 0) {
-          @SuppressWarnings("unchecked")
-          List<Object> relatedEntities = (List<Object>) getMethod.invoke(sourceJPAEntity);
-          relatedEntities.add(targetJPAEntity);
-          setMethod.invoke(sourceJPAEntity, relatedEntities);
-        } else {
-          setMethod.invoke(sourceJPAEntity, targetJPAEntity);
-        }
       }
-    } catch (IllegalAccessException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
-    } catch (IllegalArgumentException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
-    } catch (InvocationTargetException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     } catch (EdmException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
 
   }
 
+  public void create(final PostUriInfo uriInfo) throws ODataJPARuntimeException,
+      ODataJPAModelException {
+    try {
+      int index = context.getODataContext().getPathInfo().getODataSegments().size() - 2;
+      UriInfo parsedUriInfo = parser.parseURISegment(index, index + 1);
+      Object targetJPAEntity = null;
+
+      if (parsedUriInfo != null) {
+        targetJPAEntity = jpaProcessor.process((GetEntityUriInfo) parsedUriInfo);
+        if (targetJPAEntity == null) {
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND
+              .addContent(parsedUriInfo.getTargetEntitySet().getName()), null);
+        }
+        List<Object> targetJPAEntities = new ArrayList<Object>();
+        targetJPAEntities.add(sourceJPAEntity);
+        linkJPAEntities(targetJPAEntities, targetJPAEntity, uriInfo.getNavigationSegments().get(0)
+            .getNavigationProperty());
+      }
+
+    } catch (EdmException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+    } catch (ODataException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+    }
+  }
+
+  private void modifyLink(final UriInfo uriInfo, final InputStream content, final String requestContentType,
+      final String contentType)
+      throws ODataJPARuntimeException, ODataJPAModelException {
+    try {
+      EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();
+      String targerEntitySetName = targetEntitySet.getName();
+      EdmNavigationProperty navigationProperty = null;
+      UriInfo getUriInfo = null;
+
+      if (uriInfo.isLinks()) {
+        getUriInfo = parser.parseLink(targetEntitySet, content, requestContentType);
+        navigationProperty = uriInfo.getNavigationSegments().get(0).getNavigationProperty();
+      } else {
+        return;
+      }
+
+      if (!getUriInfo.getTargetEntitySet().getName().equals(targerEntitySetName))
+      {
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RELATIONSHIP_INVALID, null);
+      }
+
+      targetJPAEntity = jpaProcessor.process((GetEntityUriInfo) getUriInfo);
+      if (targetJPAEntity != null && sourceJPAEntity == null) {
+        int index = context.getODataContext().getPathInfo().getODataSegments().size() - 2;
+        getUriInfo = parser.parseURISegment(0, index);
+        sourceJPAEntity = jpaProcessor.process((GetEntityUriInfo) getUriInfo);
+        if (sourceJPAEntity == null) {
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND
+              .addContent(getUriInfo.getTargetEntitySet().getName()), null);
+        }
+      }
+      if (targetJPAEntity != null && sourceJPAEntity != null) {
+        List<Object> targetJPAEntities = new ArrayList<Object>();
+        targetJPAEntities.add(targetJPAEntity);
+        linkJPAEntities(targetJPAEntities, sourceJPAEntity, navigationProperty);
+      }
+
+    } catch (IllegalArgumentException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (EdmException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (ODataException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public static void linkJPAEntities(final Collection<Object> targetJPAEntities, final Object sourceJPAEntity,
+      final EdmNavigationProperty navigationProperty) throws ODataJPARuntimeException {
+    if (targetJPAEntities == null || sourceJPAEntity == null || navigationProperty == null) {
+      return;
+    }
+    try {
+      JPAEntityParser entityParser = new JPAEntityParser();
+      Method setMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
+          navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
+
+      switch (navigationProperty.getMultiplicity()) {
+      case MANY:
+        Method getMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
+            navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
+        Collection<Object> relatedEntities = (Collection<Object>) getMethod.invoke(sourceJPAEntity);
+        relatedEntities.addAll(targetJPAEntities);
+        setMethod.invoke(sourceJPAEntity, relatedEntities);
+        break;
+      case ONE:
+      case ZERO_TO_ONE:
+        setMethod.invoke(sourceJPAEntity, targetJPAEntities.iterator().next());
+        break;
+      }
+    } catch (EdmException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (IllegalArgumentException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (IllegalAccessException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (InvocationTargetException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    }
+  }
 }

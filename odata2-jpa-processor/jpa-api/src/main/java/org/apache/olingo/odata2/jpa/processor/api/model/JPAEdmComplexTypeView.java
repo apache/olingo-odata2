@@ -126,11 +126,11 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
    * 
    */
   public boolean isReferencedInKey(String complexTypeName);
-  
+
   /**
    * The method sets the given EDM complex type as referenced in an Entity as a key property
    * @param complexTypeName
-   *  EDM complex Type name
+   * EDM complex Type name
    */
   public void setReferencedInKey(String complexTypeName);
 

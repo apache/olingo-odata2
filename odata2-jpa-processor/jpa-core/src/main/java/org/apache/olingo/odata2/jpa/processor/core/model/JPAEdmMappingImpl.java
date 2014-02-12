@@ -47,5 +47,4 @@ public class JPAEdmMappingImpl extends Mapping implements JPAEdmMapping {
   public Class<?> getJPAType() {
     return type;
   }
-
 }

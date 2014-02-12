@@ -33,6 +33,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityLinkUriInfo;
@@ -269,34 +270,33 @@ public class JPAProcessorImpl implements JPAProcessor {
 
   /* Process Create Entity Request */
   @Override
-  public <T> List<T> process(final PostUriInfo createView, final InputStream content,
+  public Object process(final PostUriInfo createView, final InputStream content,
       final String requestedContentType) throws ODataJPAModelException,
       ODataJPARuntimeException {
     return processCreate(createView, content, null, requestedContentType);
   }
 
   @Override
-  public <T> List<T> process(final PostUriInfo createView, final Map<String, Object> content)
+  public Object process(final PostUriInfo createView, final Map<String, Object> content)
       throws ODataJPAModelException, ODataJPARuntimeException {
     return processCreate(createView, null, content, null);
   }
 
   /* Process Update Entity Request */
   @Override
-  public <T> Object process(final PutMergePatchUriInfo updateView,
+  public Object process(final PutMergePatchUriInfo updateView,
       final InputStream content, final String requestContentType)
       throws ODataJPAModelException, ODataJPARuntimeException {
     return processUpdate(updateView, content, null, requestContentType);
   }
 
   @Override
-  public <T> Object process(final PutMergePatchUriInfo updateView, final Map<String, Object> content)
+  public Object process(final PutMergePatchUriInfo updateView, final Map<String, Object> content)
       throws ODataJPAModelException, ODataJPARuntimeException {
     return processUpdate(updateView, null, content, null);
   }
 
-  @SuppressWarnings("unchecked")
-  private <T> List<T> processCreate(final PostUriInfo createView, final InputStream content,
+  private Object processCreate(final PostUriInfo createView, final InputStream content,
       final Map<String, Object> properties,
       final String requestedContentType) throws ODataJPAModelException,
       ODataJPARuntimeException {
@@ -304,8 +304,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
       final EdmEntitySet oDataEntitySet = createView.getTargetEntitySet();
       final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
-      final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet);
-      final List<Object> createList = new ArrayList<Object>();
+      final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet, oDataJPAContext);
       Object jpaEntity = null;
 
       if (content != null) {
@@ -313,9 +312,6 @@ public class JPAProcessorImpl implements JPAProcessor {
         final ODataEntry oDataEntry =
             oDataEntityParser.parseEntry(oDataEntitySet, content, requestedContentType, false);
         virtualJPAEntity.create(oDataEntry);
-        JPALink link = new JPALink(oDataJPAContext);
-        link.setSourceJPAEntity(jpaEntity);
-        link.create(createView, content, requestedContentType, requestedContentType);
       } else if (properties != null) {
         virtualJPAEntity.create(properties);
       } else {
@@ -329,10 +325,8 @@ public class JPAProcessorImpl implements JPAProcessor {
       if (em.contains(jpaEntity)) {
         em.getTransaction().commit();
 
-        createList.add(virtualJPAEntity.getJPAEntity());
-        createList.add(virtualJPAEntity.getInlineJPAEntities());
+        return jpaEntity;
 
-        return (List<T>) createList;
       }
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
@@ -367,7 +361,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
       final EdmEntitySet oDataEntitySet = updateView.getTargetEntitySet();
       final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
-      final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet);
+      final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet, oDataJPAContext);
       virtualJPAEntity.setJPAEntity(jpaEntity);
 
       if (content != null) {
@@ -396,6 +390,9 @@ public class JPAProcessorImpl implements JPAProcessor {
     JPQLContextType contextType = null;
     try {
       if (uriParserResultView instanceof DeleteUriInfo) {
+        if (((UriInfo) uriParserResultView).isLinks()) {
+          return deleteLink(uriParserResultView);
+        }
         uriParserResultView = ((DeleteUriInfo) uriParserResultView);
         if (!((DeleteUriInfo) uriParserResultView).getStartEntitySet().getName()
             .equals(((DeleteUriInfo) uriParserResultView).getTargetEntitySet().getName())) {
@@ -409,21 +406,27 @@ public class JPAProcessorImpl implements JPAProcessor {
           ODataJPARuntimeException.GENERAL, e);
     }
 
-    // First read the entity with read operation.
     Object selectedObject = readEntity(uriParserResultView, contextType);
-    // Read operation done. This object would be passed on to entity manager for delete
     if (selectedObject != null) {
       try {
         em.getTransaction().begin();
         em.remove(selectedObject);
         em.flush();
         em.getTransaction().commit();
+
       } catch (Exception e) {
         throw ODataJPARuntimeException.throwException(
             ODataJPARuntimeException.ERROR_JPQL_DELETE_REQUEST, e);
       }
     }
     return selectedObject;
+  }
+
+  private Object deleteLink(final DeleteUriInfo uriParserResultView) throws ODataJPARuntimeException {
+    JPALink link = new JPALink(oDataJPAContext);
+    link.delete(uriParserResultView);
+    link.save();
+    return link.getTargetJPAEntity();
   }
 
   /* Process Get Entity Link Request */

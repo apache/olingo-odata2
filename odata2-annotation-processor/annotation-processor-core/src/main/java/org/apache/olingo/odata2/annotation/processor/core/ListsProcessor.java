@@ -30,8 +30,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.olingo.odata2.annotation.processor.core.datasource.DataSource;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.ValueAccess;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.DataSource.BinaryData;
+import org.apache.olingo.odata2.annotation.processor.core.datasource.ValueAccess;
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.batch.BatchHandler;
 import org.apache.olingo.odata2.api.batch.BatchRequestPart;
@@ -172,12 +172,8 @@ public class ListsProcessor extends DataSourceProcessor {
         sortInDefaultOrder(entitySet, data);
       }
 
-      // TODO: Percent-encode "next" link.
-      nextLink = context.getPathInfo().getServiceRoot().relativize(context.getPathInfo().getRequestUri()).toString()
-          .replaceAll("\\$skiptoken=.+?&?", "")
-          .replaceAll("\\$skip=.+?&?", "")
-          .replaceFirst("(?:\\?|&)$", ""); // Remove potentially trailing "?" or "&" left over from remove actions
-                                           // above.
+      nextLink = context.getPathInfo().getServiceRoot().relativize(context.getPathInfo().getRequestUri()).toString();
+      nextLink = percentEncodeNextLink(nextLink);
       nextLink += (nextLink.contains("?") ? "&" : "?")
           + "$skiptoken=" + getSkipToken(entitySet, data.get(SERVER_PAGING_SIZE));
 
@@ -207,6 +203,16 @@ public class ListsProcessor extends DataSourceProcessor {
     context.stopRuntimeMeasurement(timingHandle);
 
     return ODataResponse.fromResponse(response).build();
+  }
+
+  String percentEncodeNextLink(final String link) {
+    if (link == null) {
+      return null;
+    }
+
+    return link.replaceAll("\\$skiptoken=.+?(?:&|$)", "")
+        .replaceAll("\\$skip=.+?(?:&|$)", "")
+        .replaceFirst("(?:\\?|&)$", ""); // Remove potentially trailing "?" or "&" left over from remove actions
   }
 
   @Override
@@ -900,7 +906,7 @@ public class ListsProcessor extends DataSourceProcessor {
           keys.isEmpty() ?
               dataSource.readData(startEntitySet) : dataSource.readData(startEntitySet, keys) :
           dataSource.readData(functionImport, functionImportParameters, keys);
-  
+
       EdmEntitySet currentEntitySet =
           functionImport == null ? startEntitySet : functionImport.getEntitySet();
       for (NavigationSegment navigationSegment : navigationSegments) {
@@ -1563,9 +1569,17 @@ public class ListsProcessor extends DataSourceProcessor {
     for (final String propertyName : type.getPropertyNames()) {
       final EdmProperty property = (EdmProperty) type.getProperty(propertyName);
       if (property.isSimple()) {
-        typeMap.put(propertyName, valueAccess.getPropertyType(data, property));
+        Object value = valueAccess.getPropertyType(data, property);
+        if(value != null) {
+          typeMap.put(propertyName, value);
+        }
       } else {
-        typeMap.put(propertyName, getStructuralTypeTypeMap(valueAccess.getPropertyValue(data, property),
+        Object value = valueAccess.getPropertyValue(data, property);
+        if(value == null) {
+          Class<?> complexClass = valueAccess.getPropertyType(data, property);
+          value = createInstance(complexClass);
+        }
+        typeMap.put(propertyName, getStructuralTypeTypeMap(value,
             (EdmStructuralType) property.getType()));
       }
     }
@@ -1577,6 +1591,9 @@ public class ListsProcessor extends DataSourceProcessor {
 
   private <T> void setStructuralTypeValuesFromMap(final T data, final EdmStructuralType type,
       final Map<String, Object> valueMap, final boolean merge) throws ODataException {
+    if(data == null) {
+      throw new ODataException("Unable to set structural type values to NULL data.");
+    }
     ODataContext context = getContext();
     final int timingHandle =
         context.startRuntimeMeasurement(getClass().getSimpleName(), "setStructuralTypeValuesFromMap");
@@ -1597,13 +1614,31 @@ public class ListsProcessor extends DataSourceProcessor {
         } else {
           @SuppressWarnings("unchecked")
           final Map<String, Object> values = (Map<String, Object>) value;
-          setStructuralTypeValuesFromMap(valueAccess.getPropertyValue(data, property),
+          Object complexData = valueAccess.getPropertyValue(data, property);
+          if(complexData == null) {
+            Class<?> complexClass = valueAccess.getPropertyType(data, property);
+            complexData = createInstance(complexClass);
+            valueAccess.setPropertyValue(data, property, complexData);
+          }
+          setStructuralTypeValuesFromMap(complexData,
               (EdmStructuralType) property.getType(), values, merge);
         }
       }
     }
 
     context.stopRuntimeMeasurement(timingHandle);
+  }
+
+  private Object createInstance(Class<?> complexClass) throws ODataException {
+    try {
+      return complexClass.newInstance();
+    } catch (InstantiationException e) {
+      throw new ODataException("Unable to create instance for complex data class '"
+          + complexClass + "'.", e);
+    } catch (IllegalAccessException e) {
+      throw new ODataException("Unable to create instance for complex data class '"
+          + complexClass + "'.", e);
+    }
   }
 
   @Override

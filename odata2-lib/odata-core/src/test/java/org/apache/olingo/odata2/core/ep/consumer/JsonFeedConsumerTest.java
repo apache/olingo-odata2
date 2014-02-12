@@ -23,14 +23,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.Assert;
+
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.ep.entry.DeletedEntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.MediaMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.junit.Test;
@@ -328,11 +333,200 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
     assertEquals("deltalink", feedMetadata.getDeltaLink());
   }
 
+  @Test
+  public void feedWithTeamAndNextAndDelta() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
+    String content =
+        "{\"d\":{\"results\":[{" +
+            "\"__metadata\":{\"id\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\"," +
+            "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\",\"type\":\"RefScenario.Team\"}," +
+            "\"Id\":\"1\",\"Name\":\"Team 1\",\"isScrumTeam\":false,\"nt_Employees\":{\"__deferred\":{" +
+            "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')/nt_Employees\"}}}]," +
+            "\"__next\":\"Rooms?$skiptoken=98\"," +
+            "\"__delta\":\"http://localhost:8080/ReferenceScenario.svc/Teams?!deltatoken=4711\"}}";
+    assertNotNull(content);
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataFeed feed = xec.readFeed(entitySet, contentBody, DEFAULT_PROPERTIES);
+    assertNotNull(feed);
+
+    List<ODataEntry> entries = feed.getEntries();
+    assertNotNull(entries);
+    assertEquals(1, entries.size());
+
+    FeedMetadata feedMetadata = feed.getFeedMetadata();
+    assertNotNull(feedMetadata);
+    assertEquals("Rooms?$skiptoken=98", feedMetadata.getNextLink());
+    assertEquals("http://localhost:8080/ReferenceScenario.svc/Teams?!deltatoken=4711", feedMetadata.getDeltaLink());
+  }
+
+  @Test
+  public void feedWithTeamAndDeltaAndDeletedEntriesWithoutWhen() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
+    String content =
+        "{\"d\":{\"results\":[{" +
+            "\"__metadata\":{\"id\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\"," +
+            "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\",\"type\":\"RefScenario.Team\"}," +
+            "\"Id\":\"1\",\"Name\":\"Team 1\",\"isScrumTeam\":false,\"nt_Employees\":{\"__deferred\":{" +
+            "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')/nt_Employees\"}}}" +
+            ",{ \"@odata.context\":\"$metadata#Teams/$deletedEntity\",\"id\":\"/Teams('2')\"}" +
+            "]," +
+            "\"__delta\":\"http://localhost:8080/ReferenceScenario.svc/Teams?!deltatoken=4711\"}}";
+    assertNotNull(content);
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataDeltaFeed feed = xec.readDeltaFeed(entitySet, contentBody, DEFAULT_PROPERTIES);
+    assertNotNull(feed);
+
+    List<ODataEntry> entries = feed.getEntries();
+    assertNotNull(entries);
+    assertEquals(1, entries.size());
+
+    FeedMetadata feedMetadata = feed.getFeedMetadata();
+    assertNotNull(feedMetadata);
+    assertEquals("http://localhost:8080/ReferenceScenario.svc/Teams?!deltatoken=4711", feedMetadata.getDeltaLink());
+
+    List<DeletedEntryMetadata> deletedEntries = feed.getDeletedEntries();
+    assertEquals(1, deletedEntries.size());
+    assertEquals("/Teams('2')", deletedEntries.get(0).getUri());
+    assertNull(deletedEntries.get(0).getWhen());
+  }
+
+  @Test
+  public void feedWithTeamAndDeltaAndDeletedEntries() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
+    String content =
+        "{\"d\":{\"results\":[{" +
+            "\"__metadata\":{\"id\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\"," +
+            "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')\",\"type\":\"RefScenario.Team\"}," +
+            "\"Id\":\"1\",\"Name\":\"Team 1\",\"isScrumTeam\":false,\"nt_Employees\":{\"__deferred\":{" +
+            "\"uri\":\"http://localhost:8080/ReferenceScenario.svc/Teams('1')/nt_Employees\"}}}" +
+            ",{ \"@odata.context\":\"$metadata#Teams/$deletedEntity\"," +
+            "\"id\":\"/Teams('2')\"," +
+            "\"when\":\"\\/Date(1297187419617)\\/\" }" +
+            "]," +
+            "\"__delta\":\"http://localhost:8080/ReferenceScenario.svc/Teams?!deltatoken=4711\"}}";
+    assertNotNull(content);
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataDeltaFeed feed = xec.readDeltaFeed(entitySet, contentBody, DEFAULT_PROPERTIES);
+    assertNotNull(feed);
+
+    List<ODataEntry> entries = feed.getEntries();
+    assertNotNull(entries);
+    assertEquals(1, entries.size());
+
+    FeedMetadata feedMetadata = feed.getFeedMetadata();
+    assertNotNull(feedMetadata);
+    assertEquals("http://localhost:8080/ReferenceScenario.svc/Teams?!deltatoken=4711", feedMetadata.getDeltaLink());
+
+    List<DeletedEntryMetadata> deletedEntries = feed.getDeletedEntries();
+    assertEquals(1, deletedEntries.size());
+    assertEquals("/Teams('2')", deletedEntries.get(0).getUri());
+    assertEquals(new Date(1297187419617l), deletedEntries.get(0).getWhen());
+  }
+
+  @Test
+  public void feedWithOnlyDeletedEntries() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
+    String content =
+        "{\"d\":{\"results\":[" +
+            "{ \"@odata.context\":\"$metadata#Teams/$deletedEntity\"," +
+            "\"id\":\"/Teams('2')\"," +
+            "\"when\":\"\\/Date(1297187419617)\\/\" }" +
+            "]," +
+            "\"__delta\":\"http://localhost:8080/ReferenceScenario.svc/Teams?!deltatoken=4711\"}}";
+    assertNotNull(content);
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataDeltaFeed feed = xec.readDeltaFeed(entitySet, contentBody, DEFAULT_PROPERTIES);
+    assertNotNull(feed);
+
+    List<ODataEntry> entries = feed.getEntries();
+    assertNotNull(entries);
+    assertEquals(0, entries.size());
+
+    FeedMetadata feedMetadata = feed.getFeedMetadata();
+    assertNotNull(feedMetadata);
+    assertEquals("http://localhost:8080/ReferenceScenario.svc/Teams?!deltatoken=4711", feedMetadata.getDeltaLink());
+
+    List<DeletedEntryMetadata> deletedEntries = feed.getDeletedEntries();
+    assertEquals(1, deletedEntries.size());
+    assertEquals("/Teams('2')", deletedEntries.get(0).getUri());
+    assertEquals(new Date(1297187419617l), deletedEntries.get(0).getWhen());
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void feedWithInvalidDeletedEntryWhenValue() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
+    String content =
+        "{\"d\":{\"results\":[" +
+            "{ \"@odata.context\":\"$metadata#Teams/$deletedEntity\"," +
+            "\"id\":\"/Teams('2')\"," +
+            "\"when\":\"1297187419617\" }" +
+            "]," +
+            "\"__delta\":\"http://localhost:8080/ReferenceScenario.svc/Teams?!deltatoken=4711\"}}";
+    assertNotNull(content);
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    try {
+      xec.readDeltaFeed(entitySet, contentBody, DEFAULT_PROPERTIES);
+    } catch (EntityProviderException e) {
+      assertEquals(EntityProviderException.INVALID_DELETED_ENTRY_METADATA, e.getMessageReference());
+      throw e;
+    }
+  }
+
+  @Test
+  public void feedWithRoomAndDeltaAndDeletedEntries() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    String content = readFile("JsonWithDeletedEntries.json");
+    assertNotNull(content);
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataDeltaFeed feed = xec.readDeltaFeed(entitySet, contentBody, DEFAULT_PROPERTIES);
+    assertNotNull(feed);
+
+    List<ODataEntry> entries = feed.getEntries();
+    assertNotNull(entries);
+    assertEquals(1, entries.size());
+
+    FeedMetadata feedMetadata = feed.getFeedMetadata();
+    assertNotNull(feedMetadata);
+    assertEquals("http://localhost:8080/ReferenceScenario.svc/Rooms?!deltatoken=4711", feedMetadata.getDeltaLink());
+
+    List<DeletedEntryMetadata> deletedEntries = feed.getDeletedEntries();
+    assertEquals(2, deletedEntries.size());
+    for (DeletedEntryMetadata deletedEntry : deletedEntries) {
+      String uri = deletedEntry.getUri();
+      if (uri.contains("Rooms('4')")) {
+        assertEquals("http://host:80/service/Rooms('4')", deletedEntry.getUri());
+        assertEquals(new Date(3509636760000l), deletedEntry.getWhen());
+      } else if (uri.contains("Rooms('3')")) {
+        assertEquals("http://host:80/service/Rooms('3')", deletedEntry.getUri());
+        assertEquals(new Date(1300561560000l), deletedEntry.getWhen());
+      } else {
+        Assert.fail("Found unknown DeletedEntry with value: " + deletedEntry);
+      }
+    }
+  }
+
   private void checkMediaDataInitial(final MediaMetadata mediaMetadata) {
     assertNull(mediaMetadata.getContentType());
     assertNull(mediaMetadata.getEditLink());
     assertNull(mediaMetadata.getEtag());
     assertNull(mediaMetadata.getSourceLink());
   }
-
 }

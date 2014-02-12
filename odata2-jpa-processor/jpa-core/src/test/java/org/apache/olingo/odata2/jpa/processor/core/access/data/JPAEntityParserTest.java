@@ -38,7 +38,6 @@ import org.apache.olingo.odata2.api.edm.EdmStructuralType;
 import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -133,7 +132,7 @@ public class JPAEntityParserTest {
       EasyMock.expect(edmTyped.getType()).andStubThrow(
           new EdmException(null));
       EasyMock.expect(edmTyped.getMapping()).andStubReturn(edmMapping);
-      EasyMock.expect(edmTyped.getName()).andReturn("identifier");
+      EasyMock.expect(edmTyped.getName()).andReturn("identifier").anyTimes();
       EasyMock.replay(edmTyped);
       EasyMock.expect(structuralType.getProperty("identifier"))
           .andStubReturn(edmTyped);
@@ -145,7 +144,7 @@ public class JPAEntityParserTest {
       EasyMock.expect(edmMapping01.getInternalName()).andStubReturn(
           "value");
       EasyMock.replay(edmMapping01);
-      EasyMock.expect(edmTyped01.getName()).andReturn("value");
+      EasyMock.expect(edmTyped01.getName()).andReturn("value").anyTimes();
       EasyMock.expect(edmTyped01.getType()).andStubReturn(edmType01);
       EasyMock.expect(edmTyped01.getMapping())
           .andStubReturn(edmMapping01);
@@ -203,52 +202,6 @@ public class JPAEntityParserTest {
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
-  }
-
-  @Test
-  public void testparse2EdmPropertyValueMapFromList() {
-    JPAEntityParser resultParser = new JPAEntityParser();
-    demoItem jpaEntity = new demoItem("laptop", 1);
-    DemoRelatedEntity relatedEntity = new DemoRelatedEntity("DemoOrder");
-    jpaEntity.setRelatedEntity(relatedEntity);
-    List<EdmProperty> selectPropertyList = new ArrayList<EdmProperty>();
-    // Mocking EdmProperties
-    EdmProperty edmProperty1 = EasyMock.createMock(EdmProperty.class);
-    EdmProperty edmProperty2 = EasyMock.createMock(EdmProperty.class);
-    EdmType edmType1 = EasyMock.createMock(EdmType.class);
-    EdmType edmType2 = EasyMock.createMock(EdmType.class);
-    EdmMapping mapping1 = EasyMock.createMock(EdmMapping.class);
-    EdmMapping mapping2 = EasyMock.createMock(EdmMapping.class);
-    try {
-      EasyMock.expect(edmType1.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
-      EasyMock.replay(edmType1);
-      EasyMock.expect(mapping1.getInternalName()).andStubReturn("id");
-      EasyMock.replay(mapping1);
-      EasyMock.expect(edmProperty1.getName()).andStubReturn("Id");
-      EasyMock.expect(edmProperty1.getMapping()).andStubReturn(mapping1);
-      EasyMock.expect(edmProperty1.getType()).andStubReturn(edmType1);
-      EasyMock.replay(edmProperty1);
-      EasyMock.expect(edmType2.getKind()).andStubReturn(EdmTypeKind.COMPLEX);
-      EasyMock.replay(edmType2);
-      EasyMock.expect(mapping2.getInternalName()).andStubReturn("relatedEntity.order");
-      EasyMock.replay(mapping2);
-      EasyMock.expect(edmProperty2.getName()).andStubReturn("Order");
-      EasyMock.expect(edmProperty2.getMapping()).andStubReturn(mapping2);
-      EasyMock.expect(edmProperty2.getType()).andStubReturn(edmType2);
-      EasyMock.replay(edmProperty2);
-
-    } catch (EdmException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    }
-    selectPropertyList.add(edmProperty1);
-    selectPropertyList.add(edmProperty2);
-    try {
-      Map<String, Object> result = resultParser.parse2EdmPropertyValueMap(jpaEntity, selectPropertyList);
-      assertEquals("DemoOrder", result.get("Order"));
-    } catch (ODataJPARuntimeException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    }
-
   }
 
   // This unit tests when there is a complex type in the select list

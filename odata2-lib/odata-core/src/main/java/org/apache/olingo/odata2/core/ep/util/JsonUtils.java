@@ -27,6 +27,10 @@ import com.google.gson.stream.JsonToken;
 
 public class JsonUtils {
 
+  public static String createODataContextValueForTombstone(final String entitySetName) {
+    return FormatJson.DELTA_CONTEXT_PREFIX + entitySetName + FormatJson.DELTA_CONTEXT_POSTFIX;
+  }
+
   public static int startJson(final JsonReader reader) throws EntityProviderException {
     // The enclosing "d" and "results" are optional - so we cannot check for the presence
     // but we have to read over them in case they are present.

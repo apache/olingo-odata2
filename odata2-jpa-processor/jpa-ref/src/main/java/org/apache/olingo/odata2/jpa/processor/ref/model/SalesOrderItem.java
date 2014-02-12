@@ -32,8 +32,8 @@ public class SalesOrderItem {
 
   public SalesOrderItem() {}
 
-  public SalesOrderItem(final int quantity, final double amount, final double discount,
-      final Material material) {
+  public SalesOrderItem(final int quantity, final double amount,
+      final double discount, final Material material) {
     super();
     this.quantity = quantity;
     this.amount = amount;
@@ -43,9 +43,6 @@ public class SalesOrderItem {
 
   @EmbeddedId
   private SalesOrderItemKey salesOrderItemKey;
-
-  @Column(name = "Material_Id", nullable = false)
-  private long matId;
 
   @Column
   private int quantity;
@@ -59,7 +56,18 @@ public class SalesOrderItem {
   @Transient
   private double netAmount;
 
-  @JoinColumn(name = "Material_Id", referencedColumnName = "MATERIAL_ID", insertable = false, updatable = false)
+  @Column
+  private boolean delivered;
+
+  public Boolean isDelivered() {
+    return delivered;
+  }
+
+  public void setDelivered(final Boolean deliveryStatus) {
+    delivered = deliveryStatus;
+  }
+
+  @JoinColumn(name = "Material_Id", referencedColumnName = "MATERIAL_ID")
   @ManyToOne
   private Material material;
 
@@ -73,14 +81,6 @@ public class SalesOrderItem {
 
   public void setSalesOrderItemKey(final SalesOrderItemKey salesOrderItemKey) {
     this.salesOrderItemKey = salesOrderItemKey;
-  }
-
-  public long getMatId() {
-    return matId;
-  }
-
-  public void setMatId(final long matId) {
-    this.matId = matId;
   }
 
   public int getQuantity() {
