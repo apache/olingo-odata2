@@ -39,10 +39,26 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+    
+    <servlet>
+        <servlet-name>ReferenceScenarioNonJaxrsServlet</servlet-name>
+        <servlet-class>org.apache.olingo.odata2.core.servlet.ODataServlet</servlet-class>
+        <init-param>
+            <param-name>org.apache.olingo.odata2.service.factory</param-name>
+            <param-value>org.apache.olingo.odata2.ref.processor.ScenarioServiceFactory</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
 
 	<servlet-mapping>
 		<servlet-name>ReferenceScenarioServlet</servlet-name>
 		<url-pattern>/ReferenceScenario.svc/*</url-pattern>
 	</servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ReferenceScenarioNonJaxrsServlet</servlet-name>
+        <url-pattern>/ReferenceScenarioNonJaxrs.svc/*</url-pattern>
+    </servlet-mapping>
 
 </web-app>
