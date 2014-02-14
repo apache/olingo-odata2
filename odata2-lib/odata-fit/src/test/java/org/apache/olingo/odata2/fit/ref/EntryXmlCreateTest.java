@@ -26,6 +26,7 @@ import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -33,6 +34,10 @@ import org.junit.Test;
  * 
  */
 public class EntryXmlCreateTest extends AbstractRefXmlTest {
+
+  public EntryXmlCreateTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void createDeepInsertRoomWithFourEmployees() throws Exception {

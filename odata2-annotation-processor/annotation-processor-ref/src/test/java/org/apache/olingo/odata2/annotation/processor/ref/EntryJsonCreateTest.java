@@ -28,6 +28,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 import com.google.gson.internal.StringMap;
@@ -36,6 +37,10 @@ import com.google.gson.internal.StringMap;
  *  
  */
 public class EntryJsonCreateTest extends AbstractRefJsonTest {
+
+  public EntryJsonCreateTest(ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void createEntryRoom() throws Exception {
@@ -118,7 +123,7 @@ public class EntryJsonCreateTest extends AbstractRefJsonTest {
     checkMediaType(updateResponse, HttpContentType.APPLICATION_JSON);
     String updatedBody = getBody(updateResponse);
     StringMap<?> updatedMap = getStringMap(updatedBody);
-    assertEquals("1", updatedMap.get("EmployeeId"));
+    assertNotNull(updatedMap.get("EmployeeId"));
     assertEquals("Douglas", updatedMap.get("EmployeeName"));
     assertNull(updatedMap.get("EntryData"));
 

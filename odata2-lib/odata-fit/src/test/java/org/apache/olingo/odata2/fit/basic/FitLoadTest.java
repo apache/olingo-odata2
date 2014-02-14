@@ -41,12 +41,17 @@ import org.apache.olingo.odata2.api.processor.part.MetadataProcessor;
 import org.apache.olingo.odata2.api.processor.part.ServiceDocumentProcessor;
 import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
  *  
  */
 public class FitLoadTest extends AbstractBasicTest {
+
+  public FitLoadTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   /*
    * increase for load analysis > 10.000

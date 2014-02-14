@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -30,6 +31,10 @@ import org.junit.Test;
  * 
  */
 public class PropertyJsonChangeTest extends AbstractRefTest {
+
+  public PropertyJsonChangeTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void simplePropertyWithoutAcceptHeader() throws Exception {

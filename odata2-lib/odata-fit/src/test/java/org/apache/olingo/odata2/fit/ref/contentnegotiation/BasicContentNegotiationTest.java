@@ -40,6 +40,7 @@ import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,10 @@ import org.slf4j.LoggerFactory;
  *  
  */
 public class BasicContentNegotiationTest extends AbstractContentNegotiationTest {
+
+  public BasicContentNegotiationTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   private static final Logger LOG = LoggerFactory.getLogger(BasicContentNegotiationTest.class);
 

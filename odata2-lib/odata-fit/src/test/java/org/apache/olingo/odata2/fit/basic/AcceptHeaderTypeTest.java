@@ -40,12 +40,17 @@ import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
  *  
  */
 public class AcceptHeaderTypeTest extends AbstractBasicTest {
+
+  public AcceptHeaderTypeTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   private ODataSingleProcessor processor = mock(ODataSingleProcessor.class);
 

@@ -52,17 +52,19 @@ public class TestServer {
   private final String path;
 
   private int pathSplit = 0;
+  private ServletType servletType;
 
-  public TestServer() {
-    this(DEFAULT_PATH);
-  }
-
-  public TestServer(final String path) {
+  public TestServer(ServletType type) {
+    this(DEFAULT_PATH, type);
+  }  
+  
+  public TestServer(final String path, ServletType type) {
     if (path.startsWith("/")) {
       this.path = path;
     } else {
       this.path = "/" + path;
     }
+    this.servletType = type;
   }
 
   public int getPathSplit() {
@@ -98,8 +100,7 @@ public class TestServer {
   public void startServer(final Class<? extends ODataServiceFactory> factoryClass) {
     try {
       for (int port = PORT_MIN; port <= PORT_MAX; port += PORT_INC) {
-        //final ServletContextHandler contextHandler = createContextHandler(factoryClass);
-        final ServletContextHandler contextHandler = createODataContextHandler(factoryClass);
+        final ServletContextHandler contextHandler = createContextHandler(factoryClass);
         try {
           final InetSocketAddress isa = new InetSocketAddress(DEFAULT_HOST, port);
           server = new Server(isa);
@@ -123,12 +124,25 @@ public class TestServer {
     }
   }
 
-  private ServletContextHandler createContextHandler(final Class<? extends ODataServiceFactory> factoryClass) {
-    final CXFNonSpringJaxrsServlet odataServlet = new CXFNonSpringJaxrsServlet();
-    final ServletHolder odataServletHolder = new ServletHolder(odataServlet);
-    odataServletHolder.setInitParameter("javax.ws.rs.Application",
-        "org.apache.olingo.odata2.core.rest.app.ODataApplication");
-    odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
+  private ServletContextHandler createContextHandler(final Class<? extends ODataServiceFactory> factoryClass)
+      throws Exception {
+    ServletHolder odataServletHolder = null;
+
+    switch (servletType) {
+    case JAXRS_SERVLET:
+      odataServletHolder = new ServletHolder(new CXFNonSpringJaxrsServlet());
+      odataServletHolder.setInitParameter("javax.ws.rs.Application",
+          "org.apache.olingo.odata2.core.rest.app.ODataApplication");
+      odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
+      break;
+    case ODATA_SERVLET:
+      String odataServlet = "org.apache.olingo.odata2.core.servlet.ODataServlet";
+      final HttpServlet httpServlet = (HttpServlet) Class.forName(odataServlet).newInstance();
+      odataServletHolder = new ServletHolder(httpServlet);
+      odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
+      break;
+    default:
+    }
 
     if (pathSplit > 0) {
       odataServletHolder.setInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL, Integer.toString(pathSplit));
@@ -140,23 +154,23 @@ public class TestServer {
     return contextHandler;
   }
 
-  private ServletContextHandler createODataContextHandler(final Class<? extends ODataServiceFactory> factoryClass) 
-      throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-    String odataServlet = "org.apache.olingo.odata2.core.servlet.ODataServlet";
-    final HttpServlet httpServlet = (HttpServlet) Class.forName(odataServlet).newInstance();
-    final ServletHolder odataServletHolder = new ServletHolder(httpServlet);
-    odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
+//  private ServletContextHandler createODataContextHandler(final Class<? extends ODataServiceFactory> factoryClass)
+//      throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+//    String odataServlet = "org.apache.olingo.odata2.core.servlet.ODataServlet";
+//    final HttpServlet httpServlet = (HttpServlet) Class.forName(odataServlet).newInstance();
+//    final ServletHolder odataServletHolder = new ServletHolder(httpServlet);
+//    odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
+//
+//    if (pathSplit > 0) {
+//      odataServletHolder.setInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL, Integer.toString(pathSplit));
+//    }
+//
+//    final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+//    contextHandler.setContextPath("/abc");
+//    contextHandler.addServlet(odataServletHolder, path + "/*");
+//    return contextHandler;
+//  }
 
-    if (pathSplit > 0) {
-      odataServletHolder.setInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL, Integer.toString(pathSplit));
-    }
-
-    final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-    contextHandler.setContextPath("/abc");
-    contextHandler.addServlet(odataServletHolder, path + "/*");
-    return contextHandler;
-  }
-  
   public void startServer(final ODataService service) {
     startServer(FitStaticServiceFactory.class);
 

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -31,6 +32,10 @@ import org.junit.Test;
  * 
  */
 public final class LinksXmlReadOnlyTest extends AbstractRefXmlTest {
+
+  public LinksXmlReadOnlyTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void singleLink() throws Exception {

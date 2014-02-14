@@ -34,12 +34,17 @@ import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.api.processor.part.MetadataProcessor;
 import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
  *  
  */
 public class MetadataTest extends AbstractBasicTest {
+
+  public MetadataTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Override
   protected ODataSingleProcessor createProcessor() throws ODataException {

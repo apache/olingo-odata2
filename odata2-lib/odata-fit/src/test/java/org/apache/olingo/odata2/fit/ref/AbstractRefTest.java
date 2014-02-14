@@ -47,12 +47,19 @@ import org.apache.olingo.odata2.ref.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
+import org.junit.Ignore;
 
 /**
  * Abstract base class for tests employing the reference scenario.
  * 
  */
+@Ignore("no test methods")
 public class AbstractRefTest extends AbstractFitTest {
+
+  public AbstractRefTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   protected static final String IMAGE_JPEG = "image/jpeg";
   protected static final String IMAGE_GIF = "image/gif";
@@ -211,7 +218,7 @@ public class AbstractRefTest extends AbstractFitTest {
   }
 
   protected void checkMediaType(final HttpResponse response, final String expectedMediaType) {
-    assertEquals(expectedMediaType.toUpperCase(), 
+    assertEquals(expectedMediaType.toUpperCase(),
         response.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue().toUpperCase());
   }
 

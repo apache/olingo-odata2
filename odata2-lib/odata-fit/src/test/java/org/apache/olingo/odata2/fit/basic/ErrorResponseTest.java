@@ -33,12 +33,17 @@ import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.api.processor.part.ServiceDocumentProcessor;
 import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
  *  
  */
 public class ErrorResponseTest extends AbstractBasicTest {
+
+  public ErrorResponseTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Override
   protected ODataSingleProcessor createProcessor() throws ODataException {

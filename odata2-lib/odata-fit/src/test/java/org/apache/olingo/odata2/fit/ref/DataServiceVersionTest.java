@@ -26,12 +26,17 @@ import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
  *  
  */
 public class DataServiceVersionTest extends AbstractRefTest {
+
+  public DataServiceVersionTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   private static void checkVersion(final HttpResponse response, final String expectedValue) throws AssertionError {
     final Header header = response.getFirstHeader(ODataHttpHeaders.DATASERVICEVERSION);

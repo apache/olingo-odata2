@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
@@ -39,6 +40,10 @@ import org.junit.Test;
  *  
  */
 public class ExceptionsTest extends AbstractBasicTest {
+  public ExceptionsTest(final ServletType servletType) {
+    super(servletType);
+  }
+
   @Override
   protected ODataSingleProcessor createProcessor() throws ODataException {
     return mock(ODataSingleProcessor.class);

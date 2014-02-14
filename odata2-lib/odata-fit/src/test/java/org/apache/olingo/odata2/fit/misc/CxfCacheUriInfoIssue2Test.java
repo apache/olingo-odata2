@@ -26,6 +26,7 @@ import java.net.URI;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.apache.olingo.odata2.testutil.server.TestServer;
 import org.junit.After;
 import org.junit.Before;
@@ -38,8 +39,8 @@ public class CxfCacheUriInfoIssue2Test {
 
   @Before
   public void before() {
-    server1 = new TestServer("/service1");
-    server2 = new TestServer("/service2");
+    server1 = new TestServer("/service1", ServletType.JAXRS_SERVLET);
+    server2 = new TestServer("/service2", ServletType.JAXRS_SERVLET);
 
     server1.setPathSplit(0);
     server2.setPathSplit(0);

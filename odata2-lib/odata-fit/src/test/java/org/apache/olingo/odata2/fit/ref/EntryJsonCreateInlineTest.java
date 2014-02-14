@@ -28,6 +28,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 import com.google.gson.internal.StringMap;
@@ -36,6 +37,10 @@ import com.google.gson.internal.StringMap;
  *  
  */
 public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
+
+  public EntryJsonCreateInlineTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void createThreeLevelsDeepInsert() throws Exception {

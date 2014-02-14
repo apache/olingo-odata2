@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.apache.olingo.odata2.testutil.server.TestServer;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -47,8 +48,12 @@ import org.junit.Test;
  */
 public class MappingTest extends AbstractFitTest {
 
+  public MappingTest(final ServletType servletType) {
+    super(servletType);
+  }
+
   public static void main(final String[] args) {
-    final TestServer server = new TestServer();
+    final TestServer server = new TestServer(ServletType.JAXRS_SERVLET);
     try {
       server.startServer(MapFactory.class);
       System.out.println("Press any key to exit");

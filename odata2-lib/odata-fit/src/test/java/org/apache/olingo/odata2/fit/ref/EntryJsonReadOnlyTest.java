@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -29,6 +30,10 @@ import org.junit.Test;
  * 
  */
 public class EntryJsonReadOnlyTest extends AbstractRefTest {
+
+  public EntryJsonReadOnlyTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void entry() throws Exception {

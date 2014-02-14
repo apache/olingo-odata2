@@ -28,17 +28,24 @@ import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.exceptions.XpathException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.xml.sax.SAXException;
 
 /**
  * Abstract base class for tests employing the reference scenario reading or writing XML.
  * 
  */
+@Ignore("no test methods")
 public class AbstractRefXmlTest extends AbstractRefTest {
+  public AbstractRefXmlTest(final ServletType servletType) {
+    super(servletType);
+  }
+
   @Before
   public void setXmlNamespacePrefixes() {
     Map<String, String> prefixMap = new HashMap<String, String>();
