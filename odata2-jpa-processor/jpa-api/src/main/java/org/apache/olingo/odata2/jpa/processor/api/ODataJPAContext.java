@@ -24,6 +24,7 @@ import javax.persistence.EntityManagerFactory;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataProcessor;
+import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
 
 /**
@@ -203,4 +204,27 @@ public interface ODataJPAContext {
    */
   public boolean getDefaultNaming();
 
+  /**
+   * The method gets the server side page size to the context
+   * @return the page size
+   */
+  public int getPageSize();
+
+  /**
+   * The method sets the server side page size to the context
+   * @param size
+   */
+  public void setPageSize(int size);
+
+  /**
+   * The method sets the server side paging object
+   * @param an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging}
+   */
+  public void setPaging(JPAPaging paging);
+
+  /**
+   * The method returns the server side paging object
+   * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging}
+   */
+  public JPAPaging getPaging();
 }

@@ -48,6 +48,7 @@ import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
+import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.SelectItem;
 import org.apache.olingo.odata2.api.uri.UriParser;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
@@ -470,6 +471,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       final GetEntitySetUriInfo resultsView, final List<Map<String, Object>> edmEntityList)
       throws ODataJPARuntimeException {
     ODataEntityProviderPropertiesBuilder entityFeedPropertiesBuilder = null;
+    ODataContext context = odataJPAContext.getODataContext();
 
     Integer count = null;
     if (resultsView.getInlineCount() != null) {
@@ -483,13 +485,22 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     }
 
     try {
+      PathInfo pathInfo = context.getPathInfo();
       entityFeedPropertiesBuilder =
-          EntityProviderWriteProperties.serviceRoot(odataJPAContext.getODataContext().getPathInfo().getServiceRoot());
+          EntityProviderWriteProperties.serviceRoot(pathInfo.getServiceRoot());
+      if (odataJPAContext.getPageSize() > 0 && odataJPAContext.getPaging().getNextPage() > 0) {
+        String nextLink =
+            pathInfo.getServiceRoot().relativize(context.getPathInfo().getRequestUri()).toString();
+        nextLink = percentEncodeNextLink(nextLink);
+        nextLink += (nextLink.contains("?") ? "&" : "?")
+            + "$skiptoken=" + odataJPAContext.getPaging().getNextPage();
+        entityFeedPropertiesBuilder.nextLink(nextLink);
+      }
       entityFeedPropertiesBuilder.inlineCount(count);
       entityFeedPropertiesBuilder.inlineCountType(resultsView.getInlineCount());
       ExpandSelectTreeNode expandSelectTree =
           UriParser.createExpandSelectTree(resultsView.getSelect(), resultsView.getExpand());
-      entityFeedPropertiesBuilder.callbacks(JPAExpandCallBack.getCallbacks(odataJPAContext.getODataContext()
+      entityFeedPropertiesBuilder.callbacks(JPAExpandCallBack.getCallbacks(context
           .getPathInfo().getServiceRoot(), expandSelectTree, resultsView.getExpand()));
       entityFeedPropertiesBuilder.expandSelectTree(expandSelectTree);
 
@@ -498,6 +509,16 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     }
 
     return entityFeedPropertiesBuilder.build();
+  }
+
+  private static String percentEncodeNextLink(final String link) {
+    if (link == null) {
+      return null;
+    }
+
+    return link.replaceAll("\\$skiptoken=.+?(?:&|$)", "")
+        .replaceAll("\\$skip=.+?(?:&|$)", "")
+        .replaceFirst("(?:\\?|&)$", ""); // Remove potentially trailing "?" or "&" left over from remove actions
   }
 
   /*
@@ -602,7 +623,8 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     return navigationPropertyList;
   }
 
-  private static List<EdmProperty> getEdmProperties(EdmStructuralType structuralType) throws ODataJPARuntimeException {
+  private static List<EdmProperty> getEdmProperties(final EdmStructuralType structuralType)
+      throws ODataJPARuntimeException {
     List<EdmProperty> edmProperties = new ArrayList<EdmProperty>();
     try {
       for (String propertyName : structuralType.getPropertyNames()) {

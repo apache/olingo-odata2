@@ -25,6 +25,7 @@ import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
 
 public class ODataJPAContextImpl implements ODataJPAContext {
@@ -37,6 +38,8 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   private EdmProvider edmProvider;
   private String jpaEdmMappingModelName;
   private JPAEdmExtension jpaEdmExtension;
+  private int pageSize = 0;
+  private JPAPaging jpaPaging;
   private static final ThreadLocal<ODataContext> oDataContextThreadLocal = new ThreadLocal<ODataContext>();
   private boolean defaultNaming = true;
 
@@ -142,5 +145,25 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   @Override
   public boolean getDefaultNaming() {
     return defaultNaming;
+  }
+
+  @Override
+  public int getPageSize() {
+    return pageSize;
+  }
+
+  @Override
+  public void setPageSize(final int size) {
+    pageSize = size;
+  }
+
+  @Override
+  public void setPaging(final JPAPaging paging) {
+    jpaPaging = paging;
+  }
+
+  @Override
+  public JPAPaging getPaging() {
+    return jpaPaging;
   }
 }

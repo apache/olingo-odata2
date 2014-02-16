@@ -54,6 +54,7 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 import org.apache.olingo.odata2.jpa.processor.core.ODataEntityParser;
+import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAPage.JPAPageBuilder;
 
 public class JPAProcessorImpl implements JPAProcessor {
 
@@ -117,13 +118,12 @@ public class JPAProcessorImpl implements JPAProcessor {
   }
 
   /* Process Get Entity Set Request (Query) */
-  @SuppressWarnings("unchecked")
   @Override
-  public <T> List<T> process(final GetEntitySetUriInfo uriParserResultView)
+  public List<Object> process(final GetEntitySetUriInfo uriParserResultView)
       throws ODataJPAModelException, ODataJPARuntimeException {
 
     if (uriParserResultView.getFunctionImport() != null) {
-      return (List<T>) process((GetFunctionImportUriInfo) uriParserResultView);
+      return (List<Object>) process((GetFunctionImportUriInfo) uriParserResultView);
     }
     JPQLContextType contextType = null;
     try {
@@ -139,33 +139,48 @@ public class JPAProcessorImpl implements JPAProcessor {
           ODataJPARuntimeException.GENERAL, e);
     }
 
-    JPQLContext jpqlContext = JPQLContext.createBuilder(contextType,
-        uriParserResultView).build();
+    JPQLContext jpqlContext = null;
+    if (oDataJPAContext.getPageSize() > 0) {
+      jpqlContext = JPQLContext.createBuilder(contextType,
+          uriParserResultView, true).build();
+    } else {
+      jpqlContext = JPQLContext.createBuilder(contextType,
+          uriParserResultView).build();
+    }
 
     JPQLStatement jpqlStatement = JPQLStatement.createBuilder(jpqlContext)
         .build();
     Query query = null;
     try {
       query = em.createQuery(jpqlStatement.toString());
-      // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
-      if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
-        query.setFirstResult(uriParserResultView.getSkip());
-      }
-
-      if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
-        if (uriParserResultView.getTop() == 0) {
-          List<T> resultList = new ArrayList<T>();
-          return resultList;
-        } else {
-          query.setMaxResults(uriParserResultView.getTop());
-        }
-      }
-      return query.getResultList();
+      return handlePaging(query, uriParserResultView);
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
 
     }
+  }
+
+  private List<Object> handlePaging(final Query query, final GetEntitySetUriInfo uriParserResultView) {
+
+    JPAPageBuilder pageBuilder = new JPAPageBuilder();
+    pageBuilder.pageSize(oDataJPAContext.getPageSize())
+        .query(query)
+        .skipToken(uriParserResultView.getSkipToken());
+
+    // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
+    if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
+      pageBuilder.skip(uriParserResultView.getSkip().intValue());
+    }
+
+    if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
+      pageBuilder.top(uriParserResultView.getTop().intValue());
+    }
+
+    JPAPage page = pageBuilder.build();
+    oDataJPAContext.setPaging(page);
+    return page.getPagedEntities();
+
   }
 
   /* Process Get Entity Request (Read) */
@@ -439,7 +454,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
   /* Process Get Entity Set Link Request */
   @Override
-  public <T> List<T> process(final GetEntitySetLinksUriInfo uriParserResultView)
+  public List<Object> process(final GetEntitySetLinksUriInfo uriParserResultView)
       throws ODataJPAModelException, ODataJPARuntimeException {
     return this.process((GetEntitySetUriInfo) uriParserResultView);
   }
