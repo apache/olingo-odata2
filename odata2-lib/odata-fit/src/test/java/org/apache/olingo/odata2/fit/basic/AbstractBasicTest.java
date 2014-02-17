@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -43,6 +44,10 @@ import org.mockito.stubbing.Answer;
  *  
  */
 public abstract class AbstractBasicTest extends AbstractFitTest {
+
+  public AbstractBasicTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   private ODataContext context;
 

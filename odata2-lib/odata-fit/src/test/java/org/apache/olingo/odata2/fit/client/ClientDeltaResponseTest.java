@@ -49,10 +49,15 @@ import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.fit.client.util.Client;
 import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ClientDeltaResponseTest extends AbstractFitTest {
+
+  public ClientDeltaResponseTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   private static final String DELTATOKEN_1234 = "!deltatoken=1234";
 
@@ -159,8 +164,6 @@ public class ClientDeltaResponseTest extends AbstractFitTest {
     Edm edm = client.getEdm();
     assertNotNull(edm);
     assertNotNull(edm.getDefaultEntityContainer());
-
-    System.out.println(edm.getDefaultEntityContainer().getName());
   }
 
   @Test

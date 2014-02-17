@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -30,6 +31,10 @@ import org.junit.Test;
  * 
  */
 public class FeedJsonReadOnlyTest extends AbstractRefTest {
+
+  public FeedJsonReadOnlyTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void feed() throws Exception {

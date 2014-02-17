@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -29,6 +30,10 @@ import org.junit.Test;
  * 
  */
 public final class LinksJsonChangeTest extends AbstractRefTest {
+
+  public LinksJsonChangeTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void createLink() throws Exception {

@@ -29,6 +29,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
@@ -38,6 +39,10 @@ import org.junit.Test;
  * 
  */
 public class ServiceJsonTest extends AbstractRefTest {
+  public ServiceJsonTest(final ServletType servletType) {
+    super(servletType);
+  }
+
   @Test
   public void serviceDocumentDollarFormatJson() throws Exception {
     final HttpResponse response = callUri("?$format=json");

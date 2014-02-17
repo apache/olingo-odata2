@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -38,6 +39,10 @@ import org.junit.Test;
  * 
  */
 public class EntryXmlChangeTest extends AbstractRefXmlTest {
+
+  public EntryXmlChangeTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void create() throws Exception {

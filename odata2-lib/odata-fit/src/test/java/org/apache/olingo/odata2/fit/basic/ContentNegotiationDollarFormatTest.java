@@ -39,12 +39,17 @@ import org.apache.olingo.odata2.api.processor.feature.CustomContentType;
 import org.apache.olingo.odata2.api.processor.part.ServiceDocumentProcessor;
 import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
  *  
  */
 public class ContentNegotiationDollarFormatTest extends AbstractBasicTest {
+
+  public ContentNegotiationDollarFormatTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   /**
    * 

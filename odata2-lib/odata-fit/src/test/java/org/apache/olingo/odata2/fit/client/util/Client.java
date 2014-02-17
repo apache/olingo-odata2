@@ -189,7 +189,7 @@ public class Client {
     EdmEntityContainer entityContainer = edm.getEntityContainer(entityContainerName);
 
     InputStream content = (InputStream) connect(deltaLink, contentType, "GET").getContent();
-    
+
     return EntityProvider.readDeltaFeed(contentType, entityContainer.getEntitySet(entitySetName), content,
         EntityProviderReadProperties.init().build());
   }

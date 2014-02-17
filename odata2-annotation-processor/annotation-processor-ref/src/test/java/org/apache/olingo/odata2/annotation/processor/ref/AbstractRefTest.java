@@ -41,12 +41,19 @@ import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
+import org.junit.Ignore;
 
 /**
  * Abstract base class for tests employing the reference scenario.
  * 
  */
+@Ignore("no test methods")
 public class AbstractRefTest extends AbstractFitTest {
+
+  public AbstractRefTest(ServletType servletType) {
+    super(servletType);
+  }
 
   protected static final String IMAGE_JPEG = "image/jpeg";
   protected static final String IMAGE_GIF = "image/gif";

@@ -34,6 +34,7 @@ import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,6 +42,10 @@ import org.junit.Test;
  *  
  */
 public class RequestContentTypeTest extends AbstractBasicTest {
+
+  public RequestContentTypeTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Override
   protected ODataSingleProcessor createProcessor() throws ODataException {

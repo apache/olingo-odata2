@@ -46,6 +46,7 @@ import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.testutil.helper.ClassHelper;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.hamcrest.BaseMatcher;
@@ -58,6 +59,10 @@ import org.mockito.Matchers;
  *  
  */
 public class HttpExceptionResponseTest extends AbstractBasicTest {
+
+  public HttpExceptionResponseTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   private ODataSingleProcessor processor;
 

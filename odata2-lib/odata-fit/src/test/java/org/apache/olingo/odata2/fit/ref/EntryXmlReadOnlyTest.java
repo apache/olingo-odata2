@@ -34,6 +34,7 @@ import org.apache.olingo.odata2.ref.model.DataContainer;
 import org.apache.olingo.odata2.ref.model.Photo;
 import org.apache.olingo.odata2.ref.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.junit.Test;
 
@@ -42,6 +43,10 @@ import org.junit.Test;
  * 
  */
 public class EntryXmlReadOnlyTest extends AbstractRefXmlTest {
+
+  public EntryXmlReadOnlyTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void entry() throws Exception {

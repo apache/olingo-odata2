@@ -39,12 +39,17 @@ import org.apache.olingo.odata2.api.processor.part.MetadataProcessor;
 import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.fit.basic.AbstractBasicTest;
 import org.apache.olingo.odata2.testutil.fit.FitStaticServiceFactory;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
  *  
  */
 public class CxfCacheUriInfoIssueTest extends AbstractBasicTest {
+
+  public CxfCacheUriInfoIssueTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Override
   protected ODataSingleProcessor createProcessor() throws ODataException {

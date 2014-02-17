@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.core.uri.UriType;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -30,6 +31,10 @@ import org.junit.Test;
  *  
  */
 public class ContentNegotiationPostRequestTest extends AbstractContentNegotiationTest {
+
+  public ContentNegotiationPostRequestTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   public static final String EMPLOYEE_1_XML =
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

@@ -27,6 +27,7 @@ import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -34,6 +35,10 @@ import org.junit.Test;
  * 
  */
 public class PropertyXmlReadOnlyTest extends AbstractRefXmlTest {
+  public PropertyXmlReadOnlyTest(final ServletType servletType) {
+    super(servletType);
+  }
+
   @Test
   public void simpleProperty() throws Exception {
     HttpResponse response = callUri("Employees('2')/Age/$value");

@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -31,6 +32,10 @@ import org.junit.Test;
  * 
  */
 public class MiscReadOnlyTest extends AbstractRefTest {
+
+  public MiscReadOnlyTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void checkUrls() throws Exception {

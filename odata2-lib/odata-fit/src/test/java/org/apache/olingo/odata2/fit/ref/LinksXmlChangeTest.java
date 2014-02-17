@@ -24,6 +24,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -31,6 +32,10 @@ import org.junit.Test;
  * 
  */
 public final class LinksXmlChangeTest extends AbstractRefTest {
+
+  public LinksXmlChangeTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   private static final String XML_DECLARATION = "<?xml version='1.0' encoding='utf-8'?>";
 
