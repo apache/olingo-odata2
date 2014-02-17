@@ -79,6 +79,7 @@
 						<Export-Package>
 							org.apache.olingo.odata2.core.rest.app;version=${project.version},
 							org.apache.olingo.odata2.core.rt;version=${project.version},
+                            org.apache.olingo.odata2.core.servlet;version=${project.version},
 						</Export-Package>
 						<Bundle-DocURL>${project.url}</Bundle-DocURL>
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
