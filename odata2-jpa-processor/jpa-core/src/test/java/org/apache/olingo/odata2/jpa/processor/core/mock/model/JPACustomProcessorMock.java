@@ -31,6 +31,7 @@ public class JPACustomProcessorMock {
 
   public static final String className = "JPACustomProcessorMock";
   public static final String edmName = "JPACustomProcessor";
+  public static final String nonJPAEmbeddableType = "JPACustomProcessorMock$JPANonComplexTestMock";
 
   @EdmFunctionImport(name = "Method1", entitySet = "MockSet", returnType = @ReturnType(type = Type.ENTITY,
       isCollection = true))
@@ -71,4 +72,13 @@ public class JPACustomProcessorMock {
     return null;
   }
 
+  @EdmFunctionImport(returnType = @ReturnType(type = Type.COMPLEX,
+      isCollection = false))
+  public JPANonComplexTestMock method18() {
+    return null;
+  }
+
+  public static interface JPANonComplexTestMock {
+
+  }
 }

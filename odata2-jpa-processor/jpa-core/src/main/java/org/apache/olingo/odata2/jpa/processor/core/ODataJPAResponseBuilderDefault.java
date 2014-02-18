@@ -61,6 +61,7 @@ import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
+import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAExpandCallBack;
@@ -488,7 +489,8 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       PathInfo pathInfo = context.getPathInfo();
       entityFeedPropertiesBuilder =
           EntityProviderWriteProperties.serviceRoot(pathInfo.getServiceRoot());
-      if (odataJPAContext.getPageSize() > 0 && odataJPAContext.getPaging().getNextPage() > 0) {
+      JPAPaging paging = odataJPAContext.getPaging();
+      if (odataJPAContext.getPageSize() > 0 && paging != null && paging.getNextPage() > 0) {
         String nextLink =
             pathInfo.getServiceRoot().relativize(context.getPathInfo().getRequestUri()).toString();
         nextLink = percentEncodeNextLink(nextLink);
