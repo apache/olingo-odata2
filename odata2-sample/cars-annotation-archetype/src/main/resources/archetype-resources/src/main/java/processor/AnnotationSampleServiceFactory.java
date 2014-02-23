@@ -28,7 +28,6 @@ import ${package}.model.Manufacturer;
 import java.util.Calendar;
 import java.util.Locale;
 import org.apache.olingo.odata2.annotation.processor.api.AnnotationServiceFactory;
-import org.apache.olingo.odata2.annotation.processor.core.datasource.DataStore;
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.ODataDebugCallback;
 import org.apache.olingo.odata2.api.ODataService;
@@ -60,7 +59,6 @@ public class AnnotationSampleServiceFactory extends ODataServiceFactory {
     static {
       try {
         ANNOTATION_ODATA_SERVICE = AnnotationServiceFactory.createAnnotationService(MODEL_PACKAGE);
-        initializeSampleData();
       } catch (ODataApplicationException ex) {
         throw new RuntimeException("Exception during sample data generation.", ex);
       } catch (ODataException ex) {
@@ -95,7 +93,6 @@ public class AnnotationSampleServiceFactory extends ODataServiceFactory {
   }
 
   private class ScenarioErrorCallback implements ODataErrorCallback {
-
     private final Logger LOG = LoggerFactory.getLogger(ScenarioErrorCallback.class);
 
     @Override
@@ -106,90 +103,5 @@ public class AnnotationSampleServiceFactory extends ODataServiceFactory {
 
       return EntityProvider.writeErrorDocument(context);
     }
-
-  }
-
-  private static <T> DataStore<T> getDataStore(Class<T> clz) throws DataStore.DataStoreException {
-    return DataStore.createInMemory(clz, true);
-  }
-
-  private static void initializeSampleData() throws ODataApplicationException {
-    DataStore<Car> carDs = getDataStore(Car.class);
-    Calendar updated = Calendar.getInstance();
-    Car c1 = createCar("F1 W02", 167189.00, 2011, updated);
-    carDs.create(c1);
-    Car c2 = createCar("F1 W04", 242189.99, 2013, updated);
-    carDs.create(c2);
-    Car c3 = createCar("FF2013", 199189.11, 2013, updated);
-    carDs.create(c3);
-    Car c4 = createCar("FF2014", 299189.11, 2014, updated);
-    carDs.create(c4);
-
-    DataStore<Driver> driverDs = getDataStore(Driver.class);
-    Driver d1 = createDriver("Mic", "Shoemaker", "The Fast", createDateTime(1985, 6, 27), c1);
-    driverDs.create(d1);
-    Driver d2 = createDriver("Nico", "Mulemountain", null, createDateTime(1969, 1, 3), c2);
-    driverDs.create(d2);
-    Driver d3 = createDriver("Kimi", "Heikkinen", "Iceman", createDateTime(1979, 10, 17), c3);
-    driverDs.create(d3);
-
-    Address addressStar = createAddress("Star Street 137", "Stuttgart", "70173", "Germany");
-    Manufacturer manStar = createManufacturer("Star Powered Racing", addressStar, createDateTime(1954, 7, 4), c1, c2);
-
-    Address addressHorse = createAddress("Horse Street 1", "Maranello", "41053", "Italy");
-    Manufacturer manHorse = createManufacturer("Horse Powered Racing", addressHorse, createDateTime(1929, 11, 16), c3, c4);
-
-    DataStore<Manufacturer> manDs = getDataStore(Manufacturer.class);
-    manDs.create(manStar);
-    manDs.create(manHorse);
-  }
-
-  private static Calendar createDateTime(int year, int month, int day) {
-    Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-    cal.clear();
-    cal.set(year, month - 1, day);
-    return cal;
-  }
-
-  private static Car createCar(String name, double price, int modelyear, Calendar updated) {
-    Car car = new Car();
-    car.setModel(name);
-    car.setModelYear(modelyear);
-    car.setPrice(price);
-    car.setUpdated(updated.getTime());
-    return car;
-  }
-
-  private static Driver createDriver(String name, String lastname, String nickname, Calendar birthday, Car car) {
-    Driver driver = new Driver();
-    driver.setName(name);
-    driver.setLastname(lastname);
-    driver.setNickname(nickname);
-    driver.setBirthday(birthday);
-    driver.setCar(car);
-    car.setDriver(driver);
-    return driver;
-  }
-
-  private static Manufacturer createManufacturer(String name, Address address, Calendar founded, Car... cars) {
-    Manufacturer m = new Manufacturer();
-    m.setName(name);
-    m.setAddress(address);
-    m.setFounded(founded);
-    for (Car car : cars) {
-      car.setManufacturer(m);
-      m.getCars().add(car);
-    }
-    return m;
-  }
-
-  private static Address createAddress(final String street, final String city, final String zipCode,
-          final String country) {
-    Address address = new Address();
-    address.setStreet(street);
-    address.setCity(city);
-    address.setZipCode(zipCode);
-    address.setCountry(country);
-    return address;
   }
 }

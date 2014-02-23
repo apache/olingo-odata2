@@ -26,7 +26,7 @@
     <version.compiler-plugin>2.3.2</version.compiler-plugin>
     <version.deploy-plugin>2.8.1</version.deploy-plugin>
     <version.eclipse-plugin>2.9</version.eclipse-plugin>
-    <version.jetty-plugin>9.0.6.v20130930</version.jetty-plugin>
+    <version.jetty-plugin>8.1.14.v20131031</version.jetty-plugin>
     <!-- Dependency Versions -->
     <version.cxf>2.7.6</version.cxf>
     <version.servlet-api>2.5</version.servlet-api>
@@ -84,7 +84,7 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.eclipse.jetty</groupId>
+        <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${version.jetty-plugin}</version>
       </plugin>
