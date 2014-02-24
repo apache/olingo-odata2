@@ -86,6 +86,30 @@ th, td { border: 1px solid; padding: 20px; }
                 </ul>
             </td>
         </tr>
+        <tr>
+            <td valign="bottom">
+                <div class="code">
+                    <%
+                        if (request.getParameter("genSampleData") != null) { //genSampleData is the name of your button, not id of that button.
+                            String requestUrl = request.getRequestURL().toString();
+                            if(requestUrl.endsWith("index.jsp")) {
+                                requestUrl = requestUrl.substring(0, requestUrl.length()-9);
+                            }
+                            ${package}.util.AnnotationSampleDataGenerator.generateData(requestUrl + "MyFormula.svc");
+                            response.sendRedirect(requestUrl);
+                        }
+                    %>
+                    <form method="POST">
+                        <div>
+                            For generation of sample data this button can be used.
+                            <br/>
+                            But be aware that multiple clicking results in multiple data generation.
+                        </div>
+                        <input type="submit" id="genSampleData" name="genSampleData" value="Generate sample Data"/>
+                    </form>
+                </div>
+            </td>
+        </tr>
     </table>
 </body>
 </html>
