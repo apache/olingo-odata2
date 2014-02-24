@@ -90,6 +90,7 @@ public class EdmDouble extends AbstractSimpleType {
 
       // The number format is checked above, so we don't have to catch NumberFormatException.
       result = Double.valueOf(valueString);
+
       // "Real" infinite values have been treated already above, so we can throw an exception
       // if the conversion to a float results in an infinite value.
       if (result.isInfinite()) {

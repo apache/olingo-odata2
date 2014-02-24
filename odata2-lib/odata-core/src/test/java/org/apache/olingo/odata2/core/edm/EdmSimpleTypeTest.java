@@ -1364,7 +1364,12 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertEquals(Integer.valueOf(42), instance.valueOfString("4.2E1", EdmLiteralKind.DEFAULT, null, Integer.class));
     assertEquals(Long.valueOf(1234567890), instance.valueOfString("1234567890E-00", EdmLiteralKind.DEFAULT, null,
         Long.class));
-
+    assertEquals(Long.valueOf(1234567890), instance.valueOfString("1234567890E-00", EdmLiteralKind.DEFAULT, null,
+        Long.class));
+    assertEquals(Double.valueOf(1234567890), instance.valueOfString("1234567890E+00", EdmLiteralKind.DEFAULT, null,
+        Double.class));
+    assertEquals(Double.valueOf(16.0), instance.valueOfString("1.6000000000000000E+01", EdmLiteralKind.DEFAULT, null,
+        Double.class));
     assertEquals(Double.valueOf(Double.NaN), instance.valueOfString("NaN", EdmLiteralKind.DEFAULT, null, Double.class));
     assertEquals(Double.valueOf(Double.NEGATIVE_INFINITY), instance.valueOfString("-INF", EdmLiteralKind.JSON, null,
         Double.class));
