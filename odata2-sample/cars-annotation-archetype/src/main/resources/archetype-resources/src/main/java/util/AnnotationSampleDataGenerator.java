@@ -33,11 +33,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- *
+ * Data generator for annotation sample service.
  */
 public class AnnotationSampleDataGenerator {
-  private final Logger LOG = LoggerFactory.getLogger(AnnotationSampleDataGenerator.class);
-
   public static final String HTTP_METHOD_PUT = "PUT";
   public static final String HTTP_METHOD_POST = "POST";
 
@@ -45,10 +43,16 @@ public class AnnotationSampleDataGenerator {
   public static final String HTTP_HEADER_ACCEPT = "Accept";
   
   public static final String APPLICATION_JSON = "application/json";
-  public static final boolean PRINT_RAW_CONTENT = true;
+
+  private static final Logger LOG = LoggerFactory.getLogger(AnnotationSampleDataGenerator.class);
+  private static final boolean PRINT_RAW_CONTENT = true;
 
   public static void main(String[] args) {
-    generateData("http://localhost:8080/MyFormula.svc");
+    String serviceUrl = "http://localhost:8080/MyFormula.svc";
+    if(args.length == 1) {
+      serviceUrl = args[0];
+    }
+    generateData(serviceUrl);
   }
 
   public static void generateData(String serviceUrl) {
@@ -57,6 +61,7 @@ public class AnnotationSampleDataGenerator {
   }
 
   public void generateSampleData(String serviceUrl) {
+    print("Generate sample data for service on url: " + serviceUrl);
     String usedFormat = APPLICATION_JSON;
 
     String manufacturerStar = "{\"Id\":\"1\",\"Name\":\"Star Powered Racing\",\"Founded\":\"/Date(-489024000000+0060)/\"," +

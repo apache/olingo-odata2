@@ -21,12 +21,6 @@
 #set( $symbol_escape = '\' )
 package ${package}.processor;
 
-import ${package}.model.Address;
-import ${package}.model.Car;
-import ${package}.model.Driver;
-import ${package}.model.Manufacturer;
-import java.util.Calendar;
-import java.util.Locale;
 import org.apache.olingo.odata2.annotation.processor.api.AnnotationServiceFactory;
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.ODataDebugCallback;
