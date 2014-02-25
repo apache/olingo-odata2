@@ -38,10 +38,18 @@ public class EdmDouble extends AbstractSimpleType {
   private static final int MAX_PRECISION = 15;
   private static final int MAX_SCALE = 308;
 
+
   private static final Pattern PATTERN = Pattern.compile(
-      "(?:\\+|-)?\\p{Digit}{1,15}(?:\\.\\p{Digit}{1,15})?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,3})?(D|d)?");
+      "(?:\\+|-)?\\p{Digit}{1,16}(?:\\.\\p{Digit}{1,16})?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,3})?(D|d)?");
   private static final EdmDouble instance = new EdmDouble();
 
+  
+  
+  
+  
+  
+  
+  
   public static EdmDouble getInstance() {
     return instance;
   }
@@ -90,6 +98,7 @@ public class EdmDouble extends AbstractSimpleType {
 
       // The number format is checked above, so we don't have to catch NumberFormatException.
       result = Double.valueOf(valueString);
+
       // "Real" infinite values have been treated already above, so we can throw an exception
       // if the conversion to a float results in an infinite value.
       if (result.isInfinite()) {
