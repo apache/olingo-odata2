@@ -1368,6 +1368,7 @@ public class EdmSimpleTypeTest extends BaseTest {
         Long.class));
     assertEquals(Double.valueOf(1234567890), instance.valueOfString("1234567890E+00", EdmLiteralKind.DEFAULT, null,
         Double.class));
+
     assertEquals(Double.valueOf(16.0), instance.valueOfString("1.6000000000000000E+01", EdmLiteralKind.DEFAULT, null,
         Double.class));
     assertEquals(Double.valueOf(Double.NaN), instance.valueOfString("NaN", EdmLiteralKind.DEFAULT, null, Double.class));
@@ -1531,6 +1532,7 @@ public class EdmSimpleTypeTest extends BaseTest {
     final EdmSimpleType instance = EdmSimpleTypeKind.Single.getEdmSimpleTypeInstance();
 
     assertEquals(Float.valueOf(1.42F), instance.valueOfString("1.42", EdmLiteralKind.DEFAULT, null, Float.class));
+    assertEquals(Float.valueOf(1.000000001F), instance.valueOfString("1.00000001", EdmLiteralKind.DEFAULT, null, Float.class));
     assertEquals(Double.valueOf(-42.42), instance.valueOfString("-42.42", EdmLiteralKind.JSON, null, Double.class));
     assertEquals(Float.valueOf(42.0F), instance.valueOfString("42F", EdmLiteralKind.URI, null, Float.class));
     assertEquals(Float.valueOf(2.2E38F), instance.valueOfString("22E37f", EdmLiteralKind.URI, null, Float.class));

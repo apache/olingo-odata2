@@ -40,7 +40,7 @@ public class EdmDouble extends AbstractSimpleType {
 
 
   private static final Pattern PATTERN = Pattern.compile(
-      "(?:\\+|-)?\\p{Digit}{1,17}(?:\\.\\p{Digit}{1,17})?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,3})?(D|d)?");
+      "(?:\\+|-)?\\p{Digit}{1,16}(?:\\.\\p{Digit}{1,16})?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,3})?(D|d)?");
   private static final EdmDouble instance = new EdmDouble();
 
   
