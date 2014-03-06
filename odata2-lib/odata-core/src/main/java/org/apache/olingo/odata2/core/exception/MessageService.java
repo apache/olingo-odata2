@@ -194,13 +194,13 @@ public class MessageService {
    * @return the message
    */
   private Message getMessage(final String key, final Object... replacements) {
-    String value = null;
+    String message = null;
 
     try {
-      value = resourceBundle.getString(key);
+      message = resourceBundle.getString(key);
       StringBuilder builder = new StringBuilder();
       Formatter f = new Formatter(builder, requestedLocale);
-      f.format(value, replacements);
+      f.format(message, replacements);
       f.close();
 
       return new Message(getLocale(), builder.toString());
@@ -208,7 +208,7 @@ public class MessageService {
     } catch (MissingResourceException e) {
       return new Message(Locale.ENGLISH, "Missing message for key '" + key + "'!");
     } catch (MissingFormatArgumentException e) {
-      return new Message(Locale.ENGLISH, "Missing replacement for place holder in value '" + value +
+      return new Message(Locale.ENGLISH, "Missing replacement for place holder in message '" + message +
           "' for following arguments '" + Arrays.toString(replacements) + "'!");
     }
   }

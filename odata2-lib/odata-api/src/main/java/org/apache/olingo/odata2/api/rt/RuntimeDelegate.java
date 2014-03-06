@@ -32,6 +32,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.ep.EntityProvider.EntityProviderInterface;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.processor.ODataRequest.ODataRequestBuilder;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
@@ -110,6 +111,13 @@ public abstract class RuntimeDelegate {
 
     public abstract ExpandSelectTreeNodeBuilder createExpandSelectTreeNodeBuilder();
 
+    /**
+     * Extract message of {@link ODataMessageException} and return it as a string.
+     * 
+     * @param exception which contains the message references.
+     * @return the message of the {@link ODataMessageException}
+     */
+    public abstract String extractExceptionMessage(ODataMessageException exception);
   }
 
   /**
@@ -216,5 +224,15 @@ public abstract class RuntimeDelegate {
 
   public static ExpandSelectTreeNodeBuilder createExpandSelectTreeNodeBuilder() {
     return RuntimeDelegate.getInstance().createExpandSelectTreeNodeBuilder();
+  }
+
+  /**
+   * Extract message of {@link ODataMessageException} and return it as a string.
+   * 
+   * @param exception which contains the message references.
+   * @return the message of the {@link ODataMessageException}
+   */
+  public static String extractExceptionMessage(ODataMessageException exception) {
+    return RuntimeDelegate.getInstance().extractExceptionMessage(exception);
   }
 }
