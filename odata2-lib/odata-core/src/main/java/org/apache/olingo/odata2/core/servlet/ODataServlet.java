@@ -63,7 +63,14 @@ public class ODataServlet extends HttpServlet {
       throw new ODataRuntimeException("config missing: org.apache.olingo.odata2.processor.factory");
     }
     try {
-      serviceFactory = (ODataServiceFactory) Class.forName(factoryClassName).newInstance();
+
+      ClassLoader cl = (ClassLoader) req.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
+      if (cl == null) {
+        serviceFactory = (ODataServiceFactory) Class.forName(factoryClassName).newInstance();
+      } else {
+        serviceFactory = (ODataServiceFactory) Class.forName(factoryClassName, true, cl).newInstance();
+      }
+
     } catch (Exception e) {
       throw new ODataRuntimeException(e);
     }
@@ -147,8 +154,9 @@ public class ODataServlet extends HttpServlet {
     return true;
   }
 
-  private void handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp)
-      throws IOException {
+  private void
+      handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp)
+          throws IOException {
     try {
       if (req.getHeader(HttpHeaders.ACCEPT) != null && req.getHeader(HttpHeaders.ACCEPT).isEmpty()) {
         createNotAcceptableResponse(req, ODataNotAcceptableException.COMMON, resp);
