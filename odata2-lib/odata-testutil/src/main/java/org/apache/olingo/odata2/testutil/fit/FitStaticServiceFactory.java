@@ -72,7 +72,8 @@ public class FitStaticServiceFactory extends ODataServiceFactory {
 
     assertNotNull(ctx);
     assertNotNull(ctx.getAcceptableLanguages());
-
+    assertNotNull(ctx.getParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT));
+    
     final Map<String, List<String>> requestHeaders = ctx.getRequestHeaders();
     final String host = requestHeaders.get("Host").get(0);
 

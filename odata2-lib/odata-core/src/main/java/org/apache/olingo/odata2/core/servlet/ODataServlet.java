@@ -171,10 +171,12 @@ public class ODataServlet extends HttpServlet {
           .body(req.getInputStream())
           .build();
       ODataContextImpl context = new ODataContextImpl(odataRequest, serviceFactory);
+      context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, req);
+
       ODataService service = serviceFactory.createService(context);
       context.setService(service);
-      context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, req);
       service.getProcessor().setContext(context);
+      
       ODataRequestHandler requestHandler = new ODataRequestHandler(serviceFactory, service, context);
       final ODataResponse odataResponse = requestHandler.handle(odataRequest);
       createResponse(resp, odataResponse);
