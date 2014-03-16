@@ -143,10 +143,12 @@ public final class ODataSubLocator {
     request = ODataRequest.fromRequest(request).method(method).build();
 
     ODataContextImpl context = new ODataContextImpl(request, serviceFactory);
-    ODataService service = serviceFactory.createService(context);
-    context.setService(service);
     context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, httpRequest);
+    
+    ODataService service = serviceFactory.createService(context);
+
     service.getProcessor().setContext(context);
+    context.setService(service);
 
     ODataRequestHandler requestHandler = new ODataRequestHandler(serviceFactory, service, context);
 

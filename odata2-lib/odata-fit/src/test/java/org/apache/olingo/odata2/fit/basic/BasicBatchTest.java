@@ -58,12 +58,17 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
  *  
  */
 public class BasicBatchTest extends AbstractBasicTest {
+
+  public BasicBatchTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   private static final String LF = "\n";
   private static final String REG_EX_BOUNDARY =

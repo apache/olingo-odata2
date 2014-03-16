@@ -23,12 +23,20 @@ import static org.junit.Assert.fail;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.FlushModeType;
+import javax.persistence.LockModeType;
+import javax.persistence.Parameter;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.metamodel.Metamodel;
 
 import junit.framework.Assert;
@@ -57,6 +65,7 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
@@ -180,6 +189,7 @@ public class JPAProcessorImplTest {
     EasyMock.expect(objUriInfo.getOrderBy()).andStubReturn(getOrderByExpression());
     EasyMock.expect(objUriInfo.getTop()).andStubReturn(getTop());
     EasyMock.expect(objUriInfo.getSkip()).andStubReturn(getSkip());
+    EasyMock.expect(objUriInfo.getSkipToken()).andReturn("5");
     EasyMock.expect(objUriInfo.getInlineCount()).andStubReturn(getInlineCount());
     EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
     // EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(getFunctionImport());
@@ -273,6 +283,9 @@ public class JPAProcessorImplTest {
     EasyMock.expect(odataJPAContext.getEntityManagerFactory()).andStubReturn(mockEntityManagerFactory());
     EasyMock.expect(odataJPAContext.getODataContext()).andStubReturn(getLocalODataContext());
     EasyMock.expect(odataJPAContext.getEntityManager()).andStubReturn(getLocalEntityManager());
+    EasyMock.expect(odataJPAContext.getPageSize()).andReturn(10).anyTimes();
+    odataJPAContext.setPaging(EasyMock.isA(JPAPaging.class));
+    EasyMock.expectLastCall();
     EasyMock.replay(odataJPAContext);
     return odataJPAContext;
   }
@@ -311,10 +324,174 @@ public class JPAProcessorImplTest {
   }
 
   private Query getQuery() {
-    Query query = EasyMock.createMock(Query.class);
-    EasyMock.expect(query.getResultList()).andStubReturn(getResultList());
-    EasyMock.replay(query);
-    return query;
+    return new Query() {
+
+      private int maxResults;
+      private int firstResult;
+
+      @Override
+      public Query setFirstResult(final int arg0) {
+        firstResult = arg0;
+        return this;
+      }
+
+      @Override
+      public Query setMaxResults(final int arg0) {
+        maxResults = arg0;
+        return this;
+      }
+
+      @Override
+      public int getMaxResults() {
+        return maxResults;
+      }
+
+      @Override
+      public int getFirstResult() {
+        return firstResult;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public List<Object> getResultList() {
+        return (List<Object>) getResultListL();
+      }
+
+      @Override
+      public <T> T unwrap(final Class<T> arg0) {
+        return null;
+      }
+
+      @Override
+      public Query setParameter(final int arg0, final Date arg1, final TemporalType arg2) {
+        return null;
+      }
+
+      @Override
+      public Query setParameter(final int arg0, final Calendar arg1, final TemporalType arg2) {
+        return null;
+      }
+
+      @Override
+      public Query setParameter(final String arg0, final Date arg1, final TemporalType arg2) {
+        return null;
+      }
+
+      @Override
+      public Query setParameter(final String arg0, final Calendar arg1, final TemporalType arg2) {
+        return null;
+      }
+
+      @Override
+      public Query setParameter(final Parameter<Date> arg0, final Date arg1, final TemporalType arg2) {
+        return null;
+      }
+
+      @Override
+      public Query setParameter(final Parameter<Calendar> arg0, final Calendar arg1, final TemporalType arg2) {
+        return null;
+      }
+
+      @Override
+      public Query setParameter(final int arg0, final Object arg1) {
+        return null;
+      }
+
+      @Override
+      public Query setParameter(final String arg0, final Object arg1) {
+        return null;
+      }
+
+      @Override
+      public <T> Query setParameter(final Parameter<T> arg0, final T arg1) {
+        return null;
+      }
+
+      @Override
+      public Query setLockMode(final LockModeType arg0) {
+        return null;
+      }
+
+      @Override
+      public Query setHint(final String arg0, final Object arg1) {
+        return null;
+      }
+
+      @Override
+      public Query setFlushMode(final FlushModeType arg0) {
+        return null;
+      }
+
+      @Override
+      public boolean isBound(final Parameter<?> arg0) {
+        return false;
+      }
+
+      @Override
+      public Object getSingleResult() {
+        return null;
+      }
+
+      @Override
+      public Set<Parameter<?>> getParameters() {
+        return null;
+      }
+
+      @Override
+      public Object getParameterValue(final int arg0) {
+        return null;
+      }
+
+      @Override
+      public Object getParameterValue(final String arg0) {
+        return null;
+      }
+
+      @Override
+      public <T> T getParameterValue(final Parameter<T> arg0) {
+        return null;
+      }
+
+      @Override
+      public <T> Parameter<T> getParameter(final int arg0, final Class<T> arg1) {
+        return null;
+      }
+
+      @Override
+      public <T> Parameter<T> getParameter(final String arg0, final Class<T> arg1) {
+        return null;
+      }
+
+      @Override
+      public Parameter<?> getParameter(final int arg0) {
+        return null;
+      }
+
+      @Override
+      public Parameter<?> getParameter(final String arg0) {
+        return null;
+      }
+
+      @Override
+      public LockModeType getLockMode() {
+        return null;
+      }
+
+      @Override
+      public Map<String, Object> getHints() {
+        return null;
+      }
+
+      @Override
+      public FlushModeType getFlushMode() {
+        return null;
+      }
+
+      @Override
+      public int executeUpdate() {
+        return 0;
+      }
+    };
   }
 
   private Query getQueryForSelectCount() {
@@ -324,7 +501,7 @@ public class JPAProcessorImplTest {
     return query;
   }
 
-  private List<?> getResultList() {
+  private List<?> getResultListL() {
     List<Object> list = new ArrayList<Object>();
     list.add(new Address());
     return list;

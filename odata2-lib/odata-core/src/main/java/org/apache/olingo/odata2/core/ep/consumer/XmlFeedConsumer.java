@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.ep.consumer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,13 +29,18 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.api.ep.entry.DeletedEntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
-import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
+import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
+import org.apache.olingo.odata2.core.ep.entry.DeletedEntryMetadataImpl;
 import org.apache.olingo.odata2.core.ep.feed.FeedMetadataImpl;
-import org.apache.olingo.odata2.core.ep.feed.ODataFeedImpl;
+import org.apache.olingo.odata2.core.ep.feed.ODataDeltaFeedImpl;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
@@ -53,10 +59,10 @@ public class XmlFeedConsumer {
    * @param reader
    * @param eia
    * @param readProperties
-   * @return {@link ODataFeed} object
+   * @return {@link ODataDeltaFeed} object
    * @throws EntityProviderException
    */
-  public ODataFeed readFeed(final XMLStreamReader reader, final EntityInfoAggregator eia,
+  public ODataDeltaFeed readFeed(final XMLStreamReader reader, final EntityInfoAggregator eia,
       final EntityProviderReadProperties readProperties) throws EntityProviderException {
     try {
       // read xml tag
@@ -81,7 +87,7 @@ public class XmlFeedConsumer {
 
   /**
    * Read all feed specific data (like <code>inline count</code> and <code>next link</code>) as well as all feed entries
-   * (<code>entry</code>).
+   * (<code>entry</code>) and delta feed extensions (tombstones).
    * 
    * @param reader xml stream reader with xml content to be read
    * @param eia entity infos for validation and mapping
@@ -91,33 +97,27 @@ public class XmlFeedConsumer {
    * @throws XMLStreamException if malformed xml is read in stream
    * @throws EntityProviderException if xml contains invalid data (based on odata specification and edm definition)
    */
-  private ODataFeed readFeedData(final XMLStreamReader reader, final EntityInfoAggregator eia,
+  private ODataDeltaFeed readFeedData(final XMLStreamReader reader, final EntityInfoAggregator eia,
       final EntityProviderReadProperties entryReadProperties) throws XMLStreamException, EntityProviderException {
     FeedMetadataImpl metadata = new FeedMetadataImpl();
     XmlEntryConsumer xec = new XmlEntryConsumer();
     List<ODataEntry> results = new ArrayList<ODataEntry>();
+    List<DeletedEntryMetadata> deletedEntries = new ArrayList<DeletedEntryMetadata>();
 
     while (reader.hasNext() && !isFeedEndTag(reader)) {
       if (FormatXml.ATOM_ENTRY.equals(reader.getLocalName())) {
         ODataEntry entry = xec.readEntry(reader, eia, entryReadProperties);
         results.add(entry);
+      } else if (FormatXml.ATOM_TOMBSTONE_DELETED_ENTRY.equals(reader.getLocalName())) {
+        reader.require(XMLStreamConstants.START_ELEMENT, FormatXml.ATOM_TOMBSTONE_NAMESPACE,
+            FormatXml.ATOM_TOMBSTONE_DELETED_ENTRY);
+
+        DeletedEntryMetadataImpl deletedEntryMetadata = readDeletedEntryMetadata(reader);
+        deletedEntries.add(deletedEntryMetadata);
+        reader.next();
       } else if (FormatXml.M_COUNT.equals(reader.getLocalName())) {
         reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_M_2007_08, FormatXml.M_COUNT);
-
-        String inlineCountString = reader.getElementText();
-        if (inlineCountString != null) {
-          try {
-            int inlineCountNumber = Integer.valueOf(inlineCountString);
-            if (inlineCountNumber >= 0) {
-              metadata.setInlineCount(inlineCountNumber);
-            } else {
-              throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID
-                  .addContent(inlineCountNumber));
-            }
-          } catch (NumberFormatException e) {
-            throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID.addContent(""), e);
-          }
-        }
+        readInlineCount(reader, metadata);
       } else if (FormatXml.ATOM_LINK.equals(reader.getLocalName())) {
         reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_LINK);
 
@@ -129,14 +129,51 @@ public class XmlFeedConsumer {
           final String uri = reader.getAttributeValue(null, FormatXml.ATOM_HREF);
           metadata.setDeltaLink(uri);
         }
-
         reader.next();
       } else {
         reader.next();
       }
       readTillNextStartTag(reader);
     }
-    return new ODataFeedImpl(results, metadata);
+    return new ODataDeltaFeedImpl(results, metadata, deletedEntries);
+  }
+
+  private DeletedEntryMetadataImpl readDeletedEntryMetadata(final XMLStreamReader reader)
+      throws EntityProviderException, XMLStreamException {
+    try {
+      DeletedEntryMetadataImpl deletedEntryMetadata = new DeletedEntryMetadataImpl();
+
+      String uri = reader.getAttributeValue(null, FormatXml.ATOM_TOMBSTONE_REF);
+      String whenStr = reader.getAttributeValue(null, FormatXml.ATOM_TOMBSTONE_WHEN);
+      Date when;
+      when = EdmDateTimeOffset.getInstance().valueOfString(whenStr, EdmLiteralKind.DEFAULT, null,
+          Date.class);
+
+      deletedEntryMetadata.setUri(uri);
+      deletedEntryMetadata.setWhen(when);
+      return deletedEntryMetadata;
+    } catch (EdmSimpleTypeException e) {
+      throw new EntityProviderException(EntityProviderException.INVALID_DELETED_ENTRY_METADATA);
+    }
+  }
+
+  private void readInlineCount(final XMLStreamReader reader, final FeedMetadataImpl metadata)
+      throws XMLStreamException,
+      EntityProviderException {
+    String inlineCountString = reader.getElementText();
+    if (inlineCountString != null) {
+      try {
+        int inlineCountNumber = Integer.valueOf(inlineCountString);
+        if (inlineCountNumber >= 0) {
+          metadata.setInlineCount(inlineCountNumber);
+        } else {
+          throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID
+              .addContent(inlineCountNumber));
+        }
+      } catch (NumberFormatException e) {
+        throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID.addContent(""), e);
+      }
+    }
   }
 
   private void readTillNextStartTag(final XMLStreamReader reader) throws XMLStreamException {

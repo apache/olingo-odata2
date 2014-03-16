@@ -25,10 +25,8 @@
             <includes>
                 <include>org.apache.olingo:olingo-odata2-core-incubating</include>
                 <include>org.apache.olingo:olingo-odata2-api-incubating</include>
+                <include>org.apache.olingo:olingo-odata2-api-annotation-incubating</include>
             </includes>
-            <excludes>
-                <exclude>org.apache.olingo:olingo-odata2-api-annotation-incubating</exclude>
-            </excludes>
         </dependencySet>
     </dependencySets>
     <fileSets>
@@ -37,7 +35,7 @@
             <outputDirectory>/</outputDirectory>
             <excludes>
                 <exclude>LICENSE</exclude>
-                <exclude>NOTICE</exclude>
+				<exclude>NOTICE</exclude>
            </excludes>
         </fileSet>
         <fileSet>

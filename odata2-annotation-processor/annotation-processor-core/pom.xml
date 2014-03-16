@@ -24,6 +24,46 @@ language governing permissions and limitations under the License. -->
     <relativePath>..</relativePath>
   </parent>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <instructions>
+            <Import-Package>
+              *
+            </Import-Package>
+            <Export-Package>
+              org.apache.olingo.odata2.annotation.processor.core.rt;version=${project.version}
+            </Export-Package>
+            <Bundle-DocURL>${project.url}</Bundle-DocURL>
+            <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.olingo</groupId>
@@ -40,12 +80,13 @@ language governing permissions and limitations under the License. -->
       <artifactId>olingo-odata2-api-incubating</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- Test dependencies -->
     <dependency>
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-odata2-core-incubating</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
-    <!-- Test dependencies -->
     <dependency>
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-odata2-testutil-incubating</artifactId>

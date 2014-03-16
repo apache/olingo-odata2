@@ -27,6 +27,7 @@ import org.apache.olingo.odata2.annotation.processor.core.model.Photo;
 import org.apache.olingo.odata2.annotation.processor.core.model.RefBase;
 import org.apache.olingo.odata2.annotation.processor.core.model.Room;
 import org.apache.olingo.odata2.annotation.processor.core.model.Team;
+import org.apache.olingo.odata2.annotation.processor.core.rt.AnnotationServiceFactoryImpl;
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.junit.Test;
@@ -40,10 +41,10 @@ public class AnnotationServiceFactoryImplTest {
   public void createFromPackage() throws ODataException {
     AnnotationServiceFactoryImpl factory = new AnnotationServiceFactoryImpl();
     ODataService service = factory.createAnnotationService(Building.class.getPackage().getName());
-    
+
     Assert.assertNotNull(service);
   }
-  
+
   @Test
   public void createFromAnnotatedClasses() throws ODataException {
     AnnotationServiceFactoryImpl factory = new AnnotationServiceFactoryImpl();
@@ -56,19 +57,19 @@ public class AnnotationServiceFactoryImplTest {
     annotatedClasses.add(Room.class);
     annotatedClasses.add(Team.class);
     ODataService service = factory.createAnnotationService(annotatedClasses);
-    
+
     Assert.assertNotNull(service);
   }
 
-  @Test(expected=ODataException.class)
+  @Test(expected = ODataException.class)
   public void createFromClasses() throws ODataException {
     AnnotationServiceFactoryImpl factory = new AnnotationServiceFactoryImpl();
-    
+
     final Collection<Class<?>> notAnnotatedClasses = new ArrayList<Class<?>>();
     notAnnotatedClasses.add(String.class);
     notAnnotatedClasses.add(Long.class);
     ODataService service = factory.createAnnotationService(notAnnotatedClasses);
-    
+
     Assert.assertNotNull(service);
   }
 }

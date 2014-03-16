@@ -79,6 +79,7 @@
 						<Export-Package>
 							org.apache.olingo.odata2.core.rest.app;version=${project.version},
 							org.apache.olingo.odata2.core.rt;version=${project.version},
+                            org.apache.olingo.odata2.core.servlet;version=${project.version},
 						</Export-Package>
 						<Bundle-DocURL>${project.url}</Bundle-DocURL>
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
@@ -193,9 +194,30 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>${cxf.version}</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
             <scope>test</scope>
         </dependency>
 	</dependencies>

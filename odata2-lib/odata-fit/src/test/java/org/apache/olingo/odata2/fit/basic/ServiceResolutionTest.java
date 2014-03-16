@@ -49,6 +49,7 @@ import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
 import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.apache.olingo.odata2.testutil.server.TestServer;
 import org.junit.After;
 import org.junit.Before;
@@ -62,7 +63,7 @@ import org.mockito.stubbing.Answer;
 public class ServiceResolutionTest extends BaseTest {
 
   private final HttpClient httpClient = new DefaultHttpClient();
-  private final TestServer server = new TestServer();
+  private final TestServer server = new TestServer(ServletType.JAXRS_SERVLET);
   private ODataContext context;
   private ODataSingleProcessorService service;
 

@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.api.exception;
 
+import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
+
 /**
  * <p>DO NOT EXTEND THIS EXCEPTION</p>
  * APPLICATION DEVELOPERS: please use {@link ODataApplicationException} o throw custom exceptions.
@@ -111,5 +113,22 @@ public abstract class ODataMessageException extends ODataException {
    */
   public String getErrorCode() {
     return errorCode;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String getMessage() {
+    if(messageReference == null) {
+      return "No message reference given. Inherit message is = '" + super.getMessage() + "'";
+    }
+    
+    String message = RuntimeDelegate.extractExceptionMessage(this);
+    if(message == null) {
+      return "Message Reference key = '" + messageReference.getKey() +
+              "' and inherit message = '" + super.getMessage() + "'";
+    }
+    return message;
   }
 }

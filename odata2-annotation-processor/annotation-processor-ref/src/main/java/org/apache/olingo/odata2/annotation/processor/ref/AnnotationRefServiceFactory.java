@@ -74,7 +74,7 @@ public class AnnotationRefServiceFactory extends ODataServiceFactory {
       ANNOTATED_MODEL_CLASSES.add(Animal.class);
     }
     final static ODataService ANNOTATION_ODATA_SERVICE;
-    
+
     static {
       try {
 //        ANNOTATION_ODATA_SERVICE = AnnotationServiceFactory.createAnnotationService(MODEL_PACKAGE);
@@ -138,7 +138,7 @@ public class AnnotationRefServiceFactory extends ODataServiceFactory {
   private static <T> InMemoryDataStore<T> getDataStore(Class<T> clz) throws DataStoreException {
     return InMemoryDataStore.createInMemory(clz, true);
   }
-  
+
   private static void initializeSampleData() throws ODataApplicationException {
     InMemoryDataStore<Team> teamDs = getDataStore(Team.class);
     teamDs.create(createTeam("Team Alpha", true));

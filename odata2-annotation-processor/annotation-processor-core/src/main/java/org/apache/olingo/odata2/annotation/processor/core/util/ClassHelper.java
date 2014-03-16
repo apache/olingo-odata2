@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
-
 /**
  *
  */
@@ -104,7 +102,7 @@ public class ClassHelper {
     return annotatedClasses;
   }
 
-  private static boolean isJarFile(URL url) {
+  private static boolean isJarFile(final URL url) {
     String filename = url.getFile();
     int index = filename.indexOf(JAR_RESOURCE_SEPARATOR);
     if (index > JAR_FILE_ENDING.length()) {
@@ -114,7 +112,8 @@ public class ClassHelper {
     return false;
   }
 
-  private static Collection<String> getClassFqnFromDir(final FilenameFilter ff, File folder, String packageToScan) {
+  private static Collection<String> getClassFqnFromDir(final FilenameFilter ff, final File folder,
+      final String packageToScan) {
     List<String> classFiles = new ArrayList<String>();
     String[] classFilesForFolder = folder.list(ff);
     for (String name : classFilesForFolder) {
@@ -130,7 +129,7 @@ public class ClassHelper {
     return classFiles;
   }
 
-  private static Collection<String> getClassFqnFromJar(String filepath, String packageToScan) {
+  private static Collection<String> getClassFqnFromJar(final String filepath, final String packageToScan) {
     JarFile jarFile = null;
 
     final String jarFilePath;
@@ -180,9 +179,9 @@ public class ClassHelper {
         return value;
       }
     } catch (IllegalArgumentException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     } catch (IllegalAccessException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     }
   }
 
@@ -195,9 +194,9 @@ public class ClassHelper {
         field.setAccessible(access);
       }
     } catch (IllegalArgumentException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     } catch (IllegalAccessException ex) { // should never happen
-      throw new ODataRuntimeException(ex);
+      throw new AnnotationRuntimeException(ex);
     }
   }
 

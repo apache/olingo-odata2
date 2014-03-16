@@ -1516,6 +1516,7 @@ public class ListsProcessor extends DataSourceProcessor {
     }
   }
 
+
   private <T> Map<String, Object> getSimpleTypeValueMap(final T data, final List<EdmProperty> propertyPath)
       throws ODataException {
     final EdmProperty property = propertyPath.get(propertyPath.size() - 1);
@@ -1523,7 +1524,6 @@ public class ListsProcessor extends DataSourceProcessor {
     valueWithMimeType.put(property.getName(), getPropertyValue(data, propertyPath));
 
     handleMimeType(data, property.getMapping(), valueWithMimeType);
-
     return valueWithMimeType;
   }
 

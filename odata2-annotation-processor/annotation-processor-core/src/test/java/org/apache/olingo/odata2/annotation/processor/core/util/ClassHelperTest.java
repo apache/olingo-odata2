@@ -34,7 +34,7 @@ public class ClassHelperTest {
 
   private final ClassValidator annotatedTestEntityInnerClasses = new ClassValidator() {
     @Override
-    public boolean isClassValid(Class<?> c) {
+    public boolean isClassValid(final Class<?> c) {
       return c.isAnnotationPresent(EdmEntityType.class)
           && c.getName().contains(ClassHelperTest.class.getSimpleName());
     }
@@ -42,7 +42,7 @@ public class ClassHelperTest {
 
   private final ClassValidator annotatedEntityClasses = new ClassValidator() {
     @Override
-    public boolean isClassValid(Class<?> c) {
+    public boolean isClassValid(final Class<?> c) {
       return c.isAnnotationPresent(EdmEntityType.class);
     }
   };
@@ -58,7 +58,7 @@ public class ClassHelperTest {
     Assert.assertEquals(1, loadedClasses.size());
     Assert.assertEquals(SimpleEntity.class.getName(), loadedClasses.get(0).getName());
   }
-  
+
   @Test
   public void loadSingleEntityFromJar() throws ODataException {
     String packageToScan = AnnotatedEntity.class.getPackage().getName();
@@ -70,7 +70,6 @@ public class ClassHelperTest {
     Assert.assertEquals(1, loadedClasses.size());
     Assert.assertEquals(AnnotatedEntity.class.getName(), loadedClasses.get(0).getName());
   }
-
 
   //
   // The below classes are 'unused' within the code but must be declared for loading via
@@ -88,7 +87,7 @@ public class ClassHelperTest {
 
     public SimpleEntity() {}
 
-    public SimpleEntity(Long id, String name) {
+    public SimpleEntity(final Long id, final String name) {
       this.id = id;
       this.name = name;
     }

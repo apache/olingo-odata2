@@ -42,6 +42,7 @@ import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.api.processor.part.MetadataProcessor;
 import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.exceptions.XpathException;
@@ -53,6 +54,10 @@ import org.xml.sax.SAXException;
  *  
  */
 public class LanguageNegotiationTest extends AbstractBasicTest {
+
+  public LanguageNegotiationTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Override
   protected ODataSingleProcessor createProcessor() throws ODataException {

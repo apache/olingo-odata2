@@ -51,12 +51,17 @@ import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
 import org.apache.olingo.odata2.testutil.helper.HttpMerge;
 import org.apache.olingo.odata2.testutil.helper.HttpSomethingUnsupported;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
  *  
  */
 public class BasicHttpTest extends AbstractBasicTest {
+
+  public BasicHttpTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Override
   protected ODataSingleProcessor createProcessor() throws ODataException {

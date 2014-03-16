@@ -18,9 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.exception;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmLiteralException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
@@ -51,6 +48,10 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.ODataMessageTextVerifier;
 import org.junit.Test;
 
+import java.util.Locale;
+
+import static org.junit.Assert.*;
+
 /**
  *  
  */
@@ -66,6 +67,14 @@ public class ODataExceptionTest extends BaseTest {
   public void nullPointerExceptionCause() {
     ODataException exception = new ODataException("Some message.", new NullPointerException());
     assertFalse(exception.isCausedByHttpException());
+  }
+
+  @Test
+  public void getMessage() {
+    ODataNotImplementedException odnie = new ODataNotImplementedException();
+    assertNotNull(odnie.getMessage());
+    MessageService.Message commonMsg = MessageService.getMessage(Locale.ENGLISH, ODataNotImplementedException.COMMON);
+    assertEquals(commonMsg.getText(), odnie.getMessage());
   }
 
   @Test

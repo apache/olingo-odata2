@@ -39,6 +39,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataNotAcceptableException;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
@@ -157,6 +158,13 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   public ODataFeed readFeed(final String contentType, final EdmEntitySet entitySet, final InputStream content,
       final EntityProviderReadProperties properties) throws EntityProviderException {
     return create(contentType).readFeed(entitySet, content, properties);
+  }
+
+  @Override
+  public ODataDeltaFeed readDeltaFeed(final String contentType, final EdmEntitySet entitySet,
+      final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
+    return create(contentType).readDeltaFeed(entitySet, content, properties);
   }
 
   @Override

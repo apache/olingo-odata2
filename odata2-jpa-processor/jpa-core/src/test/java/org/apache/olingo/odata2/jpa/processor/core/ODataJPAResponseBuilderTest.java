@@ -59,6 +59,7 @@ import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
+import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmTestModelView;
@@ -246,6 +247,8 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
   private ODataJPAContext getODataJPAContext() {
     ODataJPAContext objODataJPAContext = EasyMock.createMock(ODataJPAContext.class);
     EasyMock.expect(objODataJPAContext.getODataContext()).andStubReturn(getLocalODataContext());
+    EasyMock.expect(objODataJPAContext.getPageSize()).andReturn(10);
+    EasyMock.expect(objODataJPAContext.getPaging()).andReturn(mockJPAPaging()).anyTimes();
     EasyMock.replay(objODataJPAContext);
     return objODataJPAContext;
   }
@@ -261,11 +264,49 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     return objODataContext;
   }
 
+  private JPAPaging mockJPAPaging() {
+    JPAPaging paging = new JPAPaging() {
+
+      @Override
+      public int getStartPage() {
+        return 0;
+      }
+
+      @Override
+      public List<Object> getPagedEntities() {
+        return null;
+      }
+
+      @Override
+      public int getPageSize() {
+        return 10;
+      }
+
+      @Override
+      public int getNextPage() {
+        return 10;
+      }
+    };
+
+    return paging;
+  }
+
   private PathInfo getLocalPathInfo() {
     PathInfo pathInfo = EasyMock.createMock(PathInfo.class);
     EasyMock.expect(pathInfo.getServiceRoot()).andStubReturn(getLocalURI());
+    EasyMock.expect(pathInfo.getRequestUri()).andStubReturn(getRequestURI());
     EasyMock.replay(pathInfo);
     return pathInfo;
+  }
+
+  private URI getRequestURI() {
+    URI uri = null;
+    try {
+      uri = new URI("SalesOrders");
+    } catch (URISyntaxException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+    return uri;
   }
 
   private URI getLocalURI() {
@@ -326,6 +367,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     EasyMock.expect(selectItem.getProperty()).andStubReturn(getEdmPropertyForSelect());
     List<NavigationPropertySegment> navigationSegmentList = new ArrayList<NavigationPropertySegment>();
     EasyMock.expect(selectItem.getNavigationPropertySegments()).andStubReturn(navigationSegmentList);
+    EasyMock.expect(selectItem.isStar()).andReturn(false).anyTimes();
     EasyMock.replay(selectItem);
     return selectItem;
   }

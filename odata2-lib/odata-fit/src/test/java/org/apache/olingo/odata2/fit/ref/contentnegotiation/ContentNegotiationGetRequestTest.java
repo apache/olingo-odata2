@@ -34,6 +34,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.uri.UriType;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -42,6 +43,10 @@ import org.junit.Test;
  */
 @Ignore
 public class ContentNegotiationGetRequestTest extends AbstractContentNegotiationTest {
+
+  public ContentNegotiationGetRequestTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void acceptHeaderAppAtomXml() throws Exception {

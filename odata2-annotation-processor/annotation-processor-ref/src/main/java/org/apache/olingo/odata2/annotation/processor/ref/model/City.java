@@ -32,6 +32,8 @@ public class City {
   @EdmProperty
   private String cityName;
 
+  public City() {}
+  
   public City(final String postalCode, final String name) {
     this.postalCode = postalCode;
     cityName = name;

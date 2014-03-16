@@ -30,6 +30,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
@@ -39,6 +40,10 @@ import org.junit.Test;
  * 
  */
 public class ServiceJsonTest extends AbstractRefTest {
+  public ServiceJsonTest(ServletType servletType) {
+    super(servletType);
+  }
+
   @Test
   public void serviceDocumentDollarFormatJson() throws Exception {
     final HttpResponse response = callUri("?$format=json");
@@ -53,11 +58,11 @@ public class ServiceJsonTest extends AbstractRefTest {
     Assert.assertTrue(jsonDataResponseContains(body, "Teams"));
   }
 
-  private boolean jsonDataResponseContains(String content, String containingValue) {
+  private boolean jsonDataResponseContains(final String content, final String containingValue) {
     return content.matches("\\{\"d\":\\{\"EntitySets\":\\[.*"
         + containingValue + ".*\"\\]\\}\\}");
   }
-  
+
   @Test
   public void serviceDocumentAcceptHeaderJson() throws Exception {
     final HttpResponse response = callUri("", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_JSON);

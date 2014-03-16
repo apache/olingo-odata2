@@ -70,7 +70,7 @@ public class MessageServiceTest extends BaseTest {
     Message ms = MessageService.getMessage(DEFAULT_LANGUAGE, context);
 
     assertEquals(
-        "Missing replacement for place holder in value 'First was [%1$s] and second was [%2$s]!' " +
+        "Missing replacement for place holder in message 'First was [%1$s] and second was [%2$s]!' " +
             "for following arguments '[first]'!",
         ms.getText());
   }

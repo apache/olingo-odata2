@@ -19,11 +19,12 @@
 package org.apache.olingo.odata2.core.debug;
 
 import java.io.IOException;
+import java.io.Writer;
 
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
- *  
+ * Debug information.
  */
 public interface DebugInfo {
 
@@ -39,4 +40,10 @@ public interface DebugInfo {
    * @param jsonStreamWriter a JSON stream writer
    */
   public void appendJson(JsonStreamWriter jsonStreamWriter) throws IOException;
+
+  /**
+   * Appends the content of this debug information part to the given writer.
+   * @param writer a {@link Writer}
+   */
+  public void appendHtml(Writer writer) throws IOException;
 }

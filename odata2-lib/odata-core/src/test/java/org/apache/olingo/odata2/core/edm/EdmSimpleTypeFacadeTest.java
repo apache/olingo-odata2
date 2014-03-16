@@ -354,8 +354,6 @@ public class EdmSimpleTypeFacadeTest extends BaseTest {
     parseWrongLiteralContent("9876543210", EdmLiteralException.LITERALFORMAT);
     parseWrongLiteralContent("-9876543210", EdmLiteralException.LITERALFORMAT);
     parseWrongLiteralContent("12345678901234567890L", EdmLiteralException.LITERALFORMAT);
-    parseWrongLiteralContent("12345678901234567890D", EdmLiteralException.LITERALFORMAT);
-    parseWrongLiteralContent("1234567890F", EdmLiteralException.LITERALFORMAT);
     parseWrongLiteralContent("guid'a'", EdmLiteralException.LITERALFORMAT);
     parseWrongLiteralContent("datetime'1'", EdmLiteralException.LITERALFORMAT);
     parseWrongLiteralContent("datetimeoffset'2'", EdmLiteralException.LITERALFORMAT);

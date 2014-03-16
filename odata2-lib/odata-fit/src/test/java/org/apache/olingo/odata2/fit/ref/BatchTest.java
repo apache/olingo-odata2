@@ -35,6 +35,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -42,6 +43,10 @@ import org.junit.Test;
  *  
  */
 public class BatchTest extends AbstractRefTest {
+
+  public BatchTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   @Test
   public void testSimpleBatch() throws Exception {

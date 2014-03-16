@@ -130,7 +130,7 @@ public class ODataEntryMockUtil {
   }
 
   private static void
-      enhanceMockODataEntry(final ODataEntry oDataEntry, boolean hasInline, List<String> associationURIs) {
+      enhanceMockODataEntry(final ODataEntry oDataEntry, final boolean hasInline, final List<String> associationURIs) {
     EasyMock.expect(oDataEntry.containsInlineEntry()).andReturn(hasInline).anyTimes();
     EntryMetadata entryMetadata = EasyMock.createMock(EntryMetadata.class);
     if (hasInline) {

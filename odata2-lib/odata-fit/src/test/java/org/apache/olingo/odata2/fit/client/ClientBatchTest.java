@@ -43,9 +43,14 @@ import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.fit.ref.AbstractRefTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 public class ClientBatchTest extends AbstractRefTest {
+  public ClientBatchTest(final ServletType servletType) {
+    super(servletType);
+  }
+
   private static final String PUT = "PUT";
   private static final String POST = "POST";
   private static final String GET = "GET";

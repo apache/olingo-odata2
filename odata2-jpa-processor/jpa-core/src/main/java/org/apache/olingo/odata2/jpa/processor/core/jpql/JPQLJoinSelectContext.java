@@ -62,6 +62,10 @@ public class JPQLJoinSelectContext extends JPQLSelectContext implements JPQLJoin
           setType(JPQLContextType.JOIN);
         }
 
+        if (withPaging) {
+          isPagingRequested(withPaging);
+        }
+
         setJPAOuterJoinClause(generateJoinClauses());
 
         if (!jpaJoinClauses.isEmpty()) {

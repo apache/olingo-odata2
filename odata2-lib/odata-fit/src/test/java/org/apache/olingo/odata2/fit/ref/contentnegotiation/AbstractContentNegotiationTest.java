@@ -58,6 +58,7 @@ import org.apache.olingo.odata2.ref.processor.ListsProcessor;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,10 @@ import org.slf4j.LoggerFactory;
  *  
  */
 public abstract class AbstractContentNegotiationTest extends AbstractFitTest {
+
+  public AbstractContentNegotiationTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractContentNegotiationTest.class);
 

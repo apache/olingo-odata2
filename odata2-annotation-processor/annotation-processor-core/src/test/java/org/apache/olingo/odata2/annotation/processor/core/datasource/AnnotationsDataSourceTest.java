@@ -40,6 +40,7 @@ import org.apache.olingo.odata2.annotation.processor.core.model.RefBase;
 import org.apache.olingo.odata2.annotation.processor.core.model.Room;
 import org.apache.olingo.odata2.annotation.processor.core.model.Team;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
+import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationRuntimeException;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -48,7 +49,6 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -69,7 +69,6 @@ public class AnnotationsDataSourceTest {
     ANNOTATED_ENTITY_SET_CLASSES.add(Photo.class);
     ANNOTATED_ENTITY_SET_CLASSES.add(Room.class);
     ANNOTATED_ENTITY_SET_CLASSES.add(Team.class);
-    
     ANNOTATED_MODEL_CLASSES.addAll(ANNOTATED_ENTITY_SET_CLASSES);
     ANNOTATED_MODEL_CLASSES.add(Location.class);
     ANNOTATED_MODEL_CLASSES.add(City.class);
@@ -87,7 +86,7 @@ public class AnnotationsDataSourceTest {
     datasource = new AnnotationDataSource(Building.class.getPackage().getName(), dataStoreFactory);
     edmProvider = new AnnotationEdmProvider(Building.class.getPackage().getName());
   }
-  
+
   @Test
   public void initFromPackage() throws Exception {
     AnnotationDataSource ds = new AnnotationDataSource(Building.class.getPackage().getName());
@@ -208,7 +207,7 @@ public class AnnotationsDataSourceTest {
   }
 
   private Thread createBuildingThread(final CountDownLatch latch, final DataSource datasource,
-          final EdmEntitySet edmEntitySet, final String id) {
+      final EdmEntitySet edmEntitySet, final String id) {
     Runnable run = new Runnable() {
       @Override
       public void run() {
@@ -370,7 +369,7 @@ public class AnnotationsDataSourceTest {
     }
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test(expected = AnnotationRuntimeException.class)
   public void readUnknownEntity() throws Exception {
     EdmEntitySet unknownEntitySet = Mockito.mock(EdmEntitySet.class);
     Mockito.when(unknownEntitySet.getName()).thenReturn("UnknownEntity");
@@ -381,7 +380,7 @@ public class AnnotationsDataSourceTest {
     datasource.readData(unknownEntitySet, keys);
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test(expected = AnnotationRuntimeException.class)
   public void readUnknownEntities() throws Exception {
     EdmEntitySet unknownEntitySet = Mockito.mock(EdmEntitySet.class);
     Mockito.when(unknownEntitySet.getName()).thenReturn("UnknownEntity");
@@ -450,7 +449,7 @@ public class AnnotationsDataSourceTest {
 
     // execute
     Object relatedData = datasource.readRelatedData(
-            buildingsEntitySet, building, roomsEntitySet, Collections.EMPTY_MAP);
+        buildingsEntitySet, building, roomsEntitySet, Collections.EMPTY_MAP);
 
     // validate
     Assert.assertTrue("Result is no collection.", relatedData instanceof Collection);
@@ -485,7 +484,7 @@ public class AnnotationsDataSourceTest {
 
     // execute
     Object relatedData = datasource.readRelatedData(
-            roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
+        roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
 
     // validate
     Assert.assertTrue("Result is no room.", relatedData instanceof Building);
@@ -515,7 +514,7 @@ public class AnnotationsDataSourceTest {
 
     // execute
     Object relatedData = datasource.readRelatedData(
-            roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
+        roomsEntitySet, room, buildingsEntitySet, Collections.EMPTY_MAP);
 
     // validate
     Assert.assertNull("Related data must be null.", relatedData);
@@ -552,7 +551,7 @@ public class AnnotationsDataSourceTest {
     Map<String, Object> targetKeys = new HashMap<String, Object>();
     targetKeys.put("Id", 3);
     Object relatedData = datasource.readRelatedData(
-            buildingsEntitySet, building, roomsEntitySet, targetKeys);
+        buildingsEntitySet, building, roomsEntitySet, targetKeys);
 
     // validate
     Assert.assertTrue("Result is no Room.", relatedData instanceof Room);
@@ -711,11 +710,10 @@ public class AnnotationsDataSourceTest {
     try {
       Building readAfterDelete = (Building) datasource.readData(edmEntitySet, keys);
       Assert.fail("Expected " + ODataNotFoundException.class + "was not thrown for '" + readAfterDelete + "'.");
-    } catch (ODataNotFoundException e) {
-    }
+    } catch (ODataNotFoundException e) {}
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test(expected = AnnotationRuntimeException.class)
   public void unknownEntitySetForEntity() throws Exception {
     String entitySetName = "Unknown";
     FullQualifiedName entityType = new FullQualifiedName(DEFAULT_CONTAINER, entitySetName);
@@ -732,7 +730,7 @@ public class AnnotationsDataSourceTest {
     datasource.readData(edmEntitySet, keys);
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test(expected = AnnotationRuntimeException.class)
   public void unknownEntitySetForEntities() throws Exception {
     String entitySetName = "Unknown";
     FullQualifiedName entityType = new FullQualifiedName(DEFAULT_CONTAINER, entitySetName);
@@ -760,7 +758,8 @@ public class AnnotationsDataSourceTest {
     Building created = buildingStore.create(building);
 
     Room room = new Room(42, "Room with Number");
-    room.setSeats(123);;
+    room.setSeats(123);
+    ;
     room.setVersion(4711);
     roomStore.create(room);
 
@@ -788,8 +787,8 @@ public class AnnotationsDataSourceTest {
     return createMockedEdmEntitySet(edmProvider, entitySetName);
   }
 
-  private EdmEntitySet createMockedEdmEntitySet(AnnotationEdmProvider edmProvider, final String entitySetName)
-          throws ODataException {
+  private EdmEntitySet createMockedEdmEntitySet(final AnnotationEdmProvider edmProvider, final String entitySetName)
+      throws ODataException {
     EntitySet entitySet = edmProvider.getEntitySet(DEFAULT_CONTAINER, entitySetName);
     FullQualifiedName entityType = entitySet.getEntityType();
 

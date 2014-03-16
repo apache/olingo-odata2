@@ -48,6 +48,7 @@ import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
+import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.SelectItem;
 import org.apache.olingo.odata2.api.uri.UriParser;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
@@ -60,6 +61,7 @@ import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
+import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAExpandCallBack;
@@ -470,6 +472,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       final GetEntitySetUriInfo resultsView, final List<Map<String, Object>> edmEntityList)
       throws ODataJPARuntimeException {
     ODataEntityProviderPropertiesBuilder entityFeedPropertiesBuilder = null;
+    ODataContext context = odataJPAContext.getODataContext();
 
     Integer count = null;
     if (resultsView.getInlineCount() != null) {
@@ -483,13 +486,23 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     }
 
     try {
+      PathInfo pathInfo = context.getPathInfo();
       entityFeedPropertiesBuilder =
-          EntityProviderWriteProperties.serviceRoot(odataJPAContext.getODataContext().getPathInfo().getServiceRoot());
+          EntityProviderWriteProperties.serviceRoot(pathInfo.getServiceRoot());
+      JPAPaging paging = odataJPAContext.getPaging();
+      if (odataJPAContext.getPageSize() > 0 && paging != null && paging.getNextPage() > 0) {
+        String nextLink =
+            pathInfo.getServiceRoot().relativize(context.getPathInfo().getRequestUri()).toString();
+        nextLink = percentEncodeNextLink(nextLink);
+        nextLink += (nextLink.contains("?") ? "&" : "?")
+            + "$skiptoken=" + odataJPAContext.getPaging().getNextPage();
+        entityFeedPropertiesBuilder.nextLink(nextLink);
+      }
       entityFeedPropertiesBuilder.inlineCount(count);
       entityFeedPropertiesBuilder.inlineCountType(resultsView.getInlineCount());
       ExpandSelectTreeNode expandSelectTree =
           UriParser.createExpandSelectTree(resultsView.getSelect(), resultsView.getExpand());
-      entityFeedPropertiesBuilder.callbacks(JPAExpandCallBack.getCallbacks(odataJPAContext.getODataContext()
+      entityFeedPropertiesBuilder.callbacks(JPAExpandCallBack.getCallbacks(context
           .getPathInfo().getServiceRoot(), expandSelectTree, resultsView.getExpand()));
       entityFeedPropertiesBuilder.expandSelectTree(expandSelectTree);
 
@@ -498,6 +511,16 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     }
 
     return entityFeedPropertiesBuilder.build();
+  }
+
+  private static String percentEncodeNextLink(final String link) {
+    if (link == null) {
+      return null;
+    }
+
+    return link.replaceAll("\\$skiptoken=.+?(?:&|$)", "")
+        .replaceAll("\\$skip=.+?(?:&|$)", "")
+        .replaceFirst("(?:\\?|&)$", ""); // Remove potentially trailing "?" or "&" left over from remove actions
   }
 
   /*
@@ -566,13 +589,18 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     try {
       for (SelectItem selectItem : selectItems) {
         if (selectItem.getNavigationPropertySegments().size() <= 0) {
-          selectPropertyList.add(selectItem.getProperty());
+          if (selectItem.isStar()) {
+            selectPropertyList.addAll(getEdmProperties(entity));
+            return selectPropertyList;
+          } else {
+            selectPropertyList.add(selectItem.getProperty());
+          }
         }
       }
       for (EdmProperty keyProperty : entity.getKeyProperties()) {
         flag = true;
         for (SelectItem selectedItem : selectItems) {
-          if (selectedItem.getProperty().equals(keyProperty)) {
+          if (selectedItem.isStar() == false && selectedItem.getProperty().equals(keyProperty)) {
             flag = false;
             break;
           }
@@ -595,6 +623,19 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       navigationPropertyList.add(navpropSegment.get(0).getNavigationProperty());
     }
     return navigationPropertyList;
+  }
+
+  private static List<EdmProperty> getEdmProperties(final EdmStructuralType structuralType)
+      throws ODataJPARuntimeException {
+    List<EdmProperty> edmProperties = new ArrayList<EdmProperty>();
+    try {
+      for (String propertyName : structuralType.getPropertyNames()) {
+        edmProperties.add((EdmProperty) structuralType.getProperty(propertyName));
+      }
+    } catch (EdmException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    }
+    return edmProperties;
   }
 
 }

@@ -290,9 +290,20 @@ th,td {
 					<li><a
 						href="SalesOrderProcessing.svc/FindAllSalesOrders?DeliveryStatusCode='01'"
 						target="_blank">SalesOrderProcessing.svc/FindAllSalesOrders?DeliveryStatusCode='01'</a></li>
-					<li><a
-						href="SalesOrderProcessing.svc/orderValue?SoId=2L"
+					<li><a href="SalesOrderProcessing.svc/orderValue?SoId=2L"
 						target="_blank">SalesOrderProcessing.svc/orderValue?SoId=2L</a></li>
+				</ul>
+				<h3>Paging</h3>
+				<ul>
+					<li><a
+						href="SalesOrderProcessing.svc/SalesOrders?$top=1&$inlinecount=allpages"
+						target="_blank">SalesOrderProcessing.svc/SalesOrders?$top=1&$inlinecount=allpages"</a></li>
+					<li><a
+						href="SalesOrderProcessing.svc/SalesOrders?$top=1&$inlinecount=allpages&$skiptoken=5"
+						target="_blank">SalesOrderProcessing.svc/SalesOrders?$top=1&$inlinecount=allpages&$skiptoken=5</a></li>
+					<li><a
+						href="SalesOrderProcessing.svc/SalesOrders?$top=1&$skip=4&$inlinecount=allpages&$skiptoken=5"
+						target="_blank">SalesOrderProcessing.svc/SalesOrders?$top=1&$skip=4&$inlinecount=allpages&$skiptoken=5</a></li>
 				</ul>
 			</td>
 			<td valign="top">&nbsp;</td>

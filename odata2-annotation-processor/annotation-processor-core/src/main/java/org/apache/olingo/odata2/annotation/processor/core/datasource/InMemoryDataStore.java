@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
+import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationRuntimeException;
 import org.apache.olingo.odata2.annotation.processor.core.util.ClassHelper;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  *
@@ -93,9 +93,9 @@ public class InMemoryDataStore<T> implements DataStore<T> {
     try {
       return dataTypeClass.newInstance();
     } catch (InstantiationException e) {
-      throw new ODataRuntimeException("Unable to create instance of class '" + dataTypeClass + "'.", e);
+      throw new AnnotationRuntimeException("Unable to create instance of class '" + dataTypeClass + "'.", e);
     } catch (IllegalAccessException e) {
-      throw new ODataRuntimeException("Unable to create instance of class '" + dataTypeClass + "'.", e);
+      throw new AnnotationRuntimeException("Unable to create instance of class '" + dataTypeClass + "'.", e);
     }
   }
 

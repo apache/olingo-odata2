@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.debug;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +28,7 @@ import org.apache.olingo.odata2.api.processor.ODataContext.RuntimeMeasurement;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
- *  
+ * Runtime debug information.
  */
 public class DebugInfoRuntime implements DebugInfo {
 
@@ -126,16 +127,20 @@ public class DebugInfoRuntime implements DebugInfo {
     jsonStreamWriter.beginObject()
         .namedStringValueRaw("class", node.className).separator()
         .namedStringValueRaw("method", node.methodName).separator()
-        .name("duration")
-        .unquotedValue(node.timeStopped == 0 ? null :
-            Long.toString((node.timeStopped - node.timeStarted) / 1000))
-        .separator()
-        .name("memory")
-        .unquotedValue(node.memoryStopped == 0 ? null :
-            Long.toString((node.memoryStopped - node.memoryStarted) / 1000))
-        .separator()
-        .name("children");
-    appendJsonChildren(jsonStreamWriter, node);
+        .name("duration");
+    if (node.timeStopped == 0) {
+      jsonStreamWriter.unquotedValue(null);
+    } else {
+      jsonStreamWriter.beginObject()
+          .name("value").unquotedValue(Long.toString((node.timeStopped - node.timeStarted) / 1000)).separator()
+          .namedStringValueRaw("unit", "µs")
+          .endObject();
+    }
+    if (!node.children.isEmpty()) {
+      jsonStreamWriter.separator()
+          .name("children");
+      appendJsonChildren(jsonStreamWriter, node);
+    }
     jsonStreamWriter.endObject();
   }
 
@@ -151,5 +156,41 @@ public class DebugInfoRuntime implements DebugInfo {
       appendJsonNode(jsonStreamWriter, childNode);
     }
     jsonStreamWriter.endArray();
+  }
+
+  @Override
+  public void appendHtml(Writer writer) throws IOException {
+    appendRuntimeNode(rootNode, "", true, writer);
+  }
+
+  private void appendRuntimeNode(final RuntimeNode node, final String draw, final boolean isLast, Writer writer)
+      throws IOException {
+    if (node.className != null) {
+      writer.append("<li>")
+          .append("<span class=\"code\">")
+          .append("<span class=\"draw\">").append(draw)
+          .append(isLast ? "&#x2514;" : "&#x251C;").append("&#x2500;&nbsp;</span>")
+          .append("<span class=\"class\">").append(node.className).append("</span>.")
+          .append("<span class=\"method\">").append(node.methodName).append("(&hellip;)")
+          .append("</span></span>");
+      long time = node.timeStopped == 0 ? 0 : (node.timeStopped - node.timeStarted) / 1000;
+      writer.append("<span class=\"").append(time == 0 ? "null" : "numeric")
+          .append("\" title=\"").append(time == 0 ? "Stop time missing" : "Gross duration")
+          .append("\">").append(time == 0 ? "unfinished" : Long.toString(time) + "&nbsp;&micro;s")
+          .append("</span>\n");
+    }
+    if (!node.children.isEmpty()) {
+      writer.append("<ol class=\"tree\">\n");
+      for (final RuntimeNode childNode : node.children) {
+        appendRuntimeNode(childNode,
+            node.className == null ? draw : draw + (isLast ? "&nbsp;" : "&#x2502;") + "&nbsp;&nbsp;",
+            node.children.indexOf(childNode) == node.children.size() - 1,
+            writer);
+      }
+      writer.append("</ol>\n");
+    }
+    if (node.className != null) {
+      writer.append("</li>\n");
+    }
   }
 }

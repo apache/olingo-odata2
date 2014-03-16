@@ -32,6 +32,7 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
   private static final String MAPPING_MODEL = "SalesOrderProcessingMappingModel.xml";
   private static final String CONFIG = "serviceConfig";
   private static final String SHOW_DETAIL_ERROR = "showDetailError";
+  private static final int PAGE_SIZE = 5;
 
   @Override
   public ODataJPAContext initializeODataJPAContext()
@@ -42,7 +43,7 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
     oDataJPAContext.setJPAEdmMappingModel(MAPPING_MODEL);
     oDataJPAContext
         .setJPAEdmExtension((JPAEdmExtension) new SalesOrderProcessingExtension());
-
+    oDataJPAContext.setPageSize(PAGE_SIZE);
     setErrorLevel();
 
     return oDataJPAContext;

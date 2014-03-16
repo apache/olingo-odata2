@@ -1,0 +1,43 @@
+Apache Olingo
+Copyright 2013-2014 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+This distribution includes the Jax-Rs API.
+Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved. 
+Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+Other names may be trademarks of their respective owners. 
+The Jax-Rs API is dually licensed under the CDDL 1.1 and GPL2 w/ CPE license,
+and is included in this software distribution under the CDDL 1.1 license.
+For details, see the Jax-Rs API web site: http://jax-rs-spec.java.net
+
+This distribution includes the JAXB Reference Implementation.
+Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved. 
+Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+Other names may be trademarks of their respective owners. 
+The JAXB Reference Implementation is dually licensed under the CDDL 1.1 and 
+GPL2 w/ CPE license, and is included in this software distribution under 
+the CDDL 1.1 license. For details, see the JAXB Reference Implementation 
+web site: http://jaxb.java.net/
+
+This distribution includes the SDO API.
+Copyright(c) 2014 The Eclipse Foundation. All Rights Reserved.
+The SDO API is dually licensed under the Eclipse Public License v1.0 and 
+Eclipse Distribution License v. 1.0, and is included in this software 
+distribution under the Eclipse Public License v1.0. For details, see the 
+SDO API web site: http://www.eclipse.org/eclipselink
+
+This distribution includes the EclipseLink (non-OSGi) Library.
+Copyright(c) 2014 The Eclipse Foundation. All Rights Reserved.
+The EclipseLink (non-OSGi) Library is dually licensed under the 
+Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0,
+and is included in this software distribution under the Eclipse Public License v1.0.
+For details, see the EclipseLink web site: http://www.eclipse.org/eclipselink
+
+This distribution includes the Javax Persistence API.
+Copyright(c) 2014 The Eclipse Foundation. All Rights Reserved.
+The Javax Persistence API is dually licensed under the Eclipse Public License v1.0 
+and Eclipse Distribution License v. 1.0, and is included in this software 
+distribution under the Eclipse Public License v1.0. For details, see the 
+Javax Persistence API web site: http://www.eclipse.org/eclipselink

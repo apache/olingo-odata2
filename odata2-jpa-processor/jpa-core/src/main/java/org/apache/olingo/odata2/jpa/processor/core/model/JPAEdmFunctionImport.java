@@ -76,10 +76,8 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
 
     private JPAEdmEntityTypeView jpaEdmEntityTypeView = null;
     private JPAEdmComplexTypeView jpaEdmComplexTypeView = null;
-    @SuppressWarnings("deprecation")
-    private _JPAEdmFunctionImportBuilder builderDeprecated = new _JPAEdmFunctionImportBuilder();
 
-    @SuppressWarnings("deprecation")
+
     @Override
     public void build() throws ODataJPAModelException, ODataJPARuntimeException {
 
@@ -90,10 +88,6 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
       jpaEdmComplexTypeView = schemaView.getJPAEdmComplexTypeView();
 
       if (customOperations != null) {
-        // Initialize deprecated Builder
-        builderDeprecated.setJPAEdmComplexTypeView(jpaEdmComplexTypeView);
-        builderDeprecated.setJPAEdmEntityTypeView(jpaEdmEntityTypeView);
-        builderDeprecated.setSchemaView(schemaView);
 
         for (Class<?> clazz : customOperations.keySet()) {
 
@@ -142,7 +136,6 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
       }
     }
 
-    @SuppressWarnings("deprecation")
     private FunctionImport buildFunctionImport(final Method method) throws ODataJPAModelException {
 
       EdmFunctionImport edmAnnotationFunctionImport = method.getAnnotation(EdmFunctionImport.class);
@@ -150,14 +143,6 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
         return buildEdmFunctionImport(method, edmAnnotationFunctionImport);
       }
 
-      org.apache.olingo.odata2.api.annotation.edm.FunctionImport annotation =
-          method.getAnnotation(org.apache.olingo.odata2.api.annotation.edm.FunctionImport.class);
-
-      if (annotation != null) {
-        FunctionImport functionImport = builderDeprecated.buildFunctionImport(method, annotation);
-
-        return functionImport;
-      }
       return null;
     }
 

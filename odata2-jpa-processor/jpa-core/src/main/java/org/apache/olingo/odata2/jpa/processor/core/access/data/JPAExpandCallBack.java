@@ -99,7 +99,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     return result;
   }
 
-  private List<EdmProperty> getEdmProperties(EdmEntitySet entitySet, ExpandSelectTreeNode expandTreeNode)
+  private List<EdmProperty> getEdmProperties(final EdmEntitySet entitySet, final ExpandSelectTreeNode expandTreeNode)
       throws ODataApplicationException {
 
     try {

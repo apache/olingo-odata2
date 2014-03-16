@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.rt;
 
 import java.io.InputStream;
+import java.util.Locale;
 
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart.BatchResponsePartBuilder;
@@ -32,6 +33,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.ep.EntityProvider.EntityProviderInterface;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.processor.ODataRequest.ODataRequestBuilder;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
@@ -48,6 +50,8 @@ import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 import org.apache.olingo.odata2.core.edm.provider.EdmImplProv;
 import org.apache.olingo.odata2.core.edm.provider.EdmxProvider;
 import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
+import org.apache.olingo.odata2.core.exception.MessageService;
+import org.apache.olingo.odata2.core.exception.MessageService.Message;
 import org.apache.olingo.odata2.core.processor.ODataSingleProcessorService;
 import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
 import org.apache.olingo.odata2.core.uri.UriParserImpl;
@@ -137,4 +141,9 @@ public class RuntimeDelegateImpl extends RuntimeDelegateInstance {
     return expandSelectTreeNode.new ExpandSelectTreeNodeBuilderImpl();
   }
 
+  @Override
+  public String extractExceptionMessage(ODataMessageException exception) {
+    Message msg = MessageService.getMessage(Locale.ENGLISH, exception.getMessageReference());
+    return msg.getText();
+  }
 }

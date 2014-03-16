@@ -52,6 +52,7 @@ public abstract class JPQLContext implements JPQLContextView {
    * The type of JPQL context. Based on the type JPQL statements can be built.
    */
   protected JPQLContextType type;
+  protected boolean pagingRequested = false;
 
   /**
    * sets JPA Entity Name into the context
@@ -107,6 +108,10 @@ public abstract class JPQLContext implements JPQLContextView {
     return type;
   }
 
+  protected void isPagingRequested(final boolean pagingRequested) {
+    this.pagingRequested = pagingRequested;
+  }
+
   /**
    * the method returns an instance of type
    * {@link org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder} based on the
@@ -122,7 +127,28 @@ public abstract class JPQLContext implements JPQLContextView {
    */
   public final static JPQLContextBuilder createBuilder(final JPQLContextType contextType, final Object resultsView)
       throws ODataJPARuntimeException {
-    return JPQLContextBuilder.create(contextType, resultsView);
+    return JPQLContextBuilder.create(contextType, resultsView, false);
+  }
+
+  /**
+   * the method returns an instance of type
+   * {@link org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder} based on the
+   * JPQLContextType. The context builder can be used for
+   * building different JPQL contexts.
+   * 
+   * @param contextType
+   * is the JPQLContextType
+   * @param resultsView
+   * is the OData request view
+   * @param withPaging
+   * indicates whether to build the context with paging
+   * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder}
+   * @throws ODataJPARuntimeException
+   */
+  public final static JPQLContextBuilder createBuilder(final JPQLContextType contextType, final Object resultsView,
+      final boolean withPaging)
+      throws ODataJPARuntimeException {
+    return JPQLContextBuilder.create(contextType, resultsView, withPaging);
   }
 
   /**
@@ -140,6 +166,8 @@ public abstract class JPQLContext implements JPQLContextView {
      */
     protected int aliasCounter = 0;
 
+    protected boolean withPaging = false;
+
     protected JPQLContextBuilder() {}
 
     /**
@@ -153,7 +181,8 @@ public abstract class JPQLContext implements JPQLContextView {
      * {@link org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder}
      * @throws ODataJPARuntimeException
      */
-    private static JPQLContextBuilder create(final JPQLContextType contextType, final Object resultsView)
+    private static JPQLContextBuilder create(final JPQLContextType contextType, final Object resultsView,
+        final boolean withPaging)
         throws ODataJPARuntimeException {
       JPQLContextBuilder contextBuilder =
           ODataJPAFactory.createFactory().getJPQLBuilderFactory().getContextBuilder(contextType);
@@ -161,6 +190,7 @@ public abstract class JPQLContext implements JPQLContextView {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ERROR_JPQLCTXBLDR_CREATE, null);
       }
       contextBuilder.setResultsView(resultsView);
+      contextBuilder.withPaging = withPaging;
       return contextBuilder;
     }
 

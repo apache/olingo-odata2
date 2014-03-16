@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.core.debug.ODataDebugResponseWrapper;
 
 /**
- *  
+ * Context. 
  */
 public class ODataContextImpl implements ODataContext {
 
@@ -158,9 +158,9 @@ public class ODataContextImpl implements ODataContext {
     return null;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public List<RuntimeMeasurement> getRuntimeMeasurements() {
+    @SuppressWarnings("unchecked")
     List<RuntimeMeasurement> runtimeMeasurements = (List<RuntimeMeasurement>) getParameter(RUNTIME_MEASUREMENTS);
     if (runtimeMeasurements == null) {
       runtimeMeasurements = new ArrayList<RuntimeMeasurement>();
@@ -219,8 +219,8 @@ public class ODataContextImpl implements ODataContext {
 
     @Override
     public String toString() {
-      return className + "." + methodName + ": duration: " + (timeStopped - timeStarted) + ", memory: "
-          + (memoryStopped - memoryStarted);
+      return className + "." + methodName + ": duration: " + (timeStopped - timeStarted)
+          + ", memory: " + (memoryStopped - memoryStarted);
     }
 
     @Override
@@ -290,8 +290,9 @@ public class ODataContextImpl implements ODataContext {
 
   private static String getQueryDebugValue(final Map<String, String> queryParameters) {
     final String debugValue = queryParameters.get(ODataDebugResponseWrapper.ODATA_DEBUG_QUERY_PARAMETER);
-    return ODataDebugResponseWrapper.ODATA_DEBUG_JSON.equals(debugValue) ?
-        debugValue : null;
+    return ODataDebugResponseWrapper.ODATA_DEBUG_JSON.equals(debugValue)
+        || ODataDebugResponseWrapper.ODATA_DEBUG_HTML.equals(debugValue)
+        || ODataDebugResponseWrapper.ODATA_DEBUG_DOWNLOAD.equals(debugValue) ? debugValue : null;
   }
 
   public void setBatchParentContext(final ODataContext ctx) {

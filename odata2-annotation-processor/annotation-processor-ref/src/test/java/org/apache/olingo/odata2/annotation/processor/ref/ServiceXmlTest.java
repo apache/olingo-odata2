@@ -27,6 +27,7 @@ import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.custommonkey.xmlunit.exceptions.XpathException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -36,12 +37,16 @@ import org.xml.sax.SAXException;
  */
 public class ServiceXmlTest extends AbstractRefXmlTest {
 
+  public ServiceXmlTest(ServletType servletType) {
+    super(servletType);
+  }
+
   @Test
   public void serviceDocument() throws Exception {
     final HttpResponse response = callUri("/");
     checkMediaType(response, HttpContentType.APPLICATION_ATOM_SVC_UTF8);
     final String body = getBody(response);
-    
+
     assertXpathEvaluatesTo("Employees", "/app:service/app:workspace/app:collection[@href=\"Employees\"]", body);
     assertXpathEvaluatesTo("Teams", "/app:service/app:workspace/app:collection[@href=\"Teams\"]", body);
     assertXpathEvaluatesTo("Rooms", "/app:service/app:workspace/app:collection[@href=\"Rooms\"]", body);

@@ -87,6 +87,11 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
           } else {
             setType(JPQLContextType.SELECT);
           }
+
+          if (withPaging) {
+            isPagingRequested(withPaging);
+          }
+
           EdmEntityType entityType = entitySetView.getTargetEntitySet().getEntityType();
           EdmMapping mapping = entityType.getMapping();
           if (mapping != null) {
@@ -135,7 +140,8 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
 
         return ODataExpressionParser.parseToJPAOrderByExpression(entitySetView.getOrderBy(), getJPAEntityAlias());
 
-      } else if (entitySetView.getTop() != null || entitySetView.getSkip() != null) {
+      } else if (entitySetView.getTop() != null || entitySetView.getSkip() != null ||
+          pagingRequested == true) {
 
         return ODataExpressionParser.parseKeyPropertiesToJPAOrderByExpression(entitySetView.getTargetEntitySet()
             .getEntityType().getKeyProperties(), getJPAEntityAlias());

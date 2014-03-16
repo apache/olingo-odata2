@@ -1,0 +1,30 @@
+{
+"d": {
+"results": [
+  {
+    "__metadata": 
+        { 
+            "id": "http://ldcigmd.wdf.sap.corp:50055/sap/bc/odata/Rooms('1')", 
+            "uri": "http://ldcigmd.wdf.sap.corp:50055/sap/bc/odata/Rooms('1')", 
+            "type": "RefScenario.Room", 
+           "etag":"W/\"2\""
+        },
+    "Id": "1",
+    "Name": "Room 1",
+    "Seats": 1,
+    "Version": 1
+  },
+     {
+        "@odata.context":"$metadata#Rooms/$deletedEntity",
+        "id":"http://host:80/service/Rooms('3')",
+        "when":"\/Date(1300561560000)\/"
+     },
+     {
+        "@odata.context":"$metadata#Rooms/$deletedEntity",
+        "id":"http://host:80/service/Rooms('4')",
+        "when":"\/Date(3509636760000)\/"
+     }
+],
+"__delta":"http://localhost:8080/ReferenceScenario.svc/Rooms?!deltatoken=4711"
+}
+}

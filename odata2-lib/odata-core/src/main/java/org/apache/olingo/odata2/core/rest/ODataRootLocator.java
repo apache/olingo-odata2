@@ -51,6 +51,7 @@ import org.apache.olingo.odata2.core.rest.app.AbstractODataApplication;
  * </p>
  * 
  */
+@Path("/")
 public class ODataRootLocator {
 
   @Context

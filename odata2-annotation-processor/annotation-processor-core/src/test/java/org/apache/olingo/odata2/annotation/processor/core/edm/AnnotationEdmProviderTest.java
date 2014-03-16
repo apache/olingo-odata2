@@ -80,7 +80,7 @@ public class AnnotationEdmProviderTest {
   private final AnnotationEdmProvider aep;
   private final Collection<Class<?>> annotatedClasses = new ArrayList<Class<?>>();
 
-  public AnnotationEdmProviderTest() {
+  public AnnotationEdmProviderTest() throws ODataException {
     annotatedClasses.add(RefBase.class);
     annotatedClasses.add(Building.class);
     annotatedClasses.add(City.class);

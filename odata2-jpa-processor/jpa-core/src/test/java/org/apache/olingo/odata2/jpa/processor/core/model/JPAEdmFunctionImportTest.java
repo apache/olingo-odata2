@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata2.api.edm.provider.FunctionImportParameter;
 import org.apache.olingo.odata2.api.edm.provider.Mapping;
 import org.apache.olingo.odata2.api.edm.provider.ReturnType;
+import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
@@ -46,12 +48,12 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.mock.ODataJPAContextMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPACustomProcessorMock;
-import org.apache.olingo.odata2.jpa.processor.core.mock.model._JPACustomProcessorNegativeMock;
+import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPACustomProcessorNegativeMock;
 import org.junit.Before;
 import org.junit.Test;
 
 public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
-  private static final int METHOD_COUNT = 6;
+  private static final int METHOD_COUNT = 7;
   private static int VARIANT = 0;
   private JPAEdmFunctionImport jpaEdmfunctionImport;
 
@@ -177,7 +179,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       jpaEdmfunctionImport.getBuilder().build();
       fail("Exception Expected");
     } catch (ODataJPAModelException e) {
-      assertEquals(ODataJPAModelException.FUNC_ENTITYSET_EXP.getKey(), e.getMessageReference().getKey());
+      assertEquals(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND.getKey(), e.getMessageReference().getKey());
     } catch (ODataJPARuntimeException e) {
       fail("Model Exception Expected");
     }
@@ -240,7 +242,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
       jpaEdmfunctionImport.getBuilder().build();
       fail("Exception Expected");
     } catch (ODataJPAModelException e) {
-      assertEquals(ODataJPAModelException.FUNC_RETURN_TYPE_ENTITY_NOT_FOUND.getKey(), e.getMessageReference().getKey());
+      assertEquals(ODataJPAModelException.TYPE_NOT_SUPPORTED.getKey(), e.getMessageReference().getKey());
     } catch (ODataJPARuntimeException e) {
       fail("Model Exception Expected");
     }
@@ -441,6 +443,32 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
   }
 
+  /**
+   * Test Case - Function Import test for ReturnType.COMPLEX where Complex type is non JPA Embeddable Type
+   * 
+   */
+  @Test
+  public void testNonJPAReturnTypeComplex() {
+    VARIANT = 18;
+
+    build();
+
+    List<FunctionImport> functionImportList = jpaEdmfunctionImport.getConsistentFunctionImportList();
+
+    assertEquals(functionImportList.size(), 1);
+
+    FunctionImport functionImport = functionImportList.get(0);
+    assertEquals(functionImport.getName(), "method18");
+    assertNotNull(functionImport.getMapping());
+
+    ReturnType returnType = functionImport.getReturnType();
+    assertNotNull(returnType);
+    assertEquals(EdmMultiplicity.ONE, returnType.getMultiplicity());
+    assertEquals(returnType.getTypeName().toString(), ODataJPAContextMock.PERSISTENCE_UNIT_NAME + "."
+        + JPACustomProcessorMock.nonJPAEmbeddableType);
+
+  }
+
   @Test
   public void testNoFunctionImport() {
     VARIANT = 99;
@@ -479,36 +507,51 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
     } else if (VARIANT == 4) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method4" });
     } else if (VARIANT == 5) {
-      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method5" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method5" });
     } else if (VARIANT == 6) {
-      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method6" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method6" });
     } else if (VARIANT == 7) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method7" });
     } else if (VARIANT == 8) {
-      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method8" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method8" });
     } else if (VARIANT == 9) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method9" });
     } else if (VARIANT == 10) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method10" });
     } else if (VARIANT == 11) {
-      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method11" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method11" });
     } else if (VARIANT == 12) {
-      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method12" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method12" });
     } else if (VARIANT == 13) {
-      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method13" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method13" });
     } else if (VARIANT == 14) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method1" });
     } else if (VARIANT == 15) {
       customOperations.put(JPACustomProcessorMock.class, new String[] { "method3" });
     } else if (VARIANT == 16) {
-      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method16" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method16" });
     } else if (VARIANT == 17) {
-      customOperations.put(_JPACustomProcessorNegativeMock.class, new String[] { "method17" });
+      customOperations.put(JPACustomProcessorNegativeMock.class, new String[] { "method17" });
+    } else if (VARIANT == 18) {
+      customOperations.put(JPACustomProcessorMock.class, new String[] { "method18" });
     } else {
       return null;
     }
 
     return customOperations;
+  }
+
+  @Override
+  public Schema getEdmSchema() {
+    Schema schema = new Schema();
+    ComplexType complexType = new ComplexType();
+    complexType.setName(JPACustomProcessorMock.nonJPAEmbeddableType);
+    List<ComplexType> list = new ArrayList<ComplexType>();
+    list.add(complexType);
+    schema.setComplexTypes(list);
+
+    return schema;
+
   }
 
   @Override

@@ -22,8 +22,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
+import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationRuntimeException;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  *
@@ -66,9 +66,9 @@ public class JpaAnnotationDataStore<T> implements DataStore<T> {
     try {
       return dataTypeClass.newInstance();
     } catch (InstantiationException e) {
-      throw new ODataRuntimeException("Unable to create instance of class '" + dataTypeClass + "'.", e);
+      throw new AnnotationRuntimeException("Unable to create instance of class '" + dataTypeClass + "'.", e);
     } catch (IllegalAccessException e) {
-      throw new ODataRuntimeException("Unable to create instance of class '" + dataTypeClass + "'.", e);
+      throw new AnnotationRuntimeException("Unable to create instance of class '" + dataTypeClass + "'.", e);
     }
   }
 

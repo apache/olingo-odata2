@@ -73,12 +73,12 @@ public class JPAEntity {
     this.accessModifiersWrite = accessModifiersWrite;
   }
 
-  public void setParentJPAEntity(JPAEntity jpaEntity) {
-    this.parentJPAEntity = jpaEntity;
+  public void setParentJPAEntity(final JPAEntity jpaEntity) {
+    parentJPAEntity = jpaEntity;
   }
 
   public JPAEntity getParentJPAEntity() {
-    return this.parentJPAEntity;
+    return parentJPAEntity;
   }
 
   public Object getJPAEntity() {
@@ -202,7 +202,7 @@ public class JPAEntity {
           EdmNavigationProperty navProperty =
               (EdmNavigationProperty) oDataEntityType.getProperty(navigationPropertyName);
           if (relatedJPAEntityMap != null && relatedJPAEntityMap.containsKey(navigationPropertyName)) {
-            JPALink.linkJPAEntities(relatedJPAEntityMap.get(navigationPropertyName), this.jpaEntity,
+            JPALink.linkJPAEntities(relatedJPAEntityMap.get(navigationPropertyName), jpaEntity,
                 navProperty);
           } else if (parentJPAEntity != null
               &&
@@ -210,7 +210,7 @@ public class JPAEntity {
                   oDataEntitySet.getRelatedEntitySet(navProperty).getName())) {
             List<Object> targetJPAEntities = new ArrayList<Object>();
             targetJPAEntities.add(parentJPAEntity.getJPAEntity());
-            JPALink.linkJPAEntities(targetJPAEntities, this.jpaEntity, navProperty);
+            JPALink.linkJPAEntities(targetJPAEntities, jpaEntity, navProperty);
           } else {
             leftNavPrpNames.add(navigationPropertyName);
           }
@@ -218,7 +218,7 @@ public class JPAEntity {
       }
       if (!leftNavPrpNames.isEmpty()) {
         JPALink link = new JPALink(oDataJPAContext);
-        link.setSourceJPAEntity(this.jpaEntity);
+        link.setSourceJPAEntity(jpaEntity);
         link.create(oDataEntitySet, oDataEntry, leftNavPrpNames);
       }
     } catch (EdmException e) {
@@ -252,7 +252,7 @@ public class JPAEntity {
     }
     write(oDataEntryProperties, false);
     JPALink link = new JPALink(oDataJPAContext);
-    link.setSourceJPAEntity(this.jpaEntity);
+    link.setSourceJPAEntity(jpaEntity);
     try {
       link.create(oDataEntitySet, oDataEntry, oDataEntityType.getNavigationPropertyNames());
     } catch (EdmException e) {

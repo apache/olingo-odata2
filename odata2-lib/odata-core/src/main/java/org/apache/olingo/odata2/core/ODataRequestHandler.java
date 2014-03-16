@@ -155,12 +155,13 @@ public class ODataRequestHandler {
     context.stopRuntimeMeasurement(timingHandle);
 
     if (context.isInDebugMode()) {
-      if (getQueryDebugValue(request.getQueryParameters()) == null) {
+      final String debugValue = getQueryDebugValue(request.getQueryParameters());
+      if (debugValue == null) {
         ODataDebugResponseWrapperCallback callback =
             context.getServiceFactory().getCallback(ODataDebugResponseWrapperCallback.class);
         return callback == null ? odataResponse : callback.handle(context, request, odataResponse, uriInfo, exception);
       } else {
-        return new ODataDebugResponseWrapper(context, odataResponse, uriInfo, exception).wrapResponse();
+        return new ODataDebugResponseWrapper(context, odataResponse, uriInfo, exception, debugValue).wrapResponse();
       }
     } else {
       return odataResponse;
@@ -526,6 +527,8 @@ public class ODataRequestHandler {
 
   private static String getQueryDebugValue(final Map<String, String> queryParameters) {
     final String debugValue = queryParameters.get(ODataDebugResponseWrapper.ODATA_DEBUG_QUERY_PARAMETER);
-    return ODataDebugResponseWrapper.ODATA_DEBUG_JSON.equals(debugValue) ? debugValue : null;
+    return ODataDebugResponseWrapper.ODATA_DEBUG_JSON.equals(debugValue)
+        || ODataDebugResponseWrapper.ODATA_DEBUG_HTML.equals(debugValue)
+        || ODataDebugResponseWrapper.ODATA_DEBUG_DOWNLOAD.equals(debugValue) ? debugValue : null;
   }
 }

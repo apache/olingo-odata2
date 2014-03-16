@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
 /**
@@ -29,6 +30,10 @@ import org.junit.Test;
  * 
  */
 public class PropertyJsonReadOnlyTest extends AbstractRefTest {
+  public PropertyJsonReadOnlyTest(final ServletType servletType) {
+    super(servletType);
+  }
+
   @Test
   public void simpleProperty() throws Exception {
     HttpResponse response = callUri("Employees('2')/Age?$format=json");

@@ -30,6 +30,7 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
+import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.junit.Test;
@@ -86,7 +87,6 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
   public void readEmployeesFeedWithInlineCountNegative() throws Exception {
     // prepare
     String content = readFile("feed_employees_full.xml").replace("<m:count>6</m:count>", "<m:count>-1</m:count>");
-    ;
     assertNotNull(content);
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
@@ -111,7 +111,6 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
   public void readEmployeesFeedWithInlineCountLetters() throws Exception {
     // prepare
     String content = readFile("feed_employees_full.xml").replace("<m:count>6</m:count>", "<m:count>AAA</m:count>");
-    ;
     assertNotNull(content);
 
     EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
@@ -130,5 +129,28 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
     }
 
     Assert.fail("Exception expected");
+  }
+
+  @Test
+  public void readDeltaFeed() throws Exception {
+    // prepare
+    String content = readFile("feed_with_deleted_entries.xml");
+    assertNotNull(content);
+
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    InputStream reqContent = createContentAsStream(content);
+
+    XmlEntityConsumer xec = new XmlEntityConsumer();
+    EntityProviderReadProperties consumerProperties = EntityProviderReadProperties.init().build();
+
+    ODataDeltaFeed deltaFeed = xec.readFeed(entitySet, reqContent, consumerProperties);
+
+    assertNotNull(deltaFeed);
+
+    assertNotNull(deltaFeed.getDeletedEntries());
+    assertNotNull(deltaFeed.getEntries());
+
+    assertEquals(1, deltaFeed.getEntries().size());
+    assertEquals(1, deltaFeed.getDeletedEntries().size());
   }
 }

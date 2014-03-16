@@ -57,13 +57,13 @@ public class DebugInfoBodyTest {
     ODataResponse response = mock(ODataResponse.class);
     ByteArrayInputStream in = new ByteArrayInputStream(STRING_CONTENT.getBytes());
     when(response.getEntity()).thenReturn(in);
-    when(response.getContentHeader()).thenReturn(HttpContentType.APPLICATION_OCTET_STREAM);
+    when(response.getContentHeader()).thenReturn(HttpContentType.TEXT_PLAIN);
     assertEquals(STRING_CONTENT_JSON, appendJson(response));
 
-    in = new ByteArrayInputStream(STRING_CONTENT.getBytes());
+    in = new ByteArrayInputStream(STRING_CONTENT.getBytes("UTF-8"));
     when(response.getEntity()).thenReturn(in);
     when(response.getContentHeader()).thenReturn("image/png");
-    assertEquals("\"" + Base64.encodeBase64String(STRING_CONTENT.getBytes()) + "\"",
+    assertEquals("\"" + Base64.encodeBase64String(STRING_CONTENT.getBytes("UTF-8")) + "\"",
         appendJson(response));
   }
 
@@ -78,7 +78,7 @@ public class DebugInfoBodyTest {
 
   private String appendJson(final ODataResponse response) throws IOException {
     Writer writer = new StringWriter();
-    DebugInfoBody body = new DebugInfoBody(response);
+    DebugInfoBody body = new DebugInfoBody(response, null);
     body.appendJson(new JsonStreamWriter(writer));
     return writer.toString();
   }

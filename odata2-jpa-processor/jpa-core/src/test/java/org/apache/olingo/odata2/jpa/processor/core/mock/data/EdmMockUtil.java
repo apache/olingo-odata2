@@ -297,7 +297,7 @@ public class EdmMockUtil {
       EdmProperty property = mockEdmPropertyOfTarget();
       EasyMock.expect(entityType.getProperty("price")).andStubReturn(property);
       EasyMock.expect(entityType.getPropertyNames()).andStubReturn(propertyNames);
-      
+
       List<EdmProperty> keyProperties = new ArrayList<EdmProperty>();
       keyProperties.add(property);
       EasyMock.expect(entityType.getKeyProperties()).andStubReturn(keyProperties);

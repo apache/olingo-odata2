@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
+import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,6 +32,10 @@ import org.junit.Test;
  * 
  */
 public class MetadataTest extends AbstractRefXmlTest {
+
+  public MetadataTest(final ServletType servletType) {
+    super(servletType);
+  }
 
   private static String payload;
 
