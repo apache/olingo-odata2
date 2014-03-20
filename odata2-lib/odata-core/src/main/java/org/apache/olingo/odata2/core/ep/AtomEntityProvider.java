@@ -46,6 +46,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
@@ -55,6 +56,7 @@ import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.consumer.AtomServiceDocumentConsumer;
 import org.apache.olingo.odata2.core.ep.consumer.XmlEntityConsumer;
+import org.apache.olingo.odata2.core.ep.consumer.XmlErrorDocumentConsumer;
 import org.apache.olingo.odata2.core.ep.producer.AtomEntryEntityProducer;
 import org.apache.olingo.odata2.core.ep.producer.AtomFeedProducer;
 import org.apache.olingo.odata2.core.ep.producer.AtomServiceDocumentProducer;
@@ -400,5 +402,11 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
   public ServiceDocument readServiceDocument(final InputStream serviceDocument) throws EntityProviderException {
     AtomServiceDocumentConsumer serviceDocConsumer = new AtomServiceDocumentConsumer();
     return serviceDocConsumer.parseXml(serviceDocument);
+  }
+
+  @Override
+  public ODataErrorContext readErrorDocument(InputStream errorDocument) throws EntityProviderException {
+    XmlErrorDocumentConsumer xmlErrorDocumentConsumer = new XmlErrorDocumentConsumer();
+    return xmlErrorDocumentConsumer.readError(errorDocument);
   }
 }

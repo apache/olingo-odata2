@@ -34,6 +34,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 
@@ -84,4 +85,6 @@ public interface ContentTypeBasedEntityProvider {
 
   ODataDeltaFeed readDeltaFeed(EdmEntitySet entitySet, InputStream content, EntityProviderReadProperties properties)
       throws EntityProviderException;
+
+  ODataErrorContext readErrorDocument(InputStream errorDocument) throws EntityProviderException;
 }

@@ -421,6 +421,16 @@ public final class EntityProvider {
      */
     List<BatchSingleResponse> parseBatchResponse(String contentType, InputStream content) throws BatchException;
 
+    /**
+     * Read (de-serialize) data from error document as {@link InputStream} and provide according
+     * {@link ODataErrorContext}.
+     *
+     * @param errorDocument error document which is read
+     * @param contentType format of content in the given input stream
+     * @return read error document
+     * @throws EntityProviderException if reading of data (de-serialization) fails
+     */
+    ODataErrorContext readErrorDocument(InputStream errorDocument, String contentType) throws  EntityProviderException;
   }
 
   /**
@@ -798,6 +808,20 @@ public final class EntityProvider {
    */
   public static Edm readMetadata(final InputStream metadataXml, final boolean validate) throws EntityProviderException {
     return createEntityProvider().readMetadata(metadataXml, validate);
+  }
+
+  /**
+   * Read (de-serialize) data from error document as {@link InputStream} and provide according
+   * {@link ODataErrorContext}.
+   *
+   * @param errorDocument error document which is read
+   * @param contentType format of content in the given input stream
+   * @return read error document
+   * @throws EntityProviderException if reading of data (de-serialization) fails
+   */
+  public static ODataErrorContext readErrorDocument(final InputStream errorDocument, final String contentType)
+      throws EntityProviderException {
+    return createEntityProvider().readErrorDocument(errorDocument, contentType);
   }
 
   /**
