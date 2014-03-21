@@ -14,14 +14,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.olingo</groupId>
-  <artifactId>olingo-odata2-sample-cars-annotation-archetype-incubating</artifactId>
+  <artifactId>olingo-odata2-sample-cars-annotation-archetype</artifactId>
   <name>${project.artifactId}</name>
   <version>1.2.0-RC02</version>
   <packaging>maven-archetype</packaging>
 
   <parent>
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-odata2-sample-incubating</artifactId>
+    <artifactId>olingo-odata2-sample</artifactId>
     <version>1.2.0-RC02</version>
     <relativePath>..</relativePath>
   </parent>

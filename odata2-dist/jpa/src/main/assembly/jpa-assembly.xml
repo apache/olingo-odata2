@@ -23,11 +23,11 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <scope>compile</scope>
             <includes>
-                <include>org.apache.olingo:olingo-odata2-core-incubating</include>
-                <include>org.apache.olingo:olingo-odata2-api-incubating</include>
-                <include>org.apache.olingo:olingo-odata2-api-annotation-incubating</include>
-                <include>org.apache.olingo:olingo-odata2-jpa-processor-api-incubating</include>
-                <include>org.apache.olingo:olingo-odata2-jpa-processor-core-incubating</include>
+                <include>org.apache.olingo:olingo-odata2-core</include>
+                <include>org.apache.olingo:olingo-odata2-api</include>
+                <include>org.apache.olingo:olingo-odata2-api-annotation</include>
+                <include>org.apache.olingo:olingo-odata2-jpa-processor-api</include>
+                <include>org.apache.olingo:olingo-odata2-jpa-processor-core</include>
                 <include>org.eclipse.persistence:javax.persistence</include>
             </includes>
         </dependencySet>

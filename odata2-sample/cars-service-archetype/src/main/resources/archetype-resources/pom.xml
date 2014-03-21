@@ -73,7 +73,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-core-incubating</artifactId>
+			<artifactId>olingo-odata2-core</artifactId>
 			<version>${version.olingo}</version>
 		</dependency>
 		<dependency>

@@ -24,12 +24,12 @@
 
 	<parent>
 		<groupId>org.apache.olingo</groupId>
-		<artifactId>olingo-odata2-jpa-processor-incubating</artifactId>
+		<artifactId>olingo-odata2-jpa-processor</artifactId>
 		<version>1.2.0-RC02</version>
 		<relativePath>..</relativePath>
 	</parent>
 
-	<artifactId>olingo-odata2-jpa-processor-ref-incubating</artifactId>
+	<artifactId>olingo-odata2-jpa-processor-ref</artifactId>
 	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 	
@@ -94,7 +94,7 @@
 		<!-- OData Annotation Support -->
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-api-annotation-incubating</artifactId>
+			<artifactId>olingo-odata2-api-annotation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		

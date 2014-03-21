@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.apache.olingo</groupId>
-	<artifactId>olingo-odata2-parent-incubating</artifactId>
+	<artifactId>olingo-odata2-parent</artifactId>
 	<version>1.2.0-RC02</version>
 	<packaging>pom</packaging>
 
@@ -256,7 +256,6 @@
 							</properties>
 							<resourceBundles>
 								<resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
-								<resourceBundle>org.apache:apache-incubator-disclaimer-resource-bundle:1.1</resourceBundle>
 							</resourceBundles>
 						</configuration>
 					</execution>

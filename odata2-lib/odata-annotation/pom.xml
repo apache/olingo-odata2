@@ -16,12 +16,12 @@
 
   <parent>
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-odata2-lib-incubating</artifactId>
+    <artifactId>olingo-odata2-lib</artifactId>
     <version>1.2.0-RC02</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <artifactId>olingo-odata2-api-annotation-incubating</artifactId>
+  <artifactId>olingo-odata2-api-annotation</artifactId>
   <name>${project.artifactId}</name>
     <build>
         <plugins>

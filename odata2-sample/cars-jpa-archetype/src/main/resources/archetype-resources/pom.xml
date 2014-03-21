@@ -30,31 +30,31 @@
 		<!-- OData Annotation Support -->
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-api-annotation-incubating</artifactId>
+			<artifactId>olingo-odata2-api-annotation</artifactId>
 			<version>${version.olingo}</version>
 		</dependency>
 
 		<!--OData Core Support -->
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-api-incubating</artifactId>
+			<artifactId>olingo-odata2-api</artifactId>
 			<version>${version.olingo}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-core-incubating</artifactId>
+			<artifactId>olingo-odata2-core</artifactId>
 			<version>${version.olingo}</version>
 		</dependency>
 
 		<!--OData JPA Processor Support -->
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-jpa-processor-api-incubating</artifactId>
+			<artifactId>olingo-odata2-jpa-processor-api</artifactId>
 			<version>${version.olingo}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
-			<artifactId>olingo-odata2-jpa-processor-core-incubating</artifactId>
+			<artifactId>olingo-odata2-jpa-processor-core</artifactId>
 			<version>${version.olingo}</version>
 		</dependency>
 

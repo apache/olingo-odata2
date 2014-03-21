@@ -95,29 +95,29 @@
     <!-- Apache Olingo Library dependencies -->
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata2-api-incubating</artifactId>
+      <artifactId>olingo-odata2-api</artifactId>
       <version>${version.olingo}</version>
     </dependency>
     <dependency>
-      <artifactId>olingo-odata2-api-annotation-incubating</artifactId>
+      <artifactId>olingo-odata2-api-annotation</artifactId>
       <groupId>org.apache.olingo</groupId>
       <type>jar</type>
       <version>${version.olingo}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata2-core-incubating</artifactId>
+      <artifactId>olingo-odata2-core</artifactId>
       <version>${version.olingo}</version>
     </dependency>
     <!-- Apache Olingo Annotation Processor Extension dependencies -->
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata2-annotation-processor-api-incubating</artifactId>
+      <artifactId>olingo-odata2-annotation-processor-api</artifactId>
       <version>${version.olingo}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.olingo</groupId>
-      <artifactId>olingo-odata2-annotation-processor-core-incubating</artifactId>
+      <artifactId>olingo-odata2-annotation-processor-core</artifactId>
       <version>${version.olingo}</version>
     </dependency>
     <!-- Additional dependencies -->
