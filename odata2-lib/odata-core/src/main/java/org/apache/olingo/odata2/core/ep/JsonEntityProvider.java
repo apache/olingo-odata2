@@ -344,7 +344,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
   }
 
   @Override
-  public ODataErrorContext readErrorDocument(InputStream errorDocument) throws EntityProviderException {
+  public ODataErrorContext readErrorDocument(final InputStream errorDocument) throws EntityProviderException {
     return new JsonErrorDocumentConsumer().readError(errorDocument);
   }
 }

@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -43,12 +44,14 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.entry.DeletedEntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
@@ -233,6 +236,19 @@ public class ProviderFacadeImplTest extends AbstractConsumerTest {
   }
 
   @Test
+  public void readErrorDocumentJson() throws EntityProviderException {
+    ProviderFacadeImpl providerFacade = new ProviderFacadeImpl();
+    String errorDoc = "{\"error\":{\"code\":\"ErrorCode\",\"message\":{\"lang\":\"en-US\",\"value\":\"Message\"}}}";
+    ODataErrorContext errorContext = providerFacade.readErrorDocument(StringHelper.encapsulate(errorDoc),
+        ContentType.APPLICATION_JSON.toContentTypeString());
+    //
+    assertEquals("Wrong content type", "application/json", errorContext.getContentType());
+    assertEquals("Wrong message", "Message", errorContext.getMessage());
+    assertEquals("Wrong error code", "ErrorCode", errorContext.getErrorCode());
+    assertEquals("Wrong locale for lang", Locale.US, errorContext.getLocale());
+  }
+
+  @Test
   public void writeFeed() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     List<Map<String, Object>> propertiesList = new ArrayList<Map<String, Object>>();
@@ -346,5 +362,4 @@ public class ProviderFacadeImplTest extends AbstractConsumerTest {
         new ProviderFacadeImpl().writeFunctionImport(HttpContentType.APPLICATION_JSON, function, properties, null);
     assertEquals("{\"d\":{\"MaximalAge\":99}}", StringHelper.inputStreamToString((InputStream) result.getEntity()));
   }
-
 }

@@ -405,7 +405,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
   }
 
   @Override
-  public ODataErrorContext readErrorDocument(InputStream errorDocument) throws EntityProviderException {
+  public ODataErrorContext readErrorDocument(final InputStream errorDocument) throws EntityProviderException {
     XmlErrorDocumentConsumer xmlErrorDocumentConsumer = new XmlErrorDocumentConsumer();
     return xmlErrorDocumentConsumer.readError(errorDocument);
   }

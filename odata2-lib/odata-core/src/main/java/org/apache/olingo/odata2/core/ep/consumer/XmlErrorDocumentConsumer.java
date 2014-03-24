@@ -18,16 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
+import java.io.InputStream;
+
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
-
-import java.io.InputStream;
 
 /**
  * Consuming (read / deserialization) for OData error document in XML format.
  */
 public class XmlErrorDocumentConsumer {
-
 
   /**
    * Deserialize / read OData error document in ODataErrorContext.
@@ -36,7 +35,7 @@ public class XmlErrorDocumentConsumer {
    * @return created ODataErrorContext based on input stream content.
    * @throws EntityProviderException if an exception during read / deserialization occurs.
    */
-  public ODataErrorContext readError(InputStream errorDocument) throws EntityProviderException {
+  public ODataErrorContext readError(final InputStream errorDocument) throws EntityProviderException {
     throw new RuntimeException("Not yet implementedØ");
   }
 }

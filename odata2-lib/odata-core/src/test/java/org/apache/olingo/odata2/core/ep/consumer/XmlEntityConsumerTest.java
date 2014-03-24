@@ -577,7 +577,7 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("Building 1", inlineBuildingProps.get("Name"));
     assertNull(inlineBuildingProps.get("Image"));
     assertNull(inlineBuildingProps.get("nb_Rooms"));
-    
+
     assertEquals("Rooms('1')/nr_Employees", entry.getMetadata().getAssociationUris("nr_Employees").get(0));
     assertEquals("Rooms('1')/nr_Building", entry.getMetadata().getAssociationUris("nr_Building").get(0));
   }
@@ -2325,7 +2325,7 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     Map<String, Object> properties = result.getProperties();
     assertEquals(1, properties.size());
     assertEquals("1", properties.get("Id"));
-    
+
     assertEquals("Rooms('1')/nr_Building", result.getMetadata().getAssociationUris("nr_Building").get(0));
     assertEquals("Rooms('1')/nr_Employees", result.getMetadata().getAssociationUris("nr_Employees").get(0));
   }
