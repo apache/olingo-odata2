@@ -249,6 +249,24 @@ public class ProviderFacadeImplTest extends AbstractConsumerTest {
   }
 
   @Test
+  public void readErrorDocumentXml() throws EntityProviderException {
+    ProviderFacadeImpl providerFacade = new ProviderFacadeImpl();
+    String errorDoc =
+            "<?xml version='1.0' encoding='UTF-8'?>\n" +
+            "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+            "\t<code>ErrorCode</code>\n" +
+            "\t<message xml:lang=\"en-US\">Message</message>\n" +
+            "</error>";
+    ODataErrorContext errorContext = providerFacade.readErrorDocument(StringHelper.encapsulate(errorDoc),
+            ContentType.APPLICATION_XML.toContentTypeString());
+    //
+    assertEquals("Wrong content type", "application/xml", errorContext.getContentType());
+    assertEquals("Wrong message", "Message", errorContext.getMessage());
+    assertEquals("Wrong error code", "ErrorCode", errorContext.getErrorCode());
+    assertEquals("Wrong locale for lang", Locale.US, errorContext.getLocale());
+  }
+
+  @Test
   public void writeFeed() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     List<Map<String, Object>> propertiesList = new ArrayList<Map<String, Object>>();
