@@ -136,14 +136,41 @@ public class XmlErrorDocumentConsumer {
   }
 
   private boolean notFinished(final XMLStreamReader reader) throws XMLStreamException {
-    boolean finished = reader.isEndElement() && FormatXml.M_ERROR.equals(reader.getLocalName());
+    return notFinished(reader, FormatXml.M_ERROR);
+  }
+
+  private boolean notFinished(final XMLStreamReader reader, String tagName) throws XMLStreamException {
+    boolean finished = reader.isEndElement() && tagName.equals(reader.getLocalName());
     return !finished && reader.hasNext();
   }
 
   private void handleInnerError(final XMLStreamReader reader, final ODataErrorContext errorContext)
       throws XMLStreamException {
-    String innerError = reader.getElementText();
+    reader.next();
+    String innerError = null;
+    if(reader.isCharacters()) {
+      innerError = reader.getText();
+    } else if(reader.isStartElement()) {
+      innerError = handleComplexInnerError(reader);
+    }
     errorContext.setInnerError(innerError);
+  }
+
+  private String handleComplexInnerError(XMLStreamReader reader) throws XMLStreamException {
+    StringBuilder sb = new StringBuilder();
+    while(notFinished(reader, FormatXml.M_INNER_ERROR)) {
+      if(reader.hasName()) {
+        sb.append("<");
+        if(reader.isEndElement()) {
+          sb.append("/");
+        }
+        sb.append(reader.getLocalName()).append(">");
+      } else if(reader.isCharacters()) {
+        sb.append(reader.getText());
+      }
+      reader.next();
+    }
+    return sb.toString();
   }
 
   private void handleMessage(final XMLStreamReader reader, final ODataErrorContext errorContext)
