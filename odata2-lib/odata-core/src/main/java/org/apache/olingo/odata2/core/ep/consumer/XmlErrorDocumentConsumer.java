@@ -87,7 +87,8 @@ public class XmlErrorDocumentConsumer {
     }
   }
 
-  private ODataErrorContext parserError(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
+  private ODataErrorContext parserError(final XMLStreamReader reader)
+      throws XMLStreamException, EntityProviderException {
     // read xml tag
     reader.require(XMLStreamConstants.START_DOCUMENT, null, null);
     reader.nextTag();
@@ -138,19 +139,22 @@ public class XmlErrorDocumentConsumer {
     return !finished && reader.hasNext();
   }
 
-  private void handleInnerError(final XMLStreamReader reader, final ODataErrorContext errorContext) throws XMLStreamException {
+  private void handleInnerError(final XMLStreamReader reader, final ODataErrorContext errorContext)
+      throws XMLStreamException {
     String innerError = reader.getElementText();
     errorContext.setInnerError(innerError);
   }
 
-  private void handleMessage(final XMLStreamReader reader, final ODataErrorContext errorContext) throws XMLStreamException {
+  private void handleMessage(final XMLStreamReader reader, final ODataErrorContext errorContext)
+      throws XMLStreamException {
     String lang = reader.getAttributeValue(Edm.NAMESPACE_XML_1998, FormatXml.XML_LANG);
     errorContext.setLocale(getLocale(lang));
     String message = reader.getElementText();
     errorContext.setMessage(message);
   }
 
-  private void handleCode(final XMLStreamReader reader, final ODataErrorContext errorContext) throws XMLStreamException {
+  private void handleCode(final XMLStreamReader reader, final ODataErrorContext errorContext)
+      throws XMLStreamException {
     String code = reader.getElementText();
     errorContext.setErrorCode(code);
   }
