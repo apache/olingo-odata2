@@ -63,7 +63,7 @@ public class DebugInfoServer implements DebugInfo {
   }
 
   @Override
-  public void appendHtml(Writer writer) throws IOException {
+  public void appendHtml(final Writer writer) throws IOException {
     writer.append("<h2>Server Environment</h2>\n");
     ODataDebugResponseWrapper.appendHtmlTable(writer, environment);
   }

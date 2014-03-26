@@ -76,7 +76,7 @@ public class DebugInfoUri implements DebugInfo {
   }
 
   @Override
-  public void appendJson(JsonStreamWriter jsonStreamWriter) throws IOException {
+  public void appendJson(final JsonStreamWriter jsonStreamWriter) throws IOException {
     jsonStreamWriter.beginObject();
 
     if (exception != null && exception.getFilterTree() != null) {
@@ -127,7 +127,7 @@ public class DebugInfoUri implements DebugInfo {
   }
 
   @Override
-  public void appendHtml(Writer writer) throws IOException {
+  public void appendHtml(final Writer writer) throws IOException {
     if (exception != null && exception.getFilterTree() != null) {
       writer.append("<h2>Expression Information</h2>\n")
           .append("<pre class=\"code\">").append(exception.getFilterTree().getUriLiteral())
@@ -162,7 +162,7 @@ public class DebugInfoUri implements DebugInfo {
     }
   }
 
-  private void appendExpression(final CommonExpression expression, Writer writer) throws IOException {
+  private void appendExpression(final CommonExpression expression, final Writer writer) throws IOException {
     final ExpressionKind kind = expression.getKind();
     writer.append("<span class=\"kind\">")
         .append(kind.toString())
@@ -200,7 +200,7 @@ public class DebugInfoUri implements DebugInfo {
     }
   }
 
-  private void appendExpandSelect(final ExpandSelectTreeNode expandSelect, Writer writer) throws IOException {
+  private void appendExpandSelect(final ExpandSelectTreeNode expandSelect, final Writer writer) throws IOException {
     writer.append("<ul class=\"expand\">\n")
         .append("<li>");
     if (expandSelect.isAll()) {

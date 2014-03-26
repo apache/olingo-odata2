@@ -30,7 +30,7 @@ import com.google.gson.reflect.TypeToken;
  */
 @Ignore("no test methods")
 public class AbstractRefJsonTest extends AbstractRefTest {
-  public AbstractRefJsonTest(ServletType servletType) {
+  public AbstractRefJsonTest(final ServletType servletType) {
     super(servletType);
   }
 

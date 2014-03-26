@@ -252,13 +252,13 @@ public class ProviderFacadeImplTest extends AbstractConsumerTest {
   public void readErrorDocumentXml() throws EntityProviderException {
     ProviderFacadeImpl providerFacade = new ProviderFacadeImpl();
     String errorDoc =
-            "<?xml version='1.0' encoding='UTF-8'?>\n" +
+        "<?xml version='1.0' encoding='UTF-8'?>\n" +
             "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
             "\t<code>ErrorCode</code>\n" +
             "\t<message xml:lang=\"en-US\">Message</message>\n" +
             "</error>";
     ODataErrorContext errorContext = providerFacade.readErrorDocument(StringHelper.encapsulate(errorDoc),
-            ContentType.APPLICATION_XML.toContentTypeString());
+        ContentType.APPLICATION_XML.toContentTypeString());
     //
     assertEquals("Wrong content type", "application/xml", errorContext.getContentType());
     assertEquals("Wrong message", "Message", errorContext.getMessage());

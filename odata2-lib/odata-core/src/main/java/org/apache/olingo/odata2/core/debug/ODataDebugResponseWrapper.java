@@ -242,7 +242,7 @@ public class ODataDebugResponseWrapper {
     return value == null ? null : value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
   }
 
-  protected static void appendJsonTable(JsonStreamWriter jsonStreamWriter, final Map<String, String> entries)
+  protected static void appendJsonTable(final JsonStreamWriter jsonStreamWriter, final Map<String, String> entries)
       throws IOException {
     jsonStreamWriter.beginObject();
     boolean first = true;
@@ -260,7 +260,7 @@ public class ODataDebugResponseWrapper {
     jsonStreamWriter.endObject();
   }
 
-  protected static void appendHtmlTable(Writer writer, final Map<String, String> entries) throws IOException {
+  protected static void appendHtmlTable(final Writer writer, final Map<String, String> entries) throws IOException {
     writer.append("<table>\n<thead>\n")
         .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
         .append("</thead>\n<tbody>\n");

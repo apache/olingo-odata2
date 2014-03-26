@@ -1516,7 +1516,6 @@ public class ListsProcessor extends DataSourceProcessor {
     }
   }
 
-
   private <T> Map<String, Object> getSimpleTypeValueMap(final T data, final List<EdmProperty> propertyPath)
       throws ODataException {
     final EdmProperty property = propertyPath.get(propertyPath.size() - 1);
@@ -1570,12 +1569,12 @@ public class ListsProcessor extends DataSourceProcessor {
       final EdmProperty property = (EdmProperty) type.getProperty(propertyName);
       if (property.isSimple()) {
         Object value = valueAccess.getPropertyType(data, property);
-        if(value != null) {
+        if (value != null) {
           typeMap.put(propertyName, value);
         }
       } else {
         Object value = valueAccess.getPropertyValue(data, property);
-        if(value == null) {
+        if (value == null) {
           Class<?> complexClass = valueAccess.getPropertyType(data, property);
           value = createInstance(complexClass);
         }
@@ -1591,7 +1590,7 @@ public class ListsProcessor extends DataSourceProcessor {
 
   private <T> void setStructuralTypeValuesFromMap(final T data, final EdmStructuralType type,
       final Map<String, Object> valueMap, final boolean merge) throws ODataException {
-    if(data == null) {
+    if (data == null) {
       throw new ODataException("Unable to set structural type values to NULL data.");
     }
     ODataContext context = getContext();
@@ -1615,7 +1614,7 @@ public class ListsProcessor extends DataSourceProcessor {
           @SuppressWarnings("unchecked")
           final Map<String, Object> values = (Map<String, Object>) value;
           Object complexData = valueAccess.getPropertyValue(data, property);
-          if(complexData == null) {
+          if (complexData == null) {
             Class<?> complexClass = valueAccess.getPropertyType(data, property);
             complexData = createInstance(complexClass);
             valueAccess.setPropertyValue(data, property, complexData);
@@ -1629,7 +1628,7 @@ public class ListsProcessor extends DataSourceProcessor {
     context.stopRuntimeMeasurement(timingHandle);
   }
 
-  private Object createInstance(Class<?> complexClass) throws ODataException {
+  private Object createInstance(final Class<?> complexClass) throws ODataException {
     try {
       return complexClass.newInstance();
     } catch (InstantiationException e) {

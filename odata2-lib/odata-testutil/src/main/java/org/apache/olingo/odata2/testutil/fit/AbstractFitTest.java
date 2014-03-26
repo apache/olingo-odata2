@@ -47,13 +47,10 @@ public abstract class AbstractFitTest extends BaseTest {
 
   private final HttpClient httpClient = new DefaultHttpClient();
 
-  private ServletType servletType;
-
-  public AbstractFitTest(ServletType servletType) {
-    this.servletType = servletType;
+  public AbstractFitTest(final ServletType servletType) {
     server = new TestServer(this.getClass().getSimpleName(), servletType);
   }
-  
+
   @Parameterized.Parameters
   public static List<Object[]> data() {
     // If desired this can be made dependent on runtime variables
@@ -65,8 +62,8 @@ public abstract class AbstractFitTest extends BaseTest {
     return Arrays.asList(a);
   }
 
-//  public AbstractFitTest() {
-//  }
+  //  public AbstractFitTest() {
+  //  }
 
   protected URI getEndpoint() {
     return server.getEndpoint();

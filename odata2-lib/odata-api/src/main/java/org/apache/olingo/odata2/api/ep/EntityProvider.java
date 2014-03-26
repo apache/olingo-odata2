@@ -430,7 +430,7 @@ public final class EntityProvider {
      * @return read error document
      * @throws EntityProviderException if reading of data (de-serialization) fails
      */
-    ODataErrorContext readErrorDocument(InputStream errorDocument, String contentType) throws  EntityProviderException;
+    ODataErrorContext readErrorDocument(InputStream errorDocument, String contentType) throws EntityProviderException;
   }
 
   /**

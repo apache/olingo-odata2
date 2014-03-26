@@ -21,9 +21,9 @@ package org.apache.olingo.odata2.jpa.processor.core.mock.model;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImport;
-import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImportParameter;
 import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImport.ReturnType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImport.ReturnType.Type;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImportParameter;
 
 public class JPACustomProcessorNegativeMock {
 

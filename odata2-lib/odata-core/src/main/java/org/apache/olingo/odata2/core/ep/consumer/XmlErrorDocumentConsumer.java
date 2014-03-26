@@ -23,16 +23,16 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 /**
  * Consuming (read / deserialization) for OData error document in XML format.
@@ -65,7 +65,7 @@ public class XmlErrorDocumentConsumer {
       return parserError(reader);
     } catch (XMLStreamException e) {
       cachedException = new EntityProviderException(EntityProviderException.INVALID_STATE.addContent(
-                      e.getMessage()), e);
+          e.getMessage()), e);
       throw cachedException;
     } catch (EntityProviderException e) {
       cachedException = e;
@@ -79,15 +79,15 @@ public class XmlErrorDocumentConsumer {
             throw cachedException;
           } else {
             throw new EntityProviderException(
-                    EntityProviderException.EXCEPTION_OCCURRED.addContent(
-                            e.getClass().getSimpleName()), e);
+                EntityProviderException.EXCEPTION_OCCURRED.addContent(
+                    e.getClass().getSimpleName()), e);
           }
         }
       }
     }
   }
 
-  private ODataErrorContext parserError(XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
+  private ODataErrorContext parserError(final XMLStreamReader reader) throws XMLStreamException, EntityProviderException {
     // read xml tag
     reader.require(XMLStreamConstants.START_DOCUMENT, null, null);
     reader.nextTag();
@@ -99,21 +99,21 @@ public class XmlErrorDocumentConsumer {
     boolean codeFound = false;
     boolean messageFound = false;
     ODataErrorContext errorContext = new ODataErrorContext();
-    while(notFinished(reader)) {
+    while (notFinished(reader)) {
       reader.nextTag();
-      if(reader.isStartElement()) {
+      if (reader.isStartElement()) {
         String name = reader.getLocalName();
-        if(FormatXml.M_CODE.equals(name)) {
+        if (FormatXml.M_CODE.equals(name)) {
           codeFound = true;
           handleCode(reader, errorContext);
-        } else if(FormatXml.M_MESSAGE.equals(name)) {
+        } else if (FormatXml.M_MESSAGE.equals(name)) {
           messageFound = true;
           handleMessage(reader, errorContext);
-        } else if(FormatXml.M_INNER_ERROR.equals(name)) {
+        } else if (FormatXml.M_INNER_ERROR.equals(name)) {
           handleInnerError(reader, errorContext);
         } else {
           throw new EntityProviderException(
-                  EntityProviderException.INVALID_CONTENT.addContent(name, FormatXml.M_ERROR));
+              EntityProviderException.INVALID_CONTENT.addContent(name, FormatXml.M_ERROR));
         }
       }
     }
@@ -123,34 +123,34 @@ public class XmlErrorDocumentConsumer {
     return errorContext;
   }
 
-  private void validate(boolean codeFound, boolean messageFound) throws EntityProviderException {
+  private void validate(final boolean codeFound, final boolean messageFound) throws EntityProviderException {
     if (!codeFound) {
       throw new EntityProviderException(
-              EntityProviderException.MISSING_PROPERTY.addContent("Mandatory 'code' property not found.'"));
+          EntityProviderException.MISSING_PROPERTY.addContent("Mandatory 'code' property not found.'"));
     } else if (!messageFound) {
       throw new EntityProviderException(
-              EntityProviderException.MISSING_PROPERTY.addContent("Mandatory 'message' property not found.'"));
+          EntityProviderException.MISSING_PROPERTY.addContent("Mandatory 'message' property not found.'"));
     }
   }
 
-  private boolean notFinished(XMLStreamReader reader) throws XMLStreamException {
+  private boolean notFinished(final XMLStreamReader reader) throws XMLStreamException {
     boolean finished = reader.isEndElement() && FormatXml.M_ERROR.equals(reader.getLocalName());
     return !finished && reader.hasNext();
   }
 
-  private void handleInnerError(XMLStreamReader reader, ODataErrorContext errorContext) throws XMLStreamException {
+  private void handleInnerError(final XMLStreamReader reader, final ODataErrorContext errorContext) throws XMLStreamException {
     String innerError = reader.getElementText();
     errorContext.setInnerError(innerError);
   }
 
-  private void handleMessage(XMLStreamReader reader, ODataErrorContext errorContext) throws XMLStreamException {
+  private void handleMessage(final XMLStreamReader reader, final ODataErrorContext errorContext) throws XMLStreamException {
     String lang = reader.getAttributeValue(Edm.NAMESPACE_XML_1998, FormatXml.XML_LANG);
     errorContext.setLocale(getLocale(lang));
     String message = reader.getElementText();
     errorContext.setMessage(message);
   }
 
-  private void handleCode(XMLStreamReader reader, ODataErrorContext errorContext) throws XMLStreamException {
+  private void handleCode(final XMLStreamReader reader, final ODataErrorContext errorContext) throws XMLStreamException {
     String code = reader.getElementText();
     errorContext.setErrorCode(code);
   }

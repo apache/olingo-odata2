@@ -159,11 +159,11 @@ public class DebugInfoRuntime implements DebugInfo {
   }
 
   @Override
-  public void appendHtml(Writer writer) throws IOException {
+  public void appendHtml(final Writer writer) throws IOException {
     appendRuntimeNode(rootNode, "", true, writer);
   }
 
-  private void appendRuntimeNode(final RuntimeNode node, final String draw, final boolean isLast, Writer writer)
+  private void appendRuntimeNode(final RuntimeNode node, final String draw, final boolean isLast, final Writer writer)
       throws IOException {
     if (node.className != null) {
       writer.append("<li>")

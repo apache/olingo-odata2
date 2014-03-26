@@ -359,7 +359,7 @@ public class AnnotationEdmProviderTest {
     PropertyRef imageFormat = getPropertyRef(keyReferences, "ImageFormat");
     assertEquals("ImageFormat", imageFormat.getName());
 
-//    assertEquals(0, photo.getNavigationProperties().size());
+    //    assertEquals(0, photo.getNavigationProperties().size());
     assertNull(photo.getNavigationProperties());
   }
 

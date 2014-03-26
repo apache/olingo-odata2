@@ -18,11 +18,31 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.exception;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Locale;
+
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmLiteralException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
-import org.apache.olingo.odata2.api.exception.*;
+import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
+import org.apache.olingo.odata2.api.exception.ODataConflictException;
+import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataForbiddenException;
+import org.apache.olingo.odata2.api.exception.ODataHttpException;
+import org.apache.olingo.odata2.api.exception.ODataMessageException;
+import org.apache.olingo.odata2.api.exception.ODataMethodNotAllowedException;
+import org.apache.olingo.odata2.api.exception.ODataNotAcceptableException;
+import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
+import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
+import org.apache.olingo.odata2.api.exception.ODataPreconditionFailedException;
+import org.apache.olingo.odata2.api.exception.ODataPreconditionRequiredException;
+import org.apache.olingo.odata2.api.exception.ODataServiceUnavailableException;
+import org.apache.olingo.odata2.api.exception.ODataUnsupportedMediaTypeException;
 import org.apache.olingo.odata2.api.uri.UriNotMatchingException;
 import org.apache.olingo.odata2.api.uri.UriSyntaxException;
 import org.apache.olingo.odata2.api.uri.expression.ExceptionVisitExpression;
@@ -34,10 +54,6 @@ import org.apache.olingo.odata2.core.uri.expression.TokenizerExpectError;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.ODataMessageTextVerifier;
 import org.junit.Test;
-
-import java.util.Locale;
-
-import static org.junit.Assert.*;
 
 /**
  *  

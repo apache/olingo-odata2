@@ -84,17 +84,5 @@ public class ClassHelperTest {
     Long id;
     @EdmProperty
     String name;
-
-    public SimpleEntity() {}
-
-    public SimpleEntity(final Long id, final String name) {
-      this.id = id;
-      this.name = name;
-    }
-  }
-
-  @SuppressWarnings("unused")
-  private class NotAnnotatedBean {
-    private String name;
   }
 }

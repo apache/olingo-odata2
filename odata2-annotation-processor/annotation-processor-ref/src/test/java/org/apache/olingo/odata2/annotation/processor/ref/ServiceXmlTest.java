@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
  */
 public class ServiceXmlTest extends AbstractRefXmlTest {
 
-  public ServiceXmlTest(ServletType servletType) {
+  public ServiceXmlTest(final ServletType servletType) {
     super(servletType);
   }
 

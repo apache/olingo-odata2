@@ -72,7 +72,7 @@ public class DebugInfoBody implements DebugInfo {
   }
 
   @Override
-  public void appendJson(JsonStreamWriter jsonStreamWriter) throws IOException {
+  public void appendJson(final JsonStreamWriter jsonStreamWriter) throws IOException {
     if (isJson) {
       jsonStreamWriter.unquotedValue(getContentString());
     } else if (isText) {
@@ -100,7 +100,7 @@ public class DebugInfoBody implements DebugInfo {
   }
 
   @Override
-  public void appendHtml(Writer writer) throws IOException {
+  public void appendHtml(final Writer writer) throws IOException {
     final String body = getContentString();
     if (isImage) {
       writer.append("<img src=\"data:").append(response.getContentHeader()).append(";base64,")

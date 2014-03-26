@@ -452,7 +452,7 @@ public class AnnotationHelper {
 
   private Field getFieldForPropertyName(final String propertyName,
       final Class<?> resultClass, final boolean inherited) {
-    
+
     Field[] fields = resultClass.getDeclaredFields();
     for (Field field : fields) {
       EdmProperty property = field.getAnnotation(EdmProperty.class);
