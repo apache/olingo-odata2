@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -40,7 +40,8 @@ import com.google.gson.stream.JsonToken;
 public class JsonErrorDocumentConsumer {
   /** Default used charset for reader */
   private static final String DEFAULT_CHARSET = "UTF-8";
-  /** Map containing language code (language - country) to Locale mapping
+  /**
+   * Map containing language code (language - country) to Locale mapping
    * based on Locale.getAvailableLocales()
    * */
   private final static Map<String, Locale> AVAILABLE_LOCALES = new HashMap<String, Locale>();
@@ -53,7 +54,7 @@ public class JsonErrorDocumentConsumer {
 
   /**
    * Deserialize / read OData error document in ODataErrorContext.
-   *
+   * 
    * @param errorDocument OData error document in JSON format
    * @return created ODataErrorContext based on input stream content.
    * @throws EntityProviderException if an exception during read / deserialization occurs.
@@ -130,7 +131,7 @@ public class JsonErrorDocumentConsumer {
     String innerError = reader.nextString();
     errorContext.setInnerError(innerError);
     // implementation for OData v2 Section 2.2.8.1.2 JSON Error Response
-    //    (RFC4627 Section 2.2 -> https://www.ietf.org/rfc/rfc4627.txt))
+    // (RFC4627 Section 2.2 -> https://www.ietf.org/rfc/rfc4627.txt))
     // currently not provided
   }
 
@@ -176,7 +177,7 @@ public class JsonErrorDocumentConsumer {
 
   /**
    * Read the string value from the JsonReader or 'null' if no value is available.
-   *
+   * 
    * @param reader to read from
    * @return the string value or 'null'
    * @throws IOException if an exception occurs

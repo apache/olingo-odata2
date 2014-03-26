@@ -62,8 +62,8 @@ public abstract class AbstractFitTest extends BaseTest {
     return Arrays.asList(a);
   }
 
-  //  public AbstractFitTest() {
-  //  }
+  // public AbstractFitTest() {
+  // }
 
   protected URI getEndpoint() {
     return server.getEndpoint();

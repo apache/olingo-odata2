@@ -424,7 +424,7 @@ public final class EntityProvider {
     /**
      * Read (de-serialize) data from error document as {@link InputStream} and provide according
      * {@link ODataErrorContext}.
-     *
+     * 
      * @param errorDocument error document which is read
      * @param contentType format of content in the given input stream
      * @return read error document
@@ -811,9 +811,9 @@ public final class EntityProvider {
   }
 
   /**
-   * Read (de-serialize) data from error document as {@link InputStream} and provide according
-   * {@link ODataErrorContext}.
-   *
+   * Read (de-serialize) data from error document as {@link InputStream} and provide according {@link ODataErrorContext}
+   * .
+   * 
    * @param errorDocument error document which is read
    * @param contentType format of content in the given input stream
    * @return read error document

@@ -137,14 +137,14 @@ public class EntryJsonCreateTest extends AbstractRefJsonTest {
 
   private static final String JSON_EMPLOYEE = "{" +
       "    \"d\": {" +
-      //      "        \"__metadata\": {" + 
-      //      "            \"id\": \"http://localhost:19000/abc/EntryJsonCreateTest/Employees('1')\"," + 
-      //      "            \"uri\": \"http://localhost:19000/abc/EntryJsonCreateTest/Employees('1')\"," + 
-      //      "            \"type\": \"RefScenario.Employee\"," + 
-      //      "            \"content_type\": \"application/octet-stream\"," + 
-      //      "            \"media_src\": \"Employees('1')/$value\"," + 
-      //      "            \"edit_media\": \"http://localhost:19000/abc/EntryJsonCreateTest/Employees('1')/$value\"" + 
-      //      "        }," + 
+      // "        \"__metadata\": {" +
+      // "            \"id\": \"http://localhost:19000/abc/EntryJsonCreateTest/Employees('1')\"," +
+      // "            \"uri\": \"http://localhost:19000/abc/EntryJsonCreateTest/Employees('1')\"," +
+      // "            \"type\": \"RefScenario.Employee\"," +
+      // "            \"content_type\": \"application/octet-stream\"," +
+      // "            \"media_src\": \"Employees('1')/$value\"," +
+      // "            \"edit_media\": \"http://localhost:19000/abc/EntryJsonCreateTest/Employees('1')/$value\"" +
+      // "        }," +
       "        \"EmployeeId\": \"1\"," +
       "        \"EmployeeName\": \"Douglas\"," +
       "        \"Age\": 42," +

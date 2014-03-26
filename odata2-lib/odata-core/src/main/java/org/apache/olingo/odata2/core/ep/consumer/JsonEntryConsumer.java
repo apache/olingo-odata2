@@ -133,8 +133,8 @@ public class JsonEntryConsumer {
 
   /**
    * Ensure that instance field {@link #resultEntry} exists.
-   * If it not already exists create an instance (as well as all other necessary objects like:
-   * {@link #properties}, {@link #mediaMetadata}, {@link #entryMetadata}, {@link #expandSelectTree}).
+   * If it not already exists create an instance (as well as all other necessary objects like: {@link #properties},
+   * {@link #mediaMetadata}, {@link #entryMetadata}, {@link #expandSelectTree}).
    */
   private void ensureODataEntryExists() {
     if (resultEntry == null) {
