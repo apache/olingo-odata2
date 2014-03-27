@@ -127,11 +127,12 @@ public class JsonErrorDocumentConsumer {
   }
 
   private void parseInnerError(final JsonReader reader, final ODataErrorContext errorContext) throws IOException {
-    if(reader.peek() == JsonToken.STRING) {
+    JsonToken token = reader.peek();
+    if (token == JsonToken.STRING) {
       // implementation for parse content as provided by JsonErrorDocumentProducer
       String innerError = reader.nextString();
       errorContext.setInnerError(innerError);
-    } else if(reader.peek() == JsonToken.BEGIN_OBJECT) {
+    } else if (token == JsonToken.BEGIN_OBJECT) {
       // implementation for OData v2 Section 2.2.8.1.2 JSON Error Response
       // (RFC4627 Section 2.2 -> https://www.ietf.org/rfc/rfc4627.txt))
       // currently partial provided
@@ -139,33 +140,33 @@ public class JsonErrorDocumentConsumer {
     }
   }
 
-
-  private String readJson(JsonReader reader) throws  IOException {
+  private String readJson(final JsonReader reader) throws IOException {
     StringBuilder sb = new StringBuilder();
 
-    while(reader.hasNext()) {
-      if(reader.peek() == JsonToken.NAME) {
-        if(sb.length() > 0) {
+    while (reader.hasNext()) {
+      JsonToken token = reader.peek();
+      if (token == JsonToken.NAME) {
+        if (sb.length() > 0) {
           sb.append(",");
         }
         String name = reader.nextName();
         sb.append("\"").append(name).append("\"").append(":");
-      } else if(reader.peek() == JsonToken.BEGIN_OBJECT) {
+      } else if (token == JsonToken.BEGIN_OBJECT) {
         reader.beginObject();
-        sb.append("{");
-        sb.append(readJson(reader));
-        sb.append("}");
+        sb.append("{")
+            .append(readJson(reader))
+            .append("}");
         reader.endObject();
-      } else if(reader.peek() == JsonToken.BEGIN_ARRAY) {
+      } else if (token == JsonToken.BEGIN_ARRAY) {
         reader.beginArray();
-        sb.append("[");
-        sb.append(readJson(reader));
-        sb.append("]");
+        sb.append("[")
+            .append(readJson(reader))
+            .append("]");
         reader.endArray();
       } else {
-        sb.append("\"");
-        sb.append(reader.nextString());
-        sb.append("\"");
+        sb.append("\"")
+            .append(reader.nextString())
+            .append("\"");
       }
     }
 

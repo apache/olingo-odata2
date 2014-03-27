@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -37,70 +37,70 @@ import org.junit.Test;
 public class XmlErrorDocumentConsumerTest extends AbstractConsumerTest {
 
   private static final String XML_ERROR_DOCUMENT_SIMPLE =
-          "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                  "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
-                  "\t<code>ErrorCode</code>\n" +
-                  "\t<message xml:lang=\"en-US\">Message</message>\n" +
-                  "</error>";
+      "<?xml version='1.0' encoding='UTF-8'?>\n" +
+          "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+          "\t<code>ErrorCode</code>\n" +
+          "\t<message xml:lang=\"en-US\">Message</message>\n" +
+          "</error>";
   private static final String XML_ERROR_DOCUMENT_NULL_LOCALE =
-          "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                  "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
-                  "\t<code>ErrorCode</code>\n" +
-                  "\t<message xml:lang=\"\">Message</message>\n" +
-                  "</error>";
+      "<?xml version='1.0' encoding='UTF-8'?>\n" +
+          "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+          "\t<code>ErrorCode</code>\n" +
+          "\t<message xml:lang=\"\">Message</message>\n" +
+          "</error>";
   private static final String XML_ERROR_DOCUMENT_INNER_ERROR =
-          "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                  "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
-                  "\t<code>ErrorCode</code>\n" +
-                  "\t<message xml:lang=\"en-US\">Message</message>\n" +
-                  "<innererror>Some InnerError</innererror>\n" +
-                  "</error>";
+      "<?xml version='1.0' encoding='UTF-8'?>\n" +
+          "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+          "\t<code>ErrorCode</code>\n" +
+          "\t<message xml:lang=\"en-US\">Message</message>\n" +
+          "<innererror>Some InnerError</innererror>\n" +
+          "</error>";
   private static final String XML_ERROR_DOCUMENT_INNER_ERROR_COMPLEX =
-          "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                  "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
-                  "\t<code>ErrorCode</code>\n" +
-                  "\t<message xml:lang=\"en-US\">Message</message>\n" +
-                  "<innererror>" +
-                  "<moreInner>More Inner Error</moreInner>" +
-                  "</innererror>\n" +
-                  "</error>";
+      "<?xml version='1.0' encoding='UTF-8'?>\n" +
+          "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+          "\t<code>ErrorCode</code>\n" +
+          "\t<message xml:lang=\"en-US\">Message</message>\n" +
+          "<innererror>" +
+          "<moreInner>More Inner Error</moreInner>" +
+          "</innererror>\n" +
+          "</error>";
   private static final String XML_ERROR_DOCUMENT_INVALID_XML =
-          "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                  "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
-                  "\t<code>ErrorCode</CODE>\n" +
-                  "\t<message xml:lang=\"en-US\">Message</message>\n" +
-                  "</error>";
+      "<?xml version='1.0' encoding='UTF-8'?>\n" +
+          "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+          "\t<code>ErrorCode</CODE>\n" +
+          "\t<message xml:lang=\"en-US\">Message</message>\n" +
+          "</error>";
   /* error document with name 'locale' instead of 'lang' for message object */
   private static final String XML_ERROR_DOCUMENT_UNKNOWN_CONTENT =
-          "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                  "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
-                  "\t<code>ErrorCode</code>\n" +
-                  "\t<message xml:locale=\"en-US\">Message</message>\n" +
-                  "\t<privateMessage>Secret</privateMessage>\n" +
-                  "</error>";
+      "<?xml version='1.0' encoding='UTF-8'?>\n" +
+          "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+          "\t<code>ErrorCode</code>\n" +
+          "\t<message xml:locale=\"en-US\">Message</message>\n" +
+          "\t<privateMessage>Secret</privateMessage>\n" +
+          "</error>";
   /* error document without value for message object */
   private static final String XML_ERROR_DOCUMENT_EMPTY_MESSAGE =
-          "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                  "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
-                  "\t<code>ErrorCode</code>\n" +
-                  "\t<message xml:lang=\"en-US\" />\n" +
-                  "</error>";
+      "<?xml version='1.0' encoding='UTF-8'?>\n" +
+          "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+          "\t<code>ErrorCode</code>\n" +
+          "\t<message xml:lang=\"en-US\" />\n" +
+          "</error>";
   private static final String XML_ERROR_DOCUMENT_MISSING_MESSAGE =
-          "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                  "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
-                  "\t<code>ErrorCode</code>\n" +
-                  "</error>";
+      "<?xml version='1.0' encoding='UTF-8'?>\n" +
+          "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+          "\t<code>ErrorCode</code>\n" +
+          "</error>";
   private static final String XML_ERROR_DOCUMENT_MISSING_CODE =
-          "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                  "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
-                  "\t<message xml:lang=\"en-US\">Message</message>\n" +
-                  "</error>";
+      "<?xml version='1.0' encoding='UTF-8'?>\n" +
+          "<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+          "\t<message xml:lang=\"en-US\">Message</message>\n" +
+          "</error>";
   private static final String XML_ERROR_DOCUMENT_MISSING_ERROR =
-          "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                  "<errorForMe xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
-                  "\t<code>ErrorCode</code>\n" +
-                  "\t<message xml:lang=\"en-US\">Message</message>\n" +
-                  "</errorForMe>";
+      "<?xml version='1.0' encoding='UTF-8'?>\n" +
+          "<errorForMe xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" +
+          "\t<code>ErrorCode</code>\n" +
+          "\t<message xml:lang=\"en-US\">Message</message>\n" +
+          "</errorForMe>";
   private XmlErrorDocumentConsumer xedc = new XmlErrorDocumentConsumer();
 
   @Test
@@ -159,6 +159,36 @@ public class XmlErrorDocumentConsumerTest extends AbstractConsumerTest {
     assertEquals("Wrong inner error", "<moreInner>More Inner Error</moreInner>", error.getInnerError());
   }
 
+  @Test
+  public void innerErrorComplexTwo() throws Exception {
+    String innerErrorText = "<firstTag>tagText</firstTag><secondTag>secondText</secondTag>";
+    String innerError = "<innererror>" + innerErrorText + "</innererror>";
+    String errorDocument = XML_ERROR_DOCUMENT_INNER_ERROR_COMPLEX.replaceAll(
+        "<innererror.*error>", innerError);
+    InputStream in = StringHelper.encapsulate(errorDocument);
+    ODataErrorContext error = xedc.readError(in);
+
+    assertEquals("Wrong content type", "application/xml", error.getContentType());
+    assertEquals("Wrong message", "Message", error.getMessage());
+    assertEquals("Wrong error code", "ErrorCode", error.getErrorCode());
+    assertEquals("Wrong inner error", innerErrorText, error.getInnerError());
+  }
+
+  @Test
+  public void innerErrorComplexMoreCharacters() throws Exception {
+    String innerErrorText = "\n\t<firstTag>tagText</firstTag>\n<secondTag>secondText</secondTag>\n";
+    String innerError = "<innererror>" + innerErrorText + "</innererror>";
+    String errorDocument = XML_ERROR_DOCUMENT_INNER_ERROR_COMPLEX.replaceAll(
+        "<innererror.*error>", innerError);
+    InputStream in = StringHelper.encapsulate(errorDocument);
+    ODataErrorContext error = xedc.readError(in);
+
+    assertEquals("Wrong content type", "application/xml", error.getContentType());
+    assertEquals("Wrong message", "Message", error.getMessage());
+    assertEquals("Wrong error code", "ErrorCode", error.getErrorCode());
+    assertEquals("Wrong inner error", innerErrorText, error.getInnerError());
+  }
+
   @Test(expected = EntityProviderException.class)
   public void invalidJson() throws EntityProviderException {
     InputStream in = StringHelper.encapsulate(XML_ERROR_DOCUMENT_INVALID_XML);
@@ -179,7 +209,7 @@ public class XmlErrorDocumentConsumerTest extends AbstractConsumerTest {
       fail("Expected exception was not thrown");
     } catch (EntityProviderException e) {
       assertEquals("Got wrong exception: " + e.getMessageReference().getKey(),
-              EntityProviderException.INVALID_STATE, e.getMessageReference());
+          EntityProviderException.INVALID_STATE, e.getMessageReference());
       throw e;
     }
   }
@@ -215,7 +245,7 @@ public class XmlErrorDocumentConsumerTest extends AbstractConsumerTest {
       fail("Expected exception was not thrown");
     } catch (EntityProviderException e) {
       assertEquals("Got wrong exception: " + e.getMessageReference().getKey(),
-              EntityProviderException.INVALID_STATE, e.getMessageReference());
+          EntityProviderException.INVALID_STATE, e.getMessageReference());
       throw e;
     }
   }
@@ -228,7 +258,7 @@ public class XmlErrorDocumentConsumerTest extends AbstractConsumerTest {
       fail("Expected exception was not thrown");
     } catch (EntityProviderException e) {
       assertEquals("Got wrong exception: " + e.getMessageReference().getKey(),
-              EntityProviderException.MISSING_PROPERTY, e.getMessageReference());
+          EntityProviderException.MISSING_PROPERTY, e.getMessageReference());
       assertTrue(e.getMessage().contains("code"));
       throw e;
     }
@@ -242,7 +272,7 @@ public class XmlErrorDocumentConsumerTest extends AbstractConsumerTest {
       fail("Expected exception was not thrown");
     } catch (EntityProviderException e) {
       assertEquals("Got wrong exception: " + e.getMessageReference().getKey(),
-              EntityProviderException.MISSING_PROPERTY, e.getMessageReference());
+          EntityProviderException.MISSING_PROPERTY, e.getMessageReference());
       assertTrue(e.getMessage().contains("message"));
       throw e;
     }

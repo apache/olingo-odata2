@@ -43,14 +43,14 @@ public class JsonErrorDocumentConsumerTest extends AbstractConsumerTest {
   private static final String JSON_ERROR_DOCUMENT_INNER_ERROR = "{\"error\":{\"code\":\"ErrorCode\"," +
       "\"message\":{\"lang\":\"en-US\",\"value\":\"Message\"}, \"innererror\":\"Some InnerError\"}}";
   private static final String JSON_ERROR_DOCUMENT_INNER_ERROR_COMPLEX = "{\"error\":{\"code\":\"ErrorCode\"," +
-          "\"message\":{\"lang\":\"en-US\",\"value\":\"Message\"}, " +
-          "\"innererror\":{\"moreInner\":\"More Inner Error\"}}}";
+      "\"message\":{\"lang\":\"en-US\",\"value\":\"Message\"}, " +
+      "\"innererror\":{\"moreInner\":\"More Inner Error\"}}}";
   private static final String JSON_ERROR_DOCUMENT_INNER_ERROR_COMPLEX_OBJECT = "{\"error\":{\"code\":\"ErrorCode\"," +
-          "\"message\":{\"lang\":\"en-US\",\"value\":\"Message\"}, " +
-          "\"innererror\":{\"moreInner\":\"More Inner Error\",\"secondInner\":\"Second\"}}}";
+      "\"message\":{\"lang\":\"en-US\",\"value\":\"Message\"}, " +
+      "\"innererror\":{\"moreInner\":\"More Inner Error\",\"secondInner\":\"Second\"}}}";
   private static final String JSON_ERROR_DOCUMENT_INNER_ERROR_COMPLEX_ARRAY = "{\"error\":{\"code\":\"ErrorCode\"," +
-          "\"message\":{\"lang\":\"en-US\",\"value\":\"Message\"}, " +
-          "\"innererror\":{\"innerArray\":[\"More Inner Error\",\"Second\"]}}}";
+      "\"message\":{\"lang\":\"en-US\",\"value\":\"Message\"}, " +
+      "\"innererror\":{\"innerArray\":[\"More Inner Error\",\"Second\"]}}}";
   private static final String JSON_ERROR_DOCUMENT_INVALID_JSON = "\"error\":{\"code\":\"ErrorCode\"," +
       "\"message\":{\"lang\":\"en-US\",\"value\":\"Message\"}}}";
   /* error document with name 'locale' instead of 'lang' for message object */
@@ -119,7 +119,7 @@ public class JsonErrorDocumentConsumerTest extends AbstractConsumerTest {
     assertEquals("Wrong message", "Message", error.getMessage());
     assertEquals("Wrong error code", "ErrorCode", error.getErrorCode());
     assertEquals("Wrong inner error",
-            "{\"moreInner\":\"More Inner Error\",\"secondInner\":\"Second\"}", error.getInnerError());
+        "{\"moreInner\":\"More Inner Error\",\"secondInner\":\"Second\"}", error.getInnerError());
   }
 
   @Test
@@ -131,7 +131,7 @@ public class JsonErrorDocumentConsumerTest extends AbstractConsumerTest {
     assertEquals("Wrong message", "Message", error.getMessage());
     assertEquals("Wrong error code", "ErrorCode", error.getErrorCode());
     assertEquals("Wrong inner error",
-            "{\"innerArray\":[\"More Inner Error\"\"Second\"]}", error.getInnerError());
+        "{\"innerArray\":[\"More Inner Error\"\"Second\"]}", error.getInnerError());
   }
 
   @Test(expected = EntityProviderException.class)
