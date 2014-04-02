@@ -26,20 +26,28 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
 import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmAssociation;
+import org.apache.olingo.odata2.api.edm.EdmAssociationSet;
+import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
+import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
+import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -47,41 +55,76 @@ import org.junit.Test;
  */
 public class EdmEntityContainerImplProvTest extends BaseTest {
 
-  private static EdmEntityContainerImplProv edmEntityContainer;
+  private EdmEntityContainer edmEntityContainer;
 
-  @BeforeClass
-  public static void getEdmEntityContainerImpl() throws Exception {
+  @Before
+  public void getEdmEntityContainerImpl() throws Exception {
     EdmProvider edmProvider = mock(EdmProvider.class);
     EdmImplProv edmImplProv = new EdmImplProv(edmProvider);
-    when(edmProvider.getEntityContainerInfo("Container")).thenReturn(new EntityContainerInfo().setName("Container"));
+    String containerParentName = "ContainerParent";
+    String containerName = "Container";
 
-    EntityContainerInfo entityContainer = new EntityContainerInfo().setName("Container1").setExtendz("Container");
+    List<Schema> schemas = new ArrayList<Schema>();
+    Schema mockedSchema = mock(Schema.class);
+    List<EntityContainer> entityContainers = new ArrayList<EntityContainer>();
+    List<EntitySet> entitySetsParent = new ArrayList<EntitySet>();
+    EntityContainer parentEntityContainer = new EntityContainer()
+        .setName(containerParentName)
+        .setEntitySets(entitySetsParent);
+    EntityContainer entityContainer = mock(EntityContainer.class);
+    when(entityContainer.getName()).thenReturn(containerName);
+    when(entityContainer.getExtendz()).thenReturn(containerParentName);
+    entityContainers.add(entityContainer);
+    entityContainers.add(parentEntityContainer);
+    when(mockedSchema.getEntityContainers()).thenReturn(entityContainers);
+    schemas.add(mockedSchema);
+    when(edmProvider.getSchemas()).thenReturn(schemas);
+
+    List<AssociationSet> associationSets = new ArrayList<AssociationSet>();
+    when(entityContainer.getAssociationSets()).thenReturn(associationSets);
+    List<EntitySet> entitySets = new ArrayList<EntitySet>();
+    when(entityContainer.getEntitySets()).thenReturn(entitySets);
+
+    when(edmProvider.getEntityContainerInfo(containerParentName))
+        .thenReturn(new EntityContainerInfo().setName(containerParentName));
+    EntityContainerInfo entityContainerInfo =
+        new EntityContainerInfo().setName(containerName).setExtendz(containerParentName);
 
     EntitySet entitySetFooFromParent = new EntitySet().setName("fooFromParent");
-    when(edmProvider.getEntitySet("Container", "fooFromParent")).thenReturn(entitySetFooFromParent);
+    entitySetsParent.add(entitySetFooFromParent);
+    when(edmProvider.getEntitySet(containerParentName, "fooFromParent")).thenReturn(entitySetFooFromParent);
 
     EntitySet entitySetFoo = new EntitySet().setName("foo");
-    when(edmProvider.getEntitySet("Container1", "foo")).thenReturn(entitySetFoo);
+    entitySets.add(entitySetFoo);
+    when(edmProvider.getEntitySet(containerName, "foo")).thenReturn(entitySetFoo);
 
-    EntitySet entitySetBar = new EntitySet().setName("foo");
-    when(edmProvider.getEntitySet("Container1", "foo")).thenReturn(entitySetBar);
+    EntitySet entitySetBar = new EntitySet().setName("bar");
+    entitySets.add(entitySetBar);
+    when(edmProvider.getEntitySet(containerName, "bar")).thenReturn(entitySetBar);
 
     AssociationSet associationSet = new AssociationSet().setName("4711");
     FullQualifiedName assocFQName = new FullQualifiedName("AssocNs", "AssocName");
-    when(edmProvider.getAssociationSet("Container1", assocFQName, "foo", "fromRole")).thenReturn(associationSet);
+    associationSets.add(associationSet);
+    when(edmProvider.getAssociationSet(containerName, assocFQName, "foo", "fromRole")).thenReturn(associationSet);
+
+    AssociationSet parentAssociationSet = new AssociationSet().setName("42");
+    FullQualifiedName parentAssocFQName = new FullQualifiedName("AssocNs", "AssocNameParent");
+    when(edmProvider.getAssociationSet(containerParentName,
+        parentAssocFQName, "fooFromParent", "fromParentRole")).thenReturn(parentAssociationSet);
+    parentEntityContainer.setAssociationSets(Arrays.asList(parentAssociationSet));
 
     FunctionImport functionImportFoo = new FunctionImport().setName("foo");
-    when(edmProvider.getFunctionImport("Container1", "foo")).thenReturn(functionImportFoo);
+    when(edmProvider.getFunctionImport(containerName, "foo")).thenReturn(functionImportFoo);
 
     FunctionImport functionImportBar = new FunctionImport().setName("foo");
-    when(edmProvider.getFunctionImport("Container1", "foo")).thenReturn(functionImportBar);
+    when(edmProvider.getFunctionImport(containerName, "foo")).thenReturn(functionImportBar);
 
-    edmEntityContainer = new EdmEntityContainerImplProv(edmImplProv, entityContainer);
+    edmEntityContainer = new EdmEntityContainerImplProv(edmImplProv, entityContainerInfo);
   }
 
   @Test
   public void testEntityContainerName() throws EdmException {
-    assertEquals("Container1", edmEntityContainer.getName());
+    assertEquals("Container", edmEntityContainer.getName());
   }
 
   @Test
@@ -145,5 +188,35 @@ public class EdmEntityContainerImplProvTest extends BaseTest {
     EdmAnnotations annotations = annotatable.getAnnotations();
     assertNull(annotations.getAnnotationAttributes());
     assertNull(annotations.getAnnotationElements());
+  }
+
+  @Test
+  public void testGetEntitySets() throws EdmException {
+
+    List<EdmEntitySet> entitySets = edmEntityContainer.getEntitySets();
+    assertNotNull(entitySets);
+    assertEquals(3, entitySets.size());
+
+    for (EdmEntitySet entitySet : entitySets) {
+      String name = entitySet.getName();
+      boolean expectedName = "fooFromParent".equals(name)
+          || "foo".equals(name)
+          || "bar".equals(name);
+      assertTrue("Found not expected name: " + name, expectedName);
+    }
+  }
+
+  @Test
+  public void testGetAssociationSets() throws EdmException {
+    List<EdmAssociationSet> associationSets = edmEntityContainer.getAssociationSets();
+    assertNotNull(associationSets);
+    assertEquals(2, associationSets.size());
+
+    for (EdmAssociationSet assoSet : associationSets) {
+      String name = assoSet.getName();
+      boolean expectedName = "4711".equals(name)
+          || "42".equals(name);
+      assertTrue("Found not expected name: " + name, expectedName);
+    }
   }
 }
