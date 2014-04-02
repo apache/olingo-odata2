@@ -80,6 +80,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
   private ODataJPAContext oDataJPAContext;
   private ODataContext oDataContext;
   private boolean setDetailErrors = false;
+  private OnJPAWriteContent onJPAWriteContent = null;
 
   /**
    * Creates an OData Service based on the values set in
@@ -176,12 +177,28 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
     this.setDetailErrors = setDetailErrors;
   }
 
+  /**
+   * The methods sets the context with a callback implementation for JPA provider specific content.
+   * For details refer to {@link org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent}
+   * @param onJPAWriteContent is an instance of type
+   * {@link org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent}
+   */
+  protected void setOnWriteJPAContent(final OnJPAWriteContent onJPAWriteContent) {
+    this.onJPAWriteContent = onJPAWriteContent;
+  }
+
   @SuppressWarnings("unchecked")
   @Override
   public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
     if (setDetailErrors == true) {
       if (callbackInterface.isAssignableFrom(ODataErrorCallback.class)) {
         return (T) new ODataJPAErrorCallback();
+      }
+    }
+
+    if (onJPAWriteContent != null) {
+      if (callbackInterface.isAssignableFrom(OnJPAWriteContent.class)) {
+        return (T) onJPAWriteContent;
       }
     }
     return null;

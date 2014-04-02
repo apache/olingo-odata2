@@ -41,6 +41,20 @@ public class ODataContextMock {
     ODataContext context = EasyMock.createMock(ODataContext.class);
     EasyMock.expect(context.getService()).andReturn(odataService).anyTimes();
     EasyMock.expect(context.getPathInfo()).andReturn(pathInfo).anyTimes();
+    ODataJPAServiceFactoryMock mockServiceFactory = new ODataJPAServiceFactoryMock(context);
+    mockServiceFactory.initializeODataJPAContext();
+    EasyMock.expect(context.getServiceFactory()).andReturn(mockServiceFactory).anyTimes();
+    EasyMock.replay(context);
+    return context;
+  }
+
+  public ODataContext mockWithoutOnJPAWriteContent() throws ODataException {
+    ODataContext context = EasyMock.createMock(ODataContext.class);
+    EasyMock.expect(context.getService()).andReturn(odataService).anyTimes();
+    EasyMock.expect(context.getPathInfo()).andReturn(pathInfo).anyTimes();
+    ODataJPAServiceFactoryMock mockServiceFactory = new ODataJPAServiceFactoryMock(context);
+    mockServiceFactory.initializeODataJPAContextX();
+    EasyMock.expect(context.getServiceFactory()).andReturn(mockServiceFactory).anyTimes();
     EasyMock.replay(context);
     return context;
   }

@@ -18,8 +18,16 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -230,6 +238,10 @@ public final class JPAEntityParser {
         if (c != null) {
           propertyValue = toString(new Character[] { c });
         }
+      } else if (returnType.equals(Blob.class)) {
+        propertyValue = getBytes((Blob) method.invoke(entity));
+      } else if (returnType.equals(Clob.class)) {
+        propertyValue = getString((Clob) method.invoke(entity));
       } else {
         propertyValue = method.invoke(entity);
       }
@@ -244,6 +256,99 @@ public final class JPAEntityParser {
     }
 
     return propertyValue;
+  }
+
+  public static String getString(Clob clob) throws ODataJPARuntimeException {
+    try {
+      Reader stringReader = clob.getCharacterStream();
+      StringWriter buffer = null;
+      long clobSize = clob.length();
+      long remainingClobSize = clobSize;
+      int len = 0;
+      int off = 0;
+      boolean bufferNotEmpty = false;
+      if (clobSize > Integer.MAX_VALUE) {
+        buffer = new StringWriter(Integer.MAX_VALUE);
+        len = Integer.MAX_VALUE;
+        bufferNotEmpty = true;
+      } else {
+        buffer = new StringWriter((int) clobSize);
+        len = (int) clobSize;
+      }
+      stringReader = clob.getCharacterStream();
+      char c[] = new char[len];
+      while (remainingClobSize > len) {
+        stringReader.read(c, off, len);
+        buffer.write(c);
+        off = len + 1;
+        remainingClobSize = remainingClobSize - Integer.MAX_VALUE;
+        if (remainingClobSize > Integer.MAX_VALUE) {
+          len = Integer.MAX_VALUE;
+        } else {
+          len = (int) remainingClobSize;
+        }
+      }
+      if (remainingClobSize <= len) {
+        stringReader.read(c, off, len);
+      }
+      if (bufferNotEmpty) {
+        return buffer.toString();
+      } else {
+        return new String(c);
+      }
+
+    } catch (SQLException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (IOException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    }
+
+  }
+
+  public static byte[] getBytes(Blob blob) throws ODataJPARuntimeException {
+    try {
+      InputStream is = null;
+      ByteArrayOutputStream buffer = null;
+      long blobSize = blob.length();
+      long remainingBlobSize = blobSize;
+      int len = 0;
+      int off = 0;
+      boolean bufferNotEmpty = false;
+      if (blobSize > Integer.MAX_VALUE) { // Edge case when the Blob Size is more than 2GB
+        buffer = new ByteArrayOutputStream(Integer.MAX_VALUE);
+        len = Integer.MAX_VALUE;
+        bufferNotEmpty = true;
+      } else {
+        buffer = new ByteArrayOutputStream((int) blobSize);
+        len = (int) blobSize;
+      }
+
+      is = blob.getBinaryStream();
+      byte b[] = new byte[len];
+      while (remainingBlobSize > len) {
+        is.read(b, off, len);
+        buffer.write(b);
+        off = len + 1;
+        remainingBlobSize = remainingBlobSize - Integer.MAX_VALUE;
+        if (remainingBlobSize > Integer.MAX_VALUE) {
+          len = Integer.MAX_VALUE;
+        } else {
+          len = (int) remainingBlobSize;
+        }
+      }
+      if (remainingBlobSize <= len) {
+        is.read(b, off, len);
+      }
+      if (bufferNotEmpty) {
+        return buffer.toByteArray();
+      } else {
+        return b;
+      }
+    } catch (SQLException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } catch (IOException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    }
   }
 
   public Object getEmbeddablePropertyValue(final String methodName, final Object jpaEntity)
