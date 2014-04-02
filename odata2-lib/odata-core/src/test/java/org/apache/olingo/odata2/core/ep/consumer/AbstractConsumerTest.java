@@ -18,20 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
@@ -39,8 +25,19 @@ import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.core.xml.XMLStreamException;
+import org.apache.olingo.odata2.core.xml.XMLStreamReader;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  *  
@@ -50,19 +47,24 @@ public abstract class AbstractConsumerTest extends BaseTest {
   protected static final EntityProviderReadProperties DEFAULT_PROPERTIES = EntityProviderReadProperties.init()
       .mergeSemantic(false).build();
 
-  protected XMLStreamReader createReaderForTest(final String input) throws XMLStreamException {
+  protected XMLStreamReader createReaderForTest(final String input) throws XMLStreamException, EntityProviderException {
     return createReaderForTest(input, false);
   }
 
   protected XMLStreamReader createReaderForTest(final String input, final boolean namespaceAware)
-      throws XMLStreamException {
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-    factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, namespaceAware);
-
-    XMLStreamReader streamReader = factory.createXMLStreamReader(new StringReader(input));
-
-    return streamReader;
+          throws XMLStreamException, EntityProviderException {
+//    XMLInputFactory factory = XMLInputFactory.newInstance();
+//    factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
+//    factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, namespaceAware);
+//
+//    XMLStreamReader streamReader = factory.createXMLStreamWriter(new StringReader(input));
+//
+//    return streamReader;
+    if(input == null) {
+      return XMLStreamReader.createXMLStreamReader(null);
+    }
+    return XMLStreamReader.createXMLStreamReader(new ByteArrayInputStream(input.getBytes()));
+//    return XMLStreamReader.createXMLStreamWriter(new StringReader(input));
   }
 
   protected Map<String, Object> createTypeMappings(final String key, final Object value) {

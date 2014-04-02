@@ -31,9 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
@@ -53,6 +50,9 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
 import org.apache.olingo.odata2.core.ep.producer.XmlMetadataProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
+import org.apache.olingo.odata2.core.xml.XMLStreamException;
+import org.apache.olingo.odata2.core.xml.XMLStreamWriter;
+import org.apache.olingo.odata2.core.xml.XMLStreamWriterFactory;
 
 /**
  * Provider for all basic (content type independent) entity provider methods.
@@ -247,7 +247,8 @@ public class BasicEntityProvider {
     CircleStreamBuffer csb = new CircleStreamBuffer();
     try {
       writer = new OutputStreamWriter(csb.getOutputStream(), DEFAULT_CHARSET);
-      XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
+      XMLStreamWriterFactory xmlStreamWriterFactory = XMLStreamWriterFactory.create();
+      XMLStreamWriter xmlStreamWriter = xmlStreamWriterFactory.createXMLStreamWriter(writer);
       XmlMetadataProducer.writeMetadata(metadata, xmlStreamWriter, predefinedNamespaces);
     } catch (UnsupportedEncodingException e) {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()

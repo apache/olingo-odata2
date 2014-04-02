@@ -18,53 +18,21 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.InputStream;
-import java.io.StringReader;
-import java.util.List;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.olingo.odata2.api.edm.Edm;
-import org.apache.olingo.odata2.api.edm.EdmAction;
-import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
-import org.apache.olingo.odata2.api.edm.EdmContentKind;
-import org.apache.olingo.odata2.api.edm.EdmFacets;
-import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
-import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
-import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
-import org.apache.olingo.odata2.api.edm.provider.Association;
-import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
-import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
-import org.apache.olingo.odata2.api.edm.provider.AssociationSetEnd;
-import org.apache.olingo.odata2.api.edm.provider.ComplexProperty;
-import org.apache.olingo.odata2.api.edm.provider.ComplexType;
-import org.apache.olingo.odata2.api.edm.provider.DataServices;
-import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
-import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
-import org.apache.olingo.odata2.api.edm.provider.EntitySet;
-import org.apache.olingo.odata2.api.edm.provider.EntityType;
-import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
-import org.apache.olingo.odata2.api.edm.provider.FunctionImportParameter;
-import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
-import org.apache.olingo.odata2.api.edm.provider.Property;
-import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
-import org.apache.olingo.odata2.api.edm.provider.Schema;
-import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
+import org.apache.olingo.odata2.api.edm.*;
+import org.apache.olingo.odata2.api.edm.provider.*;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.xml.XMLStreamException;
+import org.apache.olingo.odata2.core.xml.XMLStreamReader;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 import org.junit.Test;
+
+import java.io.InputStream;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
 
@@ -1265,13 +1233,8 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
     }
   }
 
-  private XMLStreamReader createStreamReader(final String xml) throws XMLStreamException {
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-    factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
-    XMLStreamReader streamReader = factory.createXMLStreamReader(new StringReader(xml));
-
-    return streamReader;
+  private XMLStreamReader createStreamReader(final String xml) throws XMLStreamException, EntityProviderException {
+    return createReaderForTest(xml);
   }
 
 }

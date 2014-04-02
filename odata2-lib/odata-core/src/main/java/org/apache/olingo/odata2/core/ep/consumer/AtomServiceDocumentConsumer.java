@@ -18,37 +18,19 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
+import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.servicedocument.*;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
+import org.apache.olingo.odata2.core.ep.util.FormatXml;
+import org.apache.olingo.odata2.core.servicedocument.*;
+import org.apache.olingo.odata2.core.xml.XMLStreamConstants;
+import org.apache.olingo.odata2.core.xml.XMLStreamException;
+import org.apache.olingo.odata2.core.xml.XMLStreamReader;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.olingo.odata2.api.edm.Edm;
-import org.apache.olingo.odata2.api.ep.EntityProviderException;
-import org.apache.olingo.odata2.api.servicedocument.Accept;
-import org.apache.olingo.odata2.api.servicedocument.Categories;
-import org.apache.olingo.odata2.api.servicedocument.Category;
-import org.apache.olingo.odata2.api.servicedocument.Collection;
-import org.apache.olingo.odata2.api.servicedocument.ExtensionAttribute;
-import org.apache.olingo.odata2.api.servicedocument.ExtensionElement;
-import org.apache.olingo.odata2.api.servicedocument.Fixed;
-import org.apache.olingo.odata2.api.servicedocument.Workspace;
-import org.apache.olingo.odata2.core.commons.XmlHelper;
-import org.apache.olingo.odata2.core.ep.util.FormatXml;
-import org.apache.olingo.odata2.core.servicedocument.AcceptImpl;
-import org.apache.olingo.odata2.core.servicedocument.AtomInfoImpl;
-import org.apache.olingo.odata2.core.servicedocument.CategoriesImpl;
-import org.apache.olingo.odata2.core.servicedocument.CategoryImpl;
-import org.apache.olingo.odata2.core.servicedocument.CollectionImpl;
-import org.apache.olingo.odata2.core.servicedocument.CommonAttributesImpl;
-import org.apache.olingo.odata2.core.servicedocument.ExtensionAttributeImpl;
-import org.apache.olingo.odata2.core.servicedocument.ExtensionElementImpl;
-import org.apache.olingo.odata2.core.servicedocument.ServiceDocumentImpl;
-import org.apache.olingo.odata2.core.servicedocument.TitleImpl;
-import org.apache.olingo.odata2.core.servicedocument.WorkspaceImpl;
 
 public class AtomServiceDocumentConsumer {
   private String currentHandledStartTagName;

@@ -18,10 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.api.edm.provider;
 
-import java.util.List;
-
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.exception.ODataException;
+
+import java.util.List;
 
 /**
  * Default EDM Provider which is to be extended by the application

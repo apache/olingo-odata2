@@ -23,11 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -55,6 +50,10 @@ import org.apache.olingo.odata2.core.ep.feed.FeedMetadataImpl;
 import org.apache.olingo.odata2.core.ep.feed.ODataDeltaFeedImpl;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
+import org.apache.olingo.odata2.core.xml.NamespaceContext;
+import org.apache.olingo.odata2.core.xml.XMLStreamConstants;
+import org.apache.olingo.odata2.core.xml.XMLStreamException;
+import org.apache.olingo.odata2.core.xml.XMLStreamReader;
 
 /**
  * Atom/XML format reader/consumer for entries.

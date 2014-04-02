@@ -24,10 +24,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
@@ -59,6 +55,8 @@ import org.apache.olingo.odata2.api.edm.provider.Using;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.core.ep.util.XmlMetadataConstants;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
+import org.apache.olingo.odata2.core.xml.XMLStreamException;
+import org.apache.olingo.odata2.core.xml.XMLStreamWriter;
 
 public class XmlMetadataProducer {
 
@@ -420,8 +418,6 @@ public class XmlMetadataProducer {
 
       xmlStreamWriter.flush();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
-    } catch (FactoryConfigurationError e) {
       throw new EntityProviderException(EntityProviderException.COMMON, e);
     }
   }

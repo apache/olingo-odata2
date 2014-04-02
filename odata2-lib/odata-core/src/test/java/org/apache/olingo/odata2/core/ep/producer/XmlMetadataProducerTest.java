@@ -26,9 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
@@ -40,8 +37,11 @@ import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.core.ep.AbstractXmlProducerTestHelper;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
+import org.apache.olingo.odata2.core.xml.XMLStreamWriter;
+import org.apache.olingo.odata2.core.xml.XMLStreamWriterFactory;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.custommonkey.xmlunit.NamespaceContext;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
@@ -51,15 +51,15 @@ import org.junit.Test;
 
 public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
 
-  private XMLOutputFactory xmlStreamWriterFactory;
+  private XMLStreamWriterFactory xmlStreamWriterFactory;
 
   public XmlMetadataProducerTest(final StreamWriterImplType type) {
     super(type);
   }
 
   @Before
-  public void before() {
-    xmlStreamWriterFactory = XMLOutputFactory.newInstance();
+  public void before() throws EntityProviderException {
+    xmlStreamWriterFactory = XMLStreamWriterFactory.create();
   }
 
   @Test

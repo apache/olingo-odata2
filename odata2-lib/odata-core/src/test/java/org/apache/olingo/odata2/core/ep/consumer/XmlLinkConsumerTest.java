@@ -24,10 +24,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.core.xml.XMLStreamReader;
 import org.junit.Test;
 
 /**

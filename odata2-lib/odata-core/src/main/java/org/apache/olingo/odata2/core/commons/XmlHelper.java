@@ -18,12 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.commons;
 
-import java.io.InputStream;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
 public class XmlHelper {
@@ -31,7 +25,14 @@ public class XmlHelper {
   /** Default used charset for reader */
   private static final String DEFAULT_CHARSET = "UTF-8";
 
-  public static XMLStreamReader createStreamReader(final Object content) throws EntityProviderException {
+  public static org.apache.olingo.odata2.core.xml.XMLStreamReader createStreamReader(final Object content)
+          throws EntityProviderException {
+    return org.apache.olingo.odata2.core.xml.XMLStreamReader.createXMLStreamReader(content);
+  }
+
+
+  /*
+  public static XMLStreamReader createStreamReaderJavax(final Object content) throws EntityProviderException {
     if (content == null) {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
           .addContent("Got not allowed NULL parameter for creation of XMLStreamReader."));
@@ -45,7 +46,7 @@ public class XmlHelper {
       factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
 
       if (content instanceof InputStream) {
-        streamReader = factory.createXMLStreamReader((InputStream) content, DEFAULT_CHARSET);
+        streamReader = factory.createXMLStreamWriter((InputStream) content, DEFAULT_CHARSET);
         // verify charset encoding set in content is supported (if not set UTF-8 is used as defined in
         // v'http://www.w3.org/TR/2008/REC-xml-20081126/')
         String characterEncodingInContent = streamReader.getCharacterEncodingScheme();
@@ -63,5 +64,5 @@ public class XmlHelper {
           .getSimpleName()), e);
     }
   }
-
+*/
 }

@@ -248,7 +248,16 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
     }
   }
 
-  private XMLStreamReader createStreamReader(final String fileName) throws IOException, EntityProviderException {
+  private org.apache.olingo.odata2.core.xml.XMLStreamReader createStreamReader(final String fileName)
+          throws IOException, EntityProviderException {
+    InputStream in = ClassLoader.class.getResourceAsStream(fileName);
+    if (in == null) {
+      throw new IOException("Requested file '" + fileName + "' was not found.");
+    }
+    return org.apache.olingo.odata2.core.xml.XMLStreamReader.createXMLStreamReader(in);
+  }
+
+  private XMLStreamReader createStreamReader2(final String fileName) throws IOException, EntityProviderException {
     XMLInputFactory factory = XMLInputFactory.newInstance();
     factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
     factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);

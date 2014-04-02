@@ -18,36 +18,23 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
-import org.apache.olingo.odata2.api.edm.provider.AliasInfo;
-import org.apache.olingo.odata2.api.edm.provider.Association;
-import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
-import org.apache.olingo.odata2.api.edm.provider.ComplexType;
-import org.apache.olingo.odata2.api.edm.provider.DataServices;
-import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
-import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
-import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
-import org.apache.olingo.odata2.api.edm.provider.EntitySet;
-import org.apache.olingo.odata2.api.edm.provider.EntityType;
-import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
-import org.apache.olingo.odata2.api.edm.provider.Schema;
+import org.apache.olingo.odata2.api.edm.provider.*;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.consumer.XmlMetadataConsumer;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EdmxProvider extends EdmProvider {
   private DataServices dataServices;
 
   public EdmxProvider parse(final InputStream in, final boolean validate) throws EntityProviderException {
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
-    XMLStreamReader streamReader = XmlHelper.createStreamReader(in);
+    org.apache.olingo.odata2.core.xml.XMLStreamReader streamReader = XmlHelper.createStreamReader(in);
     dataServices = parser.readMetadata(streamReader, validate);
     return this;
   }
