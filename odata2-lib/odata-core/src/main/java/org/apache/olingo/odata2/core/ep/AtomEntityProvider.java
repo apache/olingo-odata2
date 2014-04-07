@@ -25,10 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
@@ -50,6 +46,8 @@ import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.ContentType.ODataFormat;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
@@ -67,6 +65,7 @@ import org.apache.olingo.odata2.core.ep.producer.XmlLinksEntityProducer;
 import org.apache.olingo.odata2.core.ep.producer.XmlPropertyEntityProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 
 /**
  *  
@@ -111,7 +110,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = createXmlStreamWriter(outStream);
 
       XmlErrorDocumentProducer producer = new XmlErrorDocumentProducer();
       producer.writeErrorDocument(writer, errorCode, message, locale, innerError);
@@ -166,7 +165,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = createXmlStreamWriter(outStream);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       AtomEntryEntityProducer as = new AtomEntryEntityProducer(properties);
@@ -202,7 +201,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = createXmlStreamWriter(outStream);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       XmlPropertyEntityProducer ps = new XmlPropertyEntityProducer(false);
@@ -229,7 +228,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = createXmlStreamWriter(outStream);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       AtomFeedProducer atomFeedProvider = new AtomFeedProducer(properties);
@@ -258,7 +257,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = createXmlStreamWriter(outStream);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       XmlLinkEntityProducer entity = new XmlLinkEntityProducer(properties);
@@ -287,7 +286,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = createXmlStreamWriter(outStream);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       XmlLinksEntityProducer entity = new XmlLinksEntityProducer(properties);
@@ -314,7 +313,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = createXmlStreamWriter(outStream);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       XmlCollectionEntityProducer.append(writer, propertyInfo, data);
@@ -331,6 +330,11 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
+  }
+
+  private XMLStreamWriter createXmlStreamWriter(OutputStream outStream)
+          throws EntityProviderException, XMLStreamException {
+    return XmlStreamFactory.createStreamWriter(outStream, DEFAULT_CHARSET);
   }
 
   @Override

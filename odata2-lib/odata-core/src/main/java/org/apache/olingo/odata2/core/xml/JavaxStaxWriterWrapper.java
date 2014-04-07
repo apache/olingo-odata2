@@ -179,4 +179,23 @@ public class JavaxStaxWriterWrapper implements XMLStreamWriter, XMLStreamWriterF
       throw new XMLStreamException(e);
     }
   }
+
+  @Override
+  public void writeStartDocument(String encoding, String xmlVersion) throws XMLStreamException {
+    try {
+      xmlStreamWriter.writeStartDocument(encoding, xmlVersion);
+    } catch (javax.xml.stream.XMLStreamException e) {
+      throw new XMLStreamException(e);
+    }
+  }
+
+  @Override
+  public void writeAttribute(String namespaceUdi, String localName, String value) throws XMLStreamException {
+    try {
+      xmlStreamWriter.writeAttribute(namespaceUdi, localName, value);
+    } catch (javax.xml.stream.XMLStreamException e) {
+      throw new XMLStreamException(e);
+    }
+
+  }
 }

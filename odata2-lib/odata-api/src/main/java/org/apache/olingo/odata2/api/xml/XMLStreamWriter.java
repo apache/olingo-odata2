@@ -51,4 +51,8 @@ public interface XMLStreamWriter {
   public abstract void writeCharacters(String text) throws XMLStreamException;
 
   public abstract void writeStartElement(String prefix, String name, String namespace) throws XMLStreamException;
+
+  void writeStartDocument(String defaultCharset, String xmlVersion) throws XMLStreamException;
+
+  void writeAttribute(String namespaceM200708, String mEtag, String etag) throws XMLStreamException;
 }

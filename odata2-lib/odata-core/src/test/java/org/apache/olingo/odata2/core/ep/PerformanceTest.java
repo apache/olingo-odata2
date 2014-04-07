@@ -26,19 +26,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.producer.AtomEntryEntityProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.custommonkey.xmlunit.exceptions.XpathException;
@@ -79,7 +77,7 @@ public class PerformanceTest extends AbstractProviderTest {
       outStream = new ByteArrayOutputStream();
     }
 
-    writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, "utf-8");
+    writer = XmlStreamFactory.createStreamWriter(outStream);
 
     writer.writeStartElement("junit");
     writer.writeDefaultNamespace(Edm.NAMESPACE_ATOM_2005);
@@ -112,7 +110,7 @@ public class PerformanceTest extends AbstractProviderTest {
 
   @Test
   public void readAtomEntry() throws IOException, XpathException, SAXException, XMLStreamException,
-      FactoryConfigurationError, ODataException {
+      ODataException {
     long t = startTimer();
 
     for (int i = 0; i < TIMES; i++) {
@@ -141,7 +139,7 @@ public class PerformanceTest extends AbstractProviderTest {
 
   @Test
   public void readAtomEntryOptimized() throws IOException, XpathException, SAXException, XMLStreamException,
-      FactoryConfigurationError, ODataException {
+      ODataException {
     long t = startTimer();
 
     ExpandSelectTreeNode epProperties = null;

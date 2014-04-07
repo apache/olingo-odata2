@@ -31,18 +31,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.junit.Before;
@@ -65,7 +64,7 @@ public class TombstoneProducerTest extends AbstractProviderTest {
   public void initialize() throws Exception {
     csb = new CircleStreamBuffer();
     OutputStream outStream = csb.getOutputStream();
-    writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+    writer = XmlStreamFactory.createStreamWriter(outStream, DEFAULT_CHARSET);
     defaultProperties = EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
     defaultEia =
         EntityInfoAggregator.create(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),

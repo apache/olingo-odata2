@@ -21,6 +21,8 @@ package org.apache.olingo.odata2.core.xml;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.xml.*;
 
+import java.io.OutputStream;
+
 /**
  *
  */
@@ -34,6 +36,12 @@ public class XmlStreamFactory implements XMLStreamWriterFactory, XMLStreamReader
 
   public static XMLStreamWriter createStreamWriter(final Object content)
           throws EntityProviderException, XMLStreamException {
+    XmlStreamFactory factory = new XmlStreamFactory();
+    return factory.createXMLStreamWriter(content);
+  }
+
+  public static XMLStreamWriter createStreamWriter(OutputStream content, String charset)
+          throws EntityProviderException {
     XmlStreamFactory factory = new XmlStreamFactory();
     return factory.createXMLStreamWriter(content);
   }

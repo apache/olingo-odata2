@@ -23,9 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
@@ -35,6 +32,8 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallbackResult;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
 import org.apache.olingo.odata2.core.commons.Encoder;
 import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
@@ -137,7 +136,7 @@ public class AtomFeedProducer {
   }
 
   private void appendEntries(final XMLStreamWriter writer, final EntityInfoAggregator eia,
-      final List<Map<String, Object>> data) throws EntityProviderException {
+      final List<Map<String, Object>> data) throws EntityProviderException, XMLStreamException {
     AtomEntryEntityProducer entryProvider = new AtomEntryEntityProducer(properties);
     for (Map<String, Object> singleEntryData : data) {
       entryProvider.append(writer, eia, singleEntryData, false, true);

@@ -26,9 +26,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmCustomizableFeedMappings;
@@ -53,6 +50,8 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackContext;
 import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Encoder;
 import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
@@ -76,7 +75,7 @@ public class AtomEntryEntityProducer {
   }
 
   public void append(final XMLStreamWriter writer, final EntityInfoAggregator eia, final Map<String, Object> data,
-      final boolean isRootElement, final boolean isFeedPart) throws EntityProviderException {
+      final boolean isRootElement, final boolean isFeedPart) throws EntityProviderException, XMLStreamException {
     try {
       writer.writeStartElement(FormatXml.ATOM_ENTRY);
 
