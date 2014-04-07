@@ -16,21 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.xml;
+package org.apache.olingo.odata2.api.xml;
 
 /**
+ * Based on NamespaceContext from JDK.
  */
-public class XMLStreamException extends Exception {
-  public XMLStreamException() {
-    super();
-  }
-  public XMLStreamException(Throwable e) {
-    super(e);
-  }
-  public XMLStreamException(String message) {
-    super(message);
-  }
-  public XMLStreamException(String message, Throwable e) {
-    super(message, e);
-  }
+public interface NamespaceContext {
+  String getPrefix(String customNamespaceURI);
 }

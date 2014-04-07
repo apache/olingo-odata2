@@ -248,7 +248,7 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
     }
   }
 
-  private org.apache.olingo.odata2.core.xml.XMLStreamReader createStreamReader(final String fileName)
+  private org.apache.olingo.odata2.api.xml.XMLStreamReader createStreamReader(final String fileName)
           throws IOException, EntityProviderException {
     InputStream in = ClassLoader.class.getResourceAsStream(fileName);
     if (in == null) {

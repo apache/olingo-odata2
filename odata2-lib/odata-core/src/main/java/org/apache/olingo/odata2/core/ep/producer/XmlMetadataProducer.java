@@ -55,8 +55,8 @@ import org.apache.olingo.odata2.api.edm.provider.Using;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.core.ep.util.XmlMetadataConstants;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
-import org.apache.olingo.odata2.core.xml.XMLStreamException;
-import org.apache.olingo.odata2.core.xml.XMLStreamWriter;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
 
 public class XmlMetadataProducer {
 

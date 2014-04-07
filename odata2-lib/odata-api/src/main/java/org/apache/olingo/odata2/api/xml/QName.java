@@ -16,11 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.xml;
+package org.apache.olingo.odata2.api.xml;
 
 /**
- * Based on NamespaceContext from JDK.
+ * Based on QName from JDK.
  */
-public interface NamespaceContext {
-  String getPrefix(String customNamespaceURI);
+public interface QName {
+  /**
+   * Receive namspace uri.
+   *
+   * @return namspace uri
+   */
+  String getNamespaceURI();
 }

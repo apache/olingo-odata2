@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.xml;
 
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.xml.*;
 
 import javax.xml.stream.XMLInputFactory;
 import java.io.InputStream;

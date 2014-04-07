@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.xml;
+package org.apache.olingo.odata2.api.xml;
 
 /**
  * Based on XMLStreamWriter from JDK.

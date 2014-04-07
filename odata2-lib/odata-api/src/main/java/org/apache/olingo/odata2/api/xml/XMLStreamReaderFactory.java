@@ -16,15 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.xml;
+package org.apache.olingo.odata2.api.xml;
 
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
 /**
- *
+ * Factory for XMLStreamReader instances.
  */
 public interface XMLStreamReaderFactory {
-  static final String XML_STREAM_READER_FACTORY_CLASS = "XMLStreamReaderFactoryClass";
+  static final String XML_STREAM_READER_FACTORY_CLASS = "XML_STREAM_READER_FACTORY_CLASS";
 
+  /**
+   * Create XMLStreamReader for reading given content.
+   *
+   * @param content which will be read.
+   * @return reader for given content.
+   * @throws EntityProviderException if something goes wrong during initialization.
+   */
   XMLStreamReader createXMLStreamReader(Object content) throws EntityProviderException;
 }

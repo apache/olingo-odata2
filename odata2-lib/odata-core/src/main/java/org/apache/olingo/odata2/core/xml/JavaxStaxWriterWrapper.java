@@ -18,6 +18,11 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.xml;
 
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
+import org.apache.olingo.odata2.api.xml.XMLStreamWriterFactory;
+
 import javax.xml.stream.XMLOutputFactory;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -36,7 +41,7 @@ public class JavaxStaxWriterWrapper implements XMLStreamWriter, XMLStreamWriterF
   }
 
   @Override
-  public XMLStreamWriter createXMLStreamWriter(Object content) throws XMLStreamException {
+  public XMLStreamWriter createXMLStreamWriter(Object content) throws EntityProviderException {
     if(content == null) {
       throw new IllegalArgumentException("Unsupported NULL input content.");
     }
@@ -54,13 +59,10 @@ public class JavaxStaxWriterWrapper implements XMLStreamWriter, XMLStreamWriterF
                 content.getClass() + "'.");
       }
     } catch (javax.xml.stream.XMLStreamException e) {
-      throw new XMLStreamException(e);
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+              .getSimpleName()), e);
     }
   }
-
-//  public static XMLStreamWriter create(Object content) throws XMLStreamException {
-//    return new JavaxStaxWriterWrapper(null).createXMLStreamWriter(content);
-//  }
 
   public void writeStartDocument() throws XMLStreamException {
     try {

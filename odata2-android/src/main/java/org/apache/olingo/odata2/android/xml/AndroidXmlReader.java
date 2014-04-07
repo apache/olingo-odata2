@@ -3,17 +3,17 @@ package org.apache.olingo.odata2.android.xml;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.olingo.odata2.core.xml.NamespaceContext;
-import org.apache.olingo.odata2.core.xml.QName;
-import org.apache.olingo.odata2.core.xml.XMLStreamConstants;
-import org.apache.olingo.odata2.core.xml.XMLStreamException;
-import org.apache.olingo.odata2.core.xml.XMLStreamReader;
+import org.apache.olingo.odata2.api.xml.NamespaceContext;
+import org.apache.olingo.odata2.api.xml.QName;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamReader;
+import org.apache.olingo.odata2.api.xml.XMLStreamConstants;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.util.Xml;
 
-public class AndroidXmlReader extends XMLStreamReader {
+public class AndroidXmlReader implements XMLStreamReader {
 
   private final InputStream xmlContentStream;
   private final XmlPullParser parser;
@@ -83,8 +83,14 @@ public class AndroidXmlReader extends XMLStreamReader {
 
   @Override
   public QName getName() {
+    final String namespaceUri = getNamespaceURI();
     // FIXME
-    QName qname = new QName(getNamespaceURI()) {};
+    QName qname = new QName() {
+      @Override
+      public String getNamespaceURI() {
+        return namespaceUri;
+      }
+    };
     return qname;
   }
 
@@ -100,7 +106,6 @@ public class AndroidXmlReader extends XMLStreamReader {
     final String prefix = tmp;
     // TODO Auto-generated method stub
     NamespaceContext nctx = new NamespaceContext() {
-      @Override
       public String getPrefix(String arg0) {
         return prefix;
       }

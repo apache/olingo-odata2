@@ -24,9 +24,9 @@ import org.apache.olingo.odata2.api.servicedocument.*;
 import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 import org.apache.olingo.odata2.core.servicedocument.*;
-import org.apache.olingo.odata2.core.xml.XMLStreamConstants;
-import org.apache.olingo.odata2.core.xml.XMLStreamException;
-import org.apache.olingo.odata2.core.xml.XMLStreamReader;
+import org.apache.olingo.odata2.api.xml.XMLStreamConstants;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamReader;
 
 import java.io.InputStream;
 import java.util.ArrayList;

@@ -16,11 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.xml;
+package org.apache.olingo.odata2.api.xml;
 
 /**
- * Based on QName from JDK.
+ * Based on XMLStreamException from JDK.
  */
-public interface QName {
-  String getNamespaceURI();
+public class XMLStreamException extends Exception {
+  /**
+   * Wrap thrown exception.
+   *
+   * @param e exception cause.
+   */
+  public XMLStreamException(Throwable e) {
+    super(e);
+  }
+
+  /**
+   * Create exception with message.
+   *
+   * @param message for exception.
+   */
+  public XMLStreamException(String message) {
+    super(message);
+  }
+
+  /**
+   * Create exception with message and wrapped exception cause.
+   *
+   * @param message for exception.
+   * @param e exception cause.
+   */
+  public XMLStreamException(String message, Throwable e) {
+    super(message, e);
+  }
 }

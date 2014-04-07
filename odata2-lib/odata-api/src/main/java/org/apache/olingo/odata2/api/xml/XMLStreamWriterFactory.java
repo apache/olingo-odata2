@@ -16,25 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.xml;
+package org.apache.olingo.odata2.api.xml;
+
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
 /**
- * Based on XMLStreamConstants from JDK.
+ * Factory for XMLStreamWriterFactory instances.
  */
-public interface XMLStreamConstants {
-  int START_ELEMENT = 1;
-  int END_ELEMENT = 2;
-//  int PROCESSING_INSTRUCTION = 3;
-//  int CHARACTERS = 4;
-//  int COMMENT = 5;
-//  int SPACE = 6;
-  int START_DOCUMENT = 7;
-  int END_DOCUMENT = 8;
-//  int ENTITY_REFERENCE = 9;
-//  int ATTRIBUTE = 10;
-  int DTD = 11;
-//  int CDATA = 12;
-//  int NAMESPACE = 13;
-//  int NOTATION_DECLARATION = 14;
-//  int ENTITY_DECLARATION = 15;
+public interface XMLStreamWriterFactory{
+  static final String XML_STREAM_WRITER_FACTORY_CLASS = "XML_STREAM_WRITER_FACTORY_CLASS";
+
+  /**
+   * Create XMLStreamWriterFactory for reading given content.
+   *
+   * @param content which will be written.
+   * @return writer for given content.
+   * @throws EntityProviderException if something goes wrong during initialization.
+   */
+  XMLStreamWriter createXMLStreamWriter(Object content) throws EntityProviderException;
 }

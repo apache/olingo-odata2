@@ -22,9 +22,9 @@ import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.*;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.xml.XMLStreamReader;
 import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 import org.apache.olingo.odata2.core.ep.consumer.XmlMetadataConsumer;
-import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class EdmxProvider extends EdmProvider {
 
   public EdmxProvider parse(final InputStream in, final boolean validate) throws EntityProviderException {
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
-    org.apache.olingo.odata2.core.xml.XMLStreamReader streamReader = XmlStreamFactory.createStreamReader(in);
+    XMLStreamReader streamReader = XmlStreamFactory.createStreamReader(in);
     dataServices = parser.readMetadata(streamReader, validate);
     return this;
   }

@@ -16,15 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.xml;
-
-import org.apache.olingo.odata2.api.ep.EntityProviderException;
-
 /**
- *
+ * <p>Xml Read and Write related parts</p>
+ * <p>
+ *   The XML package contains the interfaces which are used within the internal default implementations
+ *   for consuming and producing OData XML data.
+ *   To use an own XmlStreamReader or XmlStreamWriter it is necessary to implement the
+ *   XmlStreamReaderFactory and/or XmlStreamWriterFactory and put the FQN of the class
+ *   into the System Properties (see System.setProperties(...)) as
+ *   <code>XML_STREAM_READER_FACTORY_CLASS</code> and/or <code>XML_STREAM_WRITER_FACTORY_CLASS</code>
+ * </p>
  */
-public interface XMLStreamWriterFactory{
-  static final String XML_STREAM_WRITER_FACTORY_CLASS = "XML_STREAM_WRITER_FACTORY_CLASS";
-
-  XMLStreamWriter createXMLStreamWriter(Object content) throws XMLStreamException, EntityProviderException;
-}
+package org.apache.olingo.odata2.api.xml;
