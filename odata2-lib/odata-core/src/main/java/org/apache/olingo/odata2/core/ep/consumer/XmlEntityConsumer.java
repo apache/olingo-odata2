@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.EntityProviderReadPropertiesBuilder;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
-import org.apache.olingo.odata2.core.commons.XmlHelper;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.xml.XMLStreamException;
 import org.apache.olingo.odata2.core.xml.XMLStreamReader;
@@ -53,7 +53,7 @@ public class XmlEntityConsumer {
     EntityProviderException cachedException = null;
 
     try {
-      reader = XmlHelper.createStreamReader(content);
+      reader = XmlStreamFactory.createStreamReader(content);
 
       EntityInfoAggregator eia = EntityInfoAggregator.create(entitySet);
       XmlFeedConsumer xfc = new XmlFeedConsumer();
@@ -83,7 +83,7 @@ public class XmlEntityConsumer {
     EntityProviderException cachedException = null;
 
     try {
-      reader = XmlHelper.createStreamReader(content);
+      reader = XmlStreamFactory.createStreamReader(content);
       EntityInfoAggregator eia = EntityInfoAggregator.create(entitySet);
 
       return new XmlEntryConsumer().readEntry(reader, eia, properties);
@@ -113,7 +113,7 @@ public class XmlEntityConsumer {
     XmlPropertyConsumer xec = new XmlPropertyConsumer();
 
     try {
-      reader = XmlHelper.createStreamReader(content);
+      reader = XmlStreamFactory.createStreamReader(content);
       Map<String, Object> result =
           xec.readProperty(reader, edmProperty, properties.getMergeSemantic(), properties.getTypeMappings());
       return result;
@@ -166,7 +166,7 @@ public class XmlEntityConsumer {
     XmlLinkConsumer xlc = new XmlLinkConsumer();
 
     try {
-      reader = XmlHelper.createStreamReader(content);
+      reader = XmlStreamFactory.createStreamReader(content);
       return xlc.readLink(reader, entitySet);
     } catch (EntityProviderException e) {
       cachedException = e;
@@ -193,7 +193,7 @@ public class XmlEntityConsumer {
     XmlLinkConsumer xlc = new XmlLinkConsumer();
 
     try {
-      reader = XmlHelper.createStreamReader(content);
+      reader = XmlStreamFactory.createStreamReader(content);
       return xlc.readLinks(reader, entitySet);
     } catch (EntityProviderException e) {
       cachedException = e;

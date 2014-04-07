@@ -42,6 +42,7 @@ import org.apache.olingo.odata2.core.ep.AbstractXmlProducerTestHelper;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 import org.apache.olingo.odata2.core.xml.XMLStreamWriter;
 import org.apache.olingo.odata2.core.xml.XMLStreamWriterFactory;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.custommonkey.xmlunit.NamespaceContext;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
@@ -59,7 +60,7 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
 
   @Before
   public void before() throws EntityProviderException {
-    xmlStreamWriterFactory = XMLStreamWriterFactory.create();
+    xmlStreamWriterFactory = new XmlStreamFactory().createWriterFactory();
   }
 
   @Test

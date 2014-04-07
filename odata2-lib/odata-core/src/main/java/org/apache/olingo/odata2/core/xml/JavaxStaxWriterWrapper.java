@@ -24,8 +24,16 @@ import java.io.Writer;
 
 /**
  */
-public class JavaxStaxWriterWrapper extends XMLStreamWriter {
-  private javax.xml.stream.XMLStreamWriter xmlStreamWriter;
+public class JavaxStaxWriterWrapper implements XMLStreamWriter, XMLStreamWriterFactory {
+  private final javax.xml.stream.XMLStreamWriter xmlStreamWriter;
+
+  public JavaxStaxWriterWrapper(javax.xml.stream.XMLStreamWriter xmlStreamWriter) {
+    this.xmlStreamWriter = xmlStreamWriter;
+  }
+
+  public static XMLStreamWriterFactory createFactory() {
+    return new JavaxStaxWriterWrapper(null);
+  }
 
   @Override
   public XMLStreamWriter createXMLStreamWriter(Object content) throws XMLStreamException {
@@ -36,9 +44,11 @@ public class JavaxStaxWriterWrapper extends XMLStreamWriter {
     try {
       XMLOutputFactory xouf = XMLOutputFactory.newFactory();
       if (content instanceof OutputStream) {
-        xmlStreamWriter = xouf.createXMLStreamWriter((OutputStream) content);
+        javax.xml.stream.XMLStreamWriter javaxWriter = xouf.createXMLStreamWriter((OutputStream) content);
+        return new JavaxStaxWriterWrapper(javaxWriter);
       } else if (content instanceof Writer) {
-        xmlStreamWriter = xouf.createXMLStreamWriter((Writer) content);
+        javax.xml.stream.XMLStreamWriter javaxWriter = xouf.createXMLStreamWriter((Writer) content);
+        return new JavaxStaxWriterWrapper(javaxWriter);
       } else {
         throw new IllegalArgumentException("Unsupported input content with class type '" +
                 content.getClass() + "'.");
@@ -46,12 +56,11 @@ public class JavaxStaxWriterWrapper extends XMLStreamWriter {
     } catch (javax.xml.stream.XMLStreamException e) {
       throw new XMLStreamException(e);
     }
-    return this;
   }
 
-  public static XMLStreamWriter create(Object content) throws XMLStreamException {
-    return new JavaxStaxWriterWrapper().createXMLStreamWriter(content);
-  }
+//  public static XMLStreamWriter create(Object content) throws XMLStreamException {
+//    return new JavaxStaxWriterWrapper(null).createXMLStreamWriter(content);
+//  }
 
   public void writeStartDocument() throws XMLStreamException {
     try {

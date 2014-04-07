@@ -27,6 +27,7 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.core.xml.XMLStreamException;
 import org.apache.olingo.odata2.core.xml.XMLStreamReader;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
@@ -61,9 +62,9 @@ public abstract class AbstractConsumerTest extends BaseTest {
 //
 //    return streamReader;
     if(input == null) {
-      return XMLStreamReader.createXMLStreamReader(null);
+      return XmlStreamFactory.createStreamReader(null);
     }
-    return XMLStreamReader.createXMLStreamReader(new ByteArrayInputStream(input.getBytes()));
+    return XmlStreamFactory.createStreamReader(new ByteArrayInputStream(input.getBytes()));
 //    return XMLStreamReader.createXMLStreamWriter(new StringReader(input));
   }
 

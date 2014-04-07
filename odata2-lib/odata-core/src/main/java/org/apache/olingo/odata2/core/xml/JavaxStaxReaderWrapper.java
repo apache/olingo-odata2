@@ -25,12 +25,23 @@ import java.io.InputStream;
 
 /**
  */
-public class JavaxStaxReaderWrapper extends XMLStreamReader {
+public class JavaxStaxReaderWrapper implements XMLStreamReader, XMLStreamReaderFactory {
 
   /** Default used charset for reader */
   private static final String DEFAULT_CHARSET = "UTF-8";
 
-  public static XMLStreamReader createStreamReader(final Object content) throws EntityProviderException {
+  private final javax.xml.stream.XMLStreamReader reader;
+
+  private JavaxStaxReaderWrapper(javax.xml.stream.XMLStreamReader reader) {
+    this.reader = reader;
+  }
+
+  public static XMLStreamReaderFactory createFactory() {
+    return new JavaxStaxReaderWrapper(null);
+  }
+
+  @Override
+  public XMLStreamReader createXMLStreamReader(Object content) throws EntityProviderException {
     if (content == null) {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
               .addContent("Got not allowed NULL parameter for creation of XMLStreamReader."));
@@ -61,12 +72,6 @@ public class JavaxStaxReaderWrapper extends XMLStreamReader {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
               .getSimpleName()), e);
     }
-  }
-
-  private final javax.xml.stream.XMLStreamReader reader;
-
-  public JavaxStaxReaderWrapper(javax.xml.stream.XMLStreamReader reader) {
-    this.reader = reader;
   }
 
   public String getLocalName() {
@@ -209,8 +214,11 @@ public class JavaxStaxReaderWrapper extends XMLStreamReader {
   }
 
 
-  public static class JavaxNamespaceContext extends NamespaceContext {
-    javax.xml.namespace.NamespaceContext namespaceContext;
+  /**
+   *
+   */
+  public class JavaxNamespaceContext implements NamespaceContext {
+    private final javax.xml.namespace.NamespaceContext namespaceContext;
 
     public JavaxNamespaceContext(javax.xml.namespace.NamespaceContext namespaceContext) {
       this.namespaceContext = namespaceContext;
@@ -222,13 +230,18 @@ public class JavaxStaxReaderWrapper extends XMLStreamReader {
     }
   }
 
-  public static class JavaxQName extends QName {
+  /**
+   *
+   */
+  public class JavaxQName implements QName {
+    private final javax.xml.namespace.QName qname;
     public JavaxQName(javax.xml.namespace.QName qname) {
-      this(qname.getNamespaceURI());
+      this.qname = qname;
     }
 
-    protected JavaxQName(String namespaceURI) {
-      super(namespaceURI);
+    @Override
+    public String getNamespaceURI() {
+      return qname.getNamespaceURI();
     }
   }
 }

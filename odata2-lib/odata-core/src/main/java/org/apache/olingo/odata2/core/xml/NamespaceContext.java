@@ -19,10 +19,8 @@
 package org.apache.olingo.odata2.core.xml;
 
 /**
+ * Based on NamespaceContext from JDK.
  */
-public abstract class NamespaceContext {
-  protected String prefix;
-  public String getPrefix(String customNamespaceURI) {
-    return prefix;
-  }
+public interface NamespaceContext {
+  String getPrefix(String customNamespaceURI);
 }

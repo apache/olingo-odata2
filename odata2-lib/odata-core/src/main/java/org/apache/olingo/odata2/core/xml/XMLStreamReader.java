@@ -18,34 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.xml;
 
-
-import org.apache.olingo.odata2.api.ep.EntityProviderException;
-
 /**
+ * Based on XMLStreamReader from JDK.
  */
-public abstract class XMLStreamReader {
-
-  public static final String XML_STREAM_READER_FACTORY_CLASS = "XMLStreamReaderFactoryClass";
-
-  public static XMLStreamReader createXMLStreamReader(Object content) throws EntityProviderException {
-    String factory = System.getProperty(XML_STREAM_READER_FACTORY_CLASS);
-    if(factory != null) {
-      try {
-//        System.out.println("Load stream reader factory class: " + factory);
-        Class factoryClass = Class.forName(factory);
-        XMLStreamReaderFactory factoryInstance = (XMLStreamReaderFactory) factoryClass.newInstance();
-        return factoryInstance.createXMLStreamReader(content);
-      } catch (Exception e) {
-        throw new EntityProviderException(
-                EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getMessage()));
-      }
-    }
-    return JavaxStaxReaderWrapper.createStreamReader(content);
-  }
-
-  public interface XMLStreamReaderFactory {
-    XMLStreamReader createXMLStreamReader(Object content);
-  }
+public interface XMLStreamReader {
 
   public abstract String getLocalName();
 

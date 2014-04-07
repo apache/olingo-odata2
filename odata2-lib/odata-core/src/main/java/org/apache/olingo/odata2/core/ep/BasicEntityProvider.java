@@ -52,7 +52,7 @@ import org.apache.olingo.odata2.core.ep.producer.XmlMetadataProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 import org.apache.olingo.odata2.core.xml.XMLStreamException;
 import org.apache.olingo.odata2.core.xml.XMLStreamWriter;
-import org.apache.olingo.odata2.core.xml.XMLStreamWriterFactory;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 
 /**
  * Provider for all basic (content type independent) entity provider methods.
@@ -247,8 +247,7 @@ public class BasicEntityProvider {
     CircleStreamBuffer csb = new CircleStreamBuffer();
     try {
       writer = new OutputStreamWriter(csb.getOutputStream(), DEFAULT_CHARSET);
-      XMLStreamWriterFactory xmlStreamWriterFactory = XMLStreamWriterFactory.create();
-      XMLStreamWriter xmlStreamWriter = xmlStreamWriterFactory.createXMLStreamWriter(writer);
+      XMLStreamWriter xmlStreamWriter = XmlStreamFactory.createStreamWriter(writer);
       XmlMetadataProducer.writeMetadata(metadata, xmlStreamWriter, predefinedNamespaces);
     } catch (UnsupportedEncodingException e) {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()

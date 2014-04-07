@@ -19,15 +19,8 @@
 package org.apache.olingo.odata2.core.xml;
 
 /**
+ * Based on QName from JDK.
  */
-public abstract class QName {
-  private String namespaceURI;
-
-  protected QName(String namespaceURI) {
-    this.namespaceURI = namespaceURI;
-  }
-
-  public String getNamespaceURI() {
-    return namespaceURI;
-  }
+public interface QName {
+  String getNamespaceURI();
 }

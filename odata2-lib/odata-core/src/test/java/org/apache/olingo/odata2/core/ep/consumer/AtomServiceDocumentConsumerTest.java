@@ -254,7 +254,7 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
     if (in == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");
     }
-    return org.apache.olingo.odata2.core.xml.XMLStreamReader.createXMLStreamReader(in);
+    return org.apache.olingo.odata2.core.xml.XmlStreamFactory.createStreamReader(in);
   }
 
   private XMLStreamReader createStreamReader2(final String fileName) throws IOException, EntityProviderException {

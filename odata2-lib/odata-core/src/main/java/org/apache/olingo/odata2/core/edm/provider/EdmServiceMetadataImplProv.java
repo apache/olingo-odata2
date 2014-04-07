@@ -41,7 +41,7 @@ import org.apache.olingo.odata2.core.ep.producer.XmlMetadataProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 import org.apache.olingo.odata2.core.xml.XMLStreamException;
 import org.apache.olingo.odata2.core.xml.XMLStreamWriter;
-import org.apache.olingo.odata2.core.xml.XMLStreamWriterFactory;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 
 /**
  *  
@@ -70,8 +70,7 @@ public class EdmServiceMetadataImplProv implements EdmServiceMetadata {
 
     try {
       writer = new OutputStreamWriter(csb.getOutputStream(), "UTF-8");
-      XMLStreamWriterFactory xmlStreamWriterFactory = XMLStreamWriterFactory.create();
-      XMLStreamWriter xmlStreamWriter = xmlStreamWriterFactory.createXMLStreamWriter(writer);
+      XMLStreamWriter xmlStreamWriter = XmlStreamFactory.createStreamWriter(writer);
       XmlMetadataProducer.writeMetadata(metadata, xmlStreamWriter, null);
       return csb.getInputStream();
     } catch (XMLStreamException e) {

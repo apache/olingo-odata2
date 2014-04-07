@@ -19,27 +19,9 @@
 package org.apache.olingo.odata2.core.xml;
 
 /**
+ * Based on XMLStreamWriter from JDK.
  */
-public abstract class XMLStreamWriter extends XMLStreamWriterFactory {
-
-//  public static XMLStreamWriter createXMLStreamWriter(Object content)
-//            throws EntityProviderException, XMLStreamException {
-//
-//    String factory = System.getProperty(XML_STREAM_WRITER_FACTORY_CLASS);
-//    if (factory != null) {
-//      try {
-//        Class factoryClass = Class.forName(factory);
-//        XMLStreamWriterFactory factoryInstance = (XMLStreamWriterFactory) factoryClass.newInstance();
-//        return factoryInstance.createXMLStreamWriter(content);
-//      } catch (Exception e) {
-//        throw new EntityProviderException(
-//                EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getMessage()));
-//      }
-//    }
-//    return new JavaxStaxWriterWrapper.createXmlStreamReader(content);
-//  }
-
-
+public interface XMLStreamWriter {
 
   public abstract void writeStartDocument() throws XMLStreamException;
 

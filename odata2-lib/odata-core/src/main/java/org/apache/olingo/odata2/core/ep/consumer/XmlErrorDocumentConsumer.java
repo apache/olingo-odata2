@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.core.commons.ContentType;
-import org.apache.olingo.odata2.core.commons.XmlHelper;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 import org.apache.olingo.odata2.core.xml.XMLStreamConstants;
 import org.apache.olingo.odata2.core.xml.XMLStreamException;
@@ -61,7 +61,7 @@ public class XmlErrorDocumentConsumer {
     EntityProviderException cachedException = null;
 
     try {
-      reader = XmlHelper.createStreamReader(errorDocument);
+      reader = XmlStreamFactory.createStreamReader(errorDocument);
       return parserError(reader);
     } catch (XMLStreamException e) {
       cachedException = new EntityProviderException(EntityProviderException.INVALID_STATE.addContent(
