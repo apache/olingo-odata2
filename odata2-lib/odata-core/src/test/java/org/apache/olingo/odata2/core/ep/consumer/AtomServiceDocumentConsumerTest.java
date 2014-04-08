@@ -26,10 +26,8 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
@@ -41,6 +39,9 @@ import org.apache.olingo.odata2.api.servicedocument.ExtensionElement;
 import org.apache.olingo.odata2.api.servicedocument.Fixed;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.apache.olingo.odata2.api.servicedocument.Workspace;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamReader;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 import org.junit.Test;
 
 public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
@@ -258,19 +259,18 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
   }
 
   private XMLStreamReader createStreamReader2(final String fileName) throws IOException, EntityProviderException {
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-    factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
+//    XMLInputFactory factory = XMLInputFactory.newInstance();
+//    factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
+//    factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
+
+    Map<String, Object> properties = new HashMap<String, Object>();
+    XmlStreamFactory factory = XmlStreamFactory.create(properties);
     InputStream in = ClassLoader.class.getResourceAsStream(fileName);
     if (in == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");
     }
     XMLStreamReader streamReader;
-    try {
-      streamReader = factory.createXMLStreamReader(in);
-    } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON.addContent("Invalid Service Document"));
-    }
+    streamReader = factory.createXMLStreamReader(in);
 
     return streamReader;
   }

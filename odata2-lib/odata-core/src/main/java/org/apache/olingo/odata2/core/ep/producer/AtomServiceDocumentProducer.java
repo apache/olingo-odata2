@@ -21,18 +21,16 @@ package org.apache.olingo.odata2.core.ep.producer;
 import java.io.Writer;
 import java.util.List;
 
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.edm.EdmServiceMetadata;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 
 /**
  * Writes the OData service document in XML.
@@ -55,7 +53,7 @@ public class AtomServiceDocumentProducer {
     EdmServiceMetadata serviceMetadata = edm.getServiceMetadata();
 
     try {
-      XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
+      XMLStreamWriter xmlStreamWriter = XmlStreamFactory.createStreamWriter(writer);
 
       xmlStreamWriter.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
       xmlStreamWriter.setPrefix(Edm.PREFIX_XML, Edm.NAMESPACE_XML_1998);
@@ -112,8 +110,6 @@ public class AtomServiceDocumentProducer {
       xmlStreamWriter.writeEndDocument();
 
       xmlStreamWriter.flush();
-    } catch (FactoryConfigurationError e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
     } catch (XMLStreamException e) {
       throw new EntityProviderException(EntityProviderException.COMMON, e);
     } catch (ODataException e) {

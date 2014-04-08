@@ -22,11 +22,31 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.xml.*;
 
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  *
  */
 public class XmlStreamFactory implements XMLStreamWriterFactory, XMLStreamReaderFactory {
+
+  private final Map<String, Object> properties;
+
+  private XmlStreamFactory() {
+    this(Collections.EMPTY_MAP);
+  }
+
+  private XmlStreamFactory(Map<String, Object> properties) {
+    this.properties = properties;
+  }
+
+  public static XmlStreamFactory create() {
+    return create(Collections.EMPTY_MAP);
+  }
+
+  public static XmlStreamFactory create(Map<String, Object> properties) {
+    return new XmlStreamFactory(properties);
+  }
 
   public static XMLStreamReader createStreamReader(final Object content)
           throws EntityProviderException {

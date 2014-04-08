@@ -60,7 +60,7 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
 
   @Before
   public void before() throws EntityProviderException {
-    xmlStreamWriterFactory = new XmlStreamFactory().createWriterFactory();
+    xmlStreamWriterFactory = XmlStreamFactory.create().createWriterFactory();
   }
 
   @Test
