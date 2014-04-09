@@ -58,7 +58,7 @@ public class JavaxStaxReaderWrapper implements XMLStreamReader, XMLStreamReaderF
       if (content instanceof InputStream) {
         streamReader = factory.createXMLStreamReader((InputStream) content, DEFAULT_CHARSET);
         // verify charset encoding set in content is supported (if not set UTF-8 is used as defined in
-        // v'http://www.w3.org/TR/2008/REC-xml-20081126/')
+        // 'http://www.w3.org/TR/2008/REC-xml-20081126/')
         String characterEncodingInContent = streamReader.getCharacterEncodingScheme();
         if (characterEncodingInContent != null && !DEFAULT_CHARSET.equalsIgnoreCase(characterEncodingInContent)) {
           throw new EntityProviderException(EntityProviderException
