@@ -33,5 +33,15 @@ public interface XMLStreamReaderFactory {
    * @return reader for given content.
    * @throws EntityProviderException if something goes wrong during initialization.
    */
-  XMLStreamReader createXMLStreamReader(Object content) throws EntityProviderException;
+  XMLStreamReader createXMLStreamReader(Object content) throws EntityProviderException, XMLStreamException;
+
+  /**
+   * Set property with given name and value.
+   * Be sure that property can be handled by underlying implementation.
+   *
+   * @param name name of property
+   * @param value value of property
+   * @return XMLStreamReaderFactory instance
+   */
+  XMLStreamReaderFactory setReadProperty(String name, Object value);
 }

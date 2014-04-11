@@ -29,39 +29,11 @@ import java.io.Writer;
 
 /**
  */
-public class JavaxStaxWriterWrapper implements XMLStreamWriter, XMLStreamWriterFactory {
+public class JavaxStaxWriterWrapper implements XMLStreamWriter {
   private final javax.xml.stream.XMLStreamWriter xmlStreamWriter;
 
   public JavaxStaxWriterWrapper(javax.xml.stream.XMLStreamWriter xmlStreamWriter) {
     this.xmlStreamWriter = xmlStreamWriter;
-  }
-
-  public static XMLStreamWriterFactory createFactory() {
-    return new JavaxStaxWriterWrapper(null);
-  }
-
-  @Override
-  public XMLStreamWriter createXMLStreamWriter(Object content) throws EntityProviderException {
-    if(content == null) {
-      throw new IllegalArgumentException("Unsupported NULL input content.");
-    }
-
-    try {
-      XMLOutputFactory xouf = XMLOutputFactory.newFactory();
-      if (content instanceof OutputStream) {
-        javax.xml.stream.XMLStreamWriter javaxWriter = xouf.createXMLStreamWriter((OutputStream) content);
-        return new JavaxStaxWriterWrapper(javaxWriter);
-      } else if (content instanceof Writer) {
-        javax.xml.stream.XMLStreamWriter javaxWriter = xouf.createXMLStreamWriter((Writer) content);
-        return new JavaxStaxWriterWrapper(javaxWriter);
-      } else {
-        throw new IllegalArgumentException("Unsupported input content with class type '" +
-                content.getClass() + "'.");
-      }
-    } catch (javax.xml.stream.XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-              .getSimpleName()), e);
-    }
   }
 
   public void writeStartDocument() throws XMLStreamException {

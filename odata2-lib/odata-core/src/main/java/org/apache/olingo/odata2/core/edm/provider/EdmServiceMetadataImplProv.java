@@ -73,9 +73,6 @@ public class EdmServiceMetadataImplProv implements EdmServiceMetadata {
       XMLStreamWriter xmlStreamWriter = XmlStreamFactory.createStreamWriter(writer);
       XmlMetadataProducer.writeMetadata(metadata, xmlStreamWriter, null);
       return csb.getInputStream();
-    } catch (XMLStreamException e) {
-      cachedException = new EntityProviderException(EntityProviderException.COMMON, e);
-      throw cachedException;
     } catch (UnsupportedEncodingException e) {
       cachedException = new EntityProviderException(EntityProviderException.COMMON, e);
       throw cachedException;

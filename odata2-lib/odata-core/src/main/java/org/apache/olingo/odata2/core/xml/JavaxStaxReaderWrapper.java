@@ -26,53 +26,12 @@ import java.io.InputStream;
 
 /**
  */
-public class JavaxStaxReaderWrapper implements XMLStreamReader, XMLStreamReaderFactory {
-
-  /** Default used charset for reader */
-  private static final String DEFAULT_CHARSET = "UTF-8";
+public class JavaxStaxReaderWrapper implements XMLStreamReader {
 
   private final javax.xml.stream.XMLStreamReader reader;
 
-  private JavaxStaxReaderWrapper(javax.xml.stream.XMLStreamReader reader) {
+  public JavaxStaxReaderWrapper(javax.xml.stream.XMLStreamReader reader) {
     this.reader = reader;
-  }
-
-  public static XMLStreamReaderFactory createFactory() {
-    return new JavaxStaxReaderWrapper(null);
-  }
-
-  @Override
-  public XMLStreamReader createXMLStreamReader(Object content) throws EntityProviderException {
-    if (content == null) {
-      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
-              .addContent("Got not allowed NULL parameter for creation of XMLStreamReader."));
-    }
-    javax.xml.stream.XMLStreamReader streamReader;
-    try {
-      XMLInputFactory factory = XMLInputFactory.newInstance();
-      factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-      factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
-      factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
-      factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-
-      if (content instanceof InputStream) {
-        streamReader = factory.createXMLStreamReader((InputStream) content, DEFAULT_CHARSET);
-        // verify charset encoding set in content is supported (if not set UTF-8 is used as defined in
-        // 'http://www.w3.org/TR/2008/REC-xml-20081126/')
-        String characterEncodingInContent = streamReader.getCharacterEncodingScheme();
-        if (characterEncodingInContent != null && !DEFAULT_CHARSET.equalsIgnoreCase(characterEncodingInContent)) {
-          throw new EntityProviderException(EntityProviderException
-                  .UNSUPPORTED_CHARACTER_ENCODING.addContent(characterEncodingInContent));
-        }
-      } else {
-        throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
-                .addContent("Found not supported content of class '" + content.getClass() + "' to de-serialize."));
-      }
-      return new JavaxStaxReaderWrapper(streamReader);
-    } catch (javax.xml.stream.XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-              .getSimpleName()), e);
-    }
   }
 
   public String getLocalName() {

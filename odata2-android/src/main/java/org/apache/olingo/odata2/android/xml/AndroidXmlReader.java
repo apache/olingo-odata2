@@ -2,6 +2,7 @@ package org.apache.olingo.odata2.android.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.olingo.odata2.api.xml.NamespaceContext;
 import org.apache.olingo.odata2.api.xml.QName;
@@ -31,6 +32,23 @@ public class AndroidXmlReader implements XMLStreamReader {
     } else {
       throw new IllegalArgumentException("Unsupported input content. Only InputStream is supported.");
     }
+  }
+
+  public AndroidXmlReader setProperties(Map<String, Object> properties) throws XMLStreamException {
+    for (Map.Entry<String, Object> entry : properties.entrySet()) {
+      setProperty(entry.getKey(), entry.getValue());
+    }
+    return this;
+  }
+
+  public AndroidXmlReader setProperty(String name, Object value) throws XMLStreamException {
+    try {
+      parser.setProperty(name, value);
+    } catch (XmlPullParserException e) {
+      throw new XMLStreamException("During property setting an XmlPullParser Exception occurred: "
+              + e.getMessage(), e);
+    }
+    return this;
   }
 
   @Override

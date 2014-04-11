@@ -26,8 +26,6 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
@@ -39,10 +37,12 @@ import org.apache.olingo.odata2.api.servicedocument.ExtensionElement;
 import org.apache.olingo.odata2.api.servicedocument.Fixed;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.apache.olingo.odata2.api.servicedocument.Workspace;
-import org.apache.olingo.odata2.api.xml.XMLStreamException;
 import org.apache.olingo.odata2.api.xml.XMLStreamReader;
+import org.apache.olingo.odata2.api.xml.XMLStreamReaderFactory;
 import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
 
@@ -54,7 +54,7 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
   private static final String PREFIX = "foo";
 
   @Test
-  public void testServiceDocument() throws IOException, EntityProviderException {
+  public void testServiceDocument() throws Exception {
     AtomServiceDocumentConsumer svcDocumentParser = new AtomServiceDocumentConsumer();
     ServiceDocument svcDocument = svcDocumentParser.readServiceDokument(createStreamReader("/svcExample.xml"));
     assertNotNull(svcDocument);
@@ -85,7 +85,7 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
   }
 
   @Test
-  public void testExtensionsWithAttributes() throws IOException, EntityProviderException {
+  public void testExtensionsWithAttributes() throws Exception {
     AtomServiceDocumentConsumer svcDocumentParser = new AtomServiceDocumentConsumer();
     ServiceDocument svcDocument = svcDocumentParser.readServiceDokument(createStreamReader("/svcExample.xml"));
     assertNotNull(svcDocument);
@@ -105,7 +105,7 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
   }
 
   @Test
-  public void testServiceDocument2() throws IOException, EntityProviderException {
+  public void testServiceDocument2() throws Exception {
     AtomServiceDocumentConsumer svcDocumentParser = new AtomServiceDocumentConsumer();
     ServiceDocument svcDocument = svcDocumentParser.readServiceDokument(createStreamReader("/svcAtomExample.xml"));
     assertNotNull(svcDocument);
@@ -130,7 +130,7 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
   }
 
   @Test
-  public void testCategories() throws IOException, EntityProviderException {
+  public void testCategories() throws Exception {
     AtomServiceDocumentConsumer svcDocumentParser = new AtomServiceDocumentConsumer();
     ServiceDocument svcDocument = svcDocumentParser.readServiceDokument(createStreamReader("/svcAtomExample.xml"));
     assertNotNull(svcDocument);
@@ -160,7 +160,7 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
   }
 
   @Test
-  public void testNestedExtensions() throws IOException, EntityProviderException {
+  public void testNestedExtensions() throws Exception {
     AtomServiceDocumentConsumer svcDocumentParser = new AtomServiceDocumentConsumer();
     ServiceDocument svcDocument = svcDocumentParser.readServiceDokument(createStreamReader("/svcAtomExample.xml"));
     assertNotNull(svcDocument);
@@ -189,19 +189,19 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
   }
 
   @Test(expected = EntityProviderException.class)
-  public void testWithoutTitle() throws IOException, EntityProviderException {
+  public void testWithoutTitle() throws Exception {
     AtomServiceDocumentConsumer svcDocumentParser = new AtomServiceDocumentConsumer();
     svcDocumentParser.readServiceDokument(createStreamReader("/svcDocWithoutTitle.xml"));
   }
 
   @Test(expected = EntityProviderException.class)
-  public void testSvcWithoutWorkspaces() throws IOException, EntityProviderException {
+  public void testSvcWithoutWorkspaces() throws Exception {
     AtomServiceDocumentConsumer svcDocumentParser = new AtomServiceDocumentConsumer();
     svcDocumentParser.readServiceDokument(createStreamReader("/invalidSvcExample.xml"));
   }
 
   @Test
-  public void testServiceDocument3() throws IOException, EntityProviderException {
+  public void testServiceDocument3() throws Exception {
     AtomServiceDocumentConsumer svcDocumentParser = new AtomServiceDocumentConsumer();
     ServiceDocument svcDocument = svcDocumentParser.readServiceDokument(createStreamReader("/serviceDocExample.xml"));
     assertNotNull(svcDocument);
@@ -249,29 +249,18 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
     }
   }
 
-  private org.apache.olingo.odata2.api.xml.XMLStreamReader createStreamReader(final String fileName)
-          throws IOException, EntityProviderException {
-    InputStream in = ClassLoader.class.getResourceAsStream(fileName);
-    if (in == null) {
-      throw new IOException("Requested file '" + fileName + "' was not found.");
-    }
-    return org.apache.olingo.odata2.core.xml.XmlStreamFactory.createStreamReader(in);
-  }
-
-  private XMLStreamReader createStreamReader2(final String fileName) throws IOException, EntityProviderException {
+  private XMLStreamReader createStreamReader(final String fileName) throws Exception {
 //    XMLInputFactory factory = XMLInputFactory.newInstance();
 //    factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
 //    factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
 
-    Map<String, Object> properties = new HashMap<String, Object>();
-    XmlStreamFactory factory = XmlStreamFactory.create(properties);
+    XMLStreamReaderFactory factory = XmlStreamFactory.create().createReaderFactory();
+    factory.setReadProperty(XMLInputFactory.IS_VALIDATING, false);
+    factory.setReadProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
     InputStream in = ClassLoader.class.getResourceAsStream(fileName);
     if (in == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");
     }
-    XMLStreamReader streamReader;
-    streamReader = factory.createXMLStreamReader(in);
-
-    return streamReader;
+    return factory.createXMLStreamReader(in);
   }
 }

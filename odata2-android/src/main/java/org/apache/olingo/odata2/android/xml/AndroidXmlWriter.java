@@ -3,11 +3,13 @@ package org.apache.olingo.odata2.android.xml;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.xml.XMLStreamException;
 import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.Map;
 
 /**
  */
@@ -15,13 +17,25 @@ public class AndroidXmlWriter implements XMLStreamWriter {
 
   private Writer writer;
 
-  public AndroidXmlWriter(Object output) throws EntityProviderException {
+  public AndroidXmlWriter(Object output) {
     if (output instanceof OutputStream) {
       writer = new PrintWriter((OutputStream) output);
     } else if (output instanceof Writer) {
       writer = (Writer) output;
     }
   }
+
+  public AndroidXmlWriter setProperties(Map<String, Object> properties) throws XMLStreamException {
+    for (Map.Entry<String, Object> entry : properties.entrySet()) {
+      setProperty(entry.getKey(), entry.getValue());
+    }
+    return this;
+  }
+
+  public AndroidXmlWriter setProperty(String name, Object value) throws XMLStreamException {
+    return this;
+  }
+
 
   @Override
   public void flush() throws XMLStreamException {

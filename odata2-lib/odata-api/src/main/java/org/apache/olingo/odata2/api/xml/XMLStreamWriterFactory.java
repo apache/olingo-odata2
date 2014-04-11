@@ -33,5 +33,15 @@ public interface XMLStreamWriterFactory{
    * @return writer for given content.
    * @throws EntityProviderException if something goes wrong during initialization.
    */
-  XMLStreamWriter createXMLStreamWriter(Object content) throws EntityProviderException;
+  XMLStreamWriter createXMLStreamWriter(Object content) throws EntityProviderException, XMLStreamException;
+
+  /**
+   * Set property with given name and value.
+   * Be sure that property can be handled by underlying implementation.
+   *
+   * @param name name of property
+   * @param value value of property
+   * @return XMLStreamWriterFactory instance
+   */
+  XMLStreamWriterFactory setWriteProperty(String name, Object value);
 }

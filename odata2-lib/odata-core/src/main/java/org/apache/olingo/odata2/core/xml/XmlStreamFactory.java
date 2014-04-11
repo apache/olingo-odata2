@@ -22,30 +22,14 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.xml.*;
 
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  *
  */
-public class XmlStreamFactory implements XMLStreamWriterFactory, XMLStreamReaderFactory {
-
-  private final Map<String, Object> properties;
-
-  private XmlStreamFactory() {
-    this(Collections.EMPTY_MAP);
-  }
-
-  private XmlStreamFactory(Map<String, Object> properties) {
-    this.properties = properties;
-  }
+public class XmlStreamFactory extends AbstractXmlStreamFactory {
 
   public static XmlStreamFactory create() {
-    return create(Collections.EMPTY_MAP);
-  }
-
-  public static XmlStreamFactory create(Map<String, Object> properties) {
-    return new XmlStreamFactory(properties);
+    return new XmlStreamFactory();
   }
 
   public static XMLStreamReader createStreamReader(final Object content)
@@ -55,15 +39,15 @@ public class XmlStreamFactory implements XMLStreamWriterFactory, XMLStreamReader
   }
 
   public static XMLStreamWriter createStreamWriter(final Object content)
-          throws EntityProviderException, XMLStreamException {
+          throws EntityProviderException {
     XmlStreamFactory factory = new XmlStreamFactory();
     return factory.createXMLStreamWriter(content);
   }
 
   public static XMLStreamWriter createStreamWriter(OutputStream content, String charset)
-          throws EntityProviderException {
-    XmlStreamFactory factory = new XmlStreamFactory();
-    return factory.createXMLStreamWriter(content);
+          throws EntityProviderException, XMLStreamException {
+    XmlStreamFactory xsf = new XmlStreamFactory();
+    return xsf.createXMLStreamWriter(content);
   }
 
   public XMLStreamReaderFactory createReaderFactory() throws EntityProviderException {
@@ -77,7 +61,7 @@ public class XmlStreamFactory implements XMLStreamWriterFactory, XMLStreamReader
                 EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getMessage()));
       }
     }
-    return JavaxStaxReaderWrapper.createFactory();
+    return new JavaxStaxStreamFactory();
   }
 
   public XMLStreamWriterFactory createWriterFactory() throws EntityProviderException {
@@ -91,18 +75,29 @@ public class XmlStreamFactory implements XMLStreamWriterFactory, XMLStreamReader
                 EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getMessage()));
       }
     }
-    return JavaxStaxWriterWrapper.createFactory();
+    return new JavaxStaxStreamFactory();
   }
 
   @Override
   public XMLStreamReader createXMLStreamReader(Object content) throws EntityProviderException {
     XMLStreamReaderFactory factory = createReaderFactory();
-    return factory.createXMLStreamReader(content);
+    applyProperties(factory, readProperties);
+    try {
+      return factory.createXMLStreamReader(content);
+    } catch (XMLStreamException e) {
+      throw new EntityProviderException(EntityProviderException.COMMON, e);
+    }
   }
 
   @Override
   public XMLStreamWriter createXMLStreamWriter(Object content) throws EntityProviderException {
     XMLStreamWriterFactory factory = createWriterFactory();
-    return factory.createXMLStreamWriter(content);
+    applyProperties(factory, writeProperties);
+    try {
+      return factory.createXMLStreamWriter(content);
+    } catch (XMLStreamException e) {
+      throw new EntityProviderException(EntityProviderException.COMMON, e);
+    }
   }
+
 }
