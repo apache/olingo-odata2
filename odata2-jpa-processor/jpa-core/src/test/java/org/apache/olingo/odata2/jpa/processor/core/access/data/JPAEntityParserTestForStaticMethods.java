@@ -23,7 +23,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.SQLException;
+
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialClob;
+import javax.sql.rowset.serial.SerialException;
 
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
@@ -211,6 +223,73 @@ public class JPAEntityParserTestForStaticMethods {
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
+  }
+
+  @Test
+  public void testGetString() {
+    char[] expectedChar = new char[] { 'a', 'b', 'c' };
+    try {
+      Clob clob = new SerialClob(expectedChar);
+      String actualString = JPAEntityParser.getString(clob);
+
+      assertEquals(new String(expectedChar), actualString);
+
+    } catch (SerialException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (SQLException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+  }
+
+  @Test
+  public void testGetBytes() {
+    final String fileName = "SalesOrderProcessingMappingModels.xml";
+
+    try {
+      FileInputStream fis = getFileStream(fileName);
+
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      int content = fis.read();
+      while (content != -1) {
+        baos.write(content);
+        content = fis.read();
+      }
+      Blob blob = new SerialBlob(baos.toByteArray());
+      byte[] actualBytes = (byte[]) JPAEntityParser.getBytes(blob);
+      byte[] expectedBytes = baos.toByteArray();
+
+      assertEquals(expectedBytes.length, actualBytes.length);
+      int size = actualBytes.length;
+      int index = 0;
+      while (index < size) {
+        assertEquals(expectedBytes[index], actualBytes[index]);
+        index++;
+      }
+
+    } catch (FileNotFoundException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (SerialException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (SQLException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (IOException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+  }
+
+  private FileInputStream getFileStream(String name) throws SerialException, FileNotFoundException {
+    final String fileName = "SalesOrderProcessingMappingModels.xml";
+    FileInputStream fis;
+
+    URL fileURL = JPAEntityParserTestForStaticMethods.class.getClassLoader().getResource(fileName);
+    fis = new FileInputStream(fileURL.getPath());
+
+    return fis;
+
   }
 
   public Character getCharacter() {

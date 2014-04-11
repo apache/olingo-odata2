@@ -20,6 +20,9 @@ package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +35,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmStructuralType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
@@ -39,6 +43,7 @@ import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
@@ -53,6 +58,7 @@ public class JPAEntity {
   private HashMap<String, Method> accessModifiersWrite = null;
   private JPAEntityParser jpaEntityParser = null;
   private ODataJPAContext oDataJPAContext;
+  private OnJPAWriteContent onJPAWriteContent = null;
   public HashMap<String, List<Object>> relatedJPAEntityMap = null;
 
   public JPAEntity(final EdmEntityType oDataEntityType, final EdmEntitySet oDataEntitySet,
@@ -67,6 +73,7 @@ public class JPAEntity {
       return;
     }
     jpaEntityParser = new JPAEntityParser();
+    onJPAWriteContent = oDataJPAContext.getODataContext().getServiceFactory().getCallback(OnJPAWriteContent.class);
   }
 
   public void setAccessModifersWrite(final HashMap<String, Method> accessModifiersWrite) {
@@ -140,7 +147,9 @@ public class JPAEntity {
             }
           }
           accessModifier = accessModifiersWrite.get(propertyName);
-          setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName));
+          setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
+              .getType());
+
           break;
         case COMPLEX:
           structuralType = (EdmStructuralType) edmTyped.getType();
@@ -174,6 +183,9 @@ public class JPAEntity {
         }
       }
     } catch (Exception e) {
+      if (e instanceof ODataJPARuntimeException) {
+        throw (ODataJPARuntimeException) e;
+      }
       throw ODataJPARuntimeException
           .throwException(ODataJPARuntimeException.GENERAL
               .addContent(e.getMessage()), e);
@@ -279,7 +291,7 @@ public class JPAEntity {
   protected void setComplexProperty(Method accessModifier, final Object jpaEntity,
       final EdmStructuralType edmComplexType, final HashMap<String, Object> propertyValue)
       throws EdmException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-      InstantiationException, ODataJPARuntimeException {
+      InstantiationException, ODataJPARuntimeException, NoSuchMethodException, SecurityException, SQLException {
 
     JPAEdmMapping mapping = (JPAEdmMapping) edmComplexType.getMapping();
     Object embeddableObject = mapping.getJPAType().newInstance();
@@ -296,27 +308,47 @@ public class JPAEntity {
         setComplexProperty(accessModifier, embeddableObject, structualType, (HashMap<String, Object>) propertyValue
             .get(edmPropertyName));
       } else {
-        setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName));
+        setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName), (EdmSimpleType) edmTyped
+            .getType());
       }
     }
   }
 
-  protected void setProperty(final Method method, final Object entity, final Object entityPropertyValue) throws
-      IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+  protected void setProperty(final Method method, final Object entity, final Object entityPropertyValue,
+      EdmSimpleType type) throws
+      IllegalAccessException, IllegalArgumentException, InvocationTargetException, ODataJPARuntimeException {
     if (entityPropertyValue != null) {
       Class<?> parameterType = method.getParameterTypes()[0];
-      if (parameterType.equals(char[].class)) {
-        char[] characters = ((String) entityPropertyValue).toCharArray();
-        method.invoke(entity, characters);
-      } else if (parameterType.equals(char.class)) {
-        char c = ((String) entityPropertyValue).charAt(0);
-        method.invoke(entity, c);
-      } else if (parameterType.equals(Character[].class)) {
-        Character[] characters = JPAEntityParser.toCharacterArray((String) entityPropertyValue);
-        method.invoke(entity, (Object) characters);
-      } else if (parameterType.equals(Character.class)) {
-        Character c = Character.valueOf(((String) entityPropertyValue).charAt(0));
-        method.invoke(entity, c);
+      if (type != null && type.getDefaultType().equals(String.class)) {
+        if (parameterType.equals(String.class)) {
+          method.invoke(entity, entityPropertyValue);
+        } else if (parameterType.equals(char[].class)) {
+          char[] characters = ((String) entityPropertyValue).toCharArray();
+          method.invoke(entity, characters);
+        } else if (parameterType.equals(char.class)) {
+          char c = ((String) entityPropertyValue).charAt(0);
+          method.invoke(entity, c);
+        } else if (parameterType.equals(Character[].class)) {
+          Character[] characters = JPAEntityParser.toCharacterArray((String) entityPropertyValue);
+          method.invoke(entity, (Object) characters);
+        } else if (parameterType.equals(Character.class)) {
+          Character c = Character.valueOf(((String) entityPropertyValue).charAt(0));
+          method.invoke(entity, c);
+        }
+      } else if (parameterType.equals(Blob.class)) {
+        if (onJPAWriteContent == null) {
+          throw ODataJPARuntimeException
+              .throwException(ODataJPARuntimeException.ERROR_JPA_BLOB_NULL, null);
+        } else {
+          method.invoke(entity, onJPAWriteContent.getJPABlob((byte[]) entityPropertyValue));
+        }
+      } else if (parameterType.equals(Clob.class)) {
+        if (onJPAWriteContent == null) {
+          throw ODataJPARuntimeException
+              .throwException(ODataJPARuntimeException.ERROR_JPA_CLOB_NULL, null);
+        } else {
+          method.invoke(entity, onJPAWriteContent.getJPAClob(((String) entityPropertyValue).toCharArray()));
+        }
       } else {
         method.invoke(entity, entityPropertyValue);
       }

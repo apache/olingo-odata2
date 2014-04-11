@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.api.edm;
 
+import java.util.List;
+
 /**
  * @org.apache.olingo.odata2.DoNotImplement
  * A CSDL EntityContainer element
@@ -42,6 +44,16 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotatable {
   EdmEntitySet getEntitySet(String name) throws EdmException;
 
   /**
+   * <b>ATTENTION:</b> This method does not support <b>LAZY LOADING</b>.
+   * <br/>
+   * Get list of all contained EntitySets.
+   * 
+   * @return with all contained {@link EdmEntitySet}
+   * @throws EdmException
+   */
+  List<EdmEntitySet> getEntitySets() throws EdmException;
+
+  /**
    * Get contained FunctionImport by name
    * 
    * @param name
@@ -60,4 +72,14 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotatable {
    */
   EdmAssociationSet getAssociationSet(EdmEntitySet sourceEntitySet, EdmNavigationProperty navigationProperty)
       throws EdmException;
+
+  /**
+   * <b>ATTENTION:</b> This method does not support <b>LAZY LOADING</b>.
+   * <br/>
+   * Get list of all contained AssociationSets
+   * 
+   * @return list with all contained {@link EdmAssociationSet}
+   * @throws EdmException
+   */
+  List<EdmAssociationSet> getAssociationSets() throws EdmException;
 }

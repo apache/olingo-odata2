@@ -18,20 +18,28 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.ref.model;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.Converter;
+
 @Entity
 @Table(name = "T_MATERIAL")
+@Converter(
+    name = "BlobToByteConverter",
+    converterClass = org.apache.olingo.odata2.jpa.processor.ref.converter.BlobToByteConverter.class)
 public class Material {
 
   public Material() {}
@@ -56,6 +64,19 @@ public class Material {
 
   @Column(name = "MEASUREMENT_UNIT")
   private String measurementUnit;
+
+  @Lob
+  @Column(name = "MIMAGE")
+  @Convert(converter = org.apache.olingo.odata2.jpa.processor.ref.converter.BlobToByteConverter.class)
+  private Blob materialImage;
+
+  public Blob getMaterialImage() {
+    return materialImage;
+  }
+
+  public void setMaterialImage(Blob materialImage) {
+    this.materialImage = materialImage;
+  }
 
   @ManyToMany
   private List<Store> stores = new ArrayList<Store>();

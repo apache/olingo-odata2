@@ -38,11 +38,17 @@ public class ODataEntryMockUtil {
 
   public static final int VALUE_MINT = 20;
   public static Calendar VALUE_DATE_TIME = null;
+  public static byte[] VALUE_BLOB = null;
+  public static final String VALUE_CLOB = "ABC";
+  public static final String VALUE_C = "D";
+  public static final String VALUE_CARRAY = "EFG";
+  public static final String VALUE_CHAR = "I";
+  public static final String VALUE_CHARARRAY = "LMN";
   public static final String VALUE_MSTRING = "Mock";
   public static final long VALUE_MLONG = 1234567890L;
   public static final double VALUE_MDOUBLE = 20.12;
   public static final byte VALUE_MBYTE = 0XA;
-  public static final byte[] VALUE_MBYTEARRAY = { 0XA, 0XB };
+  public static final byte[] VALUE_MBYTEARRAY = new byte[] { 0XA, 0XB };
   public static final float VALUE_MFLOAT = 2.00F;
   public static final UUID VALUE_UUID = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
   public static final short VALUE_SHORT = 2;
@@ -76,6 +82,14 @@ public class ODataEntryMockUtil {
       VALUE_DATE_TIME.set(2013, 1, 1, 1, 1, 1);
       propertyMap.put(JPATypeMock.PROPERTY_NAME_MDATETIME, VALUE_DATE_TIME);
 
+      VALUE_BLOB = VALUE_MBYTEARRAY;
+      propertyMap.put(JPATypeMock.PROPERTY_NAME_MBLOB, VALUE_BLOB);
+
+      propertyMap.put(JPATypeMock.PROPERTY_NAME_CLOB, VALUE_CLOB);
+      propertyMap.put(JPATypeMock.PROPERTY_NAME_MC, VALUE_C);
+      propertyMap.put(JPATypeMock.PROPERTY_NAME_MCARRAY, VALUE_CARRAY);
+      propertyMap.put(JPATypeMock.PROPERTY_NAME_MCHAR, VALUE_CHAR);
+      propertyMap.put(JPATypeMock.PROPERTY_NAME_MCHARARRAY, VALUE_CHARARRAY);
       propertyMap.put(JPATypeMock.PROPERTY_NAME_MSTRING, VALUE_MSTRING);
     } else if (entityName.equals(JPARelatedTypeMock.ENTITY_NAME)) {
       propertyMap.put(JPARelatedTypeMock.PROPERTY_NAME_MLONG, VALUE_MLONG);
