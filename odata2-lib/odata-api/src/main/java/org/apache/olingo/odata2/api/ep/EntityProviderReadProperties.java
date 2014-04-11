@@ -31,10 +31,10 @@ import org.apache.olingo.odata2.api.ep.callback.OnReadInlineContent;
  * <ul>
  * <li>the <code>mergeSemantic</code></li>
  * <li>the <code>callback for inlined navigation properties</code></li>
- * <li>and the <code>type mappings</code></li>
+ * <li>the <code>type mappings</code></li>
+ * <li>and <code>validatingFacets</code></li>
  * </ul>
  * </p>
- * 
  */
 public class EntityProviderReadProperties {
   /** Callback which is necessary if entity contains inlined navigation properties. */
@@ -51,6 +51,9 @@ public class EntityProviderReadProperties {
    * Supported mappings are documented in {@link org.apache.olingo.odata2.api.edm.EdmSimpleType}.
    */
   final private Map<String, Object> typeMappings;
+  /** whether the constraints expressed in properties' facets are validated */
+  private boolean validatingFacets = true;
+
   final private Map<String, String> validatedPrefix2NamespaceUri;
 
   private EntityProviderReadProperties() {
@@ -90,8 +93,12 @@ public class EntityProviderReadProperties {
     return merge;
   }
 
+  public boolean isValidatingFacets() {
+    return validatingFacets;
+  }
+
   /**
-   *  
+   * Builder for {@link EntityProviderReadProperties}.  
    */
   public static class EntityProviderReadPropertiesBuilder {
     private final EntityProviderReadProperties properties = new EntityProviderReadProperties();
@@ -103,6 +110,7 @@ public class EntityProviderReadProperties {
       properties.callback = propertiesFrom.callback;
       addValidatedPrefixes(propertiesFrom.validatedPrefix2NamespaceUri);
       addTypeMappings(propertiesFrom.typeMappings);
+      properties.validatingFacets = propertiesFrom.validatingFacets;
     }
 
     /**
@@ -131,6 +139,11 @@ public class EntityProviderReadProperties {
       if (typeMappings != null) {
         properties.typeMappings.putAll(typeMappings);
       }
+      return this;
+    }
+
+    public EntityProviderReadPropertiesBuilder isValidatingFacets(final boolean validatingFacets) {
+      properties.validatingFacets = validatingFacets;
       return this;
     }
 

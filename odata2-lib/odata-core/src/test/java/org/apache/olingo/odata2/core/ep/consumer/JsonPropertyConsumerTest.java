@@ -186,7 +186,7 @@ public class JsonPropertyConsumerTest extends BaseTest {
     reader.nextName();
 
     JsonPropertyConsumer jpc = new JsonPropertyConsumer();
-    Object value = jpc.readPropertyValue(reader, entityPropertyInfo, null);
+    Object value = jpc.readPropertyValue(reader, entityPropertyInfo, null, null);
     assertEquals("Team 1", value);
   }
 
@@ -206,6 +206,30 @@ public class JsonPropertyConsumerTest extends BaseTest {
         new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, readProperties);
 
     assertEquals(propertyValue, resultMap.get("Name"));
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void simplePropertyViolatingValidation() throws Exception {
+    EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Room")
+        .getProperty("Name");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(10);
+    when(property.getFacets()).thenReturn(facets);
+    new JsonPropertyConsumer().readPropertyStandalone(prepareReader("{\"Name\":\"TooLongName\"}"), property, null);
+  }
+
+  @Test
+  public void simplePropertyIgnoringValidation() throws Exception {
+    EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Room")
+        .getProperty("Name");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(10);
+    when(property.getFacets()).thenReturn(facets);
+    final EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    final Map<String, Object> resultMap = new JsonPropertyConsumer()
+        .readPropertyStandalone(prepareReader("{\"Name\":\"TooLongName\"}"), property, readProperties);
+    assertTrue(resultMap.containsKey("Name"));
+    assertEquals("TooLongName", resultMap.get("Name"));
   }
 
   @Test
@@ -405,7 +429,7 @@ public class JsonPropertyConsumerTest extends BaseTest {
 
     JsonPropertyConsumer jpc = new JsonPropertyConsumer();
     @SuppressWarnings("unchecked")
-    Map<String, Object> result = (Map<String, Object>) jpc.readPropertyValue(reader, entityPropertyInfo, null);
+    Map<String, Object> result = (Map<String, Object>) jpc.readPropertyValue(reader, entityPropertyInfo, null, null);
 
     assertEquals(2, result.size());
     assertEquals("Heidelberg", result.get("CityName"));
@@ -422,7 +446,7 @@ public class JsonPropertyConsumerTest extends BaseTest {
 
     JsonPropertyConsumer jpc = new JsonPropertyConsumer();
     @SuppressWarnings("unchecked")
-    Map<String, Object> result = (Map<String, Object>) jpc.readPropertyValue(reader, entityPropertyInfo, null);
+    Map<String, Object> result = (Map<String, Object>) jpc.readPropertyValue(reader, entityPropertyInfo, null, null);
 
     assertEquals(2, result.size());
     assertEquals("Heidelberg", result.get("CityName"));
@@ -443,7 +467,7 @@ public class JsonPropertyConsumerTest extends BaseTest {
 
     JsonPropertyConsumer jpc = new JsonPropertyConsumer();
     @SuppressWarnings("unchecked")
-    Map<String, Object> result = (Map<String, Object>) jpc.readPropertyValue(reader, entityPropertyInfo, null);
+    Map<String, Object> result = (Map<String, Object>) jpc.readPropertyValue(reader, entityPropertyInfo, null, null);
 
     assertEquals(2, result.size());
     assertEquals("Germany", result.get("Country"));
@@ -560,6 +584,23 @@ public class JsonPropertyConsumerTest extends BaseTest {
   }
 
   @Test
+  public void complexPropertyNullValueNotAllowedButNotValidated() throws Exception {
+    final EdmProperty property = (EdmProperty) MockFacade.getMockEdm().getDefaultEntityContainer()
+        .getEntitySet("Employees").getEntityType().getProperty("Location");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.isNullable()).thenReturn(false);
+    when(property.getFacets()).thenReturn(facets);
+    final EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+
+    final Map<String, Object> propertyData = new JsonPropertyConsumer()
+        .readPropertyStandalone(prepareReader("{\"Location\":null}"), property, readProperties);
+    assertNotNull(propertyData);
+    assertEquals(1, propertyData.size());
+    assertTrue(propertyData.containsKey("Location"));
+    assertNull(propertyData.get("Location"));
+  }
+
+  @Test
   public void complexPropertyEmpty() throws Exception {
     final String cityProperty = "{\"d\":{\"City\":{}}}";
     JsonReader reader = prepareReader(cityProperty);
@@ -584,7 +625,7 @@ public class JsonPropertyConsumerTest extends BaseTest {
         (EdmProperty) MockFacade.getMockEdm().getComplexType("RefScenario", "c_Location").getProperty("City");
     EntityComplexPropertyInfo entityPropertyInfo = (EntityComplexPropertyInfo) EntityInfoAggregator.create(property);
 
-    new JsonPropertyConsumer().readPropertyValue(reader, entityPropertyInfo, null);
+    new JsonPropertyConsumer().readPropertyValue(reader, entityPropertyInfo, null, null);
   }
 
   @Test(expected = EntityProviderException.class)
@@ -596,7 +637,7 @@ public class JsonPropertyConsumerTest extends BaseTest {
         (EdmProperty) MockFacade.getMockEdm().getComplexType("RefScenario", "c_Location").getProperty("City");
     EntityComplexPropertyInfo entityPropertyInfo = (EntityComplexPropertyInfo) EntityInfoAggregator.create(property);
 
-    new JsonPropertyConsumer().readPropertyValue(reader, entityPropertyInfo, null);
+    new JsonPropertyConsumer().readPropertyValue(reader, entityPropertyInfo, null, null);
   }
 
   private JsonReader prepareReader(final String json) throws UnsupportedEncodingException {

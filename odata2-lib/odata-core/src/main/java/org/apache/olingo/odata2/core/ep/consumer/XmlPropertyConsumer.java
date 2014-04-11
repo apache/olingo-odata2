@@ -33,6 +33,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityComplexPropertyInfo;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
@@ -40,27 +41,27 @@ import org.apache.olingo.odata2.core.ep.aggregator.EntityTypeMapping;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
- *  
+ * XML property consumer.
  */
 public class XmlPropertyConsumer {
 
   protected static final String TRUE = "true";
   protected static final String FALSE = "false";
 
-  public Map<String, Object>
-      readProperty(final XMLStreamReader reader, final EdmProperty property, final boolean merge)
-          throws EntityProviderException {
-    return readProperty(reader, property, merge, null);
+  public Map<String, Object> readProperty(final XMLStreamReader reader, final EdmProperty property,
+      final boolean merge, final EntityProviderReadProperties readProperties) throws EntityProviderException {
+    return readProperty(reader, property, merge, null, readProperties);
   }
 
   public Map<String, Object> readProperty(final XMLStreamReader reader, final EdmProperty property,
-      final boolean merge, final Map<String, Object> typeMappings) throws EntityProviderException {
+      final boolean merge, final Map<String, Object> typeMappings, final EntityProviderReadProperties readProperties)
+      throws EntityProviderException {
     EntityPropertyInfo eia = EntityInfoAggregator.create(property);
 
     try {
       reader.next();
 
-      Object value = readStartedElement(reader, eia, EntityTypeMapping.create(typeMappings));
+      Object value = readStartedElement(reader, eia, EntityTypeMapping.create(typeMappings), readProperties);
 
       if (eia.isComplex() && merge) {
         mergeWithDefaultValues(value, eia);
@@ -110,7 +111,8 @@ public class XmlPropertyConsumer {
   }
 
   protected Object readStartedElement(final XMLStreamReader reader, final EntityPropertyInfo propertyInfo,
-      final EntityTypeMapping typeMappings) throws EntityProviderException, EdmException {
+      final EntityTypeMapping typeMappings, final EntityProviderReadProperties readProperties)
+      throws EntityProviderException, EdmException {
     final String name = propertyInfo.getName();
     Object result = null;
 
@@ -123,7 +125,7 @@ public class XmlPropertyConsumer {
       }
 
       if (TRUE.equals(nullAttribute)) {
-        if (propertyInfo.isMandatory()) {
+        if ((readProperties == null || readProperties.isValidatingFacets()) && propertyInfo.isMandatory()) {
           throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE.addContent(name));
         }
         reader.nextTag();
@@ -147,13 +149,14 @@ public class XmlPropertyConsumer {
           if (childProperty == null) {
             throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY.addContent(childName));
           }
-          final Object value = readStartedElement(reader, childProperty, typeMappings.getEntityTypeMapping(name));
+          final Object value = readStartedElement(reader, childProperty, typeMappings.getEntityTypeMapping(name),
+              readProperties);
           name2Value.put(childName, value);
           reader.nextTag();
         }
         result = name2Value;
       } else {
-        result = convert(propertyInfo, reader.getElementText(), typeMappings.getMappingClass(name));
+        result = convert(propertyInfo, reader.getElementText(), typeMappings.getMappingClass(name), readProperties);
       }
       reader.require(XMLStreamConstants.END_ELEMENT, Edm.NAMESPACE_D_2007_08, name);
 
@@ -164,10 +167,11 @@ public class XmlPropertyConsumer {
     }
   }
 
-  private Object convert(final EntityPropertyInfo property, final String value, final Class<?> typeMapping)
-      throws EdmSimpleTypeException {
+  private Object convert(final EntityPropertyInfo property, final String value, final Class<?> typeMapping,
+      final EntityProviderReadProperties readProperties) throws EdmSimpleTypeException {
     final EdmSimpleType type = (EdmSimpleType) property.getType();
-    return type.valueOfString(value, EdmLiteralKind.DEFAULT, property.getFacets(),
+    return type.valueOfString(value, EdmLiteralKind.DEFAULT,
+        readProperties == null || readProperties.isValidatingFacets() ? property.getFacets() : null,
         typeMapping == null ? type.getDefaultType() : typeMapping);
   }
 }
