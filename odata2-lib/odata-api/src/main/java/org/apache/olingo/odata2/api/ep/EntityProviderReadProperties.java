@@ -98,7 +98,7 @@ public class EntityProviderReadProperties {
   }
 
   /**
-   * Builder for {@link EntityProviderReadProperties}.  
+   * Builder for {@link EntityProviderReadProperties}.
    */
   public static class EntityProviderReadPropertiesBuilder {
     private final EntityProviderReadProperties properties = new EntityProviderReadProperties();

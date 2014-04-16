@@ -106,7 +106,7 @@ public class JPATypeConvertor {
         .addContent(jpaType.toString()), null);
   }
 
-  private static boolean isBlob(Attribute<?, ?> currentAttribute) {
+  private static boolean isBlob(final Attribute<?, ?> currentAttribute) {
     if (currentAttribute != null) {
       AnnotatedElement annotatedElement = (AnnotatedElement) currentAttribute.getJavaMember();
       if (annotatedElement != null && annotatedElement.getAnnotation(Lob.class) != null) {
@@ -116,7 +116,7 @@ public class JPATypeConvertor {
     return false;
   }
 
-  private static TemporalType determineTemporalType(Attribute<?, ?> currentAttribute)
+  private static TemporalType determineTemporalType(final Attribute<?, ?> currentAttribute)
       throws ODataJPAModelException {
     if (currentAttribute != null) {
       AnnotatedElement annotatedElement = (AnnotatedElement) currentAttribute.getJavaMember();

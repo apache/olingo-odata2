@@ -32,7 +32,7 @@ public class NoteKey implements Serializable {
     return creationTime;
   }
 
-  public void setCreationTime(Calendar creationTime) {
+  public void setCreationTime(final Calendar creationTime) {
     this.creationTime = creationTime;
   }
 
@@ -40,7 +40,7 @@ public class NoteKey implements Serializable {
     return creationDate;
   }
 
-  public void setCreationDate(Calendar creationDate) {
+  public void setCreationDate(final Calendar creationDate) {
     this.creationDate = creationDate;
   }
 
@@ -48,7 +48,7 @@ public class NoteKey implements Serializable {
     return createdBy;
   }
 
-  public void setCreatedBy(String createdBy) {
+  public void setCreatedBy(final String createdBy) {
     this.createdBy = createdBy;
   }
 
@@ -58,17 +58,17 @@ public class NoteKey implements Serializable {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (obj instanceof Note) {
       Note note = (Note) obj;
 
-      if (!note.getCreatedBy().equals(this.getCreatedBy())) {
+      if (!note.getCreatedBy().equals(getCreatedBy())) {
         return false;
       }
-      if (!note.getCreationDate().equals(this.getCreationDate())) {
+      if (!note.getCreationDate().equals(getCreationDate())) {
         return false;
       }
-      if (!note.getCreationTime().equals(this.getCreationTime())) {
+      if (!note.getCreationTime().equals(getCreationTime())) {
         return false;
       }
       return true;

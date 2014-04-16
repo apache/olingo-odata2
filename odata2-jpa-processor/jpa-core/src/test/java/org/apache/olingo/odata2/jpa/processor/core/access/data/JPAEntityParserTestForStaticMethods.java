@@ -281,7 +281,7 @@ public class JPAEntityParserTestForStaticMethods {
     }
   }
 
-  private FileInputStream getFileStream(String name) throws SerialException, FileNotFoundException {
+  private FileInputStream getFileStream(final String name) throws SerialException, FileNotFoundException {
     final String fileName = "SalesOrderProcessingMappingModels.xml";
     FileInputStream fis;
 

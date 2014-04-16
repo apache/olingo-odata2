@@ -315,7 +315,7 @@ public class JPAEntity {
   }
 
   protected void setProperty(final Method method, final Object entity, final Object entityPropertyValue,
-      EdmSimpleType type) throws
+      final EdmSimpleType type) throws
       IllegalAccessException, IllegalArgumentException, InvocationTargetException, ODataJPARuntimeException {
     if (entityPropertyValue != null) {
       Class<?> parameterType = method.getParameterTypes()[0];

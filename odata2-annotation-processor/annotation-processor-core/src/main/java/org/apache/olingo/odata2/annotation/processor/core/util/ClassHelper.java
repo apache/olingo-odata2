@@ -101,7 +101,7 @@ public class ClassHelper {
     return annotatedClasses;
   }
 
-  private static URI getResourceUri(String packageToScan, ClassLoader classLoader) {
+  private static URI getResourceUri(final String packageToScan, final ClassLoader classLoader) {
     String folderToScan = packageToScan.replace(PACKAGE_SEPARATOR, RESOURCE_SEPARATOR);
     URL url = classLoader.getResource(folderToScan);
     if (url == null) {
@@ -115,15 +115,16 @@ public class ClassHelper {
       return uri;
     } catch (URISyntaxException e) {
       throw new IllegalArgumentException("Invalid folder path for path URL '" + url +
-              "' from thread context class loader.");
+          "' from thread context class loader.");
     }
   }
 
-  private static boolean isJarFile(URI uri) {
+  private static boolean isJarFile(final URI uri) {
     return JAR_FILE_ENDING.equals(uri.getScheme());
   }
 
-  private static Collection<String> getClassFqnFromDir(final FilenameFilter ff, File folder, String packageToScan) {
+  private static Collection<String> getClassFqnFromDir(final FilenameFilter ff, final File folder,
+      final String packageToScan) {
     List<String> classFiles = new ArrayList<String>();
     String[] classFilesForFolder = folder.list(ff);
     for (String name : classFilesForFolder) {
@@ -139,7 +140,7 @@ public class ClassHelper {
     return classFiles;
   }
 
-  private static Collection<String> getClassFqnFromJar(URI uri, String packageToScan) {
+  private static Collection<String> getClassFqnFromJar(final URI uri, final String packageToScan) {
     final String jarFilePath;
     String filepath = uri.getSchemeSpecificPart().substring(5);
     String[] split = filepath.split(JAR_RESOURCE_SEPARATOR);

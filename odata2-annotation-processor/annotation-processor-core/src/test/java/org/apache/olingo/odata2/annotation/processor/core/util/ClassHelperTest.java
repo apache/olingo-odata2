@@ -78,7 +78,6 @@ public class ClassHelperTest {
     Assert.assertEquals(SimpleEntity.class.getName(), loadedClasses.get(0).getName());
   }
 
-
   @Test
   public void loadSingleEntityFromJar() throws ODataException {
     String packageToScan = AnnotatedEntity.class.getPackage().getName();

@@ -32,7 +32,7 @@ import org.hsqldb.jdbc.JDBCClob;
 public class OnDBWriteContent implements OnJPAWriteContent {
 
   @Override
-  public Blob getJPABlob(byte[] binaryData) throws ODataJPARuntimeException {
+  public Blob getJPABlob(final byte[] binaryData) throws ODataJPARuntimeException {
     try {
       return new JDBCBlob(binaryData);
     } catch (SerialException e) {
@@ -44,7 +44,7 @@ public class OnDBWriteContent implements OnJPAWriteContent {
   }
 
   @Override
-  public Clob getJPAClob(char[] characterData) throws ODataJPARuntimeException {
+  public Clob getJPAClob(final char[] characterData) throws ODataJPARuntimeException {
     try {
       return new JDBCClob(new String(characterData));
     } catch (SQLException e) {
