@@ -58,6 +58,7 @@ public class JPAEdmNameBuilder {
   private static final String ASSOCIATIONSET_SUFFIX = "Set";
   private static final String NAVIGATION_NAME = "Details";
   private static final String UNDERSCORE = "_";
+  private static final String FK_PREFIX = "FK";
 
   public static FullQualifiedName build(final JPAEdmBaseView view, final String name) {
     FullQualifiedName fqName = new FullQualifiedName(buildNamespace(view), name);
@@ -124,7 +125,7 @@ public class JPAEdmNameBuilder {
    * ************************************************************************
    */
   public static void build(final JPAEdmPropertyView view, final boolean isComplexMode,
-      final boolean skipDefaultNaming) {
+      final boolean skipDefaultNaming, final boolean isForeignKey) {
     Attribute<?, ?> jpaAttribute = view.getJPAAttribute();
     String jpaAttributeName = jpaAttribute.getName();
     String propertyName = null;
@@ -145,6 +146,9 @@ public class JPAEdmNameBuilder {
       propertyName = Character.toUpperCase(jpaAttributeName.charAt(0)) + jpaAttributeName.substring(1);
     } else if (propertyName == null) {
       propertyName = jpaAttributeName;
+      if (isForeignKey == true) {
+        propertyName = FK_PREFIX + UNDERSCORE + propertyName;
+      }
     }
 
     view.getEdmSimpleProperty().setName(propertyName);
