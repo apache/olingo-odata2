@@ -43,6 +43,7 @@ public class EntityProviderWriteProperties {
   private Map<String, ODataCallback> callbacks = Collections.emptyMap();
   private URI selfLink;
   private boolean includeSimplePropertyType;
+  private Map<String, Map<String, Object>> additionalLinks;
 
   private EntityProviderWriteProperties() {}
 
@@ -118,6 +119,16 @@ public class EntityProviderWriteProperties {
     return nextLink;
   }
 
+  /**
+   * Gets the additional links that should be in the payload.
+   * @return the additional links as Map where the navigation-property name is the key and
+     *       a key predicate is the value -
+     *       a key predicate is a Map from key-property names to their values
+   */
+  public final Map<String, Map<String, Object>> getAdditionalLinks() {
+    return additionalLinks;
+  }
+
   public static ODataEntityProviderPropertiesBuilder serviceRoot(final URI serviceRoot) {
     return new ODataEntityProviderPropertiesBuilder().serviceRoot(serviceRoot);
   }
@@ -187,8 +198,7 @@ public class EntityProviderWriteProperties {
 
     /**
      * Set a expand select tree which results from $expand and $select query parameter. Usually the data structure is
-     * constructed
-     * by the uri parser.
+     * constructed by the URI parser.
      * @param expandSelectTree data structure
      * @return properties builder
      */
@@ -207,6 +217,18 @@ public class EntityProviderWriteProperties {
       return this;
     }
 
+    /**
+     * Sets additional links from this entity to other entities.
+     * @param links a Map where the navigation-property name is the key and
+     *              a key predicate is the value -
+     *              a key predicate is a Map from key-property names to their values
+     * @return properties builder
+     */
+    public ODataEntityProviderPropertiesBuilder additionalLinks(final Map<String, Map<String, Object>> links) {
+      properties.additionalLinks = links;
+      return this;
+    }
+
     public ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
       this.properties.mediaResourceMimeType = properties.getMediaResourceMimeType();
       this.properties.inlineCountType = properties.getInlineCountType();
@@ -216,6 +238,7 @@ public class EntityProviderWriteProperties {
       this.properties.callbacks = properties.getCallbacks();
       this.properties.selfLink = properties.getSelfLink();
       this.properties.includeSimplePropertyType = properties.includeSimplePropertyType;
+      this.properties.additionalLinks = properties.additionalLinks;
       return this;
     }
   }

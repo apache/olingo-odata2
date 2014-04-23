@@ -110,10 +110,10 @@ public class JsonEntryEntityProducer {
           if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
             writeExpandedNavigationProperty(writer, entityInfo, data, type, navigationPropertyName);
           } else {
-            writeDeferredUri(navigationPropertyName);
+            writeDeferredUri(entityInfo, navigationPropertyName);
           }
         } else {
-          writeDeferredUri(navigationPropertyName);
+          writeDeferredUri(entityInfo, navigationPropertyName);
         }
       }
     }
@@ -240,10 +240,23 @@ public class JsonEntryEntityProducer {
     jsonStreamWriter.endObject();
   }
 
-  private void writeDeferredUri(final String navigationPropertyName) throws IOException {
+  private void writeDeferredUri(final EntityInfoAggregator entityInfo, final String navigationPropertyName)
+      throws IOException, EntityProviderException, EdmException {
     jsonStreamWriter.beginObject()
         .name(FormatJson.DEFERRED);
-    JsonLinkEntityProducer.appendUri(jsonStreamWriter, location + "/" + Encoder.encode(navigationPropertyName));
+    String target = null;
+    final Map<String, Map<String, Object>> links = properties.getAdditionalLinks();
+    final Map<String, Object> key = links == null ? null : links.get(navigationPropertyName);
+    if (key == null || key.isEmpty()) {
+      target = location + "/" + Encoder.encode(navigationPropertyName);
+    } else {
+      final EntityInfoAggregator targetEntityInfo = EntityInfoAggregator.create(
+          entityInfo.getEntitySet().getRelatedEntitySet(
+              (EdmNavigationProperty) entityInfo.getEntityType().getProperty(navigationPropertyName)));
+      target = (properties.getServiceRoot() == null ? "" : properties.getServiceRoot().toASCIIString())
+          + AtomEntryEntityProducer.createSelfLink(targetEntityInfo, key, null);
+    }
+    JsonLinkEntityProducer.appendUri(jsonStreamWriter, target);
     jsonStreamWriter.endObject();
   }
 
