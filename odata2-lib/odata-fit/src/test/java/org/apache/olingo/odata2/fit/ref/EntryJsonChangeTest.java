@@ -93,7 +93,7 @@ public class EntryJsonChangeTest extends AbstractRefTest {
     data.put("Version", 42);
     Map<String, Object> key = new HashMap<String, Object>();
     key.put("Id", "1");
-    Map<String, Map<String, Object>> links = new HashMap<String, Map<String,Object>>();
+    Map<String, Map<String, Object>> links = new HashMap<String, Map<String, Object>>();
     links.put("nr_Building", key);
     final String requestBody = StringHelper.inputStreamToString(
         (InputStream) EntityProvider.writeEntry(HttpContentType.APPLICATION_JSON, linkedEntitySet, data,

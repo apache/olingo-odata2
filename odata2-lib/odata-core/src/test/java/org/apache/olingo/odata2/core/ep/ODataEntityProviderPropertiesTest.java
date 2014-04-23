@@ -62,7 +62,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     callbacks.put("aCallback", new MyCallback(null, null));
     ExpandSelectTreeNode expandSelectTree = new ExpandSelectTreeNodeImpl();
     URI selfLink = new URI("http://some.uri");
-    Map<String, Map<String, Object>> links = new HashMap<String, Map<String,Object>>();
+    Map<String, Map<String, Object>> links = new HashMap<String, Map<String, Object>>();
     links.put("aNavigationProperty", Collections.<String, Object> emptyMap());
     final EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(serviceRoot)
         .callbacks(callbacks)
@@ -106,7 +106,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     callbacks.put("aCallback", new MyCallback(null, null));
     ExpandSelectTreeNode expandSelectTree = new ExpandSelectTreeNodeImpl();
     URI selfLink = new URI("http://some.uri");
-    Map<String, Map<String, Object>> links = new HashMap<String, Map<String,Object>>();
+    Map<String, Map<String, Object>> links = new HashMap<String, Map<String, Object>>();
     links.put("aNavigationProperty", Collections.<String, Object> emptyMap());
     final EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(serviceRoot)
         .callbacks(callbacks)

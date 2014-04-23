@@ -122,8 +122,8 @@ public class EntityProviderWriteProperties {
   /**
    * Gets the additional links that should be in the payload.
    * @return the additional links as Map where the navigation-property name is the key and
-     *       a key predicate is the value -
-     *       a key predicate is a Map from key-property names to their values
+   * a key predicate is the value -
+   * a key predicate is a Map from key-property names to their values
    */
   public final Map<String, Map<String, Object>> getAdditionalLinks() {
     return additionalLinks;
@@ -220,8 +220,8 @@ public class EntityProviderWriteProperties {
     /**
      * Sets additional links from this entity to other entities.
      * @param links a Map where the navigation-property name is the key and
-     *              a key predicate is the value -
-     *              a key predicate is a Map from key-property names to their values
+     * a key predicate is the value -
+     * a key predicate is a Map from key-property names to their values
      * @return properties builder
      */
     public ODataEntityProviderPropertiesBuilder additionalLinks(final Map<String, Map<String, Object>> links) {

@@ -725,7 +725,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     links.put("nr_Building", buildingData);
     final ODataResponse response = createAtomEntityProvider().writeEntry(
         MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
-         EntityProviderWriteProperties.serviceRoot(BASE_URI).additionalLinks(links).build());
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).additionalLinks(links).build());
     final String xmlString = verifyResponse(response);
 
     assertXpathExists("/a:entry/a:link[@title='nr_Building']", xmlString);
@@ -740,7 +740,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     links.put("nr_Employees", employeeData);
     final ODataResponse response = createAtomEntityProvider().writeEntry(
         MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
-         EntityProviderWriteProperties.serviceRoot(BASE_URI).additionalLinks(links).build());
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).additionalLinks(links).build());
     final String xmlString = verifyResponse(response);
 
     assertXpathExists("/a:entry/a:link[@title='nr_Employees']", xmlString);
