@@ -21,7 +21,6 @@ Content-Type: application/json
 Content-Length: 918
 
 {"d":{"__metadata":{"id":"http://localhost:19000/ClientBatchTest/Employees('7')","uri":"http://localhost:19000/ClientBatchTest/Employees('7')","type":"RefScenario.Employee","content_type":"application/octet-stream","media_src":"Employees('7')/$value","edit_media":"http://localhost:19000/ClientBatchTest/Employees('7')/$value"},"EmployeeId":"7","EmployeeName":"Employee 7","ManagerId":null,"RoomId":null,"TeamId":null,"Location":{"__metadata":{"type":"RefScenario.c_Location"},"City":{"__metadata":{"type":"RefScenario.c_City"},"PostalCode":null,"CityName":null},"Country":null},"Age":0,"EntryDate":null,"ImageUrl":null,"ne_Manager":{"__deferred":{"uri":"http://localhost:19000/ClientBatchTest/Employees('7')/ne_Manager"}},"ne_Team":{"__deferred":{"uri":"http://localhost:19000/ClientBatchTest/Employees('7')/ne_Team"}},"ne_Room":{"__deferred":{"uri":"http://localhost:19000/ClientBatchTest/Employees('7')/ne_Room"}}}}
-
 --changeset_12ks93js84d--
 
 --batch_123
@@ -35,5 +34,4 @@ Content-Type: text/plain;charset=utf-8
 Content-length: 13
 
 Frederic Fall
-
 --batch_123--

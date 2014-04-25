@@ -48,7 +48,6 @@ public class BatchResponseParserTest {
         + "Content-length: 22" + LF
         + LF
         + "Frederic Fall MODIFIED" + LF
-        + LF
         + "--batch_123--";
 
     InputStream in = new ByteArrayInputStream(getResponse.getBytes());

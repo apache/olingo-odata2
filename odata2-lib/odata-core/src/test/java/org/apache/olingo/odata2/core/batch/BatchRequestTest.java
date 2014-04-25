@@ -19,15 +19,20 @@
 package org.apache.olingo.odata2.core.batch;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
+import org.apache.olingo.odata2.api.batch.BatchRequestPart;
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
 import org.apache.olingo.odata2.api.client.batch.BatchPart;
 import org.apache.olingo.odata2.api.client.batch.BatchQueryPart;
+import org.apache.olingo.odata2.api.ep.EntityProviderBatchProperties;
+import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,12 +42,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class BatchRequestWriterTest {
+/**
+ * Test creation of a batch request with BatchRequestWriter and
+ * then parsing this request again with BatchRequestParser.
+ */
+public class BatchRequestTest {
 
   private static final String POST = "POST";
   private static final String GET = "GET";
   private static final String PUT = "PUT";
   private static final String BOUNDARY = "batch_123";
+  private static final String SERVICE_ROOT = "http://localhost/odata/";
+
+  private EntityProviderBatchProperties parseProperties;
+
+  public BatchRequestTest() throws URISyntaxException {
+    PathInfoImpl pathInfo = new PathInfoImpl();
+    pathInfo.setServiceRoot(new URI(SERVICE_ROOT));
+    parseProperties = EntityProviderBatchProperties.init().pathInfo(pathInfo).build();
+  }
 
   private void checkMimeHeaders(final String requestBody) {
     assertTrue(requestBody.contains("Content-Type: application/http"));
@@ -59,15 +77,20 @@ public class BatchRequestWriterTest {
 
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
-
-    String requestBody = StringHelper.toStream(batchRequest).asString();
     assertNotNull(batchRequest);
+
+    StringHelper.Stream batchRequestStream = StringHelper.toStream(batchRequest);
+    String requestBody = batchRequestStream.asString();
     checkMimeHeaders(requestBody);
 
     assertTrue(requestBody.contains("--batch_"));
     assertTrue(requestBody.contains("GET Employees HTTP/1.1"));
     checkHeaders(headers, requestBody);
-    assertEquals(10, StringHelper.countLines(requestBody));
+
+    String contentType = "multipart/mixed; boundary=" + BOUNDARY;
+    BatchRequestParser parser = new BatchRequestParser(contentType, parseProperties);
+    List<BatchRequestPart> parseResult = parser.parse(batchRequestStream.asStream());
+    assertEquals(1, parseResult.size());
   }
 
   @Test
@@ -87,9 +110,10 @@ public class BatchRequestWriterTest {
 
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
-
-    String requestBody = StringHelper.inputStreamToString(batchRequest, true);
     assertNotNull(batchRequest);
+
+    StringHelper.Stream batchRequestStream = StringHelper.toStream(batchRequest);
+    String requestBody = batchRequestStream.asString();
     checkMimeHeaders(requestBody);
     checkHeaders(headers, requestBody);
 
@@ -97,6 +121,11 @@ public class BatchRequestWriterTest {
     assertTrue(requestBody.contains("--changeset_"));
     assertTrue(requestBody.contains("PUT Employees('2') HTTP/1.1"));
     assertTrue(requestBody.contains("{\"Возраст\":40}"));
+
+    String contentType = "multipart/mixed; boundary=" + BOUNDARY;
+    BatchRequestParser parser = new BatchRequestParser(contentType, parseProperties);
+    List<BatchRequestPart> parseResult = parser.parse(batchRequestStream.asStream());
+    assertEquals(1, parseResult.size());
   }
 
   @Test
@@ -121,9 +150,10 @@ public class BatchRequestWriterTest {
     batch.add(changeSet);
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
-
-    String requestBody = StringHelper.inputStreamToString(batchRequest);
     assertNotNull(batchRequest);
+
+    StringHelper.Stream batchRequestStream = StringHelper.toStream(batchRequest);
+    String requestBody = batchRequestStream.asString();
     checkMimeHeaders(requestBody);
 
     checkHeaders(headers, requestBody);
@@ -131,6 +161,11 @@ public class BatchRequestWriterTest {
     assertTrue(requestBody.contains("GET Employees HTTP/1.1"));
     assertTrue(requestBody.contains("POST Employees HTTP/1.1"));
     assertTrue(requestBody.contains(body));
+
+    String contentType = "multipart/mixed; boundary=" + BOUNDARY;
+    BatchRequestParser parser = new BatchRequestParser(contentType, parseProperties);
+    List<BatchRequestPart> parseResult = parser.parse(batchRequestStream.asStream());
+    assertEquals(2, parseResult.size());
   }
 
   @Test
@@ -162,9 +197,10 @@ public class BatchRequestWriterTest {
 
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
-
-    String requestBody = StringHelper.inputStreamToString(batchRequest);
     assertNotNull(batchRequest);
+
+    StringHelper.Stream batchRequestStream = StringHelper.toStream(batchRequest);
+    String requestBody = batchRequestStream.asString();
     checkMimeHeaders(requestBody);
 
     assertTrue(requestBody.contains("POST Employees('2') HTTP/1.1"));
@@ -173,6 +209,10 @@ public class BatchRequestWriterTest {
     assertTrue(requestBody.contains(BatchHelper.HTTP_CONTENT_ID + ": 2"));
     assertTrue(requestBody.contains(body));
 
+    String contentType = "multipart/mixed; boundary=" + BOUNDARY;
+    BatchRequestParser parser = new BatchRequestParser(contentType, parseProperties);
+    List<BatchRequestPart> parseResult = parser.parse(batchRequestStream.asStream());
+    assertEquals(1, parseResult.size());
   }
 
   @Test
@@ -206,9 +246,10 @@ public class BatchRequestWriterTest {
 
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
-
-    String requestBody = StringHelper.inputStreamToString(batchRequest);
     assertNotNull(batchRequest);
+
+    StringHelper.Stream batchRequestStream = StringHelper.toStream(batchRequest);
+    String requestBody = batchRequestStream.asString();
     checkMimeHeaders(requestBody);
 
     assertTrue(requestBody.contains("POST Employees HTTP/1.1"));
@@ -216,6 +257,10 @@ public class BatchRequestWriterTest {
 
     assertTrue(requestBody.contains(body));
 
+    String contentType = "multipart/mixed; boundary=" + BOUNDARY;
+    BatchRequestParser parser = new BatchRequestParser(contentType, parseProperties);
+    List<BatchRequestPart> parseResult = parser.parse(batchRequestStream.asStream());
+    assertEquals(2, parseResult.size());
   }
 
   private void checkHeaders(final Map<String, String> headers, final String requestBody) {

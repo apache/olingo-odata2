@@ -35,6 +35,72 @@ import org.apache.olingo.odata2.testutil.TestUtilRuntimeException;
  */
 public class StringHelper {
 
+
+  public static class Stream {
+    private final byte[] data;
+
+    private Stream(byte[] data) {
+      this.data = data;
+    }
+
+    public Stream(String content, String charset) throws UnsupportedEncodingException {
+      this(content.getBytes(charset));
+    }
+
+    public InputStream asStream() {
+      return new ByteArrayInputStream(data);
+    }
+
+    public byte[] asArray() {
+      return data;
+    }
+
+    public String asString() {
+      return asString("UTF-8");
+    }
+
+    public String asString(String charsetName) {
+      return new String(data, Charset.forName(charsetName));
+    }
+
+    public Stream print(OutputStream out) throws IOException {
+      out.write(data);
+      return this;
+    }
+
+    public Stream print() throws IOException {
+      return print(System.out);
+    }
+
+    public int countCrLf() {
+      return StringHelper.countLines(asString(), "\r\n");
+    }
+  }
+
+  public static Stream toStream(InputStream stream) throws IOException {
+    byte[] result = new byte[0];
+    byte[] tmp = new byte[8192];
+    int readCount = stream.read(tmp);
+    while (readCount >= 0) {
+      byte[] innerTmp = new byte[result.length + readCount];
+      System.arraycopy(result, 0, innerTmp, 0, result.length);
+      System.arraycopy(tmp, 0, innerTmp, result.length, readCount);
+      result = innerTmp;
+      readCount = stream.read(tmp);
+    }
+    stream.close();
+    return new Stream(result);
+  }
+
+  public static Stream toStream(String content) {
+    try {
+      return new Stream(content, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException("UTF-8 should be supported on each system.");
+    }
+  }
+
+
   public static String inputStreamToString(final InputStream in, final boolean preserveLineBreaks) throws IOException {
     final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
     final StringBuilder stringBuilder = new StringBuilder();
@@ -52,6 +118,22 @@ public class StringHelper {
     final String result = stringBuilder.toString();
 
     return result;
+  }
+
+  public static int countLines(String content) {
+    return countLines(content, "\r\n");
+  }
+
+  public static int countLines(String content, String lineBreak) {
+    int lastPos = 0;
+    int count = -1;
+
+    while (lastPos >= 0) {
+      lastPos = content.indexOf(lineBreak, lastPos+1);
+      count++;
+    }
+
+    return count;
   }
 
   public static String inputStreamToString(final InputStream in) throws IOException {
