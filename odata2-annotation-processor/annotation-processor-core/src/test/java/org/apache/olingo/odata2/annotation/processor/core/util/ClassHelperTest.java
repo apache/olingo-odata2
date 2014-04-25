@@ -96,7 +96,7 @@ public class ClassHelperTest {
   //
 
   @EdmEntityType
-  @SuppressWarnings("unused")
+//  @SuppressWarnings("unused")
   private class SimpleEntity {
     @EdmKey
     @EdmProperty

@@ -82,7 +82,8 @@ public class JsonFeedConsumer {
   }
 
   private void readFeed() throws IOException, EdmException, EntityProviderException {
-    if (reader.peek() == JsonToken.BEGIN_ARRAY) {
+    JsonToken peek = reader.peek();
+    if (peek == JsonToken.BEGIN_ARRAY) {
       readArrayContent();
     } else {
       reader.beginObject();
