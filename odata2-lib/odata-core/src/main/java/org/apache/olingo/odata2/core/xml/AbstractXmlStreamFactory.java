@@ -42,14 +42,14 @@ public abstract class AbstractXmlStreamFactory implements XMLStreamWriterFactory
     return this;
   }
 
-  protected void applyProperties(XMLStreamReaderFactory factory, Map<String, Object> readProperties) {
-    for (Map.Entry<String, Object> name2Value : readProperties.entrySet()) {
+  protected void applyProperties(XMLStreamReaderFactory factory, Map<String, Object> properties) {
+    for (Map.Entry<String, Object> name2Value : properties.entrySet()) {
       factory.setReadProperty(name2Value.getKey(), name2Value.getValue());
     }
   }
 
-  protected void applyProperties(XMLStreamWriterFactory factory, Map<String, Object> readProperties) {
-    for (Map.Entry<String, Object> name2Value : readProperties.entrySet()) {
+  protected void applyProperties(XMLStreamWriterFactory factory, Map<String, Object> properties) {
+    for (Map.Entry<String, Object> name2Value : properties.entrySet()) {
       factory.setWriteProperty(name2Value.getKey(), name2Value.getValue());
     }
   }

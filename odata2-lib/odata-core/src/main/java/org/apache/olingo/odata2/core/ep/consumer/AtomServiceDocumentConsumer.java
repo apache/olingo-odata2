@@ -77,7 +77,7 @@ public class AtomServiceDocumentConsumer {
     }
   }
 
-  private CommonAttributesImpl parseCommonAttribute(final XMLStreamReader reader) {
+  private CommonAttributesImpl parseCommonAttribute(final XMLStreamReader reader) throws XMLStreamException {
     CommonAttributesImpl attribute = new CommonAttributesImpl();
     List<ExtensionAttribute> extAttributes = new ArrayList<ExtensionAttribute>();
     attribute.setBase(reader.getAttributeValue(null, FormatXml.XML_BASE));
@@ -277,7 +277,7 @@ public class AtomServiceDocumentConsumer {
     return extElement;
   }
 
-  private List<ExtensionAttribute> parseAttribute(final XMLStreamReader reader) {
+  private List<ExtensionAttribute> parseAttribute(final XMLStreamReader reader) throws XMLStreamException {
     List<ExtensionAttribute> extAttributes = new ArrayList<ExtensionAttribute>();
     for (int i = 0; i < reader.getAttributeCount(); i++) {
       {

@@ -18,16 +18,11 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.xml;
 
-import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.xml.XMLStreamException;
 import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
-import org.apache.olingo.odata2.api.xml.XMLStreamWriterFactory;
-
-import javax.xml.stream.XMLOutputFactory;
-import java.io.OutputStream;
-import java.io.Writer;
 
 /**
+ * Wrapper for a Java Stax XMLStreamWriter.
  */
 public class JavaxStaxWriterWrapper implements XMLStreamWriter {
   private final javax.xml.stream.XMLStreamWriter xmlStreamWriter;
@@ -53,9 +48,9 @@ public class JavaxStaxWriterWrapper implements XMLStreamWriter {
 
   }
 
-  public void setDefaultNamespace(String defaultNamespace) throws XMLStreamException {
+  public void setDefaultNamespace(String uri) throws XMLStreamException {
     try {
-      xmlStreamWriter.setDefaultNamespace(defaultNamespace);
+      xmlStreamWriter.setDefaultNamespace(uri);
     } catch (javax.xml.stream.XMLStreamException e) {
       throw new XMLStreamException(e);
     }
@@ -162,9 +157,9 @@ public class JavaxStaxWriterWrapper implements XMLStreamWriter {
   }
 
   @Override
-  public void writeAttribute(String namespaceUdi, String localName, String value) throws XMLStreamException {
+  public void writeAttribute(String namespaceUri, String localName, String value) throws XMLStreamException {
     try {
-      xmlStreamWriter.writeAttribute(namespaceUdi, localName, value);
+      xmlStreamWriter.writeAttribute(namespaceUri, localName, value);
     } catch (javax.xml.stream.XMLStreamException e) {
       throw new XMLStreamException(e);
     }

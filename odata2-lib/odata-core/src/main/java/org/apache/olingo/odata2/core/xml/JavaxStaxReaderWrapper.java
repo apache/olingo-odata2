@@ -18,11 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.xml;
 
-import org.apache.olingo.odata2.api.ep.EntityProviderException;
-import org.apache.olingo.odata2.api.xml.*;
-
-import javax.xml.stream.XMLInputFactory;
-import java.io.InputStream;
+import org.apache.olingo.odata2.api.xml.NamespaceContext;
+import org.apache.olingo.odata2.api.xml.QName;
+import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.xml.XMLStreamReader;
 
 /**
  */

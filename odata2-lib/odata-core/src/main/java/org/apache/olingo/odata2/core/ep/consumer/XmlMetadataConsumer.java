@@ -769,7 +769,8 @@ public class XmlMetadataConsumer {
     }
   }
 
-  private CustomizableFeedMappings readCustomizableFeedMappings(final XMLStreamReader reader) {
+  private CustomizableFeedMappings readCustomizableFeedMappings(final XMLStreamReader reader)
+          throws XMLStreamException {
     String targetPath = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_TARGET_PATH);
     String sourcePath = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_SOURCE_PATH);
     String nsUri = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, XmlMetadataConstants.M_FC_NS_URI);
@@ -882,7 +883,7 @@ public class XmlMetadataConsumer {
     return aElement;
   }
 
-  private List<AnnotationAttribute> readAnnotationAttribute(final XMLStreamReader reader) {
+  private List<AnnotationAttribute> readAnnotationAttribute(final XMLStreamReader reader) throws XMLStreamException {
     List<AnnotationAttribute> annotationAttributes = new ArrayList<AnnotationAttribute>();
     for (int i = 0; i < reader.getAttributeCount(); i++) {
       String attributeNamespace = reader.getAttributeNamespace(i);
@@ -920,7 +921,7 @@ public class XmlMetadataConsumer {
     }
   }
 
-  private void extractNamespaces(final XMLStreamReader reader) throws EntityProviderException {
+  private void extractNamespaces(final XMLStreamReader reader) throws EntityProviderException, XMLStreamException {
     int namespaceCount = reader.getNamespaceCount();
     for (int i = 0; i < namespaceCount; i++) {
       String namespacePrefix = reader.getNamespacePrefix(i);

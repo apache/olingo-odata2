@@ -181,7 +181,7 @@ public class XmlFeedConsumer {
     }
   }
 
-  private boolean isFeedEndTag(final XMLStreamReader reader) {
+  private boolean isFeedEndTag(final XMLStreamReader reader) throws XMLStreamException {
     return reader.isEndElement()
         && Edm.NAMESPACE_ATOM_2005.equals(reader.getNamespaceURI())
         && FormatXml.ATOM_FEED.equals(reader.getLocalName());
@@ -193,7 +193,7 @@ public class XmlFeedConsumer {
    * @param reader xml reader with current position at a xml tag
    * @return map with all found namespaces of current xml tag
    */
-  private Map<String, String> extractNamespacesFromTag(final XMLStreamReader reader) {
+  private Map<String, String> extractNamespacesFromTag(final XMLStreamReader reader) throws XMLStreamException {
     // collect namespaces
     Map<String, String> foundPrefix2NamespaceUri = new HashMap<String, String>();
     int namespaceCount = reader.getNamespaceCount();

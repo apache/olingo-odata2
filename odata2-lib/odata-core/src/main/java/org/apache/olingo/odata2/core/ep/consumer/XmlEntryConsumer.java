@@ -95,7 +95,7 @@ public class XmlEntryConsumer {
     }
   }
 
-  private boolean isEntryEndTag(final XMLStreamReader reader) {
+  private boolean isEntryEndTag(final XMLStreamReader reader) throws XMLStreamException {
     return reader.isEndElement()
         && Edm.NAMESPACE_ATOM_2005.equals(reader.getNamespaceURI())
         && FormatXml.ATOM_ENTRY.equals(reader.getLocalName());
@@ -388,7 +388,6 @@ public class XmlEntryConsumer {
    * @param navigationProperty
    * @param callback
    * @param isFeed
-   * @param entry
    * @throws EntityProviderException
    */
   private void doCallback(final EntityProviderReadProperties readProperties,
@@ -629,7 +628,8 @@ public class XmlEntryConsumer {
    * @throws EntityProviderException If no namespace uri definition is found for namespace prefix of property
    * (<code>tag</code>).
    */
-  private boolean isEdmNamespaceProperty(final XMLStreamReader reader) throws EntityProviderException {
+  private boolean isEdmNamespaceProperty(final XMLStreamReader reader)
+          throws EntityProviderException, XMLStreamException {
     final String nsUri = reader.getNamespaceURI();
     if (nsUri == null) {
       throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(reader.getLocalName()));

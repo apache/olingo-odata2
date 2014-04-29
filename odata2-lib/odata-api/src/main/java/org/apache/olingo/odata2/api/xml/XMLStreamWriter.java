@@ -23,36 +23,35 @@ package org.apache.olingo.odata2.api.xml;
  */
 public interface XMLStreamWriter {
 
-  public abstract void writeStartDocument() throws XMLStreamException;
+  void writeStartDocument() throws XMLStreamException;
 
-  public abstract void setPrefix(String prefixEdmx, String namespaceEdmx200706) throws XMLStreamException;
+  void setPrefix(String prefix, String uri) throws XMLStreamException;
 
-  public abstract void setDefaultNamespace(String defaultNamespace) throws XMLStreamException;
+  void setDefaultNamespace(String uri) throws XMLStreamException;
 
-  public abstract void writeStartElement(String namespaceEdmx200706, String edmx) throws XMLStreamException;
+  void writeAttribute(String localName, String value) throws XMLStreamException;
 
-  public abstract void writeAttribute(String name, String value) throws XMLStreamException;
+  void writeAttribute(String namespaceURI, String localName, String value) throws XMLStreamException;
 
-  public abstract void writeAttribute(String prefix, String namespace, String name, String
-          value) throws XMLStreamException;
+  void writeAttribute(String prefix, String namespaceURI, String localName, String value) throws XMLStreamException;
 
-  public abstract void writeNamespace(String prefix, String namespace) throws XMLStreamException;
+  void writeDefaultNamespace(String namespaceURI) throws XMLStreamException;
 
-  public abstract void writeStartElement(String name) throws XMLStreamException;
+  void writeNamespace(String prefix, String namespaceURI) throws XMLStreamException;
 
-  public abstract void writeDefaultNamespace(String namespace) throws XMLStreamException;
+  void writeStartElement(String localName) throws XMLStreamException;
 
-  public abstract void writeEndElement() throws XMLStreamException;
+  void writeStartElement(String namespaceURI, String localName) throws XMLStreamException;
 
-  public abstract void writeEndDocument() throws XMLStreamException;
+  void writeStartElement(String prefix, String localName, String namespaceURI) throws XMLStreamException;
 
-  public abstract void flush() throws XMLStreamException;
+  void writeStartDocument(String encoding, String version) throws XMLStreamException;
 
-  public abstract void writeCharacters(String text) throws XMLStreamException;
+  void writeEndElement() throws XMLStreamException;
 
-  public abstract void writeStartElement(String prefix, String name, String namespace) throws XMLStreamException;
+  void writeEndDocument() throws XMLStreamException;
 
-  void writeStartDocument(String defaultCharset, String xmlVersion) throws XMLStreamException;
+  void writeCharacters(String text) throws XMLStreamException;
 
-  void writeAttribute(String namespaceM200708, String mEtag, String etag) throws XMLStreamException;
+  void flush() throws XMLStreamException;
 }
