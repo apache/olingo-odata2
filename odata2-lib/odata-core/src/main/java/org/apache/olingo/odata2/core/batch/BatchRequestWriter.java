@@ -38,6 +38,8 @@ public class BatchRequestWriter {
   private static final String COLON = ":";
   private static final String SP = " ";
   private static final String LF = "\r\n";
+  public static final String BOUNDARY_PREAMBLE = "changeset";
+  public static final String HTTP_1_1 = "HTTP/1.1";
   private String batchBoundary;
   private StringBuilder writer = new StringBuilder();
 
@@ -48,7 +50,7 @@ public class BatchRequestWriter {
       throw new IllegalArgumentException();
     }
     for (BatchPart batchPart : batchParts) {
-      writer.append("--" + boundary).append(LF);
+      writer.append("--").append(boundary).append(LF);
       if (batchPart instanceof BatchChangeSet) {
         appendChangeSet((BatchChangeSet) batchPart);
       } else if (batchPart instanceof BatchQueryPart) {
@@ -64,9 +66,9 @@ public class BatchRequestWriter {
   }
 
   private void appendChangeSet(final BatchChangeSet batchChangeSet) {
-    String boundary = BatchHelper.generateBoundary("changeset");
+    String boundary = BatchHelper.generateBoundary(BOUNDARY_PREAMBLE);
     while (boundary.equals(batchBoundary) || !boundary.matches(REG_EX_BOUNDARY)) {
-      boundary = BatchHelper.generateBoundary("changeset");
+      boundary = BatchHelper.generateBoundary(BOUNDARY_PREAMBLE);
     }
     writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(
         HttpContentType.MULTIPART_MIXED + "; boundary=" + boundary).append(LF);
@@ -83,7 +85,8 @@ public class BatchRequestWriter {
     boolean isContentLengthPresent = false;
     writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(HttpContentType.APPLICATION_HTTP)
         .append(LF);
-    writer.append(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING).append(COLON).append(SP).append("binary").append(LF);
+    writer.append(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING).append(COLON).append(SP)
+            .append(BatchHelper.BINARY_ENCODING).append(LF);
     if (contentId != null) {
       writer.append(BatchHelper.HTTP_CONTENT_ID).append(COLON).append(SP).append(contentId).append(LF);
     }
@@ -92,7 +95,7 @@ public class BatchRequestWriter {
       isContentLengthPresent = true;
     }
     writer.append(LF);
-    writer.append(method).append(SP).append(uri).append(SP).append("HTTP/1.1");
+    writer.append(method).append(SP).append(uri).append(SP).append(HTTP_1_1);
     writer.append(LF);
 
     if (!isContentLengthPresent && body != null && !body.isEmpty()) {
