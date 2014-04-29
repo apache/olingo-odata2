@@ -26,21 +26,21 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 public class ODataJPAServiceFactoryMock extends ODataJPAServiceFactory {
   private ODataContext context = null;
 
-  public ODataJPAServiceFactoryMock(ODataContext context) {
+  public ODataJPAServiceFactoryMock(final ODataContext context) {
     this.context = context;
   }
 
   @Override
   public ODataJPAContext initializeODataJPAContext() throws ODataJPARuntimeException {
     ODataJPAContext oDataJPAContext = null;
-    oDataJPAContext = ODataJPAContextMock.mockODataJPAContext(this.context);
+    oDataJPAContext = ODataJPAContextMock.mockODataJPAContext(context);
     setOnWriteJPAContent(new OnJPAWriteContentMock());
     return oDataJPAContext;
   }
 
   public ODataJPAContext initializeODataJPAContextX() throws ODataJPARuntimeException {
     ODataJPAContext oDataJPAContext = null;
-    oDataJPAContext = ODataJPAContextMock.mockODataJPAContext(this.context);
+    oDataJPAContext = ODataJPAContextMock.mockODataJPAContext(context);
     setOnWriteJPAContent(null);
     return oDataJPAContext;
   }

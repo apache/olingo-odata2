@@ -718,6 +718,36 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
   }
 
   @Test
+  public void additionalLink() throws Exception {
+    Map<String, Map<String, Object>> links = new HashMap<String, Map<String, Object>>();
+    links.put("nr_Building", buildingData);
+    final ODataResponse response = createAtomEntityProvider().writeEntry(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).additionalLinks(links).build());
+    final String xmlString = verifyResponse(response);
+
+    assertXpathExists("/a:entry/a:link[@title='nr_Building']", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@href=\"Rooms('1')/nr_Building\"]", xmlString);
+    assertXpathExists("/a:entry/a:link[@href=\"Buildings('1')\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@type='application/atom+xml;type=entry']", xmlString);
+  }
+
+  @Test
+  public void additionalLinkToOneOfMany() throws Exception {
+    Map<String, Map<String, Object>> links = new HashMap<String, Map<String, Object>>();
+    links.put("nr_Employees", employeeData);
+    final ODataResponse response = createAtomEntityProvider().writeEntry(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).additionalLinks(links).build());
+    final String xmlString = verifyResponse(response);
+
+    assertXpathExists("/a:entry/a:link[@title='nr_Employees']", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@href=\"Rooms('1')/nr_Employees\"]", xmlString);
+    assertXpathExists("/a:entry/a:link[@href=\"Employees('1')\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@type='application/atom+xml;type=feed']", xmlString);
+  }
+
+  @Test
   public void serializeWithCustomSrcAttributeOnEmployee() throws Exception {
     AtomEntityProvider ser = createAtomEntityProvider();
     Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);

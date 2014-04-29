@@ -258,7 +258,7 @@ public final class JPAEntityParser {
     return propertyValue;
   }
 
-  public static String getString(Clob clob) throws ODataJPARuntimeException {
+  public static String getString(final Clob clob) throws ODataJPARuntimeException {
     try {
       Reader stringReader = clob.getCharacterStream();
       StringWriter buffer = null;
@@ -305,7 +305,7 @@ public final class JPAEntityParser {
 
   }
 
-  public static byte[] getBytes(Blob blob) throws ODataJPARuntimeException {
+  public static byte[] getBytes(final Blob blob) throws ODataJPARuntimeException {
     try {
       InputStream is = null;
       ByteArrayOutputStream buffer = null;

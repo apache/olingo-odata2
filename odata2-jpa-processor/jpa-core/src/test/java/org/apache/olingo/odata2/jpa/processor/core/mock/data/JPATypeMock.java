@@ -60,7 +60,7 @@ public class JPATypeMock {
     return mClob;
   }
 
-  public void setMClob(Clob mClob) {
+  public void setMClob(final Clob mClob) {
     this.mClob = mClob;
   }
 
@@ -68,7 +68,7 @@ public class JPATypeMock {
     return mC;
   }
 
-  public void setMC(char mC) {
+  public void setMC(final char mC) {
     this.mC = mC;
   }
 
@@ -76,7 +76,7 @@ public class JPATypeMock {
     return mCArray;
   }
 
-  public void setMCArray(char[] mCArray) {
+  public void setMCArray(final char[] mCArray) {
     this.mCArray = mCArray;
   }
 
@@ -84,7 +84,7 @@ public class JPATypeMock {
     return mChar;
   }
 
-  public void setMChar(Character mChar) {
+  public void setMChar(final Character mChar) {
     this.mChar = mChar;
   }
 
@@ -92,7 +92,7 @@ public class JPATypeMock {
     return mCharArray;
   }
 
-  public void setMCharArray(Character[] mCharArray) {
+  public void setMCharArray(final Character[] mCharArray) {
     this.mCharArray = mCharArray;
   }
 
@@ -159,7 +159,7 @@ public class JPATypeMock {
     return mBlob;
   }
 
-  public void setMBlob(Blob mBlob) {
+  public void setMBlob(final Blob mBlob) {
     this.mBlob = mBlob;
   }
 

@@ -33,7 +33,7 @@ import org.hsqldb.jdbc.JDBCBlob;
 public class BlobToByteConverter implements AttributeConverter<Blob, byte[]> {
 
   @Override
-  public byte[] convertToDatabaseColumn(Blob arg0) {
+  public byte[] convertToDatabaseColumn(final Blob arg0) {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     InputStream is;
     try {
@@ -53,7 +53,7 @@ public class BlobToByteConverter implements AttributeConverter<Blob, byte[]> {
   }
 
   @Override
-  public Blob convertToEntityAttribute(byte[] arg0) {
+  public Blob convertToEntityAttribute(final byte[] arg0) {
     try {
       return new JDBCBlob(arg0);
     } catch (SQLException e) {

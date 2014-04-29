@@ -32,7 +32,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 public class OnJPAWriteContentMock implements OnJPAWriteContent {
 
   @Override
-  public Blob getJPABlob(byte[] binaryData) throws ODataJPARuntimeException {
+  public Blob getJPABlob(final byte[] binaryData) throws ODataJPARuntimeException {
     try {
       return new SerialBlob(binaryData);
     } catch (SerialException e) {
@@ -44,7 +44,7 @@ public class OnJPAWriteContentMock implements OnJPAWriteContent {
   }
 
   @Override
-  public Clob getJPAClob(char[] characterData) throws ODataJPARuntimeException {
+  public Clob getJPAClob(final char[] characterData) throws ODataJPARuntimeException {
     try {
       return new SerialClob(characterData);
     } catch (SerialException e) {

@@ -21,10 +21,18 @@ package org.apache.olingo.odata2.fit.ref;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
@@ -74,10 +82,24 @@ public class EntryJsonChangeTest extends AbstractRefTest {
 
   @Test
   public void createEntryWithLink() throws Exception {
-    final String requestBody = "{\"Id\":\"99\",\"Name\":\"new room\",\"Seats\":19,\"Version\":42,"
-        + "\"nr_Building\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Buildings('1')\"}}}";
-    final HttpResponse response =
-        postUri("Rooms()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
+    HttpResponse response = callUri("$metadata");
+    final EdmEntitySet linkedEntitySet = EntityProvider.readMetadata(response.getEntity().getContent(), false)
+        .getDefaultEntityContainer().getEntitySet("Rooms");
+    getBody(response);
+    Map<String, Object> data = new HashMap<String, Object>();
+    data.put("Id", "99");
+    data.put("Name", "new room");
+    data.put("Seats", 19);
+    data.put("Version", 42);
+    Map<String, Object> key = new HashMap<String, Object>();
+    key.put("Id", "1");
+    Map<String, Map<String, Object>> links = new HashMap<String, Map<String, Object>>();
+    links.put("nr_Building", key);
+    final String requestBody = StringHelper.inputStreamToString(
+        (InputStream) EntityProvider.writeEntry(HttpContentType.APPLICATION_JSON, linkedEntitySet, data,
+            EntityProviderWriteProperties.serviceRoot(getEndpoint()).additionalLinks(links).build())
+            .getEntity());
+    response = postUri("Rooms()", requestBody, HttpContentType.APPLICATION_JSON, HttpStatusCodes.CREATED);
     assertFalse(getBody(response).isEmpty());
     checkUri("Rooms('104')/nr_Building?$format=json");
     assertEquals("{\"d\":{\"Name\":\"Building 1\"}}", getBody(callUri("Rooms('104')/nr_Building/Name?$format=json")));

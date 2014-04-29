@@ -74,7 +74,7 @@ public class Material {
     return materialImage;
   }
 
-  public void setMaterialImage(Blob materialImage) {
+  public void setMaterialImage(final Blob materialImage) {
     this.materialImage = materialImage;
   }
 
