@@ -136,6 +136,6 @@ public class BatchResponseTest {
     StringHelper.Stream content = StringHelper.toStream(body);
     List<BatchSingleResponse> result = parser.parse(content.asStream());
     assertEquals(2, result.size());
-    assertEquals("Failing content:\n" + content.asString(), 19, content.countCrLf());
+    assertEquals("Failing content:\n" + content.asString(), 20, content.linesCount());
   }
 }

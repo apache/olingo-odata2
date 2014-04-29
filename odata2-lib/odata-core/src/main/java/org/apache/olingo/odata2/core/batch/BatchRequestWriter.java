@@ -57,7 +57,7 @@ public class BatchRequestWriter {
             request.getContentId());
       }
     }
-    writer.append("--").append(boundary).append("--").append(LF).append(LF);
+    writer.append(LF).append("--").append(boundary).append("--");
     InputStream batchRequestBody;
     batchRequestBody = new ByteArrayInputStream(BatchHelper.getBytes(writer.toString()));
     return batchRequestBody;
@@ -69,13 +69,13 @@ public class BatchRequestWriter {
       boundary = BatchHelper.generateBoundary("changeset");
     }
     writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(
-        HttpContentType.MULTIPART_MIXED + "; boundary=" + boundary).append(LF).append(LF);
+        HttpContentType.MULTIPART_MIXED + "; boundary=" + boundary).append(LF);
     for (BatchChangeSetPart request : batchChangeSet.getChangeSetParts()) {
-      writer.append("--").append(boundary).append(LF);
+      writer.append(LF).append("--").append(boundary).append(LF);
       appendRequestBodyPart(request.getMethod(), request.getUri(), request.getBody(), request.getHeaders(), request
           .getContentId());
     }
-    writer.append("--").append(boundary).append("--").append(LF).append(LF);
+    writer.append(LF).append("--").append(boundary).append("--").append(LF);
   }
 
   private void appendRequestBodyPart(final String method, final String uri, final String body,
@@ -98,7 +98,6 @@ public class BatchRequestWriter {
     if (!isContentLengthPresent && body != null && !body.isEmpty()) {
       writer.append(HttpHeaders.CONTENT_LENGTH).append(COLON).append(SP).append(BatchHelper.getBytes(body).length)
           .append(LF);
-
     }
     appendHeader(headers);
 
@@ -106,14 +105,12 @@ public class BatchRequestWriter {
       writer.append(LF);
       writer.append(body);
     }
-    writer.append(LF).append(LF);
   }
 
   private void appendHeader(final Map<String, String> headers) {
     for (Map.Entry<String, String> headerMap : headers.entrySet()) {
       String name = headerMap.getKey();
       writer.append(name).append(COLON).append(SP).append(headerMap.getValue()).append(LF);
-
     }
   }
 

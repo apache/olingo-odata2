@@ -67,7 +67,7 @@ public class BatchRequestWriterTest {
     assertTrue(requestBody.contains("--batch_"));
     assertTrue(requestBody.contains("GET Employees HTTP/1.1"));
     checkHeaders(headers, requestBody);
-    assertEquals(10, StringHelper.countLines(requestBody));
+    assertEquals(8, StringHelper.countLines(requestBody));
   }
 
   @Test

@@ -67,7 +67,14 @@ public class StringHelper {
       return print(System.out);
     }
 
-    public int countCrLf() {
+    /**
+     * Number of lines separated by line breaks (<code>CRLF</code>).
+     * A content string like <code>text\r\nmoreText</code> will result in
+     * a line count of <code>2</code>.
+     *
+     * @return lines count
+     */
+    public int linesCount() {
       return StringHelper.countLines(asString(), "\r\n");
     }
   }
@@ -120,14 +127,17 @@ public class StringHelper {
   }
 
   public static int countLines(String content, String lineBreak) {
-    int lastPos = 0;
-    int count = -1;
+    if(content == null) {
+      return -1;
+    }
+
+    int lastPos = content.indexOf(lineBreak);
+    int count = 1;
 
     while (lastPos >= 0) {
       lastPos = content.indexOf(lineBreak, lastPos+1);
       count++;
     }
-
     return count;
   }
 

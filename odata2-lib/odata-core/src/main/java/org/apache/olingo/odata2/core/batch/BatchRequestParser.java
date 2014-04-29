@@ -155,13 +155,12 @@ public class BatchRequestParser {
 
   private BatchRequestPart parseMultipart(final Scanner scanner, final String boundary, final boolean isChangeSet)
       throws BatchException {
-    Map<String, String> mimeHeaders = new HashMap<String, String>();
-    BatchRequestPart multipart = null;
     List<ODataRequest> requests = new ArrayList<ODataRequest>();
+    BatchRequestPart multipart;
     if (scanner.hasNext("--" + boundary + REG_EX_ZERO_OR_MORE_WHITESPACES)) {
       scanner.next();
       currentLineNumber++;
-      mimeHeaders = parseHeaders(scanner);
+      Map<String, String> mimeHeaders = parseHeaders(scanner);
       currentMimeHeaderContentId = mimeHeaders.get(BatchHelper.HTTP_CONTENT_ID.toLowerCase(Locale.ENGLISH));
 
       String contentType = mimeHeaders.get(HttpHeaders.CONTENT_TYPE.toLowerCase(Locale.ENGLISH));
@@ -173,7 +172,7 @@ public class BatchRequestParser {
           validateEncoding(mimeHeaders.get(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING.toLowerCase(Locale.ENGLISH)));
           parseNewLine(scanner);// mandatory
 
-          requests.add(parseRequest(scanner, isChangeSet));
+          requests.add(parseRequest(scanner, true, boundary));
           multipart = new BatchRequestPartImpl(false, requests);
         } else {
           throw new BatchException(BatchException.INVALID_CONTENT_TYPE.addContent(HttpContentType.APPLICATION_HTTP));
@@ -182,7 +181,7 @@ public class BatchRequestParser {
         if (HttpContentType.APPLICATION_HTTP.equalsIgnoreCase(contentType)) {
           validateEncoding(mimeHeaders.get(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING.toLowerCase(Locale.ENGLISH)));
           parseNewLine(scanner);// mandatory
-          requests.add(parseRequest(scanner, isChangeSet));
+          requests.add(parseRequest(scanner, false, boundary));
           multipart = new BatchRequestPartImpl(false, requests);
         } else if (contentType.matches(REG_EX_OPTIONAL_WHITESPACE + HttpContentType.MULTIPART_MIXED + ANY_CHARACTERS)) {
           String changeSetBoundary = getBoundary(contentType);
@@ -220,7 +219,8 @@ public class BatchRequestParser {
 
   }
 
-  private ODataRequest parseRequest(final Scanner scanner, final boolean isChangeSet) throws BatchException {
+  private ODataRequest parseRequest(final Scanner scanner, final boolean isChangeSet, final String boundary)
+          throws BatchException {
     if (scanner.hasNext(REG_EX_REQUEST_LINE)) {
       scanner.next(REG_EX_REQUEST_LINE);
       currentLineNumber++;
@@ -245,7 +245,7 @@ public class BatchRequestParser {
         throw new BatchException(BatchException.INVALID_QUERY_OPERATION_METHOD.addContent(currentLineNumber));
       }
       ODataHttpMethod httpMethod = ODataHttpMethod.valueOf(method);
-      Map<String, List<String>> headers = parseRequestHeaders(scanner);
+      Map<String, List<String>> headers = parseRequestHeaders(scanner, boundary);
       if (currentMimeHeaderContentId != null) {
         List<String> headerList = new ArrayList<String>();
         headerList.add(currentMimeHeaderContentId);
@@ -255,12 +255,9 @@ public class BatchRequestParser {
       String contentType = getContentTypeHeader(headers);
       List<String> acceptHeaders = getAcceptHeader(headers);
       List<Locale> acceptLanguages = getAcceptLanguageHeader(headers);
-      parseNewLine(scanner);
       InputStream body = new ByteArrayInputStream(new byte[0]);
       if (isChangeSet) {
         body = parseBody(scanner);
-      } else {
-        parseNewLine(scanner);
       }
 
       ODataRequestBuilder requestBuilder = ODataRequest.method(httpMethod)
@@ -283,9 +280,12 @@ public class BatchRequestParser {
 
   }
 
-  private Map<String, List<String>> parseRequestHeaders(final Scanner scanner) throws BatchException {
+  private Map<String, List<String>> parseRequestHeaders(final Scanner scanner, final String boundary)
+          throws BatchException {
     Map<String, List<String>> headers = new HashMap<String, List<String>>();
-    while (scanner.hasNext() && !scanner.hasNext(REG_EX_BLANK_LINE)) {
+    while (scanner.hasNext()
+            && !scanner.hasNext(REG_EX_BLANK_LINE)
+            && !scanner.hasNext("--" + boundary + REG_EX_ZERO_OR_MORE_WHITESPACES)) {
       if (scanner.hasNext(REG_EX_HEADER)) {
         scanner.next(REG_EX_HEADER);
         currentLineNumber++;

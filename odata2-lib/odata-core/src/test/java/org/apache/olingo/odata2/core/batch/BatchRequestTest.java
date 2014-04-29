@@ -121,6 +121,7 @@ public class BatchRequestTest {
     assertTrue(requestBody.contains("--changeset_"));
     assertTrue(requestBody.contains("PUT Employees('2') HTTP/1.1"));
     assertTrue(requestBody.contains("{\"Возраст\":40}"));
+    assertEquals(16, batchRequestStream.linesCount());
 
     String contentType = "multipart/mixed; boundary=" + BOUNDARY;
     BatchRequestParser parser = new BatchRequestParser(contentType, parseProperties);
@@ -161,6 +162,7 @@ public class BatchRequestTest {
     assertTrue(requestBody.contains("GET Employees HTTP/1.1"));
     assertTrue(requestBody.contains("POST Employees HTTP/1.1"));
     assertTrue(requestBody.contains(body));
+    assertEquals(23, batchRequestStream.linesCount());
 
     String contentType = "multipart/mixed; boundary=" + BOUNDARY;
     BatchRequestParser parser = new BatchRequestParser(contentType, parseProperties);
