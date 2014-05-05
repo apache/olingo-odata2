@@ -1,3 +1,21 @@
+/*******************************************************************************
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ ******************************************************************************/
 package org.apache.olingo.odata2.android.xml;
 
 import java.io.IOException;
@@ -14,6 +32,9 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.util.Xml;
 
+/**
+ * Wrapper for XmlPullParser in Android SDK
+ */
 public class AndroidXmlReader implements XMLStreamReader {
 
   private final XmlPullParser parser;
@@ -79,8 +100,7 @@ public class AndroidXmlReader implements XMLStreamReader {
 
   @Override
   public String getAttributeValue(String namespaceURI, String localName) {
-    String attributeValue = parser.getAttributeValue(namespaceURI, localName);
-    return attributeValue;
+    return parser.getAttributeValue(namespaceURI, localName);
   }
 
   @Override
@@ -126,27 +146,23 @@ public class AndroidXmlReader implements XMLStreamReader {
       e.printStackTrace();
     }
     final String prefix = tmp;
-    // TODO Auto-generated method stub
-    NamespaceContext nctx = new NamespaceContext() {
+    return new NamespaceContext() {
       public String getPrefix(String index) {
         return prefix;
       }
     };
-    return nctx;
   }
 
   @Override
-  public int getNamespaceCount() {
+  public int getNamespaceCount() throws XMLStreamException {
     // FIXME
     try {
       int depth = parser.getDepth();
       int nsStart = parser.getNamespaceCount(depth-1);
       int nsEnd = parser.getNamespaceCount(depth);
-      int nsCount = nsEnd - nsStart;
-      return nsCount;
+      return nsEnd - nsStart;
     } catch (XmlPullParserException e) {
-      e.printStackTrace();
-      return -1;
+      throw new XMLStreamException("Got XmlPullParserException with message: " + e.getMessage(), e);
     }
   }
 
@@ -239,9 +255,9 @@ public class AndroidXmlReader implements XMLStreamReader {
   }
 
   @Override
-  public void next() throws XMLStreamException {
+  public int next() throws XMLStreamException {
     try {
-      parser.next();
+      return map2XmlStreamEventType(parser.next());
     } catch (XmlPullParserException e) {
       throw new XMLStreamException("Got XmlPullParserException with message: " + e.getMessage(), e);
     } catch (IOException e) {
@@ -252,7 +268,7 @@ public class AndroidXmlReader implements XMLStreamReader {
   @Override
   public int nextTag() throws XMLStreamException {
     try {
-      return parser.nextTag();
+      return map2XmlStreamEventType(parser.nextTag());
     } catch (XmlPullParserException e) {
       throw new XMLStreamException("Got XmlPullParserException with message: " + e.getMessage(), e);
     } catch (IOException e) {
@@ -263,7 +279,7 @@ public class AndroidXmlReader implements XMLStreamReader {
   @Override
   public void require(int eventType, String namespace, String tag) throws XMLStreamException {
     try {
-      int xmlPullEventType = mapEventType(eventType);
+      int xmlPullEventType = map2AndroidEventType(eventType);
       parser.require(xmlPullEventType, namespace, tag);
     } catch (XmlPullParserException e) {
       throw new XMLStreamException("Got XmlPullParserException with message: " + e.getMessage(), e);
@@ -272,13 +288,27 @@ public class AndroidXmlReader implements XMLStreamReader {
     }
   }
 
-  private int mapEventType(int eventType) {
+  private int map2AndroidEventType(int eventType) {
     switch (eventType) {
       case XMLStreamConstants.START_ELEMENT: return XmlPullParser.START_TAG;
       case XMLStreamConstants.END_ELEMENT: return XmlPullParser.END_TAG;
       case XMLStreamConstants.START_DOCUMENT: return XmlPullParser.START_DOCUMENT;
       case XMLStreamConstants.END_DOCUMENT: return XmlPullParser.END_DOCUMENT;
       case XMLStreamConstants.DTD: return XmlPullParser.DOCDECL;
+      default:
+        throw new IllegalArgumentException("Unknown event type ('" +
+                eventType + "') for mapping.");
+    }
+  }
+
+  private int map2XmlStreamEventType(int eventType) {
+    switch (eventType) {
+      case XmlPullParser.TEXT: return XMLStreamConstants.CHARACTERS;
+      case XmlPullParser.START_TAG: return XMLStreamConstants.START_ELEMENT;
+      case XmlPullParser.END_TAG: return XMLStreamConstants.END_ELEMENT;
+      case XmlPullParser.START_DOCUMENT: return XMLStreamConstants.START_DOCUMENT;
+      case XmlPullParser.END_DOCUMENT: return XMLStreamConstants.END_DOCUMENT;
+      case XmlPullParser.DOCDECL: return XMLStreamConstants.DTD;
       default:
         throw new IllegalArgumentException("Unknown event type ('" +
                 eventType + "') for mapping.");

@@ -79,6 +79,16 @@ public class StringHelper {
     }
   }
 
+  public static Stream toStream(Object content) throws IOException {
+    if(content instanceof InputStream) {
+      return toStream((InputStream) content);
+    } else if(content instanceof String) {
+      return toStream((String) content);
+    } else {
+      throw new IllegalArgumentException("Given object type is not supported.");
+    }
+  }
+
   public static Stream toStream(InputStream stream) throws IOException {
     byte[] result = new byte[0];
     byte[] tmp = new byte[8192];

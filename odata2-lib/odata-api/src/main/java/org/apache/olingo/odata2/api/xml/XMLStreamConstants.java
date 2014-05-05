@@ -25,7 +25,7 @@ public interface XMLStreamConstants {
   int START_ELEMENT = 1;
   int END_ELEMENT = 2;
 //  int PROCESSING_INSTRUCTION = 3;
-//  int CHARACTERS = 4;
+  int CHARACTERS = 4;
 //  int COMMENT = 5;
 //  int SPACE = 6;
   int START_DOCUMENT = 7;

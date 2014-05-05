@@ -43,7 +43,7 @@ public interface XMLStreamReader {
 
   public abstract  boolean isStartElement() throws XMLStreamException;
 
-  public abstract void next() throws XMLStreamException;
+  public abstract int next() throws XMLStreamException;
 
   public abstract boolean isEndElement() throws XMLStreamException;
 

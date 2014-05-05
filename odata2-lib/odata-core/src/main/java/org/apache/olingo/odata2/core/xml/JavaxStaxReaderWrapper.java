@@ -90,9 +90,9 @@ public class JavaxStaxReaderWrapper implements XMLStreamReader {
     return reader.isStartElement();
   }
 
-  public void next() throws XMLStreamException {
+  public int next() throws XMLStreamException {
     try {
-      reader.next();
+      return reader.next();
     } catch (javax.xml.stream.XMLStreamException e) {
       throw  new XMLStreamException(e);
     }

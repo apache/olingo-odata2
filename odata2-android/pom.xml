@@ -34,6 +34,7 @@
 
 <properties>
   <version.android>4.1.1.4</version.android>
+  <version.robolectric>2.2</version.robolectric>
 </properties>
 
   <build>
@@ -94,6 +95,28 @@
       <groupId>org.apache.olingo</groupId>
       <artifactId>olingo-odata2-core</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.olingo</groupId>
+      <artifactId>olingo-odata2-testutil</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.robolectric</groupId>
+      <artifactId>robolectric</artifactId>
+      <version>${version.robolectric}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
