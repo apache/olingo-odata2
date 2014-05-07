@@ -108,7 +108,6 @@ public class AndroidXmlWriterTest {
     StringHelper.Stream content = StringHelper.toStream(entry.getEntity());
 
     String xmlString = content.asString();
-    System.out.println(xmlString);
 
     assertXpathEvaluatesTo(Edm.NAMESPACE_ATOM_2005, "/*/namespace::*[name()='']", xmlString);
 

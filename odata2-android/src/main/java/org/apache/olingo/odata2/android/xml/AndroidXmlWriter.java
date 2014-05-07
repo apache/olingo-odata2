@@ -25,7 +25,6 @@ import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Map;
 import java.util.Stack;
@@ -38,8 +37,7 @@ public class AndroidXmlWriter implements XMLStreamWriter {
   private static final String DEFAULT_VERSION = "1.0";
 
   private final XmlSerializer serializer;
-  private final Stack<String> tags;
-  private final Stack<String> namespaces;
+  private final Stack<TagHandle> tagStack;
 
   private String defaultNamespace = null;
 
@@ -49,8 +47,7 @@ public class AndroidXmlWriter implements XMLStreamWriter {
 
   public AndroidXmlWriter(Object output, String encoding) throws XMLStreamException {
     serializer = Xml.newSerializer();
-    tags = new Stack<String>();
-    namespaces = new Stack<String>();
+    tagStack = new Stack<TagHandle>();
 
     try {
       if (output instanceof OutputStream) {
@@ -74,10 +71,6 @@ public class AndroidXmlWriter implements XMLStreamWriter {
 
   private void wrapAndReThrow(String message, Exception e) throws XMLStreamException {
     throw new XMLStreamException(message, e);
-  }
-
-  private String nextTagToClose() {
-    return tags.pop();
   }
 
   public AndroidXmlWriter setProperties(Map<String, Object> properties) throws XMLStreamException {
@@ -154,7 +147,15 @@ public class AndroidXmlWriter implements XMLStreamWriter {
   public void writeAttribute(String prefix, String namespaceURI, String localName, String value)
           throws XMLStreamException {
     try {
-      writeCurrentTag();
+      if(prefix != null && serializer.getPrefix(namespaceURI, false) == null) {
+        setPrefix(prefix, namespaceURI);
+      }
+      ensureTagWritten();
+      if(namespaceURI != null
+              && namespaceURI.equals(serializer.getNamespace())
+              && namespaceURI.equals(defaultNamespace)) {
+        namespaceURI = null;
+      }
       serializer.attribute(namespaceURI, localName, value);
     } catch (Exception e) {
       wrapAndReThrow(e);
@@ -185,18 +186,22 @@ public class AndroidXmlWriter implements XMLStreamWriter {
   }
 
   private String nextNamespaceUriToWrite() {
-    return nextNamespaceUriToWrite(true);
-  }
-
-  private String nextNamespaceUriToWrite(boolean keep) {
-    if(namespaces.isEmpty()) {
-      return defaultNamespace;
+    if(tagStack.isEmpty()) {
+      return null;
     }
-    if(keep) {
-      return namespaces.peek();
-    }
-    return namespaces.pop();
+    TagHandle tag = tagStack.peek();
+    return tag.namespaceUri;
   }
+//
+//  private String nextNamespaceUriToWrite(boolean keep) {
+//    if(namespaces.isEmpty()) {
+//      return defaultNamespace;
+//    }
+//    if(keep) {
+//      return namespaces.peek();
+//    }
+//    return namespaces.pop();
+//  }
 
   @Override
   public void writeStartElement(String namespaceURI, String localName) throws XMLStreamException {
@@ -208,17 +213,11 @@ public class AndroidXmlWriter implements XMLStreamWriter {
     }
   }
 
-  TagHandle currentTag = null;
-
   @Override
   public void writeStartElement(String prefix, String localName, String namespaceURI) throws XMLStreamException {
     try {
-      writeCurrentTag();
-      //
-      tags.push(localName);
-      namespaces.push(namespaceURI);
-      //
-      currentTag = new TagHandle(localName, namespaceURI, prefix);
+      ensureTagWritten();
+      createTag(prefix, localName, namespaceURI);
     } catch (Exception e) {
       wrapAndReThrow(e);
     }
@@ -236,8 +235,8 @@ public class AndroidXmlWriter implements XMLStreamWriter {
   @Override
   public void writeEndElement() throws XMLStreamException {
     try {
-      writeCurrentTag();
-      serializer.endTag(nextNamespaceUriToWrite(false), nextTagToClose());
+      ensureTagWritten();
+      endTag();
     } catch (Exception e) {
       wrapAndReThrow(e);
     }
@@ -255,18 +254,42 @@ public class AndroidXmlWriter implements XMLStreamWriter {
   @Override
   public void writeCharacters(String text) throws XMLStreamException {
     try {
-      writeCurrentTag();
+      ensureTagWritten();
       serializer.text(text);
     } catch (Exception e) {
       wrapAndReThrow(e);
     }
   }
 
-  private void writeCurrentTag() throws XMLStreamException {
+  private void createTag(String prefix, String localName, String namespaceURI) {
+    if(namespaceURI == null) {
+      namespaceURI = defaultNamespace;
+    }
+    TagHandle tag = new TagHandle(localName, namespaceURI, prefix);
+    tagStack.push(tag);
+  }
+
+  private void ensureTagWritten() throws XMLStreamException {
     try {
-      if(currentTag != null) {
-        serializer.startTag(currentTag.namespaceUri, currentTag.name);
-        currentTag = null;
+      if(!tagStack.isEmpty()) {
+        TagHandle tag = tagStack.peek();
+        if(!tag.written) {
+          String uri = tag.namespaceUri == null? defaultNamespace: tag.namespaceUri;
+          serializer.startTag(uri, tag.name);
+          tag.written = true;
+        }
+      }
+    } catch (Exception e) {
+      wrapAndReThrow(e);
+    }
+  }
+
+  private void endTag() throws XMLStreamException {
+    try {
+      if(!tagStack.isEmpty()) {
+        TagHandle tag = tagStack.pop();
+        String uri = tag.namespaceUri == null? defaultNamespace: tag.namespaceUri;
+        serializer.endTag(uri, tag.name);
       }
     } catch (Exception e) {
       wrapAndReThrow(e);
@@ -277,11 +300,30 @@ public class AndroidXmlWriter implements XMLStreamWriter {
     final String name;
     final String namespaceUri;
     final String namespacePrefix;
+    boolean written = false;
 
     private TagHandle(String name, String namespaceUri, String namespacePrefix) {
       this.name = name;
       this.namespaceUri = namespaceUri;
       this.namespacePrefix = namespacePrefix;
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("<");
+      if(namespacePrefix != null) {
+        sb.append(namespacePrefix).append(":");
+      }
+      sb.append(name).append(" ");
+      if(namespaceUri != null) {
+        sb.append("xmlns=");
+        if(namespacePrefix != null) {
+          sb.append(namespacePrefix).append(":");
+        }
+        sb.append(namespaceUri);
+      }
+      sb.append(">");
+      return sb.toString();
     }
   }
 }
