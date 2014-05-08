@@ -18,30 +18,23 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
+import org.apache.olingo.odata2.api.ODataServiceVersion;
+import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
+import org.apache.olingo.odata2.api.edm.EdmServiceMetadata;
+import org.apache.olingo.odata2.api.edm.provider.*;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
+import org.apache.olingo.odata2.core.ep.producer.XmlMetadataProducer;
+import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
+import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.olingo.odata2.api.ODataServiceVersion;
-import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
-import org.apache.olingo.odata2.api.edm.EdmServiceMetadata;
-import org.apache.olingo.odata2.api.edm.provider.DataServices;
-import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
-import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
-import org.apache.olingo.odata2.api.edm.provider.EntitySet;
-import org.apache.olingo.odata2.api.edm.provider.EntityType;
-import org.apache.olingo.odata2.api.edm.provider.Property;
-import org.apache.olingo.odata2.api.edm.provider.Schema;
-import org.apache.olingo.odata2.api.ep.EntityProviderException;
-import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.core.ep.producer.XmlMetadataProducer;
-import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
-import org.apache.olingo.odata2.api.xml.XMLStreamException;
-import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
-import org.apache.olingo.odata2.core.xml.XmlStreamFactory;
 
 /**
  *  

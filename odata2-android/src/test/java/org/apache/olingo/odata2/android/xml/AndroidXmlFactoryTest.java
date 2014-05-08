@@ -24,7 +24,6 @@ import org.apache.olingo.odata2.api.xml.XMLStreamReader;
 import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -62,7 +61,7 @@ public class AndroidXmlFactoryTest {
 
 
   @Test
-  @Ignore("Will work with robolectric version 2.3")
+//  @Ignore("Will work with robolectric version 2.3")
   public void createReader() throws Exception {
     InputStream stream = StringHelper.encapsulate(BASIC_CONTENT);
     XMLStreamReader xmlReader = streamFactory.createXMLStreamReader(stream);

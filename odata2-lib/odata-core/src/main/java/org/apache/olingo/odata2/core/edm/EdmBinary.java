@@ -18,12 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
+import org.apache.olingo.odata2.core.commons.Base64;
+import org.apache.olingo.odata2.core.commons.Hex;
+
+import java.io.IOException;
 
 /**
  * Implementation of the EDM simple type Binary.
@@ -102,7 +103,7 @@ public class EdmBinary extends AbstractSimpleType {
     if (literalKind == EdmLiteralKind.URI) {
       try {
         result = Hex.decodeHex(value.substring(value.startsWith("X") ? 2 : 7, value.length() - 1).toCharArray());
-      } catch (final DecoderException e) {
+      } catch (final IOException e) {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value), e);
       }
     } else {

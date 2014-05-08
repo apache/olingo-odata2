@@ -20,10 +20,11 @@ package org.apache.olingo.odata2.core.uri.expression;
 
 import static org.junit.Assert.fail;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
+import org.apache.olingo.odata2.core.commons.Base64;
+import org.apache.olingo.odata2.core.commons.Hex;
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class TestTokenizer {
 
@@ -73,7 +74,7 @@ public class TestTokenizer {
     try {
       bArr = Hex.decodeHex(hex.toCharArray());
       base64 = Base64.encodeBase64String(bArr);
-    } catch (DecoderException e) {
+    } catch (IOException e) {
       fail("Error in Unittest preparation ( HEX->base64");
     }
     return base64;

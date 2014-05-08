@@ -30,7 +30,6 @@ import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -47,7 +46,7 @@ import static org.apache.olingo.odata2.api.xml.XMLStreamReaderFactory.XML_STREAM
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest=Config.NONE)
-@Ignore("Will work with robolectric version 2.3")
+//  @Ignore("Will work with robolectric version 2.3")
 public class AndroidXmlReaderTest {
 
   private static final String BASIC_RESULT =
@@ -117,7 +116,6 @@ public class AndroidXmlReaderTest {
     AndroidXmlReader xmlReader = new AndroidXmlReader(stream.asStream());
 
     int[] expected = new int[]{
-            XMLStreamConstants.START_DOCUMENT,
             XMLStreamConstants.START_ELEMENT,
             XMLStreamConstants.START_ELEMENT,
             XMLStreamConstants.END_ELEMENT,
@@ -126,8 +124,8 @@ public class AndroidXmlReaderTest {
     int pos = 0;
     while(xmlReader.hasNext()) {
       int elementId = xmlReader.next();
-//      System.out.println("E: " + elementId);
-      assertEquals(expected[pos++], elementId);
+      assertEquals("Unexpected type at position: " + pos,
+              expected[pos++], elementId);
     }
   }
 

@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.android.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.xml.NamespaceContext;
@@ -69,6 +70,10 @@ public class AndroidXmlReader implements XMLStreamReader {
     return this;
   }
 
+  public String getCharacterEncodingScheme() {
+    return parser.getInputEncoding();
+  }
+
   @Override
   public void close() throws XMLStreamException {
   }
@@ -114,7 +119,6 @@ public class AndroidXmlReader implements XMLStreamReader {
       text = parser.getText();
       parser.next();
     } catch (Exception e) {
-      e.printStackTrace();
       throw new XMLStreamException("Failure during step forward after 'getText'.", e);
     }
     return text;
@@ -137,18 +141,24 @@ public class AndroidXmlReader implements XMLStreamReader {
   }
 
   @Override
-  public NamespaceContext getNamespaceContext() {
-    String tmp = null;
+  public NamespaceContext getNamespaceContext() throws XMLStreamException {
+    final Map<String, String> prefix2Namespace;
     try {
       int depth = parser.getDepth();
-      tmp = parser.getNamespacePrefix(depth);
+      int nsStart = parser.getNamespaceCount(depth-1);
+      int nsEnd = parser.getNamespaceCount(depth);
+      prefix2Namespace = new HashMap<String, String>(nsEnd-nsStart+1);
+      for (int i = nsStart; i < nsEnd; i++) {
+        String prefix = parser.getNamespacePrefix(i);
+        String namespace = parser.getNamespaceUri(i);
+        prefix2Namespace.put(namespace, prefix);
+      }
     } catch (XmlPullParserException e) {
-      e.printStackTrace();
+      throw new XMLStreamException("Got XmlPullParserException with message: " + e.getMessage(), e);
     }
-    final String prefix = tmp;
     return new NamespaceContext() {
-      public String getPrefix(String index) {
-        return prefix;
+      public String getPrefix(String namespaceUri) {
+        return prefix2Namespace.get(namespaceUri);
       }
     };
   }

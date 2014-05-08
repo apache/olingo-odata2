@@ -20,29 +20,22 @@ package org.apache.olingo.odata2.core.xml;
 
 import junit.framework.Assert;
 import org.apache.olingo.odata2.api.edm.Edm;
-import org.apache.olingo.odata2.api.edm.EdmEntitySet;
-import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
-import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
-import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
-import org.apache.olingo.odata2.api.xml.XMLStreamConstants;
-import org.apache.olingo.odata2.api.xml.XMLStreamException;
 import org.apache.olingo.odata2.api.xml.XMLStreamReader;
 import org.apache.olingo.odata2.api.xml.XMLStreamWriter;
 import org.apache.olingo.odata2.core.ep.AbstractXmlProducerTestHelper;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
-import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
-import java.util.Calendar;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.apache.olingo.odata2.api.xml.XMLStreamReaderFactory.XML_STREAM_READER_FACTORY_CLASS;
 import static org.apache.olingo.odata2.api.xml.XMLStreamWriterFactory.XML_STREAM_WRITER_FACTORY_CLASS;

@@ -32,11 +32,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ep.BasicEntityProvider;
+import org.apache.olingo.odata2.core.commons.Base64;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 import com.google.gson.GsonBuilder;
