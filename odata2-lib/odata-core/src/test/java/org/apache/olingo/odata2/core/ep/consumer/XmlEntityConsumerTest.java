@@ -804,14 +804,20 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry entry =
+    ODataEntry employee =
         xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // validate
-    assertNotNull(entry);
-    Map<String, Object> properties = entry.getProperties();
+    assertNotNull(employee);
+    Map<String, Object> properties = employee.getProperties();
     assertEquals("1", properties.get("EmployeeId"));
     assertEquals("Walter Winter", properties.get("EmployeeName"));
+    EntryMetadata employeeMetadata = employee.getMetadata();
+    assertNotNull(employeeMetadata);
+    assertEquals("W/\"1\"", employeeMetadata.getEtag());
+    
+    
+    //Inline
     ODataEntry room = (ODataEntry) properties.get("ne_Room");
     Map<String, Object> roomProperties = room.getProperties();
     assertEquals(4, roomProperties.size());
@@ -819,6 +825,9 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("Room 1", roomProperties.get("Name"));
     assertEquals(Short.valueOf("1"), roomProperties.get("Seats"));
     assertEquals(Short.valueOf("1"), roomProperties.get("Version"));
+    EntryMetadata roomMetadata = room.getMetadata();
+    assertNotNull(roomMetadata);
+    assertEquals("W/1", roomMetadata.getEtag());
   }
 
   /**

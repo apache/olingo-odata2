@@ -106,7 +106,7 @@ public class XmlFeedConsumer {
 
     while (reader.hasNext() && !isFeedEndTag(reader)) {
       if (FormatXml.ATOM_ENTRY.equals(reader.getLocalName())) {
-        ODataEntry entry = xec.readEntry(reader, eia, entryReadProperties);
+        ODataEntry entry = xec.readEntry(reader, eia, entryReadProperties, true);
         results.add(entry);
       } else if (FormatXml.ATOM_TOMBSTONE_DELETED_ENTRY.equals(reader.getLocalName())) {
         reader.require(XMLStreamConstants.START_ELEMENT, FormatXml.ATOM_TOMBSTONE_NAMESPACE,
