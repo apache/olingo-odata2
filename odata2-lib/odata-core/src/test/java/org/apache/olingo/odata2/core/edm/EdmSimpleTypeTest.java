@@ -1042,6 +1042,10 @@ public class EdmSimpleTypeTest extends BaseTest {
         getMaxLengthFacets(2), byte[].class)));
     assertTrue(Arrays.equals(binary, instance.valueOfString("qrvM\r\n3e7/\r\n", EdmLiteralKind.DEFAULT,
         getMaxLengthFacets(6), byte[].class)));
+    assertTrue(Arrays.equals(binary, instance.valueOfString("\nqrvM3e7/", EdmLiteralKind.DEFAULT,
+        getMaxLengthFacets(6), byte[].class)));
+    assertTrue(Arrays.equals(binary, instance.valueOfString("qrvM\n3e7/", EdmLiteralKind.DEFAULT,
+        getMaxLengthFacets(6), byte[].class)));
     assertTrue(Arrays.equals(binary, instance.valueOfString("qrvM3e7/", EdmLiteralKind.DEFAULT,
         getMaxLengthFacets(Integer.MAX_VALUE), byte[].class)));
     assertTrue(Arrays.equals(binary, instance.valueOfString("X'AABBCCDDEEFF'", EdmLiteralKind.URI,
@@ -1053,11 +1057,13 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertTrue(Arrays.equals(binary, instance.valueOfString("X'AABBCCDDEEFF'", EdmLiteralKind.URI,
         getMaxLengthFacets(null), byte[].class)));
 
-    expectErrorInValueOfString(instance, "qrvM3e7/", EdmLiteralKind.DEFAULT, getMaxLengthFacets(3),
+    expectErrorInValueOfString(instance, "qrvM3e7/", EdmLiteralKind.DEFAULT, getMaxLengthFacets(5),
         EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
-    expectErrorInValueOfString(instance, "qrvM3e7/", EdmLiteralKind.JSON, getMaxLengthFacets(3),
+    expectErrorInValueOfString(instance, "qrvM3e7/", EdmLiteralKind.JSON, getMaxLengthFacets(5),
         EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
-    expectErrorInValueOfString(instance, "binary'AABBCCDDEEFF'", EdmLiteralKind.URI, getMaxLengthFacets(3),
+    expectErrorInValueOfString(instance, "binary'AABBCCDDEEFF'", EdmLiteralKind.URI, getMaxLengthFacets(5),
+        EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
+    expectErrorInValueOfString(instance, "qrvM3e7/\r", EdmLiteralKind.DEFAULT, getMaxLengthFacets(6),
         EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
 
     expectErrorInValueOfString(instance, "@", EdmLiteralKind.DEFAULT, null,
