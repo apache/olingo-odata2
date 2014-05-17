@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 public class JpaAnnotationDataStore<T> implements DataStore<T> {
 
   public static final String DEFAULT_PERSISTENCE_NAME = "JpaAnnotationDataStorePersistence";
+  public static final String PERSISTENCE_NAME = "JpaAnnotationDataStorePersistenceNameSystemProperty";
 
   private static final AnnotationHelper ANNOTATION_HELPER = new AnnotationHelper();
 

@@ -45,7 +45,11 @@ public class DualDataStoreFactory implements DataStoreFactory {
   
   public DataStore<?> createInstance(Class<?> clz, boolean keepPersistent) throws DataStoreException {
     if(isJpaAnnotated(clz)) {
-      return JpaAnnotationDataStore.createInstance(clz);
+      String persistenceName = System.getProperty(JpaAnnotationDataStore.PERSISTENCE_NAME);
+      if(persistenceName == null) {
+        return JpaAnnotationDataStore.createInstance(clz);
+      }
+      return JpaAnnotationDataStore.createInstance(clz, persistenceName);
     }
     return InMemoryDataStore.createInMemory(clz, keepPersistent);
   }
