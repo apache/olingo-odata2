@@ -210,7 +210,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         switch (attributeType) {
         case BASIC:
           currentSimpleProperty = new SimpleProperty();
-          properties.add(buildSimpleProperty(currentAttribute, currentSimpleProperty));
+          properties.add(buildSimpleProperty(currentAttribute, currentSimpleProperty, false));
           if (((SingularAttribute<?, ?>) currentAttribute).isId()) {
             if (keyView == null) {
               keyView = new JPAEdmKey(JPAEdmProperty.this);
@@ -321,12 +321,13 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
 
     }
 
-    private SimpleProperty buildSimpleProperty(final Attribute<?, ?> jpaAttribute, final SimpleProperty simpleProperty)
+    private SimpleProperty buildSimpleProperty(final Attribute<?, ?> jpaAttribute, final SimpleProperty simpleProperty,
+        final boolean isFK)
         throws ODataJPAModelException,
         ODataJPARuntimeException {
 
       JPAEdmNameBuilder
-          .build((JPAEdmPropertyView) JPAEdmProperty.this, isBuildModeComplexType, skipDefaultNaming);
+          .build((JPAEdmPropertyView) JPAEdmProperty.this, isBuildModeComplexType, skipDefaultNaming, isFK);
       EdmSimpleTypeKind simpleTypeKind = JPATypeConvertor
           .convertToEdmSimpleType(jpaAttribute
               .getJavaType(), jpaAttribute);
@@ -360,7 +361,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
               if (referencedColumn != null && referencedColumn.name().equals((joinColumn.referencedColumnName()))) {
                 currentRefAttribute = referencedAttribute;
                 currentSimpleProperty = new SimpleProperty();
-                properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty));
+                properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty, true));
                 break;
               }
             }

@@ -155,6 +155,12 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   }
 
   @Override
+  public ODataErrorContext readErrorDocument(final InputStream errorDocument, final String contentType)
+      throws EntityProviderException {
+    return create(contentType).readErrorDocument(errorDocument);
+  }
+
+  @Override
   public ODataFeed readFeed(final String contentType, final EdmEntitySet entitySet, final InputStream content,
       final EntityProviderReadProperties properties) throws EntityProviderException {
     return create(contentType).readFeed(entitySet, content, properties);

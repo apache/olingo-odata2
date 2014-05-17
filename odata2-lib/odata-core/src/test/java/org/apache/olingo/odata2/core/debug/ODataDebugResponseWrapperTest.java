@@ -66,7 +66,8 @@ public class ODataDebugResponseWrapperTest extends BaseTest {
 
   private static final String EXPECTED = "{"
       + "\"request\":{\"method\":\"GET\",\"uri\":\"http://test/entity\",\"protocol\":null},"
-      + "\"response\":{\"status\":{\"code\":200,\"info\":\"OK\"}}}";
+      + "\"response\":{\"status\":{\"code\":200,\"info\":\"OK\"}},"
+      + "\"server\":{\"version\":null}}";
 
   private ODataContext mockContext(final ODataHttpMethod method) throws ODataException {
     ODataContext context = mock(ODataContext.class);
@@ -128,18 +129,18 @@ public class ODataDebugResponseWrapperTest extends BaseTest {
     ODataResponse response = new ODataDebugResponseWrapper(context, wrappedResponse, mock(UriInfo.class), null,
         ODataDebugResponseWrapper.ODATA_DEBUG_JSON).wrapResponse();
     String entity = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertEquals(EXPECTED.replace("}}}",
+    assertEquals(EXPECTED.replace("}},\"server",
         "},\"headers\":{\"" + HttpHeaders.CONTENT_TYPE + "\":\"" + HttpContentType.APPLICATION_JSON + "\"},"
-            + "\"body\":\"test\"}}"),
+            + "\"body\":\"test\"},\"server"),
         entity);
 
     wrappedResponse = mockResponse(HttpStatusCodes.OK, "test", HttpContentType.TEXT_PLAIN);
     response = new ODataDebugResponseWrapper(context, wrappedResponse, mock(UriInfo.class), null,
         ODataDebugResponseWrapper.ODATA_DEBUG_JSON).wrapResponse();
     entity = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertEquals(EXPECTED.replace("}}}",
+    assertEquals(EXPECTED.replace("}},\"server",
         "},\"headers\":{\"" + HttpHeaders.CONTENT_TYPE + "\":\"" + HttpContentType.TEXT_PLAIN + "\"},"
-            + "\"body\":\"test\"}}"),
+            + "\"body\":\"test\"},\"server"),
         entity);
 
     wrappedResponse = mockResponse(HttpStatusCodes.OK, null, "image/png");
@@ -147,9 +148,9 @@ public class ODataDebugResponseWrapperTest extends BaseTest {
     response = new ODataDebugResponseWrapper(context, wrappedResponse, mock(UriInfo.class), null,
         ODataDebugResponseWrapper.ODATA_DEBUG_JSON).wrapResponse();
     entity = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertEquals(EXPECTED.replace("}}}",
+    assertEquals(EXPECTED.replace("}},\"server",
         "},\"headers\":{\"" + HttpHeaders.CONTENT_TYPE + "\":\"image/png\"},"
-            + "\"body\":\"dGVzdA==\"}}"),
+            + "\"body\":\"dGVzdA==\"},\"server"),
         entity);
 
     when(wrappedResponse.getEntity()).thenReturn(new ByteArrayInputStream("test".getBytes()));
@@ -173,8 +174,9 @@ public class ODataDebugResponseWrapperTest extends BaseTest {
     String entity = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertEquals(EXPECTED.replace("},\"response",
         ",\"headers\":{\"" + HttpHeaders.CONTENT_TYPE + "\":\"" + HttpContentType.APPLICATION_JSON + "\"}},\"response")
-        .replace("}}}",
-            "},\"headers\":{\"" + HttpHeaders.CONTENT_TYPE + "\":\"" + HttpContentType.APPLICATION_JSON + "\"}}}"),
+        .replace("}},\"server",
+            "},\"headers\":{\"" + HttpHeaders.CONTENT_TYPE + "\":\"" + HttpContentType.APPLICATION_JSON
+                + "\"}},\"server"),
         entity);
 
     response = new ODataDebugResponseWrapper(context, wrappedResponse, mock(UriInfo.class), null,
@@ -194,7 +196,7 @@ public class ODataDebugResponseWrapperTest extends BaseTest {
     ODataResponse response = new ODataDebugResponseWrapper(context, wrappedResponse, mock(UriInfo.class), null,
         ODataDebugResponseWrapper.ODATA_DEBUG_JSON).wrapResponse();
     String entity = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertEquals(EXPECTED.replace("}}}", "}},\"server\":{\"environment\":{\"serverPort\":\"12345\"}}}"),
+    assertEquals(EXPECTED.replace("null}}", "null,\"environment\":{\"serverPort\":\"12345\"}}}"),
         entity);
 
     response = new ODataDebugResponseWrapper(context, wrappedResponse, mock(UriInfo.class), null,
@@ -234,7 +236,7 @@ public class ODataDebugResponseWrapperTest extends BaseTest {
     ODataResponse response = new ODataDebugResponseWrapper(context, wrappedResponse, uriInfo, null,
         ODataDebugResponseWrapper.ODATA_DEBUG_JSON).wrapResponse();
     String entity = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertEquals(EXPECTED.replace("}}}", "}},\"server\":{"
+    assertEquals(EXPECTED.replace("null}}", "null,"
         + "\"uri\":{\"filter\":{\"nodeType\":\"LITERAL\",\"type\":\"Edm.Boolean\",\"value\":\"true\"},"
         + "\"orderby\":{\"nodeType\":\"order collection\","
         + "\"orders\":[{\"nodeType\":\"ORDER\",\"sortorder\":\"asc\","
@@ -266,7 +268,7 @@ public class ODataDebugResponseWrapperTest extends BaseTest {
     ODataResponse response = new ODataDebugResponseWrapper(context, wrappedResponse, mock(UriInfo.class), exception,
         ODataDebugResponseWrapper.ODATA_DEBUG_JSON).wrapResponse();
     String entity = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertEquals(EXPECTED.replace("}}}", "}},\"server\":{"
+    assertEquals(EXPECTED.replace("null}}", "null,"
         + "\"uri\":{\"error\":{\"expression\":\"wrong\"}},"
         + "\"stacktrace\":{\"exceptions\":[{\"class\":\"" + exception.getClass().getName() + "\","
         + "\"message\":\"Error while parsing a ODATA expression.\","
@@ -300,7 +302,7 @@ public class ODataDebugResponseWrapperTest extends BaseTest {
     ODataResponse response = new ODataDebugResponseWrapper(context, wrappedResponse, mock(UriInfo.class), null,
         ODataDebugResponseWrapper.ODATA_DEBUG_JSON).wrapResponse();
     String entity = StringHelper.inputStreamToString((InputStream) response.getEntity());
-    assertEquals(EXPECTED.replace("}}}", "}},\"server\":{"
+    assertEquals(EXPECTED.replace("null}}", "null,"
         + "\"runtime\":[{\"class\":\"class\",\"method\":\"method\",\"duration\":{\"value\":41,\"unit\":\"µs\"},"
         + "\"children\":[{\"class\":\"class\",\"method\":\"inner\",\"duration\":{\"value\":8,\"unit\":\"µs\"}},"
         + "{\"class\":\"class\",\"method\":\"inner\",\"duration\":{\"value\":3,\"unit\":\"µs\"},\"children\":["
@@ -339,7 +341,7 @@ public class ODataDebugResponseWrapperTest extends BaseTest {
         .replace(Integer.toString(HttpStatusCodes.OK.getStatusCode()),
             Integer.toString(HttpStatusCodes.BAD_REQUEST.getStatusCode()))
         .replace(HttpStatusCodes.OK.getInfo(), HttpStatusCodes.BAD_REQUEST.getInfo())
-        .replace("}}}", "}},\"server\":{"
+        .replace("null}}", "null,"
             + "\"stacktrace\":{\"exceptions\":[{\"class\":\"" + exception.getClass().getName() + "\","
             + "\"message\":\"Common exception\","
             + "\"invocation\":{\"class\":\"class\",\"method\":\"method\",\"line\":42}},"

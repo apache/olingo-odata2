@@ -58,7 +58,6 @@ import org.apache.olingo.odata2.core.commons.Encoder;
 import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
-import org.apache.olingo.odata2.core.ep.aggregator.NavigationPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
@@ -182,29 +181,36 @@ public class AtomEntryEntityProducer {
   private void appendAtomNavigationLinks(final XMLStreamWriter writer, final EntityInfoAggregator eia,
       final Map<String, Object> data) throws EntityProviderException, EdmException, URISyntaxException {
     for (String name : eia.getSelectedNavigationPropertyNames()) {
-      NavigationPropertyInfo info = eia.getNavigationPropertyInfo(name);
-      boolean isFeed = (info.getMultiplicity() == EdmMultiplicity.MANY);
-      String self = createSelfLink(eia, data, info.getName());
-      appendAtomNavigationLink(writer, self, info.getName(), isFeed, eia, data);
+      final boolean isFeed = (eia.getNavigationPropertyInfo(name).getMultiplicity() == EdmMultiplicity.MANY);
+      final Map<String, Map<String, Object>> links = properties.getAdditionalLinks();
+      final Map<String, Object> key = links == null ? null : links.get(name);
+      if (key == null || key.isEmpty()) {
+        appendAtomNavigationLink(writer, createSelfLink(eia, data, name), name, isFeed, eia, data);
+      } else {
+        final EntityInfoAggregator targetEntityInfo = EntityInfoAggregator.create(
+            eia.getEntitySet().getRelatedEntitySet((EdmNavigationProperty) eia.getEntityType().getProperty(name)));
+        appendAtomNavigationLink(writer, createSelfLink(targetEntityInfo, key, null), name, null, eia, data);
+      }
     }
   }
 
-  private void appendAtomNavigationLink(final XMLStreamWriter writer, final String self,
-      final String navigationPropertyName, final boolean isFeed, final EntityInfoAggregator eia,
+  private void appendAtomNavigationLink(final XMLStreamWriter writer, final String target,
+      final String navigationPropertyName, final Boolean isFeed, final EntityInfoAggregator eia,
       final Map<String, Object> data) throws EntityProviderException, EdmException, URISyntaxException {
     try {
       writer.writeStartElement(FormatXml.ATOM_LINK);
-      writer.writeAttribute(FormatXml.ATOM_HREF, self);
+      writer.writeAttribute(FormatXml.ATOM_HREF, target);
       writer.writeAttribute(FormatXml.ATOM_REL, Edm.NAMESPACE_REL_2007_08 + navigationPropertyName);
       writer.writeAttribute(FormatXml.ATOM_TITLE, navigationPropertyName);
-      if (isFeed) {
-        writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_FEED.toString());
-        appendInlineFeed(writer, navigationPropertyName, eia, data, self);
-      } else {
-        writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_ENTRY.toString());
-        appendInlineEntry(writer, navigationPropertyName, eia, data);
+      if (isFeed != null) {
+        if (isFeed) {
+          writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_FEED.toString());
+          appendInlineFeed(writer, navigationPropertyName, eia, data, target);
+        } else {
+          writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_ENTRY.toString());
+          appendInlineEntry(writer, navigationPropertyName, eia, data);
+        }
       }
-
       writer.writeEndElement();
     } catch (XMLStreamException e) {
       throw new EntityProviderException(EntityProviderException.COMMON, e);

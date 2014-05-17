@@ -737,6 +737,30 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     assertEquals("right", jsonMap.get("content_type"));
   }
 
+  @Test
+  public void additionalLink() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    Map<String, Object> data = new HashMap<String, Object>();
+    data.put("Id", "1");
+    Map<String, Object> key = new HashMap<String, Object>();
+    key.put("Id", "3");
+    Map<String, Map<String, Object>> links = new HashMap<String, Map<String, Object>>();
+    links.put("nr_Building", key);
+    final EntityProviderWriteProperties properties = EntityProviderWriteProperties
+        .serviceRoot(URI.create(BASE_URI))
+        .additionalLinks(links)
+        .build();
+
+    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, data, properties);
+    final String json = verifyResponse(response);
+    assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Rooms('1')\","
+        + "\"uri\":\"" + BASE_URI + "Rooms('1')\",\"type\":\"RefScenario.Room\"},"
+        + "\"Id\":\"1\",\"Name\":null,\"Seats\":null,\"Version\":null,"
+        + "\"nr_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Rooms('1')/nr_Employees\"}},"
+        + "\"nr_Building\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Buildings('3')\"}}}}",
+        json);
+  }
+
   private String verifyResponse(final ODataResponse response) throws IOException {
     assertNotNull(response);
     assertNotNull(response.getEntity());

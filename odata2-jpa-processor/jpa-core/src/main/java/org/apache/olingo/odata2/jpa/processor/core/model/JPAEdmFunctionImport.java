@@ -77,7 +77,6 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
     private JPAEdmEntityTypeView jpaEdmEntityTypeView = null;
     private JPAEdmComplexTypeView jpaEdmComplexTypeView = null;
 
-
     @Override
     public void build() throws ODataJPAModelException, ODataJPARuntimeException {
 

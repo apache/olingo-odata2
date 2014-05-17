@@ -92,7 +92,7 @@ public class DebugInfoException implements DebugInfo {
   }
 
   @Override
-  public void appendHtml(Writer writer) throws IOException {
+  public void appendHtml(final Writer writer) throws IOException {
     appendException(exception, writer);
     writer.append("<h2>Stacktrace</h2>\n");
     int count = 0;
@@ -101,7 +101,7 @@ public class DebugInfoException implements DebugInfo {
     }
   }
 
-  private void appendException(final Throwable throwable, Writer writer) throws IOException {
+  private void appendException(final Throwable throwable, final Writer writer) throws IOException {
     if (throwable.getCause() != null) {
       appendException(throwable.getCause(), writer);
     }
@@ -114,7 +114,7 @@ public class DebugInfoException implements DebugInfo {
   }
 
   private void appendStackTraceElement(final StackTraceElement stackTraceElement,
-      final boolean isFirst, final boolean isLast, Writer writer) throws IOException {
+      final boolean isFirst, final boolean isLast, final Writer writer) throws IOException {
     if (isFirst) {
       writer.append("<table>\n<thead>\n")
           .append("<tr>\n<th class=\"name\">Class</th>\n")

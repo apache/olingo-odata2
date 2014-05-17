@@ -32,6 +32,10 @@ public class XmlHelper {
   private static final String DEFAULT_CHARSET = "UTF-8";
 
   public static XMLStreamReader createStreamReader(final Object content) throws EntityProviderException {
+    if (content == null) {
+      throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+          .addContent("Got not allowed NULL parameter for creation of XMLStreamReader."));
+    }
     XMLStreamReader streamReader;
     try {
       XMLInputFactory factory = XMLInputFactory.newInstance();

@@ -53,7 +53,7 @@ public class DebugInfoResponse implements DebugInfo {
   }
 
   @Override
-  public void appendJson(JsonStreamWriter jsonStreamWriter) throws IOException {
+  public void appendJson(final JsonStreamWriter jsonStreamWriter) throws IOException {
     jsonStreamWriter.beginObject();
 
     if (status != null) {
@@ -84,7 +84,7 @@ public class DebugInfoResponse implements DebugInfo {
   }
 
   @Override
-  public void appendHtml(Writer writer) throws IOException {
+  public void appendHtml(final Writer writer) throws IOException {
     writer.append("<h2>Status Code</h2>\n")
         .append("<p>").append(Integer.toString(status.getStatusCode())).append(' ')
         .append(status.getInfo()).append("</p>\n")

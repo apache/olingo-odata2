@@ -11,14 +11,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.apache.olingo</groupId>
-    <artifactId>olingo-odata2-annotation-processor-incubating</artifactId>
+    <artifactId>olingo-odata2-annotation-processor</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
 
     <parent>
         <groupId>org.apache.olingo</groupId>
-        <artifactId>olingo-odata2-parent-incubating</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <artifactId>olingo-odata2-parent</artifactId>
+        <version>1.3.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 

@@ -38,18 +38,10 @@ public class EdmDouble extends AbstractSimpleType {
   private static final int MAX_PRECISION = 15;
   private static final int MAX_SCALE = 308;
 
-
   private static final Pattern PATTERN = Pattern.compile(
       "(?:\\+|-)?\\p{Digit}+(?:\\.\\p{Digit}+)?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,3})?(D|d)?");
   private static final EdmDouble instance = new EdmDouble();
 
-  
-  
-  
-  
-  
-  
-  
   public static EdmDouble getInstance() {
     return instance;
   }

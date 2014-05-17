@@ -66,6 +66,10 @@ public class ODataJPARuntimeException extends ODataJPAException {
       "RELATIONSHIP_INVALID");
   public static final MessageReference RESOURCE_X_NOT_FOUND = createMessageReference(ODataJPARuntimeException.class,
       "RESOURCE_X_NOT_FOUND");
+  public static final MessageReference ERROR_JPA_BLOB_NULL = createMessageReference(ODataJPARuntimeException.class,
+      "ERROR_JPA_BLOB_NULL");
+  public static final MessageReference ERROR_JPA_CLOB_NULL = createMessageReference(ODataJPARuntimeException.class,
+      "ERROR_JPA_CLOB_NULL");
 
   private ODataJPARuntimeException(final String localizedMessage, final Throwable e, final MessageReference msgRef) {
     super(localizedMessage, e, msgRef);

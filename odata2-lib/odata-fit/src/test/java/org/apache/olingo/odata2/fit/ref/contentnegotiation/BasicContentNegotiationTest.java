@@ -197,7 +197,7 @@ public class BasicContentNegotiationTest extends AbstractContentNegotiationTest 
     final HttpResponse response = new DefaultHttpClient().execute(get);
 
     final String contentType = response.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
-//    assertEquals(expectedResponseContentType, contentType);
+    // assertEquals(expectedResponseContentType, contentType);
     try {
 
       assertEquals(ContentType.APPLICATION_XML, ContentType.create(contentType));

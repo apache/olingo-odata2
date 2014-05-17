@@ -133,8 +133,8 @@ public class JsonEntryConsumer {
 
   /**
    * Ensure that instance field {@link #resultEntry} exists.
-   * If it not already exists create an instance (as well as all other necessary objects like:
-   * {@link #properties}, {@link #mediaMetadata}, {@link #entryMetadata}, {@link #expandSelectTree}).
+   * If it not already exists create an instance (as well as all other necessary objects like: {@link #properties},
+   * {@link #mediaMetadata}, {@link #entryMetadata}, {@link #expandSelectTree}).
    */
   private void ensureODataEntryExists() {
     if (resultEntry == null) {
@@ -168,8 +168,8 @@ public class JsonEntryConsumer {
       ensureODataEntryExists();
       EntityPropertyInfo propertyInfo = eia.getPropertyInfo(name);
       if (propertyInfo != null) {
-        JsonPropertyConsumer jpc = new JsonPropertyConsumer();
-        Object propertyValue = jpc.readPropertyValue(reader, propertyInfo, typeMappings.get(name));
+        Object propertyValue = new JsonPropertyConsumer()
+            .readPropertyValue(reader, propertyInfo, typeMappings.get(name), readProperties);
         if (properties.containsKey(name)) {
           throw new EntityProviderException(EntityProviderException.DOUBLE_PROPERTY.addContent(name));
         }
@@ -280,7 +280,8 @@ public class JsonEntryConsumer {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent(navigationPropertyName));
     }
 
-    if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+    JsonToken peek = reader.peek();
+    if (peek == JsonToken.BEGIN_OBJECT) {
       reader.beginObject();
       String name = reader.nextName();
       if (FormatJson.DEFERRED.equals(name)) {
@@ -303,7 +304,10 @@ public class JsonEntryConsumer {
         try {
           if (callback == null) {
             inlineReadProperties =
-                EntityProviderReadProperties.init().mergeSemantic(readProperties.getMergeSemantic()).build();
+                EntityProviderReadProperties.init()
+                    .mergeSemantic(readProperties.getMergeSemantic())
+                    .isValidatingFacets(readProperties.isValidatingFacets())
+                    .build();
 
           } else {
             inlineReadProperties = callback.receiveReadProperties(readProperties, navigationProperty);
@@ -339,6 +343,8 @@ public class JsonEntryConsumer {
         }
       }
       reader.endObject();
+    } else if (peek == JsonToken.NULL) {
+      reader.nextNull();
     } else {
       final EdmNavigationProperty navigationProperty =
           (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
@@ -348,7 +354,10 @@ public class JsonEntryConsumer {
       EntityProviderReadProperties inlineReadProperties;
       if (callback == null) {
         inlineReadProperties =
-            EntityProviderReadProperties.init().mergeSemantic(readProperties.getMergeSemantic()).build();
+            EntityProviderReadProperties.init()
+                .mergeSemantic(readProperties.getMergeSemantic())
+                .isValidatingFacets(readProperties.isValidatingFacets())
+                .build();
       } else {
         try {
           inlineReadProperties = callback.receiveReadProperties(readProperties, navigationProperty);

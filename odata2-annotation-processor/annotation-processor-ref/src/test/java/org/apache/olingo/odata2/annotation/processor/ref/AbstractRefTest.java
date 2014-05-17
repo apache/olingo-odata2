@@ -51,7 +51,7 @@ import org.junit.Ignore;
 @Ignore("no test methods")
 public class AbstractRefTest extends AbstractFitTest {
 
-  public AbstractRefTest(ServletType servletType) {
+  public AbstractRefTest(final ServletType servletType) {
     super(servletType);
   }
 

@@ -18,6 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.exception;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Locale;
+
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmLiteralException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
@@ -47,10 +54,6 @@ import org.apache.olingo.odata2.core.uri.expression.TokenizerExpectError;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.ODataMessageTextVerifier;
 import org.junit.Test;
-
-import java.util.Locale;
-
-import static org.junit.Assert.*;
 
 /**
  *  

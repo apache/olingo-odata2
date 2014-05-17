@@ -18,25 +18,29 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.ref.model;
 
+import java.sql.Clob;
 import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
+@IdClass(value = NoteKey.class)
 @Table(name = "T_NOTE")
 public class Note {
 
   public Note() {}
 
   public Note(final Calendar creationTime, final Calendar creationDate, final String createdBy,
-      final String text) {
+      final Clob text) {
     super();
     this.creationTime = creationTime;
     this.creationDate = creationDate;
@@ -56,7 +60,8 @@ public class Note {
   private String createdBy;
 
   @Column
-  private String text;
+  @Lob
+  private Clob text;
 
   @Column(name = "SO_ID")
   private long soId;
@@ -89,11 +94,11 @@ public class Note {
     this.createdBy = createdBy;
   }
 
-  public String getText() {
+  public Clob getText() {
     return text;
   }
 
-  public void setText(final String text) {
+  public void setText(final Clob text) {
     this.text = text;
   }
 

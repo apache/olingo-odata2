@@ -481,8 +481,13 @@ public class ODataRequestHandler {
   private List<String> getSupportedContentTypes(final UriInfoImpl uriInfo, final ODataHttpMethod method)
       throws ODataException {
     Class<? extends ODataProcessor> processorFeature = Dispatcher.mapUriTypeToProcessorFeature(uriInfo);
-    if (ODataHttpMethod.POST.equals(method)) {
-      UriType uriType = uriInfo.getUriType();
+    UriType uriType = uriInfo.getUriType();
+    //
+    if (uriType == UriType.URI11) {
+      processorFeature = EntitySetProcessor.class;
+    } else if ((uriType == UriType.URI10)) {
+      processorFeature = EntityProcessor.class;
+    } else if (ODataHttpMethod.POST.equals(method)) {
       if (uriType == UriType.URI1 || uriType == UriType.URI6B) {
         processorFeature = EntityProcessor.class;
       }

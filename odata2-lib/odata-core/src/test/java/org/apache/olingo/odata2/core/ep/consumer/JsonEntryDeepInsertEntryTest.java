@@ -51,6 +51,7 @@ public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
 
   private static final String EMPLOYEE_WITH_INLINE_TEAM = "JsonEmployeeWithInlineTeam.json";
   private static final String INLINE_ROOM_WITH_INLINE_BUILDING = "JsonInlineRoomWithInlineBuilding.json";
+  private static final String INLINE_ROOM_WITH_INLINE_NULL = "JsonInlineRoomWithInlineNull.json";
 
   @Test
   public void innerEntryNoMediaResourceWithoutCallback() throws Exception {
@@ -160,6 +161,8 @@ public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
 
     associationUris = innerRoom.getMetadata().getAssociationUris("nr_Building");
     assertEquals(Collections.emptyList(), associationUris);
+    
+    assertEquals("W/\"1\"", innerRoom.getMetadata().getEtag());
 
     ODataEntry innerBuilding = (ODataEntry) innerRoomProperties.get("nr_Building");
     assertNotNull(innerBuilding);
@@ -264,6 +267,21 @@ public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
     associationUris = innerBuilding.getMetadata().getAssociationUris("nb_Rooms");
     assertEquals(1, associationUris.size());
     assertEquals("http://localhost:8080/ReferenceScenario.svc/Buildings('1')/nb_Rooms", associationUris.get(0));
+  }
+
+  @Test
+  public void inlineRoomWithInlineNullWithCallbacks() throws Exception {
+    EntryCallback buildingCallback = new EntryCallback();
+    EntryCallback roomCallback = new EntryCallback(buildingCallback);
+    EntityProviderReadProperties readProperties =
+        EntityProviderReadProperties.init().mergeSemantic(false).callback(roomCallback).build();
+    ODataEntry outerEntry = prepareAndExecuteEntry(INLINE_ROOM_WITH_INLINE_NULL, "Employees", readProperties);
+
+    ODataEntry innerRoom = (ODataEntry) outerEntry.getProperties().get("ne_Room");
+    assertNull(innerRoom);
+
+    innerRoom = roomCallback.getEntry();
+    assertNull(innerRoom);
   }
 
   private class EntryCallback implements OnReadInlineContent {

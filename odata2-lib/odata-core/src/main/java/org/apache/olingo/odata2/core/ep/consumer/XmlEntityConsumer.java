@@ -87,7 +87,7 @@ public class XmlEntityConsumer {
       reader = XmlHelper.createStreamReader(content);
       EntityInfoAggregator eia = EntityInfoAggregator.create(entitySet);
 
-      return new XmlEntryConsumer().readEntry(reader, eia, properties);
+      return new XmlEntryConsumer().readEntry(reader, eia, properties, false);
     } catch (EntityProviderException e) {
       cachedException = e;
       throw cachedException;
@@ -115,9 +115,8 @@ public class XmlEntityConsumer {
 
     try {
       reader = XmlHelper.createStreamReader(content);
-      Map<String, Object> result =
-          xec.readProperty(reader, edmProperty, properties.getMergeSemantic(), properties.getTypeMappings());
-      return result;
+      return xec.readProperty(reader, edmProperty, properties.getMergeSemantic(), properties.getTypeMappings(),
+          properties);
     } catch (EntityProviderException e) {
       cachedException = e;
       throw cachedException;

@@ -232,7 +232,7 @@ public abstract class RuntimeDelegate {
    * @param exception which contains the message references.
    * @return the message of the {@link ODataMessageException}
    */
-  public static String extractExceptionMessage(ODataMessageException exception) {
+  public static String extractExceptionMessage(final ODataMessageException exception) {
     return RuntimeDelegate.getInstance().extractExceptionMessage(exception);
   }
 }

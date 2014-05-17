@@ -43,12 +43,14 @@ import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.consumer.JsonEntityConsumer;
+import org.apache.olingo.odata2.core.ep.consumer.JsonErrorDocumentConsumer;
 import org.apache.olingo.odata2.core.ep.consumer.JsonServiceDocumentConsumer;
 import org.apache.olingo.odata2.core.ep.producer.JsonCollectionEntityProducer;
 import org.apache.olingo.odata2.core.ep.producer.JsonEntryEntityProducer;
@@ -341,4 +343,8 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
     return new JsonEntityConsumer().readDeltaFeed(entitySet, content, properties);
   }
 
+  @Override
+  public ODataErrorContext readErrorDocument(final InputStream errorDocument) throws EntityProviderException {
+    return new JsonErrorDocumentConsumer().readError(errorDocument);
+  }
 }

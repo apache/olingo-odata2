@@ -49,17 +49,17 @@ import org.apache.olingo.odata2.core.commons.Decoder;
 public class RestUtil {
   private static final String REG_EX_OPTIONAL_WHITESPACE = "\\s?";
 
-  //RFC 2616, 3.9: qvalue = ("0"["." 0*3DIGIT]) | ("1"["." 0*3("0")])
+  // RFC 2616, 3.9: qvalue = ("0"["." 0*3DIGIT]) | ("1"["." 0*3("0")])
   private static final String REG_EX_QVALUE = "q=((?:1(?:\\.0{0,3})?)|(?:0(?:\\.[0-9]{0,3})?))";
 
-  //RFC 2616, 14.1: the media-range parameters
+  // RFC 2616, 14.1: the media-range parameters
   private static final String REG_EX_PARAMETER = "(?:;\\s*(?:(?:[^qQ].*)|(?:[qQ]\\s*=\\s*(?:[^01].*))))*";
   private static final Pattern REG_EX_ACCEPT =
       Pattern.compile("([a-z\\*\\s]+/[a-zA-Z\\+\\*\\-=\\s]+" + REG_EX_PARAMETER + ")");
   private static final Pattern REG_EX_ACCEPT_WITH_Q_FACTOR =
       Pattern.compile(REG_EX_ACCEPT + "(?:" + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QVALUE + ")?");
 
-  //RFC 2616, 14.4: language-range  = ((1*8ALPHA *("-" 1*8ALPHA)) | "*")
+  // RFC 2616, 14.4: language-range = ((1*8ALPHA *("-" 1*8ALPHA)) | "*")
   private static final Pattern REG_EX_ACCEPT_LANGUAGES =
       Pattern.compile("((?:\\*)|(?:[a-z]{1,8}(?:\\-[a-zA-Z]{1,8})?))");
   private static final Pattern REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR =
@@ -85,12 +85,12 @@ public class RestUtil {
   }
 
   /*
-   * Parses query parameters.    
+   * Parses query parameters.
    */
   public static Map<String, String> extractQueryParameters(final String queryString) {
     Map<String, String> queryParametersMap = new HashMap<String, String>();
     if (queryString != null) {
-      //At first the queryString will be decoded.
+      // At first the queryString will be decoded.
       List<String> queryParameters = Arrays.asList(Decoder.decode(queryString).split("\\&"));
       for (String param : queryParameters) {
         int indexOfEqualSign = param.indexOf("=");
@@ -105,7 +105,7 @@ public class RestUtil {
   }
 
   /*
-   * Parses Accept-Language header. Returns a list sorted by quality parameter   
+   * Parses Accept-Language header. Returns a list sorted by quality parameter
    */
   public static List<Locale> extractAcceptableLanguage(final String acceptableLanguageHeader) {
     List<Locale> acceptLanguages = new ArrayList<Locale>();
@@ -123,7 +123,7 @@ public class RestUtil {
     }
     for (Accept accept : acceptTree) {
       String languageRange = accept.getValue();
-      //The languageRange has to be splitted in language tag and country tag         
+      // The languageRange has to be splitted in language tag and country tag
       int indexOfMinus = languageRange.indexOf("-");
       Locale locale;
       if (indexOfMinus < 0) {
@@ -140,7 +140,7 @@ public class RestUtil {
   }
 
   /*
-   * Parses Accept header. Returns a list of media ranges sorted by quality parameter   
+   * Parses Accept header. Returns a list of media ranges sorted by quality parameter
    */
   public static List<String> extractAcceptHeaders(final String acceptHeader) {
     TreeSet<Accept> acceptTree = getAcceptTree();
@@ -347,7 +347,7 @@ public class RestUtil {
 
   /*
    * The class is used in order to sort headers by "q" parameter.
-   * The object of this class contains a value of the Accept header or Accept-Language header and value of the 
+   * The object of this class contains a value of the Accept header or Accept-Language header and value of the
    * quality parameter.
    */
   private static class Accept {

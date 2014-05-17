@@ -80,7 +80,7 @@ public class DebugInfoRequest implements DebugInfo {
   }
 
   @Override
-  public void appendHtml(Writer writer) throws IOException {
+  public void appendHtml(final Writer writer) throws IOException {
     writer.append("<h2>Request Method</h2>\n")
         .append("<p>").append(method).append("</p>\n")
         .append("<h2>Request URI</h2>\n")

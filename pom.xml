@@ -11,8 +11,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.apache.olingo</groupId>
-	<artifactId>olingo-odata2-parent-incubating</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
+	<artifactId>olingo-odata2-parent</artifactId>
+	<version>1.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>${project.artifactId}</name>
@@ -33,14 +33,14 @@
 		</license>
 	</licenses>
 
-	<url>http://olingo.incubator.apache.org</url>
+	<url>http://olingo.apache.org</url>
 
 	<mailingLists>
 		<mailingList>
 			<name>Apache Olingo Developers Mailinglist</name>
-			<archive>http://mail-archives.apache.org/mod_mbox/incubator-olingo-dev/</archive>
-			<post>mailto:dev@olingo.incubator.apache.org</post>
-			<subscribe>mailto:dev-subscribe@olingo.incubator.apache.org</subscribe>
+			<archive>http://mail-archives.apache.org/mod_mbox/olingo-dev/</archive>
+			<post>mailto:dev@olingo.apache.org</post>
+			<subscribe>mailto:dev-subscribe@olingo.apache.org</subscribe>
 		</mailingList>
 	</mailingLists>
 
@@ -256,7 +256,6 @@
 							</properties>
 							<resourceBundles>
 								<resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
-								<resourceBundle>org.apache:apache-incubator-disclaimer-resource-bundle:1.1</resourceBundle>
 							</resourceBundles>
 						</configuration>
 					</execution>

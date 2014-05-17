@@ -22,8 +22,10 @@ import java.util.ResourceBundle;
 
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAServiceFactory;
+import org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
+import org.apache.olingo.odata2.jpa.processor.ref.extension.OnDBWriteContent;
 import org.apache.olingo.odata2.jpa.processor.ref.extension.SalesOrderProcessingExtension;
 import org.apache.olingo.odata2.jpa.processor.ref.factory.JPAEntityManagerFactory;
 
@@ -33,6 +35,7 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
   private static final String CONFIG = "serviceConfig";
   private static final String SHOW_DETAIL_ERROR = "showDetailError";
   private static final int PAGE_SIZE = 5;
+  public static final OnJPAWriteContent onDBWriteContent = new OnDBWriteContent();
 
   @Override
   public ODataJPAContext initializeODataJPAContext()
@@ -45,6 +48,7 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
         .setJPAEdmExtension((JPAEdmExtension) new SalesOrderProcessingExtension());
     oDataJPAContext.setPageSize(PAGE_SIZE);
     setErrorLevel();
+    setOnWriteJPAContent(onDBWriteContent);
 
     return oDataJPAContext;
   }

@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
@@ -39,7 +40,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 
 /**
- *  
+ * JSON property consumer.
  */
 public class JsonPropertyConsumer {
 
@@ -55,10 +56,10 @@ public class JsonPropertyConsumer {
       if (FormatJson.D.equals(nextName)) {
         reader.beginObject();
         nextName = reader.nextName();
-        handleName(reader, typeMappings, entityPropertyInfo, result, nextName);
+        handleName(reader, typeMappings, entityPropertyInfo, readProperties, result, nextName);
         reader.endObject();
       } else {
-        handleName(reader, typeMappings, entityPropertyInfo, result, nextName);
+        handleName(reader, typeMappings, entityPropertyInfo, readProperties, result, nextName);
       }
       reader.endObject();
 
@@ -78,8 +79,8 @@ public class JsonPropertyConsumer {
   }
 
   private void handleName(final JsonReader reader, final Map<String, Object> typeMappings,
-      final EntityPropertyInfo entityPropertyInfo, final Map<String, Object> result, final String nextName)
-      throws EntityProviderException {
+      final EntityPropertyInfo entityPropertyInfo, final EntityProviderReadProperties readProperties,
+      final Map<String, Object> result, final String nextName) throws EntityProviderException {
     if (!entityPropertyInfo.getName().equals(nextName)) {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent(nextName));
     }
@@ -87,16 +88,16 @@ public class JsonPropertyConsumer {
     if (typeMappings != null) {
       mapping = typeMappings.get(nextName);
     }
-    Object propertyValue = readPropertyValue(reader, entityPropertyInfo, mapping);
+    Object propertyValue = readPropertyValue(reader, entityPropertyInfo, mapping, readProperties);
     result.put(nextName, propertyValue);
   }
 
   protected Object readPropertyValue(final JsonReader reader, final EntityPropertyInfo entityPropertyInfo,
-      final Object typeMapping) throws EntityProviderException {
+      final Object typeMapping, final EntityProviderReadProperties readProperties) throws EntityProviderException {
     try {
       return entityPropertyInfo.isComplex() ?
-          readComplexProperty(reader, (EntityComplexPropertyInfo) entityPropertyInfo, typeMapping) :
-          readSimpleProperty(reader, entityPropertyInfo, typeMapping);
+          readComplexProperty(reader, (EntityComplexPropertyInfo) entityPropertyInfo, typeMapping, readProperties) :
+          readSimpleProperty(reader, entityPropertyInfo, typeMapping, readProperties);
     } catch (final EdmException e) {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
@@ -107,7 +108,8 @@ public class JsonPropertyConsumer {
   }
 
   private Object readSimpleProperty(final JsonReader reader, final EntityPropertyInfo entityPropertyInfo,
-      final Object typeMapping) throws EdmException, EntityProviderException, IOException {
+      final Object typeMapping, final EntityProviderReadProperties readProperties)
+      throws EdmException, EntityProviderException, IOException {
     final EdmSimpleType type = (EdmSimpleType) entityPropertyInfo.getType();
     Object value = null;
     final JsonToken tokenType = reader.peek();
@@ -148,15 +150,18 @@ public class JsonPropertyConsumer {
     }
 
     final Class<?> typeMappingClass = typeMapping == null ? type.getDefaultType() : (Class<?>) typeMapping;
-    return type.valueOfString((String) value, EdmLiteralKind.JSON, entityPropertyInfo.getFacets(), typeMappingClass);
+    final EdmFacets facets = readProperties == null || readProperties.isValidatingFacets() ?
+        entityPropertyInfo.getFacets() : null;
+    return type.valueOfString((String) value, EdmLiteralKind.JSON, facets, typeMappingClass);
   }
 
   @SuppressWarnings("unchecked")
   private Object readComplexProperty(final JsonReader reader, final EntityComplexPropertyInfo complexPropertyInfo,
-      final Object typeMapping) throws EdmException, EntityProviderException, IOException {
+      final Object typeMapping, final EntityProviderReadProperties readProperties)
+      throws EdmException, EntityProviderException, IOException {
     if (reader.peek().equals(JsonToken.NULL)) {
       reader.nextNull();
-      if (complexPropertyInfo.isMandatory()) {
+      if ((readProperties == null || readProperties.isValidatingFacets()) && complexPropertyInfo.isMandatory()) {
         throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE.addContent(complexPropertyInfo
             .getName()));
       }
@@ -200,7 +205,7 @@ public class JsonPropertyConsumer {
         if (childPropertyInfo == null) {
           throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY.addContent(childName));
         }
-        Object childData = readPropertyValue(reader, childPropertyInfo, mapping.get(childName));
+        Object childData = readPropertyValue(reader, childPropertyInfo, mapping.get(childName), readProperties);
         if (data.containsKey(childName)) {
           throw new EntityProviderException(EntityProviderException.DOUBLE_PROPERTY.addContent(childName));
         }

@@ -157,7 +157,7 @@ public class BatchResponseParser {
           }
           scanner.next(changeSetCloseDelimiter);
           currentLineNumber++;
-          parseNewLine(scanner);
+          parseOptionalEmptyLine(scanner);
         } else {
           throw new BatchException(BatchException.INVALID_CONTENT_TYPE.addContent(HttpContentType.MULTIPART_MIXED
               + " or " + HttpContentType.APPLICATION_HTTP));
@@ -358,7 +358,14 @@ public class BatchResponseParser {
     }
   }
 
-  private String trimQuota(String boundary) {
+  private void parseOptionalEmptyLine(final Scanner scanner) {
+      if (scanner.hasNext() && scanner.hasNext(REG_EX_BLANK_LINE)) {
+        scanner.next();
+        currentLineNumber++;
+      }
+    }
+
+      private String trimQuota(String boundary) {
     if (boundary.matches("\".*\"")) {
       boundary = boundary.replace("\"", "");
     }

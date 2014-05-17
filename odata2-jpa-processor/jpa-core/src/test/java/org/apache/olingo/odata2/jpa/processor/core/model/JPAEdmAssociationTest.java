@@ -49,19 +49,19 @@ import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.SimpleType;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.SimpleType.SimpleTypeA;
 import org.easymock.EasyMock;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 public class JPAEdmAssociationTest extends JPAEdmTestModelView {
 
-  private static JPAEdmAssociation objAssociation = null;
+  private JPAEdmAssociation objAssociation = null;
   private static String ASSOCIATION_NAME = "SalesOrderHeader_String";
-  private static JPAEdmAssociationTest localView = null;
+  private JPAEdmAssociationTest localView = null;
   private static final String PUNIT_NAME = "salesorderprocessing";
   private int variant;
 
-  @BeforeClass
-  public static void setup() {
+  @Before
+  public void setup() {
     localView = new JPAEdmAssociationTest();
     objAssociation = new JPAEdmAssociation(localView, localView, localView, 1);
     try {

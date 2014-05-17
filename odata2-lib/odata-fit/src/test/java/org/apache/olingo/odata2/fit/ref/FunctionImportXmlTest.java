@@ -25,10 +25,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import junit.framework.Assert;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
@@ -51,19 +53,19 @@ public class FunctionImportXmlTest extends AbstractRefXmlTest {
 
     assertFalse(getBody(callUri("EmployeeSearch?q='-'")).contains("entry"));
 
-    response = callUri("AllLocations");
+    response = callUri("AllLocations", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_XML);
     checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
     assertXpathExists("/d:AllLocations/d:element/d:City[d:CityName=\"" + CITY_2_NAME + "\"]", getBody(response));
 
-    response = callUri("AllUsedRoomIds");
+    response = callUri("AllUsedRoomIds", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_XML);
     checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
     assertXpathExists("/d:AllUsedRoomIds[d:element=\"3\"]", getBody(response));
 
-    response = callUri("MaximalAge");
+    response = callUri("MaximalAge", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_XML);
     checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
     assertXpathEvaluatesTo(EMPLOYEE_3_AGE, "/d:MaximalAge", getBody(response));
 
-    response = callUri("MostCommonLocation");
+    response = callUri("MostCommonLocation", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_XML);
     checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
     assertXpathEvaluatesTo(CITY_2_NAME, "/d:MostCommonLocation/d:City/d:CityName", getBody(response));
 
@@ -89,6 +91,66 @@ public class FunctionImportXmlTest extends AbstractRefXmlTest {
     badRequest("ManagerPhoto");
     badRequest("OldestEmployee()");
     notFound("ManagerPhoto?Id='2'");
+  }
+
+  @Test
+  public void functionImportsDefaultAccept() throws Exception {
+    HttpResponse response = callUri("EmployeeSearch('1')/ne_Room/Id/$value?q='alter'");
+    checkMediaType(response, HttpContentType.TEXT_PLAIN_UTF8);
+    checkEtag(response, "W/\"1\"");
+    assertEquals("1", getBody(response));
+
+    assertFalse(getBody(callUri("EmployeeSearch?q='-'")).contains("entry"));
+
+    response = callUri("AllLocations");
+    checkMediaType(response, ContentType.APPLICATION_ATOM_XML_FEED_CS_UTF_8);
+    assertXpathExists("/d:AllLocations/d:element/d:City[d:CityName=\"" + CITY_2_NAME + "\"]", getBody(response));
+
+    response = callUri("AllUsedRoomIds");
+    checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
+    assertXpathExists("/d:AllUsedRoomIds[d:element=\"3\"]", getBody(response));
+
+    response = callUri("MaximalAge");
+    checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
+    assertXpathEvaluatesTo(EMPLOYEE_3_AGE, "/d:MaximalAge", getBody(response));
+
+    response = callUri("MostCommonLocation");
+    checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
+    assertXpathEvaluatesTo(CITY_2_NAME, "/d:MostCommonLocation/d:City/d:CityName", getBody(response));
+
+    checkUri("ManagerPhoto?Id='1'");
+
+    response = callUri("ManagerPhoto/$value?Id='1'");
+    checkMediaType(response, IMAGE_JPEG);
+    assertNull(response.getFirstHeader(HttpHeaders.ETAG));
+    assertNotNull(getBody(response));
+
+    response = callUri("OldestEmployee");
+    checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8);
+    assertXpathEvaluatesTo(EMPLOYEE_3_NAME, "/atom:entry/m:properties/d:EmployeeName", getBody(response));
+
+    response = callUri("OldestEmployee?$format=xml");
+    checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
+    assertXpathEvaluatesTo(EMPLOYEE_3_NAME, "/atom:entry/m:properties/d:EmployeeName", getBody(response));
+
+    badRequest("AllLocations/$count");
+    badRequest("AllUsedRoomIds/$value");
+    badRequest("MaximalAge()");
+    badRequest("MostCommonLocation/City/CityName");
+    badRequest("ManagerPhoto");
+    badRequest("OldestEmployee()");
+    notFound("ManagerPhoto?Id='2'");
+  }
+
+  @Override
+  public void checkMediaType(final HttpResponse response, final String expectedContentType) {
+    checkMediaType(response, ContentType.parse(expectedContentType));
+  }
+
+  private void checkMediaType(final HttpResponse response, final ContentType expectedContentType) {
+    ContentType responseContentType =
+        ContentType.parse(response.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+    Assert.assertEquals(expectedContentType, responseContentType);
   }
 
   @Test

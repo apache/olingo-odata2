@@ -120,14 +120,14 @@ public abstract class ODataMessageException extends ODataException {
    */
   @Override
   public String getMessage() {
-    if(messageReference == null) {
+    if (messageReference == null) {
       return "No message reference given. Inherit message is = '" + super.getMessage() + "'";
     }
-    
+
     String message = RuntimeDelegate.extractExceptionMessage(this);
-    if(message == null) {
+    if (message == null) {
       return "Message Reference key = '" + messageReference.getKey() +
-              "' and inherit message = '" + super.getMessage() + "'";
+          "' and inherit message = '" + super.getMessage() + "'";
     }
     return message;
   }

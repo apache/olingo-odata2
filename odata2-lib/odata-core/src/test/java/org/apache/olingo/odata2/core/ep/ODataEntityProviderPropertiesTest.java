@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,6 +62,8 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     callbacks.put("aCallback", new MyCallback(null, null));
     ExpandSelectTreeNode expandSelectTree = new ExpandSelectTreeNodeImpl();
     URI selfLink = new URI("http://some.uri");
+    Map<String, Map<String, Object>> links = new HashMap<String, Map<String, Object>>();
+    links.put("aNavigationProperty", Collections.<String, Object> emptyMap());
     final EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(serviceRoot)
         .callbacks(callbacks)
         .expandSelectTree(expandSelectTree)
@@ -70,6 +73,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .nextLink("http://localhost")
         .selfLink(selfLink)
         .includeSimplePropertyType(true)
+        .additionalLinks(links)
         .build();
 
     assertEquals("Wrong amount of callbacks.", 1, properties.getCallbacks().size());
@@ -82,6 +86,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertEquals("Wrong inline count.", Integer.valueOf(1), properties.getInlineCount());
     assertEquals("Wrong nextLink", "http://localhost", properties.getNextLink());
     assertTrue("Simple property types should be true", properties.isIncludeSimplePropertyType());
+    assertEquals(Collections.emptyMap(), properties.getAdditionalLinks().get("aNavigationProperty"));
   }
 
   @Test
@@ -101,6 +106,8 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     callbacks.put("aCallback", new MyCallback(null, null));
     ExpandSelectTreeNode expandSelectTree = new ExpandSelectTreeNodeImpl();
     URI selfLink = new URI("http://some.uri");
+    Map<String, Map<String, Object>> links = new HashMap<String, Map<String, Object>>();
+    links.put("aNavigationProperty", Collections.<String, Object> emptyMap());
     final EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(serviceRoot)
         .callbacks(callbacks)
         .expandSelectTree(expandSelectTree)
@@ -110,6 +117,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .nextLink("http://localhost")
         .selfLink(selfLink)
         .includeSimplePropertyType(true)
+        .additionalLinks(links)
         .build();
 
     //
@@ -127,5 +135,6 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertEquals("Wrong inline count.", Integer.valueOf(1), fromProperties.getInlineCount());
     assertEquals("Wrong nextLink", "http://localhost", fromProperties.getNextLink());
     assertTrue("Simple property types should be true", fromProperties.isIncludeSimplePropertyType());
+    assertEquals(Collections.emptyMap(), fromProperties.getAdditionalLinks().get("aNavigationProperty"));
   }
 }

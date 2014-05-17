@@ -22,12 +22,12 @@
     <modelVersion>4.0.0</modelVersion>
 	<parent>
         <groupId>org.apache.olingo</groupId>
-        <artifactId>olingo-odata2-sample-incubating</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <artifactId>olingo-odata2-sample</artifactId>
+        <version>1.3.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 	
-    <artifactId>olingo-odata2-sample-cars-jpa-archetype-incubating</artifactId>
+    <artifactId>olingo-odata2-sample-cars-jpa-archetype</artifactId>
     <name>${project.artifactId}</name>
     <packaging>maven-archetype</packaging>
     <build>

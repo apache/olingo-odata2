@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.mock.data;
 
+import java.sql.Blob;
+import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -30,6 +32,12 @@ public class JPATypeMock {
   public static final String PROPERTY_NAME_MINT = "mInt";
   public static final String PROPERTY_NAME_MSTRING = "mString";
   public static final String PROPERTY_NAME_MDATETIME = "mDateTime";
+  public static final String PROPERTY_NAME_MBLOB = "mBlob";
+  public static final String PROPERTY_NAME_CLOB = "mClob";
+  public static final String PROPERTY_NAME_MCHAR = "mChar";
+  public static final String PROPERTY_NAME_MCHARARRAY = "mCharArray";
+  public static final String PROPERTY_NAME_MC = "mC";
+  public static final String PROPERTY_NAME_MCARRAY = "mCArray";
   public static final String PROPERTY_NAME_MKEY = "key";
   public static final String PROPERTY_NAME_MCOMPLEXTYPE = "complexType";
 
@@ -41,6 +49,53 @@ public class JPATypeMock {
   private int mInt;
   private String mString;
   private Calendar mDateTime;
+  private Blob mBlob;
+  private Clob mClob;
+  private char mC;
+  private char[] mCArray;
+  private Character mChar;
+  private Character[] mCharArray;
+
+  public Clob getMClob() {
+    return mClob;
+  }
+
+  public void setMClob(final Clob mClob) {
+    this.mClob = mClob;
+  }
+
+  public char getMC() {
+    return mC;
+  }
+
+  public void setMC(final char mC) {
+    this.mC = mC;
+  }
+
+  public char[] getMCArray() {
+    return mCArray;
+  }
+
+  public void setMCArray(final char[] mCArray) {
+    this.mCArray = mCArray;
+  }
+
+  public Character getMChar() {
+    return mChar;
+  }
+
+  public void setMChar(final Character mChar) {
+    this.mChar = mChar;
+  }
+
+  public Character[] getMCharArray() {
+    return mCharArray;
+  }
+
+  public void setMCharArray(final Character[] mCharArray) {
+    this.mCharArray = mCharArray;
+  }
+
   private JPARelatedTypeMock mRelatedEntity;
   private List<JPARelatedTypeMock> mRelatedEntities = new ArrayList<JPATypeMock.JPARelatedTypeMock>();
 
@@ -98,6 +153,14 @@ public class JPATypeMock {
 
   public void setComplexType(final JPATypeEmbeddableMock complexType) {
     this.complexType = complexType;
+  }
+
+  public Blob getMBlob() {
+    return mBlob;
+  }
+
+  public void setMBlob(final Blob mBlob) {
+    this.mBlob = mBlob;
   }
 
   /* ========================================================================= */

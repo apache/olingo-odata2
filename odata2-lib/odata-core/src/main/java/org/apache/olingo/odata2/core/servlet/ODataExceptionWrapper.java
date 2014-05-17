@@ -84,7 +84,7 @@ public class ODataExceptionWrapper {
 
       ODataResponse oDataResponse;
       // if (callback != null) {
-      //   oDataResponse = handleErrorCallback(callback);
+      // oDataResponse = handleErrorCallback(callback);
       // } else {
       oDataResponse = EntityProvider.writeErrorDocument(errorContext);
       // }

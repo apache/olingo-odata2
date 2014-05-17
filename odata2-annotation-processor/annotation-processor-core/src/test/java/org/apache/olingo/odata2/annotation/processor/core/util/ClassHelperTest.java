@@ -15,6 +15,8 @@
  */
 package org.apache.olingo.odata2.annotation.processor.core.util;
 
+import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -59,6 +61,23 @@ public class ClassHelperTest {
     Assert.assertEquals(SimpleEntity.class.getName(), loadedClasses.get(0).getName());
   }
 
+  @Test(expected = ClassFormatError.class)
+  public void loadFromSpaceDir() throws Exception {
+    URL currentPath = Thread.currentThread().getContextClassLoader().getResource(".");
+    File folder = new File(currentPath.toURI().getSchemeSpecificPart(), "space space/package");
+    folder.mkdirs();
+    File classFile = new File(folder, "Invalid.class");
+    classFile.createNewFile();
+    String packageToScan = "space space.package";
+
+    //
+    List<Class<?>> loadedClasses = ClassHelper.loadClasses(packageToScan, annotatedTestEntityInnerClasses);
+
+    //
+    Assert.assertEquals(1, loadedClasses.size());
+    Assert.assertEquals(SimpleEntity.class.getName(), loadedClasses.get(0).getName());
+  }
+
   @Test
   public void loadSingleEntityFromJar() throws ODataException {
     String packageToScan = AnnotatedEntity.class.getPackage().getName();
@@ -77,24 +96,12 @@ public class ClassHelperTest {
   //
 
   @EdmEntityType
-  @SuppressWarnings("unused")
+//  @SuppressWarnings("unused")
   private class SimpleEntity {
     @EdmKey
     @EdmProperty
     Long id;
     @EdmProperty
     String name;
-
-    public SimpleEntity() {}
-
-    public SimpleEntity(final Long id, final String name) {
-      this.id = id;
-      this.name = name;
-    }
-  }
-
-  @SuppressWarnings("unused")
-  private class NotAnnotatedBean {
-    private String name;
   }
 }

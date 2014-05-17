@@ -18,12 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.model;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.AnnotatedElement;
 import java.math.BigDecimal;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.metamodel.Attribute;
@@ -53,8 +56,6 @@ public class JPATypeConvertor {
    * @see EdmSimpleTypeKind
    */
 
-  private static final String OBJECT_TYPE = "java.lang.Object";
-
   public static EdmSimpleTypeKind
       convertToEdmSimpleType(final Class<?> jpaType, final Attribute<?, ?> currentAttribute)
           throws ODataJPAModelException {
@@ -78,14 +79,12 @@ public class JPATypeConvertor {
       return EdmSimpleTypeKind.Binary;
     } else if (jpaType.equals(Byte.class) || jpaType.equals(byte.class)) {
       return EdmSimpleTypeKind.Byte;
-    } else if (jpaType.equals(Byte[].class)) {
-      return EdmSimpleTypeKind.Binary;
     } else if (jpaType.equals(Boolean.class) || jpaType.equals(boolean.class)) {
       return EdmSimpleTypeKind.Boolean;
     } else if ((jpaType.equals(Date.class)) || (jpaType.equals(Calendar.class))) {
       try {
         if ((currentAttribute != null)
-            && (determineTemporalType(currentAttribute.getDeclaringType().getJavaType(), currentAttribute.getName())
+            && (determineTemporalType(currentAttribute)
               == TemporalType.TIME)) {
           return EdmSimpleTypeKind.Time;
         } else {
@@ -96,21 +95,33 @@ public class JPATypeConvertor {
       }
     } else if (jpaType.equals(UUID.class)) {
       return EdmSimpleTypeKind.Guid;
+    } else if (jpaType.equals(Byte[].class)) {
+      return EdmSimpleTypeKind.Binary;
+    } else if (jpaType.equals(Blob.class) && isBlob(currentAttribute)) {
+      return EdmSimpleTypeKind.Binary;
+    } else if (jpaType.equals(Clob.class) && isBlob(currentAttribute)) {
+      return EdmSimpleTypeKind.String;
     }
     throw ODataJPAModelException.throwException(ODataJPAModelException.TYPE_NOT_SUPPORTED
         .addContent(jpaType.toString()), null);
   }
 
-  private static TemporalType determineTemporalType(final Class<?> type, final String fieldName)
+  private static boolean isBlob(final Attribute<?, ?> currentAttribute) {
+    if (currentAttribute != null) {
+      AnnotatedElement annotatedElement = (AnnotatedElement) currentAttribute.getJavaMember();
+      if (annotatedElement != null && annotatedElement.getAnnotation(Lob.class) != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static TemporalType determineTemporalType(final Attribute<?, ?> currentAttribute)
       throws ODataJPAModelException {
-    if (type != null && !type.getName().equals(OBJECT_TYPE)) {
-      try {
-        Field field = type.getField(fieldName);
-        return field.getAnnotation(Temporal.class).value();
-      } catch (NoSuchFieldException e) {
-        determineTemporalType(type.getSuperclass(), fieldName);
-      } catch (SecurityException e) {
-        throw ODataJPAModelException.throwException(ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
+    if (currentAttribute != null) {
+      AnnotatedElement annotatedElement = (AnnotatedElement) currentAttribute.getJavaMember();
+      if (annotatedElement != null && annotatedElement.getAnnotation(Temporal.class) != null) {
+        return annotatedElement.getAnnotation(Temporal.class).value();
       }
     }
     return null;

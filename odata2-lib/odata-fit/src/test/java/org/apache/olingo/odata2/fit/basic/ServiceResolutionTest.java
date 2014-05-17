@@ -255,6 +255,24 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
+  public void testMetadataUriWithMatrixParameter() throws ClientProtocolException, IOException, ODataException,
+      URISyntaxException {
+    server.setPathSplit(3);
+    startServer();
+
+    final String endpoint = server.getEndpoint().toString();
+    final HttpGet get = new HttpGet(URI.create(endpoint + "aaa/bbb;n=2,3;m=1/ccc/$metadata"));
+    final HttpResponse response = httpClient.execute(get);
+
+    assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
+
+    final ODataContext ctx = service.getProcessor().getContext();
+    assertNotNull(ctx);
+    assertEquals(endpoint + "aaa/bbb;n=2,3;m=1/ccc/", ctx.getPathInfo().getServiceRoot().toASCIIString());
+    assertEquals("$metadata", ctx.getPathInfo().getODataSegments().get(0).getPath());
+  }
+
+  @Test
   public void testBaseUriWithEncoding() throws ClientProtocolException, IOException, ODataException,
       URISyntaxException {
     server.setPathSplit(3);

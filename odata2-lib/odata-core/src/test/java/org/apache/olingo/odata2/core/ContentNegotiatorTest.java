@@ -47,6 +47,14 @@ public class ContentNegotiatorTest {
     assertEquals(expected, contentType.toContentTypeString());
   }
 
+  @Test
+  public void defaultContentTypeForEmptyList() throws ODataException {
+    List<ContentType> contentTypes = Arrays.asList();
+    List<ContentType> supportedTypes = Arrays.asList(ContentType.APPLICATION_ATOM_XML, ContentType.APPLICATION_XML);
+
+    negotiateContentType(contentTypes, supportedTypes, "application/atom+xml");
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void invalidContentNegotiatorCreation() throws ODataException {
     final ContentType contentType = new ContentNegotiator().doContentNegotiation(null, null, null);

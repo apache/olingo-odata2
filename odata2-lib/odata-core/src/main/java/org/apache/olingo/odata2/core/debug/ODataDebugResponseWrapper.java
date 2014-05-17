@@ -140,30 +140,23 @@ public class ODataDebugResponseWrapper {
     CircleStreamBuffer csb = new CircleStreamBuffer();
     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(csb.getOutputStream(), "UTF-8"));
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
-    jsonStreamWriter.beginObject();
-    jsonStreamWriter.name(parts.get(0).getName().toLowerCase(Locale.ROOT));
+    jsonStreamWriter.beginObject()
+        .name(parts.get(0).getName().toLowerCase(Locale.ROOT));
     parts.get(0).appendJson(jsonStreamWriter);
-    jsonStreamWriter.separator();
-    jsonStreamWriter.name(parts.get(1).getName().toLowerCase(Locale.ROOT));
+    jsonStreamWriter.separator()
+        .name(parts.get(1).getName().toLowerCase(Locale.ROOT));
     parts.get(1).appendJson(jsonStreamWriter);
-    if (parts.size() > 2) {
-      jsonStreamWriter.separator();
-      jsonStreamWriter.name("server")
-          .beginObject();
-    }
-    boolean first = true;
+    jsonStreamWriter.separator()
+        .name("server")
+        .beginObject()
+        .namedStringValueRaw("version", ODataDebugResponseWrapper.class.getPackage().getImplementationVersion());
     for (final DebugInfo part : parts.subList(2, parts.size())) {
-      if (!first) {
-        jsonStreamWriter.separator();
-      }
-      first = false;
-      jsonStreamWriter.name(part.getName().toLowerCase(Locale.ROOT));
+      jsonStreamWriter.separator()
+          .name(part.getName().toLowerCase(Locale.ROOT));
       part.appendJson(jsonStreamWriter);
     }
-    if (parts.size() > 2) {
-      jsonStreamWriter.endObject();
-    }
-    jsonStreamWriter.endObject();
+    jsonStreamWriter.endObject()
+        .endObject();
     writer.flush();
     csb.closeWrite();
     return csb.getInputStream();
@@ -242,7 +235,7 @@ public class ODataDebugResponseWrapper {
     return value == null ? null : value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
   }
 
-  protected static void appendJsonTable(JsonStreamWriter jsonStreamWriter, final Map<String, String> entries)
+  protected static void appendJsonTable(final JsonStreamWriter jsonStreamWriter, final Map<String, String> entries)
       throws IOException {
     jsonStreamWriter.beginObject();
     boolean first = true;
@@ -260,7 +253,7 @@ public class ODataDebugResponseWrapper {
     jsonStreamWriter.endObject();
   }
 
-  protected static void appendHtmlTable(Writer writer, final Map<String, String> entries) throws IOException {
+  protected static void appendHtmlTable(final Writer writer, final Map<String, String> entries) throws IOException {
     writer.append("<table>\n<thead>\n")
         .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
         .append("</thead>\n<tbody>\n");

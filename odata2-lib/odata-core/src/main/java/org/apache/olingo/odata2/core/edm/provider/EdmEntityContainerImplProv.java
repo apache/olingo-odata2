@@ -18,7 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
@@ -32,9 +34,11 @@ import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
+import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
+import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.exception.ODataException;
 
 /**
@@ -43,7 +47,8 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnotatable {
 
   private EdmImplProv edm;
-  private EntityContainerInfo entityContainer;
+  private List<EntityContainer> entityContainerHierachy;
+  private EntityContainerInfo entityContainerInfo;
   private Map<String, EdmEntitySet> edmEntitySets;
   private Map<String, EdmAssociationSet> edmAssociationSets;
   private Map<String, EdmFunctionImport> edmFunctionImports;
@@ -51,17 +56,17 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
   private boolean isDefaultContainer;
   private EdmAnnotations annotations;
 
-  public EdmEntityContainerImplProv(final EdmImplProv edm, final EntityContainerInfo entityContainer)
+  public EdmEntityContainerImplProv(final EdmImplProv edm, final EntityContainerInfo entityContainerInfo)
       throws EdmException {
     this.edm = edm;
-    this.entityContainer = entityContainer;
+    this.entityContainerInfo = entityContainerInfo;
     edmEntitySets = new HashMap<String, EdmEntitySet>();
     edmAssociationSets = new HashMap<String, EdmAssociationSet>();
     edmFunctionImports = new HashMap<String, EdmFunctionImport>();
-    isDefaultContainer = entityContainer.isDefaultEntityContainer();
+    isDefaultContainer = entityContainerInfo.isDefaultEntityContainer();
 
-    if (entityContainer.getExtendz() != null) {
-      edmExtendedEntityContainer = edm.getEntityContainer(entityContainer.getExtendz());
+    if (entityContainerInfo.getExtendz() != null) {
+      edmExtendedEntityContainer = edm.getEntityContainer(entityContainerInfo.getExtendz());
       if (edmExtendedEntityContainer == null) {
         throw new EdmException(EdmException.COMMON);
       }
@@ -70,7 +75,7 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
 
   @Override
   public String getName() throws EdmException {
-    return entityContainer.getName();
+    return entityContainerInfo.getName();
   }
 
   @Override
@@ -82,14 +87,13 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
 
     EntitySet entitySet;
     try {
-      entitySet = edm.edmProvider.getEntitySet(entityContainer.getName(), name);
+      entitySet = edm.edmProvider.getEntitySet(entityContainerInfo.getName(), name);
     } catch (ODataException e) {
       throw new EdmException(EdmException.PROVIDERPROBLEM, e);
     }
 
     if (entitySet != null) {
       edmEntitySet = createEntitySet(entitySet);
-      edmEntitySets.put(name, edmEntitySet);
     } else if (edmExtendedEntityContainer != null) {
       edmEntitySet = edmExtendedEntityContainer.getEntitySet(name);
       if (edmEntitySet != null) {
@@ -109,7 +113,7 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
 
     FunctionImport functionImport;
     try {
-      functionImport = edm.edmProvider.getFunctionImport(entityContainer.getName(), name);
+      functionImport = edm.edmProvider.getFunctionImport(entityContainerInfo.getName(), name);
     } catch (ODataException e) {
       throw new EdmException(EdmException.PROVIDERPROBLEM, e);
     }
@@ -147,7 +151,7 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
         new FullQualifiedName(edmAssociation.getNamespace(), edmAssociation.getName());
     try {
       associationSet =
-          edm.edmProvider.getAssociationSet(entityContainer.getName(), associationFQName, entitySetName,
+          edm.edmProvider.getAssociationSet(entityContainerInfo.getName(), associationFQName, entitySetName,
               entitySetFromRole);
     } catch (ODataException e) {
       throw new EdmException(EdmException.PROVIDERPROBLEM, e);
@@ -166,8 +170,18 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
     }
   }
 
+  /**
+   * Create an {@link EdmEntitySet} based on given {@link EntitySet} and put it into the cache (see
+   * {@link #edmEntitySets}).
+   * 
+   * @param entitySet based on which the {@link EdmEntitySet} is created
+   * @return the created and cached {@link EdmEntitySet}
+   * @throws EdmException
+   */
   private EdmEntitySet createEntitySet(final EntitySet entitySet) throws EdmException {
-    return new EdmEntitySetImplProv(edm, entitySet, this);
+    EdmEntitySet edmEntitySet = new EdmEntitySetImplProv(edm, entitySet, this);
+    edmEntitySets.put(entitySet.getName(), edmEntitySet);
+    return edmEntitySet;
   }
 
   private EdmFunctionImport createFunctionImport(final FunctionImport functionImport) throws EdmException {
@@ -186,9 +200,78 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
   @Override
   public EdmAnnotations getAnnotations() throws EdmException {
     if (annotations == null) {
-      annotations = new EdmAnnotationsImplProv(entityContainer.getAnnotationAttributes(),
-          entityContainer.getAnnotationElements());
+      annotations = new EdmAnnotationsImplProv(entityContainerInfo.getAnnotationAttributes(),
+          entityContainerInfo.getAnnotationElements());
     }
     return annotations;
+  }
+
+  @Override
+  public List<EdmEntitySet> getEntitySets() throws EdmException {
+    try {
+      List<EdmEntitySet> edmEntitySets = new ArrayList<EdmEntitySet>();
+      List<EntityContainer> entityContainerHierachy = getEntityContainerHierachy();
+      for (EntityContainer entityContainer : entityContainerHierachy) {
+        List<EntitySet> entitySets = entityContainer.getEntitySets();
+        for (EntitySet entitySet : entitySets) {
+          EdmEntitySet ees = createEntitySet(entitySet);
+          edmEntitySets.add(ees);
+        }
+      }
+      return edmEntitySets;
+    } catch (ODataException e) {
+      throw new EdmException(EdmException.PROVIDERPROBLEM, e);
+    }
+  }
+
+  @Override
+  public List<EdmAssociationSet> getAssociationSets() throws EdmException {
+    try {
+      List<EntityContainer> containers = getEntityContainerHierachy();
+      List<EdmAssociationSet> edmAssociationSets = new ArrayList<EdmAssociationSet>();
+      for (EntityContainer entityContainer : containers) {
+        List<AssociationSet> associationSets = entityContainer.getAssociationSets();
+        for (AssociationSet associationSet : associationSets) {
+          EdmAssociationSet eas = createAssociationSet(associationSet);
+          edmAssociationSets.add(eas);
+        }
+      }
+
+      return edmAssociationSets;
+    } catch (ODataException e) {
+      throw new EdmException(EdmException.PROVIDERPROBLEM, e);
+    }
+  }
+
+  private Map<String, EntityContainer> getEntityContainerMap() throws ODataException {
+    Map<String, EntityContainer> name2Container = new HashMap<String, EntityContainer>();
+    List<Schema> schemas = edm.edmProvider.getSchemas();
+    for (Schema schema : schemas) {
+      List<EntityContainer> containers = schema.getEntityContainers();
+      for (EntityContainer container : containers) {
+        name2Container.put(container.getName(), container);
+      }
+    }
+    return name2Container;
+  }
+
+  private List<EntityContainer> getEntityContainerHierachy() throws ODataException {
+    if (entityContainerHierachy != null) {
+      return entityContainerHierachy;
+    }
+
+    List<EntityContainer> entityContainerHierachy = new ArrayList<EntityContainer>();
+    Map<String, EntityContainer> name2Container = getEntityContainerMap();
+    String currentName = getName();
+    while (currentName != null) {
+      EntityContainer currentContainer = name2Container.get(currentName);
+      entityContainerHierachy.add(currentContainer);
+      currentName = currentContainer.getExtendz();
+    }
+
+    if (entityContainerHierachy.isEmpty()) {
+      throw new EdmException(EdmException.PROVIDERPROBLEM, "No container at all found.");
+    }
+    return entityContainerHierachy;
   }
 }

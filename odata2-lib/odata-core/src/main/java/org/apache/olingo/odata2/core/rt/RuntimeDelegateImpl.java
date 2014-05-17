@@ -142,7 +142,7 @@ public class RuntimeDelegateImpl extends RuntimeDelegateInstance {
   }
 
   @Override
-  public String extractExceptionMessage(ODataMessageException exception) {
+  public String extractExceptionMessage(final ODataMessageException exception) {
     Message msg = MessageService.getMessage(Locale.ENGLISH, exception.getMessageReference());
     return msg.getText();
   }

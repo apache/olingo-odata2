@@ -23,6 +23,8 @@ import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,25 +60,22 @@ public class ClassHelper {
     }
   };
 
-  public static final List<Class<?>> loadClasses(final String packageToScan, final ClassValidator cv) {
+  public static List<Class<?>> loadClasses(final String packageToScan, final ClassValidator cv) {
     return loadClasses(packageToScan, CLASSFILE_FILTER, cv);
   }
 
-  public static final List<Class<?>> loadClasses(final String packageToScan, final FilenameFilter ff,
+  public static List<Class<?>> loadClasses(final String packageToScan, final FilenameFilter ff,
       final ClassValidator cv) {
     final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    String folderToScan = packageToScan.replace(PACKAGE_SEPARATOR, RESOURCE_SEPARATOR);
-    URL url = classLoader.getResource(folderToScan);
-    if (url == null) {
-      throw new IllegalArgumentException("No folder to scan found for package '" + packageToScan + "'.");
-    }
+
+    URI uri = getResourceUri(packageToScan, classLoader);
 
     final Collection<String> fqnForClasses;
-    File folder = new File(url.getFile());
+    File folder = new File(uri.getSchemeSpecificPart());
     if (folder.isDirectory()) {
       fqnForClasses = getClassFqnFromDir(ff, folder, packageToScan);
-    } else if (isJarFile(url)) {
-      fqnForClasses = getClassFqnFromJar(url.getFile().substring(5), packageToScan);
+    } else if (isJarFile(uri)) {
+      fqnForClasses = getClassFqnFromJar(uri, packageToScan);
     } else {
       fqnForClasses = null;
     }
@@ -94,7 +93,7 @@ public class ClassHelper {
         }
       } catch (ClassNotFoundException ex) {
         throw new IllegalArgumentException("Exception during class loading of class '" + fqn +
-            " from resource '" + url.getFile() + "'" +
+            " from resource '" + uri + "'" +
             "' with message '" + ex.getMessage() + "'.");
       }
     }
@@ -102,14 +101,26 @@ public class ClassHelper {
     return annotatedClasses;
   }
 
-  private static boolean isJarFile(final URL url) {
-    String filename = url.getFile();
-    int index = filename.indexOf(JAR_RESOURCE_SEPARATOR);
-    if (index > JAR_FILE_ENDING.length()) {
-      String fileEnding = filename.substring(index - JAR_FILE_ENDING.length(), index);
-      return JAR_FILE_ENDING.equalsIgnoreCase(fileEnding);
+  private static URI getResourceUri(final String packageToScan, final ClassLoader classLoader) {
+    String folderToScan = packageToScan.replace(PACKAGE_SEPARATOR, RESOURCE_SEPARATOR);
+    URL url = classLoader.getResource(folderToScan);
+    if (url == null) {
+      throw new IllegalArgumentException("No folder to scan found for package '" + packageToScan + "'.");
     }
-    return false;
+    try {
+      URI uri = url.toURI();
+      if (uri == null) {
+        throw new IllegalArgumentException("No folder to scan found for package '" + packageToScan + "'.");
+      }
+      return uri;
+    } catch (URISyntaxException e) {
+      throw new IllegalArgumentException("Invalid folder path for path URL '" + url +
+          "' from thread context class loader.");
+    }
+  }
+
+  private static boolean isJarFile(final URI uri) {
+    return JAR_FILE_ENDING.equals(uri.getScheme());
   }
 
   private static Collection<String> getClassFqnFromDir(final FilenameFilter ff, final File folder,
@@ -129,10 +140,9 @@ public class ClassHelper {
     return classFiles;
   }
 
-  private static Collection<String> getClassFqnFromJar(final String filepath, final String packageToScan) {
-    JarFile jarFile = null;
-
+  private static Collection<String> getClassFqnFromJar(final URI uri, final String packageToScan) {
     final String jarFilePath;
+    String filepath = uri.getSchemeSpecificPart().substring(5);
     String[] split = filepath.split(JAR_RESOURCE_SEPARATOR);
     if (split.length == 2) {
       jarFilePath = split[0];
@@ -140,6 +150,7 @@ public class ClassHelper {
       throw new IllegalArgumentException("Illegal jar file path '" + filepath + "'.");
     }
 
+    JarFile jarFile = null;
     try {
       jarFile = new JarFile(jarFilePath);
       List<String> classFileNames = new ArrayList<String>();

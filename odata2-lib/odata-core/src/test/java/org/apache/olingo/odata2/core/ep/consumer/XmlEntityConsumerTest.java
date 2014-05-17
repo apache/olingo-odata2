@@ -577,7 +577,7 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("Building 1", inlineBuildingProps.get("Name"));
     assertNull(inlineBuildingProps.get("Image"));
     assertNull(inlineBuildingProps.get("nb_Rooms"));
-    
+
     assertEquals("Rooms('1')/nr_Employees", entry.getMetadata().getAssociationUris("nr_Employees").get(0));
     assertEquals("Rooms('1')/nr_Building", entry.getMetadata().getAssociationUris("nr_Building").get(0));
   }
@@ -804,14 +804,20 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
 
     // execute
     XmlEntityConsumer xec = new XmlEntityConsumer();
-    ODataEntry entry =
+    ODataEntry employee =
         xec.readEntry(entitySet, reqContent, EntityProviderReadProperties.init().mergeSemantic(true).build());
 
     // validate
-    assertNotNull(entry);
-    Map<String, Object> properties = entry.getProperties();
+    assertNotNull(employee);
+    Map<String, Object> properties = employee.getProperties();
     assertEquals("1", properties.get("EmployeeId"));
     assertEquals("Walter Winter", properties.get("EmployeeName"));
+    EntryMetadata employeeMetadata = employee.getMetadata();
+    assertNotNull(employeeMetadata);
+    assertEquals("W/\"1\"", employeeMetadata.getEtag());
+    
+    
+    //Inline
     ODataEntry room = (ODataEntry) properties.get("ne_Room");
     Map<String, Object> roomProperties = room.getProperties();
     assertEquals(4, roomProperties.size());
@@ -819,6 +825,9 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("Room 1", roomProperties.get("Name"));
     assertEquals(Short.valueOf("1"), roomProperties.get("Seats"));
     assertEquals(Short.valueOf("1"), roomProperties.get("Version"));
+    EntryMetadata roomMetadata = room.getMetadata();
+    assertNotNull(roomMetadata);
+    assertEquals("W/1", roomMetadata.getEtag());
   }
 
   /**
@@ -2325,7 +2334,7 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     Map<String, Object> properties = result.getProperties();
     assertEquals(1, properties.size());
     assertEquals("1", properties.get("Id"));
-    
+
     assertEquals("Rooms('1')/nr_Building", result.getMetadata().getAssociationUris("nr_Building").get(0));
     assertEquals("Rooms('1')/nr_Employees", result.getMetadata().getAssociationUris("nr_Employees").get(0));
   }

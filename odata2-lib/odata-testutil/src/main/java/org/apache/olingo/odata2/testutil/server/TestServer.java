@@ -54,17 +54,17 @@ public class TestServer {
   private int pathSplit = 0;
   private ServletType servletType;
 
-  public TestServer(ServletType type) {
+  public TestServer(final ServletType type) {
     this(DEFAULT_PATH, type);
-  }  
-  
-  public TestServer(final String path, ServletType type) {
+  }
+
+  public TestServer(final String path, final ServletType type) {
     if (path.startsWith("/")) {
       this.path = path;
     } else {
       this.path = "/" + path;
     }
-    this.servletType = type;
+    servletType = type;
   }
 
   public int getPathSplit() {
@@ -154,22 +154,22 @@ public class TestServer {
     return contextHandler;
   }
 
-//  private ServletContextHandler createODataContextHandler(final Class<? extends ODataServiceFactory> factoryClass)
-//      throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-//    String odataServlet = "org.apache.olingo.odata2.core.servlet.ODataServlet";
-//    final HttpServlet httpServlet = (HttpServlet) Class.forName(odataServlet).newInstance();
-//    final ServletHolder odataServletHolder = new ServletHolder(httpServlet);
-//    odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
-//
-//    if (pathSplit > 0) {
-//      odataServletHolder.setInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL, Integer.toString(pathSplit));
-//    }
-//
-//    final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-//    contextHandler.setContextPath("/abc");
-//    contextHandler.addServlet(odataServletHolder, path + "/*");
-//    return contextHandler;
-//  }
+  // private ServletContextHandler createODataContextHandler(final Class<? extends ODataServiceFactory> factoryClass)
+  // throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+  // String odataServlet = "org.apache.olingo.odata2.core.servlet.ODataServlet";
+  // final HttpServlet httpServlet = (HttpServlet) Class.forName(odataServlet).newInstance();
+  // final ServletHolder odataServletHolder = new ServletHolder(httpServlet);
+  // odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
+  //
+  // if (pathSplit > 0) {
+  // odataServletHolder.setInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL, Integer.toString(pathSplit));
+  // }
+  //
+  // final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+  // contextHandler.setContextPath("/abc");
+  // contextHandler.addServlet(odataServletHolder, path + "/*");
+  // return contextHandler;
+  // }
 
   public void startServer(final ODataService service) {
     startServer(FitStaticServiceFactory.class);
