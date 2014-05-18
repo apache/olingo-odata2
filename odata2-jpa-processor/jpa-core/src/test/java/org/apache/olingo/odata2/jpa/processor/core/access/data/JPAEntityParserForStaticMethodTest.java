@@ -41,7 +41,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.junit.Test;
 
-public class JPAEntityParserTestForStaticMethods {
+public class JPAEntityParserForStaticMethodTest {
 
   @Test
   public void testToStringDefault() {
@@ -84,7 +84,7 @@ public class JPAEntityParserTestForStaticMethods {
   @Test
   public void testGetPropertyCharacter() {
     try {
-      Method method = JPAEntityParserTestForStaticMethods.class.getMethod("getCharacter", (Class<?>[]) null);
+      Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharacter", (Class<?>[]) null);
       String output = (String) JPAEntityParser.getPropertyValue(method, this);
       assertEquals("A", output);
 
@@ -100,7 +100,7 @@ public class JPAEntityParserTestForStaticMethods {
   @Test
   public void testGetPropertyCharacterNull() {
     try {
-      Method method = JPAEntityParserTestForStaticMethods.class.getMethod("getCharacterNull", (Class<?>[]) null);
+      Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharacterNull", (Class<?>[]) null);
       String output = (String) JPAEntityParser.getPropertyValue(method, this);
       assertNull(output);
 
@@ -116,7 +116,7 @@ public class JPAEntityParserTestForStaticMethods {
   @Test
   public void testGetPropertyCharacterArray() {
     try {
-      Method method = JPAEntityParserTestForStaticMethods.class.getMethod("getCharacterArray", (Class<?>[]) null);
+      Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharacterArray", (Class<?>[]) null);
       String output = (String) JPAEntityParser.getPropertyValue(method, this);
       assertEquals("AB", output);
 
@@ -132,7 +132,7 @@ public class JPAEntityParserTestForStaticMethods {
   @Test
   public void testGetPropertyCharacterArrayNull() {
     try {
-      Method method = JPAEntityParserTestForStaticMethods.class.getMethod("getCharacterArrayNull", (Class<?>[]) null);
+      Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharacterArrayNull", (Class<?>[]) null);
       String output = (String) JPAEntityParser.getPropertyValue(method, this);
       assertNull(output);
 
@@ -148,7 +148,7 @@ public class JPAEntityParserTestForStaticMethods {
   @Test
   public void testGetPropertyChar() {
     try {
-      Method method = JPAEntityParserTestForStaticMethods.class.getMethod("getChar", (Class<?>[]) null);
+      Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getChar", (Class<?>[]) null);
       String output = (String) JPAEntityParser.getPropertyValue(method, this);
       assertEquals("A", output);
 
@@ -164,7 +164,7 @@ public class JPAEntityParserTestForStaticMethods {
   @Test
   public void testGetPropertyCharNull() {
     try {
-      Method method = JPAEntityParserTestForStaticMethods.class.getMethod("getCharNull", (Class<?>[]) null);
+      Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharNull", (Class<?>[]) null);
       String output = (String) JPAEntityParser.getPropertyValue(method, this);
       assertNull(output);
 
@@ -180,7 +180,7 @@ public class JPAEntityParserTestForStaticMethods {
   @Test
   public void testGetPropertyCharArray() {
     try {
-      Method method = JPAEntityParserTestForStaticMethods.class.getMethod("getCharArray", (Class<?>[]) null);
+      Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharArray", (Class<?>[]) null);
       String output = (String) JPAEntityParser.getPropertyValue(method, this);
       assertEquals("AB", output);
 
@@ -196,7 +196,7 @@ public class JPAEntityParserTestForStaticMethods {
   @Test
   public void testGetPropertyCharArrayNull() {
     try {
-      Method method = JPAEntityParserTestForStaticMethods.class.getMethod("getCharArrayNull", (Class<?>[]) null);
+      Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharArrayNull", (Class<?>[]) null);
       String output = (String) JPAEntityParser.getPropertyValue(method, this);
       assertNull(output);
 
@@ -212,7 +212,7 @@ public class JPAEntityParserTestForStaticMethods {
   @Test
   public void testGetPropertyCharArrayValueNull() {
     try {
-      Method method = JPAEntityParserTestForStaticMethods.class.getMethod("getCharArrayValueNull", (Class<?>[]) null);
+      Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharArrayValueNull", (Class<?>[]) null);
       String output = (String) JPAEntityParser.getPropertyValue(method, this);
       assertEquals("A\u0000", output);
 
@@ -285,7 +285,7 @@ public class JPAEntityParserTestForStaticMethods {
     final String fileName = "SalesOrderProcessingMappingModels.xml";
     FileInputStream fis;
 
-    URL fileURL = JPAEntityParserTestForStaticMethods.class.getClassLoader().getResource(fileName);
+    URL fileURL = JPAEntityParserForStaticMethodTest.class.getClassLoader().getResource(fileName);
     fis = new FileInputStream(fileURL.getPath());
 
     return fis;

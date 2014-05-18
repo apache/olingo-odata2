@@ -219,6 +219,11 @@ public class JPAEdmEntitySetTest extends JPAEdmTestModelView {
       public String getName() {
         return "SalesOrderHeader";
       }
+
+      @Override
+      public Class<String> getJavaType() {
+        return (Class<String>) java.lang.String.class;
+      }
     }
   }
 }

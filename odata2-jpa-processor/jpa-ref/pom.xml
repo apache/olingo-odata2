@@ -90,6 +90,13 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<!-- OData API Support -->
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo-odata2-jpa-processor-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 		<!-- JUnits -->
 		<dependency>
 			<groupId>junit</groupId>

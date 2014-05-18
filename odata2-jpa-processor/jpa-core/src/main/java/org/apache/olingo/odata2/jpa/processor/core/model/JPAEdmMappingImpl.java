@@ -19,12 +19,14 @@
 package org.apache.olingo.odata2.jpa.processor.core.model;
 
 import org.apache.olingo.odata2.api.edm.provider.Mapping;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 
 public class JPAEdmMappingImpl extends Mapping implements JPAEdmMapping {
 
   private String columnName = null;
   private Class<?> type = null;
+  private Class<? extends ODataJPATombstoneEntityListener> entityListener = null;
 
   @Override
   public void setJPAColumnName(final String name) {
@@ -46,5 +48,16 @@ public class JPAEdmMappingImpl extends Mapping implements JPAEdmMapping {
   @Override
   public Class<?> getJPAType() {
     return type;
+  }
+
+  @Override
+  public void setODataJPATombstoneEntityListener(
+      final Class<? extends ODataJPATombstoneEntityListener> entityListener) {
+    this.entityListener = entityListener;
+  }
+
+  @Override
+  public Class<? extends ODataJPATombstoneEntityListener> getODataJPATombstoneEntityListener() {
+    return entityListener;
   }
 }

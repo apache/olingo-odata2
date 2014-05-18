@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.api.model;
 
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
+
 /**
  * The interface acts a container for storing Java persistence column name. The
  * JPA EDM mapping instance can be associated with any EDM simple, EDM complex
@@ -59,5 +61,19 @@ public interface JPAEdmMapping {
    * @return type
    */
   public Class<?> getJPAType();
+
+  /**
+   * The method sets a stateless JPA EntityListner type. The entity listener type
+   * should inherit from {@link com.sap.core.odata.processor.api.jpa.ODataJPATombstoneEntityListener}.
+   * @param entityListner
+   * is an instance of type Class<?>
+   */
+  public void setODataJPATombstoneEntityListener(Class<? extends ODataJPATombstoneEntityListener> entityListener);
+
+  /**
+   * The method returns a stateless JPA EntityListener type.
+   * @return JPA EntityListener type
+   */
+  public Class<? extends ODataJPATombstoneEntityListener> getODataJPATombstoneEntityListener();
 
 }

@@ -25,13 +25,17 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import javax.persistence.EntityListeners;
+
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmMappingModelAccess;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmKeyView;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmNavigationPropertyView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmSchemaView;
@@ -83,6 +87,7 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntity
 
   private class JPAEdmEntityTypeBuilder implements JPAEdmBuilder {
 
+    @SuppressWarnings("unchecked")
     @Override
     public void build() throws ODataJPAModelException, ODataJPARuntimeException {
 
@@ -105,7 +110,20 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntity
         }
 
         JPAEdmNameBuilder.build(JPAEdmEntityType.this);
+        JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) currentEdmEntityType.getMapping();
+        EntityListeners entityListners = currentJPAEntityType.getJavaType().getAnnotation(EntityListeners.class);
+        if (entityListners != null) {
+          for (Class<? extends ODataJPATombstoneEntityListener> entityListner : entityListners.value())
+          {
+            try {
+              jpaEdmMapping.setODataJPATombstoneEntityListener(entityListner);
+              break;
+            } catch (ClassCastException e) {
+              continue;
+            }
 
+          }
+        }
         JPAEdmPropertyView propertyView = new JPAEdmProperty(schemaView);
         propertyView.getBuilder().build();
 
