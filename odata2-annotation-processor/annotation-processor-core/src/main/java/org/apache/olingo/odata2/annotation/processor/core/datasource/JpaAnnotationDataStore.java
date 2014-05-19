@@ -20,6 +20,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationRuntimeException;
@@ -122,8 +123,7 @@ public class JpaAnnotationDataStore<T> implements DataStore<T> {
 
   @Override
   public Collection<T> read() {
-    TypedQuery<T> query = entityManager.createQuery(
-            "select t from " + dataTypeClass.getSimpleName() + " t", dataTypeClass);
+    Query query = entityManager.createQuery("SELECT t FROM " + dataTypeClass.getSimpleName() + " t");
     return query.getResultList();
   }
 
