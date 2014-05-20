@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.edm.EdmMappable;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
@@ -131,7 +132,7 @@ public class ODataExpressionParser {
     case PROPERTY:
       String returnStr =
           tableAlias + JPQLStatement.DELIMITER.PERIOD
-              + ((EdmProperty) ((PropertyExpression) whereExpression).getEdmProperty()).getMapping().getInternalName();
+              + ((EdmMappable) ((PropertyExpression) whereExpression).getEdmProperty()).getMapping().getInternalName();
       return returnStr;
 
     case MEMBER:
@@ -146,12 +147,12 @@ public class ODataExpressionParser {
         }
         i++;
         memberExpStr =
-            ((EdmProperty) ((PropertyExpression) member.getProperty()).getEdmProperty()).getMapping().getInternalName()
+            ((EdmMappable) ((PropertyExpression) member.getProperty()).getEdmProperty()).getMapping().getInternalName()
                 + memberExpStr;
         tempExp = member.getPath();
       }
       memberExpStr =
-          ((EdmProperty) ((PropertyExpression) tempExp).getEdmProperty()).getMapping().getInternalName()
+          ((EdmMappable) ((PropertyExpression) tempExp).getEdmProperty()).getMapping().getInternalName()
               + JPQLStatement.DELIMITER.PERIOD + memberExpStr;
       return tableAlias + JPQLStatement.DELIMITER.PERIOD + memberExpStr;
 
@@ -242,7 +243,7 @@ public class ODataExpressionParser {
 
         try {
           orderByField =
-              ((EdmProperty) ((PropertyExpression) orderBy.getExpression()).getEdmProperty()).getMapping()
+              ((EdmMappable) ((PropertyExpression) orderBy.getExpression()).getEdmProperty()).getMapping()
                   .getInternalName();
           orderByDirection = (orderBy.getSortOrder() == SortOrder.asc) ? EMPTY : "DESC"; //$NON-NLS-1$
           orderByMap.put(tableAlias + JPQLStatement.DELIMITER.PERIOD + orderByField, orderByDirection);
