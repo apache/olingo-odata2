@@ -27,6 +27,7 @@ import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper.
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper.ODataAnnotationException;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationRuntimeException;
 import org.apache.olingo.odata2.annotation.processor.core.util.ClassHelper;
+import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
@@ -156,7 +157,7 @@ public class AnnotationDataSource implements DataSource {
           + "', targetStore='" + targetStore + "').");
     }
 
-    List<Object> resultData = readResultData(targetStore, sourceData, sourceField);
+    List<Object> resultData = readResultData(targetStore, sourceData, sourceField, navInfo);
     return extractResultData(targetStore, targetKeys, navInfo, resultData);
   }
 
@@ -169,20 +170,24 @@ public class AnnotationDataSource implements DataSource {
    * @return
    * @throws DataStoreException
    */
-  private List<Object> readResultData(final DataStore<?> targetStore, final Object sourceData, final Field sourceField)
+  private List<Object> readResultData(final DataStore<?> targetStore, final Object sourceData, 
+          final Field sourceField, final AnnotatedNavInfo navInfo)
       throws DataStoreException {
     Object navigationInstance = getValue(sourceField, sourceData);
     if (navigationInstance == null) {
       return Collections.emptyList();
     }
-
+    
     List<Object> resultData = new ArrayList<Object>();
     for (Object targetInstance : targetStore.read()) {
       if (navigationInstance instanceof Collection) {
-        for (Object object : (Collection<?>) navigationInstance) {
-          if (targetStore.isKeyEqualChecked(targetInstance, object)) {
-            resultData.add(targetInstance);
-          }
+        Map<String, Object> keyName2Value = 
+                ANNOTATION_HELPER.getValueForAnnotatedFields(sourceData, EdmKey.class);
+        Field toField = navInfo.getToField();
+        Object backInstance = ClassHelper.getFieldValue(targetInstance, toField);
+        boolean keyMatch = ANNOTATION_HELPER.keyMatch(backInstance, keyName2Value);
+        if(keyMatch) {
+          resultData.add(targetInstance);
         }
       } else if (targetStore.isKeyEqualChecked(targetInstance, navigationInstance)) {
         resultData.add(targetInstance);
