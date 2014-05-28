@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
@@ -37,7 +38,7 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 public class ODataRequestImpl extends ODataRequest {
 
   private ODataHttpMethod method;
-  private Map<String, List<String>> requestHeaders = new HashMap<String, List<String>>();
+  private CaseInsensitiveMap requestHeaders = new CaseInsensitiveMap();
   private InputStream body;
   private PathInfo pathInfo;
   private Map<String, String> queryParameters;
@@ -73,7 +74,7 @@ public class ODataRequestImpl extends ODataRequest {
 
   @Override
   public Map<String, List<String>> getRequestHeaders() {
-    return Collections.unmodifiableMap(requestHeaders);
+    return requestHeaders;
   }
 
   @Override
@@ -93,7 +94,7 @@ public class ODataRequestImpl extends ODataRequest {
 
   public class ODataRequestBuilderImpl extends ODataRequestBuilder {
     private ODataHttpMethod method;
-    private Map<String, List<String>> requestHeaders = new HashMap<String, List<String>>();
+    private CaseInsensitiveMap requestHeaders = new CaseInsensitiveMap();
     private InputStream body;
     private PathInfo pathInfo;
     private Map<String, String> queryParameters;
@@ -116,7 +117,11 @@ public class ODataRequestImpl extends ODataRequest {
 
     @Override
     public ODataRequestBuilder requestHeaders(final Map<String, List<String>> headers) {
-      requestHeaders = headers;
+      requestHeaders = new CaseInsensitiveMap();
+      for (Entry<String, List<String>> set : headers.entrySet()) {
+        requestHeaders.put(set.getKey(), set.getValue());
+      }
+
       return this;
     }
 
@@ -170,7 +175,11 @@ public class ODataRequestImpl extends ODataRequest {
       if (request.getContentType() != null) {
         contentType = ContentType.create(request.getContentType());
       }
-      requestHeaders = request.getRequestHeaders();
+
+      requestHeaders = new CaseInsensitiveMap();
+      for (Entry<String, List<String>> set : request.getRequestHeaders().entrySet()) {
+        requestHeaders.put(set.getKey(), set.getValue());
+      }
 
       if (request.getAcceptHeaders() != null) {
         acceptHeaders = new ArrayList<String>();
@@ -194,5 +203,26 @@ public class ODataRequestImpl extends ODataRequest {
       return this;
     }
 
+  }
+
+  private class CaseInsensitiveMap extends HashMap<String, List<String>> {
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public List<String> put(String key, List<String> value) {
+      return super.put(key.toLowerCase(), value);
+    }
+
+    // not @Override because that would require the key parameter to be of type Object
+    public List<String> get(String key) {
+      return super.get(key.toLowerCase());
+    }
+
+    @Override
+    public List<String> get(Object key) {
+      String skey = (String) key;
+      return super.get(skey.toLowerCase());
+    }
   }
 }
