@@ -18,41 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
-import static org.junit.Assert.fail;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.FlushModeType;
-import javax.persistence.LockModeType;
-import javax.persistence.Parameter;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-import javax.persistence.metamodel.Metamodel;
-
 import junit.framework.Assert;
-
 import org.apache.olingo.odata2.api.commons.InlineCount;
-import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
-import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
-import org.apache.olingo.odata2.api.edm.EdmEntitySet;
-import org.apache.olingo.odata2.api.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.edm.EdmException;
-import org.apache.olingo.odata2.api.edm.EdmFacets;
-import org.apache.olingo.odata2.api.edm.EdmMapping;
-import org.apache.olingo.odata2.api.edm.EdmProperty;
-import org.apache.olingo.odata2.api.edm.EdmType;
-import org.apache.olingo.odata2.api.edm.EdmTypeKind;
-import org.apache.olingo.odata2.api.edm.EdmTyped;
+import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.edm.provider.Mapping;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
@@ -74,6 +42,14 @@ import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.persistence.*;
+import javax.persistence.metamodel.Metamodel;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+
+import static org.junit.Assert.fail;
 
 public class JPAProcessorImplTest {
 
@@ -306,6 +282,7 @@ public class JPAProcessorImplTest {
     EasyMock.expect(em.createQuery("SELECT COUNT ( E1 ) FROM SalesOrderHeaders E1")).andStubReturn(
         getQueryForSelectCount());
     EasyMock.expect(em.getTransaction()).andStubReturn(getLocalTransaction()); // For Delete
+    EasyMock.expect(em.getTransaction()).andStubReturn(getLocalTransaction()); // For Delete
     em.flush();
     em.flush();
     Address obj = new Address();
@@ -321,6 +298,7 @@ public class JPAProcessorImplTest {
     entityTransaction.begin(); // testing void method
     entityTransaction.commit();// testing void method
     entityTransaction.commit();// testing void method
+    EasyMock.expect(entityTransaction.isActive()).andStubReturn(false);// testing finally clause
     EasyMock.replay(entityTransaction);
     return entityTransaction;
   }

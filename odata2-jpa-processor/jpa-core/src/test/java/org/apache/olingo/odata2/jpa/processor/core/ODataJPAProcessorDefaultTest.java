@@ -18,9 +18,35 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.apache.olingo.odata2.api.commons.HttpContentType;
+import org.apache.olingo.odata2.api.commons.InlineCount;
+import org.apache.olingo.odata2.api.edm.*;
+import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.api.uri.KeyPredicate;
+import org.apache.olingo.odata2.api.uri.NavigationSegment;
+import org.apache.olingo.odata2.api.uri.PathInfo;
+import org.apache.olingo.odata2.api.uri.UriInfo;
+import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
+import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
+import org.apache.olingo.odata2.api.uri.info.*;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
+import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
+import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmTestModelView;
+import org.easymock.EasyMock;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -31,50 +57,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
-
-import org.apache.olingo.odata2.api.commons.HttpContentType;
-import org.apache.olingo.odata2.api.commons.InlineCount;
-import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
-import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
-import org.apache.olingo.odata2.api.edm.EdmEntitySet;
-import org.apache.olingo.odata2.api.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.edm.EdmException;
-import org.apache.olingo.odata2.api.edm.EdmFacets;
-import org.apache.olingo.odata2.api.edm.EdmMapping;
-import org.apache.olingo.odata2.api.edm.EdmProperty;
-import org.apache.olingo.odata2.api.edm.EdmType;
-import org.apache.olingo.odata2.api.edm.EdmTypeKind;
-import org.apache.olingo.odata2.api.edm.EdmTyped;
-import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.api.processor.ODataContext;
-import org.apache.olingo.odata2.api.processor.ODataResponse;
-import org.apache.olingo.odata2.api.uri.KeyPredicate;
-import org.apache.olingo.odata2.api.uri.NavigationSegment;
-import org.apache.olingo.odata2.api.uri.PathInfo;
-import org.apache.olingo.odata2.api.uri.UriInfo;
-import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
-import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
-import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
-import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
-import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
-import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
-import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
-import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmTestModelView;
-import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
 
@@ -360,6 +344,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     entityTransaction.begin(); // testing void method
     entityTransaction.commit();// testing void method
     entityTransaction.rollback();// testing void method
+    EasyMock.expect(entityTransaction.isActive()).andStubReturn(false);// testing finally clause
     EasyMock.replay(entityTransaction);
     return entityTransaction;
   }

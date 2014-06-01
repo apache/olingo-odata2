@@ -406,6 +406,10 @@ public class JPAProcessorImpl implements JPAProcessor {
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_CREATE_REQUEST, e);
+    } finally {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
     }
     return null;
   }
@@ -453,6 +457,10 @@ public class JPAProcessorImpl implements JPAProcessor {
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_UPDATE_REQUEST, e);
+    } finally {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
     }
 
     return jpaEntity;
@@ -492,6 +500,10 @@ public class JPAProcessorImpl implements JPAProcessor {
       } catch (Exception e) {
         throw ODataJPARuntimeException.throwException(
             ODataJPARuntimeException.ERROR_JPQL_DELETE_REQUEST, e);
+      } finally {
+          if (em.getTransaction().isActive()) {
+              em.getTransaction().rollback();
+          }
       }
     }
     return selectedObject;
