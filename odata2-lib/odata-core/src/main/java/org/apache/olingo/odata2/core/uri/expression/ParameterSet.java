@@ -120,6 +120,11 @@ public class ParameterSet {
           return false;
         }
 
+        // Always allow null comparisons
+        if (actType instanceof EdmNull) {
+          continue;
+        }
+
         // Its allowed to promoted the actual parameter!!!
 
         // Promotion only allowed for simple types
