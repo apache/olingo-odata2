@@ -128,7 +128,7 @@ public class ODataServlet extends HttpServlet {
     } else if (HTTP_METHOD_HEAD.equals(method) || HTTP_METHOD_OPTIONS.equals(method)) {
       createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
     } else {
-      createMethodNotAllowedResponse(req, ODataHttpException.COMMON, resp);
+      createNotImplementedResponse(req, ODataHttpException.COMMON, resp);
     }
   }
 
@@ -149,7 +149,7 @@ public class ODataServlet extends HttpServlet {
     } else if (HTTP_METHOD_HEAD.equals(xHttpMethod) || HTTP_METHOD_OPTIONS.equals(xHttpMethod)) {
       createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
     } else {
-      return false;
+      createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
     }
     return true;
   }
@@ -201,7 +201,7 @@ public class ODataServlet extends HttpServlet {
           .build();
       createResponse(resp, odataResponse);
     } else {
-      createMethodNotAllowedResponse(req, ODataHttpException.COMMON, resp);
+      createNotImplementedResponse(req, ODataHttpException.COMMON, resp);
     }
 
   }
@@ -239,6 +239,7 @@ public class ODataServlet extends HttpServlet {
     ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req);
     ODataResponse response =
         exceptionWrapper.wrapInExceptionResponse(new ODataNotImplementedException(messageReference));
+//    resp.setStatus(HttpStatusCodes.NOT_IMPLEMENTED.getStatusCode());
     createResponse(resp, response);
   }
 
