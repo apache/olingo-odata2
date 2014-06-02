@@ -18,8 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
-import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -55,8 +53,6 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
-import org.apache.olingo.odata2.core.commons.ContentType;
-import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
 import org.apache.olingo.odata2.core.ep.JsonEntityProvider;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
@@ -774,25 +770,4 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     assertNotNull(json);
     return json;
   }
-
-  @Test
-  public void testPostEntryWithoutId() throws Exception {
-    HashMap<String, Object> roomData = new HashMap<String, Object>();
-
-    roomData.put("Name", "Neu Schwanstein");
-    roomData.put("Seats", new Integer(20));
-    roomData.put("Version", new Integer(3));
-
-    final EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).ignoreKey(true).build();
-    ODataResponse response =
-        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
-            roomData, properties);
-
-    String json = verifyResponse(response);
-
-    assertEquals("{\"d\":{\"__metadata\":{\"type\":\"RefScenario.Room\",\"etag\":\"W/\\\"3\\\"\"},"
-        + "\"Name\":\"Neu Schwanstein\",\"Seats\":20,\"Version\":3}}", json);
-  }
-
 }

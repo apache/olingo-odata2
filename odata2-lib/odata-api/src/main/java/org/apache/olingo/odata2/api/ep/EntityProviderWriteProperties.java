@@ -44,7 +44,6 @@ public class EntityProviderWriteProperties {
   private URI selfLink;
   private boolean includeSimplePropertyType;
   private Map<String, Map<String, Object>> additionalLinks;
-  private boolean ignoreKey = false;
 
   private EntityProviderWriteProperties() {}
 
@@ -240,12 +239,6 @@ public class EntityProviderWriteProperties {
       this.properties.selfLink = properties.getSelfLink();
       this.properties.includeSimplePropertyType = properties.includeSimplePropertyType;
       this.properties.additionalLinks = properties.additionalLinks;
-      this.properties.ignoreKey = properties.ignoreKey;
-      return this;
-    }
-
-    public ODataEntityProviderPropertiesBuilder ignoreKey(boolean ignoreKey) {
-      properties.ignoreKey = ignoreKey;
       return this;
     }
   }
@@ -254,9 +247,5 @@ public class EntityProviderWriteProperties {
     final ODataEntityProviderPropertiesBuilder builder =
         EntityProviderWriteProperties.serviceRoot(properties.getServiceRoot());
     return builder.fromProperties(properties);
-  }
-
-  public boolean isIgnoreKey() {
-    return ignoreKey;
   }
 }

@@ -56,7 +56,6 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
-import org.apache.olingo.odata2.core.ep.consumer.XmlEntityConsumer;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.helper.XMLUnitHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
@@ -862,26 +861,5 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
 
   private void verifyTagOrdering(final String xmlString, final String... toCheckTags) {
     XMLUnitHelper.verifyTagOrdering(xmlString, toCheckTags);
-  }
-
-  @Test
-  public void testPostEntryWithoutId() throws Exception {
-    roomData.remove("Id");
-
-    final EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).ignoreKey(true).build();
-    AtomEntityProvider ser = createAtomEntityProvider();
-    ODataResponse response =
-        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData, properties);
-
-    String xmlString = verifyResponse(response);
-
-    assertXpathExists("/a:entry", xmlString);
-    assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
-
-    assertXpathExists("/a:entry/a:content", xmlString);
-    assertXpathEvaluatesTo(ContentType.APPLICATION_XML.toString(), "/a:entry/a:content/@type", xmlString);
-
-    assertXpathExists("/a:entry/a:content/m:properties", xmlString);
   }
 }

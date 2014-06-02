@@ -45,7 +45,6 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Encoder;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
-import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
@@ -81,10 +80,8 @@ public class JsonEntryEntityProducer {
 
       writeProperties(entityInfo, data, type);
 
-      if (!properties.isIgnoreKey()) {
-        writeNavigationProperties(writer, entityInfo, data, type);
-      }
-      
+      writeNavigationProperties(writer, entityInfo, data, type);
+
       jsonStreamWriter.endObject();
 
       if (isRootElement) {
@@ -178,15 +175,10 @@ public class JsonEntryEntityProducer {
       final EdmEntityType type) throws EdmException, EntityProviderException, IOException {
     for (final String propertyName : type.getPropertyNames()) {
       if (entityInfo.getSelectedPropertyNames().contains(propertyName)) {
-
-        EntityPropertyInfo propertyInfo = entityInfo.getPropertyInfo(propertyName);
-        if (!(entityInfo.getKeyPropertyInfos().contains(propertyInfo) && properties.isIgnoreKey())) {
-
-          jsonStreamWriter.separator();
-          jsonStreamWriter.name(propertyName);
-          JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, entityInfo.getPropertyInfo(propertyName),
-              data.get(propertyName));
-        }
+        jsonStreamWriter.separator();
+        jsonStreamWriter.name(propertyName);
+        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, entityInfo.getPropertyInfo(propertyName),
+            data.get(propertyName));
       }
     }
   }
@@ -195,15 +187,12 @@ public class JsonEntryEntityProducer {
       final EdmEntityType type) throws IOException, EntityProviderException, EdmException {
     jsonStreamWriter.name(FormatJson.METADATA);
     jsonStreamWriter.beginObject();
-    String self = null;
-    if (!properties.isIgnoreKey()) {
-      self = AtomEntryEntityProducer.createSelfLink(entityInfo, data, null);
-      location = (properties.getServiceRoot() == null ? "" : properties.getServiceRoot().toASCIIString()) + self;
-      jsonStreamWriter.namedStringValue(FormatJson.ID, location);
-      jsonStreamWriter.separator();
-      jsonStreamWriter.namedStringValue(FormatJson.URI, location);
-      jsonStreamWriter.separator();
-    }
+    final String self = AtomEntryEntityProducer.createSelfLink(entityInfo, data, null);
+    location = (properties.getServiceRoot() == null ? "" : properties.getServiceRoot().toASCIIString()) + self;
+    jsonStreamWriter.namedStringValue(FormatJson.ID, location);
+    jsonStreamWriter.separator();
+    jsonStreamWriter.namedStringValue(FormatJson.URI, location);
+    jsonStreamWriter.separator();
     jsonStreamWriter.namedStringValueRaw(FormatJson.TYPE, type.getNamespace() + Edm.DELIMITER + type.getName());
     eTag = AtomEntryEntityProducer.createETag(entityInfo, data);
     if (eTag != null) {
