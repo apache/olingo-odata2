@@ -107,7 +107,8 @@ public class BatchRequestParser {
   }
 
   public List<BatchRequestPart> parse(final InputStream in) throws BatchException {
-    Scanner scanner = new Scanner(in, BatchHelper.DEFAULT_ENCODING).useDelimiter(LF);
+    Scanner scanner = new Scanner(in, BatchHelper.DEFAULT_ENCODING);
+    scanner.useDelimiter(LF);
     baseUri = getBaseUri();
     List<BatchRequestPart> requestList;
     try {
@@ -339,7 +340,8 @@ public class BatchRequestParser {
     final String odataPathSegmentsAsString;
     final String queryParametersAsString;
     try {
-      Scanner uriScanner = new Scanner(uri).useDelimiter(LF);
+      Scanner uriScanner = new Scanner(uri);
+      uriScanner.useDelimiter(LF);
       URI uriObject = new URI(uri);
       if (uriObject.isAbsolute()) {
         Pattern regexRequestUri = Pattern.compile(baseUri + "/([^/][^?]*)(\\?.*)?");
@@ -392,7 +394,8 @@ public class BatchRequestParser {
   }
 
   private Map<String, String> parseQueryParameters(final String uri) throws BatchException {
-    Scanner uriScanner = new Scanner(uri).useDelimiter("\n");
+    Scanner uriScanner = new Scanner(uri);
+    uriScanner.useDelimiter("\n");
     Map<String, String> queryParametersMap = new HashMap<String, String>();
     Pattern regex = Pattern.compile("(?:" + baseUri + "/)?" + "[^?]+" + "\\?(.*)");
     if (uriScanner.hasNext(regex)) {
@@ -400,7 +403,8 @@ public class BatchRequestParser {
       MatchResult uriResult = uriScanner.match();
       if (uriResult.groupCount() == 1) {
         String queryParams = uriResult.group(1);
-        Scanner queryParamsScanner = new Scanner(queryParams).useDelimiter("&");
+        Scanner queryParamsScanner = new Scanner(queryParams);
+        queryParamsScanner.useDelimiter("&");
         while (queryParamsScanner.hasNext(REG_EX_QUERY_PARAMETER)) {
           queryParamsScanner.next(REG_EX_QUERY_PARAMETER);
           MatchResult result = queryParamsScanner.match();
@@ -425,7 +429,8 @@ public class BatchRequestParser {
   }
 
   private List<PathSegment> parseODataPathSegments(final String odataPathSegmentsAsString) {
-    Scanner pathSegmentScanner = new Scanner(odataPathSegmentsAsString).useDelimiter("/");
+    Scanner pathSegmentScanner = new Scanner(odataPathSegmentsAsString);
+    pathSegmentScanner.useDelimiter("/");
     List<PathSegment> odataPathSegments = new ArrayList<PathSegment>();
     while (pathSegmentScanner.hasNext()) {
       odataPathSegments.add(new ODataPathSegmentImpl(pathSegmentScanner.next(), null));
@@ -468,7 +473,8 @@ public class BatchRequestParser {
   }
 
   private String getBoundary(final String contentType) throws BatchException {
-    Scanner contentTypeScanner = new Scanner(contentType).useDelimiter(";\\s?");
+    Scanner contentTypeScanner = new Scanner(contentType);
+    contentTypeScanner.useDelimiter(";\\s?");
     if (contentTypeScanner.hasNext(REG_EX_CONTENT_TYPE)) {
       contentTypeScanner.next(REG_EX_CONTENT_TYPE);
     } else {

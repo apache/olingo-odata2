@@ -51,7 +51,8 @@ public class AcceptParser {
   public static List<String> parseAcceptHeaders(final String headerValue) throws BatchException {
     TreeSet<Accept> acceptTree = getAcceptTree();
     List<String> acceptHeaders = new ArrayList<String>();
-    Scanner acceptHeaderScanner = new Scanner(headerValue).useDelimiter(",\\s?");
+    Scanner acceptHeaderScanner = new Scanner(headerValue);
+    acceptHeaderScanner.useDelimiter(",\\s?");
     while (acceptHeaderScanner.hasNext()) {
       if (acceptHeaderScanner.hasNext(REG_EX_ACCEPT_WITH_Q_FACTOR)) {
         acceptHeaderScanner.next(REG_EX_ACCEPT_WITH_Q_FACTOR);
@@ -107,7 +108,9 @@ public class AcceptParser {
   public static List<String> parseAcceptableLanguages(final String headerValue) throws BatchException {
     List<String> acceptLanguages = new LinkedList<String>();
     TreeSet<Accept> acceptTree = getAcceptTree();
-    Scanner acceptLanguageScanner = new Scanner(headerValue).useDelimiter(",\\s?");
+    Scanner acceptLanguageScanner = new Scanner(headerValue);
+    acceptLanguageScanner.useDelimiter(",\\s?");
+
     while (acceptLanguageScanner.hasNext()) {
       if (acceptLanguageScanner.hasNext(REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR)) {
         acceptLanguageScanner.next(REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR);
