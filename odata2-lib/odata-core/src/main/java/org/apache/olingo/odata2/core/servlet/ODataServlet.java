@@ -154,8 +154,7 @@ public class ODataServlet extends HttpServlet {
     return true;
   }
 
-  private void
-      handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp)
+  private void handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp)
           throws IOException {
     try {
       if (req.getHeader(HttpHeaders.ACCEPT) != null && req.getHeader(HttpHeaders.ACCEPT).isEmpty()) {
@@ -197,13 +196,27 @@ public class ODataServlet extends HttpServlet {
         HTTP_METHOD_HEAD.equals(method) ||
         HTTP_METHOD_OPTIONS.equals(method)) {
       ODataResponse odataResponse = ODataResponse.status(HttpStatusCodes.TEMPORARY_REDIRECT)
-          .header(HttpHeaders.LOCATION, "/")
+          .header(HttpHeaders.LOCATION, createLocation(req))
           .build();
       createResponse(resp, odataResponse);
     } else {
       createNotImplementedResponse(req, ODataHttpException.COMMON, resp);
     }
 
+  }
+
+  private String createLocation(HttpServletRequest req) {
+    StringBuilder location = new StringBuilder();
+    String contextPath = req.getContextPath();
+    if(contextPath != null) {
+      location.append(contextPath);
+    }
+    String servletPath = req.getServletPath();
+    if(servletPath != null) {
+      location.append(servletPath);
+    }
+    location.append("/");
+    return location.toString();
   }
 
   private void createResponse(final HttpServletResponse resp, final ODataResponse response) throws IOException {
