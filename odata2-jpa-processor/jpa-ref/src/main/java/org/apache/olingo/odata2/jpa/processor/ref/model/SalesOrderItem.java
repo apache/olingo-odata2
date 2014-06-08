@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.jpa.processor.ref.model;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -28,6 +29,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "T_SALESORDERITEM")
+@EntityListeners(org.apache.olingo.odata2.jpa.processor.ref.listeners.SalesOrderItemTombstoneListener.class)
 public class SalesOrderItem {
 
   public SalesOrderItem() {}
