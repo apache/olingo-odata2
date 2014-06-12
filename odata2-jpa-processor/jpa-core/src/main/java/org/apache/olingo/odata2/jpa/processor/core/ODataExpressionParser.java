@@ -107,10 +107,11 @@ public class ODataExpressionParser {
 
       switch (binaryExpression.getOperator()) {
       case AND:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.AND + JPQLStatement.DELIMITER.SPACE
-            + right;
+        return "(" + left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.AND + JPQLStatement.DELIMITER.SPACE
+            + right + ")";
       case OR:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.OR + JPQLStatement.DELIMITER.SPACE + right;
+        return "(" + left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.OR + JPQLStatement.DELIMITER.SPACE
+            + right + ")";
       case EQ:
         return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.EQ + JPQLStatement.DELIMITER.SPACE + right;
       case NE:
