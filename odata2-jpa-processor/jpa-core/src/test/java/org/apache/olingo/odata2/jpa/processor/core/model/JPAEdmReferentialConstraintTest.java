@@ -25,6 +25,8 @@ import static org.junit.Assert.fail;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.metamodel.Attribute;
@@ -48,6 +50,7 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
 
   private static JPAEdmReferentialConstraint objJPAEdmReferentialConstraint = null;
   private static JPAEdmReferentialConstraintTest objJPAEdmReferentialConstraintTest = null;
+  private List<JoinColumn> bufferedJoinColumns = null;
 
   @Before
   public void setUp() {
@@ -123,6 +126,21 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
   @Override
   public Attribute<?, ?> getJPAAttribute() {
     return getJPAAttributeLocal();
+  }
+
+  @Override
+  public List<JoinColumn> getJPAJoinColumns() {
+    if (bufferedJoinColumns == null) {
+      JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
+      EasyMock.expect(joinColumn.referencedColumnName()).andReturn("SOID");
+      EasyMock.expect(joinColumn.name()).andReturn("SOID");
+
+      EasyMock.replay(joinColumn);
+
+      bufferedJoinColumns = new ArrayList<JoinColumn>();
+      bufferedJoinColumns.add(joinColumn);
+    }
+    return bufferedJoinColumns;
   }
 
   @SuppressWarnings("hiding")

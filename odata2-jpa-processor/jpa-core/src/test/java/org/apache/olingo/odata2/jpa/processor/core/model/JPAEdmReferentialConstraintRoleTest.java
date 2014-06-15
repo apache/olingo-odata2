@@ -55,6 +55,7 @@ public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
 
   private static JPAEdmReferentialConstraintRole objJPAEdmReferentialConstraintRole = null;
   private static JPAEdmReferentialConstraintRoleTest objJPAEdmReferentialConstraintRoleTest = null;
+  private List<JoinColumn> bufferedJoinColumns = null;
 
   @Before
   public void setUp() {
@@ -147,6 +148,21 @@ public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
   }
 
   @Override
+  public List<JoinColumn> getJPAJoinColumns() {
+    if (bufferedJoinColumns == null) {
+      JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
+      EasyMock.expect(joinColumn.referencedColumnName()).andReturn("SOID");
+      EasyMock.expect(joinColumn.name()).andReturn("SOID");
+
+      EasyMock.replay(joinColumn);
+
+      bufferedJoinColumns = new ArrayList<JoinColumn>();
+      bufferedJoinColumns.add(joinColumn);
+    }
+    return bufferedJoinColumns;
+  }
+
+  @Override
   public Association getEdmAssociation() {
     Association association = new Association();
     association.setName("Assoc_SalesOrderHeader_SalesOrderItem");
@@ -227,6 +243,9 @@ public class JPAEdmReferentialConstraintRoleTest extends JPAEdmTestModelView {
       EasyMock.expect(joinColumn.name()).andReturn("SOID");
 
       EasyMock.replay(joinColumn);
+
+      bufferedJoinColumns = new ArrayList<JoinColumn>();
+      bufferedJoinColumns.add(joinColumn);
       return (T) joinColumn;
     }
   }

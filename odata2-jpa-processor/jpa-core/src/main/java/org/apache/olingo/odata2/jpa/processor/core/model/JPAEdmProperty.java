@@ -74,6 +74,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
   private Attribute<?, ?> currentRefAttribute;
   private boolean isBuildModeComplexType;
   private Map<String, Integer> associationCount;
+  private ArrayList<JoinColumn> bJoinColumns = null;
 
   public JPAEdmProperty(final JPAEdmSchemaView view) {
     super(view);
@@ -136,6 +137,11 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
   @Override
   public JPAEdmNavigationPropertyView getJPAEdmNavigationPropertyView() {
     return navigationPropertyView;
+  }
+
+  @Override
+  public List<JoinColumn> getJPAJoinColumns() {
+    return bJoinColumns;
   }
 
   private class JPAEdmPropertyBuilder implements JPAEdmBuilder {
@@ -352,6 +358,8 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
           return;
         }
       } else {
+        bJoinColumns = bJoinColumns == null ? new ArrayList<JoinColumn>() : bJoinColumns;
+        bJoinColumns.add(joinColumn);
         if (joinColumn.insertable() && joinColumn.updatable()) {
           EntityType<?> referencedEntityType = metaModel.entity(jpaAttribute.getJavaType());
           for (Attribute<?, ?> referencedAttribute : referencedEntityType.getAttributes()) {
@@ -419,5 +427,4 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
     }
     return isExcluded;
   }
-
 }
