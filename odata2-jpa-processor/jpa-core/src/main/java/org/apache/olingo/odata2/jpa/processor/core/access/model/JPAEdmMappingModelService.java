@@ -38,13 +38,12 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
 
   boolean mappingModelExists = true;
   private JPAEdmMappingModel mappingModel;
+  private InputStream mappingModelStream = null;
   private String mappingModelName;
 
   public JPAEdmMappingModelService(final ODataJPAContext ctx) {
-    mappingModelName = ctx.getJPAEdmMappingModel();
-    if (mappingModelName == null) {
-      mappingModelExists = false;
-    }
+    mappingModelExists = (mappingModelName = ctx.getJPAEdmMappingModel()) == null ?
+        (((mappingModelStream = ctx.getJPAEdmExtension().getJPAEdmMappingModelStream()) == null) ? false : true) : true;
   }
 
   @Override
@@ -194,8 +193,10 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   protected InputStream loadMappingModelInputStream() {
+    if (mappingModelStream != null) {
+      return mappingModelStream;
+    }
     InputStream is = JPAEdmMappingModelService.class.getClassLoader().getResourceAsStream("../../" + mappingModelName);
-
     return is;
 
   }
