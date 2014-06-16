@@ -348,6 +348,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         ODataJPARuntimeException {
 
       AnnotatedElement annotatedElement = (AnnotatedElement) jpaAttribute.getJavaMember();
+      bJoinColumns = null;
       if (annotatedElement == null) {
         return;
       }
