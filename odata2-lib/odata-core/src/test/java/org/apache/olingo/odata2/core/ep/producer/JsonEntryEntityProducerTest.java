@@ -87,6 +87,24 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         json);
   }
 
+  @Test
+  public void omitJsonWrapper() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
+    Map<String, Object> teamData = new HashMap<String, Object>();
+    teamData.put("Id", "1");
+    teamData.put("isScrumTeam", true);
+
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).omitJsonWrapper(true).build();
+    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, teamData, properties);
+    final String json = verifyResponse(response);
+    assertEquals("{\"__metadata\":{\"id\":\"" + BASE_URI + "Teams('1')\","
+        + "\"uri\":\"" + BASE_URI + "Teams('1')\",\"type\":\"RefScenario.Team\"},"
+        + "\"Id\":\"1\",\"Name\":null,\"isScrumTeam\":true,"
+        + "\"nt_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Teams('1')/nt_Employees\"}}}",
+        json);
+  }
+
   @Test(expected = EntityProviderException.class)
   public void entryWithNullData() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");

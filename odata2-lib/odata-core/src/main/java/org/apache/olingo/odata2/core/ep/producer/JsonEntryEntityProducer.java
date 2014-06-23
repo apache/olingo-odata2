@@ -70,7 +70,7 @@ public class JsonEntryEntityProducer {
 
     try {
       jsonStreamWriter = new JsonStreamWriter(writer);
-      if (isRootElement) {
+      if (isRootElement && !properties.isOmitJsonWrapper()) {
         jsonStreamWriter.beginObject().name(FormatJson.D);
       }
 
@@ -84,7 +84,7 @@ public class JsonEntryEntityProducer {
 
       jsonStreamWriter.endObject();
 
-      if (isRootElement) {
+      if (isRootElement && !properties.isOmitJsonWrapper()) {
         jsonStreamWriter.endObject();
       }
 
