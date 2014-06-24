@@ -18,9 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.ref.processor;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -76,9 +80,11 @@ import org.apache.olingo.odata2.api.exception.ODataHttpException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.api.processor.ODataProcessor;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
+import org.apache.olingo.odata2.api.processor.part.EntitySetProcessor;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.NavigationSegment;
@@ -111,7 +117,14 @@ import org.apache.olingo.odata2.api.uri.info.GetMediaResourceUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetSimplePropertyUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
+import org.apache.olingo.odata2.ref.model.AddressBookProtos;
 import org.apache.olingo.odata2.ref.processor.ScenarioDataSource.BinaryData;
+
+import com.google.protobuf.Descriptors;
+import com.google.protobuf.Descriptors.FieldDescriptor;
+import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.Message;
 
 /**
  * Implementation of the centralized parts of OData processing,
@@ -121,10 +134,24 @@ import org.apache.olingo.odata2.ref.processor.ScenarioDataSource.BinaryData;
  */
 public class ListsProcessor extends ODataSingleProcessor {
 
+  private static final String CUSTOM_CONTENT_TYPE = "application/x-protobuf";
   // TODO: Paging size should be configurable.
   private static final int SERVER_PAGING_SIZE = 100;
   private final BeanPropertyAccess valueAccess;
   private final ScenarioDataSource dataSource;
+  private static Map<String, String> mapping;
+  static {
+    mapping = new HashMap<String, String>();
+    mapping.put("org.apache.olingo.odata2.ref.model.Room", "org.apache.olingo.odata2.ref.model.AddressBookProtos$Room");
+    mapping.put("org.apache.olingo.odata2.ref.model.Employee",
+        "org.apache.olingo.odata2.ref.model.AddressBookProtos$Employee");
+    mapping.put("org.apache.olingo.odata2.ref.model.Manager",
+        "org.apache.olingo.odata2.ref.model.AddressBookProtos$Employee");
+    mapping.put("org.apache.olingo.odata2.ref.model.Location",
+        "org.apache.olingo.odata2.ref.model.AddressBookProtos$Employee$Location");
+    mapping.put("org.apache.olingo.odata2.ref.model.City",
+        "org.apache.olingo.odata2.ref.model.AddressBookProtos$Employee$City");
+  }
 
   public ListsProcessor(final ScenarioDataSource dataSource) {
     this(dataSource, new BeanPropertyAccess());
@@ -135,6 +162,21 @@ public class ListsProcessor extends ODataSingleProcessor {
     this.valueAccess = valueAccess;
   }
 
+  @Override
+  public List<String> getCustomContentTypes(final Class<? extends ODataProcessor> processorFeature)
+      throws ODataException {
+    if (processorFeature == EntitySetProcessor.class) {
+      List<String> customContentTypes = new ArrayList<String>();
+      // otherwise fit fails if no media type has been entered
+      customContentTypes.add(HttpContentType.APPLICATION_ATOM_XML_FEED_UTF8);
+      customContentTypes.add(CUSTOM_CONTENT_TYPE);
+      return customContentTypes;
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public ODataResponse readEntitySet(final GetEntitySetUriInfo uriInfo, final String contentType)
       throws ODataException {
@@ -191,6 +233,47 @@ public class ListsProcessor extends ODataSingleProcessor {
 
     final EdmEntityType entityType = entitySet.getEntityType();
     List<Map<String, Object>> values = new ArrayList<Map<String, Object>>();
+
+    if (CUSTOM_CONTENT_TYPE.equals(contentType)) {
+      Descriptors.Descriptor addressBookDescriptor = AddressBookProtos.AddressBook.getDescriptor();
+      AddressBookProtos.AddressBook.Builder addressBook = AddressBookProtos.AddressBook.newBuilder();
+      CircleStreamBuffer buffer = new CircleStreamBuffer();
+      try {
+      for (final Object entryData : data) {
+        String className = mapping.get(entryData.getClass().getName());
+      
+        Class<Message> object = (Class<Message>) Class.forName(className);
+        Descriptors.Descriptor descriptor = ( Descriptors.Descriptor) object.getMethod("getDescriptor").invoke(object);
+        GeneratedMessage.Builder builder = (GeneratedMessage.Builder) object.getMethod("newBuilder").invoke(object);
+        Message message = getStructuralTypeValueMapProtobuf(entryData, descriptor,
+           builder, entityType);
+        
+        FieldDescriptor fd = addressBookDescriptor.findFieldByName(descriptor.getName().toLowerCase());
+        if (fd != null) {
+          addressBook.addRepeatedField(fd, message);
+        }
+      }
+      OutputStream output = buffer.getOutputStream();
+    
+
+        addressBook.build().writeTo(output);
+      } catch (IOException e) {
+        throw new ODataException(e);
+      } catch (IllegalArgumentException e) {
+        throw new ODataException(e);
+      } catch (SecurityException e) {
+        throw new ODataException(e);
+      } catch (IllegalAccessException e) {
+        throw new ODataException(e);
+      } catch (InvocationTargetException e) {
+        throw new ODataException(e);
+      } catch (NoSuchMethodException e) {
+        throw new ODataException(e);
+      } catch (ClassNotFoundException e) {
+        throw new ODataException(e);
+      }
+      return ODataResponse.entity(buffer.getInputStream()).build();
+    }
     for (final Object entryData : data) {
       values.add(getStructuralTypeValueMap(entryData, entityType));
     }
@@ -1522,7 +1605,55 @@ public class ListsProcessor extends ODataSingleProcessor {
       }
     }
   }
+  private Message getStructuralTypeValueMapProtobuf(final Object data, final Descriptors.Descriptor descriptor,
+      final GeneratedMessage.Builder message,
+      final EdmStructuralType type) throws ODataException {
 
+    // String cname = data.getClass().getName();
+    Map<String, Object> valueMap = new HashMap<String, Object>();
+
+    for (final String propertyName : type.getPropertyNames()) {
+      final EdmProperty property = (EdmProperty) type.getProperty(propertyName);
+      final Object value = valueAccess.getPropertyValue(data, property);
+      Descriptors.FieldDescriptor fieldDescriptor = descriptor.findFieldByName(propertyName.toLowerCase());
+      if(value!=null){
+      if (property.isSimple()) {
+        if(value instanceof Calendar){
+          message.setField(fieldDescriptor, ((Calendar)value).getTimeInMillis());
+        } else{
+           message.setField(fieldDescriptor, value);
+        }
+        
+      } else {
+        String className = mapping.get(value.getClass().getName());
+        
+        Class<Message> object;
+        try {
+          object = (Class<Message>) Class.forName(className);
+          Descriptors.Descriptor descr = ( Descriptors.Descriptor) object.getMethod("getDescriptor").invoke(object);
+          GeneratedMessage.Builder builder = (GeneratedMessage.Builder) object.getMethod("newBuilder").invoke(object);
+          message.setField(fieldDescriptor, getStructuralTypeValueMapProtobuf(value,descr,
+              builder, (EdmStructuralType) property.getType()));
+        } catch (ClassNotFoundException e) {
+          throw new ODataException(e);
+        } catch (IllegalArgumentException e) {
+          throw new ODataException(e);
+        } catch (SecurityException e) {
+          throw new ODataException(e);
+        } catch (IllegalAccessException e) {
+          throw new ODataException(e);
+        } catch (InvocationTargetException e) {
+          throw new ODataException(e);
+        } catch (NoSuchMethodException e) {
+          throw new ODataException(e);
+        }
+        
+        }
+    }
+    }
+    return message.build();
+  }
+  
   private <T> Map<String, Object> getSimpleTypeValueMap(final T data, final List<EdmProperty> propertyPath)
       throws ODataException {
     final EdmProperty property = propertyPath.get(propertyPath.size() - 1);
