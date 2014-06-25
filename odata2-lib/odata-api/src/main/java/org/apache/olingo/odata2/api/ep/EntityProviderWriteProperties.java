@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.commons.InlineCount;
-import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.ODataEntityProviderPropertiesBuilder;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 
 /**
@@ -46,8 +45,13 @@ public class EntityProviderWriteProperties {
   private boolean includeSimplePropertyType;
   private Map<String, Map<String, Object>> additionalLinks;
   private boolean omitJsonWrapper;
+  private boolean contentOnly;
 
   private EntityProviderWriteProperties() {}
+
+  public final boolean isContentOnly() {
+    return contentOnly;
+  }
 
   public final boolean isOmitJsonWrapper() {
     return omitJsonWrapper;
@@ -235,6 +239,17 @@ public class EntityProviderWriteProperties {
       return this;
     }
 
+    public ODataEntityProviderPropertiesBuilder omitJsonWrapper(boolean omitJsonWrapper) {
+      properties.omitJsonWrapper = omitJsonWrapper;
+      return this;
+    }
+
+    public ODataEntityProviderPropertiesBuilder contentOnly(boolean contentOnly) {
+      properties.contentOnly = contentOnly;
+      return this;
+    }
+
+    
     public ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
       this.properties.mediaResourceMimeType = properties.getMediaResourceMimeType();
       this.properties.inlineCountType = properties.getInlineCountType();
@@ -246,13 +261,10 @@ public class EntityProviderWriteProperties {
       this.properties.includeSimplePropertyType = properties.includeSimplePropertyType;
       this.properties.additionalLinks = properties.additionalLinks;
       this.properties.omitJsonWrapper = properties.omitJsonWrapper;
+      this.properties.contentOnly = properties.contentOnly;
       return this;
     }
 
-    public ODataEntityProviderPropertiesBuilder omitJsonWrapper(boolean omitJsonWrapper) {
-      properties.omitJsonWrapper = omitJsonWrapper;
-      return this;
-    }
   }
 
   public static ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {

@@ -75,6 +75,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .includeSimplePropertyType(true)
         .additionalLinks(links)
         .omitJsonWrapper(true)
+        .contentOnly(true)
         .build();
 
     assertEquals("Wrong amount of callbacks.", 1, properties.getCallbacks().size());
@@ -89,6 +90,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertTrue("Simple property types should be true", properties.isIncludeSimplePropertyType());
     assertEquals(Collections.emptyMap(), properties.getAdditionalLinks().get("aNavigationProperty"));
     assertTrue("Json Wrapper should be omitted", properties.isOmitJsonWrapper());
+    assertTrue("ContentOnlyFlag should be set", properties.isContentOnly());
   }
 
   @Test
@@ -121,6 +123,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .includeSimplePropertyType(true)
         .additionalLinks(links)
         .omitJsonWrapper(true)
+        .contentOnly(true)
         .build();
 
     //
@@ -140,5 +143,6 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertTrue("Simple property types should be true", fromProperties.isIncludeSimplePropertyType());
     assertEquals(Collections.emptyMap(), fromProperties.getAdditionalLinks().get("aNavigationProperty"));
     assertTrue("Json Wrapper should be omitted", properties.isOmitJsonWrapper());
+    assertTrue("ContentOnlyFlag should be set", properties.isContentOnly());
   }
 }
