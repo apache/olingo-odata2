@@ -1,0 +1,25 @@
+{
+	"d" : {
+		"EmployeeId" : "1",
+		"EmployeeName" : "Walter Winter",
+		"ManagerId" : "1",
+		"RoomId" : "1",
+		"TeamId" : "1",
+		"Location" : {
+			"__metadata" : {
+				"type" : "RefScenario.c_Location"
+			},
+			"City" : {
+				"__metadata" : {
+					"type" : "RefScenario.c_City"
+				},
+				"PostalCode" : "69124",
+				"CityName" : "Heidelberg"
+			},
+			"Country" : "Germany"
+		},
+		"Age" : 52,
+		"EntryDate" : "\/Date(915148800000)\/",
+		"ImageUrl" : "Employees('1')/$value"
+	}
+}
