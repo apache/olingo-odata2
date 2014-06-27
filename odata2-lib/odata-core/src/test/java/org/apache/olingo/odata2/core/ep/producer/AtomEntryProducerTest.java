@@ -31,9 +31,11 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -567,10 +569,34 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
   public void serializeAtomMediaResourceWithMimeType() throws IOException, XpathException, SAXException,
       XMLStreamException, FactoryConfigurationError, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
-    EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>();
+
+    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    date.clear();
+    date.set(1999, 0, 1);
+
+    localEmployeeData.put("EmployeeId", "1");
+    localEmployeeData.put("ImmageUrl", null);
+    localEmployeeData.put("ManagerId", "1");
+    localEmployeeData.put("Age", new Integer(52));
+    localEmployeeData.put("RoomId", "1");
+    localEmployeeData.put("EntryDate", date);
+    localEmployeeData.put("TeamId", "42");
+    localEmployeeData.put("EmployeeName", "Walter Winter");
+    localEmployeeData.put("getImageType", "abc");
+
+    Map<String, Object> locationData = new HashMap<String, Object>();
+    Map<String, Object> cityData = new HashMap<String, Object>();
+    cityData.put("PostalCode", "33470");
+    cityData.put("CityName", "Duckburg");
+    locationData.put("City", cityData);
+    locationData.put("Country", "Calisota");
+
+    localEmployeeData.put("Location", locationData);
     ODataResponse response =
-        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData,
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            localEmployeeData,
             properties);
     String xmlString = verifyResponse(response);
 
@@ -614,10 +640,34 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
   public void serializeEmployeeAndCheckOrderOfTags() throws IOException, XpathException, SAXException,
       XMLStreamException, FactoryConfigurationError, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
-    EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>();
+
+    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    date.clear();
+    date.set(1999, 0, 1);
+
+    localEmployeeData.put("EmployeeId", "1");
+    localEmployeeData.put("ImmageUrl", null);
+    localEmployeeData.put("ManagerId", "1");
+    localEmployeeData.put("Age", new Integer(52));
+    localEmployeeData.put("RoomId", "1");
+    localEmployeeData.put("EntryDate", date);
+    localEmployeeData.put("TeamId", "42");
+    localEmployeeData.put("EmployeeName", "Walter Winter");
+    localEmployeeData.put("getImageType", "abc");
+
+    Map<String, Object> locationData = new HashMap<String, Object>();
+    Map<String, Object> cityData = new HashMap<String, Object>();
+    cityData.put("PostalCode", "33470");
+    cityData.put("CityName", "Duckburg");
+    locationData.put("City", cityData);
+    locationData.put("Country", "Calisota");
+
+    localEmployeeData.put("Location", locationData);
     ODataResponse response =
-        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData,
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            localEmployeeData,
             properties);
     String xmlString = verifyResponse(response);
 
@@ -649,7 +699,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
       XMLStreamException, FactoryConfigurationError, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
     EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
     EdmEntitySet employeeEntitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     ODataResponse response = ser.writeEntry(employeeEntitySet, employeeData, properties);
     String xmlString = verifyResponse(response);
@@ -672,7 +722,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
       XMLStreamException, FactoryConfigurationError, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
     EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
     EdmEntitySet employeeEntitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
 
     // set "keepInContent" to false for EntryDate
@@ -1026,7 +1076,6 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     EdmMapping mapping = employeesSet.getEntityType().getMapping();
     when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
     when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
-    when(mapping.getMimeType()).thenReturn(null);
     ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
     String xmlString = verifyResponse(response);
 
@@ -1084,25 +1133,25 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     assertXpathNotExists("/a:entry/a:content[@src=\"http://localhost:8080/images/image1\"]", xmlString);
   }
 
-  @Test
-  public void assureGetMimeTypeWinsOverGetMediaResourceMimeTypeKey() throws Exception {
-    // Keep this test till version 1.2
-    AtomEntityProvider ser = createAtomEntityProvider();
-    Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);
-    String mediaResourceMimeTypeKey = "~type";
-    localEmployeeData.put(mediaResourceMimeTypeKey, "wrong");
-    String originalMimeTypeKey = "~originalType";
-    localEmployeeData.put(originalMimeTypeKey, "right");
-    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
-    EdmMapping mapping = employeesSet.getEntityType().getMapping();
-    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
-    when(mapping.getMimeType()).thenReturn(originalMimeTypeKey);
-    ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
-    String xmlString = verifyResponse(response);
-
-    assertXpathExists("/a:entry/a:content[@type=\"right\"]", xmlString);
-    assertXpathNotExists("/a:entry/a:content[@type=\"wrong\"]", xmlString);
-  }
+//  @Test
+//  public void assureGetMimeTypeWinsOverGetMediaResourceMimeTypeKey() throws Exception {
+//    // Keep this test till version 1.2
+//    AtomEntityProvider ser = createAtomEntityProvider();
+//    Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);
+//    String mediaResourceMimeTypeKey = "~type";
+//    localEmployeeData.put(mediaResourceMimeTypeKey, "wrong");
+//    String originalMimeTypeKey = "~originalType";
+//    localEmployeeData.put(originalMimeTypeKey, "right");
+//    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+//    EdmMapping mapping = employeesSet.getEntityType().getMapping();
+//    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
+//    when(mapping.getMimeType()).thenReturn(originalMimeTypeKey);
+//    ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
+//    String xmlString = verifyResponse(response);
+//
+//    assertXpathExists("/a:entry/a:content[@type=\"right\"]", xmlString);
+//    assertXpathNotExists("/a:entry/a:content[@type=\"wrong\"]", xmlString);
+//  }
 
   private void verifyTagOrdering(final String xmlString, final String... toCheckTags) {
     XMLUnitHelper.verifyTagOrdering(xmlString, toCheckTags);

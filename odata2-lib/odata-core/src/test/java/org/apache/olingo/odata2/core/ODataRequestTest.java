@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.junit.Test;
 

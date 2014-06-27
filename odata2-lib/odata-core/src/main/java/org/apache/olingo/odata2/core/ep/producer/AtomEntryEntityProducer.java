@@ -59,7 +59,6 @@ import org.apache.olingo.odata2.core.commons.Encoder;
 import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
-import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
@@ -351,18 +350,16 @@ public class AtomEntryEntityProducer {
   private void appendAtomContentLink(final XMLStreamWriter writer, final EntityInfoAggregator eia,
       final Map<String, Object> data, final String selfLink) throws EntityProviderException, EdmException {
     try {
-      String mediaResourceMimeType = properties.getMediaResourceMimeType();
+      String mediaResourceMimeType = null;
+      EdmMapping entityTypeMapping = eia.getEntityType().getMapping();
+      if (entityTypeMapping != null) {
+        String mediaResourceMimeTypeKey = entityTypeMapping.getMediaResourceMimeTypeKey();
+        if (mediaResourceMimeTypeKey != null) {
+          mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
+        }
+      }
       if (mediaResourceMimeType == null) {
-        EdmMapping entityTypeMapping = eia.getEntityType().getMapping();
-        if (entityTypeMapping != null) {
-          String mediaResourceMimeTypeKey = entityTypeMapping.getMediaResourceMimeTypeKey();
-          if (mediaResourceMimeTypeKey != null) {
-            mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
-          }
-        }
-        if (mediaResourceMimeType == null) {
-          mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
-        }
+        mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
       }
 
       writer.writeStartElement(FormatXml.ATOM_LINK);
@@ -379,10 +376,9 @@ public class AtomEntryEntityProducer {
       final Map<String, Object> data, final String selfLink) throws EntityProviderException, EdmException {
     try {
 
-      // We have to support the media resource mime type at the properties till version 1.2 then this can be refactored
-      String mediaResourceMimeType = properties.getMediaResourceMimeType();
       EdmMapping entityTypeMapping = eia.getEntityType().getMapping();
       String self = null;
+      String mediaResourceMimeType = null;
 
       if (entityTypeMapping != null) {
         String mediaResourceSourceKey = entityTypeMapping.getMediaResourceSourceKey();
@@ -392,22 +388,16 @@ public class AtomEntryEntityProducer {
         if (self == null) {
           self = selfLink + "/$value";
         }
-        if (mediaResourceMimeType == null) {
-          String mediaResourceMimeTypeKey =
-              entityTypeMapping.getMimeType() != null ? entityTypeMapping.getMimeType()
-                  : entityTypeMapping.getMediaResourceMimeTypeKey();
-          if (mediaResourceMimeTypeKey != null) {
-            mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
-          }
-          if (mediaResourceMimeType == null) {
-            mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
-          }
+        String mediaResourceMimeTypeKey = entityTypeMapping.getMediaResourceMimeTypeKey();
+        if (mediaResourceMimeTypeKey != null) {
+          mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
         }
-      } else {
-        self = selfLink + "/$value";
         if (mediaResourceMimeType == null) {
           mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
         }
+      } else {
+        self = selfLink + "/$value";
+        mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
       }
 
       writer.writeStartElement(FormatXml.ATOM_CONTENT);

@@ -34,8 +34,6 @@ import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 public class EntityProviderWriteProperties {
 
   private URI serviceRoot;
-  @Deprecated
-  private String mediaResourceMimeType;
   private InlineCount inlineCountType;
   private Integer inlineCount;
   private String nextLink;
@@ -79,17 +77,6 @@ public class EntityProviderWriteProperties {
    */
   public final URI getServiceRoot() {
     return serviceRoot;
-  }
-
-  /**
-   * Gets the MIME type of the media resource.
-   * @return the MIME type of the media resource
-   * @deprecated use instead the functionality of 'EdmMapping -> mediaResourceMimeTypeKey' to reference via a key
-   * to the 'mime type' of the media resource provided in the entity data map
-   */
-  @Deprecated
-  public final String getMediaResourceMimeType() {
-    return mediaResourceMimeType;
   }
 
   /**
@@ -152,17 +139,6 @@ public class EntityProviderWriteProperties {
     public final ODataEntityProviderPropertiesBuilder includeSimplePropertyType(
         final boolean includeSimplePropertyType) {
       properties.includeSimplePropertyType = includeSimplePropertyType;
-      return this;
-    }
-
-    /**
-     * @param mediaResourceMimeType the mediaResourceMimeType to set
-     * @deprecated use instead the functionality of 'EdmMapping -> mediaResourceMimeTypeKey' to reference via a key
-     * to the 'mime type' of the media resource provided in the entity data map
-     */
-    @Deprecated
-    public final ODataEntityProviderPropertiesBuilder mediaResourceMimeType(final String mediaResourceMimeType) {
-      properties.mediaResourceMimeType = mediaResourceMimeType;
       return this;
     }
 
@@ -251,7 +227,6 @@ public class EntityProviderWriteProperties {
 
     
     public ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
-      this.properties.mediaResourceMimeType = properties.getMediaResourceMimeType();
       this.properties.inlineCountType = properties.getInlineCountType();
       this.properties.inlineCount = properties.getInlineCount();
       this.properties.nextLink = properties.getNextLink();

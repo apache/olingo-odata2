@@ -215,7 +215,10 @@ public class ScenarioEdmProvider extends EdmProvider {
             .setHasStream(true)
             .setKey(getKey("EmployeeId"))
             .setNavigationProperties(navigationProperties)
-            .setMapping(new Mapping().setMimeType("getImageType").setMediaResourceMimeTypeKey("~mrmtk"));
+            .setMapping(new Mapping()
+//                  .setMimeType("getImageType")
+//                .setMediaResourceMimeTypeKey("~mrmtk")
+                .setMediaResourceMimeTypeKey("getImageType"));
 
       } else if (ENTITY_TYPE_1_BASE.getName().equals(edmFQName.getName())) {
         List<Property> properties = new ArrayList<Property>();
@@ -265,7 +268,9 @@ public class ScenarioEdmProvider extends EdmProvider {
             .setBaseType(ENTITY_TYPE_1_1)
             .setHasStream(true)
             .setNavigationProperties(navigationProperties)
-            .setMapping(new Mapping().setMimeType("getImageType"));
+            .setMapping(new Mapping()
+//            .setMimeType("getImageType")
+            .setMediaResourceMimeTypeKey("getImageType"));
 
       } else if (ENTITY_TYPE_1_5.getName().equals(edmFQName.getName())) {
         List<Property> properties = new ArrayList<Property>();
@@ -299,7 +304,7 @@ public class ScenarioEdmProvider extends EdmProvider {
                 .setFcTargetPath(EdmTargetPath.SYNDICATION_AUTHORURI))
             .setMapping(new Mapping().setInternalName("getImageUri")));
         properties.add(new SimpleProperty().setName("Image").setType(EdmSimpleTypeKind.Binary)
-            .setMapping(new Mapping().setMimeType("getImageType")));
+            .setMapping(new Mapping().setMediaResourceMimeTypeKey("getImageType")));
         properties.add(new SimpleProperty().setName("BinaryData").setType(EdmSimpleTypeKind.Binary)
             .setFacets(new Facets().setNullable(true))
             .setMimeType("image/jpeg"));
@@ -315,7 +320,9 @@ public class ScenarioEdmProvider extends EdmProvider {
             .setProperties(properties)
             .setHasStream(true)
             .setKey(getKey("Id", "Type"))
-            .setMapping(new Mapping().setMimeType("getType").setMediaResourceMimeTypeKey("~MediaResourceMimeTypeKey"));
+            .setMapping(new Mapping()
+            //.setMimeType("getType")
+                .setMediaResourceMimeTypeKey("getType"));
       }
     }
 

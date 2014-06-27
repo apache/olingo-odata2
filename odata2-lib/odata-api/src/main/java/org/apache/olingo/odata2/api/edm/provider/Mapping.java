@@ -27,7 +27,6 @@ import org.apache.olingo.odata2.api.edm.EdmMapping;
 public class Mapping implements EdmMapping {
 
   private String value;
-  private String mimeType;
   private Object object;
   private String mediaResourceSourceKey;
   private String mediaResourceMimeTypeKey;
@@ -35,11 +34,6 @@ public class Mapping implements EdmMapping {
   @Override
   public String getInternalName() {
     return value;
-  }
-
-  @Override
-  public String getMimeType() {
-    return mimeType;
   }
 
   @Override
@@ -64,18 +58,6 @@ public class Mapping implements EdmMapping {
    */
   public Mapping setInternalName(final String value) {
     this.value = value;
-    return this;
-  }
-
-  /**
-   * Sets the mime type for this {@link Mapping}.
-   * @param mimeType
-   * @return {@link Mapping} for method chaining
-   * @deprecated use instead functionality of {@link #setMediaResourceMimeTypeKey(String)} method
-   */
-  @Deprecated
-  public Mapping setMimeType(final String mimeType) {
-    this.mimeType = mimeType;
     return this;
   }
 

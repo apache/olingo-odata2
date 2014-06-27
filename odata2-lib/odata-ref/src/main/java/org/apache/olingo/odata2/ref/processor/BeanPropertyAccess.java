@@ -51,15 +51,15 @@ public class BeanPropertyAccess {
   }
 
   public <T> Object getMappingValue(final T data, final EdmMapping mapping) throws ODataException {
-    if (mapping != null && mapping.getMimeType() != null) {
-      return getValue(data, mapping.getMimeType());
+    if (mapping != null && mapping.getMediaResourceMimeTypeKey() != null) {
+      return getValue(data, mapping.getMediaResourceMimeTypeKey());
     }
     return null;
   }
 
   public <T, V> void setMappingValue(final T data, final EdmMapping mapping, final V value) throws ODataException {
-    if (mapping != null && mapping.getMimeType() != null) {
-      setValue(data, getSetterMethodName(mapping.getMimeType()), value);
+    if (mapping != null && mapping.getMediaResourceMimeTypeKey() != null) {
+      setValue(data, getSetterMethodName(mapping.getMediaResourceMimeTypeKey()), value);
     }
   }
 

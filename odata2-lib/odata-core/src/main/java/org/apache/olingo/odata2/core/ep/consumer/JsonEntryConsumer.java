@@ -264,7 +264,6 @@ public class JsonEntryConsumer {
         throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(FormatJson.CONTENT_TYPE)
             .addContent(FormatJson.METADATA));
       }
-      // TODO Mime Type Mapping
     } else {
       if (mediaMetadata.getContentType() != null || mediaMetadata.getEditLink() != null
           || mediaMetadata.getEtag() != null || mediaMetadata.getSourceLink() != null) {

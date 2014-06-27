@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -218,9 +217,8 @@ public class JsonEntryEntityProducer {
     if (type.hasStream()) {
       jsonStreamWriter.separator();
 
-      // We have to support the media resource mime type at the properties till version 1.2 then this can be refactored
-      String mediaResourceMimeType = properties.getMediaResourceMimeType();
       EdmMapping entityTypeMapping = entityInfo.getEntityType().getMapping();
+      String mediaResourceMimeType = null;
       String mediaSrc = null;
 
       if (entityTypeMapping != null) {
@@ -231,19 +229,16 @@ public class JsonEntryEntityProducer {
         if (mediaSrc == null) {
           mediaSrc = self + "/$value";
         }
-        if (mediaResourceMimeType == null) {
-          mediaResourceMimeType =
-              entityTypeMapping.getMimeType() != null ? (String) data.get(entityTypeMapping.getMimeType())
-                  : (String) data.get(entityTypeMapping.getMediaResourceMimeTypeKey());
-          if (mediaResourceMimeType == null) {
-            mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
-          }
+        String mediaResourceMimeTypeKey = entityTypeMapping.getMediaResourceMimeTypeKey();
+        if (mediaResourceMimeTypeKey != null) {
+          mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
         }
-      } else {
-        mediaSrc = self + "/$value";
         if (mediaResourceMimeType == null) {
           mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
         }
+      } else {
+        mediaSrc = self + "/$value";
+        mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
       }
 
       jsonStreamWriter.namedStringValueRaw(FormatJson.CONTENT_TYPE, mediaResourceMimeType);

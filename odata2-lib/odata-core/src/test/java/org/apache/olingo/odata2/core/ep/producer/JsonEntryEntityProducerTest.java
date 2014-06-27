@@ -768,7 +768,6 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     EdmMapping mapping = employeesSet.getEntityType().getMapping();
     when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
     when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
-    when(mapping.getMimeType()).thenReturn(null);
 
     ODataResponse response = new JsonEntityProvider().writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
     String jsonString = verifyResponse(response);
@@ -846,53 +845,53 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     assertNull(jsonMap.get("edit_media"));
   }
 
-  @SuppressWarnings("unchecked")
-  @Test
-  public void assureGetMimeTypeWinsOverGetMediaResourceMimeTypeKey() throws Exception {
-    // Keep this test till version 1.2
-    Map<String, Object> employeeData = new HashMap<String, Object>();
-
-    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-    date.clear();
-    date.set(1999, 0, 1);
-
-    employeeData.put("EmployeeId", "1");
-    employeeData.put("ImmageUrl", null);
-    employeeData.put("ManagerId", "1");
-    employeeData.put("Age", new Integer(52));
-    employeeData.put("RoomId", "1");
-    employeeData.put("EntryDate", date);
-    employeeData.put("TeamId", "42");
-    employeeData.put("EmployeeName", "Walter Winter");
-
-    Map<String, Object> locationData = new HashMap<String, Object>();
-    Map<String, Object> cityData = new HashMap<String, Object>();
-    cityData.put("PostalCode", "33470");
-    cityData.put("CityName", "Duckburg");
-    locationData.put("City", cityData);
-    locationData.put("Country", "Calisota");
-
-    employeeData.put("Location", locationData);
-    String mediaResourceMimeTypeKey = "~type";
-    employeeData.put(mediaResourceMimeTypeKey, "wrong");
-    String originalMimeTypeKey = "~originalType";
-    employeeData.put(originalMimeTypeKey, "right");
-
-    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
-    EdmMapping mapping = employeesSet.getEntityType().getMapping();
-    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
-    when(mapping.getMimeType()).thenReturn(originalMimeTypeKey);
-
-    ODataResponse response = new JsonEntityProvider().writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
-    String jsonString = verifyResponse(response);
-
-    Gson gson = new Gson();
-    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
-    jsonMap = (StringMap<Object>) jsonMap.get("d");
-    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
-
-    assertEquals("right", jsonMap.get("content_type"));
-  }
+//  @SuppressWarnings("unchecked")
+//  @Test
+//  public void assureGetMimeTypeWinsOverGetMediaResourceMimeTypeKey() throws Exception {
+//    // Keep this test till version 1.2
+//    Map<String, Object> employeeData = new HashMap<String, Object>();
+//
+//    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+//    date.clear();
+//    date.set(1999, 0, 1);
+//
+//    employeeData.put("EmployeeId", "1");
+//    employeeData.put("ImmageUrl", null);
+//    employeeData.put("ManagerId", "1");
+//    employeeData.put("Age", new Integer(52));
+//    employeeData.put("RoomId", "1");
+//    employeeData.put("EntryDate", date);
+//    employeeData.put("TeamId", "42");
+//    employeeData.put("EmployeeName", "Walter Winter");
+//
+//    Map<String, Object> locationData = new HashMap<String, Object>();
+//    Map<String, Object> cityData = new HashMap<String, Object>();
+//    cityData.put("PostalCode", "33470");
+//    cityData.put("CityName", "Duckburg");
+//    locationData.put("City", cityData);
+//    locationData.put("Country", "Calisota");
+//
+//    employeeData.put("Location", locationData);
+//    String mediaResourceMimeTypeKey = "~type";
+//    employeeData.put(mediaResourceMimeTypeKey, "wrong");
+//    String originalMimeTypeKey = "~originalType";
+//    employeeData.put(originalMimeTypeKey, "right");
+//
+//    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+//    EdmMapping mapping = employeesSet.getEntityType().getMapping();
+//    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
+//    when(mapping.getMimeType()).thenReturn(originalMimeTypeKey);
+//
+//    ODataResponse response = new JsonEntityProvider().writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
+//    String jsonString = verifyResponse(response);
+//
+//    Gson gson = new Gson();
+//    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
+//    jsonMap = (StringMap<Object>) jsonMap.get("d");
+//    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
+//
+//    assertEquals("right", jsonMap.get("content_type"));
+//  }
 
   @Test
   public void additionalLink() throws Exception {
