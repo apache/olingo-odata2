@@ -35,6 +35,7 @@ public class EdmAssociationImplProv extends EdmNamedImplProv implements EdmAssoc
   private Association association;
   private String namespace;
   private EdmAnnotations annotations;
+  private EdmReferentialConstraintImplProv referentialConstraint;
 
   public EdmAssociationImplProv(final EdmImplProv edm, final Association association, final String namespace)
       throws EdmException {
@@ -102,8 +103,12 @@ public class EdmAssociationImplProv extends EdmNamedImplProv implements EdmAssoc
 
   @Override
   public EdmReferentialConstraint getReferentialConstraint() throws EdmException {
-    ReferentialConstraint refConstraint = association.getReferentialConstraint();
-    return new EdmReferentialConstraintImplProv(refConstraint);
+    if(referentialConstraint == null){
+      ReferentialConstraint refConstraint = association.getReferentialConstraint();
+      if(refConstraint != null){
+        referentialConstraint = new EdmReferentialConstraintImplProv(refConstraint);
+      }
+    }
+    return referentialConstraint;
   }
-
 }
