@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.ref.model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,9 @@ public class Customer {
 
   @Embedded
   private Address address;
+
+  @Column(name = "CREATED_AT")
+  private Timestamp createdAt;
 
   @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
   private List<SalesOrderHeader> orders = new ArrayList<SalesOrderHeader>();
@@ -76,6 +80,14 @@ public class Customer {
 
   public void setAddress(final Address address) {
     this.address = address;
+  }
+
+  public Timestamp getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Timestamp createdAt) {
+    this.createdAt = createdAt;
   }
 
 }

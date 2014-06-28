@@ -22,6 +22,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.sql.Date;
 import java.util.UUID;
@@ -81,7 +82,8 @@ public class JPATypeConvertor {
       return EdmSimpleTypeKind.Byte;
     } else if (jpaType.equals(Boolean.class) || jpaType.equals(boolean.class)) {
       return EdmSimpleTypeKind.Boolean;
-    } else if ((jpaType.equals(Date.class)) || (jpaType.equals(Calendar.class))) {
+    } else if ((jpaType.equals(Date.class)) || (jpaType.equals(Calendar.class)) ||
+        jpaType.equals(Timestamp.class)) {
       try {
         if ((currentAttribute != null)
             && (determineTemporalType(currentAttribute)
