@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.util.Calendar;
-import java.util.Date;
+import java.sql.Date;
 import java.util.UUID;
 
 import javax.persistence.Lob;

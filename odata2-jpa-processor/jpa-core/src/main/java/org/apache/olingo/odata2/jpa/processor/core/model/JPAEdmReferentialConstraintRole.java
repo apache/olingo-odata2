@@ -23,7 +23,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.JoinColumn;
 import javax.persistence.metamodel.Attribute;
 
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -48,9 +47,8 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
   private JPAEdmReferentialConstraintRoleView.RoleType roleType;
 
   private Attribute<?, ?> jpaAttribute;
-  private ArrayList<String> jpaColumnNames;
+  private List<String[]> jpaColumnNames;
   private Association association;
-  private List<JoinColumn> bufferedJoinColumns = null;
 
   private boolean roleExists = false;
 
@@ -66,7 +64,7 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
     this.roleType = roleType;
 
     jpaAttribute = propertyView.getJPAAttribute();
-    bufferedJoinColumns = propertyView.getJPAJoinColumns();
+    jpaColumnNames = propertyView.getJPAJoinColumns();
     association = associationView.getEdmAssociation();
 
   }
@@ -133,20 +131,11 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
       firstBuild = false;
       isConsistent = false;
 
-      if (bufferedJoinColumns == null || bufferedJoinColumns.isEmpty()) {
+      if (jpaColumnNames == null || jpaColumnNames.isEmpty()) {
         roleExists = false;
         return;
       } else {
         roleExists = true;
-      }
-      jpaColumnNames = new ArrayList<String>();
-
-      for (JoinColumn joinColumn : bufferedJoinColumns) {
-        if (roleType == RoleType.PRINCIPAL) {
-          jpaColumnNames.add(joinColumn.referencedColumnName());
-        } else if (roleType == RoleType.DEPENDENT) {
-          jpaColumnNames.add(joinColumn.name());
-        }
       }
     }
 
@@ -174,9 +163,12 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
 
         List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();
         if (edmEntityType != null) {
-          for (String columnName : jpaColumnNames) {
+          for (String[] columnName : jpaColumnNames) {
             for (Property property : edmEntityType.getProperties()) {
-              if (columnName.equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName())) {
+              if (columnName[0].equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName()) ||
+                  columnName[0].equals(property.getName()) ||
+                  columnName[1].equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName()) ||
+                  columnName[1].equals(property.getName())) {
                 PropertyRef propertyRef = new PropertyRef();
                 propertyRef.setName(property.getName());
                 propertyRefs.add(propertyRef);

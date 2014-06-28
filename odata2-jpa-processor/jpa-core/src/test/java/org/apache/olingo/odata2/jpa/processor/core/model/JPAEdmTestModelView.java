@@ -21,7 +21,6 @@ package org.apache.olingo.odata2.jpa.processor.core.model;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.JoinColumn;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.Metamodel;
@@ -357,13 +356,13 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView, JPAEdmAsso
   }
 
   @Override
-  public String getJoinColumnName() {
+  public String[] getJoinColumnNames() {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public String getJoinColumnReferenceColumnName() {
+  public String[] getJoinColumnReferenceColumnNames() {
     // TODO Auto-generated method stub
     return null;
   }
@@ -405,7 +404,7 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView, JPAEdmAsso
   }
 
   @Override
-  public List<JoinColumn> getJPAJoinColumns() {
+  public List<String[]> getJPAJoinColumns() {
     // TODO Auto-generated method stub
     return null;
   }

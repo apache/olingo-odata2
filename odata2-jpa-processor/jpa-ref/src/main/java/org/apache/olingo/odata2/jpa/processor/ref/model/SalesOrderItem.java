@@ -69,7 +69,7 @@ public class SalesOrderItem {
     delivered = deliveryStatus;
   }
 
-  @JoinColumn(name = "Material_Id", referencedColumnName = "MATERIAL_ID")
+  @JoinColumn(name = "Material_Id")
   @ManyToOne
   private Material material;
 

@@ -20,7 +20,6 @@ package org.apache.olingo.odata2.jpa.processor.api.model;
 
 import java.util.List;
 
-import javax.persistence.JoinColumn;
 import javax.persistence.metamodel.Attribute;
 
 import org.apache.olingo.odata2.api.edm.provider.Property;
@@ -115,7 +114,8 @@ public interface JPAEdmPropertyView extends JPAEdmBaseView {
   /**
    * The method returns a list of JPA Join Column Annotations for the given JPA Attribute
    * @return
-   * an instance of type {@link javax.persistence.JoinColumn}
+   * a list of Array of Strings. First element in the Array represents the join column name and the second element in
+   * the array represents the referencedColumn name
    */
-  List<JoinColumn> getJPAJoinColumns();
+  List<String[]> getJPAJoinColumns();
 }

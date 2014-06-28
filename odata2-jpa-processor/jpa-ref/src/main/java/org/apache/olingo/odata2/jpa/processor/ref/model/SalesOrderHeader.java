@@ -89,7 +89,7 @@ public class SalesOrderHeader {
   private List<Note> notes = new ArrayList<Note>();
 
   @ManyToOne
-  @JoinColumn(name = "CUST_ID", referencedColumnName = "ID")
+  @JoinColumn
   private Customer customer;
 
   public Customer getCustomer() {

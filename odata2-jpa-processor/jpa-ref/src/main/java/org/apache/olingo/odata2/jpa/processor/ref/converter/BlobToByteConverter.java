@@ -34,6 +34,9 @@ public class BlobToByteConverter implements AttributeConverter<Blob, byte[]> {
 
   @Override
   public byte[] convertToDatabaseColumn(final Blob arg0) {
+    if (arg0 == null) {
+      return null;
+    }
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     InputStream is;
     try {
@@ -55,6 +58,9 @@ public class BlobToByteConverter implements AttributeConverter<Blob, byte[]> {
   @Override
   public Blob convertToEntityAttribute(final byte[] arg0) {
     try {
+      if (arg0 == null) {
+        return null;
+      }
       return new JDBCBlob(arg0);
     } catch (SQLException e) {
       e.printStackTrace();

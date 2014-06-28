@@ -50,7 +50,7 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
 
   private static JPAEdmReferentialConstraint objJPAEdmReferentialConstraint = null;
   private static JPAEdmReferentialConstraintTest objJPAEdmReferentialConstraintTest = null;
-  private List<JoinColumn> bufferedJoinColumns = null;
+  private List<String[]> joinColumnNames = null;
 
   @Before
   public void setUp() {
@@ -129,18 +129,14 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
   }
 
   @Override
-  public List<JoinColumn> getJPAJoinColumns() {
-    if (bufferedJoinColumns == null) {
-      JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
-      EasyMock.expect(joinColumn.referencedColumnName()).andReturn("SOID");
-      EasyMock.expect(joinColumn.name()).andReturn("SOID");
+  public List<String[]> getJPAJoinColumns() {
+    if (joinColumnNames == null) {
 
-      EasyMock.replay(joinColumn);
-
-      bufferedJoinColumns = new ArrayList<JoinColumn>();
-      bufferedJoinColumns.add(joinColumn);
+      joinColumnNames = new ArrayList<String[]>();
+      String[] names = { "SOID", "SOID" };
+      joinColumnNames.add(names);
     }
-    return bufferedJoinColumns;
+    return joinColumnNames;
   }
 
   @SuppressWarnings("hiding")

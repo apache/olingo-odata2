@@ -35,6 +35,10 @@ public class Category {
   @Column(name = "CODE")
   private char code[] = new char[2];
 
+  @Id
+  @Column(name = "ID")
+  private long id;
+
   @Column(name = "DESC")
   private String description;
 
@@ -47,6 +51,14 @@ public class Category {
 
   public void setMaterials(final List<Material> materials) {
     this.materials = materials;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
   }
 
   public char[] getCode() {
