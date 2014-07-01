@@ -560,8 +560,15 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
             + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
             + "<FunctionImport Name=\"EmployeeSearch\" ReturnType=\"Collection(RefScenario.Employee)\" " +
             "EntitySet=\"Employees\" m:HttpMethod=\"GET\">"
-            + "<Parameter Name=\"q\" Type=\"Edm.String\" Nullable=\"true\" />"
-            + "</FunctionImport>" + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+            + "<Parameter Name=\"q1\" Type=\"Edm.String\" Nullable=\"true\" />"
+            + "<Parameter Name=\"q2\" Type=\"Edm.Int32\" Nullable=\"false\" />"
+            + "</FunctionImport>"
+            + "<FunctionImport Name=\"RoomSearch\" ReturnType=\"Collection(RefScenario.Room)\" " +
+            "EntitySet=\"Rooms\" m:HttpMethod=\"GET\">"
+            + "<Parameter Name=\"q1\" Type=\"Edm.String\" Nullable=\"true\" />"
+            + "<Parameter Name=\"q2\" Type=\"Edm.Int32\" Nullable=\"false\" />"
+            + "</FunctionImport>"
+            + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmWithEntityContainer);
     DataServices result = parser.readMetadata(reader, true);
@@ -569,22 +576,46 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
       for (EntityContainer container : schema.getEntityContainers()) {
         assertEquals("Container1", container.getName());
         assertEquals(Boolean.TRUE, container.isDefaultEntityContainer());
-        for (FunctionImport functionImport : container.getFunctionImports()) {
-          assertEquals("EmployeeSearch", functionImport.getName());
-          assertEquals("Employees", functionImport.getEntitySet());
-          assertEquals(NAMESPACE, functionImport.getReturnType().getTypeName().getNamespace());
-          assertEquals("Employee", functionImport.getReturnType().getTypeName().getName());
-          assertEquals(EdmMultiplicity.MANY, functionImport.getReturnType().getMultiplicity());
-          assertEquals("GET", functionImport.getHttpMethod());
-          for (FunctionImportParameter parameter : functionImport.getParameters()) {
-            assertEquals("q", parameter.getName());
-            assertEquals(EdmSimpleTypeKind.String, parameter.getType());
-            assertEquals(Boolean.TRUE, parameter.getFacets().isNullable());
-          }
-        }
+
+        assertEquals(2, container.getFunctionImports().size());
+        FunctionImport functionImport1 = container.getFunctionImports().get(0);
+
+        assertEquals("EmployeeSearch", functionImport1.getName());
+        assertEquals("Employees", functionImport1.getEntitySet());
+        assertEquals(NAMESPACE, functionImport1.getReturnType().getTypeName().getNamespace());
+        assertEquals("Employee", functionImport1.getReturnType().getTypeName().getName());
+        assertEquals(EdmMultiplicity.MANY, functionImport1.getReturnType().getMultiplicity());
+        assertEquals("GET", functionImport1.getHttpMethod());
+        assertEquals(2, functionImport1.getParameters().size());
+
+        assertEquals("q1", functionImport1.getParameters().get(0).getName());
+        assertEquals(EdmSimpleTypeKind.String, functionImport1.getParameters().get(0).getType());
+        assertEquals(Boolean.TRUE, functionImport1.getParameters().get(0).getFacets().isNullable());
+
+        assertEquals("q2", functionImport1.getParameters().get(1).getName());
+        assertEquals(EdmSimpleTypeKind.Int32, functionImport1.getParameters().get(1).getType());
+        assertEquals(Boolean.FALSE, functionImport1.getParameters().get(1).getFacets().isNullable());
+
+        FunctionImport functionImport2 = container.getFunctionImports().get(1);
+
+        assertEquals("RoomSearch", functionImport2.getName());
+        assertEquals("Rooms", functionImport2.getEntitySet());
+        assertEquals(NAMESPACE, functionImport2.getReturnType().getTypeName().getNamespace());
+        assertEquals("Room", functionImport2.getReturnType().getTypeName().getName());
+        assertEquals(EdmMultiplicity.MANY, functionImport2.getReturnType().getMultiplicity());
+        assertEquals("GET", functionImport2.getHttpMethod());
+        assertEquals(2, functionImport2.getParameters().size());
+
+        assertEquals("q1", functionImport2.getParameters().get(0).getName());
+        assertEquals(EdmSimpleTypeKind.String, functionImport2.getParameters().get(0).getType());
+        assertEquals(Boolean.TRUE, functionImport2.getParameters().get(0).getFacets().isNullable());
+
+        assertEquals("q2", functionImport2.getParameters().get(1).getName());
+        assertEquals(EdmSimpleTypeKind.Int32, functionImport2.getParameters().get(1).getType());
+        assertEquals(Boolean.FALSE, functionImport2.getParameters().get(1).getFacets().isNullable());
+
       }
     }
-
   }
 
   @Test()

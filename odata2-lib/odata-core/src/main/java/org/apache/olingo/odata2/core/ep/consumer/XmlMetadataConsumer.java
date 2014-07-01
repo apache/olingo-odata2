@@ -306,7 +306,7 @@ public class XmlMetadataConsumer {
     functionParameter.setAnnotationAttributes(readAnnotationAttribute(reader));
     while (reader.hasNext()
         && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
-        && XmlMetadataConstants.EDM_FUNCTION_IMPORT.equals(reader.getLocalName()))) {
+        && XmlMetadataConstants.EDM_FUNCTION_PARAMETER.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);
