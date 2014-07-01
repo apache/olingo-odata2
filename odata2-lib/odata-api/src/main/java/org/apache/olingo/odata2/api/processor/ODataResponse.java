@@ -55,16 +55,16 @@ public abstract class ODataResponse {
 
   /**
    * @return a response entity as inputStream which becomes the body part of a response message
-   * @throws ODataException throws ODataException in case of entity is not a stream (internal ClassCastException) 
+   * @throws ODataException throws ODataException in case of entity is not a stream (internal ClassCastException)
    */
   public InputStream getEntityAsStream() throws ODataException {
     try {
-    return (InputStream) getEntity();
+      return (InputStream) getEntity();
     } catch (ClassCastException e) {
       throw new ODataException(e);
     }
   }
-  
+
   /**
    * Close the underlying entity input stream (if such a stream is available) and release all with this repsonse
    * associated resources.

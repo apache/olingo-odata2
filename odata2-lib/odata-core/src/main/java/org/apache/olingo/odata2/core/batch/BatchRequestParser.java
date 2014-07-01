@@ -186,8 +186,8 @@ public class BatchRequestParser {
   }
 
   private BatchRequestPart parseBatchRequestPart(final Scanner scanner, final String boundary,
-                                                 final Map<String, String> mimeHeaders,
-                                                 final String contentType) throws BatchException {
+      final Map<String, String> mimeHeaders,
+      final String contentType) throws BatchException {
     if (HttpContentType.APPLICATION_HTTP.equalsIgnoreCase(contentType)) {
       validateEncoding(mimeHeaders.get(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING.toLowerCase(Locale.ENGLISH)));
       parseNewLine(scanner);// mandatory
@@ -217,8 +217,8 @@ public class BatchRequestParser {
   }
 
   private BatchRequestPart parseBatchRequestPartInChangeset(final Scanner scanner, final String boundary,
-                                                            final Map<String, String> mimeHeaders,
-                                                            final String contentType) throws BatchException {
+      final Map<String, String> mimeHeaders,
+      final String contentType) throws BatchException {
     if (HttpContentType.APPLICATION_HTTP.equalsIgnoreCase(contentType)) {
       validateEncoding(mimeHeaders.get(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING.toLowerCase(Locale.ENGLISH)));
       parseNewLine(scanner);// mandatory
@@ -231,7 +231,7 @@ public class BatchRequestParser {
   }
 
   private ODataRequest parseRequest(final Scanner scanner, final boolean isChangeSet, final String boundary)
-          throws BatchException {
+      throws BatchException {
     if (scanner.hasNext(REG_EX_REQUEST_LINE)) {
       scanner.next(REG_EX_REQUEST_LINE);
       currentLineNumber++;
@@ -292,11 +292,11 @@ public class BatchRequestParser {
   }
 
   private Map<String, List<String>> parseRequestHeaders(final Scanner scanner, final String boundary)
-          throws BatchException {
+      throws BatchException {
     Map<String, List<String>> headers = new HashMap<String, List<String>>();
     while (scanner.hasNext()
-            && !scanner.hasNext(REG_EX_BLANK_LINE)
-            && !scanner.hasNext("--" + boundary + REG_EX_ZERO_OR_MORE_WHITESPACES)) {
+        && !scanner.hasNext(REG_EX_BLANK_LINE)
+        && !scanner.hasNext("--" + boundary + REG_EX_ZERO_OR_MORE_WHITESPACES)) {
       if (scanner.hasNext(REG_EX_HEADER)) {
         scanner.next(REG_EX_HEADER);
         currentLineNumber++;

@@ -145,7 +145,8 @@ public class AtomEntryEntityProducer {
     }
   }
 
-  private void appendAdditinalLinks(XMLStreamWriter writer, EntityInfoAggregator eia, Map<String, Object> data)
+  private void appendAdditinalLinks(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data)
       throws EntityProviderException, EdmException, URISyntaxException {
     final Map<String, Map<String, Object>> links = properties.getAdditionalLinks();
     if (links != null && !links.isEmpty()) {

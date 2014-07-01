@@ -62,8 +62,6 @@ public class JPAPageBuilderTest {
     assertEquals(10, query.getMaxResults());
   }
 
-
-
   @Test
   public void testBuildDefaultZeroPage() {
     JPAPageBuilder pageBuilder = new JPAPageBuilder();
@@ -84,7 +82,7 @@ public class JPAPageBuilderTest {
     assertEquals(0, query.getMaxResults());
   }
 
-   @Test
+  @Test
   public void testBuildWithNoSkipToken() {
     JPAPageBuilder pageBuilder = new JPAPageBuilder();
     Query query = mockQuery(false);
@@ -558,6 +556,5 @@ public class JPAPageBuilderTest {
       }
     };
   }
-
 
 }

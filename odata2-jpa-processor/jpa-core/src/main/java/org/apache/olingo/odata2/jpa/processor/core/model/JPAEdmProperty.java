@@ -365,7 +365,8 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
       }
     }
 
-    private void buildForeignKey(JoinColumn joinColumn, Attribute<?, ?> jpaAttribute) throws ODataJPAModelException,
+    private void buildForeignKey(final JoinColumn joinColumn, final Attribute<?, ?> jpaAttribute)
+        throws ODataJPAModelException,
         ODataJPARuntimeException {
       joinColumnNames = joinColumnNames == null ? new ArrayList<String[]>() : joinColumnNames;
       String[] name = { null, null };

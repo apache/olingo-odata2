@@ -18,13 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
-import org.apache.olingo.odata2.api.batch.BatchException;
-import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
-import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
-import org.apache.olingo.odata2.api.client.batch.BatchPart;
-import org.apache.olingo.odata2.api.client.batch.BatchQueryPart;
-import org.apache.olingo.odata2.testutil.helper.StringHelper;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,9 +29,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.apache.olingo.odata2.api.batch.BatchException;
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
+import org.apache.olingo.odata2.api.client.batch.BatchPart;
+import org.apache.olingo.odata2.api.client.batch.BatchQueryPart;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
+import org.junit.Test;
 
 public class BatchRequestWriterTest {
 

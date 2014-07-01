@@ -216,7 +216,7 @@ public class ScenarioEdmProvider extends EdmProvider {
             .setKey(getKey("EmployeeId"))
             .setNavigationProperties(navigationProperties)
             .setMapping(new Mapping()
-//                  .setMimeType("getImageType")
+                // .setMimeType("getImageType")
 //                .setMediaResourceMimeTypeKey("~mrmtk")
                 .setMediaResourceMimeTypeKey("getImageType"));
 
@@ -269,8 +269,8 @@ public class ScenarioEdmProvider extends EdmProvider {
             .setHasStream(true)
             .setNavigationProperties(navigationProperties)
             .setMapping(new Mapping()
-//            .setMimeType("getImageType")
-            .setMediaResourceMimeTypeKey("getImageType"));
+                // .setMimeType("getImageType")
+                .setMediaResourceMimeTypeKey("getImageType"));
 
       } else if (ENTITY_TYPE_1_5.getName().equals(edmFQName.getName())) {
         List<Property> properties = new ArrayList<Property>();
@@ -321,7 +321,7 @@ public class ScenarioEdmProvider extends EdmProvider {
             .setHasStream(true)
             .setKey(getKey("Id", "Type"))
             .setMapping(new Mapping()
-            //.setMimeType("getType")
+                // .setMimeType("getType")
                 .setMediaResourceMimeTypeKey("getType"));
       }
     }

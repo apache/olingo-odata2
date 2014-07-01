@@ -22,9 +22,9 @@ import java.lang.reflect.AnnotatedElement;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.sql.Date;
 import java.util.UUID;
 
 import javax.persistence.Lob;

@@ -154,7 +154,8 @@ public class ODataServlet extends HttpServlet {
     return true;
   }
 
-  private void handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp)
+  private void
+      handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp)
           throws IOException {
     try {
       if (req.getHeader(HttpHeaders.ACCEPT) != null && req.getHeader(HttpHeaders.ACCEPT).isEmpty()) {
@@ -205,14 +206,14 @@ public class ODataServlet extends HttpServlet {
 
   }
 
-  private String createLocation(HttpServletRequest req) {
+  private String createLocation(final HttpServletRequest req) {
     StringBuilder location = new StringBuilder();
     String contextPath = req.getContextPath();
-    if(contextPath != null) {
+    if (contextPath != null) {
       location.append(contextPath);
     }
     String servletPath = req.getServletPath();
-    if(servletPath != null) {
+    if (servletPath != null) {
       location.append(servletPath);
     }
     location.append("/");

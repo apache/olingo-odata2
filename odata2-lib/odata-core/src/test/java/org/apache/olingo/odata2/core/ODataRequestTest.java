@@ -47,7 +47,7 @@ public class ODataRequestTest {
 
   }
 
-  void verifyHeader(ODataRequest r) {
+  void verifyHeader(final ODataRequest r) {
     assertEquals("lower", r.getRequestHeaderValue("lower"));
     assertEquals("lower", r.getRequestHeaderValue("LOWER"));
     assertEquals("lower", r.getRequestHeaderValue("Lower"));
@@ -72,6 +72,6 @@ public class ODataRequestTest {
 
     assertEquals("mIxEd", map.get("mixed").get(0));
     assertEquals("mIxEd", map.get("MIXED").get(0));
-    assertEquals("mIxEd", map.get("mIxEd").get(0));    
+    assertEquals("mIxEd", map.get("mIxEd").get(0));
   }
 }

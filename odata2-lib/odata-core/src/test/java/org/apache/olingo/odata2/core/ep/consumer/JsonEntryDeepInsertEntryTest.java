@@ -161,7 +161,7 @@ public class JsonEntryDeepInsertEntryTest extends AbstractConsumerTest {
 
     associationUris = innerRoom.getMetadata().getAssociationUris("nr_Building");
     assertEquals(Collections.emptyList(), associationUris);
-    
+
     assertEquals("W/\"1\"", innerRoom.getMetadata().getEtag());
 
     ODataEntry innerBuilding = (ODataEntry) innerRoomProperties.get("nr_Building");

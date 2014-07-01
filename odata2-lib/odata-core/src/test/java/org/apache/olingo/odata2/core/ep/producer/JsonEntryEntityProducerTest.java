@@ -213,7 +213,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).omitJsonWrapper(true).contentOnly(true)
             .expandSelectTree(expandSelectTreeNode).additionalLinks(additinalLinks).build();
     final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, employeeData, properties);
-   //System.out.println(StringHelper.inputStreamToString((InputStream) response.getEntity()));
+    // System.out.println(StringHelper.inputStreamToString((InputStream) response.getEntity()));
     Map<String, Object> employee =
         (Map<String, Object>) new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
     assertNull(employee.get("__metadata"));

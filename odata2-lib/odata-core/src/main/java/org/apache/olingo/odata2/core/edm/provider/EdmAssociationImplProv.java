@@ -103,9 +103,9 @@ public class EdmAssociationImplProv extends EdmNamedImplProv implements EdmAssoc
 
   @Override
   public EdmReferentialConstraint getReferentialConstraint() throws EdmException {
-    if(referentialConstraint == null){
+    if (referentialConstraint == null) {
       ReferentialConstraint refConstraint = association.getReferentialConstraint();
-      if(refConstraint != null){
+      if (refConstraint != null) {
         referentialConstraint = new EdmReferentialConstraintImplProv(refConstraint);
       }
     }

@@ -196,7 +196,7 @@ public class JPAProcessorImpl implements JPAProcessor {
     }
   }
 
-  private List<Object> handlePaging(List<Object> result, GetEntitySetUriInfo uriParserResultView) {
+  private List<Object> handlePaging(final List<Object> result, final GetEntitySetUriInfo uriParserResultView) {
     if (result == null) {
       return null;
     }

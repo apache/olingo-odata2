@@ -361,13 +361,13 @@ public class BatchResponseParser {
   }
 
   private void parseOptionalEmptyLine(final Scanner scanner) {
-      if (scanner.hasNext() && scanner.hasNext(REG_EX_BLANK_LINE)) {
-        scanner.next();
-        currentLineNumber++;
-      }
+    if (scanner.hasNext() && scanner.hasNext(REG_EX_BLANK_LINE)) {
+      scanner.next();
+      currentLineNumber++;
     }
+  }
 
-      private String trimQuota(String boundary) {
+  private String trimQuota(String boundary) {
     if (boundary.matches("\".*\"")) {
       boundary = boundary.replace("\"", "");
     }

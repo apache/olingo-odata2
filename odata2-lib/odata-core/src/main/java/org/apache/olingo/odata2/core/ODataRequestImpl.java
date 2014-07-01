@@ -209,17 +209,17 @@ public class ODataRequestImpl extends ODataRequest {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public List<String> put(String key, List<String> value) {
+    public List<String> put(final String key, final List<String> value) {
       return super.put(key.toLowerCase(), value);
     }
 
     // not @Override because that would require the key parameter to be of type Object
-    public List<String> get(String key) {
+    public List<String> get(final String key) {
       return super.get(key.toLowerCase());
     }
 
     @Override
-    public List<String> get(Object key) {
+    public List<String> get(final Object key) {
       String skey = (String) key;
       return super.get(skey.toLowerCase());
     }

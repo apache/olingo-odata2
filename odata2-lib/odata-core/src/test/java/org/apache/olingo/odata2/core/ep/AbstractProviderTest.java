@@ -95,7 +95,7 @@ public abstract class AbstractProviderTest extends AbstractXmlProducerTestHelper
     employeeData.put("EntryDate", date);
     employeeData.put("TeamId", "42");
     employeeData.put("EmployeeName", "Walter Winter");
-    //employeeData.put("getImageType", "abc");
+    // employeeData.put("getImageType", "abc");
 
     Map<String, Object> locationData = new HashMap<String, Object>();
     Map<String, Object> cityData = new HashMap<String, Object>();

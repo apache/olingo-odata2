@@ -215,17 +215,16 @@ public class EntityProviderWriteProperties {
       return this;
     }
 
-    public ODataEntityProviderPropertiesBuilder omitJsonWrapper(boolean omitJsonWrapper) {
+    public ODataEntityProviderPropertiesBuilder omitJsonWrapper(final boolean omitJsonWrapper) {
       properties.omitJsonWrapper = omitJsonWrapper;
       return this;
     }
 
-    public ODataEntityProviderPropertiesBuilder contentOnly(boolean contentOnly) {
+    public ODataEntityProviderPropertiesBuilder contentOnly(final boolean contentOnly) {
       properties.contentOnly = contentOnly;
       return this;
     }
 
-    
     public ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
       this.properties.inlineCountType = properties.getInlineCountType();
       this.properties.inlineCount = properties.getInlineCount();

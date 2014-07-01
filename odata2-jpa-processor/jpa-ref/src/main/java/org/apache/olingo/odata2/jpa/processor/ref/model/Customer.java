@@ -86,7 +86,7 @@ public class Customer {
     return createdAt;
   }
 
-  public void setCreatedAt(Timestamp createdAt) {
+  public void setCreatedAt(final Timestamp createdAt) {
     this.createdAt = createdAt;
   }
 
