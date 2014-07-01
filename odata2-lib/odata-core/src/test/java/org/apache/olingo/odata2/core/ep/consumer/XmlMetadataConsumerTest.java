@@ -568,6 +568,11 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
             + "<Parameter Name=\"q1\" Type=\"Edm.String\" Nullable=\"true\" />"
             + "<Parameter Name=\"q2\" Type=\"Edm.Int32\" Nullable=\"false\" />"
             + "</FunctionImport>"
+            + "<FunctionImport Name=\"NoParamters\" ReturnType=\"Collection(RefScenario.Room)\" " +
+            "EntitySet=\"Rooms\" m:HttpMethod=\"GET\">"
+            + "</FunctionImport>"
+            + "<FunctionImport Name=\"NoReturn\" " +
+            "EntitySet=\"Rooms\" m:HttpMethod=\"GET\"/>"
             + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmWithEntityContainer);
@@ -577,7 +582,7 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertEquals("Container1", container.getName());
         assertEquals(Boolean.TRUE, container.isDefaultEntityContainer());
 
-        assertEquals(2, container.getFunctionImports().size());
+        assertEquals(4, container.getFunctionImports().size());
         FunctionImport functionImport1 = container.getFunctionImports().get(0);
 
         assertEquals("EmployeeSearch", functionImport1.getName());
@@ -614,6 +619,19 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertEquals(EdmSimpleTypeKind.Int32, functionImport2.getParameters().get(1).getType());
         assertEquals(Boolean.FALSE, functionImport2.getParameters().get(1).getFacets().isNullable());
 
+        FunctionImport functionImport3 = container.getFunctionImports().get(2);
+
+        assertEquals("NoParamters", functionImport3.getName());
+        List<FunctionImportParameter> parameters3 = functionImport3.getParameters();
+        assertNotNull(parameters3);
+        assertEquals(0, parameters3.size());
+
+        FunctionImport functionImport4 = container.getFunctionImports().get(3);
+        assertEquals("NoReturn", functionImport4.getName());
+        List<FunctionImportParameter> parameters4 = functionImport4.getParameters();
+        assertNotNull(parameters4);
+        assertEquals(0, parameters4.size());
+        assertNull(functionImport4.getReturnType());
       }
     }
   }
