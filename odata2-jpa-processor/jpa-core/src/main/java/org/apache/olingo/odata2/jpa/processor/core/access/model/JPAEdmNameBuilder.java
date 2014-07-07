@@ -497,7 +497,15 @@ public class JPAEdmNameBuilder {
 
     navProp.setName(navPropName);
 
-    if (toName.equals(associationEndTypeOne.getName())) {
+    if (toName.equals(fromName)) {
+        if (jpaAttribute.isCollection() == (association.getEnd1().getMultiplicity() == EdmMultiplicity.MANY)) {
+            navProp.setFromRole(association.getEnd2().getRole());
+            navProp.setToRole(association.getEnd1().getRole());
+        } else {
+            navProp.setToRole(association.getEnd2().getRole());
+            navProp.setFromRole(association.getEnd1().getRole());
+        }
+    } else if (toName.equals(associationEndTypeOne.getName())) {
       navProp.setFromRole(association.getEnd2().getRole());
       navProp.setToRole(association.getEnd1().getRole());
     } else if (toName.equals(associationEndTypeTwo.getName())) {
