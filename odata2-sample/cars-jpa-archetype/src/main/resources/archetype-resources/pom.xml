@@ -20,7 +20,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<version.cxf>2.7.6</version.cxf>
-		<version.olingo>2.0.0</version.olingo>
+		<version.olingo>2.1.0-SNAPSHOT</version.olingo>
 		<version.eclipselink>2.5.1</version.eclipselink>
 		<version.javax.persistence>2.0.5</version.javax.persistence>
 	</properties>
