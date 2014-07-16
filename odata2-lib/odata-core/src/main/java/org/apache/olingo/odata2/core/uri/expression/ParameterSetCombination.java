@@ -89,7 +89,7 @@ public interface ParameterSetCombination {
         }
       }
 
-      // first check for parameter combination with promotion
+      // second check for parameter combination with promotion
       for (ParameterSet parameterSet : combinations) {
         boolean s = parameterSet.equals(actualParameterTypes, true);
         if (s) {

@@ -672,6 +672,7 @@ public class FilterParserImpl implements FilterParser {
     EdmSimpleType datetimeoffset = EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.DateTimeOffset);
     EdmSimpleType guid = EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Guid);
     EdmSimpleType binary = EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Binary);
+    EdmSimpleType null_ = EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Null);
 
     // ---Memeber member access---
     lAvailableBinaryOperators.put("/", new InfoBinaryOperator(BinaryOperator.PROPERTY_ACCESS, "Primary", 100,
@@ -686,8 +687,26 @@ public class FilterParserImpl implements FilterParser {
     combination.add(new ParameterSet(int64, int64, int64));
     combination.add(new ParameterSet(single, single, single));
     combination.add(new ParameterSet(double_, double_, double_));
-
     combination.add(new ParameterSet(decimal, decimal, decimal));
+        
+    combination.add(new ParameterSet(sbyte, sbyte, null_));
+    combination.add(new ParameterSet(sbyte, null_, sbyte));
+    combination.add(new ParameterSet(byte_, byte_, null_));
+    combination.add(new ParameterSet(byte_, null_, byte_));
+    
+    combination.add(new ParameterSet(int16, int16, null_));
+    combination.add(new ParameterSet(int16, null_, int16));
+    combination.add(new ParameterSet(int32, int32, null_));
+    combination.add(new ParameterSet(int32, null_, int32));
+    combination.add(new ParameterSet(int64, int64, null_));
+    combination.add(new ParameterSet(int64, null_, int64));
+    
+    combination.add(new ParameterSet(single, single, null_));
+    combination.add(new ParameterSet(single, null_, single));
+    combination.add(new ParameterSet(double_, double_, null_));
+    combination.add(new ParameterSet(double_, null_, double_));
+    combination.add(new ParameterSet(decimal, decimal, null_));
+    combination.add(new ParameterSet(decimal, null_, decimal));
 
     lAvailableBinaryOperators.put(BinaryOperator.MUL.toUriLiteral(), new InfoBinaryOperator(BinaryOperator.MUL,
         "Multiplicative", 60, combination));
@@ -706,6 +725,25 @@ public class FilterParserImpl implements FilterParser {
     combination.add(new ParameterSet(single, single, single));
     combination.add(new ParameterSet(double_, double_, double_));
     combination.add(new ParameterSet(decimal, decimal, decimal));
+    
+    combination.add(new ParameterSet(sbyte, sbyte, null_));
+    combination.add(new ParameterSet(sbyte, null_, sbyte));
+    combination.add(new ParameterSet(byte_, byte_, null_));
+    combination.add(new ParameterSet(byte_, null_, byte_));
+    
+    combination.add(new ParameterSet(int16, int16, null_));
+    combination.add(new ParameterSet(int16, null_, int16));
+    combination.add(new ParameterSet(int32, int32, null_));
+    combination.add(new ParameterSet(int32, null_, int32));
+    combination.add(new ParameterSet(int64, int64, null_));
+    combination.add(new ParameterSet(int64, null_, int64));
+    
+    combination.add(new ParameterSet(single, single, null_));
+    combination.add(new ParameterSet(single, null_, single));
+    combination.add(new ParameterSet(double_, double_, null_));
+    combination.add(new ParameterSet(double_, null_, double_));
+    combination.add(new ParameterSet(decimal, decimal, null_));
+    combination.add(new ParameterSet(decimal, null_, decimal));
 
     lAvailableBinaryOperators.put(BinaryOperator.ADD.toUriLiteral(), new InfoBinaryOperator(BinaryOperator.ADD,
         "Additive", 50, combination));
@@ -728,6 +766,44 @@ public class FilterParserImpl implements FilterParser {
     combination.add(new ParameterSet(boolean_, double_, double_));
     combination.add(new ParameterSet(boolean_, decimal, decimal));
     combination.add(new ParameterSet(boolean_, binary, binary));
+    
+    combination.add(new ParameterSet(boolean_, string, null_));
+    combination.add(new ParameterSet(boolean_, null_, string));
+    
+    combination.add(new ParameterSet(boolean_, time, null_));
+    combination.add(new ParameterSet(boolean_, null_, time));
+    
+    combination.add(new ParameterSet(boolean_, datetime, null_));
+    combination.add(new ParameterSet(boolean_, null_, datetime));
+    
+    combination.add(new ParameterSet(boolean_, datetimeoffset, null_));
+    combination.add(new ParameterSet(boolean_, null_, datetimeoffset));
+    
+    combination.add(new ParameterSet(boolean_, guid, null_));
+    combination.add(new ParameterSet(boolean_, null_, guid));
+    
+    combination.add(new ParameterSet(boolean_, sbyte, null_));
+    combination.add(new ParameterSet(boolean_, null_, sbyte));
+    combination.add(new ParameterSet(boolean_, byte_, null_));
+    combination.add(new ParameterSet(boolean_, null_, byte_));
+    
+    combination.add(new ParameterSet(boolean_, int16, null_));
+    combination.add(new ParameterSet(boolean_, null_, int16));
+    combination.add(new ParameterSet(boolean_, int32, null_));
+    combination.add(new ParameterSet(boolean_, null_, int32));
+    combination.add(new ParameterSet(boolean_, int64, null_));
+    combination.add(new ParameterSet(boolean_, null_, int64));
+    
+    combination.add(new ParameterSet(boolean_, single, null_));
+    combination.add(new ParameterSet(boolean_, null_, single));
+    combination.add(new ParameterSet(boolean_, double_, null_));
+    combination.add(new ParameterSet(boolean_, null_, double_));
+    combination.add(new ParameterSet(boolean_, decimal, null_));
+    combination.add(new ParameterSet(boolean_, null_, decimal));
+    
+    combination.add(new ParameterSet(boolean_, binary, null_));
+    combination.add(new ParameterSet(boolean_, null_, binary));
+      
 
     lAvailableBinaryOperators.put(BinaryOperator.LT.toUriLiteral(), new InfoBinaryOperator(BinaryOperator.LT,
         "Relational", 40, combination));
@@ -757,6 +833,9 @@ public class FilterParserImpl implements FilterParser {
      * combination.add(new ParameterSet(boolean_, decimal, decimal));
      * combination.add(new ParameterSet(boolean_, binary, binary));
      */
+    
+    combination.add(new ParameterSet(boolean_, boolean_, null_));
+    combination.add(new ParameterSet(boolean_, null_, boolean_));
 
     lAvailableBinaryOperators.put(BinaryOperator.EQ.toUriLiteral(), new InfoBinaryOperator(BinaryOperator.EQ,
         "Equality", 30, combination));
@@ -766,6 +845,8 @@ public class FilterParserImpl implements FilterParser {
     // "---Conditinal AND---
     combination = new ParameterSetCombination.PSCflex();
     combination.add(new ParameterSet(boolean_, boolean_, boolean_));
+    combination.add(new ParameterSet(boolean_, boolean_, null_));
+    combination.add(new ParameterSet(boolean_, null_, boolean_));
 
     lAvailableBinaryOperators.put(BinaryOperator.AND.toUriLiteral(), new InfoBinaryOperator(BinaryOperator.AND,
         "Conditinal", 20, combination));
@@ -773,6 +854,8 @@ public class FilterParserImpl implements FilterParser {
     // ---Conditinal OR---
     combination = new ParameterSetCombination.PSCflex();
     combination.add(new ParameterSet(boolean_, boolean_, boolean_));
+    combination.add(new ParameterSet(boolean_, boolean_, null_));
+    combination.add(new ParameterSet(boolean_, null_, boolean_));
 
     lAvailableBinaryOperators.put(BinaryOperator.OR.toUriLiteral(), new InfoBinaryOperator(BinaryOperator.OR,
         "Conditinal", 10, combination));
@@ -900,6 +983,8 @@ public class FilterParserImpl implements FilterParser {
     combination.add(new ParameterSet(single, single));
     combination.add(new ParameterSet(double_, double_));
     combination.add(new ParameterSet(decimal, decimal));
+    combination.add(new ParameterSet(null_, null_));
+    
 
     // minus
     lAvailableUnaryOperators.put(UnaryOperator.MINUS.toUriLiteral(), new InfoUnaryOperator(UnaryOperator.MINUS,
@@ -908,6 +993,7 @@ public class FilterParserImpl implements FilterParser {
     // not
     combination = new ParameterSetCombination.PSCflex();
     combination.add(new ParameterSet(boolean_, boolean_));
+    combination.add(new ParameterSet(null_, null_));
     lAvailableUnaryOperators.put(UnaryOperator.NOT.toUriLiteral(), new InfoUnaryOperator(UnaryOperator.NOT, "not",
         combination));
 

@@ -44,6 +44,7 @@ import org.apache.olingo.odata2.core.edm.EdmGuid;
 import org.apache.olingo.odata2.core.edm.EdmInt16;
 import org.apache.olingo.odata2.core.edm.EdmInt32;
 import org.apache.olingo.odata2.core.edm.EdmInt64;
+import org.apache.olingo.odata2.core.edm.EdmNull;
 import org.apache.olingo.odata2.core.edm.EdmSByte;
 import org.apache.olingo.odata2.core.edm.EdmSingle;
 import org.apache.olingo.odata2.core.edm.EdmString;
@@ -126,8 +127,8 @@ public class TestParser extends TestBase {
     GetPTF("concat('a','b')").aEdmType(EdmString.getInstance());
     GetPTF("concat('a','b','c')").aEdmType(EdmString.getInstance());
   }
-
-  @Test
+  
+   @Test
   public void testProperties() {
     // GetPTF("sven").aSerialized("sven").aKind(ExpressionKind.PROPERTY);
     GetPTF("sven1 add sven2").aSerialized("{sven1 add sven2}").aKind(ExpressionKind.BINARY).root().left().aKind(

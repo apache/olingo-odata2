@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.core.edm.Bit;
 import org.apache.olingo.odata2.core.edm.EdmBinary;
 import org.apache.olingo.odata2.core.edm.EdmBoolean;
@@ -32,6 +33,7 @@ import org.apache.olingo.odata2.core.edm.EdmInt32;
 import org.apache.olingo.odata2.core.edm.EdmInt64;
 import org.apache.olingo.odata2.core.edm.EdmNull;
 import org.apache.olingo.odata2.core.edm.EdmSByte;
+import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 import org.apache.olingo.odata2.core.edm.EdmSingle;
 import org.apache.olingo.odata2.core.edm.EdmString;
 import org.apache.olingo.odata2.core.edm.EdmTime;
@@ -45,6 +47,191 @@ import org.junit.Test;
  * 
  */
 public class TestAbapCompatibility extends TestBase {
+
+  @Test
+  public void nullTests() {
+
+    // unary negate/not
+
+    GetPTF("  - null").aSerialized("{- null}").aEdmType(
+        EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Null));
+    GetPTF("not null").aSerialized("{not null}").aEdmType(
+        EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Null));
+
+    // binary add/sub
+    GetPTF("-1   add null").aSerialized("{-1 add null}").aEdmType(
+        EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.SByte));
+    GetPTF("null add   -1").aSerialized("{null add -1}").aEdmType(
+        EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.SByte));
+
+    GetPTF("130  add null").aSerialized("{130 add null}").aEdmType(EdmByte.getInstance());
+    GetPTF("null add  130").aSerialized("{null add 130}").aEdmType(EdmByte.getInstance());
+
+    GetPTF("12345 add  null").aSerialized("{12345 add null}").aEdmType(EdmInt16.getInstance());
+    GetPTF("null  add 12345").aSerialized("{null add 12345}").aEdmType(EdmInt16.getInstance());
+
+    GetPTF("1234512345  add       null").aSerialized("{1234512345 add null}").aEdmType(EdmInt32.getInstance());
+    GetPTF("null        add 1234512345").aSerialized("{null add 1234512345}").aEdmType(EdmInt32.getInstance());
+
+    GetPTF("12345L add   null").aSerialized("{12345L add null}").aEdmType(EdmInt64.getInstance());
+    GetPTF("null   add 12345L").aSerialized("{null add 12345L}").aEdmType(EdmInt64.getInstance());
+
+    GetPTF("1.1F add null").aSerialized("{1.1F add null}").aEdmType(EdmSingle.getInstance());
+    GetPTF("null add 1.1F").aSerialized("{null add 1.1F}").aEdmType(EdmSingle.getInstance());
+
+    GetPTF("1.1D add null").aSerialized("{1.1D add null}").aEdmType(EdmDouble.getInstance());
+    GetPTF("null add 1.1D").aSerialized("{null add 1.1D}").aEdmType(EdmDouble.getInstance());
+
+    GetPTF("1.1M add null").aSerialized("{1.1M add null}").aEdmType(EdmDecimal.getInstance());
+    GetPTF("null add 1.1M").aSerialized("{null add 1.1M}").aEdmType(EdmDecimal.getInstance());
+
+    // binary mul/div/mod
+
+    GetPTF("-1   mul null").aSerialized("{-1 mul null}").aEdmType(
+        EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.SByte));
+    GetPTF("null mul   -1").aSerialized("{null mul -1}").aEdmType(
+        EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.SByte));
+
+    GetPTF("130  mul null").aSerialized("{130 mul null}").aEdmType(EdmByte.getInstance());
+    GetPTF("null mul  130").aSerialized("{null mul 130}").aEdmType(EdmByte.getInstance());
+
+    GetPTF("12345 mul  null").aSerialized("{12345 mul null}").aEdmType(EdmInt16.getInstance());
+    GetPTF("null  mul 12345").aSerialized("{null mul 12345}").aEdmType(EdmInt16.getInstance());
+
+    GetPTF("1234512345  mul       null").aSerialized("{1234512345 mul null}").aEdmType(EdmInt32.getInstance());
+    GetPTF("null        mul 1234512345").aSerialized("{null mul 1234512345}").aEdmType(EdmInt32.getInstance());
+
+    GetPTF("12345L mul   null").aSerialized("{12345L mul null}").aEdmType(EdmInt64.getInstance());
+    GetPTF("null   mul 12345L").aSerialized("{null mul 12345L}").aEdmType(EdmInt64.getInstance());
+
+    GetPTF("1.1F mul null").aSerialized("{1.1F mul null}").aEdmType(EdmSingle.getInstance());
+    GetPTF("null mul 1.1F").aSerialized("{null mul 1.1F}").aEdmType(EdmSingle.getInstance());
+
+    GetPTF("1.1D mul null").aSerialized("{1.1D mul null}").aEdmType(EdmDouble.getInstance());
+    GetPTF("null mul 1.1D").aSerialized("{null mul 1.1D}").aEdmType(EdmDouble.getInstance());
+
+    GetPTF("1.1M mul null").aSerialized("{1.1M mul null}").aEdmType(EdmDecimal.getInstance());
+    GetPTF("null mul 1.1M").aSerialized("{null mul 1.1M}").aEdmType(EdmDecimal.getInstance());
+
+    // relational gt/ge/lt/le
+
+    GetPTF("'TEST' gt null").aSerialized("{'TEST' gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null   gt 'TEST'").aSerialized("{null gt 'TEST'}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("time'PT19H02M01S' gt              null")
+        .aSerialized("{time'PT19H02M01S' gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null              gt time'PT19H02M01S'")
+        .aSerialized("{null gt time'PT19H02M01S'}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("datetime'2011-07-31T23:30:59' gt null")
+        .aSerialized("{datetime'2011-07-31T23:30:59' gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null                          gt datetime'2011-07-31T23:30:59'").aSerialized(
+        "{null gt datetime'2011-07-31T23:30:59'}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("datetimeoffset'2002-10-10T12:00:00-05:00' gt null")
+        .aSerialized("{datetimeoffset'2002-10-10T12:00:00-05:00' gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null  gt datetimeoffset'2002-10-10T12:00:00-05:00'")
+        .aSerialized("{null gt datetimeoffset'2002-10-10T12:00:00-05:00'}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("guid'12345678-1234-1234-1234-123456789012' gt null")
+        .aSerialized("{guid'12345678-1234-1234-1234-123456789012' gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null gt guid'12345678-1234-1234-1234-123456789012'")
+        .aSerialized("{null gt guid'12345678-1234-1234-1234-123456789012'}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("-1   gt null").aSerialized("{-1 gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null gt   -1").aSerialized("{null gt -1}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("130  gt null").aSerialized("{130 gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null gt  130").aSerialized("{null gt 130}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("12345 gt  null").aSerialized("{12345 gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null  gt 12345").aSerialized("{null gt 12345}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("1234512345  gt       null").aSerialized("{1234512345 gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null        gt 1234512345").aSerialized("{null gt 1234512345}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("12345L gt   null").aSerialized("{12345L gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null   gt 12345L").aSerialized("{null gt 12345L}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("1.1F gt null").aSerialized("{1.1F gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null gt 1.1F").aSerialized("{null gt 1.1F}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("1.1D gt null").aSerialized("{1.1D gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null gt 1.1D").aSerialized("{null gt 1.1D}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("1.1M gt null").aSerialized("{1.1M gt null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null gt 1.1M").aSerialized("{null gt 1.1M}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("X'1234567890ABCDEF' gt null").aSerialized("{X'1234567890ABCDEF' gt null}").aEdmType(
+        EdmBoolean.getInstance());
+    GetPTF("null gt X'1234567890ABCDEF'").aSerialized("{null gt X'1234567890ABCDEF'}").aEdmType(
+        EdmBoolean.getInstance());
+
+    // equlity eq/ne
+
+    GetPTF("'TEST' eq null").aSerialized("{'TEST' eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null   eq 'TEST'").aSerialized("{null eq 'TEST'}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("time'PT19H02M01S'   eq               null").aSerialized("{time'PT19H02M01S' eq null}").aEdmType(
+        EdmBoolean.getInstance());
+    GetPTF("null                eq  time'PT19H02M01S'").aSerialized("{null eq time'PT19H02M01S'}").aEdmType(
+        EdmBoolean.getInstance());
+
+    GetPTF("datetime'2011-07-31T23:30:59'   eq                           null").aSerialized(
+        "{datetime'2011-07-31T23:30:59' eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null                            eq  datetime'2011-07-31T23:30:59'").aSerialized(
+        "{null eq datetime'2011-07-31T23:30:59'}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("datetimeoffset'2002-10-10T12:00:00-05:00' eq null").aSerialized(
+        "{datetimeoffset'2002-10-10T12:00:00-05:00' eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null eq datetimeoffset'2002-10-10T12:00:00-05:00'").aSerialized(
+        "{null eq datetimeoffset'2002-10-10T12:00:00-05:00'}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("guid'12345678-1234-1234-1234-123456789012' eq null").aSerialized(
+        "{guid'12345678-1234-1234-1234-123456789012' eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null eq guid'12345678-1234-1234-1234-123456789012'").aSerialized(
+        "{null eq guid'12345678-1234-1234-1234-123456789012'}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("-1   eq null").aSerialized("{-1 eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null eq   -1").aSerialized("{null eq -1}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("130  eq null").aSerialized("{130 eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null eq  130").aSerialized("{null eq 130}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("12345 eq  null").aSerialized("{12345 eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null  eq 12345").aSerialized("{null eq 12345}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("1234512345  eq       null").aSerialized("{1234512345 eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null        eq 1234512345").aSerialized("{null eq 1234512345}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("12345L eq   null").aSerialized("{12345L eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null   eq 12345L").aSerialized("{null eq 12345L}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("1.1F eq null").aSerialized("{1.1F eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null eq 1.1F").aSerialized("{null eq 1.1F}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("1.1D eq null").aSerialized("{1.1D eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null eq 1.1D").aSerialized("{null eq 1.1D}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("1.1M eq null").aSerialized("{1.1M eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null eq 1.1M").aSerialized("{null eq 1.1M}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("X'1234567890ABCDEF' eq null").aSerialized("{X'1234567890ABCDEF' eq null}").aEdmType(
+        EdmBoolean.getInstance());
+    GetPTF("null eq X'1234567890ABCDEF'").aSerialized("{null eq X'1234567890ABCDEF'}").aEdmType(
+        EdmBoolean.getInstance());
+
+    GetPTF("true eq null").aSerialized("{true eq null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null eq true").aSerialized("{null eq true}").aEdmType(EdmBoolean.getInstance());
+
+    // logical and/or
+    GetPTF("true and null").aSerialized("{true and null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null and true").aSerialized("{null and true}").aEdmType(EdmBoolean.getInstance());
+
+    GetPTF("true or null").aSerialized("{true or null}").aEdmType(EdmBoolean.getInstance());
+    GetPTF("null or true").aSerialized("{null or true}").aEdmType(EdmBoolean.getInstance());
+
+  }
 
   @Test
   public void abapTestParameterPromotion() // copy of ABAP method test_parameter_promotion
