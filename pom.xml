@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file 
     distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you under 
-    the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may 
+    the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may
     obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to 
     in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF 
     ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under 
@@ -84,6 +84,14 @@
 
 	<build>
 		<finalName>${project.artifactId}-${project.version}</finalName>
+
+        <extensions>
+            <extension>
+                <groupId>org.kuali.maven.wagons</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version>1.2.1</version>
+            </extension>
+        </extensions>
 
 		<pluginManagement>
 			<plugins>
@@ -419,11 +427,25 @@
 		</profile>
 	</profiles>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>maven-s3-snapshot-repo</id>
+            <name>S3 Snapshot Repository</name>
+            <url>s3://mobikon-maven/snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <repositories>
         <repository>
-            <id>oss.sonatype.org</id>
-            <name>OSS Sonatype Staging</name>
-            <url>https://oss.sonatype.org/content/groups/staging</url>
+            <id>maven-s3-snapshot-repo</id>
+            <name>S3 Snapshot Repository</name>
+            <url>s3://mobikon-maven/snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
     

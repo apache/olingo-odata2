@@ -18,47 +18,30 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.odata2.api.edm.EdmException;
-import org.apache.olingo.odata2.api.edm.EdmFacets;
-import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
-import org.apache.olingo.odata2.api.edm.EdmMapping;
-import org.apache.olingo.odata2.api.edm.EdmProperty;
-import org.apache.olingo.odata2.api.edm.EdmSimpleType;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
-import org.apache.olingo.odata2.api.edm.EdmTypeKind;
-import org.apache.olingo.odata2.api.edm.EdmTyped;
+import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
-import org.apache.olingo.odata2.api.uri.expression.BinaryExpression;
-import org.apache.olingo.odata2.api.uri.expression.BinaryOperator;
-import org.apache.olingo.odata2.api.uri.expression.CommonExpression;
-import org.apache.olingo.odata2.api.uri.expression.ExpressionKind;
-import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
-import org.apache.olingo.odata2.api.uri.expression.LiteralExpression;
-import org.apache.olingo.odata2.api.uri.expression.MemberExpression;
-import org.apache.olingo.odata2.api.uri.expression.MethodExpression;
-import org.apache.olingo.odata2.api.uri.expression.MethodOperator;
-import org.apache.olingo.odata2.api.uri.expression.PropertyExpression;
-import org.apache.olingo.odata2.api.uri.expression.UnaryExpression;
-import org.apache.olingo.odata2.api.uri.expression.UnaryOperator;
+import org.apache.olingo.odata2.api.uri.expression.*;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 public class ODataExpressionParserTest {
 
+  private static final String EXPECTED_STR_0 = "(gwt1.SalesOrder >= 1234 AND " +
+          "(gwt1.SalesOrder <> 2345 OR gwt1.SalesOrder <> XYZ))";
   private static final String EXPECTED_STR_1 = "gwt1.SalesOrder = 1234";
-  private static final String EXPECTED_STR_2 = "gwt1.SalesOrder >= 1234 AND gwt1.SalesABC <> XYZ";
-  private static final String EXPECTED_STR_3 = "gwt1.SalesOrder >= 1234 OR gwt1.SalesABC <> XYZ";
-  private static final String EXPECTED_STR_4 = "gwt1.SalesOrder < 1234 AND gwt1.SalesABC <= XYZ";
-  private static final String EXPECTED_STR_5 = "gwt1.LineItems > 2345 AND gwt1.SalesOrder >= Amazon";
+  private static final String EXPECTED_STR_2 = "(gwt1.SalesOrder >= 1234 AND gwt1.SalesABC <> XYZ)";
+  private static final String EXPECTED_STR_3 = "(gwt1.SalesOrder >= 1234 OR gwt1.SalesABC <> XYZ)";
+  private static final String EXPECTED_STR_4 = "(gwt1.SalesOrder < 1234 AND gwt1.SalesABC <= XYZ)";
+  private static final String EXPECTED_STR_5 = "(gwt1.LineItems > 2345 AND gwt1.SalesOrder >= Amazon)";
   private static final String EXPECTED_STR_6 = "gwt1.Address.city = \'City_3\'";
   private static final String EXPECTED_STR_7 = "gwt1.Address.city.area = \'BTM\'";
   private static final String EXPECTED_STR_8 = "gwt1.field1 = 1 AND gwt1.field2 = 'abc'";
@@ -141,6 +124,29 @@ public class ODataExpressionParserTest {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     assertEquals(EXPECTED_STR_3, parsedStr);
+  }
+
+  @Test
+  public void testInnerOr() {
+    // complex query -
+    String parsedStr = ODataJPATestConstants.EMPTY_STRING;
+    CommonExpression exp1 =
+            getBinaryExpressionMockedObj(BinaryOperator.GE, ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_1);
+    CommonExpression exp2 =
+            getBinaryExpressionMockedObj(BinaryOperator.NE, ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_2);
+    CommonExpression exp3 =
+            getBinaryExpressionMockedObj(BinaryOperator.NE, ExpressionKind.PROPERTY, SALES_ORDER, SAMPLE_DATA_XYZ);
+    CommonExpression or =
+            getBinaryExpression(exp2, BinaryOperator.OR, exp3);
+    CommonExpression and = getBinaryExpression(exp1, BinaryOperator.AND, or);
+    try {
+        parsedStr =
+                ODataExpressionParser.parseToJPAWhereExpression(and,
+                        TABLE_ALIAS);
+        assertEquals(EXPECTED_STR_0, parsedStr);
+    } catch (ODataException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
   }
 
   @Test

@@ -18,12 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
+import org.apache.olingo.odata2.core.edm.EdmNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Parameter set is a vector of 1 or more EDM types, it is used to store the possible
@@ -118,6 +119,11 @@ public class ParameterSet {
         // this parameter combination does not fit
         if (!allowPromotion) {
           return false;
+        }
+
+        // Always allow null comparisons
+        if (actType instanceof EdmNull) {
+          continue;
         }
 
         // Its allowed to promoted the actual parameter!!!

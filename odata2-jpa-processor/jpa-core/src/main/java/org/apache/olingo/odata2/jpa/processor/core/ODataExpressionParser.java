@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.edm.EdmMappable;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
@@ -106,10 +107,11 @@ public class ODataExpressionParser {
 
       switch (binaryExpression.getOperator()) {
       case AND:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.AND + JPQLStatement.DELIMITER.SPACE
-            + right;
+        return "(" + left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.AND + JPQLStatement.DELIMITER.SPACE
+            + right + ")";
       case OR:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.OR + JPQLStatement.DELIMITER.SPACE + right;
+        return "(" + left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.OR + JPQLStatement.DELIMITER.SPACE
+            + right + ")";
       case EQ:
         return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.EQ + JPQLStatement.DELIMITER.SPACE + right;
       case NE:
@@ -131,7 +133,7 @@ public class ODataExpressionParser {
     case PROPERTY:
       String returnStr =
           tableAlias + JPQLStatement.DELIMITER.PERIOD
-              + ((EdmProperty) ((PropertyExpression) whereExpression).getEdmProperty()).getMapping().getInternalName();
+              + ((EdmMappable) ((PropertyExpression) whereExpression).getEdmProperty()).getMapping().getInternalName();
       return returnStr;
 
     case MEMBER:
@@ -146,12 +148,12 @@ public class ODataExpressionParser {
         }
         i++;
         memberExpStr =
-            ((EdmProperty) ((PropertyExpression) member.getProperty()).getEdmProperty()).getMapping().getInternalName()
+            ((EdmMappable) ((PropertyExpression) member.getProperty()).getEdmProperty()).getMapping().getInternalName()
                 + memberExpStr;
         tempExp = member.getPath();
       }
       memberExpStr =
-          ((EdmProperty) ((PropertyExpression) tempExp).getEdmProperty()).getMapping().getInternalName()
+          ((EdmMappable) ((PropertyExpression) tempExp).getEdmProperty()).getMapping().getInternalName()
               + JPQLStatement.DELIMITER.PERIOD + memberExpStr;
       return tableAlias + JPQLStatement.DELIMITER.PERIOD + memberExpStr;
 
@@ -242,7 +244,7 @@ public class ODataExpressionParser {
 
         try {
           orderByField =
-              ((EdmProperty) ((PropertyExpression) orderBy.getExpression()).getEdmProperty()).getMapping()
+              ((EdmMappable) ((PropertyExpression) orderBy.getExpression()).getEdmProperty()).getMapping()
                   .getInternalName();
           orderByDirection = (orderBy.getSortOrder() == SortOrder.asc) ? EMPTY : "DESC"; //$NON-NLS-1$
           orderByMap.put(tableAlias + JPQLStatement.DELIMITER.PERIOD + orderByField, orderByDirection);
@@ -326,11 +328,10 @@ public class ODataExpressionParser {
         String sec = String.format("%02d", datetime.get(Calendar.SECOND));
 
         value =
-            JPQLStatement.DELIMITER.LEFT_BRACE + JPQLStatement.KEYWORD.TIMESTAMP + JPQLStatement.DELIMITER.SPACE + "\'"
+            "\'"
                 + year + JPQLStatement.DELIMITER.HYPHEN + month + JPQLStatement.DELIMITER.HYPHEN + day
                 + JPQLStatement.DELIMITER.SPACE + hour + JPQLStatement.DELIMITER.COLON + min
-                + JPQLStatement.DELIMITER.COLON + sec + JPQLStatement.KEYWORD.OFFSET + "\'"
-                + JPQLStatement.DELIMITER.RIGHT_BRACE;
+                + JPQLStatement.DELIMITER.COLON + sec + JPQLStatement.KEYWORD.OFFSET + "\'";
 
       } catch (EdmSimpleTypeException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
