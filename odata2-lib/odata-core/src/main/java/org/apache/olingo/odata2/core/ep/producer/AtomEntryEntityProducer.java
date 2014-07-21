@@ -152,12 +152,14 @@ public class AtomEntryEntityProducer {
     if (links != null && !links.isEmpty()) {
       for (Entry<String, Map<String, Object>> entry : links.entrySet()) {
         Map<String, Object> navigationKeyMap = entry.getValue();
+        final boolean isFeed =
+            (eia.getNavigationPropertyInfo(entry.getKey()).getMultiplicity() == EdmMultiplicity.MANY);
         if (navigationKeyMap != null && !navigationKeyMap.isEmpty()) {
           final EntityInfoAggregator targetEntityInfo = EntityInfoAggregator.create(
               eia.getEntitySet().getRelatedEntitySet(
                   (EdmNavigationProperty) eia.getEntityType().getProperty(entry.getKey())));
           appendAtomNavigationLink(writer, createSelfLink(targetEntityInfo, navigationKeyMap, null), entry.getKey(),
-              null, eia, data);
+              isFeed, eia, data);
         }
       }
     }
@@ -219,27 +221,25 @@ public class AtomEntryEntityProducer {
       } else {
         final EntityInfoAggregator targetEntityInfo = EntityInfoAggregator.create(
             eia.getEntitySet().getRelatedEntitySet((EdmNavigationProperty) eia.getEntityType().getProperty(name)));
-        appendAtomNavigationLink(writer, createSelfLink(targetEntityInfo, key, null), name, null, eia, data);
+        appendAtomNavigationLink(writer, createSelfLink(targetEntityInfo, key, null), name, isFeed, eia, data);
       }
     }
   }
 
   private void appendAtomNavigationLink(final XMLStreamWriter writer, final String target,
-      final String navigationPropertyName, final Boolean isFeed, final EntityInfoAggregator eia,
+      final String navigationPropertyName, final boolean isFeed, final EntityInfoAggregator eia,
       final Map<String, Object> data) throws EntityProviderException, EdmException, URISyntaxException {
     try {
       writer.writeStartElement(FormatXml.ATOM_LINK);
       writer.writeAttribute(FormatXml.ATOM_HREF, target);
       writer.writeAttribute(FormatXml.ATOM_REL, Edm.NAMESPACE_REL_2007_08 + navigationPropertyName);
       writer.writeAttribute(FormatXml.ATOM_TITLE, navigationPropertyName);
-      if (isFeed != null) {
-        if (isFeed) {
-          writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_FEED.toString());
-          appendInlineFeed(writer, navigationPropertyName, eia, data, target);
-        } else {
-          writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_ENTRY.toString());
-          appendInlineEntry(writer, navigationPropertyName, eia, data);
-        }
+      if (isFeed) {
+        writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_FEED.toString());
+        appendInlineFeed(writer, navigationPropertyName, eia, data, target);
+      } else {
+        writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_ENTRY.toString());
+        appendInlineEntry(writer, navigationPropertyName, eia, data);
       }
       writer.writeEndElement();
     } catch (XMLStreamException e) {

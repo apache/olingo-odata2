@@ -1026,7 +1026,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     assertXpathExists("/a:entry/a:link[@title='nr_Building']", xmlString);
     assertXpathNotExists("/a:entry/a:link[@href=\"Rooms('1')/nr_Building\"]", xmlString);
     assertXpathExists("/a:entry/a:link[@href=\"Buildings('1')\"]", xmlString);
-    assertXpathNotExists("/a:entry/a:link[@type='application/atom+xml;type=entry']", xmlString);
+    assertXpathExists("/a:entry/a:link[@type='application/atom+xml;type=entry']", xmlString);
   }
 
   @Test
@@ -1041,7 +1041,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     assertXpathExists("/a:entry/a:link[@title='nr_Employees']", xmlString);
     assertXpathNotExists("/a:entry/a:link[@href=\"Rooms('1')/nr_Employees\"]", xmlString);
     assertXpathExists("/a:entry/a:link[@href=\"Employees('1')\"]", xmlString);
-    assertXpathNotExists("/a:entry/a:link[@type='application/atom+xml;type=feed']", xmlString);
+    assertXpathExists("/a:entry/a:link[@type='application/atom+xml;type=feed']", xmlString);
   }
 
   @Test
