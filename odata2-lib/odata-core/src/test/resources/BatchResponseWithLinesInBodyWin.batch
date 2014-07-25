@@ -1,0 +1,16 @@
+--batch_123
+Content-Type: application/http
+Content-Length: 234
+content-transfer-encoding: binary
+
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/xml;charset=utf-8
+Content-Length: 130
+
+This is the body we need to parse. The line spaces in the body 
+
+
+are 
+
+part of the body and must not be ignored or filtered.
+--batch_123--
