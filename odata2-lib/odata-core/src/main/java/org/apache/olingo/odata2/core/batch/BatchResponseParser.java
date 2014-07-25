@@ -201,9 +201,9 @@ public class BatchResponseParser {
       parseNewLine(scanner);
       String body = parseBody(scanner);
       String contentLengthHeader = getHeaderValue(headers, HttpHeaders.CONTENT_LENGTH);
-      if(contentLengthHeader != null){
+      if (contentLengthHeader != null) {
         int contentLength = Integer.parseInt(contentLengthHeader);
-        if(contentLength < body.length()){
+        if (contentLength < body.length()) {
           body = body.substring(0, contentLength);
         }
       }
@@ -290,31 +290,6 @@ public class BatchResponseParser {
         body.append(CRLF).append(scanner.next());
       }
       currentLineNumber++;
-    }
-    String responseBody = body != null ? body.toString() : null;
-    return responseBody;
-  }
-
-  private String parseBody(final Scanner scanner, final int contentLength) {
-    StringBuilder body = null;
-    int length = 0;
-    while (scanner.hasNext() && length < contentLength) {
-      if (!scanner.hasNext(REG_EX_ZERO_OR_MORE_WHITESPACES)) {
-        String nextLine = scanner.next();
-        length += BatchHelper.getBytes(nextLine).length;
-        if (body == null) {
-          body = new StringBuilder(nextLine);
-        } else {
-          body.append(CRLF).append(nextLine);
-        }
-      } else {
-        scanner.next();
-      }
-      currentLineNumber++;
-      if (scanner.hasNext() && scanner.hasNext(REG_EX_BLANK_LINE)) {
-        scanner.next();
-        currentLineNumber++;
-      }
     }
     String responseBody = body != null ? body.toString() : null;
     return responseBody;

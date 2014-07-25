@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.batch;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -285,9 +286,11 @@ public class BatchResponseParserTest {
 
   @Test
   public void parseWithAdditionalLineEndingAtTheEnd() throws Exception {
-    InputStream stream = getFileAsStream("BatchResponseWithAdditionalLineEnding.batch");
+    String fileString = readFile("BatchResponseWithAdditionalLineEnding.batch");
+    assertTrue(fileString.contains("\r\n--batch_123--"));
+    InputStream stream =new ByteArrayInputStream(fileString.getBytes());
     BatchSingleResponse response =
-        EntityProvider.parseBatchResponse(stream, "multipart/mixed;boundary=batch_123").get(0);
+        EntityProvider.parseBatchResponse(stream , "multipart/mixed;boundary=batch_123").get(0);
     assertEquals("This is the body we need to parse. The trailing line ending is part of the body." + CRLF, response
         .getBody());
 
@@ -330,6 +333,20 @@ public class BatchResponseParserTest {
     assertEquals(body, response.getBody());
   }
 
+  protected String readFile(final String filename) throws IOException {
+    InputStream in = getFileAsStream(filename);
+
+    byte[] tmp = new byte[8192];
+    int count = in.read(tmp);
+    StringBuilder b = new StringBuilder();
+    while (count >= 0) {
+      b.append(new String(tmp, 0, count));
+      count = in.read(tmp);
+    }
+
+    return b.toString();
+  }
+  
   private InputStream getFileAsStream(final String filename) throws IOException {
     InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
     if (in == null) {
