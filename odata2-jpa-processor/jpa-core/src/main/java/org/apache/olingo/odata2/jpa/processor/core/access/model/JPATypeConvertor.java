@@ -82,8 +82,10 @@ public class JPATypeConvertor {
       return EdmSimpleTypeKind.Byte;
     } else if (jpaType.equals(Boolean.class) || jpaType.equals(boolean.class)) {
       return EdmSimpleTypeKind.Boolean;
-    } else if ((jpaType.equals(Date.class)) || (jpaType.equals(Calendar.class)) ||
-        jpaType.equals(Timestamp.class)) {
+    } else if (jpaType.equals(java.sql.Time.class)) {
+      return EdmSimpleTypeKind.Time;
+    } else if (jpaType.equals(Date.class) || jpaType.equals(Calendar.class) ||
+        jpaType.equals(Timestamp.class) || jpaType.equals(java.util.Date.class)) {
       try {
         if ((currentAttribute != null)
             && (determineTemporalType(currentAttribute)

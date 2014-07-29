@@ -354,6 +354,14 @@ public class JPAEntity {
       } else if (parameterType.equals(Timestamp.class)) {
         Timestamp ts = new Timestamp(((Calendar) entityPropertyValue).getTimeInMillis());
         method.invoke(entity, ts);
+      } else if (parameterType.equals(java.util.Date.class)) {
+        method.invoke(entity, ((Calendar) entityPropertyValue).getTime());
+      } else if (parameterType.equals(java.sql.Date.class)) {
+        long timeInMs = ((Calendar) entityPropertyValue).getTimeInMillis();
+        method.invoke(entity, new java.sql.Date(timeInMs));
+      } else if (parameterType.equals(java.sql.Time.class)) {
+        long timeInMs = ((Calendar) entityPropertyValue).getTimeInMillis();
+        method.invoke(entity, new java.sql.Time(timeInMs));
       } else {
         method.invoke(entity, entityPropertyValue);
       }
