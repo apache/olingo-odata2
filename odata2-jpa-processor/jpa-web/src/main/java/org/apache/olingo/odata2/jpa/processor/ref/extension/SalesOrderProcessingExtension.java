@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.ref.extension;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +64,11 @@ public class SalesOrderProcessingExtension implements JPAEdmExtension {
   public void extendWithOperation(final JPAEdmSchemaView view) {
     view.registerOperations(SalesOrderHeaderProcessor.class, null);
 
+  }
+
+  @Override
+  public InputStream getJPAEdmMappingModelStream() {
+    return null;
   }
 
 }

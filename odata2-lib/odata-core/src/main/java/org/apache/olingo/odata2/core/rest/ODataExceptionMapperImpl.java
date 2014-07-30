@@ -25,7 +25,6 @@ import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
@@ -93,8 +92,7 @@ public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
 
     ODataExceptionWrapper exceptionWrapper =
         new ODataExceptionWrapper(uriInfo, httpHeaders, getErrorHandlerCallback());
-    ODataResponse oDataResponse = exceptionWrapper.wrapInExceptionResponse(exception);
-    return oDataResponse;
+    return exceptionWrapper.wrapInExceptionResponse(exception);
   }
 
   private ODataResponse handleWebApplicationException(final Exception exception) throws ClassNotFoundException,
@@ -132,8 +130,9 @@ public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
     context.setErrorCode(null);
     context.setMessage(exception.getMessage());
     context.setLocale(DEFAULT_RESPONSE_LOCALE);
-    context.setHttpStatus(HttpStatusCodes.fromStatusCode(exception.getResponse().getStatus()));
-    if (exception instanceof NotAllowedException) {
+    HttpStatusCodes statusCode = HttpStatusCodes.fromStatusCode(exception.getResponse().getStatus());
+    context.setHttpStatus(statusCode);
+    if (statusCode == HttpStatusCodes.METHOD_NOT_ALLOWED) {
       // RFC 2616, 5.1.1: " An origin server SHOULD return the status code
       // 405 (Method Not Allowed) if the method is known by the origin server
       // but not allowed for the requested resource, and 501 (Not Implemented)
@@ -194,10 +193,8 @@ public class ODataExceptionMapperImpl implements ExceptionMapper<Exception> {
   }
 
   private ODataErrorCallback getErrorHandlerCallback() {
-    ODataErrorCallback callback = null;
     final ODataServiceFactory serviceFactory =
         ODataRootLocator.createServiceFactoryFromContext(app, servletRequest, servletConfig);
-    callback = serviceFactory.getCallback(ODataErrorCallback.class);
-    return callback;
+    return serviceFactory.getCallback(ODataErrorCallback.class);
   }
 }

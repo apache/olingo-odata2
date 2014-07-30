@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.junit.Test;
 
@@ -48,7 +47,7 @@ public class ODataRequestTest {
 
   }
 
-  void verifyHeader(ODataRequest r) {
+  void verifyHeader(final ODataRequest r) {
     assertEquals("lower", r.getRequestHeaderValue("lower"));
     assertEquals("lower", r.getRequestHeaderValue("LOWER"));
     assertEquals("lower", r.getRequestHeaderValue("Lower"));
@@ -73,6 +72,6 @@ public class ODataRequestTest {
 
     assertEquals("mIxEd", map.get("mixed").get(0));
     assertEquals("mIxEd", map.get("MIXED").get(0));
-    assertEquals("mIxEd", map.get("mIxEd").get(0));    
+    assertEquals("mIxEd", map.get("mIxEd").get(0));
   }
 }

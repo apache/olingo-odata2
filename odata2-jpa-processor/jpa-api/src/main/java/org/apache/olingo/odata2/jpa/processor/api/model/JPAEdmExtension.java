@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.api.model;
 
+import java.io.InputStream;
+
 /**
  * The interface provides methods to extend JPA EDM containers.
  * 
@@ -46,5 +48,12 @@ public interface JPAEdmExtension {
    * 
    */
   public void extendJPAEdmSchema(JPAEdmSchemaView view);
+
+  /**
+   * Implement this method to provide a stream of Mapping model.
+   * @return
+   * a stream of mapping model XML as per JPAEDMMappingModel.xsd
+   */
+  public InputStream getJPAEdmMappingModelStream();
 
 }

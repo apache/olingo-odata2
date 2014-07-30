@@ -28,18 +28,14 @@ import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.eclipse.persistence.annotations.Converter;
-
 @Entity
 @Table(name = "T_MATERIAL")
-@Converter(
-    name = "BlobToByteConverter",
-    converterClass = org.apache.olingo.odata2.jpa.processor.ref.converter.BlobToByteConverter.class)
 public class Material {
 
   public Material() {}
@@ -82,7 +78,8 @@ public class Material {
   private List<Store> stores = new ArrayList<Store>();
 
   @ManyToOne
-  @JoinColumn(name = "TYPE_CODE", referencedColumnName = "CODE")
+  @JoinColumns({ @JoinColumn(name = "TYPE_CODE", referencedColumnName = "CODE"),
+      @JoinColumn(name = "CAT_ID", referencedColumnName = "ID") })
   private Category category;
 
   public long getMaterialId() {

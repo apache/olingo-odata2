@@ -128,7 +128,7 @@ public class ODataServlet extends HttpServlet {
     } else if (HTTP_METHOD_HEAD.equals(method) || HTTP_METHOD_OPTIONS.equals(method)) {
       createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
     } else {
-      createMethodNotAllowedResponse(req, ODataHttpException.COMMON, resp);
+      createNotImplementedResponse(req, ODataHttpException.COMMON, resp);
     }
   }
 
@@ -149,7 +149,7 @@ public class ODataServlet extends HttpServlet {
     } else if (HTTP_METHOD_HEAD.equals(xHttpMethod) || HTTP_METHOD_OPTIONS.equals(xHttpMethod)) {
       createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
     } else {
-      return false;
+      createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
     }
     return true;
   }
@@ -197,13 +197,27 @@ public class ODataServlet extends HttpServlet {
         HTTP_METHOD_HEAD.equals(method) ||
         HTTP_METHOD_OPTIONS.equals(method)) {
       ODataResponse odataResponse = ODataResponse.status(HttpStatusCodes.TEMPORARY_REDIRECT)
-          .header(HttpHeaders.LOCATION, "/")
+          .header(HttpHeaders.LOCATION, createLocation(req))
           .build();
       createResponse(resp, odataResponse);
     } else {
-      createMethodNotAllowedResponse(req, ODataHttpException.COMMON, resp);
+      createNotImplementedResponse(req, ODataHttpException.COMMON, resp);
     }
 
+  }
+
+  private String createLocation(final HttpServletRequest req) {
+    StringBuilder location = new StringBuilder();
+    String contextPath = req.getContextPath();
+    if (contextPath != null) {
+      location.append(contextPath);
+    }
+    String servletPath = req.getServletPath();
+    if (servletPath != null) {
+      location.append(servletPath);
+    }
+    location.append("/");
+    return location.toString();
   }
 
   private void createResponse(final HttpServletResponse resp, final ODataResponse response) throws IOException {
@@ -239,6 +253,7 @@ public class ODataServlet extends HttpServlet {
     ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req);
     ODataResponse response =
         exceptionWrapper.wrapInExceptionResponse(new ODataNotImplementedException(messageReference));
+//    resp.setStatus(HttpStatusCodes.NOT_IMPLEMENTED.getStatusCode());
     createResponse(resp, response);
   }
 

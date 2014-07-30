@@ -203,8 +203,8 @@ public class JPAPage implements JPAPaging {
       return this;
     }
 
-    public JPAPageBuilder entities(List<Object> result) {
-      this.entities = result;
+    public JPAPageBuilder entities(final List<Object> result) {
+      entities = result;
       return this;
     }
   }

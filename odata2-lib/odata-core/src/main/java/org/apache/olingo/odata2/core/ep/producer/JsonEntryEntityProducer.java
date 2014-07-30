@@ -23,6 +23,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -45,7 +46,6 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Encoder;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
-import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
@@ -71,23 +71,27 @@ public class JsonEntryEntityProducer {
 
     try {
       jsonStreamWriter = new JsonStreamWriter(writer);
-      if (isRootElement) {
+      if (isRootElement && !properties.isOmitJsonWrapper()) {
         jsonStreamWriter.beginObject().name(FormatJson.D);
       }
 
       jsonStreamWriter.beginObject();
 
-      writeMetadata(entityInfo, data, type);
+      if (!properties.isContentOnly()) {
+        writeMetadata(entityInfo, data, type);
+      }
 
       writeProperties(entityInfo, data, type);
 
-      if (!properties.isIgnoreKey()) {
+      if (!properties.isContentOnly()) {
         writeNavigationProperties(writer, entityInfo, data, type);
+      } else {
+        writeAdditonalLinksInContentOnlyCase(entityInfo);
       }
-      
+
       jsonStreamWriter.endObject();
 
-      if (isRootElement) {
+      if (isRootElement && !properties.isOmitJsonWrapper()) {
         jsonStreamWriter.endObject();
       }
 
@@ -176,17 +180,20 @@ public class JsonEntryEntityProducer {
 
   private void writeProperties(final EntityInfoAggregator entityInfo, final Map<String, Object> data,
       final EdmEntityType type) throws EdmException, EntityProviderException, IOException {
+    boolean omitComma = false;
+    if (properties.isContentOnly()) {
+      omitComma = true;
+    }
     for (final String propertyName : type.getPropertyNames()) {
       if (entityInfo.getSelectedPropertyNames().contains(propertyName)) {
-
-        EntityPropertyInfo propertyInfo = entityInfo.getPropertyInfo(propertyName);
-        if (!(entityInfo.getKeyPropertyInfos().contains(propertyInfo) && properties.isIgnoreKey())) {
-
+        if (omitComma == true) {
+          omitComma = false;
+        } else {
           jsonStreamWriter.separator();
-          jsonStreamWriter.name(propertyName);
-          JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, entityInfo.getPropertyInfo(propertyName),
-              data.get(propertyName));
         }
+        jsonStreamWriter.name(propertyName);
+        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, entityInfo.getPropertyInfo(propertyName),
+            data.get(propertyName));
       }
     }
   }
@@ -195,15 +202,12 @@ public class JsonEntryEntityProducer {
       final EdmEntityType type) throws IOException, EntityProviderException, EdmException {
     jsonStreamWriter.name(FormatJson.METADATA);
     jsonStreamWriter.beginObject();
-    String self = null;
-    if (!properties.isIgnoreKey()) {
-      self = AtomEntryEntityProducer.createSelfLink(entityInfo, data, null);
-      location = (properties.getServiceRoot() == null ? "" : properties.getServiceRoot().toASCIIString()) + self;
-      jsonStreamWriter.namedStringValue(FormatJson.ID, location);
-      jsonStreamWriter.separator();
-      jsonStreamWriter.namedStringValue(FormatJson.URI, location);
-      jsonStreamWriter.separator();
-    }
+    final String self = AtomEntryEntityProducer.createSelfLink(entityInfo, data, null);
+    location = (properties.getServiceRoot() == null ? "" : properties.getServiceRoot().toASCIIString()) + self;
+    jsonStreamWriter.namedStringValue(FormatJson.ID, location);
+    jsonStreamWriter.separator();
+    jsonStreamWriter.namedStringValue(FormatJson.URI, location);
+    jsonStreamWriter.separator();
     jsonStreamWriter.namedStringValueRaw(FormatJson.TYPE, type.getNamespace() + Edm.DELIMITER + type.getName());
     eTag = AtomEntryEntityProducer.createETag(entityInfo, data);
     if (eTag != null) {
@@ -213,9 +217,8 @@ public class JsonEntryEntityProducer {
     if (type.hasStream()) {
       jsonStreamWriter.separator();
 
-      // We have to support the media resource mime type at the properties till version 1.2 then this can be refactored
-      String mediaResourceMimeType = properties.getMediaResourceMimeType();
       EdmMapping entityTypeMapping = entityInfo.getEntityType().getMapping();
+      String mediaResourceMimeType = null;
       String mediaSrc = null;
 
       if (entityTypeMapping != null) {
@@ -226,19 +229,16 @@ public class JsonEntryEntityProducer {
         if (mediaSrc == null) {
           mediaSrc = self + "/$value";
         }
-        if (mediaResourceMimeType == null) {
-          mediaResourceMimeType =
-              entityTypeMapping.getMimeType() != null ? (String) data.get(entityTypeMapping.getMimeType())
-                  : (String) data.get(entityTypeMapping.getMediaResourceMimeTypeKey());
-          if (mediaResourceMimeType == null) {
-            mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
-          }
+        String mediaResourceMimeTypeKey = entityTypeMapping.getMediaResourceMimeTypeKey();
+        if (mediaResourceMimeTypeKey != null) {
+          mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
         }
-      } else {
-        mediaSrc = self + "/$value";
         if (mediaResourceMimeType == null) {
           mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
         }
+      } else {
+        mediaSrc = self + "/$value";
+        mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
       }
 
       jsonStreamWriter.namedStringValueRaw(FormatJson.CONTENT_TYPE, mediaResourceMimeType);
@@ -261,14 +261,40 @@ public class JsonEntryEntityProducer {
     if (key == null || key.isEmpty()) {
       target = location + "/" + Encoder.encode(navigationPropertyName);
     } else {
-      final EntityInfoAggregator targetEntityInfo = EntityInfoAggregator.create(
-          entityInfo.getEntitySet().getRelatedEntitySet(
-              (EdmNavigationProperty) entityInfo.getEntityType().getProperty(navigationPropertyName)));
-      target = (properties.getServiceRoot() == null ? "" : properties.getServiceRoot().toASCIIString())
-          + AtomEntryEntityProducer.createSelfLink(targetEntityInfo, key, null);
+      target = createCustomTargetLink(entityInfo, navigationPropertyName, key);
     }
     JsonLinkEntityProducer.appendUri(jsonStreamWriter, target);
     jsonStreamWriter.endObject();
+  }
+
+  private String createCustomTargetLink(final EntityInfoAggregator entityInfo, final String navigationPropertyName,
+      final Map<String, Object> key) throws EntityProviderException, EdmException {
+    String target;
+    final EntityInfoAggregator targetEntityInfo = EntityInfoAggregator.create(
+        entityInfo.getEntitySet().getRelatedEntitySet(
+            (EdmNavigationProperty) entityInfo.getEntityType().getProperty(navigationPropertyName)));
+    target = (properties.getServiceRoot() == null ? "" : properties.getServiceRoot().toASCIIString())
+        + AtomEntryEntityProducer.createSelfLink(targetEntityInfo, key, null);
+    return target;
+  }
+
+  private void writeAdditonalLinksInContentOnlyCase(final EntityInfoAggregator entityInfo)
+      throws IOException, EntityProviderException, EdmException {
+    final Map<String, Map<String, Object>> links = properties.getAdditionalLinks();
+    if (links != null && !links.isEmpty()) {
+      for (Entry<String, Map<String, Object>> entry : links.entrySet()) {
+        Map<String, Object> navigationKeyMap = entry.getValue();
+        if (navigationKeyMap != null && !navigationKeyMap.isEmpty()) {
+          String target = createCustomTargetLink(entityInfo, entry.getKey(), navigationKeyMap);
+          jsonStreamWriter.separator();
+          jsonStreamWriter.name(entry.getKey());
+          jsonStreamWriter.beginObject()
+              .name(FormatJson.DEFERRED);
+          JsonLinkEntityProducer.appendUri(jsonStreamWriter, target);
+          jsonStreamWriter.endObject();
+        }
+      }
+    }
   }
 
   public String getETag() {

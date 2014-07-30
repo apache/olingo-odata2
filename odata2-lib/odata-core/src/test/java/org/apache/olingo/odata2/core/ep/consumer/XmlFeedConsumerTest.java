@@ -43,7 +43,7 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
   public XmlFeedConsumerTest(final StreamWriterImplType type) {
     super(type);
   }
-  
+
   @Test
   public void roomsFeedWithEtagEntries() throws Exception {
     InputStream stream = getFileAsStream("feed_rooms_small.xml");
@@ -58,13 +58,13 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
     FeedMetadata feedMetadata = feed.getFeedMetadata();
     assertNotNull(feedMetadata);
     assertNotNull(feedMetadata.getNextLink());
-    
+
     List<ODataEntry> entries = feed.getEntries();
     assertEquals(3, entries.size());
     ODataEntry singleRoom = entries.get(0);
     EntryMetadata roomMetadata = singleRoom.getMetadata();
     assertNotNull(roomMetadata);
-    
+
     assertEquals("W/\"1\"", roomMetadata.getEtag());
   }
 

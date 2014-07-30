@@ -20,15 +20,14 @@ package org.apache.olingo.odata2.jpa.processor.ref.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -40,6 +39,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "T_SALESORDERHEADER")
+@EntityListeners(org.apache.olingo.odata2.jpa.processor.ref.listeners.SalesOrderTombstoneListener.class)
 public class SalesOrderHeader {
 
   public SalesOrderHeader() {}
@@ -89,7 +89,7 @@ public class SalesOrderHeader {
   private List<Note> notes = new ArrayList<Note>();
 
   @ManyToOne
-  @JoinColumn(name = "CUST_ID", referencedColumnName = "ID")
+  @JoinColumn
   private Customer customer;
 
   public Customer getCustomer() {
@@ -116,26 +116,17 @@ public class SalesOrderHeader {
     this.soId = soId;
   }
 
-  public Date getCreationDate() {
+  public Calendar getCreationDate() {
     if (creationDate == null) {
       return null;
     }
-    long dbTime = creationDate.getTime().getTime();
-    Date originalDate = new Date(dbTime + TimeZone.getDefault().getOffset(dbTime));
-    return originalDate;
+
+    return creationDate;
   }
 
   public void setCreationDate(final Calendar creationDate) {
-    long originalTime;
-    if (creationDate != null) {
-      originalTime = creationDate.getTime().getTime();
-    } else {
-      originalTime = Calendar.getInstance(TimeZone.getDefault()).getTime().getTime();
-    }
-    Date newDate = new Date(originalTime - TimeZone.getDefault().getOffset(originalTime));
-    Calendar newCalendar = Calendar.getInstance();
-    newCalendar.setTime(newDate);
-    this.creationDate = newCalendar;
+
+    this.creationDate = creationDate;
   }
 
   public String getCurrencyCode() {

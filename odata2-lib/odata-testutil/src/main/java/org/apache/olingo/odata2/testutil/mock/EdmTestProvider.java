@@ -259,7 +259,7 @@ public class EdmTestProvider extends EdmProvider {
             .setHasStream(true)
             .setKey(getKey("EmployeeId"))
             .setNavigationProperties(navigationProperties)
-            .setMapping(new Mapping().setMimeType("getImageType"));
+            .setMapping(new Mapping().setMediaResourceMimeTypeKey("getImageType"));
 
       } else if (ENTITY_TYPE_1_BASE.getName().equals(edmFQName.getName())) {
         final List<Property> properties = new ArrayList<Property>();
@@ -309,7 +309,7 @@ public class EdmTestProvider extends EdmProvider {
             .setBaseType(ENTITY_TYPE_1_1)
             .setHasStream(true)
             .setNavigationProperties(navigationProperties)
-            .setMapping(new Mapping().setMimeType("getImageType"));
+            .setMapping(new Mapping().setMediaResourceMimeTypeKey("getImageType"));
 
       } else if (ENTITY_TYPE_1_5.getName().equals(edmFQName.getName())) {
         final List<Property> properties = new ArrayList<Property>();
@@ -343,7 +343,7 @@ public class EdmTestProvider extends EdmProvider {
                 new CustomizableFeedMappings().setFcTargetPath(EdmTargetPath.SYNDICATION_AUTHORURI))
             .setMapping(new Mapping().setInternalName("getImageUri")));
         properties.add(new SimpleProperty().setName("Image").setType(EdmSimpleTypeKind.Binary)
-            .setMapping(new Mapping().setMimeType("getType")));
+            .setMapping(new Mapping().setMediaResourceMimeTypeKey("getType")));
         properties.add(new SimpleProperty().setName("BinaryData").setType(EdmSimpleTypeKind.Binary)
             .setFacets(new Facets().setNullable(true))
             .setMimeType("image/jpeg"));
@@ -359,7 +359,7 @@ public class EdmTestProvider extends EdmProvider {
             .setProperties(properties)
             .setHasStream(true)
             .setKey(getKey("Id", "Type"))
-            .setMapping(new Mapping().setMimeType("getType"));
+            .setMapping(new Mapping().setMediaResourceMimeTypeKey("getType"));
       }
     }
 

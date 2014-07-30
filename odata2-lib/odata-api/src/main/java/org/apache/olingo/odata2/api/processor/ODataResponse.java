@@ -19,9 +19,11 @@
 package org.apache.olingo.odata2.api.processor;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 
 /**
@@ -50,6 +52,18 @@ public abstract class ODataResponse {
    * @return a response entity which becomes the body part of a response message
    */
   public abstract Object getEntity();
+
+  /**
+   * @return a response entity as inputStream which becomes the body part of a response message
+   * @throws ODataException throws ODataException in case of entity is not a stream (internal ClassCastException)
+   */
+  public InputStream getEntityAsStream() throws ODataException {
+    try {
+      return (InputStream) getEntity();
+    } catch (ClassCastException e) {
+      throw new ODataException(e);
+    }
+  }
 
   /**
    * Close the underlying entity input stream (if such a stream is available) and release all with this repsonse
