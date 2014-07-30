@@ -26,6 +26,7 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.PluralAttribute;
 
+import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
