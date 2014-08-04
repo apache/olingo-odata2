@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -128,6 +129,11 @@ public class JPAProcessorImpl implements JPAProcessor {
 
     if (uriParserResultView.getFunctionImport() != null) {
       return (List<Object>) process((GetFunctionImportUriInfo) uriParserResultView);
+    }
+    InlineCount inlineCount = uriParserResultView.getInlineCount();
+    Integer top = uriParserResultView.getTop();
+    if (top != null && top.intValue() == 0 && inlineCount != null && inlineCount.equals(InlineCount.ALLPAGES)) {
+      return new ArrayList<Object>();
     }
     JPQLContextType contextType = null;
     try {
