@@ -313,6 +313,22 @@ public final class EntityProvider {
         throws EntityProviderException;
 
     /**
+     * Reads (de-serializes) function-import data from <code>content</code> (as {@link InputStream}) in specified format
+     * (given as <code>contentType</code>) based on <code>entity data model</code> (given as {@link EdmFunctionImport})
+     * and provide this data as {@link Object}.
+     * 
+     * @param contentType format of content in the given input stream.
+     * @param functionImport entity data model for Function Import to be read
+     * @param content data in form of an {@link InputStream} which contains the data in specified format
+     * @param properties additional properties necessary for reading content from {@link InputStream} into {@link Map}.
+     * Must not be null.
+     * @return data as {@link Object}
+     * @throws EntityProviderException if reading of data (de-serialization) fails
+     */
+    Object readFunctionImport(final String contentType, final EdmFunctionImport functionImport,
+        final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException;
+
+    /**
      * Read (de-serialize) a link from <code>content</code> (as {@link InputStream}) in specified format (given as
      * <code>contentType</code>)
      * based on <code>entity data model</code> (given as {@link EdmEntitySet}) and provide the link as {@link String}.
@@ -751,6 +767,24 @@ public final class EntityProvider {
   public static Object readPropertyValue(final EdmProperty edmProperty, final InputStream content,
       final Class<?> typeMapping) throws EntityProviderException {
     return createEntityProvider().readPropertyValue(edmProperty, content, typeMapping);
+  }
+
+  /**
+   * Reads (de-serializes) function-import data from <code>content</code> (as {@link InputStream}) in specified format
+   * (given as <code>contentType</code>) based on <code>entity data model</code> (given as {@link EdmFunctionImport})
+   * and provide this data as {@link Object}.
+   * 
+   * @param contentType format of content in the given input stream.
+   * @param functionImport entity data model for Function Import to be read
+   * @param content data in form of an {@link InputStream} which contains the data in specified format
+   * @param properties additional properties necessary for reading content from {@link InputStream} into {@link Map}.
+   * Must not be null.
+   * @return data as {@link Object}
+   * @throws EntityProviderException if reading of data (de-serialization) fails
+   */
+  public static Object readFunctionImport(final String contentType, final EdmFunctionImport functionImport,
+      final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+    return createEntityProvider().readFunctionImport(contentType, functionImport, content, properties);
   }
 
   /**

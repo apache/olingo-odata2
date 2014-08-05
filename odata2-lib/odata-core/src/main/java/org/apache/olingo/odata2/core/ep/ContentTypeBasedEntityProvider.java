@@ -87,4 +87,7 @@ public interface ContentTypeBasedEntityProvider {
       throws EntityProviderException;
 
   ODataErrorContext readErrorDocument(InputStream errorDocument) throws EntityProviderException;
+
+  Object readFunctionImport(EdmFunctionImport functionImport, InputStream content,
+      EntityProviderReadProperties properties) throws EntityProviderException;
 }

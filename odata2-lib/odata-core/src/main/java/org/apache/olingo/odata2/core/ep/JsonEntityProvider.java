@@ -322,6 +322,24 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
   }
 
   @Override
+  public Object readFunctionImport(final EdmFunctionImport functionImport, final InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
+    try {
+      if (functionImport.getReturnType().getType().getKind() == EdmTypeKind.ENTITY) {
+        return new JsonEntityConsumer().readEntry(functionImport.getEntitySet(), content, properties);
+      } else {
+        final EntityPropertyInfo info = EntityInfoAggregator.create(functionImport);
+        return functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY ?
+          new JsonEntityConsumer().readCollection(info, content, properties) :
+          new JsonEntityConsumer().readProperty(info, content, properties).get(info.getName());
+      }
+    } catch (final EdmException e) {
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
+          .addContent(e.getClass().getSimpleName()), e);
+    }
+  }
+
+  @Override
   public String readLink(final EdmEntitySet entitySet, final InputStream content) throws EntityProviderException {
     return new JsonEntityConsumer().readLink(entitySet, content);
   }

@@ -33,6 +33,7 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
+import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 
 import com.google.gson.stream.JsonReader;
 
@@ -115,14 +116,20 @@ public class JsonEntityConsumer {
     }
   }
 
-  public Map<String, Object> readProperty(final EdmProperty property, final InputStream content,
+
+  public Map<String, Object> readProperty(final EdmProperty edmProperty, InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
+    return readProperty(EntityInfoAggregator.create(edmProperty), content, properties);
+  }
+
+  public Map<String, Object> readProperty(final EntityPropertyInfo propertyInfo, final InputStream content,
       final EntityProviderReadProperties readProperties) throws EntityProviderException {
     JsonReader reader = null;
     EntityProviderException cachedException = null;
 
     try {
       reader = createJsonReader(content);
-      return new JsonPropertyConsumer().readPropertyStandalone(reader, property, readProperties);
+      return new JsonPropertyConsumer().readPropertyStandalone(reader, propertyInfo, readProperties);
     } catch (final UnsupportedEncodingException e) {
       cachedException =
           new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
@@ -138,6 +145,34 @@ public class JsonEntityConsumer {
           } else {
             throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
                 .getSimpleName()), e);
+          }
+        }
+      }
+    }
+  }
+
+  public List<?> readCollection(final EntityPropertyInfo info, InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
+    JsonReader reader = null;
+    EntityProviderException cachedException = null;
+
+    try {
+      reader = createJsonReader(content);
+      return new JsonPropertyConsumer().readCollection(reader, info, properties);
+    } catch (final UnsupportedEncodingException e) {
+      cachedException = new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
+          .addContent(e.getClass().getSimpleName()), e);
+      throw cachedException;
+    } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (final IOException e) {
+          if (cachedException != null) {
+            throw cachedException;
+          } else {
+            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
+                .addContent(e.getClass().getSimpleName()), e);
           }
         }
       }

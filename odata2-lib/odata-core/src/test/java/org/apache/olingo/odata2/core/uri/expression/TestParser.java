@@ -44,7 +44,6 @@ import org.apache.olingo.odata2.core.edm.EdmGuid;
 import org.apache.olingo.odata2.core.edm.EdmInt16;
 import org.apache.olingo.odata2.core.edm.EdmInt32;
 import org.apache.olingo.odata2.core.edm.EdmInt64;
-import org.apache.olingo.odata2.core.edm.EdmNull;
 import org.apache.olingo.odata2.core.edm.EdmSByte;
 import org.apache.olingo.odata2.core.edm.EdmSingle;
 import org.apache.olingo.odata2.core.edm.EdmString;

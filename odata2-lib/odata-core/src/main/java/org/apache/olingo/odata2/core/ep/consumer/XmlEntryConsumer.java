@@ -588,7 +588,7 @@ public class XmlEntryConsumer {
             throw new EntityProviderException(EntityProviderException.DOUBLE_PROPERTY.addContent(closeTag));
           }
           property = getValidatedPropertyInfo(entitySet, closeTag);
-          final Object value = xpc.readStartedElement(reader, property, typeMappings, readProperties);
+          final Object value = xpc.readStartedElement(reader, closeTag, property, typeMappings, readProperties);
           properties.put(closeTag, value);
           closeTag = null;
         }
