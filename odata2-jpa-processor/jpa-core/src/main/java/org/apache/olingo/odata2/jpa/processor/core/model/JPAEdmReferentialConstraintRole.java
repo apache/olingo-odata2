@@ -165,12 +165,15 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
         if (edmEntityType != null) {
           for (String[] columnName : jpaColumnNames) {
             for (Property property : edmEntityType.getProperties()) {
-              if (columnName[0].equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName()) ||
-                  columnName[0].equals(property.getName()) ||
-                  columnName[1].equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName()) ||
-                  columnName[1].equals(property.getName())) {
+              String jpaColumnName = ((JPAEdmMapping) property.getMapping()).getJPAColumnName();
+              String propertyName = property.getName();
+              boolean isForeignKey = (columnName[0].equals(jpaColumnName) || columnName[0].equals(propertyName))
+                      && roleType == RoleType.DEPENDENT;
+              boolean isReferencedKey = (columnName[1].equals(jpaColumnName) || columnName[1].equals(propertyName))
+                      && roleType == RoleType.PRINCIPAL;
+              if (isForeignKey || isReferencedKey) {
                 PropertyRef propertyRef = new PropertyRef();
-                propertyRef.setName(property.getName());
+                propertyRef.setName(propertyName);
                 propertyRefs.add(propertyRef);
                 break;
               }
