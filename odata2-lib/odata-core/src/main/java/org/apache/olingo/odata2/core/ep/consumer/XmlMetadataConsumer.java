@@ -92,7 +92,7 @@ public class XmlMetadataConsumer {
 
       while (reader.hasNext()
           && !(reader.isEndElement() && Edm.NAMESPACE_EDMX_2007_06.equals(reader.getNamespaceURI())
-          && XmlMetadataConstants.EDM_DATA_SERVICES.equals(reader.getLocalName()))) {
+          && XmlMetadataConstants.EDMX_TAG.equals(reader.getLocalName()))) {
         reader.next();
         if (reader.isStartElement()) {
           extractNamespaces(reader);
@@ -104,8 +104,14 @@ public class XmlMetadataConsumer {
               .getLocalName())) {
             dataServices.setDataServiceVersion(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, "DataServiceVersion"));
           }
-        }
+        } 
       }
+
+      if (!reader.isEndElement() || !XmlMetadataConstants.EDMX_TAG.equals(reader.getLocalName())) {
+        throw new EntityProviderException(EntityProviderException.MISSING_TAG
+            .addContent(XmlMetadataConstants.EDMX_TAG));
+      }
+
       if (validate) {
         validate();
       }

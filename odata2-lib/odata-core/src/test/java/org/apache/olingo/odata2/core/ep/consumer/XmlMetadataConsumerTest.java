@@ -371,6 +371,23 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
     parser.readMetadata(reader, true);
   }
 
+  @Test(expected = EntityProviderException.class)
+  public void testMissingEdmxCloseTag() throws XMLStreamException, EntityProviderException {
+    final String xml = "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+        + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>" + "<Property Name=\""
+        + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>" + "<Property Name=\""
+        + propertyNames[2] + "\" Type=\"RefScenario.c_Location\" Nullable=\"false\"/>" + "</EntityType>"
+        + "<ComplexType Name=\"c_Location\">" + "<Property Name=\"Country\" Type=\"Edm.String\"/>" + "</ComplexType>"
+        + "</Schema>" + "</edmx:DataServices>";
+
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(xml);
+    parser.readMetadata(reader, true);
+  }
+
   @Test
   public void testAssociation() throws XMLStreamException, EntityProviderException {
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
