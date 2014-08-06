@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Random;
@@ -70,6 +71,22 @@ public class StringHelper {
 
     public Stream print() throws IOException {
       return print(System.out);
+    }
+
+    public String asStringWithLineSeparation(String separator) throws IOException {
+      BufferedReader br = new BufferedReader(new StringReader(asString()));
+      StringBuilder sb = new StringBuilder(br.readLine());
+      String line = br.readLine();
+      while(line != null) {
+        sb.append(separator).append(line);
+        line = br.readLine();
+      }
+      return sb.toString();
+    }
+
+    public InputStream asStreamWithLineSeparation(String separator) throws IOException {
+      String asString = asStringWithLineSeparation(separator);
+      return new ByteArrayInputStream(asString.getBytes("UTF-8"));
     }
 
     /**

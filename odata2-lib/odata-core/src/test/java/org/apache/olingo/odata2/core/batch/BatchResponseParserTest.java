@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
 public class BatchResponseParserTest {
@@ -74,7 +75,7 @@ public class BatchResponseParserTest {
       throw new IOException("Requested file '" + fileName + "' was not found.");
     }
     BatchResponseParser parser = new BatchResponseParser("multipart/mixed;boundary=batch_123");
-    List<BatchSingleResponse> responses = parser.parse(in);
+    List<BatchSingleResponse> responses = parser.parse(StringHelper.toStream(in).asStreamWithLineSeparation("\r\n"));
     for (BatchSingleResponse response : responses) {
       if ("1".equals(response.getContentId())) {
         assertEquals("204", response.getStatusCode());
