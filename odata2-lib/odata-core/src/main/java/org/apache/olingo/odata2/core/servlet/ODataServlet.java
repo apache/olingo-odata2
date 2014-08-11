@@ -166,7 +166,7 @@ public class ODataServlet extends HttpServlet {
           .acceptHeaders(RestUtil.extractAcceptHeaders(req.getHeader(HttpHeaders.ACCEPT)))
           .acceptableLanguages(RestUtil.extractAcceptableLanguage(req.getHeader(HttpHeaders.ACCEPT_LANGUAGE)))
           .pathInfo(RestUtil.buildODataPathInfo(req, pathSplit))
-          .queryParameters(RestUtil.extractQueryParameters(req.getQueryString()))
+          .allQueryParameters(RestUtil.extractAllQueryParameters(req.getQueryString()))
           .requestHeaders(RestUtil.extractHeaders(req))
           .body(req.getInputStream())
           .build();

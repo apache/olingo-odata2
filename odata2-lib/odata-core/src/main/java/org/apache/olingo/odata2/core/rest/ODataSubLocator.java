@@ -166,7 +166,7 @@ public final class ODataSubLocator {
         .acceptHeaders(RestUtil.extractAcceptHeaders(param))
         .body(RestUtil.contentAsStream(RestUtil.extractRequestContent(param)))
         .pathInfo(RestUtil.buildODataPathInfo(param))
-        .queryParameters(RestUtil.convertToSinglevaluedMap(param.getUriInfo().getQueryParameters()))
+        .allQueryParameters(param.getUriInfo().getQueryParameters())
         .requestHeaders(param.getHttpHeaders().getRequestHeaders())
         .contentType(RestUtil.extractRequestContentType(param).toContentTypeString())
         .build();

@@ -104,7 +104,7 @@ public class ODataRequestHandler {
 
       final List<PathSegment> pathSegments = context.getPathInfo().getODataSegments();
       int timingHandle2 = context.startRuntimeMeasurement("UriParserImpl", "parse");
-      uriInfo = (UriInfoImpl) uriParser.parse(pathSegments, request.getQueryParameters());
+      uriInfo = (UriInfoImpl) uriParser.parseAll(pathSegments, request.getAllQueryParameters());
       context.stopRuntimeMeasurement(timingHandle2);
 
       final ODataHttpMethod method = request.getMethod();

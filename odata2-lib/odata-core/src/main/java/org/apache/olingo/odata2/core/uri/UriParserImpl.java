@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.core.uri;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -102,6 +103,14 @@ public class UriParserImpl extends UriParser {
   @Override
   public UriInfo parse(final List<PathSegment> pathSegments, final Map<String, String> queryParameters)
       throws UriSyntaxException, UriNotMatchingException, EdmException {
+
+    return parseAll(pathSegments, convertFromSingleMapToMultiMap(queryParameters));
+  }
+
+  @Override
+  public UriInfo parseAll(final List<PathSegment> pathSegments, final Map<String, List<String>> allQueryParameters)
+      throws UriSyntaxException, UriNotMatchingException, EdmException {
+
     this.pathSegments = copyPathSegmentList(pathSegments);
     systemQueryOptions = new HashMap<SystemQueryOption, String>();
     otherQueryParameters = new HashMap<String, String>();
@@ -111,12 +120,25 @@ public class UriParserImpl extends UriParser {
 
     handleResourcePath();
 
-    distributeQueryParameters(queryParameters);
+    distributeQueryParameters(allQueryParameters);
     checkSystemQueryOptionsCompatibility();
     handleSystemQueryOptions();
     handleOtherQueryParameters();
 
     return uriResult;
+  }
+
+  private <T, K> Map<T, List<K>> convertFromSingleMapToMultiMap(final Map<T, K> singleMap) {
+    Map<T, List<K>> multiMap = new HashMap<T, List<K>>();
+
+    for (T key : singleMap.keySet()) {
+      List<K> valueList = new LinkedList<K>();
+      valueList.add(singleMap.get(key));
+
+      multiMap.put(key, valueList);
+    }
+
+    return multiMap;
   }
 
   private void preparePathSegments() throws UriSyntaxException {
@@ -508,23 +530,35 @@ public class UriParserImpl extends UriParser {
     ensureLastSegment();
   }
 
-  private void distributeQueryParameters(final Map<String, String> queryParameters) throws UriSyntaxException {
+  private void distributeQueryParameters(final Map<String, List<String>> queryParameters) throws UriSyntaxException {
     for (final String queryOptionString : queryParameters.keySet()) {
-      final String value = queryParameters.get(queryOptionString);
-      if (queryOptionString.startsWith("$")) {
-        SystemQueryOption queryOption;
-        try {
-          queryOption = SystemQueryOption.valueOf(queryOptionString);
-        } catch (IllegalArgumentException e) {
-          throw new UriSyntaxException(UriSyntaxException.INVALIDSYSTEMQUERYOPTION.addContent(queryOptionString), e);
-        }
-        if ("".equals(value)) {
-          throw new UriSyntaxException(UriSyntaxException.INVALIDNULLVALUE.addContent(queryOptionString));
+      final List<String> valueList = queryParameters.get(queryOptionString);
+
+      if (valueList.size() >= 1) {
+        String value = valueList.get(0);
+
+        if (queryOptionString.startsWith("$")) {
+          SystemQueryOption queryOption;
+          try {
+            queryOption = SystemQueryOption.valueOf(queryOptionString);
+          } catch (IllegalArgumentException e) {
+            throw new UriSyntaxException(UriSyntaxException.INVALIDSYSTEMQUERYOPTION.addContent(queryOptionString), e);
+          }
+          if ("".equals(value)) {
+            throw new UriSyntaxException(UriSyntaxException.INVALIDNULLVALUE.addContent(queryOptionString));
+          } else {
+            if (valueList.size() == 1 && !systemQueryOptions.containsKey(queryOption)) {
+              systemQueryOptions.put(queryOption, value);
+            } else {
+              throw new UriSyntaxException(UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES
+                  .addContent(queryOptionString));
+            }
+          }
         } else {
-          systemQueryOptions.put(queryOption, value);
+          otherQueryParameters.put(queryOptionString, value);
         }
       } else {
-        otherQueryParameters.put(queryOptionString, value);
+        throw new UriSyntaxException(UriSyntaxException.INVALIDNULLVALUE.addContent(queryOptionString));
       }
     }
   }

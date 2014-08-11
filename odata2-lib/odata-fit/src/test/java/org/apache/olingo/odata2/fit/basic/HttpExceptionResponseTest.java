@@ -95,7 +95,18 @@ public class HttpExceptionResponseTest extends AbstractBasicTest {
     assertXpathValuesEqual("\"" + MessageService.getMessage(Locale.ENGLISH, ODataNotFoundException.ENTITY).getText()
         + "\"", "/a:error/a:message", content);
   }
-
+  
+  @Test
+  public void test400BadRequestRedundantSystemQueryOptions() throws Exception {
+    HttpResponse response = executeGetRequest("Employees?$top=1&$top=3");
+    assertEquals(HttpStatusCodes.BAD_REQUEST.getStatusCode(), response.getStatusLine().getStatusCode());
+    
+    final String content = StringHelper.inputStreamToString(response.getEntity().getContent());
+    assertEquals("<?xml version='1.0' encoding='UTF-8'?><error xmlns=\"http://schemas.microsoft.com/ado/2007/"
+        + "08/dataservices/metadata\"><code/><message xml:lang=\"en\">Duplicate system query parameter names: "
+        + "'$top'.</message></error>", content);
+  }
+  
   @Test
   public void genericHttpExceptions() throws Exception {
     disableLogging();

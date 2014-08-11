@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -232,6 +233,8 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
     when(request.getPathInfo()).thenReturn(pathInfo);
     when(request.getQueryParameters()).thenReturn(
         queryParameters == null ? Collections.<String, String> emptyMap() : queryParameters);
+    when(request.getAllQueryParameters()).thenReturn(queryParameters == null ?
+        Collections.<String, List<String>> emptyMap() : convertToMultiMap(queryParameters));
     when(request.getContentType()).thenReturn(
         requestContentType == null ? HttpContentType.APPLICATION_JSON : requestContentType);
     when(request.getRequestHeaderValue(httpHeaderName)).thenReturn(httpHeaderValue);
@@ -239,6 +242,19 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
       when(request.getAcceptHeaders()).thenReturn(Arrays.asList(httpHeaderValue));
     }
     return request;
+  }
+
+  private Map<String, List<String>> convertToMultiMap(final Map<String, String> queryParameters) {
+    Map<String, List<String>> multiMap = new HashMap<String, List<String>>();
+
+    for (final String key : queryParameters.keySet()) {
+      List<String> parameterList = new LinkedList<String>();
+      parameterList.add(queryParameters.get(key));
+
+      multiMap.put(key, parameterList);
+    }
+
+    return multiMap;
   }
 
   private ODataService mockODataService(final ODataServiceFactory serviceFactory) throws ODataException {

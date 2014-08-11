@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.core;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -41,6 +42,7 @@ public class ODataRequestImpl extends ODataRequest {
   private InputStream body;
   private PathInfo pathInfo;
   private Map<String, String> queryParameters;
+  private Map<String, List<String>> allQueryParameters;
   private List<String> acceptHeaders;
   private ContentType contentType;
   private List<Locale> acceptableLanguages;
@@ -91,12 +93,17 @@ public class ODataRequestImpl extends ODataRequest {
     return pathInfo;
   }
 
+  @Override
+  public Map<String, List<String>> getAllQueryParameters() {
+    return allQueryParameters;
+  }
+
   public class ODataRequestBuilderImpl extends ODataRequestBuilder {
     private ODataHttpMethod method;
     private CaseInsensitiveMap requestHeaders = new CaseInsensitiveMap();
     private InputStream body;
     private PathInfo pathInfo;
-    private Map<String, String> queryParameters;
+    private Map<String, List<String>> allQueryParameters = new HashMap<String, List<String>>();
     private List<String> acceptHeaders;
     private ContentType contentType;
     private List<Locale> acceptableLanguages;
@@ -107,10 +114,12 @@ public class ODataRequestImpl extends ODataRequest {
       ODataRequestImpl.this.requestHeaders = requestHeaders;
       ODataRequestImpl.this.body = body;
       ODataRequestImpl.this.pathInfo = pathInfo;
-      ODataRequestImpl.this.queryParameters = queryParameters;
+      queryParameters = convertMultiMaptoSingleMap(allQueryParameters);
+      ODataRequestImpl.this.allQueryParameters = allQueryParameters;
       ODataRequestImpl.this.acceptHeaders = acceptHeaders;
       ODataRequestImpl.this.contentType = contentType;
       ODataRequestImpl.this.acceptableLanguages = acceptableLanguages;
+
       return ODataRequestImpl.this;
     }
 
@@ -156,7 +165,18 @@ public class ODataRequestImpl extends ODataRequest {
 
     @Override
     public ODataRequestBuilder queryParameters(final Map<String, String> queryParameters) {
-      this.queryParameters = queryParameters;
+      for (String key : queryParameters.keySet()) {
+        List<String> parameterValues = new LinkedList<String>();
+        parameterValues.add(queryParameters.get(key));
+
+        allQueryParameters.put(key, parameterValues);
+      }
+      return this;
+    }
+
+    @Override
+    public ODataRequestBuilder allQueryParameters(final Map<String, List<String>> allQueryParameters) {
+      this.allQueryParameters = new HashMap<String, List<String>>(allQueryParameters);
       return this;
     }
 
@@ -192,16 +212,25 @@ public class ODataRequestImpl extends ODataRequest {
           acceptableLanguages.add(acceptLanguage);
         }
       }
-      if (request.getQueryParameters() != null) {
-        queryParameters = new HashMap<String, String>();
-        for (Map.Entry<String, String> queryParameter : request.getQueryParameters().entrySet()) {
+      if (request.getAllQueryParameters() != null) {
+        allQueryParameters = new HashMap<String, List<String>>();
+        for (Map.Entry<String, List<String>> queryParameter : request.getAllQueryParameters().entrySet()) {
           String queryParameterName = queryParameter.getKey();
-          queryParameters.put(queryParameterName, queryParameter.getValue());
+          allQueryParameters.put(queryParameterName, request.getAllQueryParameters().get(queryParameterName));
         }
       }
       return this;
     }
 
+    private <T, K> Map<T, K> convertMultiMaptoSingleMap(final Map<T, List<K>> multiMap) {
+      final Map<T, K> singleMap = new HashMap<T, K>();
+
+      for (T key : multiMap.keySet()) {
+        singleMap.put(key, multiMap.get(key).get(0));
+      }
+
+      return singleMap;
+    }
   }
 
   private class CaseInsensitiveMap extends HashMap<String, List<String>> {

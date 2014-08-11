@@ -44,6 +44,8 @@ public class UriSyntaxException extends ODataBadRequestException {
       "MISSINGKEYPREDICATENAME");
   public static final MessageReference DUPLICATEKEYNAMES = createMessageReference(UriSyntaxException.class,
       "DUPLICATEKEYNAMES");
+  public static final MessageReference DUPLICATESYSTEMQUERYPARAMETES = createMessageReference(UriSyntaxException.class,
+      "DUPLICATESYSTEMQUERYPARAMETES");
   public static final MessageReference EMPTYSEGMENT = createMessageReference(UriSyntaxException.class, "EMPTYSEGMENT");
   public static final MessageReference MUSTNOTBELASTSEGMENT = createMessageReference(UriSyntaxException.class,
       "MUSTNOTBELASTSEGMENT");
