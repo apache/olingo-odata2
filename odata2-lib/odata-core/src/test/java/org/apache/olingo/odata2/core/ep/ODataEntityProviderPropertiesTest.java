@@ -75,6 +75,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .additionalLinks(links)
         .omitJsonWrapper(true)
         .contentOnly(true)
+        .omitETag(true)
         .build();
 
     assertEquals("Wrong amount of callbacks.", 1, properties.getCallbacks().size());
@@ -89,6 +90,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertEquals(Collections.emptyMap(), properties.getAdditionalLinks().get("aNavigationProperty"));
     assertTrue("Json Wrapper should be omitted", properties.isOmitJsonWrapper());
     assertTrue("ContentOnlyFlag should be set", properties.isContentOnly());
+    assertTrue("OmitETag should be set", properties.isOmitETag());
   }
 
   @Test
@@ -111,6 +113,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .additionalLinks(links)
         .omitJsonWrapper(true)
         .contentOnly(true)
+        .omitETag(true)
         .build();
 
     //
@@ -130,5 +133,6 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertEquals(Collections.emptyMap(), fromProperties.getAdditionalLinks().get("aNavigationProperty"));
     assertTrue("Json Wrapper should be omitted", properties.isOmitJsonWrapper());
     assertTrue("ContentOnlyFlag should be set", properties.isContentOnly());
+    assertTrue("OmitETag should be set", properties.isOmitETag());
   }
 }

@@ -68,13 +68,70 @@ import org.custommonkey.xmlunit.exceptions.XpathException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-/**
- *  
- */
 public class AtomEntryProducerTest extends AbstractProviderTest {
 
   public AtomEntryProducerTest(final StreamWriterImplType type) {
     super(type);
+  }
+
+  @Test
+  public void omitETagTestPropertyPresent() throws Exception {
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).omitETag(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+
+    Map<String, Object> localRoomData = new HashMap<String, Object>();
+    localRoomData.put("Id", "1");
+    localRoomData.put("Name", "Neu Schwanstein");
+    localRoomData.put("Seats", new Integer(20));
+    localRoomData.put("Version", new Integer(3));
+    ODataResponse response =
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), localRoomData,
+            properties);
+    String xmlString = verifyResponse(response);
+    assertXpathNotExists("/a:entry[@m:etag]", xmlString);
+  }
+
+  @Test
+  public void omitETagTestPropertyNOTPresentMustNotResultInException() throws Exception {
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).omitETag(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+
+    Map<String, Object> localRoomData = new HashMap<String, Object>();
+    localRoomData.put("Id", "1");
+    localRoomData.put("Name", "Neu Schwanstein");
+    localRoomData.put("Seats", new Integer(20));
+    ODataResponse response =
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), localRoomData,
+            properties);
+    String xmlString = verifyResponse(response);
+    assertXpathNotExists("/a:entry[@m:etag]", xmlString);
+  }
+
+  @Test
+  public void omitETagTestNonNullablePropertyNOTPresentMustNotResultInException() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    EdmProperty versionProperty = (EdmProperty) entitySet.getEntityType().getProperty("Version");
+    EdmFacets facets = versionProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("Id");
+    selectedPropertyNames.add("Name");
+    selectedPropertyNames.add("Seats");
+    ExpandSelectTreeNode selectNode =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).build();
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).omitETag(true).expandSelectTree(selectNode).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+
+    Map<String, Object> localRoomData = new HashMap<String, Object>();
+    localRoomData.put("Id", "1");
+    localRoomData.put("Name", "Neu Schwanstein");
+    localRoomData.put("Seats", new Integer(20));
+    ODataResponse response = ser.writeEntry(entitySet, localRoomData, properties);
+    String xmlString = verifyResponse(response);
+    assertXpathNotExists("/a:entry[@m:etag]", xmlString);
   }
 
   @Test
@@ -90,6 +147,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     assertXpathExists("/a:entry", xmlString);
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
 
+    assertXpathNotExists("/a:entry[@m:etag]", xmlString);
     assertXpathNotExists("/a:entry/a:id", xmlString);
     assertXpathNotExists("/a:entry/a:title", xmlString);
     assertXpathNotExists("/a:entry/a:updated", xmlString);
@@ -121,7 +179,8 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     String xmlString = verifyResponse(response);
     assertXpathExists("/a:entry", xmlString);
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
-
+    assertXpathNotExists("/a:entry[@m:etag]", xmlString);
+    
     assertXpathNotExists("/a:entry/a:id", xmlString);
     assertXpathNotExists("/a:entry/a:title", xmlString);
     assertXpathNotExists("/a:entry/a:updated", xmlString);
@@ -155,7 +214,8 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     String xmlString = verifyResponse(response);
     assertXpathExists("/a:entry", xmlString);
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
-
+    assertXpathNotExists("/a:entry[@m:etag]", xmlString);
+    
     assertXpathNotExists("/a:entry/a:id", xmlString);
     assertXpathNotExists("/a:entry/a:title", xmlString);
     assertXpathNotExists("/a:entry/a:updated", xmlString);
@@ -189,7 +249,8 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     String xmlString = verifyResponse(response);
     assertXpathExists("/a:entry", xmlString);
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
-
+    assertXpathNotExists("/a:entry[@m:etag]", xmlString);
+    
     assertXpathNotExists("/a:entry/a:id", xmlString);
     assertXpathNotExists("/a:entry/a:title", xmlString);
     assertXpathNotExists("/a:entry/a:updated", xmlString);
@@ -221,7 +282,8 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     String xmlString = verifyResponse(response);
     assertXpathExists("/a:entry", xmlString);
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
-
+    assertXpathNotExists("/a:entry[@m:etag]", xmlString);
+    
     assertXpathNotExists("/a:entry/a:id", xmlString);
     assertXpathNotExists("/a:entry/a:title", xmlString);
     assertXpathNotExists("/a:entry/a:updated", xmlString);
@@ -264,7 +326,8 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     String xmlString = verifyResponse(response);
     assertXpathExists("/a:entry", xmlString);
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
-
+    assertXpathNotExists("/a:entry[@m:etag]", xmlString);
+    
     assertXpathNotExists("/a:entry/a:id", xmlString);
     assertXpathNotExists("/a:entry/a:title", xmlString);
     assertXpathNotExists("/a:entry/a:updated", xmlString);
@@ -305,7 +368,8 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     String xmlString = verifyResponse(response);
     assertXpathExists("/a:entry", xmlString);
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
-
+    assertXpathNotExists("/a:entry[@m:etag]", xmlString);
+    
     assertXpathNotExists("/a:entry/a:id", xmlString);
     assertXpathNotExists("/a:entry/a:title", xmlString);
     assertXpathNotExists("/a:entry/a:updated", xmlString);

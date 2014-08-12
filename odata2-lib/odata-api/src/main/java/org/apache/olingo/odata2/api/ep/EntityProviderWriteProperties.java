@@ -44,8 +44,13 @@ public class EntityProviderWriteProperties {
   private Map<String, Map<String, Object>> additionalLinks;
   private boolean omitJsonWrapper;
   private boolean contentOnly;
+  private boolean omitETag;
 
   private EntityProviderWriteProperties() {}
+
+  public final boolean isOmitETag() {
+    return omitETag;
+  }
 
   public final boolean isContentOnly() {
     return contentOnly;
@@ -224,6 +229,11 @@ public class EntityProviderWriteProperties {
       properties.contentOnly = contentOnly;
       return this;
     }
+    
+    public ODataEntityProviderPropertiesBuilder omitETag(final boolean omitETag) {
+      properties.omitETag = omitETag;
+      return this;
+    }
 
     public ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
       this.properties.inlineCountType = properties.getInlineCountType();
@@ -236,6 +246,7 @@ public class EntityProviderWriteProperties {
       this.properties.additionalLinks = properties.additionalLinks;
       this.properties.omitJsonWrapper = properties.omitJsonWrapper;
       this.properties.contentOnly = properties.contentOnly;
+      this.properties.omitETag = properties.omitETag;
       return this;
     }
 

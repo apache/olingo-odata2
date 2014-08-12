@@ -209,10 +209,12 @@ public class JsonEntryEntityProducer {
     jsonStreamWriter.namedStringValue(FormatJson.URI, location);
     jsonStreamWriter.separator();
     jsonStreamWriter.namedStringValueRaw(FormatJson.TYPE, type.getNamespace() + Edm.DELIMITER + type.getName());
-    eTag = AtomEntryEntityProducer.createETag(entityInfo, data);
-    if (eTag != null) {
-      jsonStreamWriter.separator();
-      jsonStreamWriter.namedStringValue(FormatJson.ETAG, eTag);
+    if (!properties.isOmitETag()) {
+      eTag = AtomEntryEntityProducer.createETag(entityInfo, data);
+      if (eTag != null) {
+        jsonStreamWriter.separator();
+        jsonStreamWriter.namedStringValue(FormatJson.ETAG, eTag);
+      }
     }
     if (type.hasStream()) {
       jsonStreamWriter.separator();

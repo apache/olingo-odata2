@@ -90,11 +90,13 @@ public class AtomEntryEntityProducer {
             .toASCIIString());
       }
 
-      etag = createETag(eia, data);
-      if (etag != null) {
-        writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.M_ETAG, etag);
+      if (!properties.isContentOnly() && !properties.isOmitETag()) {
+        etag = createETag(eia, data);
+        if (etag != null) {
+          writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.M_ETAG, etag);
+        }
       }
-
+      
       String selfLink = null;
       if (!properties.isContentOnly()) {
         // write all atom infos (mandatory and optional)

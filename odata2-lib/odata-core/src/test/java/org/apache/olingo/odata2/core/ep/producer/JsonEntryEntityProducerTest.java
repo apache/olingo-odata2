@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.ep.producer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -40,6 +41,7 @@ import java.util.TimeZone;
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
@@ -85,6 +87,75 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         + "\"Id\":\"1\",\"Name\":null,\"isScrumTeam\":true,"
         + "\"nt_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Teams('1')/nt_Employees\"}}}}",
         json);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void omitETagTestPropertyPresent() throws Exception {
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).omitETag(true).omitJsonWrapper(true).build();
+
+    Map<String, Object> localRoomData = new HashMap<String, Object>();
+    localRoomData.put("Id", "1");
+    localRoomData.put("Name", "Neu Schwanstein");
+    localRoomData.put("Seats", new Integer(20));
+    localRoomData.put("Version", new Integer(3));
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
+            localRoomData, properties);
+    Map<String, Object> room =
+        (Map<String, Object>) new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+
+    room = (Map<String, Object>) room.get("__metadata");
+    assertFalse(room.containsKey("etag"));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void omitETagTestPropertyNOTPresentMustNotResultInException() throws Exception {
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).omitETag(true).omitJsonWrapper(true).build();
+
+    Map<String, Object> localRoomData = new HashMap<String, Object>();
+    localRoomData.put("Id", "1");
+    localRoomData.put("Name", "Neu Schwanstein");
+    localRoomData.put("Seats", new Integer(20));
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),
+            localRoomData, properties);
+    Map<String, Object> room =
+        (Map<String, Object>) new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+
+    room = (Map<String, Object>) room.get("__metadata");
+    assertFalse(room.containsKey("etag"));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void omitETagTestNonNullablePropertyNOTPresentMustNotResultInException() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    EdmProperty versionProperty = (EdmProperty) entitySet.getEntityType().getProperty("Version");
+    EdmFacets facets = versionProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("Id");
+    selectedPropertyNames.add("Name");
+    selectedPropertyNames.add("Seats");
+    ExpandSelectTreeNode selectNode =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).build();
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).omitETag(true).omitJsonWrapper(true)
+            .expandSelectTree(selectNode).build();
+    Map<String, Object> localRoomData = new HashMap<String, Object>();
+    localRoomData.put("Id", "1");
+    localRoomData.put("Name", "Neu Schwanstein");
+    localRoomData.put("Seats", new Integer(20));
+    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, localRoomData, properties);
+    Map<String, Object> room =
+        (Map<String, Object>) new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+
+    room = (Map<String, Object>) room.get("__metadata");
+    assertFalse(room.containsKey("etag"));
   }
 
   @SuppressWarnings("unchecked")
