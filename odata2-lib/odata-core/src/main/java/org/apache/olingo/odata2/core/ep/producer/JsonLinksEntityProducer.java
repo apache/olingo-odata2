@@ -47,8 +47,10 @@ public class JsonLinksEntityProducer {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
 
     try {
-      jsonStreamWriter.beginObject()
-          .name(FormatJson.D);
+      if (!properties.isOmitJsonWrapper()) {
+        jsonStreamWriter.beginObject()
+            .name(FormatJson.D);
+      }
 
       if (properties.getInlineCountType() == InlineCount.ALLPAGES) {
         final int inlineCount = properties.getInlineCount() == null ? 0 : properties.getInlineCount();
@@ -75,8 +77,9 @@ public class JsonLinksEntityProducer {
       if (properties.getInlineCountType() == InlineCount.ALLPAGES) {
         jsonStreamWriter.endObject();
       }
-
-      jsonStreamWriter.endObject();
+      if (!properties.isOmitJsonWrapper()) {
+        jsonStreamWriter.endObject();
+      }
     } catch (final IOException e) {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);

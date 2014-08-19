@@ -44,6 +44,23 @@ public class JsonLinkEntityProducerTest extends BaseTest {
       EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).build();
 
   @Test
+  public void omitJsonWrapperOnLink() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    Map<String, Object> employeeData = new HashMap<String, Object>();
+    employeeData.put("EmployeeId", "1");
+
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).omitJsonWrapper(true).build();
+    final ODataResponse response = new JsonEntityProvider().writeLink(entitySet, employeeData, properties);
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+
+    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
+    assertNotNull(json);
+    assertEquals("{\"uri\":\"" + BASE_URI + "Employees('1')\"}", json);
+  }
+
+  @Test
   public void serializeEmployeeLink() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     Map<String, Object> employeeData = new HashMap<String, Object>();
