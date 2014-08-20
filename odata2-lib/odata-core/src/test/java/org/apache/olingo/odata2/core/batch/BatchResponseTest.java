@@ -33,6 +33,7 @@ import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.batch.v2.BatchParser;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
@@ -75,8 +76,8 @@ public class BatchResponseTest {
     assertTrue(body.contains("HTTP/1.1 204 No Content"));
 
     String contentHeader = batchResponse.getContentHeader();
-    BatchResponseParser parser = new BatchResponseParser(contentHeader);
-    List<BatchSingleResponse> result = parser.parse(new ByteArrayInputStream(body.getBytes()));
+    BatchParser parser = new BatchParser(contentHeader, true);
+    List<BatchSingleResponse> result = parser.parseBatchResponse(new ByteArrayInputStream(body.getBytes()));
     assertEquals(2, result.size());
   }
 
@@ -104,8 +105,8 @@ public class BatchResponseTest {
     assertTrue(body.contains("Content-Type: multipart/mixed; boundary=changeset"));
 
     String contentHeader = batchResponse.getContentHeader();
-    BatchResponseParser parser = new BatchResponseParser(contentHeader);
-    List<BatchSingleResponse> result = parser.parse(new ByteArrayInputStream(body.getBytes()));
+    BatchParser parser = new BatchParser(contentHeader, true);
+    List<BatchSingleResponse> result = parser.parseBatchResponse(new ByteArrayInputStream(body.getBytes()));
     assertEquals(1, result.size());
   }
 
@@ -135,9 +136,9 @@ public class BatchResponseTest {
     assertTrue(body.contains("Content-Type: multipart/mixed; boundary=changeset"));
 
     String contentHeader = batchResponse.getContentHeader();
-    BatchResponseParser parser = new BatchResponseParser(contentHeader);
+    BatchParser parser = new BatchParser(contentHeader, true);
     StringHelper.Stream content = StringHelper.toStream(body);
-    List<BatchSingleResponse> result = parser.parse(content.asStream());
+    List<BatchSingleResponse> result = parser.parseBatchResponse(content.asStream());
     assertEquals(2, result.size());
     assertEquals("Failing content:\n" + content.asString(), 20, content.linesCount());
   }

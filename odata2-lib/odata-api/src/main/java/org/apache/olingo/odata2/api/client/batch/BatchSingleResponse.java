@@ -21,12 +21,14 @@ package org.apache.olingo.odata2.api.client.batch;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.olingo.odata2.api.batch.BatchParserResult;
+
 /**
  * A BatchSingleResponse
  * <p> BatchSingleResponse represents a single response of a Batch Response body. It can be a response to a change
  * request of ChangeSet or a response to a retrieve request
  */
-public interface BatchSingleResponse {
+public interface BatchSingleResponse extends BatchParserResult {
   /**
    * @return a result code of the attempt to understand and satisfy the request
    */
