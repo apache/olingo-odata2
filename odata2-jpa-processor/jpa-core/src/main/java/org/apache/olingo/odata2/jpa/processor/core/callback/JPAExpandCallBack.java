@@ -87,7 +87,9 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
         }
         HashMap<String, Object> navigationMap =
             jpaResultParser.parse2EdmNavigationValueMap(inlinedEntry, currentNavPropertyList);
-        edmPropertyValueMap.putAll(navigationMap);
+        if (edmPropertyValueMap != null) {
+          edmPropertyValueMap.putAll(navigationMap);
+        }
         result.setEntryData(edmPropertyValueMap);
       }
       result.setInlineProperties(getInlineEntityProviderProperties(context));

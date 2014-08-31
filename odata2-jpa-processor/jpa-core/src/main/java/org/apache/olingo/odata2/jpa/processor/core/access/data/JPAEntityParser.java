@@ -163,6 +163,9 @@ public final class JPAEntityParser {
     Object result = null;
     String methodName = null;
     HashMap<String, Object> navigationMap = new HashMap<String, Object>();
+    if (jpaEntity == null) {
+      return navigationMap;
+    }
     if (navigationPropertyList != null
         && navigationPropertyList.size() != 0) {
 

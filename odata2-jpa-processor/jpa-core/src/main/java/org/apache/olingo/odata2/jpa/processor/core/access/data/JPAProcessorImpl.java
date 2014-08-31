@@ -131,8 +131,9 @@ public class JPAProcessorImpl implements JPAProcessor {
       return (List<Object>) process((GetFunctionImportUriInfo) uriParserResultView);
     }
     InlineCount inlineCount = uriParserResultView.getInlineCount();
-    Integer top = uriParserResultView.getTop();
-    if (top != null && top.intValue() == 0 && inlineCount != null && inlineCount.equals(InlineCount.ALLPAGES)) {
+    Integer top = uriParserResultView.getTop() == null ? 1 : uriParserResultView.getTop().intValue();
+    boolean hasNoAllPages = inlineCount == null ? true : !inlineCount.equals(InlineCount.ALLPAGES);
+    if (top.intValue() == 0 && hasNoAllPages) {
       return new ArrayList<Object>();
     }
     JPQLContextType contextType = null;
