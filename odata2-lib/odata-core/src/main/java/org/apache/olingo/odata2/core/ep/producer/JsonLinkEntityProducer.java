@@ -47,10 +47,14 @@ public class JsonLinkEntityProducer {
     final String uri = (properties.getServiceRoot() == null ? "" : properties.getServiceRoot().toASCIIString())
         + AtomEntryEntityProducer.createSelfLink(entityInfo, data, null);
     try {
-      jsonStreamWriter.beginObject()
-          .name(FormatJson.D);
+      if (!properties.isOmitJsonWrapper()) {
+        jsonStreamWriter.beginObject()
+            .name(FormatJson.D);
+      }
       appendUri(jsonStreamWriter, uri);
-      jsonStreamWriter.endObject();
+      if (!properties.isOmitJsonWrapper()) {
+        jsonStreamWriter.endObject();
+      }
     } catch (final IOException e) {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
