@@ -144,6 +144,31 @@ public class EdmFunctionImportImplProvTest extends BaseTest {
     assertEquals("fooParameter3", parameter.getName());
   }
 
+
+  @Test
+  public void parametersAreSorted() throws Exception {
+    List<String> parameterNames = edmFunctionImport.getParameterNames();
+    assertEquals("fooParameter1", parameterNames.get(0));
+    assertEquals("fooParameter2", parameterNames.get(1));
+    assertEquals("fooParameter3", parameterNames.get(2));
+
+    EdmParameter parameter = edmFunctionImport.getParameter("fooParameter1");
+    assertNotNull(parameter);
+    assertEquals("fooParameter1", parameter.getName());
+
+    parameter = edmFunctionImport.getParameter("fooParameter1");
+    assertNotNull(parameter);
+    assertEquals("fooParameter1", parameter.getName());
+
+    parameter = edmFunctionImport.getParameter("fooParameter2");
+    assertNotNull(parameter);
+    assertEquals("fooParameter2", parameter.getName());
+
+    parameter = edmFunctionImport.getParameter("fooParameter3");
+    assertNotNull(parameter);
+    assertEquals("fooParameter3", parameter.getName());
+  }
+
   @Test
   public void parameterNotExisting() throws Exception {
     assertNotNull(edmFunctionImportWithoutParameters.getParameterNames());
