@@ -18,12 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
 import org.apache.olingo.odata2.api.edm.EdmAnnotations;
@@ -67,10 +62,8 @@ public class EdmFunctionImportImplProv extends EdmNamedImplProv implements EdmFu
 
     List<FunctionImportParameter> parameters = functionImport.getParameters();
     if (parameters != null) {
-      FunctionImportParameter functionImportParameter;
-      for (Iterator<FunctionImportParameter> iterator = parameters.iterator(); iterator.hasNext();) {
-        functionImportParameter = iterator.next();
-        this.parameters.put(functionImportParameter.getName(), functionImportParameter);
+      for (FunctionImportParameter parameter : parameters) {
+        this.parameters.put(parameter.getName(), parameter);
       }
     }
   }
@@ -102,10 +95,11 @@ public class EdmFunctionImportImplProv extends EdmNamedImplProv implements EdmFu
     if (parametersList == null) {
       parametersList = new ArrayList<String>();
 
-      Set<String> keySet = parameters.keySet();
-      Iterator<String> iterator = keySet.iterator();
-      while (iterator.hasNext()) {
-        parametersList.add(iterator.next());
+      List<FunctionImportParameter> parameters = functionImport.getParameters();
+      if(parameters != null) {
+        for (FunctionImportParameter parameter : parameters) {
+          parametersList.add(parameter.getName());
+        }
       }
     }
 
