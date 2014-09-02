@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
+import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 
 /**
  * Xml entity (content type dependent) consumer for reading input (from <code>content</code>).
@@ -109,14 +110,16 @@ public class XmlEntityConsumer {
 
   public Map<String, Object> readProperty(final EdmProperty edmProperty, final InputStream content,
       final EntityProviderReadProperties properties) throws EntityProviderException {
+    return readProperty(EntityInfoAggregator.create(edmProperty), content, properties);
+  }
+
+  public Map<String, Object> readProperty(final EntityPropertyInfo propertyInfo, final InputStream content,
+      final EntityProviderReadProperties readProperties) throws EntityProviderException {
     XMLStreamReader reader = null;
     EntityProviderException cachedException = null;
-    XmlPropertyConsumer xec = new XmlPropertyConsumer();
-
     try {
       reader = XmlHelper.createStreamReader(content);
-      return xec.readProperty(reader, edmProperty, properties.getMergeSemantic(), properties.getTypeMappings(),
-          properties);
+      return new XmlPropertyConsumer().readProperty(reader, propertyInfo, readProperties);
     } catch (EntityProviderException e) {
       cachedException = e;
       throw cachedException;
@@ -157,6 +160,33 @@ public class XmlEntityConsumer {
     } catch (EdmException e) {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
+    }
+  }
+
+
+  public Object readCollection(final EntityPropertyInfo info, InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
+    XMLStreamReader reader = null;
+    EntityProviderException cachedException = null;
+    try {
+      reader = XmlHelper.createStreamReader(content);
+      return new XmlPropertyConsumer().readCollection(reader, info, properties);
+    } catch (final EntityProviderException e) {
+      cachedException = e;
+      throw cachedException;
+    } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (final XMLStreamException e) {
+          if (cachedException != null) {
+            throw cachedException;
+          } else {
+            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
+                .addContent(e.getClass().getSimpleName()), e);
+          }
+        }
+      }
     }
   }
 
@@ -213,5 +243,4 @@ public class XmlEntityConsumer {
       }
     }
   }
-
 }

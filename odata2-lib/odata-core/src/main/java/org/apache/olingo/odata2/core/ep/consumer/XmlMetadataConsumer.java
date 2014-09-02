@@ -92,7 +92,7 @@ public class XmlMetadataConsumer {
 
       while (reader.hasNext()
           && !(reader.isEndElement() && Edm.NAMESPACE_EDMX_2007_06.equals(reader.getNamespaceURI())
-          && XmlMetadataConstants.EDM_DATA_SERVICES.equals(reader.getLocalName()))) {
+          && XmlMetadataConstants.EDMX_TAG.equals(reader.getLocalName()))) {
         reader.next();
         if (reader.isStartElement()) {
           extractNamespaces(reader);
@@ -104,8 +104,14 @@ public class XmlMetadataConsumer {
               .getLocalName())) {
             dataServices.setDataServiceVersion(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, "DataServiceVersion"));
           }
-        }
+        } 
       }
+
+      if (!reader.isEndElement() || !XmlMetadataConstants.EDMX_TAG.equals(reader.getLocalName())) {
+        throw new EntityProviderException(EntityProviderException.MISSING_TAG
+            .addContent(XmlMetadataConstants.EDMX_TAG));
+      }
+
       if (validate) {
         validate();
       }
@@ -256,9 +262,10 @@ public class XmlMetadataConsumer {
     function.setHttpMethod(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08,
         XmlMetadataConstants.EDM_FUNCTION_IMPORT_HTTP_METHOD));
     function.setEntitySet(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ENTITY_SET));
-    ReturnType returnType = new ReturnType();
+
     String returnTypeString = reader.getAttributeValue(null, XmlMetadataConstants.EDM_FUNCTION_IMPORT_RETURN);
     if (returnTypeString != null) {
+      ReturnType returnType = new ReturnType();
       if (returnTypeString.startsWith("Collection") || returnTypeString.startsWith("collection")) {
         returnType.setMultiplicity(EdmMultiplicity.MANY);
         returnTypeString = returnTypeString.substring(returnTypeString.indexOf("(") + 1, returnTypeString.length() - 1);
@@ -306,7 +313,7 @@ public class XmlMetadataConsumer {
     functionParameter.setAnnotationAttributes(readAnnotationAttribute(reader));
     while (reader.hasNext()
         && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
-        && XmlMetadataConstants.EDM_FUNCTION_IMPORT.equals(reader.getLocalName()))) {
+        && XmlMetadataConstants.EDM_FUNCTION_PARAMETER.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);

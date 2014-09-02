@@ -34,8 +34,6 @@ import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 public class EntityProviderWriteProperties {
 
   private URI serviceRoot;
-  @Deprecated
-  private String mediaResourceMimeType;
   private InlineCount inlineCountType;
   private Integer inlineCount;
   private String nextLink;
@@ -44,8 +42,23 @@ public class EntityProviderWriteProperties {
   private URI selfLink;
   private boolean includeSimplePropertyType;
   private Map<String, Map<String, Object>> additionalLinks;
+  private boolean omitJsonWrapper;
+  private boolean contentOnly;
+  private boolean omitETag;
 
   private EntityProviderWriteProperties() {}
+
+  public final boolean isOmitETag() {
+    return omitETag;
+  }
+
+  public final boolean isContentOnly() {
+    return contentOnly;
+  }
+
+  public final boolean isOmitJsonWrapper() {
+    return omitJsonWrapper;
+  }
 
   /**
    * Returns if type information of simple properties should be in the payload.
@@ -69,17 +82,6 @@ public class EntityProviderWriteProperties {
    */
   public final URI getServiceRoot() {
     return serviceRoot;
-  }
-
-  /**
-   * Gets the MIME type of the media resource.
-   * @return the MIME type of the media resource
-   * @deprecated use instead the functionality of 'EdmMapping -> mediaResourceMimeTypeKey' to reference via a key
-   * to the 'mime type' of the media resource provided in the entity data map
-   */
-  @Deprecated
-  public final String getMediaResourceMimeType() {
-    return mediaResourceMimeType;
   }
 
   /**
@@ -142,17 +144,6 @@ public class EntityProviderWriteProperties {
     public final ODataEntityProviderPropertiesBuilder includeSimplePropertyType(
         final boolean includeSimplePropertyType) {
       properties.includeSimplePropertyType = includeSimplePropertyType;
-      return this;
-    }
-
-    /**
-     * @param mediaResourceMimeType the mediaResourceMimeType to set
-     * @deprecated use instead the functionality of 'EdmMapping -> mediaResourceMimeTypeKey' to reference via a key
-     * to the 'mime type' of the media resource provided in the entity data map
-     */
-    @Deprecated
-    public final ODataEntityProviderPropertiesBuilder mediaResourceMimeType(final String mediaResourceMimeType) {
-      properties.mediaResourceMimeType = mediaResourceMimeType;
       return this;
     }
 
@@ -229,8 +220,22 @@ public class EntityProviderWriteProperties {
       return this;
     }
 
+    public ODataEntityProviderPropertiesBuilder omitJsonWrapper(final boolean omitJsonWrapper) {
+      properties.omitJsonWrapper = omitJsonWrapper;
+      return this;
+    }
+
+    public ODataEntityProviderPropertiesBuilder contentOnly(final boolean contentOnly) {
+      properties.contentOnly = contentOnly;
+      return this;
+    }
+    
+    public ODataEntityProviderPropertiesBuilder omitETag(final boolean omitETag) {
+      properties.omitETag = omitETag;
+      return this;
+    }
+
     public ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
-      this.properties.mediaResourceMimeType = properties.getMediaResourceMimeType();
       this.properties.inlineCountType = properties.getInlineCountType();
       this.properties.inlineCount = properties.getInlineCount();
       this.properties.nextLink = properties.getNextLink();
@@ -239,8 +244,12 @@ public class EntityProviderWriteProperties {
       this.properties.selfLink = properties.getSelfLink();
       this.properties.includeSimplePropertyType = properties.includeSimplePropertyType;
       this.properties.additionalLinks = properties.additionalLinks;
+      this.properties.omitJsonWrapper = properties.omitJsonWrapper;
+      this.properties.contentOnly = properties.contentOnly;
+      this.properties.omitETag = properties.omitETag;
       return this;
     }
+
   }
 
   public static ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {

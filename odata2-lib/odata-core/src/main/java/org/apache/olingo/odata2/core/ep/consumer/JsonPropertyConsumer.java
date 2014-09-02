@@ -19,7 +19,9 @@
 package org.apache.olingo.odata2.core.ep.consumer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -44,22 +46,26 @@ import com.google.gson.stream.JsonToken;
  */
 public class JsonPropertyConsumer {
 
-  public Map<String, Object> readPropertyStandalone(final JsonReader reader, final EdmProperty property,
+  public Map<String, Object> readPropertyStandalone(JsonReader reader, final EdmProperty edmProperty,
       final EntityProviderReadProperties readProperties) throws EntityProviderException {
-    try {
-      EntityPropertyInfo entityPropertyInfo = EntityInfoAggregator.create(property);
-      Map<String, Object> typeMappings = readProperties == null ? null : readProperties.getTypeMappings();
-      Map<String, Object> result = new HashMap<String, Object>();
+    return readPropertyStandalone(reader, EntityInfoAggregator.create(edmProperty), readProperties);
+  }
 
+  public Map<String, Object> readPropertyStandalone(final JsonReader reader, final EntityPropertyInfo propertyInfo,
+      final EntityProviderReadProperties readProperties) throws EntityProviderException {
+    Map<String, Object> typeMappings = readProperties == null ? null : readProperties.getTypeMappings();
+    Map<String, Object> result = new HashMap<String, Object>();
+
+    try {
       reader.beginObject();
       String nextName = reader.nextName();
       if (FormatJson.D.equals(nextName)) {
         reader.beginObject();
         nextName = reader.nextName();
-        handleName(reader, typeMappings, entityPropertyInfo, readProperties, result, nextName);
+        handleName(reader, typeMappings, propertyInfo, readProperties, result, nextName);
         reader.endObject();
       } else {
-        handleName(reader, typeMappings, entityPropertyInfo, readProperties, result, nextName);
+        handleName(reader, typeMappings, propertyInfo, readProperties, result, nextName);
       }
       reader.endObject();
 
@@ -78,17 +84,80 @@ public class JsonPropertyConsumer {
     }
   }
 
+  public List<?> readCollection(JsonReader reader, final EntityPropertyInfo propertyInfo,
+        final EntityProviderReadProperties readProperties) throws EntityProviderException {
+    final Object typeMapping = readProperties == null ? null :
+      readProperties.getTypeMappings().get(propertyInfo.getName());
+    List<Object> result = new ArrayList<Object>();
+    String name = null;
+    boolean wrapped = false;
+    boolean version2 = false;
+
+    try {
+      if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+        reader.beginObject();
+        name = reader.nextName();
+        if (FormatJson.D.equals(name)) {
+          wrapped = true;
+          if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+            reader.beginObject();
+            name = reader.nextName();
+          } else {
+            name = null;
+          }
+        }
+      }
+      if (name != null) {
+        version2 = true;
+        if (FormatJson.METADATA.equals(name)) {
+          readAndCheckTypeInfo(reader,
+              "Collection(" + propertyInfo.getType().getNamespace() + Edm.DELIMITER
+              + propertyInfo.getType().getName() + ")");
+          name = reader.nextName();
+        }
+        if (!FormatJson.RESULTS.equals(name)) {
+          throw new EntityProviderException(EntityProviderException.INVALID_PARENT_TAG
+              .addContent(FormatJson.RESULTS, name));
+        }
+      }
+      reader.beginArray();
+      while (reader.hasNext()) {
+        result.add(readPropertyValue(reader, propertyInfo, typeMapping, readProperties));
+      }
+      reader.endArray();
+      if (version2) {
+        reader.endObject();
+      }
+      if (wrapped) {
+        reader.endObject();
+      }
+
+      if (reader.peek() != JsonToken.END_DOCUMENT) {
+        throw new EntityProviderException(EntityProviderException.END_DOCUMENT_EXPECTED
+            .addContent(reader.peek().toString()));
+      }
+
+      return result;
+    } catch (final EdmException e) {
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
+          .addContent(e.getClass().getSimpleName()), e);
+    } catch (final IOException e) {
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
+          .addContent(e.getClass().getSimpleName()), e);
+    } catch (final IllegalStateException e) {
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
+          .addContent(e.getClass().getSimpleName()), e);
+    }
+  }
+
   private void handleName(final JsonReader reader, final Map<String, Object> typeMappings,
       final EntityPropertyInfo entityPropertyInfo, final EntityProviderReadProperties readProperties,
       final Map<String, Object> result, final String nextName) throws EntityProviderException {
     if (!entityPropertyInfo.getName().equals(nextName)) {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent(nextName));
     }
-    Object mapping = null;
-    if (typeMappings != null) {
-      mapping = typeMappings.get(nextName);
-    }
-    Object propertyValue = readPropertyValue(reader, entityPropertyInfo, mapping, readProperties);
+    final Object mapping = typeMappings == null ? null : typeMappings.get(nextName);
+    final Object propertyValue = readPropertyValue(reader, entityPropertyInfo, mapping, readProperties);
     result.put(nextName, propertyValue);
   }
 
@@ -132,6 +201,18 @@ public class JsonPropertyConsumer {
       case Int32:
         if (tokenType == JsonToken.NUMBER) {
           value = reader.nextInt();
+          value = value.toString();
+        } else {
+          throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE
+              .addContent(entityPropertyInfo.getName()));
+        }
+        break;
+      case Single:
+      case Double:
+        if (tokenType == JsonToken.STRING) {
+          value = reader.nextString();
+        } else if (tokenType == JsonToken.NUMBER) {
+          value = reader.nextDouble();
           value = value.toString();
         } else {
           throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE
@@ -184,22 +265,10 @@ public class JsonPropertyConsumer {
     }
 
     while (reader.hasNext()) {
-      String childName = reader.nextName();
+      final String childName = reader.nextName();
       if (FormatJson.METADATA.equals(childName)) {
-        reader.beginObject();
-        childName = reader.nextName();
-        if (!FormatJson.TYPE.equals(childName)) {
-          throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(FormatJson.TYPE)
-              .addContent(FormatJson.METADATA));
-        }
-        String actualTypeName = reader.nextString();
-        String expectedTypeName =
-            complexPropertyInfo.getType().getNamespace() + Edm.DELIMITER + complexPropertyInfo.getType().getName();
-        if (!expectedTypeName.equals(actualTypeName)) {
-          throw new EntityProviderException(EntityProviderException.INVALID_ENTITYTYPE.addContent(expectedTypeName)
-              .addContent(actualTypeName));
-        }
-        reader.endObject();
+        readAndCheckTypeInfo(reader,
+            complexPropertyInfo.getType().getNamespace() + Edm.DELIMITER + complexPropertyInfo.getType().getName());
       } else {
         EntityPropertyInfo childPropertyInfo = complexPropertyInfo.getPropertyInfo(childName);
         if (childPropertyInfo == null) {
@@ -214,5 +283,20 @@ public class JsonPropertyConsumer {
     }
     reader.endObject();
     return data;
+  }
+
+  protected void readAndCheckTypeInfo(final JsonReader reader, String expectedTypeName)
+          throws IOException, EntityProviderException {
+    reader.beginObject();
+    if (!FormatJson.TYPE.equals(reader.nextName())) {
+      throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent(FormatJson.TYPE)
+          .addContent(FormatJson.METADATA));
+    }
+    final String actualTypeName = reader.nextString();
+    if (!expectedTypeName.equals(actualTypeName)) {
+      throw new EntityProviderException(EntityProviderException.INVALID_ENTITYTYPE.addContent(expectedTypeName)
+          .addContent(actualTypeName));
+    }
+    reader.endObject();
   }
 }

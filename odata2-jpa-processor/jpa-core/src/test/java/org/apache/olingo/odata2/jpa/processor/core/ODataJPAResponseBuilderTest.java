@@ -386,7 +386,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     EdmProperty edmProperty = EasyMock.createMock(EdmProperty.class);
     EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("soId");
-    EasyMock.expect(edmMapping.getMimeType()).andReturn(null);
+    EasyMock.expect(edmMapping.getMediaResourceMimeTypeKey()).andReturn(null);
     EasyMock.replay(edmMapping);
     try {
       EasyMock.expect(edmProperty.getName()).andStubReturn("ID");

@@ -234,7 +234,7 @@ public class BeanPropertyAccessTest {
 
   private EdmMapping mockMapping(final String mimeTypeKey) throws EdmException {
     EdmMapping mapping = Mockito.mock(EdmMapping.class);
-    Mockito.when(mapping.getMimeType()).thenReturn(mimeTypeKey);
+    Mockito.when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mimeTypeKey);
     return mapping;
   }
 

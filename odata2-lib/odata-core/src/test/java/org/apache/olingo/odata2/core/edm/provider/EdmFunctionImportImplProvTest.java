@@ -91,7 +91,6 @@ public class EdmFunctionImportImplProvTest extends BaseTest {
     when(edmProvider.getFunctionImport("Container", "bar")).thenReturn(functionImportBar);
     edmFunctionImportWithoutParameters =
         new EdmFunctionImportImplProv(edmImplProv, functionImportBar, edmEntityContainer);
-
   }
 
   @Test
@@ -157,6 +156,11 @@ public class EdmFunctionImportImplProvTest extends BaseTest {
 
     parameter = edmFunctionImportWithoutParameters.getParameter("fooParameter3");
     assertNull(parameter);
+  }
+
+  @Test
+  public void nulllReturnType() throws Exception {
+    assertNull(edmFunctionImportWithoutParameters.getReturnType());
   }
 
   @Test

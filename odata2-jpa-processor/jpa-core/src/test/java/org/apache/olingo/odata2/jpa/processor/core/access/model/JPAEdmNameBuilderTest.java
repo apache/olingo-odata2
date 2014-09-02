@@ -49,7 +49,7 @@ public class JPAEdmNameBuilderTest {
     EasyMock.expect(propertyView.getEdmSimpleProperty()).andStubReturn(simpleProperty);
     EasyMock.replay(propertyView);
 
-    JPAEdmNameBuilder.build(propertyView, false, false,false);
+    JPAEdmNameBuilder.build(propertyView, false, false, false);
     assertEquals("Id", simpleProperty.getName());
   }
 
@@ -69,7 +69,7 @@ public class JPAEdmNameBuilderTest {
     EasyMock.expect(propertyView.getEdmSimpleProperty()).andStubReturn(simpleProperty);
     EasyMock.replay(propertyView);
 
-    JPAEdmNameBuilder.build(propertyView, false, true,false);
+    JPAEdmNameBuilder.build(propertyView, false, true, false);
     assertEquals("id", simpleProperty.getName());
   }
 

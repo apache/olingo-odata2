@@ -68,6 +68,13 @@ public class JPAPage implements JPAPaging {
     private int skip;
     private int skipToken;
     private Query query;
+    private List<Object> entities;
+    private List<Object> pagedEntities;
+
+    private static class TopSkip {
+      public int top;
+      public int skip;
+    }
 
     public JPAPageBuilder() {}
 
@@ -81,19 +88,47 @@ public class JPAPage implements JPAPaging {
       return this;
     }
 
-    @SuppressWarnings("unchecked")
     public JPAPage build() {
+      if (entities != null) {
+        return buildFromEntities();
+      } else {
+        return buildFromQuery();
+      }
+    }
 
-      List<Object> entities = new ArrayList<Object>();
+    private JPAPage buildFromEntities() {
+      TopSkip topSkip = formulateTopSkip();
+      pagedEntities = new ArrayList<Object>();
+      if (topSkip.skip <= 0) {
+        topSkip.skip = 1;
+      }
+      for (int i = topSkip.skip - 1, j = 0; (j < topSkip.top && i < entities.size()); j++) {
+        pagedEntities.add(entities.get(i++));
+      }
+      formulateNextPage();
+      return new JPAPage(startPage, nextPage, pagedEntities, pageSize);
+    }
+
+    @SuppressWarnings("unchecked")
+    private JPAPage buildFromQuery() {
+      TopSkip topSkip = formulateTopSkip();
+      query.setFirstResult(topSkip.skip);
+      query.setMaxResults(topSkip.top);
+      pagedEntities = query.getResultList();
+      formulateNextPage();
+      return new JPAPage(startPage, nextPage, pagedEntities, pageSize);
+    }
+
+    private TopSkip formulateTopSkip() {
+      TopSkip topSkip = new TopSkip();
       int size = 0;
       if (pageSize <= 0) {
         if (skip > 0) {
-          query.setFirstResult(skip);
+          topSkip.skip = skip;
         }
         if (top > 0) {
-          query.setMaxResults(top);
+          topSkip.top = top;
         }
-        entities = query.getResultList();
       } else {
         if (skip >= pageSize) { // No Records to fetch
           startPage = skipToken;
@@ -103,34 +138,37 @@ public class JPAPage implements JPAPaging {
           size = top + skip;
           if (size > pageSize) {
             if (skip == 0) {
-              query.setMaxResults(pageSize);
+              topSkip.top = pageSize;
             } else {
-              query.setMaxResults(pageSize - skip);
+              topSkip.top = pageSize - skip;
             }
           } else {
             if (top > 0) {
-              query.setMaxResults(top);
+              topSkip.top = top;
             } else {
-              query.setMaxResults(pageSize);
+              topSkip.top = pageSize;
             }
           }
 
           startPage = skipToken;
           if (skip > 0) {
-            query.setFirstResult(startPage + skip);
+            topSkip.skip = startPage + skip;
           } else {
-            query.setFirstResult(startPage);
-          }
-
-          entities = query.getResultList();
-          if (entities.size() == 0) {
-            nextPage = 0;
-          } else {
-            nextPage = startPage + pageSize;
+            topSkip.skip = startPage;
           }
         }
       }
-      return new JPAPage(startPage, nextPage, entities, pageSize);
+      return topSkip;
+    }
+
+    private void formulateNextPage() {
+      if (pagedEntities.size() == 0) {
+        nextPage = 0;
+      } else if (pagedEntities.size() < pageSize) {
+        nextPage = 0;
+      } else {
+        nextPage = startPage + pageSize;
+      }
     }
 
     public JPAPageBuilder skip(final int skip) {
@@ -162,6 +200,11 @@ public class JPAPage implements JPAPaging {
       } else {
         this.top = top;
       }
+      return this;
+    }
+
+    public JPAPageBuilder entities(final List<Object> result) {
+      entities = result;
       return this;
     }
   }

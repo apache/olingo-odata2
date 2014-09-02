@@ -49,6 +49,7 @@ public class EdmFunctionImportImplProv extends EdmNamedImplProv implements EdmFu
   private Map<String, FunctionImportParameter> parameters;
   private List<String> parametersList;
   private EdmAnnotations annotations;
+  private EdmTyped edmReturnType;
 
   public EdmFunctionImportImplProv(final EdmImplProv edm, final FunctionImport functionImport,
       final EdmEntityContainer edmEntityContainer) throws EdmException {
@@ -123,8 +124,14 @@ public class EdmFunctionImportImplProv extends EdmNamedImplProv implements EdmFu
 
   @Override
   public EdmTyped getReturnType() throws EdmException {
-    final ReturnType returnType = functionImport.getReturnType();
-    return new EdmTypedImplProv(edm, functionImport.getName(), returnType.getTypeName(), returnType.getMultiplicity());
+    if (edmReturnType == null) {
+      final ReturnType returnType = functionImport.getReturnType();
+      if (returnType != null) {
+        edmReturnType =
+            new EdmTypedImplProv(edm, functionImport.getName(), returnType.getTypeName(), returnType.getMultiplicity());
+      }
+    }
+    return edmReturnType;
   }
 
   @Override

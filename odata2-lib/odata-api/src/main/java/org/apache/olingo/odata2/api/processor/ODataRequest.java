@@ -50,7 +50,9 @@ public abstract class ODataRequest {
   public abstract List<String> getAcceptHeaders();
 
   public abstract Map<String, String> getQueryParameters();
-
+  
+  public abstract Map<String, List<String>> getAllQueryParameters();
+  
   public static ODataRequestBuilder requestHeaders(final Map<String, List<String>> headers) {
     return newBuilder().requestHeaders(headers);
   }
@@ -82,7 +84,11 @@ public abstract class ODataRequest {
   public static ODataRequestBuilder queryParameters(final Map<String, String> queryParameters) {
     return newBuilder().queryParameters(queryParameters);
   }
-
+  
+  public static ODataRequestBuilder allQueryParameters(final Map<String, List<String>> allQueryParameters) {
+    return newBuilder().allQueryParameters(allQueryParameters);
+  }
+  
   public static ODataRequestBuilder fromRequest(final ODataRequest request) {
     return newBuilder().fromRequest(request);
   }
@@ -119,7 +125,9 @@ public abstract class ODataRequest {
     public abstract ODataRequestBuilder acceptHeaders(List<String> acceptHeaders);
 
     public abstract ODataRequestBuilder queryParameters(Map<String, String> queryParameters);
-
+    
+    public abstract ODataRequestBuilder allQueryParameters(Map<String, List<String>> queryParameters);
+    
     public abstract ODataRequestBuilder fromRequest(ODataRequest request);
 
   }

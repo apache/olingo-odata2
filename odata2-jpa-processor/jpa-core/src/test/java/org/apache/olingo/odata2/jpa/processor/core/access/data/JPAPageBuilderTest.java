@@ -52,7 +52,7 @@ public class JPAPageBuilderTest {
         .skipToken("10")
         .build();
 
-    assertEquals(20, page.getNextPage());
+    assertEquals(0, page.getNextPage());
     assertEquals(10, page.getStartPage());
     assertEquals(PAGE_SIZE, page.getPageSize());
     assertNotNull(page.getPagedEntities());
@@ -92,7 +92,7 @@ public class JPAPageBuilderTest {
         .skipToken("0")
         .build();
 
-    assertEquals(10, page.getNextPage());
+    assertEquals(0, page.getNextPage());
     assertEquals(0, page.getStartPage());
     assertEquals(PAGE_SIZE, page.getPageSize());
     assertNotNull(page.getPagedEntities());
@@ -112,7 +112,7 @@ public class JPAPageBuilderTest {
         .skipToken(null)
         .build();
 
-    assertEquals(10, page.getNextPage());
+    assertEquals(0, page.getNextPage());
     assertEquals(0, page.getStartPage());
     assertEquals(PAGE_SIZE, page.getPageSize());
     assertNotNull(page.getPagedEntities());
@@ -146,7 +146,7 @@ public class JPAPageBuilderTest {
         .top(5)
         .build();
 
-    assertEquals(20, page.getNextPage());
+    assertEquals(0, page.getNextPage());
     assertEquals(10, page.getStartPage());
     assertEquals(PAGE_SIZE, page.getPageSize());
     assertNotNull(page.getPagedEntities());
@@ -227,7 +227,7 @@ public class JPAPageBuilderTest {
         .top(15)
         .build();
 
-    assertEquals(20, page.getNextPage());
+    assertEquals(0, page.getNextPage());
     assertEquals(10, page.getStartPage());
     assertEquals(PAGE_SIZE, page.getPageSize());
     assertNotNull(page.getPagedEntities());
@@ -269,7 +269,7 @@ public class JPAPageBuilderTest {
         .skip(9)
         .build();
 
-    assertEquals(20, page.getNextPage());
+    assertEquals(0, page.getNextPage());
     assertEquals(10, page.getStartPage());
     assertEquals(PAGE_SIZE, page.getPageSize());
     assertNotNull(page.getPagedEntities());
@@ -290,7 +290,7 @@ public class JPAPageBuilderTest {
         .skip(9)
         .build();
 
-    assertEquals(20, page.getNextPage());
+    assertEquals(0, page.getNextPage());
     assertEquals(10, page.getStartPage());
     assertEquals(PAGE_SIZE, page.getPageSize());
     assertNotNull(page.getPagedEntities());
@@ -331,7 +331,7 @@ public class JPAPageBuilderTest {
         .top(-5)
         .build();
 
-    assertEquals(20, page.getNextPage());
+    assertEquals(0, page.getNextPage());
     assertEquals(10, page.getStartPage());
     assertEquals(PAGE_SIZE, page.getPageSize());
     assertNotNull(page.getPagedEntities());
@@ -352,7 +352,7 @@ public class JPAPageBuilderTest {
         .skip(-1)
         .build();
 
-    assertEquals(10, page.getNextPage());
+    assertEquals(0, page.getNextPage());
     assertEquals(0, page.getStartPage());
     assertEquals(PAGE_SIZE, page.getPageSize());
     assertNotNull(page.getPagedEntities());
@@ -556,4 +556,5 @@ public class JPAPageBuilderTest {
       }
     };
   }
+
 }

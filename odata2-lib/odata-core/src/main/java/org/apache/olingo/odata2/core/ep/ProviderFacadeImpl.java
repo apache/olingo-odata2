@@ -192,6 +192,12 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   }
 
   @Override
+  public Object readFunctionImport(final String contentType, final EdmFunctionImport functionImport,
+      final InputStream content, final EntityProviderReadProperties properties) throws EntityProviderException {
+    return create(contentType).readFunctionImport(functionImport, content, properties);
+  }
+
+  @Override
   public List<String> readLinks(final String contentType, final EdmEntitySet entitySet, final InputStream content)
       throws EntityProviderException {
     return create(contentType).readLinks(entitySet, content);

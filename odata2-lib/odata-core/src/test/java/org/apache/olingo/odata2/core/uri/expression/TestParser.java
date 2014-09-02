@@ -126,8 +126,8 @@ public class TestParser extends TestBase {
     GetPTF("concat('a','b')").aEdmType(EdmString.getInstance());
     GetPTF("concat('a','b','c')").aEdmType(EdmString.getInstance());
   }
-
-  @Test
+  
+   @Test
   public void testProperties() {
     // GetPTF("sven").aSerialized("sven").aKind(ExpressionKind.PROPERTY);
     GetPTF("sven1 add sven2").aSerialized("{sven1 add sven2}").aKind(ExpressionKind.BINARY).root().left().aKind(

@@ -19,10 +19,19 @@
 package org.apache.olingo.odata2.jpa.processor.core;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.olingo.odata2.api.batch.BatchHandler;
+import org.apache.olingo.odata2.api.batch.BatchRequestPart;
+import org.apache.olingo.odata2.api.batch.BatchResponsePart;
+import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.api.ep.EntityProviderBatchProperties;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityLinkUriInfo;
@@ -54,6 +63,8 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
 
     ODataResponse oDataResponse =
         responseBuilder.build(uriParserResultView, jpaEntities, contentType);
+
+    close();
 
     return oDataResponse;
   }
@@ -198,5 +209,37 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
     jpaProcessor.process(uriParserResultView, contentType);
     return ODataResponse.newBuilder().build();
 
+  }
+
+  @Override
+  public ODataResponse executeBatch(final BatchHandler handler, final String contentType, final InputStream content)
+      throws ODataException {
+    ODataResponse batchResponse;
+    List<BatchResponsePart> batchResponseParts = new ArrayList<BatchResponsePart>();
+    PathInfo pathInfo = getContext().getPathInfo();
+    EntityProviderBatchProperties batchProperties = EntityProviderBatchProperties.init().pathInfo(pathInfo).build();
+    List<BatchRequestPart> batchParts = EntityProvider.parseBatchRequest(contentType, content, batchProperties);
+    for (BatchRequestPart batchPart : batchParts) {
+      batchResponseParts.add(handler.handleBatchPart(batchPart));
+    }
+    batchResponse = EntityProvider.writeBatchResponse(batchResponseParts);
+    return batchResponse;
+  }
+
+  @Override
+  public BatchResponsePart executeChangeSet(final BatchHandler handler, final List<ODataRequest> requests)
+      throws ODataException {
+    List<ODataResponse> responses = new ArrayList<ODataResponse>();
+    for (ODataRequest request : requests) {
+      ODataResponse response = handler.handleRequest(request);
+      if (response.getStatus().getStatusCode() >= HttpStatusCodes.BAD_REQUEST.getStatusCode()) {
+        // Rollback
+        List<ODataResponse> errorResponses = new ArrayList<ODataResponse>(1);
+        errorResponses.add(response);
+        return BatchResponsePart.responses(errorResponses).changeSet(false).build();
+      }
+      responses.add(response);
+    }
+    return BatchResponsePart.responses(responses).changeSet(true).build();
   }
 }

@@ -33,15 +33,6 @@ public interface EdmMapping {
   String getInternalName();
 
   /**
-   * Get the mapping name for mime type lookup
-   * 
-   * @return mapping name as String
-   * @deprecated use instead functionality of {@link #getMediaResourceMimeTypeKey()} method
-   */
-  @Deprecated
-  String getMimeType();
-
-  /**
    * Gets the key under which the resource source value can be found in the data map.
    * @return the key of the media resource source
    */

@@ -25,12 +25,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import junit.framework.Assert;
 
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
+import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.core.commons.ContentType;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
@@ -55,11 +64,32 @@ public class FunctionImportXmlTest extends AbstractRefXmlTest {
 
     response = callUri("AllLocations", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_XML);
     checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
-    assertXpathExists("/d:AllLocations/d:element/d:City[d:CityName=\"" + CITY_2_NAME + "\"]", getBody(response));
+    String body = getBody(response);
+    assertXpathExists("/d:AllLocations/d:element/d:City[d:CityName=\"" + CITY_2_NAME + "\"]", body);
+    final HttpResponse metadataResponse = callUri("$metadata"); 
+    final EdmEntityContainer entityContainer = EntityProvider.readMetadata(metadataResponse.getEntity().getContent(),
+        false).getDefaultEntityContainer();
+    getBody(metadataResponse);
+    Object result = EntityProvider.readFunctionImport(HttpContentType.APPLICATION_XML,
+        entityContainer.getFunctionImport("AllLocations"), StringHelper.encapsulate(body),
+        EntityProviderReadProperties.init().build());
+    assertNotNull(result);
+    final List<?> collection = (List<?>) result;
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> secondLocation = (Map<String, Object>) collection.get(1);
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> secondCity = (Map<String, Object>) secondLocation.get("City");
+    assertEquals(CITY_2_NAME, secondCity.get("CityName"));
 
     response = callUri("AllUsedRoomIds", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_XML);
     checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
-    assertXpathExists("/d:AllUsedRoomIds[d:element=\"3\"]", getBody(response));
+    body = getBody(response);
+    assertXpathExists("/d:AllUsedRoomIds[d:element=\"3\"]", body);
+    result = EntityProvider.readFunctionImport(HttpContentType.APPLICATION_XML,
+        entityContainer.getFunctionImport("AllUsedRoomIds"), StringHelper.encapsulate(body),
+        EntityProviderReadProperties.init().build());
+    assertNotNull(result);
+    assertEquals(Arrays.asList("1", "2", "3"), result);
 
     response = callUri("MaximalAge", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_XML);
     checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);

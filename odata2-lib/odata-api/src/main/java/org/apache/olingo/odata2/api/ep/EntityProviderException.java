@@ -56,6 +56,10 @@ public class EntityProviderException extends ODataMessageException {
   /** INVALID_PARENT_TAG requires 2 content values ('missing attribute name' and 'tag name') */
   public static final MessageReference MISSING_ATTRIBUTE = createMessageReference(EntityProviderException.class,
       "MISSING_ATTRIBUTE");
+  /** MISSING_TAG requires 1 content values ('tag name') */
+  public static final MessageReference MISSING_TAG = createMessageReference(EntityProviderException.class,
+      "MISSING_TAG");
+  /** UNSUPPORTED_PROPERTY_TYPE requires 1 content values ('property type') */
   public static final MessageReference UNSUPPORTED_PROPERTY_TYPE = createMessageReference(
       EntityProviderException.class, "UNSUPPORTED_PROPERTY_TYPE");
   public static final MessageReference INLINECOUNT_INVALID = createMessageReference(EntityProviderException.class,

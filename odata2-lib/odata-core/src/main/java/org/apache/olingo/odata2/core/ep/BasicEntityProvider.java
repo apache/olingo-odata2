@@ -56,8 +56,6 @@ import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 
 /**
  * Provider for all basic (content type independent) entity provider methods.
- * 
- * 
  */
 public class BasicEntityProvider {
 
@@ -163,8 +161,8 @@ public class BasicEntityProvider {
         if (edmProperty.getMimeType() != null) {
           contentType = edmProperty.getMimeType();
         } else {
-          if (edmProperty.getMapping() != null && edmProperty.getMapping().getMimeType() != null) {
-            String mimeTypeMapping = edmProperty.getMapping().getMimeType();
+          if (edmProperty.getMapping() != null && edmProperty.getMapping().getMediaResourceMimeTypeKey() != null) {
+            String mimeTypeMapping = edmProperty.getMapping().getMediaResourceMimeTypeKey();
             if (value instanceof Map) {
               final Map<?, ?> mappedData = (Map<?, ?>) value;
               binary = mappedData.get(edmProperty.getName());

@@ -100,9 +100,15 @@ public class EdmAssociationImplProvTest extends BaseTest {
 
   @Test
   public void testReferentialConstraint() throws EdmException {
-    EdmAssociation association = associationProv;
-    assertEquals("end1Role", association.getReferentialConstraint().getDependent().getRole());
-    assertEquals("end2Role", association.getReferentialConstraint().getPrincipal().getRole());
+    assertEquals("end1Role", associationProv.getReferentialConstraint().getDependent().getRole());
+    assertEquals("end2Role", associationProv.getReferentialConstraint().getPrincipal().getRole());
+  }
+
+  @Test
+  public void testReferentialConstraintNull() throws EdmException {
+    Association association = new Association().setName("association");
+    EdmAssociation edmAssociation = new EdmAssociationImplProv(null, association, "ns");
+    assertNull(edmAssociation.getReferentialConstraint());
   }
 
   @Test

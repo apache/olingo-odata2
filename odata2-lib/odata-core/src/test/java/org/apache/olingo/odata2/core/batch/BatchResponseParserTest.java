@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.batch;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,25 +30,29 @@ import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
 public class BatchResponseParserTest {
 
-  private static final String LF = "\r\n";
+  private static final String CRLF = "\r\n";
+  private static final String LF = "\n";
+
 
   @Test
   public void testSimpleBatchResponse() throws BatchException {
-    String getResponse = "--batch_123" + LF
-        + "Content-Type: application/http" + LF
-        + "Content-Transfer-Encoding: binary" + LF
-        + "Content-ID: 1" + LF
-        + LF
-        + "HTTP/1.1 200 OK" + LF
-        + "DataServiceVersion: 2.0" + LF
-        + "Content-Type: text/plain;charset=utf-8" + LF
-        + "Content-length: 22" + LF
-        + LF
-        + "Frederic Fall MODIFIED" + LF
+    String getResponse = "--batch_123" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-ID: 1" + CRLF
+        + CRLF
+        + "HTTP/1.1 200 OK" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + "Content-Type: text/plain;charset=utf-8" + CRLF
+        + "Content-length: 22" + CRLF
+        + CRLF
+        + "Frederic Fall MODIFIED" + CRLF
         + "--batch_123--";
 
     InputStream in = new ByteArrayInputStream(getResponse.getBytes());
@@ -70,7 +75,7 @@ public class BatchResponseParserTest {
       throw new IOException("Requested file '" + fileName + "' was not found.");
     }
     BatchResponseParser parser = new BatchResponseParser("multipart/mixed;boundary=batch_123");
-    List<BatchSingleResponse> responses = parser.parse(in);
+    List<BatchSingleResponse> responses = parser.parse(StringHelper.toStream(in).asStreamWithLineSeparation("\r\n"));
     for (BatchSingleResponse response : responses) {
       if ("1".equals(response.getContentId())) {
         assertEquals("204", response.getStatusCode());
@@ -84,20 +89,20 @@ public class BatchResponseParserTest {
 
   @Test
   public void testResponseToChangeSet() throws BatchException {
-    String putResponse = "--batch_123" + LF
-        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + LF
-        + LF
-        + "--changeset_12ks93js84d" + LF
-        + "Content-Type: application/http" + LF
-        + "Content-Transfer-Encoding: binary" + LF
-        + "Content-ID: 1" + LF
-        + LF
-        + "HTTP/1.1 204 No Content" + LF
-        + "DataServiceVersion: 2.0" + LF
-        + LF
-        + LF
-        + "--changeset_12ks93js84d--" + LF
-        + LF
+    String putResponse = "--batch_123" + CRLF
+        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-ID: 1" + CRLF
+        + CRLF
+        + "HTTP/1.1 204 No Content" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d--" + CRLF
+        + CRLF
         + "--batch_123--";
 
     InputStream in = new ByteArrayInputStream(putResponse.getBytes());
@@ -112,19 +117,19 @@ public class BatchResponseParserTest {
 
   @Test(expected = BatchException.class)
   public void testInvalidMimeHeader() throws BatchException {
-    String putResponse = "--batch_123" + LF
-        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + LF
-        + LF
-        + "--changeset_12ks93js84d" + LF
-        + "Content-Type: application/http" + LF
-        + "Content-Transfer-Encoding: 7bit" + LF // Content-Transfer-Encoding must be binary
-        + LF
-        + "HTTP/1.1 No Content" + LF
-        + "DataServiceVersion: 2.0" + LF
-        + LF
-        + LF
-        + "--changeset_12ks93js84d--" + LF
-        + LF
+    String putResponse = "--batch_123" + CRLF
+        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: 7bit" + CRLF // Content-Transfer-Encoding must be binary
+        + CRLF
+        + "HTTP/1.1 No Content" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d--" + CRLF
+        + CRLF
         + "--batch_123--";
 
     parseInvalidBatchResponseBody(putResponse);
@@ -132,17 +137,17 @@ public class BatchResponseParserTest {
 
   @Test(expected = BatchException.class)
   public void testMissingMimeHeader() throws BatchException {
-    String putResponse = "--batch_123" + LF
-        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + LF
-        + LF
-        + "--changeset_12ks93js84d" + LF
-        + LF
-        + "HTTP/1.1 No Content" + LF
-        + "DataServiceVersion: 2.0" + LF
-        + LF
-        + LF
-        + "--changeset_12ks93js84d--" + LF
-        + LF
+    String putResponse = "--batch_123" + CRLF
+        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d" + CRLF
+        + CRLF
+        + "HTTP/1.1 No Content" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d--" + CRLF
+        + CRLF
         + "--batch_123--";
 
     parseInvalidBatchResponseBody(putResponse);
@@ -150,19 +155,19 @@ public class BatchResponseParserTest {
 
   @Test(expected = BatchException.class)
   public void testInvalidContentType() throws BatchException {
-    String putResponse = "--batch_123" + LF
-        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + LF // Missing boundary parameter
-        + LF
-        + "--changeset_12ks93js84d" + LF
-        + "Content-Type: application/http" + LF
-        + "Content-Transfer-Encoding: binary" + LF
-        + LF
-        + "HTTP/1.1 No Content" + LF
-        + "DataServiceVersion: 2.0" + LF
-        + LF
-        + LF
-        + "--changeset_12ks93js84d--" + LF
-        + LF
+    String putResponse = "--batch_123" + CRLF
+        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + CRLF // Missing boundary parameter
+        + CRLF
+        + "--changeset_12ks93js84d" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + CRLF
+        + "HTTP/1.1 No Content" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d--" + CRLF
+        + CRLF
         + "--batch_123--";
 
     parseInvalidBatchResponseBody(putResponse);
@@ -170,19 +175,19 @@ public class BatchResponseParserTest {
 
   @Test(expected = BatchException.class)
   public void testInvalidStatusLine() throws BatchException {
-    String putResponse = "--batch_123" + LF
-        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + LF
-        + LF
-        + "--changeset_12ks93js84d" + LF
-        + "Content-Type: application/http" + LF
-        + "Content-Transfer-Encoding: binary" + LF
-        + LF
-        + "HTTP/1.1 No Content" + LF
-        + "DataServiceVersion: 2.0" + LF
-        + LF
-        + LF
-        + "--changeset_12ks93js84d--" + LF
-        + LF
+    String putResponse = "--batch_123" + CRLF
+        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + CRLF
+        + "HTTP/1.1 No Content" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d--" + CRLF
+        + CRLF
         + "--batch_123--";
 
     parseInvalidBatchResponseBody(putResponse);
@@ -191,84 +196,164 @@ public class BatchResponseParserTest {
 
   @Test(expected = BatchException.class)
   public void testMissingCloseDelimiter() throws BatchException {
-    String putResponse = "--batch_123" + LF
-        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + LF
-        + LF
-        + "--changeset_12ks93js84d" + LF
-        + "Content-Type: application/http" + LF
-        + "Content-Transfer-Encoding: binary" + LF
-        + LF
-        + "HTTP/1.1 204 No Content" + LF
-        + "DataServiceVersion: 2.0" + LF
-        + LF
-        + LF
-        + "--changeset_12ks93js84d--" + LF
-        + LF;
+    String putResponse = "--batch_123" + CRLF
+        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + CRLF
+        + "HTTP/1.1 204 No Content" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d--" + CRLF
+        + CRLF;
 
     parseInvalidBatchResponseBody(putResponse);
 
   }
 
-  @Test(expected = BatchException.class)
-  public void testInvalidEnteredContentLength() throws BatchException {
-    String getResponse = "--batch_123" + LF
-        + "Content-Type: application/http" + LF
-        + "Content-Transfer-Encoding: binary" + LF
-        + "Content-ID: 1" + LF
-        + LF
-        + "HTTP/1.1 200 OK" + LF
-        + "DataServiceVersion: 2.0" + LF
-        + "Content-Type: text/plain;charset=utf-8" + LF
-        + "Content-length: 100" + LF
-        + LF
-        + "Frederic Fall" + LF
-        + LF
+  @Test
+  public void tooBigContentLegthDoesNotResultInException() throws BatchException {
+    String getResponse = "--batch_123" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-ID: 1" + CRLF
+        + CRLF
+        + "HTTP/1.1 200 OK" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + "Content-Type: text/plain;charset=utf-8" + CRLF
+        + "Content-Length: 100" + CRLF
+        + CRLF
+        + "Frederic Fall" + CRLF
         + "--batch_123--";
 
-    parseInvalidBatchResponseBody(getResponse);
+    InputStream in = new ByteArrayInputStream(getResponse.getBytes());
+    List<BatchSingleResponse> batchResponse =
+        EntityProvider.parseBatchResponse(in, "multipart/mixed;boundary=batch_123");
+    BatchSingleResponse response = batchResponse.get(0);
+    assertEquals("100", response.getHeader("Content-Length"));
+    assertEquals("Frederic Fall", response.getBody());
   }
 
   @Test(expected = BatchException.class)
   public void testInvalidBoundary() throws BatchException {
-    String getResponse = "--batch_321" + LF
-        + "Content-Type: application/http" + LF
-        + "Content-Transfer-Encoding: binary" + LF
-        + "Content-ID: 1" + LF
-        + LF
-        + "HTTP/1.1 200 OK" + LF
-        + "DataServiceVersion: 2.0" + LF
-        + "Content-Type: text/plain;charset=utf-8" + LF
-        + LF
-        + "Frederic Fall" + LF
-        + LF
+    String getResponse = "--batch_321" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-ID: 1" + CRLF
+        + CRLF
+        + "HTTP/1.1 200 OK" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + "Content-Type: text/plain;charset=utf-8" + CRLF
+        + CRLF
+        + "Frederic Fall" + CRLF
+        + CRLF
         + "--batch_123--";
 
     parseInvalidBatchResponseBody(getResponse);
   }
 
-  @Test(expected = BatchException.class)
-  public void testInvalidBoundary2() throws BatchException {
-    String getResponse = "--batch_123" + LF
-        + "Content-Type: application/http" + LF
-        + "Content-Transfer-Encoding: binary" + LF
-        + LF
-        + "HTTP/1.1 200 OK" + LF
-        + "Content-Type: text/plain;charset=utf-8" + LF
-        + "Content-Length: 13" + LF
-        + LF
-        + "Frederic Fall" + LF
-        + LF
-        + "batch_123" + LF
-        + "Content-Type: application/http" + LF
-        + "Content-Transfer-Encoding: binary" + LF
-        + LF
-        + "HTTP/1.1 200 OK" + LF
-        + "Content-Type: text/plain;charset=utf-8" + LF
-        + LF
-        + "Walter Winter" + LF
-        + LF
+  @Test
+  public void boundaryInBodyMustBeIgnored() throws BatchException {
+    String getResponse = "--batch_123" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + CRLF
+        + "HTTP/1.1 200 OK" + CRLF
+        + "Content-Type: text/plain;charset=utf-8" + CRLF
+        + "Content-Length: 13" + CRLF
+        + CRLF
+        + "Frederic Fall" + CRLF
+        + CRLF
+        + "batch_123" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + CRLF
+        + "HTTP/1.1 200 OK" + CRLF
+        + "Content-Type: text/plain;charset=utf-8" + CRLF
+        + CRLF
+        + "Walter Winter" + CRLF
+        + CRLF
         + "--batch_123--";
-    parseInvalidBatchResponseBody(getResponse);
+    InputStream in = new ByteArrayInputStream(getResponse.getBytes());
+    List<BatchSingleResponse> batchResponse =
+        EntityProvider.parseBatchResponse(in, "multipart/mixed;boundary=batch_123");
+    BatchSingleResponse response = batchResponse.get(0);
+    assertEquals("13", response.getHeader("Content-Length"));
+    assertEquals("Frederic Fall", response.getBody());
+  }
+
+  @Test
+  public void parseWithAdditionalLineEndingAtTheEnd() throws Exception {
+    String fileString = readFile("BatchResponseWithAdditionalLineEnding.batch");
+    assertTrue(fileString.contains("\r\n--batch_123--"));
+    InputStream stream =new ByteArrayInputStream(fileString.getBytes());
+    BatchSingleResponse response =
+        EntityProvider.parseBatchResponse(stream , "multipart/mixed;boundary=batch_123").get(0);
+    assertEquals("This is the body we need to parse. The trailing line ending is part of the body." + CRLF, response
+        .getBody());
+
+  }
+
+  @Test
+  public void parseWithWindowsLineEndingsInBody() throws Exception {
+    InputStream stream = getFileAsStream("BatchResponseWithLinesInBodyWin.batch");
+    BatchSingleResponse response =
+        EntityProvider.parseBatchResponse(stream, "multipart/mixed;boundary=batch_123").get(0);
+    String body =
+        "This is the body we need to parse. The line spaces in the body " + CRLF + CRLF + CRLF + "are " + CRLF + CRLF
+            + "part of the body and must not be ignored or filtered.";
+
+    assertEquals(body, response.getBody());
+  }
+  
+  @Test
+  public void parseWithUnixLineEndingsInBody() throws Exception {
+    String body =
+        "This is the body we need to parse. The line spaces in the body " + LF + LF + LF + "are " + LF + LF
+        + "part of the body and must not be ignored or filtered.";
+    String responseString = "--batch_123" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Length: 234" + CRLF
+        + "content-transfer-encoding: binary" + CRLF
+        + CRLF 
+        + "HTTP/1.1 500 Internal Server Error" + CRLF
+        + "Content-Type: application/xml;charset=utf-8" + CRLF
+        + "Content-Length: 125" + CRLF
+        + CRLF
+        + body
+        + CRLF
+        + "--batch_123--"
+        ;
+    InputStream stream = new ByteArrayInputStream(responseString.getBytes());
+    BatchSingleResponse response =
+        EntityProvider.parseBatchResponse(stream, "multipart/mixed;boundary=batch_123").get(0);
+
+    assertEquals(body, response.getBody());
+  }
+
+  protected String readFile(final String filename) throws IOException {
+    InputStream in = getFileAsStream(filename);
+
+    byte[] tmp = new byte[8192];
+    int count = in.read(tmp);
+    StringBuilder b = new StringBuilder();
+    while (count >= 0) {
+      b.append(new String(tmp, 0, count));
+      count = in.read(tmp);
+    }
+
+    return b.toString();
+  }
+  
+  private InputStream getFileAsStream(final String filename) throws IOException {
+    InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+    if (in == null) {
+      throw new IOException("Requested file '" + filename + "' was not found.");
+    }
+    return in;
   }
 
   private void parseInvalidBatchResponseBody(final String putResponse) throws BatchException {

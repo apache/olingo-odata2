@@ -74,6 +74,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
   private Attribute<?, ?> currentRefAttribute;
   private boolean isBuildModeComplexType;
   private Map<String, Integer> associationCount;
+  private ArrayList<String[]> joinColumnNames = null;
 
   public JPAEdmProperty(final JPAEdmSchemaView view) {
     super(view);
@@ -136,6 +137,11 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
   @Override
   public JPAEdmNavigationPropertyView getJPAEdmNavigationPropertyView() {
     return navigationPropertyView;
+  }
+
+  @Override
+  public List<String[]> getJPAJoinColumns() {
+    return joinColumnNames;
   }
 
   private class JPAEdmPropertyBuilder implements JPAEdmBuilder {
@@ -342,6 +348,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         ODataJPARuntimeException {
 
       AnnotatedElement annotatedElement = (AnnotatedElement) jpaAttribute.getJavaMember();
+      joinColumnNames = null;
       if (annotatedElement == null) {
         return;
       }
@@ -349,25 +356,53 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
       if (joinColumn == null) {
         JoinColumns joinColumns = annotatedElement.getAnnotation(JoinColumns.class);
         if (joinColumns != null) {
-          return;
+          for (JoinColumn jc : joinColumns.value()) {
+            buildForeignKey(jc, jpaAttribute);
+          }
         }
       } else {
-        if (joinColumn.insertable() && joinColumn.updatable()) {
-          EntityType<?> referencedEntityType = metaModel.entity(jpaAttribute.getJavaType());
-          for (Attribute<?, ?> referencedAttribute : referencedEntityType.getAttributes()) {
-            AnnotatedElement annotatedElement2 = (AnnotatedElement) referencedAttribute.getJavaMember();
-            if (annotatedElement2 != null) {
-              Column referencedColumn = annotatedElement2.getAnnotation(Column.class);
-              if (referencedColumn != null && referencedColumn.name().equals((joinColumn.referencedColumnName()))) {
-                currentRefAttribute = referencedAttribute;
-                currentSimpleProperty = new SimpleProperty();
-                properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty, true));
-                break;
-              }
+        buildForeignKey(joinColumn, jpaAttribute);
+      }
+    }
+
+    private void buildForeignKey(final JoinColumn joinColumn, final Attribute<?, ?> jpaAttribute)
+        throws ODataJPAModelException,
+        ODataJPARuntimeException {
+      joinColumnNames = joinColumnNames == null ? new ArrayList<String[]>() : joinColumnNames;
+      String[] name = { null, null };
+      name[0] = joinColumn.name().equals("") == true ? jpaAttribute.getName() : joinColumn.name();
+
+      EntityType<?> referencedEntityType = metaModel.entity(jpaAttribute.getJavaType());
+      if (joinColumn.referencedColumnName().equals("")) {
+        for (Attribute<?, ?> referencedAttribute : referencedEntityType.getAttributes()) {
+          if (referencedAttribute.getPersistentAttributeType() == PersistentAttributeType.BASIC &&
+              ((SingularAttribute<?, ?>) referencedAttribute).isId()) {
+            name[1] = referencedAttribute.getName();
+            joinColumnNames.add(name);
+            currentRefAttribute = referencedAttribute;
+            break;
+          }
+        }
+      } else {
+        for (Attribute<?, ?> referencedAttribute : referencedEntityType.getAttributes()) {
+          AnnotatedElement annotatedElement2 = (AnnotatedElement) referencedAttribute.getJavaMember();
+          if (annotatedElement2 != null) {
+            Column referencedColumn = annotatedElement2.getAnnotation(Column.class);
+            if (referencedColumn != null && referencedColumn.name().equals((joinColumn.referencedColumnName()))) {
+              name[1] = referencedColumn.name();
+              joinColumnNames.add(name);
+              currentRefAttribute = referencedAttribute;
+              break;
             }
           }
         }
       }
+
+      if (joinColumn.insertable() && joinColumn.updatable()) {
+        currentSimpleProperty = new SimpleProperty();
+        properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty, true));
+      }
+
     }
 
     @SuppressWarnings("rawtypes")
@@ -419,5 +454,4 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
     }
     return isExcluded;
   }
-
 }

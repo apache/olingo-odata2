@@ -18,7 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.consumer;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -49,26 +52,27 @@ public class XmlPropertyConsumer {
   protected static final String FALSE = "false";
 
   public Map<String, Object> readProperty(final XMLStreamReader reader, final EdmProperty property,
-      final boolean merge, final EntityProviderReadProperties readProperties) throws EntityProviderException {
-    return readProperty(reader, property, merge, null, readProperties);
+      final EntityProviderReadProperties readProperties) throws EntityProviderException {
+    return readProperty(reader, EntityInfoAggregator.create(property), readProperties);
   }
 
-  public Map<String, Object> readProperty(final XMLStreamReader reader, final EdmProperty property,
-      final boolean merge, final Map<String, Object> typeMappings, final EntityProviderReadProperties readProperties)
-      throws EntityProviderException {
-    EntityPropertyInfo eia = EntityInfoAggregator.create(property);
-
+  public Map<String, Object> readProperty(final XMLStreamReader reader, final EntityPropertyInfo propertyInfo,
+      final EntityProviderReadProperties readProperties) throws EntityProviderException {
+    final EntityTypeMapping typeMappings =
+        EntityTypeMapping.create(readProperties == null ? Collections.<String, Object> emptyMap() :
+          readProperties.getTypeMappings());
+    final boolean merge = readProperties != null && readProperties.getMergeSemantic();
     try {
       reader.next();
 
-      Object value = readStartedElement(reader, eia, EntityTypeMapping.create(typeMappings), readProperties);
+      Object value = readStartedElement(reader, propertyInfo.getName(), propertyInfo, typeMappings, readProperties);
 
-      if (eia.isComplex() && merge) {
-        mergeWithDefaultValues(value, eia);
+      if (propertyInfo.isComplex() && merge) {
+        mergeWithDefaultValues(value, propertyInfo);
       }
 
       Map<String, Object> result = new HashMap<String, Object>();
-      result.put(eia.getName(), value);
+      result.put(propertyInfo.getName(), value);
       return result;
     } catch (XMLStreamException e) {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
@@ -110,10 +114,39 @@ public class XmlPropertyConsumer {
     }
   }
 
-  protected Object readStartedElement(final XMLStreamReader reader, final EntityPropertyInfo propertyInfo,
+  public List<?> readCollection(XMLStreamReader reader, final EntityPropertyInfo info,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
+    final String collectionName = info.getName();
+    final EntityTypeMapping typeMappings = EntityTypeMapping.create(
+        properties == null || !properties.getTypeMappings().containsKey(collectionName) ?
+            Collections.<String, Object> emptyMap() :
+            Collections.<String, Object> singletonMap(FormatXml.D_ELEMENT,
+                properties.getTypeMappings().get(collectionName)));
+    List<Object> result = new ArrayList<Object>();
+    try {
+      reader.nextTag();
+      reader.require(XMLStreamConstants.START_ELEMENT, Edm.NAMESPACE_D_2007_08, collectionName);
+      reader.nextTag();
+      while (reader.isStartElement()) {
+        result.add(readStartedElement(reader, FormatXml.D_ELEMENT, info, typeMappings, properties));
+        reader.nextTag();
+      }
+      reader.require(XMLStreamConstants.END_ELEMENT, Edm.NAMESPACE_D_2007_08, collectionName);
+      reader.next();
+      reader.require(XMLStreamConstants.END_DOCUMENT, null, null);
+      return result;
+    } catch (final XMLStreamException e) {
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
+          .addContent(e.getClass().getSimpleName()), e);
+    } catch (final EdmException e) {
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
+          .addContent(e.getClass().getSimpleName()), e);
+    }
+  }
+
+  protected Object readStartedElement(XMLStreamReader reader, final String name, final EntityPropertyInfo propertyInfo,
       final EntityTypeMapping typeMappings, final EntityProviderReadProperties readProperties)
       throws EntityProviderException, EdmException {
-    final String name = propertyInfo.getName();
     Object result = null;
 
     try {
@@ -149,8 +182,8 @@ public class XmlPropertyConsumer {
           if (childProperty == null) {
             throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY.addContent(childName));
           }
-          final Object value = readStartedElement(reader, childProperty, typeMappings.getEntityTypeMapping(name),
-              readProperties);
+          final Object value = readStartedElement(reader, childName, childProperty,
+              typeMappings.getEntityTypeMapping(name), readProperties);
           name2Value.put(childName, value);
           reader.nextTag();
         }

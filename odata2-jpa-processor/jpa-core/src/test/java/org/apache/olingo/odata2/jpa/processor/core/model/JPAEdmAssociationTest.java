@@ -28,7 +28,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.JoinColumn;
@@ -59,6 +61,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
   private JPAEdmAssociationTest localView = null;
   private static final String PUNIT_NAME = "salesorderprocessing";
   private int variant;
+  private List<String[]> joinColumnNames = null;
 
   @Before
   public void setup() {
@@ -183,6 +186,18 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
   @Test
   public void testSearchAssociation1() {
     class TestAssociationEndView extends JPAEdmTestModelView {
+
+      @Override
+      public List<String[]> getJPAJoinColumns() {
+        if (joinColumnNames == null) {
+
+          joinColumnNames = new ArrayList<String[]>();
+          String[] names = { "SOID", "DEMO_ID" };
+          joinColumnNames.add(names);
+        }
+        return joinColumnNames;
+      }
+
       @Override
       public String getEdmRelationShipName() {
         return "SalesOrderHeader_String1";
@@ -199,13 +214,13 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
       }
 
       @Override
-      public String getJoinColumnName() {
-        return "SO_ID";
+      public String[] getJoinColumnNames() {
+        return new String[] { "SO_ID" };
       }
 
       @Override
-      public String getJoinColumnReferenceColumnName() {
-        return "DEMO_ID";
+      public String[] getJoinColumnReferenceColumnNames() {
+        return new String[] { "DEMO_ID" };
       }
 
       @Override

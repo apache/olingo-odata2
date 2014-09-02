@@ -1,0 +1,12 @@
+--batch_123
+Content-Type: application/http
+Content-Length: 185
+content-transfer-encoding: binary
+
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/xml;charset=utf-8
+Content-Length: 82
+
+This is the body we need to parse. The trailing line ending is part of the body.
+
+--batch_123--

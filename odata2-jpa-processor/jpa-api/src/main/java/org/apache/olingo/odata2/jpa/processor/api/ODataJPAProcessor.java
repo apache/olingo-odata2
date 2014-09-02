@@ -74,4 +74,12 @@ public abstract class ODataJPAProcessor extends ODataSingleProcessor {
         ODataJPAFactory.createFactory().getODataJPAAccessFactory().getODataJPAResponseBuilder(this.oDataJPAContext);
   }
 
+  /**
+   * The method closes ThreadContext. It is mandatory to call this method to
+   * avoid memory leaks.
+   */
+  public void close() {
+    ODataJPATombstoneContext.cleanup();
+  }
+
 }

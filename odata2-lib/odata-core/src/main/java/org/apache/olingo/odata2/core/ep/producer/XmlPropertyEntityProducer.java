@@ -183,8 +183,8 @@ public class XmlPropertyEntityProducer {
     String mimeType = null;
     if (prop.getMimeType() != null) {
       mimeType = prop.getMimeType();
-    } else if (prop.getMapping() != null && prop.getMapping().getMimeType() != null) {
-      mimeType = (String) extractChildValue(value, prop.getMapping().getMimeType());
+    } else if (prop.getMapping() != null && prop.getMapping().getMediaResourceMimeTypeKey() != null) {
+      mimeType = (String) extractChildValue(value, prop.getMapping().getMediaResourceMimeTypeKey());
       contentValue = extractChildValue(value, prop.getName());
     }
 

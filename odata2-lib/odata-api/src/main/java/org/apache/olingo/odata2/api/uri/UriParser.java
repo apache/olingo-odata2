@@ -55,6 +55,8 @@ public abstract class UriParser {
 
   /**
    * Parses path segments and query parameters.
+   * This method ignores redundant system query parameters.
+   * 
    * @param pathSegments list of path segments
    * @param queryParameters query parameters
    * @return {@link UriInfo} information about the parsed URI
@@ -65,6 +67,20 @@ public abstract class UriParser {
   public abstract UriInfo parse(List<PathSegment> pathSegments, Map<String, String> queryParameters)
       throws UriSyntaxException, UriNotMatchingException, EdmException;
 
+  /**
+   * Parses path segments and query parameters.
+   * Throws an exception if there are redundant system query parameters.
+   * 
+   * @param pathSegments list of path segments
+   * @param queryParameters query parameters
+   * @return {@link UriInfo} information about the parsed URI
+   * @throws UriSyntaxException
+   * @throws UriNotMatchingException
+   * @throws EdmException
+   */
+  public abstract UriInfo parseAll(List<PathSegment> pathSegments, Map<String, List<String>> allQueryParameters)
+      throws UriSyntaxException, UriNotMatchingException, EdmException;
+  
   /**
    * Parses a $filter expression string and create an expression tree.
    * <p>The current expression parser supports expressions as defined in the

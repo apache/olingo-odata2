@@ -163,6 +163,9 @@ public final class JPAEntityParser {
     Object result = null;
     String methodName = null;
     HashMap<String, Object> navigationMap = new HashMap<String, Object>();
+    if (jpaEntity == null) {
+      return navigationMap;
+    }
     if (navigationPropertyList != null
         && navigationPropertyList.size() != 0) {
 
@@ -260,6 +263,11 @@ public final class JPAEntityParser {
 
   public static String getString(final Clob clob) throws ODataJPARuntimeException {
     try {
+
+      if (clob == null) {
+        return null;
+      }
+
       Reader stringReader = clob.getCharacterStream();
       StringWriter buffer = null;
       long clobSize = clob.length();
@@ -307,8 +315,13 @@ public final class JPAEntityParser {
 
   public static byte[] getBytes(final Blob blob) throws ODataJPARuntimeException {
     try {
+
+      if (blob == null) {
+        return null;
+      }
       InputStream is = null;
       ByteArrayOutputStream buffer = null;
+
       long blobSize = blob.length();
       long remainingBlobSize = blobSize;
       int len = 0;

@@ -47,6 +47,82 @@ public class JsonLinksEntityProducerTest extends BaseTest {
       EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).build();
 
   @Test
+  public void omitJsonWrapperSingleLink() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    Map<String, Object> employeeData = new HashMap<String, Object>();
+    employeeData.put("EmployeeId", "1");
+    ArrayList<Map<String, Object>> employeesData = new ArrayList<Map<String, Object>>();
+    employeesData.add(employeeData);
+
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).omitJsonWrapper(true).build();
+    final ODataResponse response = new JsonEntityProvider().writeLinks(entitySet, employeesData, properties);
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+
+    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
+    assertNotNull(json);
+    assertEquals("[{\"uri\":\"" + BASE_URI + "Employees('1')\"}]", json);
+  }
+
+  @Test
+  public void omitJsonWrapperSingleLinks() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    Map<String, Object> employee1 = new HashMap<String, Object>();
+    employee1.put("EmployeeId", "1");
+    Map<String, Object> employee2 = new HashMap<String, Object>();
+    employee2.put("EmployeeId", "2");
+    Map<String, Object> employee3 = new HashMap<String, Object>();
+    employee3.put("EmployeeId", "3");
+    ArrayList<Map<String, Object>> employeesData = new ArrayList<Map<String, Object>>();
+    employeesData.add(employee1);
+    employeesData.add(employee2);
+    employeesData.add(employee3);
+
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).omitJsonWrapper(true).build();
+    final ODataResponse response = new JsonEntityProvider().writeLinks(entitySet, employeesData, properties);
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+
+    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
+    assertNotNull(json);
+    assertEquals("[{\"uri\":\"" + BASE_URI + "Employees('1')\"},"
+        + "{\"uri\":\"" + BASE_URI + "Employees('2')\"},"
+        + "{\"uri\":\"" + BASE_URI + "Employees('3')\"}]",
+        json);
+  }
+
+  @Test
+  public void serializeLinksAndInlineCountWithOmitJsonWrapper() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    Map<String, Object> employee1 = new HashMap<String, Object>();
+    employee1.put("EmployeeId", "1");
+    Map<String, Object> employee2 = new HashMap<String, Object>();
+    employee2.put("EmployeeId", "2");
+    ArrayList<Map<String, Object>> employeesData = new ArrayList<Map<String, Object>>();
+    employeesData.add(employee1);
+    employeesData.add(employee2);
+
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).omitJsonWrapper(true).inlineCountType(
+            InlineCount.ALLPAGES).inlineCount(42).build();
+    final ODataResponse response = new JsonEntityProvider().writeLinks(entitySet, employeesData, properties);
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+
+    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
+    assertNotNull(json);
+    assertEquals("{\"__count\":\"42\",\"results\":["
+        + "{\"uri\":\"" + BASE_URI + "Employees('1')\"},"
+        + "{\"uri\":\"" + BASE_URI + "Employees('2')\"}]}",
+        json);
+  }
+
+  @Test
   public void serializeEmployeeLink() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     Map<String, Object> employeeData = new HashMap<String, Object>();

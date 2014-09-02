@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,19 +82,25 @@ public class UriParserTest extends BaseTest {
 
     final List<PathSegment> pathSegments =
         MockFacade.getPathSegmentsAsODataPathSegmentMock(Arrays.asList(path[0].split("/", -1)));
-    final Map<String, String> queryParameters =
-        getQueryParameters(path.length == 2 ? unescape(path[1]) : "");
+    final Map<String, List<String>> queryParameters = getQueryParameters(path.length == 2 ? unescape(path[1]) : "");
 
-    return (UriInfoImpl) new UriParserImpl(edm).parse(pathSegments, queryParameters);
+    return (UriInfoImpl) new UriParserImpl(edm).parseAll(pathSegments, queryParameters);
   }
 
-  private Map<String, String> getQueryParameters(final String uri) {
-    Map<String, String> queryParameters = new HashMap<String, String>();
+  private Map<String, List<String>> getQueryParameters(final String uri) {
+    Map<String, List<String>> allQueryParameters = new HashMap<String, List<String>>();
+
     for (final String option : uri.split("&")) {
       final String[] keyAndValue = option.split("=");
-      queryParameters.put(keyAndValue[0], keyAndValue.length == 2 ? keyAndValue[1] : "");
+      List<String> list = allQueryParameters.containsKey(keyAndValue[0]) ?
+          allQueryParameters.get(keyAndValue[0]) : new LinkedList<String>();
+
+      list.add(keyAndValue.length == 2 ? keyAndValue[1] : "");
+
+      allQueryParameters.put(keyAndValue[0], list);
     }
-    return queryParameters;
+
+    return allQueryParameters;
   }
 
   private String unescape(final String s) throws UriSyntaxException {
@@ -667,9 +674,6 @@ public class UriParserTest extends BaseTest {
     assertEquals("xml", result.getFormat());
     assertNull(result.getTop());
 
-    result = parse("Employees?$format=xml&$format=json");
-    assertEquals("json", result.getFormat());
-
     result = parse("Employees?$format=custom/*");
     assertNotNull(result.getFormat());
     assertEquals("custom/*", result.getFormat().toString());
@@ -705,6 +709,24 @@ public class UriParserTest extends BaseTest {
     parseWrongUri("Employees?$filter=Age", UriSyntaxException.INVALIDFILTEREXPRESSION);
     parseWrongUri("Employees?$filter=(Age", UriSyntaxException.INVALIDFILTEREXPRESSION);
     parseWrongUri("Employees?$orderby=desc", UriSyntaxException.INVALIDORDERBYEXPRESSION);
+  }
+
+  @Test
+  public void parseWrongRedundantSystemQueryOptions() throws Exception {
+    parseWrongUri("Employees?$top=1&$top=2", UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES);
+    parseWrongUri("Employees?$top=1&$skip=1&$top=2", UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES);
+    parseWrongUri("Employees?$top=1&$top=1", UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES);
+    parseWrongUri("Employees?$skip=1&$skip=2", UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES);
+    parseWrongUri("Employees?$expand=ne_Manager&$expand=ne_Manager", UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES);
+    parseWrongUri("Employees?$orderby=Name%20desc&$orderby=Birthday%20desc",
+        UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES);
+    parseWrongUri("Employees?$select=EmployeeName&$select=EmployeeName",
+        UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES);
+    parseWrongUri("Employees?$filter=EmployeeName%20eq%20'Foo'&$filter=EmployeeName%20ne%20'Bar'",
+        UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES);
+    parseWrongUri("Employees?$inlinecount=allpages&$inlinecount=none",
+        UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES);
+    parseWrongUri("Employees?$format=xml&$format=json", UriSyntaxException.DUPLICATESYSTEMQUERYPARAMETES);
   }
 
   @Test

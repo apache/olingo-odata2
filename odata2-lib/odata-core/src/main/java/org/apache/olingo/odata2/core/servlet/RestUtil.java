@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -104,6 +105,35 @@ public class RestUtil {
     return queryParametersMap;
   }
 
+  public static Map<String, List<String>> extractAllQueryParameters(final String queryString) {
+    Map<String, List<String>> allQueryParameterMap = new HashMap<String, List<String>>();
+    
+    if (queryString != null) {
+      // At first the queryString will be decoded.
+      List<String> queryParameters = Arrays.asList(Decoder.decode(queryString).split("\\&"));
+      for (String param : queryParameters) {
+        int indexOfEqualSign = param.indexOf("=");
+        
+        if (indexOfEqualSign < 0) {
+          final List<String> parameterList = allQueryParameterMap.containsKey(param) ? allQueryParameterMap.get(param) 
+              : new LinkedList<String>();
+         allQueryParameterMap.put(param, parameterList);
+          
+          parameterList.add("");
+        } else {
+          final String key = param.substring(0, indexOfEqualSign);
+          final List<String> parameterList = allQueryParameterMap.containsKey(key) ? allQueryParameterMap.get(key) 
+              : new LinkedList<String>();
+          
+          allQueryParameterMap.put(key, parameterList);
+          parameterList.add(param.substring(indexOfEqualSign + 1));
+        }
+      }
+    }
+    
+    return allQueryParameterMap;
+  }
+  
   /*
    * Parses Accept-Language header. Returns a list sorted by quality parameter
    */
@@ -269,6 +299,7 @@ public class RestUtil {
       if (index < 0) {
         odataSegments.add(new ODataPathSegmentImpl(segment, null));
       } else {
+        // post condition: we do not allow matrix parameters in OData path segments
         String path = segment.substring(0, index);
         Map<String, List<String>> parameterMap = extractMatrixParameter(segment, index);
         throw new ODataNotFoundException(ODataNotFoundException.MATRIX.addContent(parameterMap.keySet(), path));

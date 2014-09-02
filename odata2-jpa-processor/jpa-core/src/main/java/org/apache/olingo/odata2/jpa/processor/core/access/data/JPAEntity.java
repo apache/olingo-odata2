@@ -23,7 +23,9 @@ import java.lang.reflect.Method;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -349,6 +351,17 @@ public class JPAEntity {
         } else {
           method.invoke(entity, onJPAWriteContent.getJPAClob(((String) entityPropertyValue).toCharArray()));
         }
+      } else if (parameterType.equals(Timestamp.class)) {
+        Timestamp ts = new Timestamp(((Calendar) entityPropertyValue).getTimeInMillis());
+        method.invoke(entity, ts);
+      } else if (parameterType.equals(java.util.Date.class)) {
+        method.invoke(entity, ((Calendar) entityPropertyValue).getTime());
+      } else if (parameterType.equals(java.sql.Date.class)) {
+        long timeInMs = ((Calendar) entityPropertyValue).getTimeInMillis();
+        method.invoke(entity, new java.sql.Date(timeInMs));
+      } else if (parameterType.equals(java.sql.Time.class)) {
+        long timeInMs = ((Calendar) entityPropertyValue).getTimeInMillis();
+        method.invoke(entity, new java.sql.Time(timeInMs));
       } else {
         method.invoke(entity, entityPropertyValue);
       }

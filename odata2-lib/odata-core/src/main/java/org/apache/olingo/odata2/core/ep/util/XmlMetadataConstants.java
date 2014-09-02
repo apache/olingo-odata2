@@ -23,7 +23,9 @@ package org.apache.olingo.odata2.core.ep.util;
  * 
  */
 public class XmlMetadataConstants {
-
+  
+  public static final String EDMX_TAG = "Edmx";
+  
   public static final String EDM_DATA_SERVICES = "DataServices";
   public static final String EDM_DATA_SERVICE_VERSION = "DataServiceVersion";
   public static final String EDM_SCHEMA = "Schema";

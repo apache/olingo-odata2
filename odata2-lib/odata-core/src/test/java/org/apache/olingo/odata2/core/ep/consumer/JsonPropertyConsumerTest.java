@@ -32,7 +32,9 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -130,6 +132,12 @@ public class JsonPropertyConsumerTest extends BaseTest {
     when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Double.getEdmSimpleTypeInstance());
     resultMap = execute(edmProperty, reader);
     assertEquals(Double.valueOf("123456789"), resultMap.get("Name"));
+    // Double without "
+    simplePropertyJson = "{\"d\":{\"Name\":123456789}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Double.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(Double.valueOf("123456789"), resultMap.get("Name"));
     // Int64
     simplePropertyJson = "{\"d\":{\"Name\":\"123456789\"}}";
     reader = prepareReader(simplePropertyJson);
@@ -138,6 +146,12 @@ public class JsonPropertyConsumerTest extends BaseTest {
     assertEquals(Long.valueOf("123456789"), resultMap.get("Name"));
     // Single
     simplePropertyJson = "{\"d\":{\"Name\":\"123456\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Single.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(Float.valueOf("123456"), resultMap.get("Name"));
+    // Single without "
+    simplePropertyJson = "{\"d\":{\"Name\":123456}}";
     reader = prepareReader(simplePropertyJson);
     when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Single.getEdmSimpleTypeInstance());
     resultMap = execute(edmProperty, reader);
@@ -653,10 +667,6 @@ public class JsonPropertyConsumerTest extends BaseTest {
     return resultMap;
   }
 
-  private InputStream createContentAsStream(final String json) throws UnsupportedEncodingException {
-    return new ByteArrayInputStream(json.getBytes("UTF-8"));
-  }
-
   @Test(expected = EntityProviderException.class)
   public void invalidDoubleClosingBrackets() throws Exception {
     String simplePropertyJson = "{\"d\":{\"Name\":\"Team 1\"}}}";
@@ -679,4 +689,118 @@ public class JsonPropertyConsumerTest extends BaseTest {
     new JsonPropertyConsumer().readPropertyStandalone(reader, edmProperty, null);
   }
 
+  @Test
+  public void collectionEmpty() throws Exception {
+    final EntityPropertyInfo info = EntityInfoAggregator.create(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds"));
+    List<?> collection = new JsonPropertyConsumer().readCollection(prepareReader("[]"), info, null);
+    assertNotNull(collection);
+    assertTrue(collection.isEmpty());
+
+    collection = new JsonPropertyConsumer().readCollection(prepareReader("{\"d\":[]}"), info, null);
+    assertNotNull(collection);
+    assertTrue(collection.isEmpty());
+
+    collection = new JsonPropertyConsumer().readCollection(prepareReader("{\"results\":[]}"), info, null);
+    assertNotNull(collection);
+    assertTrue(collection.isEmpty());
+
+    collection = new JsonPropertyConsumer().readCollection(prepareReader("{\"d\":{\"results\":[]}}"), info, null);
+    assertNotNull(collection);
+    assertTrue(collection.isEmpty());
+  }
+
+  @Test
+  public void collectionSimple() throws Exception {
+    final EntityPropertyInfo info = EntityInfoAggregator.create(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds"));
+    List<?> collection = new JsonPropertyConsumer().readCollection(prepareReader("[\"1\",\"42\"]"), info, null);
+    assertNotNull(collection);
+    assertEquals(Arrays.asList("1", "42"), collection);
+  }
+
+  @Test
+  public void collectionSimpleWithMetadata() throws Exception {
+    final EntityPropertyInfo info = EntityInfoAggregator.create(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds"));
+    List<?> collection = new JsonPropertyConsumer().readCollection(prepareReader(
+        "{\"__metadata\":{\"type\":\"Collection(Edm.String)\"},\"results\":[\"1\",\"42\"]}"),
+        info, null);
+    assertNotNull(collection);
+    assertEquals(Arrays.asList("1", "42"), collection);
+  }
+
+  @Test
+  public void collectionSimpleWithMapping() throws Exception {
+    final EntityPropertyInfo info = EntityInfoAggregator.create(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds"));
+    EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    when(readProperties.getTypeMappings()).thenReturn(
+        Collections.<String, Object> singletonMap("AllUsedRoomIds", String.class));
+    List<?> collection = new JsonPropertyConsumer().readCollection(prepareReader("[\"1\",\"42\"]"), info,
+        readProperties);
+    assertNotNull(collection);
+    assertEquals(Arrays.asList("1", "42"), collection);
+  }
+
+  @Test
+  public void collectionComplex() throws Exception {
+    final EntityPropertyInfo info = EntityInfoAggregator.create(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllLocations"));
+    EntityProviderReadProperties readProperties = mock(EntityProviderReadProperties.class);
+    final Map<String, Object> mappings = Collections.<String, Object> singletonMap("Location",
+        Collections.<String, Object> singletonMap("City",
+            Collections.<String, Object> singletonMap("PostalCode", String.class)));
+    when(readProperties.getTypeMappings()).thenReturn(mappings);
+    List<?> collection = new JsonPropertyConsumer().readCollection(prepareReader(
+        "{\"__metadata\":{\"type\":\"Collection(RefScenario.c_Location)\"},"
+            + "\"results\":["
+            + "{\"City\":{\"PostalCode\":\"69124\",\"CityName\":\"Heidelberg\"},\"Country\":\"Germany\"},"
+            + "{\"City\":{\"PostalCode\":\"69190\",\"CityName\":\"Walldorf\"},\"Country\":\"Germany\"}]}"),
+        info, readProperties);
+    assertNotNull(collection);
+    assertEquals(2, collection.size());
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> secondLocation = (Map<String, Object>) collection.get(1);
+    assertEquals("Germany", secondLocation.get("Country"));
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void collectionUnfinished() throws Exception {
+    final EntityPropertyInfo info = EntityInfoAggregator.create(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds"));
+    new JsonPropertyConsumer().readCollection(prepareReader("[\"1\""), info, null);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void collectionWithoutClosing() throws Exception {
+    final EntityPropertyInfo info = EntityInfoAggregator.create(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds"));
+    new JsonPropertyConsumer().readCollection(prepareReader("{\"results\":[]"), info, null);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void collectionWithWrongTag() throws Exception {
+    final EntityPropertyInfo info = EntityInfoAggregator.create(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds"));
+    new JsonPropertyConsumer().readCollection(prepareReader("{\"something\":[]}"), info, null);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void collectionWithWrongInnerTag() throws Exception {
+    final EntityPropertyInfo info = EntityInfoAggregator.create(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds"));
+    new JsonPropertyConsumer().readCollection(prepareReader("{\"d\":{\"something\":[]}}"), info, null);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void collectionWithTrailing() throws Exception {
+    final EntityPropertyInfo info = EntityInfoAggregator.create(
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AllUsedRoomIds"));
+    new JsonPropertyConsumer().readCollection(prepareReader("{\"results\":[],\"a\":0}"), info, null);
+  }
+
+  private InputStream createContentAsStream(final String json) throws UnsupportedEncodingException {
+    return new ByteArrayInputStream(json.getBytes("UTF-8"));
+  }
 }

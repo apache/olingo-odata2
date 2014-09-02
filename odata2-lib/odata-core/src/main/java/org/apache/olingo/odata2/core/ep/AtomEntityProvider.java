@@ -409,4 +409,22 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
     XmlErrorDocumentConsumer xmlErrorDocumentConsumer = new XmlErrorDocumentConsumer();
     return xmlErrorDocumentConsumer.readError(errorDocument);
   }
+
+  @Override
+  public Object readFunctionImport(final EdmFunctionImport functionImport, InputStream content,
+      final EntityProviderReadProperties properties) throws EntityProviderException {
+    try {
+      if (functionImport.getReturnType().getType().getKind() == EdmTypeKind.ENTITY) {
+        return new XmlEntityConsumer().readEntry(functionImport.getEntitySet(), content, properties);
+      } else {
+        final EntityPropertyInfo info = EntityInfoAggregator.create(functionImport);
+        return functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY ?
+          new XmlEntityConsumer().readCollection(info, content, properties) :
+          new XmlEntityConsumer().readProperty(info, content, properties).get(info.getName());
+      }
+    } catch (final EdmException e) {
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
+          .addContent(e.getClass().getSimpleName()), e);
+    }
+  }
 }

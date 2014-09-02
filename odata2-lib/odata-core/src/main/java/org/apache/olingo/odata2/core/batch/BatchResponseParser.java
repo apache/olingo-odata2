@@ -38,7 +38,7 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class BatchResponseParser {
 
-  private static final String LF = "\n";
+  private static final String CRLF = "\r\n";
   private static final String REG_EX_OPTIONAL_WHITESPACE = "\\s?";
   private static final String REG_EX_ZERO_OR_MORE_WHITESPACES = "\\s*";
   private static final String ANY_CHARACTERS = ".*";
@@ -70,7 +70,8 @@ public class BatchResponseParser {
   }
 
   public List<BatchSingleResponse> parse(final InputStream in) throws BatchException {
-    Scanner scanner = new Scanner(in, BatchHelper.DEFAULT_ENCODING).useDelimiter(LF);
+    Scanner scanner = new Scanner(in, BatchHelper.DEFAULT_ENCODING);
+    scanner.useDelimiter(CRLF);
     List<BatchSingleResponse> responseList;
     try {
       responseList = Collections.unmodifiableList(parseBatchResponse(scanner));
@@ -198,10 +199,14 @@ public class BatchResponseParser {
 
       Map<String, String> headers = parseResponseHeaders(scanner);
       parseNewLine(scanner);
+      String body = parseBody(scanner);
       String contentLengthHeader = getHeaderValue(headers, HttpHeaders.CONTENT_LENGTH);
-      String body =
-          (contentLengthHeader != null) ? parseBody(scanner, Integer.parseInt(contentLengthHeader))
-              : parseBody(scanner);
+      if (contentLengthHeader != null) {
+        int contentLength = Integer.parseInt(contentLengthHeader);
+        if (contentLength < body.length()) {
+          body = body.substring(0, contentLength);
+        }
+      }
       response.setStatusCode(statusCode);
       response.setStatusInfo(statusInfo);
       response.setHeaders(headers);
@@ -279,48 +284,20 @@ public class BatchResponseParser {
   private String parseBody(final Scanner scanner) {
     StringBuilder body = null;
     while (scanner.hasNext() && !scanner.hasNext(REG_EX_ANY_BOUNDARY_STRING)) {
-      if (!scanner.hasNext(REG_EX_ZERO_OR_MORE_WHITESPACES)) {
-        if (body == null) {
-          body = new StringBuilder(scanner.next());
-        } else {
-          body.append(LF).append(scanner.next());
-        }
+      if (body == null) {
+        body = new StringBuilder(scanner.next());
       } else {
-        scanner.next();
+        body.append(CRLF).append(scanner.next());
       }
       currentLineNumber++;
-    }
-    String responseBody = body != null ? body.toString() : null;
-    return responseBody;
-  }
-
-  private String parseBody(final Scanner scanner, final int contentLength) {
-    StringBuilder body = null;
-    int length = 0;
-    while (scanner.hasNext() && length < contentLength) {
-      if (!scanner.hasNext(REG_EX_ZERO_OR_MORE_WHITESPACES)) {
-        String nextLine = scanner.next();
-        length += BatchHelper.getBytes(nextLine).length;
-        if (body == null) {
-          body = new StringBuilder(nextLine);
-        } else {
-          body.append(LF).append(nextLine);
-        }
-      } else {
-        scanner.next();
-      }
-      currentLineNumber++;
-      if (scanner.hasNext() && scanner.hasNext(REG_EX_BLANK_LINE)) {
-        scanner.next();
-        currentLineNumber++;
-      }
     }
     String responseBody = body != null ? body.toString() : null;
     return responseBody;
   }
 
   private String getBoundary(final String contentType) throws BatchException {
-    Scanner contentTypeScanner = new Scanner(contentType).useDelimiter(";\\s?");
+    Scanner contentTypeScanner = new Scanner(contentType);
+    contentTypeScanner.useDelimiter(";\\s?");
     if (contentTypeScanner.hasNext(REG_EX_CONTENT_TYPE)) {
       contentTypeScanner.next(REG_EX_CONTENT_TYPE);
     } else {
@@ -359,13 +336,13 @@ public class BatchResponseParser {
   }
 
   private void parseOptionalEmptyLine(final Scanner scanner) {
-      if (scanner.hasNext() && scanner.hasNext(REG_EX_BLANK_LINE)) {
-        scanner.next();
-        currentLineNumber++;
-      }
+    if (scanner.hasNext() && scanner.hasNext(REG_EX_BLANK_LINE)) {
+      scanner.next();
+      currentLineNumber++;
     }
+  }
 
-      private String trimQuota(String boundary) {
+  private String trimQuota(String boundary) {
     if (boundary.matches("\".*\"")) {
       boundary = boundary.replace("\"", "");
     }

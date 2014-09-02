@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -89,30 +90,43 @@ public class AtomEntryEntityProducer {
             .toASCIIString());
       }
 
-      etag = createETag(eia, data);
-      if (etag != null) {
-        writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.M_ETAG, etag);
+      if (!properties.isContentOnly() && !properties.isOmitETag()) {
+        etag = createETag(eia, data);
+        if (etag != null) {
+          writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.M_ETAG, etag);
+        }
       }
-
-      // write all atom infos (mandatory and optional)
-      String selfLink = createSelfLink(eia, data, null);
-      appendAtomMandatoryParts(writer, eia, data, selfLink);
-      appendAtomOptionalParts(writer, eia, data);
-
+      
+      String selfLink = null;
+      if (!properties.isContentOnly()) {
+        // write all atom infos (mandatory and optional)
+        selfLink = createSelfLink(eia, data, null);
+        appendAtomMandatoryParts(writer, eia, data, selfLink);
+        appendAtomOptionalParts(writer, eia, data);
+      }
       if (eia.getEntityType().hasStream()) {
         // write all links
-        appendAtomEditLink(writer, eia, data, selfLink);
-        // TODO: fix
-        appendAtomContentLink(writer, eia, data, selfLink);
-        appendAtomNavigationLinks(writer, eia, data);
+        if (!properties.isContentOnly()) {
+          appendAtomEditLink(writer, eia, data, selfLink);
+          appendAtomContentLink(writer, eia, data, selfLink);
+          appendAtomNavigationLinks(writer, eia, data);
+        } else {
+          appendAdditinalLinks(writer, eia, data);
+        }
         // write properties/content
         appendCustomProperties(writer, eia, data);
-        appendAtomContentPart(writer, eia, data, selfLink);
+        if (!properties.isContentOnly()) {
+          appendAtomContentPart(writer, eia, data, selfLink);
+        }
         appendProperties(writer, eia, data);
       } else {
         // write all links
-        appendAtomEditLink(writer, eia, data, selfLink);
-        appendAtomNavigationLinks(writer, eia, data);
+        if (!properties.isContentOnly()) {
+          appendAtomEditLink(writer, eia, data, selfLink);
+          appendAtomNavigationLinks(writer, eia, data);
+        } else {
+          appendAdditinalLinks(writer, eia, data);
+        }
         // write properties/content
         appendCustomProperties(writer, eia, data);
         writer.writeStartElement(FormatXml.ATOM_CONTENT);
@@ -130,6 +144,26 @@ public class AtomEntryEntityProducer {
       throw new EntityProviderException(EntityProviderException.COMMON, e);
     } catch (URISyntaxException e) {
       throw new EntityProviderException(EntityProviderException.COMMON, e);
+    }
+  }
+
+  private void appendAdditinalLinks(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data)
+      throws EntityProviderException, EdmException, URISyntaxException {
+    final Map<String, Map<String, Object>> links = properties.getAdditionalLinks();
+    if (links != null && !links.isEmpty()) {
+      for (Entry<String, Map<String, Object>> entry : links.entrySet()) {
+        Map<String, Object> navigationKeyMap = entry.getValue();
+        final boolean isFeed =
+            (eia.getNavigationPropertyInfo(entry.getKey()).getMultiplicity() == EdmMultiplicity.MANY);
+        if (navigationKeyMap != null && !navigationKeyMap.isEmpty()) {
+          final EntityInfoAggregator targetEntityInfo = EntityInfoAggregator.create(
+              eia.getEntitySet().getRelatedEntitySet(
+                  (EdmNavigationProperty) eia.getEntityType().getProperty(entry.getKey())));
+          appendAtomNavigationLink(writer, createSelfLink(targetEntityInfo, navigationKeyMap, null), entry.getKey(),
+              isFeed, eia, data);
+        }
+      }
     }
   }
 
@@ -189,27 +223,25 @@ public class AtomEntryEntityProducer {
       } else {
         final EntityInfoAggregator targetEntityInfo = EntityInfoAggregator.create(
             eia.getEntitySet().getRelatedEntitySet((EdmNavigationProperty) eia.getEntityType().getProperty(name)));
-        appendAtomNavigationLink(writer, createSelfLink(targetEntityInfo, key, null), name, null, eia, data);
+        appendAtomNavigationLink(writer, createSelfLink(targetEntityInfo, key, null), name, isFeed, eia, data);
       }
     }
   }
 
   private void appendAtomNavigationLink(final XMLStreamWriter writer, final String target,
-      final String navigationPropertyName, final Boolean isFeed, final EntityInfoAggregator eia,
+      final String navigationPropertyName, final boolean isFeed, final EntityInfoAggregator eia,
       final Map<String, Object> data) throws EntityProviderException, EdmException, URISyntaxException {
     try {
       writer.writeStartElement(FormatXml.ATOM_LINK);
       writer.writeAttribute(FormatXml.ATOM_HREF, target);
       writer.writeAttribute(FormatXml.ATOM_REL, Edm.NAMESPACE_REL_2007_08 + navigationPropertyName);
       writer.writeAttribute(FormatXml.ATOM_TITLE, navigationPropertyName);
-      if (isFeed != null) {
-        if (isFeed) {
-          writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_FEED.toString());
-          appendInlineFeed(writer, navigationPropertyName, eia, data, target);
-        } else {
-          writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_ENTRY.toString());
-          appendInlineEntry(writer, navigationPropertyName, eia, data);
-        }
+      if (isFeed) {
+        writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_FEED.toString());
+        appendInlineFeed(writer, navigationPropertyName, eia, data, target);
+      } else {
+        writer.writeAttribute(FormatXml.ATOM_TYPE, ContentType.APPLICATION_ATOM_XML_ENTRY.toString());
+        appendInlineEntry(writer, navigationPropertyName, eia, data);
       }
       writer.writeEndElement();
     } catch (XMLStreamException e) {
@@ -321,18 +353,16 @@ public class AtomEntryEntityProducer {
   private void appendAtomContentLink(final XMLStreamWriter writer, final EntityInfoAggregator eia,
       final Map<String, Object> data, final String selfLink) throws EntityProviderException, EdmException {
     try {
-      String mediaResourceMimeType = properties.getMediaResourceMimeType();
+      String mediaResourceMimeType = null;
+      EdmMapping entityTypeMapping = eia.getEntityType().getMapping();
+      if (entityTypeMapping != null) {
+        String mediaResourceMimeTypeKey = entityTypeMapping.getMediaResourceMimeTypeKey();
+        if (mediaResourceMimeTypeKey != null) {
+          mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
+        }
+      }
       if (mediaResourceMimeType == null) {
-        EdmMapping entityTypeMapping = eia.getEntityType().getMapping();
-        if (entityTypeMapping != null) {
-          String mediaResourceMimeTypeKey = entityTypeMapping.getMediaResourceMimeTypeKey();
-          if (mediaResourceMimeTypeKey != null) {
-            mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
-          }
-        }
-        if (mediaResourceMimeType == null) {
-          mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
-        }
+        mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
       }
 
       writer.writeStartElement(FormatXml.ATOM_LINK);
@@ -349,10 +379,9 @@ public class AtomEntryEntityProducer {
       final Map<String, Object> data, final String selfLink) throws EntityProviderException, EdmException {
     try {
 
-      // We have to support the media resource mime type at the properties till version 1.2 then this can be refactored
-      String mediaResourceMimeType = properties.getMediaResourceMimeType();
       EdmMapping entityTypeMapping = eia.getEntityType().getMapping();
       String self = null;
+      String mediaResourceMimeType = null;
 
       if (entityTypeMapping != null) {
         String mediaResourceSourceKey = entityTypeMapping.getMediaResourceSourceKey();
@@ -362,22 +391,16 @@ public class AtomEntryEntityProducer {
         if (self == null) {
           self = selfLink + "/$value";
         }
-        if (mediaResourceMimeType == null) {
-          String mediaResourceMimeTypeKey =
-              entityTypeMapping.getMimeType() != null ? entityTypeMapping.getMimeType()
-                  : entityTypeMapping.getMediaResourceMimeTypeKey();
-          if (mediaResourceMimeTypeKey != null) {
-            mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
-          }
-          if (mediaResourceMimeType == null) {
-            mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
-          }
+        String mediaResourceMimeTypeKey = entityTypeMapping.getMediaResourceMimeTypeKey();
+        if (mediaResourceMimeTypeKey != null) {
+          mediaResourceMimeType = (String) data.get(mediaResourceMimeTypeKey);
         }
-      } else {
-        self = selfLink + "/$value";
         if (mediaResourceMimeType == null) {
           mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
         }
+      } else {
+        self = selfLink + "/$value";
+        mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
       }
 
       writer.writeStartElement(FormatXml.ATOM_CONTENT);

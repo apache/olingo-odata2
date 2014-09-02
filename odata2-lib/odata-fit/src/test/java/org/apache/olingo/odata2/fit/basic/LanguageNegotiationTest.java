@@ -100,7 +100,7 @@ public class LanguageNegotiationTest extends AbstractBasicTest {
 
     assertXpathExists("/m:error/m:message", content);
     assertXpathExists("/m:error/m:message[@xml:lang=\"it\"]", content);
-    assertXpathEvaluatesTo("itLanguage", "/m:error/m:message/text()", content);
+    assertXpathEvaluatesTo("eccezione comune", "/m:error/m:message/text()", content);
 
   }
 
@@ -114,11 +114,11 @@ public class LanguageNegotiationTest extends AbstractBasicTest {
 
     assertXpathExists("/m:error/m:message", content);
     assertXpathExists("/m:error/m:message[@xml:lang=\"en\"]", content);
-    assertXpathEvaluatesTo("fallbackLanguage", "/m:error/m:message/text()", content);
+    assertXpathEvaluatesTo("Common exception", "/m:error/m:message/text()", content);
   }
 
   private static class MyException extends ODataMessageException {
-    private static final MessageReference TEST = createMessageReference(MyException.class, "TEST");
+    private static final MessageReference TEST = createMessageReference(ODataMessageException.class, "COMMON");
     private static final long serialVersionUID = 1L;
 
     /**

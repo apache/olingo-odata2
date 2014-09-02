@@ -217,6 +217,16 @@ public class ProviderFacadeImplTest extends AbstractConsumerTest {
   }
 
   @Test
+  public void readFunctionImport() throws Exception {
+    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer()
+        .getFunctionImport("MaximalAge");
+    InputStream content = new ByteArrayInputStream("{\"d\":{\"MaximalAge\":42}}".getBytes("UTF-8"));
+    final Object result = new ProviderFacadeImpl().readFunctionImport(HttpContentType.APPLICATION_JSON,
+        functionImport, content, EntityProviderReadProperties.init().build());
+    assertEquals((short) 42, result);
+  }
+
+  @Test
   public void readLink() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
     InputStream content = new ByteArrayInputStream("{\"d\":{\"uri\":\"http://somelink\"}}".getBytes("UTF-8"));

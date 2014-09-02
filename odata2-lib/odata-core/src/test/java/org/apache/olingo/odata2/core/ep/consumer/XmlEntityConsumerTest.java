@@ -433,6 +433,76 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
   }
 
   @Test
+  public void readContentOnlyEmployee() throws Exception {
+    // prepare
+    String content = readFile("EmployeeContentOnly.xml");
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    XmlEntityConsumer xec = new XmlEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+
+    // verify
+    assertEquals(9, result.getProperties().size());
+  }
+
+  @Test
+  public void readContentOnlyRoom() throws Exception {
+    // prepare
+    String content = readFile("RoomContentOnly.xml");
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    XmlEntityConsumer xec = new XmlEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+
+    // verify
+    assertEquals(4, result.getProperties().size());
+  }
+
+  @Test
+  public void readContentOnlyEmployeeWithAdditionalLink() throws Exception {
+    // prepare
+    String content = readFile("EmployeeContentOnlyWithAdditionalLink.xml");
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    XmlEntityConsumer xec = new XmlEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+
+    // verify
+    assertEquals(9, result.getProperties().size());
+    List<String> associationUris = result.getMetadata().getAssociationUris("ne_Manager");
+    assertEquals(1, associationUris.size());
+    assertEquals("Managers('1')", associationUris.get(0));
+  }
+
+  @Test
+  public void readContentOnlyRoomWithAdditionalLink() throws Exception {
+    // prepare
+    String content = readFile("RoomContentOnlyWithAdditionalLink.xml");
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    XmlEntityConsumer xec = new XmlEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+
+    // verify
+    assertEquals(4, result.getProperties().size());
+    List<String> associationUris = result.getMetadata().getAssociationUris("nr_Building");
+    assertEquals(1, associationUris.size());
+    assertEquals("Buildings('1')", associationUris.get(0));
+  }
+
+  @Test
   public void readDeltaLink() throws Exception {
     // prepare
     String content = readFile("feed_with_delta_link.xml");
@@ -815,9 +885,8 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     EntryMetadata employeeMetadata = employee.getMetadata();
     assertNotNull(employeeMetadata);
     assertEquals("W/\"1\"", employeeMetadata.getEtag());
-    
-    
-    //Inline
+
+    // Inline
     ODataEntry room = (ODataEntry) properties.get("ne_Room");
     Map<String, Object> roomProperties = room.getProperties();
     assertEquals(4, roomProperties.size());

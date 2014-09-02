@@ -18,14 +18,11 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.model;
 
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.metamodel.Attribute;
 
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -43,14 +40,6 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmReferentialConstraintRoleView;
 
 public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implements JPAEdmReferentialConstraintRoleView {
-  /*
-   * Static Buffer
-   */
-  private static Attribute<?, ?> bufferedJPAAttribute = null;
-  private static ArrayList<JoinColumn> bufferedJoinColumns = new ArrayList<JoinColumn>();
-  /*
-   * Static Buffer
-   */
 
   private boolean firstBuild = true;
 
@@ -58,7 +47,7 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
   private JPAEdmReferentialConstraintRoleView.RoleType roleType;
 
   private Attribute<?, ?> jpaAttribute;
-  private ArrayList<String> jpaColumnNames;
+  private List<String[]> jpaColumnNames;
   private Association association;
 
   private boolean roleExists = false;
@@ -75,6 +64,7 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
     this.roleType = roleType;
 
     jpaAttribute = propertyView.getJPAAttribute();
+    jpaColumnNames = propertyView.getJPAJoinColumns();
     association = associationView.getEdmAssociation();
 
   }
@@ -141,22 +131,12 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
       firstBuild = false;
       isConsistent = false;
 
-      extractJoinColumns();
-
-      if (!roleExists) {
+      if (jpaColumnNames == null || jpaColumnNames.isEmpty()) {
+        roleExists = false;
         return;
+      } else {
+        roleExists = true;
       }
-
-      jpaColumnNames = new ArrayList<String>();
-
-      for (JoinColumn joinColumn : bufferedJoinColumns) {
-        if (roleType == RoleType.PRINCIPAL) {
-          jpaColumnNames.add(joinColumn.referencedColumnName());
-        } else if (roleType == RoleType.DEPENDENT) {
-          jpaColumnNames.add(joinColumn.name());
-        }
-      }
-
     }
 
     private void buildRole() throws SecurityException, NoSuchFieldException {
@@ -183,9 +163,12 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
 
         List<PropertyRef> propertyRefs = new ArrayList<PropertyRef>();
         if (edmEntityType != null) {
-          for (String columnName : jpaColumnNames) {
+          for (String[] columnName : jpaColumnNames) {
             for (Property property : edmEntityType.getProperties()) {
-              if (columnName.equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName())) {
+              if (columnName[0].equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName()) ||
+                  columnName[0].equals(property.getName()) ||
+                  columnName[1].equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName()) ||
+                  columnName[1].equals(property.getName())) {
                 PropertyRef propertyRef = new PropertyRef();
                 propertyRef.setName(property.getName());
                 propertyRefs.add(propertyRef);
@@ -212,47 +195,6 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
         }
 
       }
-    }
-
-    private void extractJoinColumns() {
-      /*
-       * Check against Static Buffer whether the join column was already
-       * extracted.
-       */
-      if (!jpaAttribute.equals(bufferedJPAAttribute)) {
-        bufferedJPAAttribute = jpaAttribute;
-        bufferedJoinColumns.clear();
-      } else if (bufferedJoinColumns.isEmpty()) {
-        roleExists = false;
-        return;
-      } else {
-        roleExists = true;
-        return;
-      }
-
-      AnnotatedElement annotatedElement = (AnnotatedElement) jpaAttribute.getJavaMember();
-
-      if (annotatedElement == null) {
-        return;
-      }
-
-      JoinColumn joinColumn = annotatedElement.getAnnotation(JoinColumn.class);
-      if (joinColumn == null) {
-        JoinColumns joinColumns = annotatedElement.getAnnotation(JoinColumns.class);
-
-        if (joinColumns != null) {
-          JoinColumn[] joinColumnArray = joinColumns.value();
-
-          for (JoinColumn element : joinColumnArray) {
-            bufferedJoinColumns.add(element);
-          }
-        } else {
-          return;
-        }
-      } else {
-        bufferedJoinColumns.add(joinColumn);
-      }
-      roleExists = true;
     }
   }
 }

@@ -53,6 +53,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
+import org.apache.olingo.odata2.api.edm.provider.Mapping;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
@@ -69,6 +70,7 @@ import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -192,8 +194,8 @@ public class JPAProcessorImplTest {
     EasyMock.expect(objUriInfo.getSkipToken()).andReturn("5");
     EasyMock.expect(objUriInfo.getInlineCount()).andStubReturn(getInlineCount());
     EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
-    // EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(getFunctionImport());
     EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(null);
+    EasyMock.expect(objUriInfo.getCustomQueryOptions()).andStubReturn(null);
     EasyMock.replay(objUriInfo);
     return objUriInfo;
   }
@@ -576,13 +578,13 @@ public class JPAProcessorImplTest {
   }
 
   private EdmMapping getEdmMappingMockedObj(final String propertyName) {
-    EdmMapping mockedEdmMapping = EasyMock.createMock(EdmMapping.class);
+    EdmMapping mockedEdmMapping = new JPAEdmMappingImpl();
     if (propertyName.equalsIgnoreCase(SALES_ORDER)) {
-      EasyMock.expect(mockedEdmMapping.getInternalName()).andStubReturn(SALES_ORDER_HEADERS);
+      ((Mapping) mockedEdmMapping).setInternalName(SALES_ORDER_HEADERS);
     } else {
-      EasyMock.expect(mockedEdmMapping.getInternalName()).andStubReturn(propertyName);
+      ((Mapping) mockedEdmMapping).setInternalName(propertyName);
     }
-    EasyMock.replay(mockedEdmMapping);
+
     return mockedEdmMapping;
   }
 
