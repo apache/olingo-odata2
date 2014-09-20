@@ -33,6 +33,7 @@
 				<JPAAttributes>
 					<JPAAttribute name="liId">ID</JPAAttribute>
 					<JPAAttribute name="soId">SalesOrderID</JPAAttribute>
+					<JPAAttribute name="Material_Id">mID</JPAAttribute>
 				</JPAAttributes>
 				<JPARelationships>
 					<JPARelationship name="salesOrderHeader">SalesOrderHeaderDetails</JPARelationship>

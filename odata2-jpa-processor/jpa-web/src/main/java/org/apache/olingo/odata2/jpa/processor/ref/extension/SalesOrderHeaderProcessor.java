@@ -71,7 +71,7 @@ public class SalesOrderHeaderProcessor {
     }
   }
 
-  @EdmFunctionImport(returnType = @ReturnType(type = Type.ENTITY, isCollection = true), entitySet = "SalesOrders")
+  @EdmFunctionImport(returnType = @ReturnType(type = Type.ENTITY, isCollection = false), entitySet = "SalesOrders")
   public SalesOrderHeader calculateNetAmount(
       @EdmFunctionImportParameter(name = "SoID", facets = @EdmFacets(nullable = false)) final Long soID)
       throws ODataException {
