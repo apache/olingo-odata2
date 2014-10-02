@@ -51,7 +51,6 @@ public class BatchResponseTransformator implements BatchTransformator {
 
     List<BatchParserResult> resultList = new ArrayList<BatchParserResult>();
 
-    BatchTransformatorCommon.parsePartSyntax(bodyPart);
     BatchTransformatorCommon.validateContentType(bodyPart.getHeaders());
 
     resultList.addAll(handleBodyPart(bodyPart));
@@ -64,7 +63,7 @@ public class BatchResponseTransformator implements BatchTransformator {
 
     if (bodyPart.isChangeSet()) {
       for (BatchQueryOperation operation : bodyPart.getRequests()) {
-        bodyPartResult.add(transformChangeSet((BatchChangeSet) operation));
+        bodyPartResult.add(transformChangeSet((BatchChangeSetPart) operation));
       }
     } else {
       bodyPartResult.add(transformQueryOperation(bodyPart.getRequests().get(0), getContentId(bodyPart.getHeaders())));
@@ -73,7 +72,7 @@ public class BatchResponseTransformator implements BatchTransformator {
     return bodyPartResult;
   }
 
-  private BatchSingleResponse transformChangeSet(final BatchChangeSet changeSet) throws BatchException {
+  private BatchSingleResponse transformChangeSet(final BatchChangeSetPart changeSet) throws BatchException {
     BatchTransformatorCommon.validateContentTransferEncoding(changeSet.getHeaders(), true);
 
     return transformQueryOperation(changeSet.getRequest(), getContentId(changeSet.getHeaders()));
@@ -84,8 +83,8 @@ public class BatchResponseTransformator implements BatchTransformator {
     BatchSingleResponseImpl response = new BatchSingleResponseImpl();
     response.setContentId(contentId);
     response.setHeaders(BatchParserCommon.headerFieldMapToSingleMap(operation.getHeaders()));
-    response.setStatusCode(getStatusCode(operation.httpMethod));
-    response.setStatusInfo(getStatusInfo(operation.getHttpMethod()));
+    response.setStatusCode(getStatusCode(operation.httpStatusLine));
+    response.setStatusInfo(getStatusInfo(operation.getHttpStatusLine()));
     response.setBody(getBody(operation));
 
     return response;
@@ -105,8 +104,8 @@ public class BatchResponseTransformator implements BatchTransformator {
 
   private String getBody(final BatchQueryOperation operation) throws BatchException {
     int contentLength = BatchTransformatorCommon.getContentLength(operation.getHeaders());
-    List<String> body = BatchParserCommon.trimStringListToLength(operation.getBody(), contentLength);
-    return BatchParserCommon.stringListToString(body);
+
+    return BatchParserCommon.trimStringListToStringLength(operation.getBody(), contentLength);
   }
 
   private String getStatusCode(final String httpMethod) throws BatchException {

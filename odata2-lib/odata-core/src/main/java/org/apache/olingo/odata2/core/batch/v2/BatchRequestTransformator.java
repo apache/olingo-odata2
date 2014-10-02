@@ -55,7 +55,6 @@ public class BatchRequestTransformator implements BatchTransformator {
     final List<ODataRequest> requests = new LinkedList<ODataRequest>();
     final List<BatchParserResult> resultList = new ArrayList<BatchParserResult>();
 
-    BatchTransformatorCommon.parsePartSyntax(bodyPart);
     validateBodyPartHeaders(bodyPart);
 
     for (BatchQueryOperation queryOperation : bodyPart.getRequests()) {
@@ -77,7 +76,7 @@ public class BatchRequestTransformator implements BatchTransformator {
       final String baseUri, final BatchQueryOperation queryOperation) throws BatchException {
 
     if (bodyPart.isChangeSet()) {
-      BatchQueryOperation encapsulatedQueryOperation = ((BatchChangeSet) queryOperation).getRequest();
+      BatchQueryOperation encapsulatedQueryOperation = ((BatchChangeSetPart) queryOperation).getRequest();
       Map<String, HeaderField> headers = transformHeader(encapsulatedQueryOperation, queryOperation);
       validateChangeSetMultipartMimeHeaders(queryOperation, encapsulatedQueryOperation);
 
@@ -98,7 +97,7 @@ public class BatchRequestTransformator implements BatchTransformator {
   private ODataRequest createRequest(final BatchQueryOperation operation, final Map<String, HeaderField> headers,
       final PathInfo pathInfo, final String baseUri, final boolean isChangeSet) throws BatchException {
 
-    ODataHttpMethod httpMethod = getHttpMethod(operation.getHttpMethod());
+    ODataHttpMethod httpMethod = getHttpMethod(operation.getHttpStatusLine());
     validateHttpMethod(httpMethod, isChangeSet);
     validateBody(httpMethod, operation);
     InputStream bodyStrean = getBodyStream(operation, headers, httpMethod);
@@ -106,10 +105,10 @@ public class BatchRequestTransformator implements BatchTransformator {
     ODataRequestBuilder requestBuilder = ODataRequest.method(httpMethod)
         .acceptableLanguages(getAcceptLanguageHeaders(headers))
         .acceptHeaders(getAcceptHeaders(headers))
-        .allQueryParameters(BatchParserCommon.parseQueryParameter(operation.getHttpMethod()))
+        .allQueryParameters(BatchParserCommon.parseQueryParameter(operation.getHttpStatusLine()))
         .body(bodyStrean)
         .requestHeaders(BatchParserCommon.headerFieldMapToMultiMap(headers))
-        .pathInfo(BatchParserCommon.parseRequestUri(operation.getHttpMethod(), pathInfo, baseUri));
+        .pathInfo(BatchParserCommon.parseRequestUri(operation.getHttpStatusLine(), pathInfo, baseUri));
 
     addContentTypeHeader(requestBuilder, headers);
 
@@ -135,9 +134,12 @@ public class BatchRequestTransformator implements BatchTransformator {
       return new ByteArrayInputStream(new byte[0]);
     } else {
       int contentLength = BatchTransformatorCommon.getContentLength(headers);
-      contentLength = (contentLength >= 0) ? contentLength : Integer.MAX_VALUE;
 
-      return BatchParserCommon.convertMessageToInputStream(operation.getBody(), contentLength);
+      if (contentLength == -1) {
+        return BatchParserCommon.convertMessageToInputStream(operation.getBody());
+      } else {
+        return BatchParserCommon.convertMessageToInputStream(operation.getBody(), contentLength);
+      }
     }
   }
 

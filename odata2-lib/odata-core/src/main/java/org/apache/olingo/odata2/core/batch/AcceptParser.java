@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.batch;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -30,10 +31,11 @@ import java.util.regex.Pattern;
 import org.apache.olingo.odata2.api.batch.BatchException;
 
 /**
- *  
+ *
  */
 public class AcceptParser {
 
+  private static final String COMMA = ",";
   private static final String BAD_REQUEST = "400";
   private static final String ALL = "*";
   private static final String REG_EX_QUALITY_FACTOR = "q=((?:1\\.0{0,3})|(?:0\\.[0-9]{0,2}[1-9]))";
@@ -48,10 +50,15 @@ public class AcceptParser {
 
   private static final double QUALITY_PARAM_FACTOR = 0.001;
 
-  public static List<String> parseAcceptHeaders(final String headerValue) throws BatchException {
-    TreeSet<Accept> acceptTree = getAcceptTree();
-    List<String> acceptHeaders = new ArrayList<String>();
-    Scanner acceptHeaderScanner = new Scanner(headerValue);
+  private List<String> acceptHeaderValues = new ArrayList<String>();
+  private List<String> acceptLanguageHeaderValues = new ArrayList<String>();
+
+  public List<String> parseAcceptHeaders() throws BatchException {
+    final String headerValue = concatenateHeaderLines(acceptHeaderValues);
+    final TreeSet<Accept> acceptTree = getAcceptTree();
+    final List<String> acceptHeaders = new ArrayList<String>();
+    final Scanner acceptHeaderScanner = new Scanner(headerValue);
+
     acceptHeaderScanner.useDelimiter(",\\s?");
     while (acceptHeaderScanner.hasNext()) {
       if (acceptHeaderScanner.hasNext(REG_EX_ACCEPT_WITH_Q_FACTOR)) {
@@ -75,18 +82,21 @@ public class AcceptParser {
       }
     }
     for (Accept accept : acceptTree) {
-      acceptHeaders.add(accept.getValue());
+      if (!acceptHeaders.contains(accept.getValue())) {
+        acceptHeaders.add(accept.getValue());
+      }
     }
     acceptHeaderScanner.close();
     return acceptHeaders;
   }
 
-  private static double getQualityFactor(final String acceptHeaderValue, double qualityFactor) {
+  private double getQualityFactor(final String acceptHeaderValue, double qualityFactor) {
     int paramNumber = 0;
     double typeFactor = 0.0;
     double subtypeFactor = 0.0;
     String[] mediaRange = acceptHeaderValue.split("(?=[^;]+);");
     String[] mediaTypes = mediaRange[0].split("/");
+
     if (mediaTypes.length == 2) {
       String type = mediaTypes[0];
       String subtype = mediaTypes[1];
@@ -101,13 +111,15 @@ public class AcceptParser {
       String[] parameters = mediaRange[1].split(";\\s?");
       paramNumber = parameters.length;
     }
+
     qualityFactor = qualityFactor + paramNumber * QUALITY_PARAM_FACTOR + typeFactor + subtypeFactor;
     return qualityFactor;
   }
 
-  public static List<String> parseAcceptableLanguages(final String headerValue) throws BatchException {
-    List<String> acceptLanguages = new LinkedList<String>();
-    TreeSet<Accept> acceptTree = getAcceptTree();
+  public List<String> parseAcceptableLanguages() throws BatchException {
+    final String headerValue = concatenateHeaderLines(acceptLanguageHeaderValues);
+    final List<String> acceptLanguages = new LinkedList<String>();
+    final TreeSet<Accept> acceptTree = getAcceptTree();
     Scanner acceptLanguageScanner = new Scanner(headerValue);
     acceptLanguageScanner.useDelimiter(",\\s?");
 
@@ -132,13 +144,37 @@ public class AcceptParser {
       }
     }
     for (Accept accept : acceptTree) {
-      acceptLanguages.add(accept.getValue());
+      if (!acceptLanguages.contains(accept.getValue())) {
+        acceptLanguages.add(accept.getValue());
+      }
     }
     acceptLanguageScanner.close();
     return acceptLanguages;
   }
 
-  private static TreeSet<Accept> getAcceptTree() {
+  private String concatenateHeaderLines(final List<String> headerValues) {
+    final StringBuilder builder = new StringBuilder();
+    final Iterator<String> iter = headerValues.iterator();
+
+    while (iter.hasNext()) {
+      builder.append(iter.next());
+      if (iter.hasNext()) {
+        builder.append(COMMA);
+      }
+    }
+
+    return builder.toString();
+  }
+
+  public void addAcceptHeaderValue(final String headerValue) {
+    acceptHeaderValues.add(headerValue);
+  }
+
+  public void addAcceptLanguageHeaderValue(final String headerValue) {
+    acceptLanguageHeaderValues.add(headerValue);
+  }
+
+  private TreeSet<Accept> getAcceptTree() {
     TreeSet<Accept> treeSet = new TreeSet<Accept>(new Comparator<Accept>() {
       @Override
       public int compare(final Accept o1, final Accept o2) {

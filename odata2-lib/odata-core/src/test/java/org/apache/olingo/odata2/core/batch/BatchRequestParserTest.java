@@ -431,7 +431,7 @@ public class BatchRequestParserTest {
         + "--batch_8194-cf13-1f56--";
     parseInvalidBatchBody(batch);
   }
-  
+
   @Test(expected = BatchException.class)
   public void testMissingContentTransferEncoding() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
@@ -439,7 +439,7 @@ public class BatchRequestParserTest {
         + CRLF
         + "--changeset_f980-1cb6-94dd" + CRLF
         + "Content-Type: application/http" + CRLF
-        //+ "Content-Transfer-Encoding: binary" + CRLF
+        // + "Content-Transfer-Encoding: binary" + CRLF
         + CRLF
         + "POST Employees('2') HTTP/1.1" + CRLF
         + "Content-Type: application/json;odata=verbose" + CRLF
@@ -449,14 +449,14 @@ public class BatchRequestParserTest {
         + "--batch_8194-cf13-1f56--";
     parseInvalidBatchBody(batch);
   }
-  
+
   @Test(expected = BatchException.class)
   public void testMissingContentType() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
         + CRLF
         + "--changeset_f980-1cb6-94dd" + CRLF
-        //+ "Content-Type: application/http" + CRLF
+        // + "Content-Type: application/http" + CRLF
         + "Content-Transfer-Encoding: binary" + CRLF
         + CRLF
         + "POST Employees('2') HTTP/1.1" + CRLF
@@ -467,7 +467,7 @@ public class BatchRequestParserTest {
         + "--batch_8194-cf13-1f56--";
     parseInvalidBatchBody(batch);
   }
-  
+
   @Test(expected = BatchException.class)
   public void testNoCloseDelimiter() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
@@ -605,32 +605,33 @@ public class BatchRequestParserTest {
 
     }
   }
-  
+
   @SuppressWarnings("unused")
-  @Test(expected=BatchException.class)
+  @Test(expected = BatchException.class)
+  @Ignore("This header should not be validated")
   public void testNegativeContentLength() throws BatchException, IOException {
-      String batch = ""
-          + "--batch_8194-cf13-1f56" + CRLF
-          + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-          + "Content-Length: -2" + CRLF
-          + CRLF
-          + "--changeset_f980-1cb6-94dd" + CRLF
-          + MIME_HEADERS
-          + "Content-ID: " + PUT_MIME_HEADER_CONTENT_ID + CRLF
-          + CRLF
-          + "PUT $" + CONTENT_ID_REFERENCE + "/EmployeeName HTTP/1.1" + CRLF
-          + "Content-Type: application/json;odata=verbose" + CRLF
-          + "Content-Id:" + PUT_REQUEST_HEADER_CONTENT_ID + CRLF
-          + CRLF
-          + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-          + "--changeset_f980-1cb6-94dd--" + CRLF
-          + CRLF
-          + "--batch_8194-cf13-1f56--";
-      InputStream in = new ByteArrayInputStream(batch.getBytes());
-      BatchParser parser = new BatchParser(contentType, batchProperties, true);
-      List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
+    String batch = ""
+        + "--batch_8194-cf13-1f56" + CRLF
+        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
+        + "Content-Length: -2" + CRLF
+        + CRLF
+        + "--changeset_f980-1cb6-94dd" + CRLF
+        + MIME_HEADERS
+        + "Content-ID: " + PUT_MIME_HEADER_CONTENT_ID + CRLF
+        + CRLF
+        + "PUT $" + CONTENT_ID_REFERENCE + "/EmployeeName HTTP/1.1" + CRLF
+        + "Content-Type: application/json;odata=verbose" + CRLF
+        + "Content-Id:" + PUT_REQUEST_HEADER_CONTENT_ID + CRLF
+        + CRLF
+        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
+        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + CRLF
+        + "--batch_8194-cf13-1f56--";
+    InputStream in = new ByteArrayInputStream(batch.getBytes());
+    BatchParser parser = new BatchParser(contentType, batchProperties, true);
+    List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
   }
-  
+
   @SuppressWarnings("unused")
   @Test
   public void testNegativeContentLengthChangeSet() throws BatchException, IOException {
@@ -655,9 +656,9 @@ public class BatchRequestParserTest {
     BatchParser parser = new BatchParser(contentType, batchProperties, true);
     List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
   }
-  
+
   @SuppressWarnings("unused")
-  @Test(expected=BatchException.class)
+  @Test(expected = BatchException.class)
   public void testNegativeContentLengthRequest() throws BatchException, IOException {
     String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
@@ -680,7 +681,7 @@ public class BatchRequestParserTest {
     BatchParser parser = new BatchParser(contentType, batchProperties, true);
     List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
   }
-  
+
   @Test
   public void testContentLengthGreatherThanBodyLength() throws BatchException, IOException {
     String batch = ""
@@ -746,6 +747,7 @@ public class BatchRequestParserTest {
   }
 
   @Test(expected = BatchException.class)
+  @Ignore("This header should not be validated")
   public void testCutChangeSetDelimiter() throws BatchException, IOException {
     String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
@@ -918,7 +920,7 @@ public class BatchRequestParserTest {
       }
     }
   }
-  
+
   @Test
   public void testNoContentId() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
@@ -950,10 +952,10 @@ public class BatchRequestParserTest {
         + "--batch_8194-cf13-1f56--";
     InputStream in = new ByteArrayInputStream(batch.getBytes());
     BatchParser parser = new BatchParser(contentType, batchProperties, true);
-    List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);  // No exception should be thrown
+    List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in); // No exception should be thrown
     assertNotNull(batchRequestParts);
   }
-  
+
   @Test
   public void testPreamble() throws BatchException, IOException {
     String batch = ""
@@ -1015,6 +1017,60 @@ public class BatchRequestParserTest {
         inputStreamToString(changeSetPart.getRequests().get(0).getBody()));
     assertEquals("{\"EmployeeName\":\"Peter Fall\"}",
         inputStreamToString(changeSetPart.getRequests().get(1).getBody()));
+  }
+
+  @SuppressWarnings("unused")
+  @Test
+  public void testContentTypeCaseInsensitive() throws BatchException, IOException {
+    String batch = ""
+        + "--batch_8194-cf13-1f56" + CRLF
+        + "Content-Type: muLTiParT/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
+        + CRLF
+        + "--changeset_f980-1cb6-94dd" + CRLF
+        + MIME_HEADERS
+        + "Content-ID: " + PUT_MIME_HEADER_CONTENT_ID + CRLF
+        + "Content-Length: -2" + CRLF
+        + CRLF
+        + "PUT $" + CONTENT_ID_REFERENCE + "/EmployeeName HTTP/1.1" + CRLF
+        + "Content-Type: application/json;odata=verbose" + CRLF
+        + "Content-Id:" + PUT_REQUEST_HEADER_CONTENT_ID + CRLF
+        + CRLF
+        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
+        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + CRLF
+        + "--batch_8194-cf13-1f56--";
+    InputStream in = new ByteArrayInputStream(batch.getBytes());
+    BatchParser parser = new BatchParser(contentType, batchProperties, true);
+    List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
+  }
+
+  @Test
+  public void testContentTypeBoundaryCaseInsensitive() throws BatchException, IOException {
+    String batch = ""
+        + "--batch_8194-cf13-1f56" + CRLF
+        + "Content-Type: multipart/mixed; bOunDaRy=changeset_f980-1cb6-94dd" + CRLF
+        + CRLF
+        + "--changeset_f980-1cb6-94dd" + CRLF
+        + MIME_HEADERS
+        + "Content-ID: " + PUT_MIME_HEADER_CONTENT_ID + CRLF
+        + "Content-Length: -2" + CRLF
+        + CRLF
+        + "PUT $" + CONTENT_ID_REFERENCE + "/EmployeeName HTTP/1.1" + CRLF
+        + "Content-Type: application/json;odata=verbose" + CRLF
+        + "Content-Id:" + PUT_REQUEST_HEADER_CONTENT_ID + CRLF
+        + CRLF
+        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
+        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + CRLF
+        + "--batch_8194-cf13-1f56--";
+    InputStream in = new ByteArrayInputStream(batch.getBytes());
+    BatchParser parser = new BatchParser(contentType, batchProperties, true);
+    List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
+
+    assertNotNull(batchRequestParts);
+    assertEquals(1, batchRequestParts.size());
+    assertTrue(batchRequestParts.get(0).isChangeSet());
+    assertEquals(1, batchRequestParts.get(0).getRequests().size());
   }
 
   @Test

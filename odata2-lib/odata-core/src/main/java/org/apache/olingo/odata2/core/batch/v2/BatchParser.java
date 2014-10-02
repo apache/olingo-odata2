@@ -83,7 +83,7 @@ public class BatchParser {
     final List<List<String>> bodyPartStrings = splitBodyParts(in, boundary);
 
     for (List<String> bodyPartString : bodyPartStrings) {
-      BatchBodyPart bodyPart = new BatchBodyPart(bodyPartString, boundary, isStrict);
+      BatchBodyPart bodyPart = new BatchBodyPart(bodyPartString, boundary, isStrict).parse();
       resultList.addAll(transformator.transform(bodyPart, batchRequestPathInfo, baseUri));
     }
 

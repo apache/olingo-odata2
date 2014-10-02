@@ -27,7 +27,7 @@ import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon.HeaderField;
 public class BatchQueryOperation implements BatchPart {
 
   protected final boolean isStrict;
-  protected String httpMethod;
+  protected String httpStatusLine;
   protected Map<String, HeaderField> headers;
   protected List<String> body;
   protected int bodySize;
@@ -39,7 +39,7 @@ public class BatchQueryOperation implements BatchPart {
   }
 
   public BatchQueryOperation parse() throws BatchException {
-    httpMethod = consumeHttpMethod(message);
+    httpStatusLine = consumeHttpStatusLine(message);
     headers = BatchParserCommon.consumeHeaders(message);
     BatchParserCommon.consumeBlankLine(message, isStrict);
     body = message;
@@ -47,7 +47,7 @@ public class BatchQueryOperation implements BatchPart {
     return this;
   }
 
-  protected String consumeHttpMethod(final List<String> message) throws BatchException {
+  protected String consumeHttpStatusLine(final List<String> message) throws BatchException {
     if (message.size() > 0 && !message.get(0).trim().equals("")) {
       String method = message.get(0);
       message.remove(0);
@@ -58,8 +58,8 @@ public class BatchQueryOperation implements BatchPart {
     }
   }
 
-  public String getHttpMethod() {
-    return httpMethod;
+  public String getHttpStatusLine() {
+    return httpStatusLine;
   }
 
   public List<String> getBody() {

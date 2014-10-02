@@ -31,8 +31,10 @@ public class AcceptParserTest {
 
   @Test
   public void testAcceptHeader() throws BatchException {
-    List<String> acceptHeaders =
-        AcceptParser.parseAcceptHeaders("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+    List<String> acceptHeaders = parser.parseAcceptHeaders();
+    
     assertNotNull(acceptHeaders);
     assertEquals(4, acceptHeaders.size());
     assertEquals("text/html", acceptHeaders.get(0));
@@ -43,48 +45,58 @@ public class AcceptParserTest {
 
   @Test
   public void testAcceptHeaderWithParameter() throws BatchException {
-    List<String> acceptHeaders = AcceptParser.parseAcceptHeaders("application/json;odata=verbose;q=1.0, */*;q=0.1");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("application/json;odata=verbose;q=1.0, */*;q=0.1");
+    List<String> acceptHeaders = parser.parseAcceptHeaders();
+    
     assertNotNull(acceptHeaders);
     assertEquals(2, acceptHeaders.size());
     assertEquals("application/json;odata=verbose", acceptHeaders.get(0));
-    ;
     assertEquals("*/*", acceptHeaders.get(1));
   }
 
   @Test
   public void testAcceptHeaderWithParameterAndLws() throws BatchException {
-    List<String> acceptHeaders = AcceptParser.parseAcceptHeaders("application/json;  odata=verbose;q=1.0, */*;q=0.1");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("application/json;  odata=verbose;q=1.0, */*;q=0.1");
+    List<String> acceptHeaders = parser.parseAcceptHeaders();
+
     assertNotNull(acceptHeaders);
     assertEquals(2, acceptHeaders.size());
     assertEquals("application/json;  odata=verbose", acceptHeaders.get(0));
-    ;
     assertEquals("*/*", acceptHeaders.get(1));
   }
 
   @Test
   public void testAcceptHeaderWithTabulator() throws BatchException {
-    List<String> acceptHeaders = AcceptParser.parseAcceptHeaders("application/json;\todata=verbose;q=1.0, */*;q=0.1");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("application/json;\todata=verbose;q=1.0, */*;q=0.1");
+    List<String> acceptHeaders = parser.parseAcceptHeaders();
+    
     assertNotNull(acceptHeaders);
     assertEquals(2, acceptHeaders.size());
     assertEquals("application/json;" + TAB + "odata=verbose", acceptHeaders.get(0));
-    ;
     assertEquals("*/*", acceptHeaders.get(1));
   }
 
   @Test
   public void testAcceptHeaderWithTwoParameters() throws BatchException {
-    List<String> acceptHeaders =
-        AcceptParser.parseAcceptHeaders("application/xml;another=test ; param=alskdf, */*;q=0.1");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("application/xml;another=test ; param=alskdf, */*;q=0.1");
+    List<String> acceptHeaders = parser.parseAcceptHeaders();
+
     assertNotNull(acceptHeaders);
     assertEquals(2, acceptHeaders.size());
     assertEquals("application/xml;another=test ; param=alskdf", acceptHeaders.get(0));
-    ;
     assertEquals("*/*", acceptHeaders.get(1));
   }
 
   @Test
   public void testAcceptHeader2() throws BatchException {
-    List<String> acceptHeaders = AcceptParser.parseAcceptHeaders("text/html;level=1, application/*, */*;q=0.1");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("text/html;level=1, application/*, */*;q=0.1");
+    List<String> acceptHeaders = parser.parseAcceptHeaders();
+
     assertNotNull(acceptHeaders);
     assertEquals(3, acceptHeaders.size());
     assertEquals("text/html;level=1", acceptHeaders.get(0));
@@ -94,7 +106,10 @@ public class AcceptParserTest {
 
   @Test
   public void testMoreSpecificMediaType() throws BatchException {
-    List<String> acceptHeaders = AcceptParser.parseAcceptHeaders("application/*, application/xml");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("application/*, application/xml");
+    List<String> acceptHeaders = parser.parseAcceptHeaders();
+    
     assertNotNull(acceptHeaders);
     assertEquals(2, acceptHeaders.size());
     assertEquals("application/xml", acceptHeaders.get(0));
@@ -103,28 +118,40 @@ public class AcceptParserTest {
 
   @Test
   public void testQualityParameter() throws BatchException {
-    List<String> acceptHeaders = AcceptParser.parseAcceptHeaders("application/*, */*; q=0.012");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("application/*, */*; q=0.012");
+    List<String> acceptHeaders = parser.parseAcceptHeaders();
+    
     assertNotNull(acceptHeaders);
   }
 
   @Test(expected = BatchException.class)
   public void testInvalidAcceptHeader() throws BatchException {
-    AcceptParser.parseAcceptHeaders("appi cation/*, */*;q=0.1");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("appi cation/*, */*;q=0.1");
+    parser.parseAcceptHeaders();
   }
 
   @Test(expected = BatchException.class)
   public void testInvalidQualityParameter() throws BatchException {
-    AcceptParser.parseAcceptHeaders("appication/*, */*;q=0,9");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("appication/*, */*;q=0,9");
+    parser.parseAcceptHeaders();
   }
 
   @Test(expected = BatchException.class)
   public void testInvalidQualityParameter2() throws BatchException {
-    AcceptParser.parseAcceptHeaders("appication/*, */*;q=1.0001");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("appication/*, */*;q=1.0001");
+    parser.parseAcceptHeaders();
   }
 
   @Test
   public void testAcceptLanguages() throws BatchException {
-    List<String> acceptLanguageHeaders = AcceptParser.parseAcceptableLanguages("en-US,en;q=0.7,en-UK;q=0.9");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("en-US,en;q=0.7,en-UK;q=0.9");
+    List<String> acceptLanguageHeaders = parser.parseAcceptableLanguages();
+
     assertNotNull(acceptLanguageHeaders);
     assertEquals(3, acceptLanguageHeaders.size());
     assertEquals("en-US", acceptLanguageHeaders.get(0));
@@ -134,20 +161,28 @@ public class AcceptParserTest {
 
   @Test
   public void testAllAcceptLanguages() throws BatchException {
-    List<String> acceptLanguageHeaders = AcceptParser.parseAcceptableLanguages("*");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("*");
+    List<String> acceptLanguageHeaders = parser.parseAcceptableLanguages();
+    
     assertNotNull(acceptLanguageHeaders);
     assertEquals(1, acceptLanguageHeaders.size());
   }
 
   @Test
   public void testLongAcceptLanguageValue() throws BatchException {
-    List<String> acceptLanguageHeaders = AcceptParser.parseAcceptableLanguages("english");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("english");
+    List<String> acceptLanguageHeaders = parser.parseAcceptableLanguages();
+    
     assertNotNull(acceptLanguageHeaders);
     assertEquals("english", acceptLanguageHeaders.get(0));
   }
 
   @Test(expected = BatchException.class)
   public void testInvalidAcceptLanguageValue() throws BatchException {
-    AcceptParser.parseAcceptableLanguages("en_US");
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("en_US");
+    parser.parseAcceptableLanguages();
   }
 }

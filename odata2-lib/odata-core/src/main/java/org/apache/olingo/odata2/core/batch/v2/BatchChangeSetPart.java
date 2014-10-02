@@ -22,15 +22,15 @@ import java.util.List;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 
-public class BatchChangeSet extends BatchQueryOperation {
+public class BatchChangeSetPart extends BatchQueryOperation {
   private BatchQueryOperation request;
 
-  public BatchChangeSet(final List<String> message, final boolean isStrict) throws BatchException {
+  public BatchChangeSetPart(final List<String> message, final boolean isStrict) throws BatchException {
     super(message, isStrict);
   }
 
   @Override
-  public BatchChangeSet parse() throws BatchException {
+  public BatchChangeSetPart parse() throws BatchException {
     headers = BatchParserCommon.consumeHeaders(message);
     BatchParserCommon.consumeBlankLine(message, isStrict);
 
@@ -49,7 +49,7 @@ public class BatchChangeSet extends BatchQueryOperation {
   }
 
   @Override
-  public String getHttpMethod() {
-    return request.getHttpMethod();
+  public String getHttpStatusLine() {
+    return request.getHttpStatusLine();
   }
 }

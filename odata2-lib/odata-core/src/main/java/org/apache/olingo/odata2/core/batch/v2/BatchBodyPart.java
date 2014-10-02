@@ -24,18 +24,16 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
-import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon.HeaderField;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class BatchBodyPart implements BatchPart {
-  final private Map<String, HeaderField> headers;
   final private String boundary;
-  final private boolean isChangeSet;
   final private boolean isStrict;
-  final private List<String> body;
-  private boolean isParsed = false;
+  final List<String> remainingMessage = new LinkedList<String>();
+
+  private Map<String, HeaderField> headers;
+  private boolean isChangeSet;
   private List<BatchQueryOperation> requests;
 
   public BatchBodyPart(final List<String> bodyPartMessage, final String boundary, final boolean isStrict)
@@ -43,19 +41,14 @@ public class BatchBodyPart implements BatchPart {
     this.boundary = boundary;
     this.isStrict = isStrict;
 
-    List<String> remainingMessage = new LinkedList<String>();
     remainingMessage.addAll(bodyPartMessage);
+  }
 
+  public BatchBodyPart parse() throws BatchException {
     headers = BatchParserCommon.consumeHeaders(remainingMessage);
     BatchParserCommon.consumeBlankLine(remainingMessage, isStrict);
     isChangeSet = isChangeSet(headers);
-    body = remainingMessage;
-  }
-
-  public BatchBodyPart parse(final int contentLength) throws BatchException {
-    List<String> remainingMessage = BatchParserCommon.trimStringListToLength(body, contentLength);
     requests = consumeRequest(remainingMessage);
-    isParsed = true;
 
     return this;
   }
@@ -78,7 +71,7 @@ public class BatchBodyPart implements BatchPart {
   }
 
   private boolean isContentTypeMultiPartMixed(final String contentType) {
-    return contentType.contains(HttpContentType.MULTIPART_MIXED);
+    return BatchParserCommon.PATTERN_MULTIPART_BOUNDARY.matcher(contentType).matches();
   }
 
   private List<BatchQueryOperation> consumeRequest(final List<String> remainingMessage) throws BatchException {
@@ -95,7 +88,7 @@ public class BatchBodyPart implements BatchPart {
     final List<BatchQueryOperation> requestList = new LinkedList<BatchQueryOperation>();
 
     for (List<String> changeRequest : changeRequests) {
-      requestList.add(new BatchChangeSet(changeRequest, isStrict).parse());
+      requestList.add(new BatchChangeSetPart(changeRequest, isStrict).parse());
     }
 
     return requestList;
@@ -146,10 +139,6 @@ public class BatchBodyPart implements BatchPart {
   }
 
   public List<BatchQueryOperation> getRequests() {
-    if (!isParsed) {
-      throw new ODataRuntimeException("Batch part must be parsed first");
-    }
-
     return requests;
   }
 }

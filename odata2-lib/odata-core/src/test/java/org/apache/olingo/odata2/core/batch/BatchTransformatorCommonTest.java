@@ -26,7 +26,17 @@ public class BatchTransformatorCommonTest {
 
   @Test
   public void testValidateContentTypeMultipartMixed() throws BatchException {
-    List<String> contentTypeValues = Arrays.asList(new String[] { HttpContentType.MULTIPART_MIXED });
+    List<String> contentTypeValues =
+        Arrays.asList(new String[] { HttpContentType.MULTIPART_MIXED + "; boundary=batch_32332_32323_fdsf" });
+    Map<String, HeaderField> headers = makeHeaders(HttpHeaders.CONTENT_TYPE, contentTypeValues);
+
+    BatchTransformatorCommon.validateContentType(headers);
+  }
+
+  @Test
+  public void testValidateContentTypeMultipartMixedCaseInsensitiv() throws BatchException {
+    List<String> contentTypeValues =
+        Arrays.asList(new String[] { "mulTiPart/MiXed; boundary=batch_32332_32323_fdsf" });
     Map<String, HeaderField> headers = makeHeaders(HttpHeaders.CONTENT_TYPE, contentTypeValues);
 
     BatchTransformatorCommon.validateContentType(headers);
