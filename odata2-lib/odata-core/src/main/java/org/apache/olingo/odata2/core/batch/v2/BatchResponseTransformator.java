@@ -20,8 +20,6 @@ package org.apache.olingo.odata2.core.batch.v2;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +29,6 @@ import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
 import org.apache.olingo.odata2.core.batch.BatchSingleResponseImpl;
-import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon.HeaderField;
 
 public class BatchResponseTransformator implements BatchTransformator {
 
@@ -52,7 +49,6 @@ public class BatchResponseTransformator implements BatchTransformator {
     List<BatchParserResult> resultList = new ArrayList<BatchParserResult>();
 
     BatchTransformatorCommon.validateContentType(bodyPart.getHeaders());
-
     resultList.addAll(handleBodyPart(bodyPart));
 
     return resultList;
@@ -66,7 +62,9 @@ public class BatchResponseTransformator implements BatchTransformator {
         bodyPartResult.add(transformChangeSet((BatchChangeSetPart) operation));
       }
     } else {
-      bodyPartResult.add(transformQueryOperation(bodyPart.getRequests().get(0), getContentId(bodyPart.getHeaders())));
+      final String contentId = bodyPart.getHeaders().getHeader(BatchHelper.HTTP_CONTENT_ID);
+
+      bodyPartResult.add(transformQueryOperation(bodyPart.getRequests().get(0), contentId));
     }
 
     return bodyPartResult;
@@ -74,60 +72,53 @@ public class BatchResponseTransformator implements BatchTransformator {
 
   private BatchSingleResponse transformChangeSet(final BatchChangeSetPart changeSet) throws BatchException {
     BatchTransformatorCommon.validateContentTransferEncoding(changeSet.getHeaders(), true);
+    final String contentId = changeSet.getHeaders().getHeader(BatchHelper.HTTP_CONTENT_ID);
 
-    return transformQueryOperation(changeSet.getRequest(), getContentId(changeSet.getHeaders()));
+    return transformQueryOperation(changeSet.getRequest(), contentId);
   }
 
   private BatchSingleResponse transformQueryOperation(final BatchQueryOperation operation, final String contentId)
       throws BatchException {
+
+    final Matcher statusMatcher = prepareStatusLineMatcher(operation.getHttpStatusLine());
+
     BatchSingleResponseImpl response = new BatchSingleResponseImpl();
     response.setContentId(contentId);
-    response.setHeaders(BatchParserCommon.headerFieldMapToSingleMap(operation.getHeaders()));
-    response.setStatusCode(getStatusCode(operation.httpStatusLine));
-    response.setStatusInfo(getStatusInfo(operation.getHttpStatusLine()));
+    response.setHeaders(operation.getHeaders().toSingleMap());
+    response.setStatusCode(getStatusCode(statusMatcher));
+    response.setStatusInfo(getStatusInfo(statusMatcher));
     response.setBody(getBody(operation));
 
     return response;
   }
 
-  private String getContentId(final Map<String, HeaderField> headers) {
-    HeaderField contentIdField = headers.get(BatchHelper.HTTP_CONTENT_ID.toLowerCase(Locale.ENGLISH));
+  private Matcher prepareStatusLineMatcher(String httpStatusLine) throws BatchException {
+    final Pattern regexPattern = Pattern.compile(REG_EX_STATUS_LINE);
+    final Matcher matcher = regexPattern.matcher(httpStatusLine);
 
-    if (contentIdField != null) {
-      if (contentIdField.getValues().size() > 0) {
-        return contentIdField.getValues().get(0);
-      }
+    if (matcher.find()) {
+      return matcher;
+    } else {
+      throw new BatchException(BatchException.INVALID_STATUS_LINE);
     }
-
-    return null;
   }
 
   private String getBody(final BatchQueryOperation operation) throws BatchException {
     int contentLength = BatchTransformatorCommon.getContentLength(operation.getHeaders());
 
-    return BatchParserCommon.trimStringListToStringLength(operation.getBody(), contentLength);
-  }
-
-  private String getStatusCode(final String httpMethod) throws BatchException {
-    Pattern regexPattern = Pattern.compile(REG_EX_STATUS_LINE);
-    Matcher matcher = regexPattern.matcher(httpMethod);
-
-    if (matcher.find()) {
-      return matcher.group(1);
+    if (contentLength == -1) {
+      return BatchParserCommon.stringListToString(operation.getBody());
     } else {
-      throw new BatchException(BatchException.INVALID_STATUS_LINE);
+      return BatchParserCommon.trimStringListToStringLength(operation.getBody(), contentLength);
     }
   }
 
-  private String getStatusInfo(final String httpMethod) throws BatchException {
-    Pattern regexPattern = Pattern.compile(REG_EX_STATUS_LINE);
-    Matcher matcher = regexPattern.matcher(httpMethod);
+  private String getStatusCode(final Matcher matcher) throws BatchException {
+    return matcher.group(1);
+  }
 
-    if (matcher.find()) {
-      return matcher.group(2);
-    } else {
-      throw new BatchException(BatchException.INVALID_STATUS_LINE);
-    }
+  private String getStatusInfo(final Matcher matcher) throws BatchException {
+    return matcher.group(2);
   }
 
 }

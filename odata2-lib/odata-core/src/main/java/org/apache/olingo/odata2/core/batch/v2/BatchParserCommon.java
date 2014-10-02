@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -148,8 +147,8 @@ public class BatchParserCommon {
     }
   }
 
-  public static Map<String, HeaderField> consumeHeaders(final List<String> remainingMessage) throws BatchException {
-    final Map<String, HeaderField> headers = new HashMap<String, HeaderField>();
+  public static Header consumeHeaders(final List<String> remainingMessage) throws BatchException {
+    final Header headers = new Header();
     boolean isHeader = true;
     final Iterator<String> iter = remainingMessage.iterator();
     final AcceptParser acceptParser = new AcceptParser();
@@ -157,59 +156,30 @@ public class BatchParserCommon {
 
     while (iter.hasNext() && isHeader) {
       currentLine = iter.next();
-      Matcher headerMatcher = PATTERN_HEADER_LINE.matcher(currentLine);
+      final Matcher headerMatcher = PATTERN_HEADER_LINE.matcher(currentLine);
 
       if (headerMatcher.matches() && headerMatcher.groupCount() == 2) {
         iter.remove();
 
         String headerName = headerMatcher.group(1).trim();
-        String headerNameLowerCase = headerName.toLowerCase(Locale.ENGLISH);
         String headerValue = headerMatcher.group(2).trim();
 
-        if (HttpHeaders.ACCEPT.equalsIgnoreCase(headerNameLowerCase)) {
+        if (HttpHeaders.ACCEPT.equalsIgnoreCase(headerName)) {
           acceptParser.addAcceptHeaderValue(headerValue);
-        } else if (HttpHeaders.ACCEPT_LANGUAGE.equalsIgnoreCase(headerNameLowerCase)) {
+        } else if (HttpHeaders.ACCEPT_LANGUAGE.equalsIgnoreCase(headerName)) {
           acceptParser.addAcceptLanguageHeaderValue(headerValue);
         } else {
-          addHeaderValue(headers, headerName, headerNameLowerCase, headerValue);
+          headers.addHeader(headerName, Header.splitValuesByComma(headerValue));
         }
       } else {
         isHeader = false;
       }
     }
 
-    final List<String> acceptHeader = acceptParser.parseAcceptHeaders();
-    headers.put(HttpHeaders.ACCEPT.toLowerCase(), new HeaderField(HttpHeaders.ACCEPT, acceptHeader));
+    headers.addHeader(HttpHeaders.ACCEPT, acceptParser.parseAcceptHeaders());
+    headers.addHeader(HttpHeaders.ACCEPT_LANGUAGE, acceptParser.parseAcceptableLanguages());
 
-    final List<String> acceptLanguageHeader = acceptParser.parseAcceptableLanguages();
-    headers.put(HttpHeaders.ACCEPT_LANGUAGE.toLowerCase(), new HeaderField(HttpHeaders.ACCEPT_LANGUAGE,
-        acceptLanguageHeader));
-
-    return Collections.unmodifiableMap(headers);
-  }
-
-  private static void addHeaderValue(final Map<String, HeaderField> headers, final String headerName,
-      final String headerNameLowerCase, final String headerValue) {
-    HeaderField headerField = headers.get(headerNameLowerCase);
-    headerField = headerField == null ? new HeaderField(headerName) : headerField;
-    headers.put(headerNameLowerCase, headerField);
-
-    for (final String singleValue : splitHeaderValuesByComma(headerValue)) {
-      if (!headerField.getValues().contains(singleValue)) {
-        headerField.getValues().add(singleValue);
-      }
-    }
-  }
-
-  private static List<String> splitHeaderValuesByComma(final String headerValue) {
-    final List<String> singleValues = new ArrayList<String>();
-
-    String[] parts = headerValue.split(",");
-    for (final String value : parts) {
-      singleValues.add(value.trim());
-    }
-
-    return singleValues;
+    return headers;
   }
 
   public static void consumeBlankLine(final List<String> remainingMessage, final boolean isStrict)
@@ -337,92 +307,5 @@ public class BatchParserCommon {
     }
 
     return boundary;
-  }
-
-  public static Map<String, String> headerFieldMapToSingleMap(final Map<String, HeaderField> headers) {
-    final Map<String, String> singleMap = new HashMap<String, String>();
-
-    for (final String key : headers.keySet()) {
-      HeaderField field = headers.get(key);
-      String value = field.getValues().size() > 0 ? field.getValues().get(0) : "";
-      singleMap.put(field.getFieldName(), value);
-    }
-
-    return singleMap;
-  }
-
-  public static Map<String, List<String>> headerFieldMapToMultiMap(final Map<String, HeaderField> headers) {
-    final Map<String, List<String>> singleMap = new HashMap<String, List<String>>();
-
-    for (final String key : headers.keySet()) {
-      HeaderField field = headers.get(key);
-      singleMap.put(field.getFieldName(), field.getValues());
-    }
-
-    return singleMap;
-  }
-
-  public static class HeaderField implements Cloneable {
-    private String fieldName;
-    private List<String> values;
-
-    public HeaderField(final String fieldName) {
-      this(fieldName, new ArrayList<String>());
-    }
-
-    public HeaderField(final String fieldName, final List<String> values) {
-      this.fieldName = fieldName;
-      this.values = values;
-    }
-
-    public String getFieldName() {
-      return fieldName;
-    }
-
-    public List<String> getValues() {
-      return values;
-    }
-
-    public void setValues(final List<String> values) {
-      this.values = values;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      HeaderField other = (HeaderField) obj;
-      if (fieldName == null) {
-        if (other.fieldName != null) {
-          return false;
-        }
-      } else if (!fieldName.equals(other.fieldName)) {
-        return false;
-      }
-      return true;
-    }
-
-    @Override
-    public HeaderField clone() {
-      List<String> newValues = new ArrayList<String>();
-      newValues.addAll(values);
-
-      return new HeaderField(fieldName, newValues);
-    }
   }
 }

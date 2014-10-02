@@ -22,12 +22,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
@@ -40,7 +38,6 @@ import org.apache.olingo.odata2.api.processor.ODataRequest.ODataRequestBuilder;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
 import org.apache.olingo.odata2.core.batch.BatchRequestPartImpl;
-import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon.HeaderField;
 
 public class BatchRequestTransformator implements BatchTransformator {
 
@@ -55,7 +52,7 @@ public class BatchRequestTransformator implements BatchTransformator {
     final List<ODataRequest> requests = new LinkedList<ODataRequest>();
     final List<BatchParserResult> resultList = new ArrayList<BatchParserResult>();
 
-    validateBodyPartHeaders(bodyPart);
+    validateHeader(bodyPart, false);
 
     for (BatchQueryOperation queryOperation : bodyPart.getRequests()) {
       requests.add(processQueryOperation(bodyPart, pathInfo, baseUri, queryOperation));
@@ -65,11 +62,11 @@ public class BatchRequestTransformator implements BatchTransformator {
     return resultList;
   }
 
-  private void validateBodyPartHeaders(final BatchBodyPart bodyPart) throws BatchException {
-    Map<String, HeaderField> headers = bodyPart.getHeaders();
+  private void validateHeader(final BatchPart bodyPart, boolean isChangeSet) throws BatchException {
+    Header headers = bodyPart.getHeaders();
 
     BatchTransformatorCommon.validateContentType(headers);
-    BatchTransformatorCommon.validateContentTransferEncoding(headers, false);
+    BatchTransformatorCommon.validateContentTransferEncoding(headers, isChangeSet);
   }
 
   private ODataRequest processQueryOperation(final BatchBodyPart bodyPart, final PathInfo pathInfo,
@@ -77,24 +74,18 @@ public class BatchRequestTransformator implements BatchTransformator {
 
     if (bodyPart.isChangeSet()) {
       BatchQueryOperation encapsulatedQueryOperation = ((BatchChangeSetPart) queryOperation).getRequest();
-      Map<String, HeaderField> headers = transformHeader(encapsulatedQueryOperation, queryOperation);
-      validateChangeSetMultipartMimeHeaders(queryOperation, encapsulatedQueryOperation);
+      Header headers = transformHeader(encapsulatedQueryOperation, queryOperation);
+      validateHeader(queryOperation, true);
 
       return createRequest(queryOperation, headers, pathInfo, baseUri, bodyPart.isChangeSet());
     } else {
 
-      Map<String, HeaderField> headers = transformHeader(queryOperation, bodyPart);
+      Header headers = transformHeader(queryOperation, bodyPart);
       return createRequest(queryOperation, headers, pathInfo, baseUri, bodyPart.isChangeSet());
     }
   }
 
-  private void validateChangeSetMultipartMimeHeaders(final BatchQueryOperation queryOperation,
-      final BatchQueryOperation encapsulatedQueryOperation) throws BatchException {
-    BatchTransformatorCommon.validateContentType(queryOperation.getHeaders());
-    BatchTransformatorCommon.validateContentTransferEncoding(queryOperation.getHeaders(), true);
-  }
-
-  private ODataRequest createRequest(final BatchQueryOperation operation, final Map<String, HeaderField> headers,
+  private ODataRequest createRequest(final BatchQueryOperation operation, final Header headers,
       final PathInfo pathInfo, final String baseUri, final boolean isChangeSet) throws BatchException {
 
     ODataHttpMethod httpMethod = getHttpMethod(operation.getHttpStatusLine());
@@ -104,14 +95,18 @@ public class BatchRequestTransformator implements BatchTransformator {
 
     ODataRequestBuilder requestBuilder = ODataRequest.method(httpMethod)
         .acceptableLanguages(getAcceptLanguageHeaders(headers))
-        .acceptHeaders(getAcceptHeaders(headers))
+        .acceptHeaders(headers.getHeaders(HttpHeaders.ACCEPT))
         .allQueryParameters(BatchParserCommon.parseQueryParameter(operation.getHttpStatusLine()))
         .body(bodyStrean)
-        .requestHeaders(BatchParserCommon.headerFieldMapToMultiMap(headers))
+        .requestHeaders(headers.toMultiMap())
         .pathInfo(BatchParserCommon.parseRequestUri(operation.getHttpStatusLine(), pathInfo, baseUri));
-
-    addContentTypeHeader(requestBuilder, headers);
-
+    
+    final String contentType =headers.getHeader(HttpHeaders.CONTENT_TYPE);
+    if(contentType != null) {
+      requestBuilder.contentType(contentType);
+    }
+      
+    
     return requestBuilder.build();
   }
 
@@ -127,7 +122,7 @@ public class BatchRequestTransformator implements BatchTransformator {
         || (operation.getBody().size() == 1 && !operation.getBody().get(0).trim().equals(""));
   }
 
-  private InputStream getBodyStream(final BatchQueryOperation operation, final Map<String, HeaderField> headers,
+  private InputStream getBodyStream(final BatchQueryOperation operation, Header headers,
       final ODataHttpMethod httpMethod) throws BatchException {
 
     if (HTTP_BATCH_METHODS.contains(httpMethod.toString())) {
@@ -143,27 +138,18 @@ public class BatchRequestTransformator implements BatchTransformator {
     }
   }
 
-  private Map<String, HeaderField> transformHeader(final BatchPart operation, final BatchPart parentPart) {
-    final Map<String, HeaderField> headers = new HashMap<String, HeaderField>();
-    final Map<String, HeaderField> operationHeader = operation.getHeaders();
-    final Map<String, HeaderField> parentHeaders = parentPart.getHeaders();
+  private Header transformHeader(final BatchPart operation, final BatchPart parentPart) {
+    final Header headers = operation.getHeaders().clone();
+    headers.removeHeaders(BatchHelper.HTTP_CONTENT_ID);
+    final List<String> operationContentIds = operation.getHeaders().getHeaders(BatchHelper.HTTP_CONTENT_ID);
+    final List<String> parentContentIds = parentPart.getHeaders().getHeaders(BatchHelper.HTTP_CONTENT_ID);
 
-    for (final String key : operation.getHeaders().keySet()) {
-      headers.put(key, operation.getHeaders().get(key).clone());
+    if (operationContentIds.size() != 0) {
+      headers.addHeader(BatchHelper.REQUEST_HEADER_CONTENT_ID, operationContentIds);
     }
 
-    headers.remove(BatchHelper.HTTP_CONTENT_ID.toLowerCase(Locale.ENGLISH));
-
-    if (operationHeader.containsKey(BatchHelper.HTTP_CONTENT_ID.toLowerCase(Locale.ENGLISH))) {
-      HeaderField operationContentField = operationHeader.get(BatchHelper.HTTP_CONTENT_ID.toLowerCase());
-      headers.put(BatchHelper.REQUEST_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH), new HeaderField(
-          BatchHelper.REQUEST_HEADER_CONTENT_ID, operationContentField.getValues()));
-    }
-
-    if (parentHeaders.containsKey(BatchHelper.HTTP_CONTENT_ID.toLowerCase(Locale.ENGLISH))) {
-      HeaderField parentContentField = parentHeaders.get(BatchHelper.HTTP_CONTENT_ID.toLowerCase());
-      headers.put(BatchHelper.MIME_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH), new HeaderField(
-          BatchHelper.MIME_HEADER_CONTENT_ID, parentContentField.getValues()));
+    if (parentContentIds.size() != 0) {
+      headers.addHeader(BatchHelper.MIME_HEADER_CONTENT_ID, parentContentIds);
     }
 
     return headers;
@@ -179,52 +165,19 @@ public class BatchRequestTransformator implements BatchTransformator {
     }
   }
 
-  private void addContentTypeHeader(final ODataRequestBuilder requestBuilder, final Map<String, HeaderField> header) {
-    String contentType = getContentTypeHeader(header);
-
-    if (contentType != null) {
-      requestBuilder.contentType(contentType);
-    }
-  }
-
-  private String getContentTypeHeader(final Map<String, HeaderField> headers) {
-    HeaderField contentTypeField = headers.get(HttpHeaders.CONTENT_TYPE.toLowerCase(Locale.ENGLISH));
-    String contentType = null;
-    if (contentTypeField != null) {
-      for (String requestContentType : contentTypeField.getValues()) {
-        contentType = contentType != null ? contentType + "," + requestContentType : requestContentType;
-      }
-    }
-
-    return contentType;
-  }
-
-  private List<String> getAcceptHeaders(final Map<String, HeaderField> headers) {
-    List<String> acceptHeaders = new ArrayList<String>();
-    HeaderField requestAcceptHeaderField = headers.get(HttpHeaders.ACCEPT.toLowerCase(Locale.ENGLISH));
-
-    if (requestAcceptHeaderField != null) {
-      acceptHeaders = requestAcceptHeaderField.getValues();
-    }
-
-    return acceptHeaders;
-  }
-
-  private List<Locale> getAcceptLanguageHeaders(final Map<String, HeaderField> headers) {
-    final HeaderField requestAcceptLanguageField = headers.get(HttpHeaders.ACCEPT_LANGUAGE.toLowerCase(Locale.ENGLISH));
+  private List<Locale> getAcceptLanguageHeaders(final Header headers) {
+    final List<String> acceptLanguageValues = headers.getHeaders(HttpHeaders.ACCEPT_LANGUAGE);
     List<Locale> acceptLanguages = new ArrayList<Locale>();
 
-    if (requestAcceptLanguageField != null) {
-      for (String acceptLanguage : requestAcceptLanguageField.getValues()) {
-        String[] part = acceptLanguage.split("-");
-        String language = part[0];
-        String country = "";
-        if (part.length == 2) {
-          country = part[part.length - 1];
-        }
-        Locale locale = new Locale(language, country);
-        acceptLanguages.add(locale);
+    for (String acceptLanguage : acceptLanguageValues) {
+      String[] part = acceptLanguage.split("-");
+      String language = part[0];
+      String country = "";
+      if (part.length == 2) {
+        country = part[part.length - 1];
       }
+      Locale locale = new Locale(language, country);
+      acceptLanguages.add(locale);
     }
 
     return acceptLanguages;

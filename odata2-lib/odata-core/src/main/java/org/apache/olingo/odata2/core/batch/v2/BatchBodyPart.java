@@ -20,19 +20,16 @@ package org.apache.olingo.odata2.core.batch.v2;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
-import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon.HeaderField;
 
 public class BatchBodyPart implements BatchPart {
   final private String boundary;
   final private boolean isStrict;
   final List<String> remainingMessage = new LinkedList<String>();
 
-  private Map<String, HeaderField> headers;
+  private Header headers;
   private boolean isChangeSet;
   private List<BatchQueryOperation> requests;
 
@@ -53,15 +50,15 @@ public class BatchBodyPart implements BatchPart {
     return this;
   }
 
-  private boolean isChangeSet(final Map<String, HeaderField> headers) throws BatchException {
-    final HeaderField contentTypeField = headers.get(HttpHeaders.CONTENT_TYPE.toLowerCase(Locale.ENGLISH));
+  private boolean isChangeSet(final Header headers) throws BatchException {
+    final List<String> contentTypes = headers.getHeaders(HttpHeaders.CONTENT_TYPE);
     boolean isChangeSet = false;
 
-    if (contentTypeField == null || contentTypeField.getValues().size() == 0) {
+    if (contentTypes.size() == 0) {
       throw new BatchException(BatchException.MISSING_CONTENT_TYPE);
     }
 
-    for (String contentType : contentTypeField.getValues()) {
+    for (String contentType : contentTypes) {
       if (isContentTypeMultiPartMixed(contentType)) {
         isChangeSet = true;
       }
@@ -97,7 +94,7 @@ public class BatchBodyPart implements BatchPart {
   private List<List<String>> splitChangeSet(final List<String> remainingMessage)
       throws BatchException {
 
-    final String changeSetBoundary = BatchParserCommon.getBoundary(getContentType());
+    final String changeSetBoundary = BatchParserCommon.getBoundary(headers.getHeaderNotNull(HttpHeaders.CONTENT_TYPE));
     validateChangeSetBoundary(changeSetBoundary);
 
     return BatchParserCommon.splitMessageByBoundary(remainingMessage, changeSetBoundary);
@@ -117,15 +114,8 @@ public class BatchBodyPart implements BatchPart {
     }
   }
 
-  private String getContentType() {
-    HeaderField contentTypeField = headers.get(HttpHeaders.CONTENT_TYPE.toLowerCase(Locale.ENGLISH));
-
-    return (contentTypeField != null && contentTypeField.getValues().size() > 0) ? contentTypeField.getValues().get(0)
-        : "";
-  }
-
   @Override
-  public Map<String, HeaderField> getHeaders() {
+  public Header getHeaders() {
     return headers;
   }
 

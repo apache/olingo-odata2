@@ -5,13 +5,11 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon;
-import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon.HeaderField;
+import org.apache.olingo.odata2.core.batch.v2.Header;
 import org.junit.Test;
 
 public class BatchParserCommonTest {
@@ -30,14 +28,14 @@ public class BatchParserCommonTest {
     message.addAll(Arrays.asList(messageRaw));
     
     
-    final Map<String, HeaderField> header = BatchParserCommon.consumeHeaders(message);
+    final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
     
-    final HeaderField contentIdHeaders = header.get(BatchHelper.HTTP_CONTENT_ID.toLowerCase(Locale.ENGLISH));
+    final List<String> contentIdHeaders = header.getHeaders(BatchHelper.HTTP_CONTENT_ID);
     assertNotNull(contentIdHeaders);
-    assertEquals(2, contentIdHeaders.getValues().size());
-    assertEquals("1", contentIdHeaders.getValues().get(0));
-    assertEquals("2", contentIdHeaders.getValues().get(1));
+    assertEquals(2, contentIdHeaders.size());
+    assertEquals("1", contentIdHeaders.get(0));
+    assertEquals("2", contentIdHeaders.get(1));
   }
   
   @Test
@@ -52,13 +50,13 @@ public class BatchParserCommonTest {
     message.addAll(Arrays.asList(messageRaw));
     
     
-    final Map<String, HeaderField> header = BatchParserCommon.consumeHeaders(message);
+    final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
     
-    final HeaderField contentIdHeaders = header.get(BatchHelper.HTTP_CONTENT_ID.toLowerCase(Locale.ENGLISH));
+    final List<String> contentIdHeaders = header.getHeaders(BatchHelper.HTTP_CONTENT_ID);
     assertNotNull(contentIdHeaders);
-    assertEquals(1, contentIdHeaders.getValues().size());
-    assertEquals("1", contentIdHeaders.getValues().get(0));
+    assertEquals(1, contentIdHeaders.size());
+    assertEquals("1", contentIdHeaders.get(0));
   }
   
   @Test
@@ -73,16 +71,16 @@ public class BatchParserCommonTest {
     message.addAll(Arrays.asList(messageRaw));
     
     
-    final Map<String, HeaderField> header = BatchParserCommon.consumeHeaders(message);
+    final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
     
-    final HeaderField upgradeHeader = header.get("upgrade");
+    final List<String> upgradeHeader = header.getHeaders("upgrade");
     assertNotNull(upgradeHeader);
-    assertEquals(4, upgradeHeader.getValues().size());
-    assertEquals("HTTP/2.0", upgradeHeader.getValues().get(0));
-    assertEquals("SHTTP/1.3", upgradeHeader.getValues().get(1));
-    assertEquals("IRC/6.9", upgradeHeader.getValues().get(2));
-    assertEquals("RTA/x11", upgradeHeader.getValues().get(3));
+    assertEquals(4, upgradeHeader.size());
+    assertEquals("HTTP/2.0", upgradeHeader.get(0));
+    assertEquals("SHTTP/1.3", upgradeHeader.get(1));
+    assertEquals("IRC/6.9", upgradeHeader.get(2));
+    assertEquals("RTA/x11", upgradeHeader.get(3));
   }
   
   @Test
@@ -98,12 +96,12 @@ public class BatchParserCommonTest {
     message.addAll(Arrays.asList(messageRaw));
     
     
-    final Map<String, HeaderField> header = BatchParserCommon.consumeHeaders(message);
+    final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
     
-    final HeaderField acceptHeader = header.get(HttpHeaders.ACCEPT.toLowerCase());
+    final List<String> acceptHeader = header.getHeaders(HttpHeaders.ACCEPT);
     assertNotNull(acceptHeader);
-    assertEquals(4, acceptHeader.getValues().size());
+    assertEquals(4, acceptHeader.size());
   }
   
   @Test
@@ -119,12 +117,12 @@ public class BatchParserCommonTest {
     message.addAll(Arrays.asList(messageRaw));
     
     
-    final Map<String, HeaderField> header = BatchParserCommon.consumeHeaders(message);
+    final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
     
-    final HeaderField acceptHeader = header.get(HttpHeaders.ACCEPT.toLowerCase());
+    final List<String> acceptHeader = header.getHeaders(HttpHeaders.ACCEPT);
     assertNotNull(acceptHeader);
-    assertEquals(3, acceptHeader.getValues().size());
+    assertEquals(3, acceptHeader.size());
   }
   
   @Test
@@ -138,12 +136,12 @@ public class BatchParserCommonTest {
     List<String> message = new ArrayList<String>();
     message.addAll(Arrays.asList(messageRaw));
     
-    final Map<String, HeaderField> header = BatchParserCommon.consumeHeaders(message);
+    final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
     
-    final HeaderField acceptLanguageHeader = header.get(HttpHeaders.ACCEPT_LANGUAGE.toLowerCase());
+    final List<String> acceptLanguageHeader = header.getHeaders(HttpHeaders.ACCEPT_LANGUAGE);
     assertNotNull(acceptLanguageHeader);
-    assertEquals(4, acceptLanguageHeader.getValues().size());
+    assertEquals(4, acceptLanguageHeader.size());
   }
   
   @Test
@@ -157,12 +155,12 @@ public class BatchParserCommonTest {
     List<String> message = new ArrayList<String>();
     message.addAll(Arrays.asList(messageRaw));
     
-    final Map<String, HeaderField> header = BatchParserCommon.consumeHeaders(message);
+    final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
     
-    final HeaderField acceptLanguageHeader = header.get(HttpHeaders.ACCEPT_LANGUAGE.toLowerCase());
+    final List<String> acceptLanguageHeader = header.getHeaders(HttpHeaders.ACCEPT_LANGUAGE);
     assertNotNull(acceptLanguageHeader);
-    assertEquals(3, acceptLanguageHeader.getValues().size());
+    assertEquals(3, acceptLanguageHeader.size());
   }
   
   @Test

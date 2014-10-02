@@ -18,12 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch.v2;
 
-import java.util.Map;
-
-import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon.HeaderField;
-
 public interface BatchPart {
-  public Map<String, HeaderField> getHeaders();
+  public Header getHeaders();
 
   public boolean isStrict();
 }

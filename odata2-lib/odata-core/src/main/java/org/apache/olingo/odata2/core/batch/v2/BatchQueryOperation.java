@@ -19,16 +19,14 @@
 package org.apache.olingo.odata2.core.batch.v2;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
-import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon.HeaderField;
 
 public class BatchQueryOperation implements BatchPart {
 
   protected final boolean isStrict;
   protected String httpStatusLine;
-  protected Map<String, HeaderField> headers;
+  protected Header headers;
   protected List<String> body;
   protected int bodySize;
   protected List<String> message;
@@ -71,7 +69,7 @@ public class BatchQueryOperation implements BatchPart {
   }
 
   @Override
-  public Map<String, HeaderField> getHeaders() {
+  public Header getHeaders() {
     return headers;
   }
 
