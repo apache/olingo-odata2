@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.jpa.processor.core.access.model;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -52,7 +53,7 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
       }
     }
 
-    mappingModelExists = mappingModelName != null || mappingModelStream != null ? true : false;
+    mappingModelExists = mappingModelName != null || mappingModelStream != null;
   }
 
   @Override
@@ -180,13 +181,14 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   private JPAEntityTypeMapType searchJPAEntityTypeMapType(final String jpaEntityTypeName) {
-    for (JPAEntityTypeMapType jpaEntityType : mappingModel.getPersistenceUnit().getJPAEntityTypes()
-        .getJPAEntityType()) {
-      if (jpaEntityType.getName().equals(jpaEntityTypeName)) {
-        return jpaEntityType;
+    if(mappingModel != null) {
+      List<JPAEntityTypeMapType> types = mappingModel.getPersistenceUnit().getJPAEntityTypes().getJPAEntityType();
+      for (JPAEntityTypeMapType jpaEntityType : types) {
+        if (jpaEntityType.getName().equals(jpaEntityTypeName)) {
+          return jpaEntityType;
+        }
       }
     }
-
     return null;
   }
 
@@ -205,8 +207,7 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
     if (mappingModelStream != null) {
       return mappingModelStream;
     }
-    InputStream is = JPAEdmMappingModelService.class.getClassLoader().getResourceAsStream("../../" + mappingModelName);
-    return is;
+    return JPAEdmMappingModelService.class.getClassLoader().getResourceAsStream("../../" + mappingModelName);
 
   }
 
