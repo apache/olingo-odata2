@@ -83,9 +83,9 @@ public class FitStaticServiceFactory extends ODataServiceFactory {
     // access and validation in synchronized block
     synchronized (PORT_2_SERVICE) {
       final ODataService service = PORT_2_SERVICE.get(port);
-      if (service == null) {
-        throw new IllegalArgumentException("no static service set for JUnit test");
-      }
+//      if (service == null) {
+//        throw new IllegalArgumentException("no static service set for JUnit test");
+//      }
       return service;
     }
   }

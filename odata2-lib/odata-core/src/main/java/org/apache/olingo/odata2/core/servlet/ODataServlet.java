@@ -35,6 +35,7 @@ import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataHttpException;
+import org.apache.olingo.odata2.api.exception.ODataInternalServerErrorException;
 import org.apache.olingo.odata2.api.exception.ODataMethodNotAllowedException;
 import org.apache.olingo.odata2.api.exception.ODataNotAcceptableException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
@@ -174,6 +175,9 @@ public class ODataServlet extends HttpServlet {
       context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, req);
 
       ODataService service = serviceFactory.createService(context);
+      if(service == null){
+        createServiceUnavailableResponse(req, ODataInternalServerErrorException.NOSERVICE, resp);
+      }
       context.setService(service);
       service.getProcessor().setContext(context);
 
@@ -271,7 +275,14 @@ public class ODataServlet extends HttpServlet {
     ODataResponse response =
         exceptionWrapper.wrapInExceptionResponse(new ODataNotAcceptableException(messageReference));
     createResponse(resp, response);
+  }
 
+  private void createServiceUnavailableResponse(HttpServletRequest req, MessageReference messageReference,
+      HttpServletResponse resp) throws IOException {
+    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req);
+    ODataResponse response =
+        exceptionWrapper.wrapInExceptionResponse(new ODataInternalServerErrorException(messageReference));
+    createResponse(resp, response);
   }
 
 }
