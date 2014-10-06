@@ -40,6 +40,7 @@ import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.AcceptParser;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.commons.Decoder;
 
 public class BatchParserCommon {
@@ -55,53 +56,52 @@ public class BatchParserCommon {
   public static final Pattern PATTERN_CONTENT_TYPE_APPLICATION_HTTP = Pattern.compile(REG_EX_APPLICATION_HTTP,
       Pattern.CASE_INSENSITIVE);
 
-  public static String trimStringListToStringLength(final List<String> list, final int length) {
+  public static String trimLineListToLength(final List<Line> list, final int length) {
     final String message = stringListToString(list);
     final int lastIndex = Math.min(length, message.length());
 
     return (lastIndex > 0) ? message.substring(0, lastIndex) : "";
   }
 
-  public static String stringListToString(final List<String> list) {
+  public static String stringListToString(final List<Line> list) {
     StringBuilder builder = new StringBuilder();
 
-    for (String currentLine : list) {
-      builder.append(currentLine);
+    for (Line currentLine : list) {
+      builder.append(currentLine.toString());
     }
 
     return builder.toString();
   }
 
-  public static InputStream convertMessageToInputStream(final List<String> messageList, final int contentLength)
+  public static InputStream convertMessageToInputStream(final List<Line> messageList, final int contentLength)
       throws BatchException {
-    final String message = trimStringListToStringLength(messageList, contentLength);
+    final String message = trimLineListToLength(messageList, contentLength);
 
     return new ByteArrayInputStream(message.getBytes());
   }
 
-  public static InputStream convertMessageToInputStream(final List<String> messageList)
+  public static InputStream convertMessageToInputStream(final List<Line> messageList)
       throws BatchException {
     final String message = stringListToString(messageList);
 
     return new ByteArrayInputStream(message.getBytes());
   }
 
-  // TODO Splitten von InputStream, sodass nur eine Iteration erfolgen muss
-  static List<List<String>> splitMessageByBoundary(final List<String> message, final String boundary)
+  static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)
       throws BatchException {
-    final List<List<String>> messageParts = new LinkedList<List<String>>();
-    List<String> currentPart = new ArrayList<String>();
+    final List<List<Line>> messageParts = new LinkedList<List<Line>>();
+    List<Line> currentPart = new ArrayList<Line>();
     boolean isEndReached = false;
 
-    for (String currentLine : message) {
-      if (currentLine.contains("--" + boundary + "--")) {
+    for (Line currentLine : message) {
+      if (currentLine.toString().contains("--" + boundary + "--")) {
         removeEndingCRLFFromList(currentPart);
         messageParts.add(currentPart);
         isEndReached = true;
-      } else if (currentLine.contains("--" + boundary)) {
+      } else if (currentLine.toString().contains("--" + boundary)) {
         removeEndingCRLFFromList(currentPart);
         messageParts.add(currentPart);
-        currentPart = new LinkedList<String>();
+        currentPart = new LinkedList<Line>();
       } else {
         currentPart.add(currentLine);
       }
@@ -111,52 +111,57 @@ public class BatchParserCommon {
       }
     }
 
+    final int lineNumer = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
     // Remove preamble
     if (messageParts.size() > 0) {
       messageParts.remove(0);
     } else {
-      throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER);
-    }
 
-    if (messageParts.size() == 0) {
-      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING);
+      throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER.addContent(lineNumer));
     }
 
     if (!isEndReached) {
-      throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER);
+      throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER.addContent(lineNumer));
+    }
+
+    if (messageParts.size() == 0) {
+      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING.addContent(boundary).addContent(lineNumer));
     }
 
     return messageParts;
   }
 
-  private static void removeEndingCRLFFromList(final List<String> list) {
+  private static void removeEndingCRLFFromList(final List<Line> list) {
     if (list.size() > 0) {
-      String lastLine = list.remove(list.size() - 1);
+      Line lastLine = list.remove(list.size() - 1);
       list.add(removeEndingCRLF(lastLine));
     }
   }
 
-  public static String removeEndingCRLF(final String line) {
+  public static Line removeEndingCRLF(final Line line) {
     Pattern pattern = Pattern.compile("(.*)(\r\n){1}( *)", Pattern.DOTALL);
-    Matcher matcher = pattern.matcher(line);
+    Matcher matcher = pattern.matcher(line.toString());
 
     if (matcher.matches()) {
-      return matcher.group(1);
+      return new Line(matcher.group(1), line.getLineNumber());
     } else {
       return line;
     }
   }
 
-  public static Header consumeHeaders(final List<String> remainingMessage) throws BatchException {
-    final Header headers = new Header();
+  public static Header consumeHeaders(final List<Line> remainingMessage) throws BatchException {
+    final int lineNumberOfHeader = remainingMessage.size() != 0 ? remainingMessage.get(0).getLineNumber() : 0;
+    final Header headers = new Header(lineNumberOfHeader);
     boolean isHeader = true;
-    final Iterator<String> iter = remainingMessage.iterator();
+    final Iterator<Line> iter = remainingMessage.iterator();
     final AcceptParser acceptParser = new AcceptParser();
-    String currentLine;
+    Line currentLine;
+    int acceptLineNumber = 0;
+    int acceptLanguageLineNumber = 0;
 
     while (iter.hasNext() && isHeader) {
       currentLine = iter.next();
-      final Matcher headerMatcher = PATTERN_HEADER_LINE.matcher(currentLine);
+      final Matcher headerMatcher = PATTERN_HEADER_LINE.matcher(currentLine.toString());
 
       if (headerMatcher.matches() && headerMatcher.groupCount() == 2) {
         iter.remove();
@@ -166,34 +171,37 @@ public class BatchParserCommon {
 
         if (HttpHeaders.ACCEPT.equalsIgnoreCase(headerName)) {
           acceptParser.addAcceptHeaderValue(headerValue);
+          acceptLineNumber = currentLine.getLineNumber();
         } else if (HttpHeaders.ACCEPT_LANGUAGE.equalsIgnoreCase(headerName)) {
           acceptParser.addAcceptLanguageHeaderValue(headerValue);
+          acceptLanguageLineNumber = currentLine.getLineNumber();
         } else {
-          headers.addHeader(headerName, Header.splitValuesByComma(headerValue));
+          headers.addHeader(headerName, Header.splitValuesByComma(headerValue), currentLine.getLineNumber());
         }
       } else {
         isHeader = false;
       }
     }
 
-    headers.addHeader(HttpHeaders.ACCEPT, acceptParser.parseAcceptHeaders());
-    headers.addHeader(HttpHeaders.ACCEPT_LANGUAGE, acceptParser.parseAcceptableLanguages());
+    headers.addHeader(HttpHeaders.ACCEPT, acceptParser.parseAcceptHeaders(), acceptLineNumber);
+    headers.addHeader(HttpHeaders.ACCEPT_LANGUAGE, acceptParser.parseAcceptableLanguages(), acceptLanguageLineNumber);
 
     return headers;
   }
 
-  public static void consumeBlankLine(final List<String> remainingMessage, final boolean isStrict)
+  public static void consumeBlankLine(final List<Line> remainingMessage, final boolean isStrict)
       throws BatchException {
-    if (remainingMessage.size() > 0 && "".equals(remainingMessage.get(0).trim())) {
+    if (remainingMessage.size() > 0 && "".equals(remainingMessage.get(0).toString().trim())) {
       remainingMessage.remove(0);
     } else {
       if (isStrict) {
-        throw new BatchException(BatchException.MISSING_BLANK_LINE);
+        final int lineNumber = (remainingMessage.size() > 0) ? remainingMessage.get(0).getLineNumber() : 0;
+        throw new BatchException(BatchException.MISSING_BLANK_LINE.addContent("[None]").addContent(lineNumber));
       }
     }
   }
 
-  public static String getBoundary(final String contentType) throws BatchException {
+  public static String getBoundary(final String contentType, final int line) throws BatchException {
     final Matcher boundaryMatcher = PATTERN_MULTIPART_BOUNDARY.matcher(contentType);
 
     if (boundaryMatcher.matches()) {
@@ -201,17 +209,17 @@ public class BatchParserCommon {
       if (boundary.matches(REG_EX_BOUNDARY)) {
         return trimQuota(boundary);
       } else {
-        throw new BatchException(BatchException.INVALID_BOUNDARY);
+        throw new BatchException(BatchException.INVALID_BOUNDARY.addContent(line));
       }
     } else {
       throw new BatchException(BatchException.INVALID_CONTENT_TYPE.addContent(HttpContentType.MULTIPART_MIXED));
     }
   }
 
-  public static Map<String, List<String>> parseQueryParameter(final String httpRequest) {
+  public static Map<String, List<String>> parseQueryParameter(final Line httpRequest) {
     Map<String, List<String>> queryParameter = new HashMap<String, List<String>>();
 
-    String[] requestParts = httpRequest.split(" ");
+    String[] requestParts = httpRequest.toString().split(" ");
     if (requestParts.length == 3) {
 
       String[] parts = requestParts[1].split("\\?");
@@ -239,8 +247,8 @@ public class BatchParserCommon {
     return queryParameter;
   }
 
-  public static PathInfo parseRequestUri(final String httpRequest, final PathInfo batchRequestPathInfo,
-      final String baseUri)
+  public static PathInfo parseRequestUri(final Line httpStatusLine, final PathInfo batchRequestPathInfo,
+      final String baseUri, final int line)
       throws BatchException {
 
     final String odataPathSegmentsAsString;
@@ -250,7 +258,7 @@ public class BatchParserCommon {
     pathInfo.setServiceRoot(batchRequestPathInfo.getServiceRoot());
     pathInfo.setPrecedingPathSegment(batchRequestPathInfo.getPrecedingSegments());
 
-    String[] requestParts = httpRequest.split(" ");
+    String[] requestParts = httpStatusLine.toString().split(" ");
     if (requestParts.length == 3) {
       String uri = requestParts[1];
       Pattern regexRequestUri;
@@ -277,14 +285,15 @@ public class BatchParserCommon {
           }
 
         } else {
-          throw new BatchException(BatchException.INVALID_URI);
+          throw new BatchException(BatchException.INVALID_URI.addContent(httpStatusLine.getLineNumber()));
         }
 
       } catch (URISyntaxException e) {
-        throw new BatchException(BatchException.INVALID_URI, e);
+        throw new BatchException(BatchException.INVALID_URI.addContent(line), e);
       }
     } else {
-      throw new BatchException(BatchException.INVALID_REQUEST_LINE);
+      throw new BatchException(BatchException.INVALID_REQUEST_LINE.addContent(httpStatusLine.toString())
+          .addContent(line));
     }
 
     return pathInfo;

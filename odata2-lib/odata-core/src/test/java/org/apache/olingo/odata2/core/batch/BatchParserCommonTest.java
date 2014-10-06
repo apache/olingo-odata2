@@ -3,12 +3,12 @@ package org.apache.olingo.odata2.core.batch;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.batch.v2.Header;
 import org.junit.Test;
 
@@ -24,9 +24,7 @@ public class BatchParserCommonTest {
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
       };
-    List<String> message = new ArrayList<String>();
-    message.addAll(Arrays.asList(messageRaw));
-    
+    List<Line> message = toLineList(messageRaw);
     
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
@@ -46,9 +44,7 @@ public class BatchParserCommonTest {
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
       };
-    List<String> message = new ArrayList<String>();
-    message.addAll(Arrays.asList(messageRaw));
-    
+    List<Line> message = toLineList(messageRaw);
     
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
@@ -67,9 +63,7 @@ public class BatchParserCommonTest {
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
       };
-    List<String> message = new ArrayList<String>();
-    message.addAll(Arrays.asList(messageRaw));
-    
+    List<Line> message = toLineList(messageRaw);
     
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
@@ -92,9 +86,7 @@ public class BatchParserCommonTest {
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
       };
-    List<String> message = new ArrayList<String>();
-    message.addAll(Arrays.asList(messageRaw));
-    
+    List<Line> message = toLineList(messageRaw);
     
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
@@ -113,9 +105,7 @@ public class BatchParserCommonTest {
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
       };
-    List<String> message = new ArrayList<String>();
-    message.addAll(Arrays.asList(messageRaw));
-    
+    List<Line> message = toLineList(messageRaw);
     
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
@@ -133,8 +123,7 @@ public class BatchParserCommonTest {
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
       };
-    List<String> message = new ArrayList<String>();
-    message.addAll(Arrays.asList(messageRaw));
+    List<Line> message = toLineList(messageRaw);
     
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
@@ -152,8 +141,7 @@ public class BatchParserCommonTest {
         "content-type: Application/http" + CRLF,
         "content-transfer-encoding: Binary" + CRLF
       };
-    List<String> message = new ArrayList<String>();
-    message.addAll(Arrays.asList(messageRaw));
+    List<Line> message = toLineList(messageRaw);
     
     final Header header = BatchParserCommon.consumeHeaders(message);
     assertNotNull(header);
@@ -166,48 +154,59 @@ public class BatchParserCommonTest {
   @Test
   public void testRemoveEndingCRLF() {
     String line = "Test\r\n";
-    assertEquals("Test", BatchParserCommon.removeEndingCRLF(line));
+    assertEquals("Test", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
   }
 
   @Test
   public void testRemoveLastEndingCRLF() {
     String line = "Test\r\n\r\n";
-    assertEquals("Test\r\n", BatchParserCommon.removeEndingCRLF(line));
+    assertEquals("Test\r\n", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
   }
 
   @Test
   public void testRemoveEndingCRLFWithWS() {
     String line = "Test\r\n            ";
-    assertEquals("Test", BatchParserCommon.removeEndingCRLF(line));
+    assertEquals("Test", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
   }
 
   @Test
   public void testRemoveEndingCRLFNothingToRemove() {
     String line = "Hallo\r\nBla";
-    assertEquals("Hallo\r\nBla", BatchParserCommon.removeEndingCRLF(line));
+    assertEquals("Hallo\r\nBla", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
   }
 
   @Test
   public void testRemoveEndingCRLFAll() {
     String line = "\r\n";
-    assertEquals("", BatchParserCommon.removeEndingCRLF(line));
+    assertEquals("", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
   }
 
   @Test
   public void testRemoveEndingCRLFSpace() {
     String line = "\r\n                      ";
-    assertEquals("", BatchParserCommon.removeEndingCRLF(line));
+    assertEquals("", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
   }
 
   @Test
   public void testRemoveLastEndingCRLFWithWS() {
     String line = "Test            \r\n";
-    assertEquals("Test            ", BatchParserCommon.removeEndingCRLF(line));
+    assertEquals("Test            ", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
   }
 
   @Test
   public void testRemoveLastEndingCRLFWithWSLong() {
     String line = "Test            \r\nTest2    \r\n";
-    assertEquals("Test            \r\nTest2    ", BatchParserCommon.removeEndingCRLF(line));
+    assertEquals("Test            \r\nTest2    ", BatchParserCommon.removeEndingCRLF(new Line(line,1)).toString());
+  }
+  
+  private List<Line> toLineList(String[] messageRaw) {
+    final List<Line> lineList = new ArrayList<Line>();
+    int counter = 1;
+    
+    for(final String currentLine : messageRaw) {
+      lineList.add(new Line(currentLine, counter++));
+    }
+    
+    return lineList;
   }
 }

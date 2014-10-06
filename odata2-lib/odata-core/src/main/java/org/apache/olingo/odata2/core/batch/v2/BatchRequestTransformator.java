@@ -32,12 +32,13 @@ import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchParserResult;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
-import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.processor.ODataRequest.ODataRequestBuilder;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
 import org.apache.olingo.odata2.core.batch.BatchRequestPartImpl;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.odata2.core.batch.v2.Header.HeaderField;
 
 public class BatchRequestTransformator implements BatchTransformator {
 
@@ -88,9 +89,10 @@ public class BatchRequestTransformator implements BatchTransformator {
   private ODataRequest createRequest(final BatchQueryOperation operation, final Header headers,
       final PathInfo pathInfo, final String baseUri, final boolean isChangeSet) throws BatchException {
 
+    final int httpLineNumber = operation.getHttpStatusLine().getLineNumber();
     ODataHttpMethod httpMethod = getHttpMethod(operation.getHttpStatusLine());
-    validateHttpMethod(httpMethod, isChangeSet);
-    validateBody(httpMethod, operation);
+    validateHttpMethod(httpMethod, isChangeSet, httpLineNumber);
+    validateBody(httpMethod, operation, httpLineNumber);
     InputStream bodyStrean = getBodyStream(operation, headers, httpMethod);
 
     ODataRequestBuilder requestBuilder = ODataRequest.method(httpMethod)
@@ -99,27 +101,26 @@ public class BatchRequestTransformator implements BatchTransformator {
         .allQueryParameters(BatchParserCommon.parseQueryParameter(operation.getHttpStatusLine()))
         .body(bodyStrean)
         .requestHeaders(headers.toMultiMap())
-        .pathInfo(BatchParserCommon.parseRequestUri(operation.getHttpStatusLine(), pathInfo, baseUri));
-    
-    final String contentType =headers.getHeader(HttpHeaders.CONTENT_TYPE);
-    if(contentType != null) {
+        .pathInfo(BatchParserCommon.parseRequestUri(operation.getHttpStatusLine(), pathInfo, baseUri, 0));
+
+    final String contentType = headers.getHeader(HttpHeaders.CONTENT_TYPE);
+    if (contentType != null) {
       requestBuilder.contentType(contentType);
     }
-      
-    
+
     return requestBuilder.build();
   }
 
-  private void validateBody(final ODataHttpMethod httpMethod, final BatchQueryOperation operation)
+  private void validateBody(final ODataHttpMethod httpStatusLine, final BatchQueryOperation operation, final int line)
       throws BatchException {
-    if (HTTP_BATCH_METHODS.contains(httpMethod.toString()) && isUnvalidGetRequestBody(operation)) {
-      throw new BatchException(BatchException.INVALID_REQUEST_LINE);
+    if (HTTP_BATCH_METHODS.contains(httpStatusLine.toString()) && isUnvalidGetRequestBody(operation)) {
+      throw new BatchException(BatchException.INVALID_REQUEST_LINE.addContent(httpStatusLine).addContent(line));
     }
   }
 
   private boolean isUnvalidGetRequestBody(final BatchQueryOperation operation) {
     return (operation.getBody().size() > 1)
-        || (operation.getBody().size() == 1 && !operation.getBody().get(0).trim().equals(""));
+        || (operation.getBody().size() == 1 && !operation.getBody().get(0).toString().trim().equals(""));
   }
 
   private InputStream getBodyStream(final BatchQueryOperation operation, Header headers,
@@ -140,28 +141,32 @@ public class BatchRequestTransformator implements BatchTransformator {
 
   private Header transformHeader(final BatchPart operation, final BatchPart parentPart) {
     final Header headers = operation.getHeaders().clone();
-    headers.removeHeaders(BatchHelper.HTTP_CONTENT_ID);
-    final List<String> operationContentIds = operation.getHeaders().getHeaders(BatchHelper.HTTP_CONTENT_ID);
-    final List<String> parentContentIds = parentPart.getHeaders().getHeaders(BatchHelper.HTTP_CONTENT_ID);
+    headers.removeHeader(BatchHelper.HTTP_CONTENT_ID);
+    final HeaderField operationHeader = operation.getHeaders().getHeaderField(BatchHelper.HTTP_CONTENT_ID);
+    final HeaderField parentHeader = parentPart.getHeaders().getHeaderField(BatchHelper.HTTP_CONTENT_ID);
 
-    if (operationContentIds.size() != 0) {
-      headers.addHeader(BatchHelper.REQUEST_HEADER_CONTENT_ID, operationContentIds);
+    if (operationHeader != null && operationHeader.getValues().size() != 0) {
+      headers.addHeader(BatchHelper.REQUEST_HEADER_CONTENT_ID, operationHeader.getValues(), operationHeader
+          .getLineNumber());
     }
 
-    if (parentContentIds.size() != 0) {
-      headers.addHeader(BatchHelper.MIME_HEADER_CONTENT_ID, parentContentIds);
+    if (parentHeader != null && parentHeader.getValues().size() != 0) {
+      headers.addHeader(BatchHelper.MIME_HEADER_CONTENT_ID, parentHeader.getValues(), parentHeader.getLineNumber());
     }
 
     return headers;
   }
 
-  private void validateHttpMethod(final ODataHttpMethod httpMethod, final boolean isChangeSet) throws BatchException {
+  private void validateHttpMethod(final ODataHttpMethod httpMethod, final boolean isChangeSet, final int line)
+      throws BatchException {
     Set<String> validMethods = (isChangeSet) ? HTTP_CHANGE_SET_METHODS : HTTP_BATCH_METHODS;
 
     if (!validMethods.contains(httpMethod.toString())) {
-      MessageReference message =
-          (isChangeSet) ? BatchException.INVALID_CHANGESET_METHOD : BatchException.INVALID_QUERY_OPERATION_METHOD;
-      throw new BatchException(message);
+      if (isChangeSet) {
+        throw new BatchException(BatchException.INVALID_CHANGESET_METHOD.addContent(line));
+      } else {
+        throw new BatchException(BatchException.INVALID_QUERY_OPERATION_METHOD.addContent(line));
+      }
     }
   }
 
@@ -183,23 +188,20 @@ public class BatchRequestTransformator implements BatchTransformator {
     return acceptLanguages;
   }
 
-  private ODataHttpMethod getHttpMethod(final String httpRequest) throws BatchException {
+  private ODataHttpMethod getHttpMethod(final Line httpRequest) throws BatchException {
     ODataHttpMethod result = null;
 
-    if (httpRequest != null) {
-      String[] parts = httpRequest.split(" ");
+    String[] parts = httpRequest.toString().split(" ");
 
-      if (parts.length == 3) {
-        try {
-          result = ODataHttpMethod.valueOf(parts[0]);
-        } catch (IllegalArgumentException e) {
-          throw new BatchException(BatchException.MISSING_METHOD, e);
-        }
-      } else {
-        throw new BatchException(BatchException.INVALID_REQUEST_LINE);
+    if (parts.length == 3) {
+      try {
+        result = ODataHttpMethod.valueOf(parts[0]);
+      } catch (IllegalArgumentException e) {
+        throw new BatchException(BatchException.MISSING_METHOD.addContent(httpRequest.getLineNumber()), e);
       }
     } else {
-      throw new BatchException(BatchException.INVALID_REQUEST_LINE);
+      throw new BatchException(BatchException.INVALID_REQUEST_LINE.addContent(httpRequest.toString()).addContent(
+          httpRequest.getLineNumber()));
     }
 
     return result;

@@ -50,7 +50,7 @@ public class BatchTransformatorCommonTest {
 
   @Test(expected = BatchException.class)
   public void testValidateContentTypeMissingHeader() throws BatchException {
-    final Header headers = new Header();
+    final Header headers = new Header(1);
     
     BatchTransformatorCommon.validateContentType(headers);
   }
@@ -82,7 +82,7 @@ public class BatchTransformatorCommonTest {
 
   @Test(expected = BatchException.class)
   public void testValidateContentTransferEncodingMissingHeader() throws BatchException {
-    final Header headers = new Header();
+    final Header headers = new Header(1);
     
     BatchTransformatorCommon.validateContentTransferEncoding(headers, true);
   }
@@ -96,8 +96,8 @@ public class BatchTransformatorCommonTest {
   }
 
   private Header makeHeaders(final String headerName, final List<String> values) {
-    final Header headers = new Header();
-    headers.addHeader(headerName, values);
+    final Header headers = new Header(1);
+    headers.addHeader(headerName, values, 1);
 
     return headers;
   }

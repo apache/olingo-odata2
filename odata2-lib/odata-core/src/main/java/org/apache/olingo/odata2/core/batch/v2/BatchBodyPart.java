@@ -23,17 +23,19 @@ import java.util.List;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.odata2.core.batch.v2.Header.HeaderField;
 
 public class BatchBodyPart implements BatchPart {
   final private String boundary;
   final private boolean isStrict;
-  final List<String> remainingMessage = new LinkedList<String>();
+  final List<Line> remainingMessage = new LinkedList<Line>();
 
   private Header headers;
   private boolean isChangeSet;
   private List<BatchQueryOperation> requests;
 
-  public BatchBodyPart(final List<String> bodyPartMessage, final String boundary, final boolean isStrict)
+  public BatchBodyPart(final List<Line> bodyPartMessage, final String boundary, final boolean isStrict)
       throws BatchException {
     this.boundary = boundary;
     this.isStrict = isStrict;
@@ -55,7 +57,7 @@ public class BatchBodyPart implements BatchPart {
     boolean isChangeSet = false;
 
     if (contentTypes.size() == 0) {
-      throw new BatchException(BatchException.MISSING_CONTENT_TYPE);
+      throw new BatchException(BatchException.MISSING_CONTENT_TYPE.addContent(headers.getLineNumber()));
     }
 
     for (String contentType : contentTypes) {
@@ -71,7 +73,7 @@ public class BatchBodyPart implements BatchPart {
     return BatchParserCommon.PATTERN_MULTIPART_BOUNDARY.matcher(contentType).matches();
   }
 
-  private List<BatchQueryOperation> consumeRequest(final List<String> remainingMessage) throws BatchException {
+  private List<BatchQueryOperation> consumeRequest(final List<Line> remainingMessage) throws BatchException {
     if (isChangeSet) {
       return consumeChangeSet(remainingMessage);
     } else {
@@ -79,28 +81,30 @@ public class BatchBodyPart implements BatchPart {
     }
   }
 
-  private List<BatchQueryOperation> consumeChangeSet(final List<String> remainingMessage)
+  private List<BatchQueryOperation> consumeChangeSet(final List<Line> remainingMessage)
       throws BatchException {
-    final List<List<String>> changeRequests = splitChangeSet(remainingMessage);
+    final List<List<Line>> changeRequests = splitChangeSet(remainingMessage);
     final List<BatchQueryOperation> requestList = new LinkedList<BatchQueryOperation>();
 
-    for (List<String> changeRequest : changeRequests) {
+    for (List<Line> changeRequest : changeRequests) {
       requestList.add(new BatchChangeSetPart(changeRequest, isStrict).parse());
     }
 
     return requestList;
   }
 
-  private List<List<String>> splitChangeSet(final List<String> remainingMessage)
+  private List<List<Line>> splitChangeSet(final List<Line> remainingMessage)
       throws BatchException {
 
-    final String changeSetBoundary = BatchParserCommon.getBoundary(headers.getHeaderNotNull(HttpHeaders.CONTENT_TYPE));
-    validateChangeSetBoundary(changeSetBoundary);
+    final HeaderField contentTypeField = headers.getHeaderField(HttpHeaders.CONTENT_TYPE);
+    final String changeSetBoundary =
+        BatchParserCommon.getBoundary(contentTypeField.getValueNotNull(), contentTypeField.getLineNumber());
+    validateChangeSetBoundary(changeSetBoundary, headers);
 
     return BatchParserCommon.splitMessageByBoundary(remainingMessage, changeSetBoundary);
   }
 
-  private List<BatchQueryOperation> consumeQueryOperation(final List<String> remainingMessage)
+  private List<BatchQueryOperation> consumeQueryOperation(final List<Line> remainingMessage)
       throws BatchException {
     final List<BatchQueryOperation> requestList = new LinkedList<BatchQueryOperation>();
     requestList.add(new BatchQueryOperation(remainingMessage, isStrict).parse());
@@ -108,9 +112,10 @@ public class BatchBodyPart implements BatchPart {
     return requestList;
   }
 
-  private void validateChangeSetBoundary(final String changeSetBoundary) throws BatchException {
+  private void validateChangeSetBoundary(final String changeSetBoundary, Header header) throws BatchException {
     if (changeSetBoundary.equals(boundary)) {
-      throw new BatchException(BatchException.INVALID_BOUNDARY);
+      throw new BatchException(BatchException.INVALID_BOUNDARY.addContent(header.getHeaderField(
+          HttpHeaders.CONTENT_TYPE).getLineNumber()));
     }
   }
 

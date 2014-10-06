@@ -94,7 +94,7 @@ public class BatchException extends ODataMessageException {
   public static final MessageReference INVALID_ACCEPT_LANGUAGE_HEADER = createMessageReference(BatchException.class,
       "INVALID_ACCEPT_LANGUAGE_HEADER");
 
-  /** INVALID_CONTENT_TRANSFER_ENCODING requires no content value */
+  /** INVALID_CONTENT_TRANSFER_ENCODING requires 1 content value */
   public static final MessageReference INVALID_CONTENT_TRANSFER_ENCODING = createMessageReference(BatchException.class,
       "INVALID_CONTENT_TRANSFER_ENCODING");
 

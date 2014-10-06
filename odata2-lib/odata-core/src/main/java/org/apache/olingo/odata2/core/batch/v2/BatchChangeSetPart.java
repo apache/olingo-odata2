@@ -21,11 +21,12 @@ package org.apache.olingo.odata2.core.batch.v2;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 
 public class BatchChangeSetPart extends BatchQueryOperation {
   private BatchQueryOperation request;
 
-  public BatchChangeSetPart(final List<String> message, final boolean isStrict) throws BatchException {
+  public BatchChangeSetPart(final List<Line> message, final boolean isStrict) throws BatchException {
     super(message, isStrict);
   }
 
@@ -44,12 +45,12 @@ public class BatchChangeSetPart extends BatchQueryOperation {
   }
 
   @Override
-  public List<String> getBody() {
+  public List<Line> getBody() {
     return request.getBody();
   }
 
   @Override
-  public String getHttpStatusLine() {
+  public Line getHttpStatusLine() {
     return request.getHttpStatusLine();
   }
 }

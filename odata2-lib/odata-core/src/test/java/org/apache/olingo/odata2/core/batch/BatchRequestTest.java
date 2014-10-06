@@ -132,7 +132,6 @@ public class BatchRequestTest {
   }
 
   @Test
-  @Ignore
   // TODO
       /*
        * --batch_123
@@ -146,8 +145,8 @@ public class BatchRequestTest {
        * ...
        * ....
        */
-      public
-      void testBatchWithGetAndPost() throws BatchException, IOException {
+  @Ignore
+  public void testBatchWithGetAndPost() throws BatchException, IOException {
     List<BatchPart> batch = new ArrayList<BatchPart>();
     Map<String, String> headers = new HashMap<String, String>();
     headers.put("Accept", "application/json");

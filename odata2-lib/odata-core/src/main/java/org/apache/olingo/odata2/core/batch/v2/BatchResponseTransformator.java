@@ -29,6 +29,7 @@ import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
 import org.apache.olingo.odata2.core.batch.BatchSingleResponseImpl;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 
 public class BatchResponseTransformator implements BatchTransformator {
 
@@ -92,14 +93,15 @@ public class BatchResponseTransformator implements BatchTransformator {
     return response;
   }
 
-  private Matcher prepareStatusLineMatcher(String httpStatusLine) throws BatchException {
+  private Matcher prepareStatusLineMatcher(final Line httpStatusLine) throws BatchException {
     final Pattern regexPattern = Pattern.compile(REG_EX_STATUS_LINE);
-    final Matcher matcher = regexPattern.matcher(httpStatusLine);
+    final Matcher matcher = regexPattern.matcher(httpStatusLine.toString());
 
     if (matcher.find()) {
       return matcher;
     } else {
-      throw new BatchException(BatchException.INVALID_STATUS_LINE);
+      throw new BatchException(BatchException.INVALID_STATUS_LINE.addContent(httpStatusLine.toString())
+          .addContent(httpStatusLine.getLineNumber()));
     }
   }
 
@@ -109,7 +111,7 @@ public class BatchResponseTransformator implements BatchTransformator {
     if (contentLength == -1) {
       return BatchParserCommon.stringListToString(operation.getBody());
     } else {
-      return BatchParserCommon.trimStringListToStringLength(operation.getBody(), contentLength);
+      return BatchParserCommon.trimLineListToLength(operation.getBody(), contentLength);
     }
   }
 

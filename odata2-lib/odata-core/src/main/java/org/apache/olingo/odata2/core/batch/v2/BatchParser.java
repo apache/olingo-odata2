@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.ep.EntityProviderBatchProperties;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.PathSegment;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class BatchParser {
@@ -78,11 +79,11 @@ public class BatchParser {
       final BatchTransformator transformator) throws BatchException, IOException {
 
     final String baseUri = getBaseUri();
-    final String boundary = BatchParserCommon.getBoundary(contentTypeMime);
+    final String boundary = BatchParserCommon.getBoundary(contentTypeMime, 1);
     final List<BatchParserResult> resultList = new LinkedList<BatchParserResult>();
-    final List<List<String>> bodyPartStrings = splitBodyParts(in, boundary);
+    final List<List<Line>> bodyPartStrings = splitBodyParts(in, boundary);
 
-    for (List<String> bodyPartString : bodyPartStrings) {
+    for (List<Line> bodyPartString : bodyPartStrings) {
       BatchBodyPart bodyPart = new BatchBodyPart(bodyPartString, boundary, isStrict).parse();
       resultList.addAll(transformator.transform(bodyPart, batchRequestPathInfo, baseUri));
     }
@@ -90,11 +91,11 @@ public class BatchParser {
     return resultList;
   }
 
-  private List<List<String>> splitBodyParts(final InputStream in, final String boundary)
+  private List<List<Line>> splitBodyParts(final InputStream in, final String boundary)
       throws IOException, BatchException {
 
     final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
-    final List<String> message = reader.toList();
+    final List<Line> message = reader.toList();
     reader.close();
 
     return BatchParserCommon.splitMessageByBoundary(message, boundary);

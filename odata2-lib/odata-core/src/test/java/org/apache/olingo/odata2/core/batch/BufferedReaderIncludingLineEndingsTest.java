@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.junit.Test;
 
 public class BufferedReaderIncludingLineEndingsTest {
@@ -422,20 +423,20 @@ public class BufferedReaderIncludingLineEndingsTest {
   @Test
   public void testToList() throws IOException {
     BufferedReaderIncludingLineEndings reader = create(TEXT_COMBINED);
-    List<String> stringList = reader.toList();
+    List<Line> stringList = reader.toList();
 
     assertEquals(11, stringList.size());
-    assertEquals("Test\r", stringList.get(0));
-    assertEquals("Test2\r\n", stringList.get(1));
-    assertEquals("Test3\n", stringList.get(2));
-    assertEquals("Test4\r", stringList.get(3));
-    assertEquals("\r", stringList.get(4));
-    assertEquals("\r\n", stringList.get(5));
-    assertEquals("\r\n", stringList.get(6));
-    assertEquals("Test5\n", stringList.get(7));
-    assertEquals("Test6\r\n", stringList.get(8));
-    assertEquals("Test7\n", stringList.get(9));
-    assertEquals("\n", stringList.get(10));
+    assertEquals("Test\r", stringList.get(0).toString());
+    assertEquals("Test2\r\n", stringList.get(1).toString());
+    assertEquals("Test3\n", stringList.get(2).toString());
+    assertEquals("Test4\r", stringList.get(3).toString());
+    assertEquals("\r", stringList.get(4).toString());
+    assertEquals("\r\n", stringList.get(5).toString());
+    assertEquals("\r\n", stringList.get(6).toString());
+    assertEquals("Test5\n", stringList.get(7).toString());
+    assertEquals("Test6\r\n", stringList.get(8).toString());
+    assertEquals("Test7\n", stringList.get(9).toString());
+    assertEquals("\n", stringList.get(10).toString());
     reader.close();
   }
 

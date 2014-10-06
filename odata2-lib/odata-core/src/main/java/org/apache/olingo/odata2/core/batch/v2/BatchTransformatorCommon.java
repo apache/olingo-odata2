@@ -6,6 +6,7 @@ import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
+import org.apache.olingo.odata2.core.batch.v2.Header.HeaderField;
 
 public class BatchTransformatorCommon {
 
@@ -24,39 +25,45 @@ public class BatchTransformatorCommon {
 
   public static void validateContentTransferEncoding(final Header headers, final boolean isChangeRequest)
       throws BatchException {
-    final List<String> contentTransferEncodings = headers.getHeaders(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING);
+    final HeaderField contentTransferField = headers.getHeaderField(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING);
 
-    if (contentTransferEncodings.size() != 0) {
-      if (contentTransferEncodings.size() == 1) {
-        String encoding = contentTransferEncodings.get(0);
+    if (contentTransferField != null) {
+      final List<String> contentTransferValues = contentTransferField.getValues();
+      if (contentTransferValues.size() == 1) {
+        String encoding = contentTransferValues.get(0);
 
         if (!BatchHelper.BINARY_ENCODING.equalsIgnoreCase(encoding)) {
-          throw new BatchException(BatchException.INVALID_CONTENT_TRANSFER_ENCODING);
+          throw new BatchException(
+              BatchException.INVALID_CONTENT_TRANSFER_ENCODING.addContent(contentTransferField.getLineNumber()));
         }
       } else {
-        throw new BatchException(BatchException.INVALID_HEADER);
+        throw new BatchException(BatchException.INVALID_HEADER.addContent(contentTransferField.getLineNumber()));
       }
     } else {
       if (isChangeRequest) {
-        throw new BatchException(BatchException.INVALID_CONTENT_TRANSFER_ENCODING);
+        throw new BatchException(BatchException.INVALID_CONTENT_TRANSFER_ENCODING.addContent(headers.getLineNumber()));
       }
     }
   }
 
   public static int getContentLength(final Header headers) throws BatchException {
-    final List<String> contentLengths = headers.getHeaders(HttpHeaders.CONTENT_LENGTH);
+    final HeaderField contentLengthField = headers.getHeaderField(HttpHeaders.CONTENT_LENGTH);
 
-    if (contentLengths.size() == 1) {
+    if (contentLengthField != null && contentLengthField.getValues().size() == 1) {
+      final List<String> contentLengthValues = contentLengthField.getValues();
+
       try {
-        int contentLength = Integer.parseInt(contentLengths.get(0));
+        int contentLength = Integer.parseInt(contentLengthValues.get(0));
 
         if (contentLength < 0) {
-          throw new BatchException(BatchException.INVALID_HEADER);
+          throw new BatchException(BatchException.INVALID_HEADER.addContent(contentLengthField.getValue()).addContent(
+              contentLengthField.getLineNumber()));
         }
 
         return contentLength;
       } catch (NumberFormatException e) {
-        throw new BatchException(BatchException.INVALID_HEADER, e);
+        throw new BatchException(BatchException.INVALID_HEADER.addContent(contentLengthField.getValue()).addContent(
+            contentLengthField.getLineNumber()), e);
       }
     }
 

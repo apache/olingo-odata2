@@ -21,17 +21,18 @@ package org.apache.olingo.odata2.core.batch.v2;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 
 public class BatchQueryOperation implements BatchPart {
 
   protected final boolean isStrict;
-  protected String httpStatusLine;
+  protected Line httpStatusLine;
   protected Header headers;
-  protected List<String> body;
+  protected List<Line> body;
   protected int bodySize;
-  protected List<String> message;
+  protected List<Line> message;
 
-  public BatchQueryOperation(final List<String> message, final boolean isStrict) {
+  public BatchQueryOperation(final List<Line> message, final boolean isStrict) {
     this.isStrict = isStrict;
     this.message = message;
   }
@@ -45,22 +46,23 @@ public class BatchQueryOperation implements BatchPart {
     return this;
   }
 
-  protected String consumeHttpStatusLine(final List<String> message) throws BatchException {
-    if (message.size() > 0 && !message.get(0).trim().equals("")) {
-      String method = message.get(0);
+  protected Line consumeHttpStatusLine(final List<Line> message) throws BatchException {
+    if (message.size() > 0 && !message.get(0).toString().trim().equals("")) {
+      final Line method = message.get(0);
       message.remove(0);
 
       return method;
     } else {
-      throw new BatchException(BatchException.INVALID_QUERY_OPERATION_METHOD);
+      final int line = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
+      throw new BatchException(BatchException.MISSING_METHOD.addContent(line));
     }
   }
 
-  public String getHttpStatusLine() {
+  public Line getHttpStatusLine() {
     return httpStatusLine;
   }
 
-  public List<String> getBody() {
+  public List<Line> getBody() {
     return body;
   }
 

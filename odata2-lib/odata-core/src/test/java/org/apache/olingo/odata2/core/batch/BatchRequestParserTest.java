@@ -44,9 +44,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- *
- */
 public class BatchRequestParserTest {
 
   private static final String CRLF = "\r\n";
@@ -257,7 +254,7 @@ public class BatchRequestParserTest {
 
   @Test(expected = BatchException.class)
   public void testBoundaryParameterWithoutQuota() throws BatchException {
-    String invalidContentType = "multipart;boundary=batch_1740-bb:84-2f7f";
+    String invalidContentType = "multipart/mixed;boundary=batch_1740-bb:84-2f7f";
     String batch = "--batch_1740-bb:84-2f7f" + CRLF
         + GET_REQUEST
         + "--batch_1740-bb:84-2f7f--";
@@ -607,32 +604,6 @@ public class BatchRequestParserTest {
   }
 
   @SuppressWarnings("unused")
-  @Test(expected = BatchException.class)
-  @Ignore("This header should not be validated")
-  public void testNegativeContentLength() throws BatchException, IOException {
-    String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-        + "Content-Length: -2" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: " + PUT_MIME_HEADER_CONTENT_ID + CRLF
-        + CRLF
-        + "PUT $" + CONTENT_ID_REFERENCE + "/EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "Content-Id:" + PUT_REQUEST_HEADER_CONTENT_ID + CRLF
-        + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-    InputStream in = new ByteArrayInputStream(batch.getBytes());
-    BatchParser parser = new BatchParser(contentType, batchProperties, true);
-    List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
-  }
-
-  @SuppressWarnings("unused")
   @Test
   public void testNegativeContentLengthChangeSet() throws BatchException, IOException {
     String batch = ""
@@ -744,44 +715,6 @@ public class BatchRequestParserTest {
         assertEquals("{\"Employee", inputStreamToString(request.getBody()));
       }
     }
-  }
-
-  @Test(expected = BatchException.class)
-  @Ignore("This header should not be validated")
-  public void testCutChangeSetDelimiter() throws BatchException, IOException {
-    String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-        + "Content-Length: 582" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: " + PUT_MIME_HEADER_CONTENT_ID + CRLF
-        + CRLF
-        + "PUT $" + CONTENT_ID_REFERENCE + "/EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "Content-Id:" + PUT_REQUEST_HEADER_CONTENT_ID + CRLF
-        + "Content-Length: 10" + CRLF
-        + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: " + PUT_MIME_HEADER_CONTENT_ID + CRLF
-        + CRLF
-        + "PUT $" + CONTENT_ID_REFERENCE + "/EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "Content-Id:" + PUT_REQUEST_HEADER_CONTENT_ID + CRLF
-        + "Content-Length: 100000" + CRLF
-        + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    InputStream in = new ByteArrayInputStream(batch.getBytes());
-    BatchParser parser = new BatchParser(contentType, batchProperties, true);
-    parser.parseBatchRequest(in);
   }
 
   @Test(expected = BatchException.class)
@@ -1138,7 +1071,20 @@ public class BatchRequestParserTest {
     assertEquals("{\"EmployeeName\":\"Peter Fall\"}",
         inputStreamToString(changeSetPart.getRequests().get(1).getBody()));
   }
+  
+  @Test
+  public void testLargeBatch() throws BatchException, IOException {
+    String fileName = "/batchLarge.batch";
+    InputStream in = ClassLoader.class.getResourceAsStream(fileName);
+    if (in == null) {
+      throw new IOException("Requested file '" + fileName + "' was not found.");
+    }
+    
+    BatchParser parser = new BatchParser(contentType, batchProperties, true);
+    parser.parseBatchRequest(in);
+  }
 
+  
   private List<BatchRequestPart> parse(final String batch) throws BatchException {
     InputStream in = new ByteArrayInputStream(batch.getBytes());
     BatchParser parser = new BatchParser(contentType, batchProperties, true);
