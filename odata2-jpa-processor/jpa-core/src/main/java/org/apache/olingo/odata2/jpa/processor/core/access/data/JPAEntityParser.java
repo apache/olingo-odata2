@@ -543,6 +543,8 @@ public final class JPAEntityParser {
               String nameWithIs = getAccessModifierName(property.getName(),
                   property.getMapping(), ACCESS_MODIFIER_IS);
               method = jpaEntityType.getMethod(nameWithIs, (Class<?>[]) null);
+            } else {
+              throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e1);
             }
           } catch (EdmException exp) {
             throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, exp);
