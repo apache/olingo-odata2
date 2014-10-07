@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchRequestPart;
@@ -895,7 +896,7 @@ public class BatchRequestParserTest {
         + "This is a preamble and must be ignored" + CRLF
         + CRLF
         + CRLF
-        + "----1242"
+        + "----1242" + CRLF
         + "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
         + CRLF
@@ -909,7 +910,7 @@ public class BatchRequestParserTest {
         + "This is a preamble and must be ignored" + CRLF
         + CRLF
         + CRLF
-        + "----1242"
+        + "----1242" + CRLF
         + "--changeset_f980-1cb6-94dd" + CRLF
         + MIME_HEADERS
         + "Content-Id: " + CONTENT_ID_REFERENCE + CRLF
@@ -1071,20 +1072,34 @@ public class BatchRequestParserTest {
     assertEquals("{\"EmployeeName\":\"Peter Fall\"}",
         inputStreamToString(changeSetPart.getRequests().get(1).getBody()));
   }
-  
+
   @Test
   public void testLargeBatch() throws BatchException, IOException {
-    String fileName = "/batchLarge.batch";
-    InputStream in = ClassLoader.class.getResourceAsStream(fileName);
-    if (in == null) {
-      throw new IOException("Requested file '" + fileName + "' was not found.");
+    for (int j = 0; j < 200; j++) {
+      String fileName = "/batchLarge.batch";
+      InputStream in = ClassLoader.class.getResourceAsStream(fileName);
+      if (in == null) {
+        throw new IOException("Requested file '" + fileName + "' was not found.");
+      }
+
+      StringBuilder builder = new StringBuilder();
+      Random rnd = new Random();
+      for (int i = 0; i < 300; i++) {
+        builder.append((char) ('A' + rnd.nextInt('Z' - 'A')));
+      }
+
+      // String request = builder.toString() + CRLF + inputStreamToString(in);
+      String request = inputStreamToString(in).replace("Walldorf", builder.toString());
+      in.close();
+      InputStream requestStream = new ByteArrayInputStream(request.getBytes());
+
+      long start = System.currentTimeMillis();
+      BatchParser parser = new BatchParser(contentType, batchProperties, true);
+      parser.parseBatchRequest(requestStream);
+      System.out.println(System.currentTimeMillis() - start);
     }
-    
-    BatchParser parser = new BatchParser(contentType, batchProperties, true);
-    parser.parseBatchRequest(in);
   }
 
-  
   private List<BatchRequestPart> parse(final String batch) throws BatchException {
     InputStream in = new ByteArrayInputStream(batch.getBytes());
     BatchParser parser = new BatchParser(contentType, batchProperties, true);

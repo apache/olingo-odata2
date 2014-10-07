@@ -87,7 +87,7 @@ public class Header implements Cloneable {
 
   public Map<String, List<String>> toMultiMap() {
     final Map<String, List<String>> singleMap = new HashMap<String, List<String>>();
-
+    
     for (final String key : headers.keySet()) {
       HeaderField field = headers.get(key);
       singleMap.put(field.getFieldName(), field.getValues());

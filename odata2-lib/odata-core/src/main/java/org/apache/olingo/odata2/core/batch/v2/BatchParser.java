@@ -20,7 +20,6 @@ package org.apache.olingo.odata2.core.batch.v2;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -81,7 +80,7 @@ public class BatchParser {
     final String baseUri = getBaseUri();
     final String boundary = BatchParserCommon.getBoundary(contentTypeMime, 1);
     final List<BatchParserResult> resultList = new LinkedList<BatchParserResult>();
-    final List<List<Line>> bodyPartStrings = splitBodyParts(in, boundary);
+    final List<List<Line>> bodyPartStrings = BatchParserCommon.splitRequestByBoundary(in, boundary);
 
     for (List<Line> bodyPartString : bodyPartStrings) {
       BatchBodyPart bodyPart = new BatchBodyPart(bodyPartString, boundary, isStrict).parse();
@@ -90,16 +89,17 @@ public class BatchParser {
 
     return resultList;
   }
-
-  private List<List<Line>> splitBodyParts(final InputStream in, final String boundary)
-      throws IOException, BatchException {
-
-    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
-    final List<Line> message = reader.toList();
-    reader.close();
-
-    return BatchParserCommon.splitMessageByBoundary(message, boundary);
-  }
+  
+  //TODO remove
+//  private List<List<Line>> splitBodyParts(final InputStream in, final String boundary)
+//      throws IOException, BatchException {
+//
+//    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
+//    final List<Line> message = reader.toList();
+//    reader.close();
+//
+//    return BatchParserCommon.splitMessageByBoundary(message, boundary);
+//  }
 
   private String getBaseUri() throws BatchException {
     String baseUri = "";

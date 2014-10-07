@@ -19,7 +19,9 @@
 package org.apache.olingo.odata2.core.batch.v2;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -44,6 +46,9 @@ import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings
 import org.apache.olingo.odata2.core.commons.Decoder;
 
 public class BatchParserCommon {
+
+  private static final Pattern PATTERN_LAST_CRLF = Pattern.compile("(.*)(\r\n){1}( *)", Pattern.DOTALL);
+
   private static final String REG_EX_BOUNDARY =
       "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\" +
           "(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\""; // See RFC 2046
@@ -55,6 +60,7 @@ public class BatchParserCommon {
   public static final Pattern PATTERN_HEADER_LINE = Pattern.compile("([a-zA-Z\\-]+):\\s?(.*)\\s*");
   public static final Pattern PATTERN_CONTENT_TYPE_APPLICATION_HTTP = Pattern.compile(REG_EX_APPLICATION_HTTP,
       Pattern.CASE_INSENSITIVE);
+  private static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(\\?.*)?");
 
   public static String trimLineListToLength(final List<Line> list, final int length) {
     final String message = stringListToString(list);
@@ -86,19 +92,77 @@ public class BatchParserCommon {
 
     return new ByteArrayInputStream(message.getBytes());
   }
+  
+  static List<List<Line>> splitRequestByBoundary(final InputStream in, final String boundary)
+      throws BatchException, IOException {
+    final List<List<Line>> messageParts = new LinkedList<List<Line>>();
+    List<Line> currentPart = new ArrayList<Line>();
+    boolean isEndReached = false;
+    //32ms
+    final String quotedBoundary = Pattern.quote(boundary);
+    final Pattern boundaryDelimiterPattern = Pattern.compile("--" + quotedBoundary +  "--[\\s ]*");
+    final Pattern boundaryPattern = Pattern.compile("--" + quotedBoundary + "[\\s ]*");
+    
+    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
+    String currentLine;
+    int lineNumber = 1;
+    
+    while((currentLine = reader.readLine()) != null) {
+      if (boundaryDelimiterPattern.matcher(currentLine.toString()).matches()) {
+        removeEndingCRLFFromList(currentPart);
+        messageParts.add(currentPart);
+        isEndReached = true;
+      } else if (boundaryPattern.matcher(currentLine.toString()).matches()) {
+        removeEndingCRLFFromList(currentPart);
+        messageParts.add(currentPart);
+        currentPart = new LinkedList<Line>();
+      } else {
+        currentPart.add(new Line(currentLine, lineNumber));
+      }
 
+      if (isEndReached) {
+        break;
+      }
+
+      lineNumber++;
+    }
+    reader.close();
+
+    // Remove preamble
+    if (messageParts.size() > 0) {
+      messageParts.remove(0);
+    } else {
+
+      throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER.addContent(1));
+    }
+
+    if (!isEndReached) {
+      throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER.addContent(1));
+    }
+
+    if (messageParts.size() == 0) {
+      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING.addContent(boundary).addContent(0));
+    }
+
+    return messageParts;
+  }
+  
   static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)
       throws BatchException {
     final List<List<Line>> messageParts = new LinkedList<List<Line>>();
     List<Line> currentPart = new ArrayList<Line>();
     boolean isEndReached = false;
-
+    
+    final String quotedBoundary = Pattern.quote(boundary);
+    final Pattern boundaryDelimiterPattern = Pattern.compile("--" + quotedBoundary +  "--[\\s ]*");
+    final Pattern boundaryPattern = Pattern.compile("--" + quotedBoundary + "[\\s ]*");
+    
     for (Line currentLine : message) {
-      if (currentLine.toString().contains("--" + boundary + "--")) {
+      if (boundaryDelimiterPattern.matcher(currentLine.toString()).matches()) {
         removeEndingCRLFFromList(currentPart);
         messageParts.add(currentPart);
         isEndReached = true;
-      } else if (currentLine.toString().contains("--" + boundary)) {
+      } else if (boundaryPattern.matcher(currentLine.toString()).matches()) {
         removeEndingCRLFFromList(currentPart);
         messageParts.add(currentPart);
         currentPart = new LinkedList<Line>();
@@ -139,7 +203,7 @@ public class BatchParserCommon {
   }
 
   public static Line removeEndingCRLF(final Line line) {
-    Pattern pattern = Pattern.compile("(.*)(\r\n){1}( *)", Pattern.DOTALL);
+    Pattern pattern = PATTERN_LAST_CRLF;
     Matcher matcher = pattern.matcher(line.toString());
 
     if (matcher.matches()) {
@@ -268,7 +332,7 @@ public class BatchParserCommon {
         if (uriObject.isAbsolute()) {
           regexRequestUri = Pattern.compile(baseUri + "/([^/][^?]*)(\\?.*)?");
         } else {
-          regexRequestUri = Pattern.compile("([^/][^?]*)(\\?.*)?");
+          regexRequestUri = PATTERN_RELATIVE_URI;
 
         }
 

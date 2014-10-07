@@ -27,7 +27,7 @@ public class BufferedReaderIncludingLineEndings extends Reader {
   private static final char CR = '\r';
   private static final char LF = '\n';
   private static final int EOF = -1;
-  private static final int BUFFER_SIZE = 1024;
+  private static final int BUFFER_SIZE = 8192;
   private Reader reader;
   private char[] buffer;
   private int offset = 0;
@@ -105,7 +105,7 @@ public class BufferedReaderIncludingLineEndings extends Reader {
   }
 
   public String readLine() throws IOException {
-    if (isEOF()) {
+    if (limit == EOF) {
       return null;
     }
 
@@ -113,7 +113,7 @@ public class BufferedReaderIncludingLineEndings extends Reader {
     boolean foundLineEnd = false; // EOF will be considered as line ending
 
     while (!foundLineEnd) {
-      if (isBufferReloadRequired()) {
+      if (limit == offset) {
         if (fillBuffer() == EOF) {
           foundLineEnd = true;
         }
@@ -129,12 +129,12 @@ public class BufferedReaderIncludingLineEndings extends Reader {
           foundLineEnd = true;
 
           // Check next char. Consume \n if available
-          if (isBufferReloadRequired()) {
+          if (limit == offset) {
             fillBuffer();
           }
 
           // Check if there is at least one character
-          if (!isEOF() && buffer[offset] == LF) {
+          if (limit != EOF && buffer[offset] == LF) {
             stringBuffer.append(LF);
             offset++;
           }
