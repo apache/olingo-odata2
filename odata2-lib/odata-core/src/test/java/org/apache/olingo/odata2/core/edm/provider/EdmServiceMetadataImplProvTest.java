@@ -28,7 +28,6 @@ import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +75,7 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
 
     List<EdmEntitySetInfo> infos = serviceMetadata.getEntitySetInfos();
     assertNotNull(infos);
-    assertEquals(Collections.emptyList(), infos);
+    assertTrue(infos.isEmpty());
   }
 
   @Test
@@ -90,7 +89,27 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
 
     List<EdmEntitySetInfo> infos = serviceMetadata.getEntitySetInfos();
     assertNotNull(infos);
-    assertEquals(Collections.emptyList(), infos);
+    assertTrue(infos.isEmpty());
+  }
+
+  /**
+   * Check that no NPE can occur with a new created Schema
+   *
+   * @throws Exception
+   */
+  @Test
+  public void getEntitySetInfosForNewEdmProviderSchemas() throws Exception {
+    List<Schema> schemas = new ArrayList<Schema>();
+    schemas.add(new Schema());
+
+    EdmProvider edmProvider = mock(EdmProvider.class);
+    when(edmProvider.getSchemas()).thenReturn(schemas);
+
+    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImplProv(edmProvider);
+
+    List<EdmEntitySetInfo> infos = serviceMetadata.getEntitySetInfos();
+    assertNotNull(infos);
+    assertTrue(infos.isEmpty());
   }
 
   @Test
