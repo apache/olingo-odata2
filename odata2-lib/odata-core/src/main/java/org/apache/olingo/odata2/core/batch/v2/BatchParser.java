@@ -89,17 +89,6 @@ public class BatchParser {
 
     return resultList;
   }
-  
-  //TODO remove
-//  private List<List<Line>> splitBodyParts(final InputStream in, final String boundary)
-//      throws IOException, BatchException {
-//
-//    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
-//    final List<Line> message = reader.toList();
-//    reader.close();
-//
-//    return BatchParserCommon.splitMessageByBoundary(message, boundary);
-//  }
 
   private String getBaseUri() throws BatchException {
     String baseUri = "";

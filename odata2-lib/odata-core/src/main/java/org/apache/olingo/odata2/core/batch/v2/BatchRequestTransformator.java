@@ -63,7 +63,7 @@ public class BatchRequestTransformator implements BatchTransformator {
     return resultList;
   }
 
-  private void validateHeader(final BatchPart bodyPart, boolean isChangeSet) throws BatchException {
+  private void validateHeader(final BatchPart bodyPart, final boolean isChangeSet) throws BatchException {
     Header headers = bodyPart.getHeaders();
 
     BatchTransformatorCommon.validateContentType(headers);
@@ -123,7 +123,7 @@ public class BatchRequestTransformator implements BatchTransformator {
         || (operation.getBody().size() == 1 && !operation.getBody().get(0).toString().trim().equals(""));
   }
 
-  private InputStream getBodyStream(final BatchQueryOperation operation, Header headers,
+  private InputStream getBodyStream(final BatchQueryOperation operation, final Header headers,
       final ODataHttpMethod httpMethod) throws BatchException {
 
     if (HTTP_BATCH_METHODS.contains(httpMethod.toString())) {

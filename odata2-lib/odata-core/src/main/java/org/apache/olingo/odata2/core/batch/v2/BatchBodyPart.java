@@ -112,7 +112,7 @@ public class BatchBodyPart implements BatchPart {
     return requestList;
   }
 
-  private void validateChangeSetBoundary(final String changeSetBoundary, Header header) throws BatchException {
+  private void validateChangeSetBoundary(final String changeSetBoundary, final Header header) throws BatchException {
     if (changeSetBoundary.equals(boundary)) {
       throw new BatchException(BatchException.INVALID_BOUNDARY.addContent(header.getHeaderField(
           HttpHeaders.CONTENT_TYPE).getLineNumber()));

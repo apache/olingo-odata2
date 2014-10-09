@@ -92,22 +92,22 @@ public class BatchParserCommon {
 
     return new ByteArrayInputStream(message.getBytes());
   }
-  
+
   static List<List<Line>> splitRequestByBoundary(final InputStream in, final String boundary)
       throws BatchException, IOException {
     final List<List<Line>> messageParts = new LinkedList<List<Line>>();
     List<Line> currentPart = new ArrayList<Line>();
     boolean isEndReached = false;
-    //32ms
+
     final String quotedBoundary = Pattern.quote(boundary);
-    final Pattern boundaryDelimiterPattern = Pattern.compile("--" + quotedBoundary +  "--[\\s ]*");
+    final Pattern boundaryDelimiterPattern = Pattern.compile("--" + quotedBoundary + "--[\\s ]*");
     final Pattern boundaryPattern = Pattern.compile("--" + quotedBoundary + "[\\s ]*");
-    
+
     final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
     String currentLine;
     int lineNumber = 1;
-    
-    while((currentLine = reader.readLine()) != null) {
+
+    while ((currentLine = reader.readLine()) != null) {
       if (boundaryDelimiterPattern.matcher(currentLine.toString()).matches()) {
         removeEndingCRLFFromList(currentPart);
         messageParts.add(currentPart);
@@ -146,17 +146,17 @@ public class BatchParserCommon {
 
     return messageParts;
   }
-  
+
   static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)
       throws BatchException {
     final List<List<Line>> messageParts = new LinkedList<List<Line>>();
     List<Line> currentPart = new ArrayList<Line>();
     boolean isEndReached = false;
-    
+
     final String quotedBoundary = Pattern.quote(boundary);
-    final Pattern boundaryDelimiterPattern = Pattern.compile("--" + quotedBoundary +  "--[\\s ]*");
+    final Pattern boundaryDelimiterPattern = Pattern.compile("--" + quotedBoundary + "--[\\s ]*");
     final Pattern boundaryPattern = Pattern.compile("--" + quotedBoundary + "[\\s ]*");
-    
+
     for (Line currentLine : message) {
       if (boundaryDelimiterPattern.matcher(currentLine.toString()).matches()) {
         removeEndingCRLFFromList(currentPart);
@@ -313,7 +313,7 @@ public class BatchParserCommon {
 
   public static PathInfo parseRequestUri(final Line httpStatusLine, final PathInfo batchRequestPathInfo,
       final String baseUri, final int line)
-      throws BatchException {
+          throws BatchException {
 
     final String odataPathSegmentsAsString;
     final String queryParametersAsString;

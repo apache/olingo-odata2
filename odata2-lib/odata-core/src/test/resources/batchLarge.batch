@@ -5,16 +5,12 @@ Content-Transfer-Encoding: binary
 GET Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
 Accept: application/atom+xml
 MaxDataServiceVersion: 2.0
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
 DataServiceVersion: 2.0
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept-Encoding: gzip,deflate
 Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
-
 
 --batch_8194-cf13-1f56
 Content-Type: application/http
@@ -23,16 +19,12 @@ Content-Transfer-Encoding: binary
 GET Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
 Accept: application/atom+xml
 MaxDataServiceVersion: 2.0
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
 DataServiceVersion: 2.0
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept-Encoding: gzip,deflate
 Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
-
 
 --batch_8194-cf13-1f56
 Content-Type: application/http
@@ -41,16 +33,12 @@ Content-Transfer-Encoding: binary
 GET Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
 Accept: application/atom+xml
 MaxDataServiceVersion: 2.0
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
 DataServiceVersion: 2.0
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept-Encoding: gzip,deflate
 Accept-Language: de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4
-
 
 --batch_8194-cf13-1f56
 Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd
@@ -63,11 +51,6 @@ Content-ID: 1
 POST Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -283,11 +266,6 @@ Content-ID: 1
 POST Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -503,11 +481,7 @@ Content-ID: 1
 PUT Employees('1') HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
+
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -553,11 +527,6 @@ Content-ID: 1
 POST Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -773,11 +742,6 @@ Content-ID: 1
 POST Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -993,11 +957,6 @@ Content-ID: 1
 PUT Employees('1') HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -1043,11 +1002,6 @@ Content-ID: 1
 POST Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -1263,11 +1217,6 @@ Content-ID: 1
 POST Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -1483,11 +1432,6 @@ Content-ID: 1
 PUT Employees('1') HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -1533,11 +1477,6 @@ Content-ID: 1
 POST Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -1753,11 +1692,6 @@ Content-ID: 1
 POST Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -1973,11 +1907,6 @@ Content-ID: 1
 PUT Employees('1') HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -2023,11 +1952,6 @@ Content-ID: 1
 POST Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -2243,11 +2167,6 @@ Content-ID: 1
 POST Employees HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate
@@ -2463,11 +2382,6 @@ Content-ID: 1
 PUT Employees('1') HTTP/1.1
 Host: http://localhost/odata
 Connection: keep-alive
-Content-Length: 1117
-Authorization: Basic YW56ZWlnZXI6ZGlzcGxheQ==
-Origin: chrome-extension://hgmloofddffdnphfgcellkdfbfbjeloo
-X-CSRF-Token: P6no0PBwygp1ie0Gz-YbEg==
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36
 Content-Type: application/atom+xml
 Accept: */*
 Accept-Encoding: gzip,deflate

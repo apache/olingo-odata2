@@ -57,7 +57,8 @@ public class BufferedReaderIncludingLineEndings extends Reader {
     }
 
     // Check if buffer is filled. Return if EOF is reached
-    if (isBufferReloadRequired() || isEOF()) {
+    // Is buffer refill required
+    if (limit == offset || isEOF()) {
       fillBuffer();
 
       if (isEOF()) {
@@ -70,7 +71,8 @@ public class BufferedReaderIncludingLineEndings extends Reader {
     int currentOutputOffset = bufferOffset;
 
     while (bytesToRead != 0) {
-      if (isBufferReloadRequired()) {
+      // Is buffer refill required?
+      if (limit == offset) {
         fillBuffer();
 
         if (isEOF()) {
@@ -113,6 +115,7 @@ public class BufferedReaderIncludingLineEndings extends Reader {
     boolean foundLineEnd = false; // EOF will be considered as line ending
 
     while (!foundLineEnd) {
+     // Is buffer refill required?
       if (limit == offset) {
         if (fillBuffer() == EOF) {
           foundLineEnd = true;
@@ -129,6 +132,7 @@ public class BufferedReaderIncludingLineEndings extends Reader {
           foundLineEnd = true;
 
           // Check next char. Consume \n if available
+          // Is buffer refill required?
           if (limit == offset) {
             fillBuffer();
           }
@@ -152,7 +156,8 @@ public class BufferedReaderIncludingLineEndings extends Reader {
 
   @Override
   public boolean ready() throws IOException {
-    return !isEOF() && !isBufferReloadRequired();
+    // Not EOF and buffer refill is not required
+    return !isEOF() && !(limit == offset);
   }
 
   @Override
@@ -181,8 +186,8 @@ public class BufferedReaderIncludingLineEndings extends Reader {
       long charactersSkiped = 0;
 
       while (charactersToSkip != 0) {
-        // Check if buffer is empty
-        if (isBufferReloadRequired()) {
+        // Is buffer refill required?
+        if (limit == offset) {
           fillBuffer();
 
           if (isEOF()) {
@@ -202,10 +207,6 @@ public class BufferedReaderIncludingLineEndings extends Reader {
 
       return charactersSkiped;
     }
-  }
-
-  private boolean isBufferReloadRequired() {
-    return limit == offset;
   }
 
   private boolean isEOF() {

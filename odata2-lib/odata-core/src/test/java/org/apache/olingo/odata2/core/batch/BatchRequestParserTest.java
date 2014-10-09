@@ -29,7 +29,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchRequestPart;
@@ -1075,29 +1074,13 @@ public class BatchRequestParserTest {
 
   @Test
   public void testLargeBatch() throws BatchException, IOException {
-    for (int j = 0; j < 200; j++) {
-      String fileName = "/batchLarge.batch";
-      InputStream in = ClassLoader.class.getResourceAsStream(fileName);
-      if (in == null) {
-        throw new IOException("Requested file '" + fileName + "' was not found.");
-      }
-
-      StringBuilder builder = new StringBuilder();
-      Random rnd = new Random();
-      for (int i = 0; i < 300; i++) {
-        builder.append((char) ('A' + rnd.nextInt('Z' - 'A')));
-      }
-
-      // String request = builder.toString() + CRLF + inputStreamToString(in);
-      String request = inputStreamToString(in).replace("Walldorf", builder.toString());
-      in.close();
-      InputStream requestStream = new ByteArrayInputStream(request.getBytes());
-
-      long start = System.currentTimeMillis();
-      BatchParser parser = new BatchParser(contentType, batchProperties, true);
-      parser.parseBatchRequest(requestStream);
-      System.out.println(System.currentTimeMillis() - start);
+    String fileName = "/batchLarge.batch";
+    InputStream in = ClassLoader.class.getResourceAsStream(fileName);
+    if (in == null) {
+      throw new IOException("Requested file '" + fileName + "' was not found.");
     }
+    BatchParser parser = new BatchParser(contentType, batchProperties, true);
+    parser.parseBatchRequest(in);
   }
 
   private List<BatchRequestPart> parse(final String batch) throws BatchException {

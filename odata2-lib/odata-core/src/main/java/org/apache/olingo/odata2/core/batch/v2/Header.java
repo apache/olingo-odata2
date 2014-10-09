@@ -11,11 +11,11 @@ public class Header implements Cloneable {
 
   private final Map<String, HeaderField> headers = new HashMap<String, HeaderField>();
   private int lineNumber;
-  
-  public Header(int lineNumer) {
-    this.lineNumber = lineNumer;
+
+  public Header(final int lineNumer) {
+    lineNumber = lineNumer;
   }
-  
+
   public void addHeader(final String name, final String value, final int lineNumber) {
     final HeaderField headerField = getHeaderFieldOrDefault(name, lineNumber);
     final List<String> headerValues = headerField.getValues();
@@ -50,13 +50,13 @@ public class Header implements Cloneable {
 
   public String getHeader(final String name) {
     final HeaderField headerField = getHeaderField(name);
-    
+
     return (headerField == null) ? null : headerField.getValue();
   }
 
   public String getHeaderNotNull(final String name) {
     final HeaderField headerField = getHeaderField(name);
-    
+
     return (headerField == null) ? "" : headerField.getValueNotNull();
   }
 
@@ -69,11 +69,11 @@ public class Header implements Cloneable {
   public HeaderField getHeaderField(final String name) {
     return headers.get(name.toLowerCase(Locale.ENGLISH));
   }
-  
+
   public int getLineNumber() {
     return lineNumber;
   }
-  
+
   public Map<String, String> toSingleMap() {
     final Map<String, String> singleMap = new HashMap<String, String>();
 
@@ -87,7 +87,7 @@ public class Header implements Cloneable {
 
   public Map<String, List<String>> toMultiMap() {
     final Map<String, List<String>> singleMap = new HashMap<String, List<String>>();
-    
+
     for (final String key : headers.keySet()) {
       HeaderField field = headers.get(key);
       singleMap.put(field.getFieldName(), field.getValues());
