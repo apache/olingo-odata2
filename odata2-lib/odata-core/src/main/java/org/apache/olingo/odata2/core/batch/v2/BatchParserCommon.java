@@ -19,9 +19,7 @@
 package org.apache.olingo.odata2.core.batch.v2;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -91,60 +89,6 @@ public class BatchParserCommon {
     final String message = stringListToString(messageList);
 
     return new ByteArrayInputStream(message.getBytes());
-  }
-
-  static List<List<Line>> splitRequestByBoundary(final InputStream in, final String boundary)
-      throws BatchException, IOException {
-    final List<List<Line>> messageParts = new LinkedList<List<Line>>();
-    List<Line> currentPart = new ArrayList<Line>();
-    boolean isEndReached = false;
-
-    final String quotedBoundary = Pattern.quote(boundary);
-    final Pattern boundaryDelimiterPattern = Pattern.compile("--" + quotedBoundary + "--[\\s ]*");
-    final Pattern boundaryPattern = Pattern.compile("--" + quotedBoundary + "[\\s ]*");
-
-    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
-    String currentLine;
-    int lineNumber = 1;
-
-    while ((currentLine = reader.readLine()) != null) {
-      if (boundaryDelimiterPattern.matcher(currentLine.toString()).matches()) {
-        removeEndingCRLFFromList(currentPart);
-        messageParts.add(currentPart);
-        isEndReached = true;
-      } else if (boundaryPattern.matcher(currentLine.toString()).matches()) {
-        removeEndingCRLFFromList(currentPart);
-        messageParts.add(currentPart);
-        currentPart = new LinkedList<Line>();
-      } else {
-        currentPart.add(new Line(currentLine, lineNumber));
-      }
-
-      if (isEndReached) {
-        break;
-      }
-
-      lineNumber++;
-    }
-    reader.close();
-
-    // Remove preamble
-    if (messageParts.size() > 0) {
-      messageParts.remove(0);
-    } else {
-
-      throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER.addContent(1));
-    }
-
-    if (!isEndReached) {
-      throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER.addContent(1));
-    }
-
-    if (messageParts.size() == 0) {
-      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING.addContent(boundary).addContent(0));
-    }
-
-    return messageParts;
   }
 
   static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)
