@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
  * response to a retrieve request
  * 
  */
-public abstract class BatchResponsePart {
+public abstract class BatchResponsePart implements BatchParserResult {
 
   /**
    * Get responses. If a BatchResponsePart is a response to a retrieve request, the list consists of one response.

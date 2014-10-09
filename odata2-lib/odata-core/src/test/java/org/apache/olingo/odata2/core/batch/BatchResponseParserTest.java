@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.core.batch.v2.BatchParser;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
@@ -38,7 +39,6 @@ public class BatchResponseParserTest {
 
   private static final String CRLF = "\r\n";
   private static final String LF = "\n";
-
 
   @Test
   public void testSimpleBatchResponse() throws BatchException {
@@ -56,8 +56,8 @@ public class BatchResponseParserTest {
         + "--batch_123--";
 
     InputStream in = new ByteArrayInputStream(getResponse.getBytes());
-    BatchResponseParser parser = new BatchResponseParser("multipart/mixed;boundary=batch_123");
-    List<BatchSingleResponse> responses = parser.parse(in);
+    BatchParser parser = new BatchParser("multipart/mixed;boundary=batch_123", true);
+    List<BatchSingleResponse> responses = parser.parseBatchResponse(in);
     for (BatchSingleResponse response : responses) {
       assertEquals("200", response.getStatusCode());
       assertEquals("OK", response.getStatusInfo());
@@ -74,8 +74,9 @@ public class BatchResponseParserTest {
     if (in == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");
     }
-    BatchResponseParser parser = new BatchResponseParser("multipart/mixed;boundary=batch_123");
-    List<BatchSingleResponse> responses = parser.parse(StringHelper.toStream(in).asStreamWithLineSeparation("\r\n"));
+    BatchParser parser = new BatchParser("multipart/mixed;boundary=batch_123", true);
+    List<BatchSingleResponse> responses =
+        parser.parseBatchResponse(StringHelper.toStream(in).asStreamWithLineSeparation("\r\n"));
     for (BatchSingleResponse response : responses) {
       if ("1".equals(response.getContentId())) {
         assertEquals("204", response.getStatusCode());
@@ -106,8 +107,8 @@ public class BatchResponseParserTest {
         + "--batch_123--";
 
     InputStream in = new ByteArrayInputStream(putResponse.getBytes());
-    BatchResponseParser parser = new BatchResponseParser("multipart/mixed;boundary=batch_123");
-    List<BatchSingleResponse> responses = parser.parse(in);
+    BatchParser parser = new BatchParser("multipart/mixed;boundary=batch_123", true);
+    List<BatchSingleResponse> responses = parser.parseBatchResponse(in);
     for (BatchSingleResponse response : responses) {
       assertEquals("204", response.getStatusCode());
       assertEquals("No Content", response.getStatusInfo());
@@ -289,9 +290,9 @@ public class BatchResponseParserTest {
   public void parseWithAdditionalLineEndingAtTheEnd() throws Exception {
     String fileString = readFile("BatchResponseWithAdditionalLineEnding.batch");
     assertTrue(fileString.contains("\r\n--batch_123--"));
-    InputStream stream =new ByteArrayInputStream(fileString.getBytes());
+    InputStream stream = new ByteArrayInputStream(fileString.getBytes());
     BatchSingleResponse response =
-        EntityProvider.parseBatchResponse(stream , "multipart/mixed;boundary=batch_123").get(0);
+        EntityProvider.parseBatchResponse(stream, "multipart/mixed;boundary=batch_123").get(0);
     assertEquals("This is the body we need to parse. The trailing line ending is part of the body." + CRLF, response
         .getBody());
 
@@ -308,25 +309,24 @@ public class BatchResponseParserTest {
 
     assertEquals(body, response.getBody());
   }
-  
+
   @Test
   public void parseWithUnixLineEndingsInBody() throws Exception {
     String body =
         "This is the body we need to parse. The line spaces in the body " + LF + LF + LF + "are " + LF + LF
-        + "part of the body and must not be ignored or filtered.";
+            + "part of the body and must not be ignored or filtered.";
     String responseString = "--batch_123" + CRLF
         + "Content-Type: application/http" + CRLF
         + "Content-Length: 234" + CRLF
         + "content-transfer-encoding: binary" + CRLF
-        + CRLF 
+        + CRLF
         + "HTTP/1.1 500 Internal Server Error" + CRLF
         + "Content-Type: application/xml;charset=utf-8" + CRLF
         + "Content-Length: 125" + CRLF
         + CRLF
         + body
         + CRLF
-        + "--batch_123--"
-        ;
+        + "--batch_123--";
     InputStream stream = new ByteArrayInputStream(responseString.getBytes());
     BatchSingleResponse response =
         EntityProvider.parseBatchResponse(stream, "multipart/mixed;boundary=batch_123").get(0);
@@ -347,7 +347,7 @@ public class BatchResponseParserTest {
 
     return b.toString();
   }
-  
+
   private InputStream getFileAsStream(final String filename) throws IOException {
     InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
     if (in == null) {
@@ -358,7 +358,7 @@ public class BatchResponseParserTest {
 
   private void parseInvalidBatchResponseBody(final String putResponse) throws BatchException {
     InputStream in = new ByteArrayInputStream(putResponse.getBytes());
-    BatchResponseParser parser = new BatchResponseParser("multipart/mixed;boundary=batch_123");
-    parser.parse(in);
+    BatchParser parser = new BatchParser("multipart/mixed;boundary=batch_123", true);
+    parser.parseBatchResponse(in);
   }
 }

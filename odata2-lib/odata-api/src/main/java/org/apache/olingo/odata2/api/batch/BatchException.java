@@ -43,7 +43,11 @@ public class BatchException extends ODataMessageException {
   /** MISSING_CLOSE_DELIMITER requires 1 content value ('line number') */
   public static final MessageReference MISSING_CLOSE_DELIMITER = createMessageReference(BatchException.class,
       "MISSING_CLOSE_DELIMITER");
-
+  
+  /** MISSONG MANDATORY HEADER requires 1 content value ('header name') */
+  public static final MessageReference MISSING_MANDATORY_HEADER = createMessageReference(BatchException.class, 
+      "MISSING_MANDATORY_HEADER");
+  
   /** INVALID_QUERY_OPERATION_METHOD requires 1 content value ('line number') */
   public static final MessageReference INVALID_QUERY_OPERATION_METHOD = createMessageReference(BatchException.class,
       "INVALID_QUERY_OPERATION_METHOD");
@@ -90,7 +94,7 @@ public class BatchException extends ODataMessageException {
   public static final MessageReference INVALID_ACCEPT_LANGUAGE_HEADER = createMessageReference(BatchException.class,
       "INVALID_ACCEPT_LANGUAGE_HEADER");
 
-  /** INVALID_CONTENT_TRANSFER_ENCODING requires no content value */
+  /** INVALID_CONTENT_TRANSFER_ENCODING requires 1 content value */
   public static final MessageReference INVALID_CONTENT_TRANSFER_ENCODING = createMessageReference(BatchException.class,
       "INVALID_CONTENT_TRANSFER_ENCODING");
 

@@ -57,7 +57,7 @@ public class BatchResponseWriterTest {
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
     String body = (String) batchResponse.getEntity();
-
+    
     assertTrue(body.contains("--batch"));
     assertTrue(body.contains("--changeset"));
     assertTrue(body.contains("HTTP/1.1 200 OK"));

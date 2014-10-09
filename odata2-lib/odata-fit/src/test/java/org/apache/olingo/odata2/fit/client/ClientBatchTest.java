@@ -44,8 +44,10 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.fit.ref.AbstractRefTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.server.ServletType;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class ClientBatchTest extends AbstractRefTest {
   public ClientBatchTest(final ServletType servletType) {
     super(servletType);
