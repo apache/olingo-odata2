@@ -21,12 +21,9 @@ package org.apache.olingo.odata2.core.batch.v2;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchParserResult;
@@ -37,14 +34,10 @@ import org.apache.olingo.odata2.api.processor.ODataRequest.ODataRequestBuilder;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
 import org.apache.olingo.odata2.core.batch.BatchRequestPartImpl;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.odata2.core.batch.v2.BatchTransformatorCommon.HttpRequestStatusLine;
 import org.apache.olingo.odata2.core.batch.v2.Header.HeaderField;
 
 public class BatchRequestTransformator implements BatchTransformator {
-
-  private static final Set<String> HTTP_BATCH_METHODS = new HashSet<String>(Arrays.asList(new String[] { "GET" }));
-  private static final Set<String> HTTP_CHANGE_SET_METHODS = new HashSet<String>(Arrays.asList(new String[] { "POST",
-      "PUT", "DELETE", "MERGE", "PATCH" }));
 
   @Override
   public List<BatchParserResult> transform(final BatchBodyPart bodyPart, final PathInfo pathInfo, final String baseUri)
@@ -89,19 +82,21 @@ public class BatchRequestTransformator implements BatchTransformator {
   private ODataRequest createRequest(final BatchQueryOperation operation, final Header headers,
       final PathInfo pathInfo, final String baseUri, final boolean isChangeSet) throws BatchException {
 
-    final int httpLineNumber = operation.getHttpStatusLine().getLineNumber();
-    ODataHttpMethod httpMethod = getHttpMethod(operation.getHttpStatusLine());
-    validateHttpMethod(httpMethod, isChangeSet, httpLineNumber);
-    validateBody(httpMethod, operation, httpLineNumber);
-    InputStream bodyStrean = getBodyStream(operation, headers, httpMethod);
+    final HttpRequestStatusLine statusLine = new HttpRequestStatusLine( operation.getHttpStatusLine(), 
+                                                                        baseUri, 
+                                                                        pathInfo);
+    statusLine.validateHttpMethod(isChangeSet);
 
-    ODataRequestBuilder requestBuilder = ODataRequest.method(httpMethod)
+    validateBody(statusLine, operation);
+    InputStream bodyStrean = getBodyStream(operation, headers, statusLine);
+
+    ODataRequestBuilder requestBuilder = ODataRequest.method(statusLine.getMethod())
         .acceptableLanguages(getAcceptLanguageHeaders(headers))
         .acceptHeaders(headers.getHeaders(HttpHeaders.ACCEPT))
         .allQueryParameters(BatchParserCommon.parseQueryParameter(operation.getHttpStatusLine()))
         .body(bodyStrean)
         .requestHeaders(headers.toMultiMap())
-        .pathInfo(BatchParserCommon.parseRequestUri(operation.getHttpStatusLine(), pathInfo, baseUri, 0));
+        .pathInfo(statusLine.getPathInfo());
 
     final String contentType = headers.getHeader(HttpHeaders.CONTENT_TYPE);
     if (contentType != null) {
@@ -111,30 +106,32 @@ public class BatchRequestTransformator implements BatchTransformator {
     return requestBuilder.build();
   }
 
-  private void validateBody(final ODataHttpMethod httpStatusLine, final BatchQueryOperation operation, final int line)
+  private void validateBody(final HttpRequestStatusLine httpStatusLine, final BatchQueryOperation operation)
       throws BatchException {
-    if (HTTP_BATCH_METHODS.contains(httpStatusLine.toString()) && isUnvalidGetRequestBody(operation)) {
-      throw new BatchException(BatchException.INVALID_REQUEST_LINE.addContent(httpStatusLine).addContent(line));
+    if (httpStatusLine.getMethod().equals(ODataHttpMethod.GET) && isUnvalidGetRequestBody(operation)) {
+      throw new BatchException(BatchException.INVALID_REQUEST_LINE
+          .addContent(httpStatusLine.getMethod())
+          .addContent(httpStatusLine.getLineNumber()));
     }
   }
 
   private boolean isUnvalidGetRequestBody(final BatchQueryOperation operation) {
     return (operation.getBody().size() > 1)
-        || (operation.getBody().size() == 1 && !operation.getBody().get(0).toString().trim().equals(""));
+        || (operation.getBody().size() == 1 && !"".equals(operation.getBody().get(0).toString().trim()));
   }
 
   private InputStream getBodyStream(final BatchQueryOperation operation, final Header headers,
-      final ODataHttpMethod httpMethod) throws BatchException {
+      final HttpRequestStatusLine httpStatusLine) throws BatchException {
 
-    if (HTTP_BATCH_METHODS.contains(httpMethod.toString())) {
+    if (httpStatusLine.getMethod().equals(ODataHttpMethod.GET)) {
       return new ByteArrayInputStream(new byte[0]);
     } else {
       int contentLength = BatchTransformatorCommon.getContentLength(headers);
 
       if (contentLength == -1) {
-        return BatchParserCommon.convertMessageToInputStream(operation.getBody());
+        return BatchParserCommon.convertLineListToInputStream(operation.getBody());
       } else {
-        return BatchParserCommon.convertMessageToInputStream(operation.getBody(), contentLength);
+        return BatchParserCommon.convertLineListToInputStream(operation.getBody(), contentLength);
       }
     }
   }
@@ -157,19 +154,6 @@ public class BatchRequestTransformator implements BatchTransformator {
     return headers;
   }
 
-  private void validateHttpMethod(final ODataHttpMethod httpMethod, final boolean isChangeSet, final int line)
-      throws BatchException {
-    Set<String> validMethods = (isChangeSet) ? HTTP_CHANGE_SET_METHODS : HTTP_BATCH_METHODS;
-
-    if (!validMethods.contains(httpMethod.toString())) {
-      if (isChangeSet) {
-        throw new BatchException(BatchException.INVALID_CHANGESET_METHOD.addContent(line));
-      } else {
-        throw new BatchException(BatchException.INVALID_QUERY_OPERATION_METHOD.addContent(line));
-      }
-    }
-  }
-
   private List<Locale> getAcceptLanguageHeaders(final Header headers) {
     final List<String> acceptLanguageValues = headers.getHeaders(HttpHeaders.ACCEPT_LANGUAGE);
     List<Locale> acceptLanguages = new ArrayList<Locale>();
@@ -186,25 +170,6 @@ public class BatchRequestTransformator implements BatchTransformator {
     }
 
     return acceptLanguages;
-  }
-
-  private ODataHttpMethod getHttpMethod(final Line httpRequest) throws BatchException {
-    ODataHttpMethod result = null;
-
-    String[] parts = httpRequest.toString().split(" ");
-
-    if (parts.length == 3) {
-      try {
-        result = ODataHttpMethod.valueOf(parts[0]);
-      } catch (IllegalArgumentException e) {
-        throw new BatchException(BatchException.MISSING_METHOD.addContent(httpRequest.getLineNumber()), e);
-      }
-    } else {
-      throw new BatchException(BatchException.INVALID_REQUEST_LINE.addContent(httpRequest.toString()).addContent(
-          httpRequest.getLineNumber()));
-    }
-
-    return result;
   }
 
 }

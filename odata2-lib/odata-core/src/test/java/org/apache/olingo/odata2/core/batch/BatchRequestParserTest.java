@@ -41,7 +41,6 @@ import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.v2.BatchParser;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class BatchRequestParserTest {
@@ -119,7 +118,7 @@ public class BatchRequestParserTest {
       }
     }
   }
-
+  
   @Test
   public void testImageInContent() throws IOException, BatchException, URISyntaxException {
     String fileName = "/batchWithContent.batch";
@@ -271,6 +270,51 @@ public class BatchRequestParserTest {
     parseInvalidBatchBody(batch);
   }
 
+  @Test(expected=BatchException.class)
+  public void testMissingHttpVersion() throws BatchException {
+    String batch = ""
+        + "--batch_8194-cf13-1f56" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding:binary" + CRLF
+        + CRLF
+        + "GET Employees?$format=json" + CRLF
+        + "Host: localhost:8080" + CRLF
+        + CRLF
+        + "--batch_8194-cf13-1f56--";
+    
+    parseInvalidBatchBody(batch);
+  }
+  
+  @Test(expected=BatchException.class)
+  public void testMissingHttpVersion2() throws BatchException {
+    String batch = ""
+        + "--batch_8194-cf13-1f56" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding:binary" + CRLF
+        + CRLF
+        + "GET Employees?$format=json " + CRLF
+        + "Host: localhost:8080" + CRLF
+        + CRLF
+        + "--batch_8194-cf13-1f56--";
+    
+    parseInvalidBatchBody(batch);
+  }
+  
+  @Test(expected=BatchException.class)
+  public void testMissingHttpVersion3() throws BatchException {
+    String batch = ""
+        + "--batch_8194-cf13-1f56" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding:binary" + CRLF
+        + CRLF
+        + "GET Employees?$format=json SMTP:3.1" + CRLF
+        + "Host: localhost:8080" + CRLF
+        + CRLF
+        + "--batch_8194-cf13-1f56--";
+    
+    parseInvalidBatchBody(batch);
+  }
+  
   @Test(expected = BatchException.class)
   public void testBoundaryWithoutHyphen() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
@@ -347,19 +391,6 @@ public class BatchRequestParserTest {
   }
 
   @Test(expected = BatchException.class)
-  @Ignore("What should here throw an exception")
-  public void testMimeHeaderContentId() throws BatchException {
-    String batch = "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: 1" + CRLF
-        + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-    parseInvalidBatchBody(batch);
-  }
-
-  @Test(expected = BatchException.class)
   public void testInvalidMethodForBatch() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
         + MIME_HEADERS
@@ -413,7 +444,7 @@ public class BatchRequestParserTest {
     parseInvalidBatchBody(batch);
   }
 
-  @Test(expected = BatchException.class)
+  @Test(expected=BatchException.class)
   public void testInvalidChangeSetBoundary() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -425,10 +456,37 @@ public class BatchRequestParserTest {
         + "Content-Type: application/json;odata=verbose" + CRLF
         + "MaxDataServiceVersion: 2.0" + CRLF
         + CRLF
+        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + CRLF
         + "--batch_8194-cf13-1f56--";
     parseInvalidBatchBody(batch);
   }
-
+  
+  @Test(expected=BatchException.class)
+  public void testNestedChangeset() throws BatchException {
+    String batch = "--batch_8194-cf13-1f56" + CRLF
+        + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
+        + CRLF
+        + "--changeset_f980-1cb6-94dd" + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd2" + CRLF
+        + CRLF
+        + "--changeset_f980-1cb6-94dd2" + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + "POST Employees('2') HTTP/1.1" + CRLF
+        + "Content-Type: application/json;odata=verbose" + CRLF
+        + "MaxDataServiceVersion: 2.0" + CRLF
+        + CRLF
+        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + CRLF
+        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + CRLF
+        + "--batch_8194-cf13-1f56--";
+    parse(batch);
+  }
+  
   @Test(expected = BatchException.class)
   public void testMissingContentTransferEncoding() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF

@@ -378,7 +378,18 @@ public class BufferedReaderIncludingLineEndingsTest {
     assertEquals(null, reader.readLine());
     assertEquals(-1, reader.read());
   }
-
+  
+  @Test
+  public void testLineEqualsAndHashCode() {
+    Line l1 = new Line("The first line", 1);
+    Line l2 = new Line("The first line", 1);
+    Line l3 = new Line("The second line", 2);
+    
+    assertEquals(l1, l2);
+    assertFalse(l1.equals(l3));
+    assertTrue(l1.hashCode() != l3.hashCode());
+  }
+  
   @Test(expected = IllegalArgumentException.class)
   public void testSkipNegative() throws IOException {
     BufferedReaderIncludingLineEndings reader = create("123");

@@ -132,7 +132,6 @@ public class BatchRequestTest {
   }
 
   @Test
-  // TODO
       /*
        * --batch_123
        * Content-Type: application/http

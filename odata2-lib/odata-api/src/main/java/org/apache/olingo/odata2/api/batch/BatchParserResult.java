@@ -18,6 +18,12 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.api.batch;
 
+/**
+ * A BatchParserResult
+ * 
+ * <p> BatchParserResult represents a BatchRequestPart or a BatchResponse part. 
+ * 
+ */
 public interface BatchParserResult {
 
 }

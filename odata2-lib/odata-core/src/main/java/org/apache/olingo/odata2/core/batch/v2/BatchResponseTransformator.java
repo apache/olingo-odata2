@@ -20,8 +20,6 @@ package org.apache.olingo.odata2.core.batch.v2;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchParserResult;
@@ -29,11 +27,9 @@ import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
 import org.apache.olingo.odata2.core.batch.BatchSingleResponseImpl;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.odata2.core.batch.v2.BatchTransformatorCommon.HttpResponsetStatusLine;
 
 public class BatchResponseTransformator implements BatchTransformator {
-
-  private static final String REG_EX_STATUS_LINE = "(?:HTTP/[0-9]\\.[0-9])\\s([0-9]{3})\\s([\\S ]+)\\s*";
 
   public BatchResponseTransformator() {}
 
@@ -81,46 +77,26 @@ public class BatchResponseTransformator implements BatchTransformator {
   private BatchSingleResponse transformQueryOperation(final BatchQueryOperation operation, final String contentId)
       throws BatchException {
 
-    final Matcher statusMatcher = prepareStatusLineMatcher(operation.getHttpStatusLine());
+    final HttpResponsetStatusLine statusLine = new HttpResponsetStatusLine(operation.getHttpStatusLine());
 
     BatchSingleResponseImpl response = new BatchSingleResponseImpl();
     response.setContentId(contentId);
     response.setHeaders(operation.getHeaders().toSingleMap());
-    response.setStatusCode(getStatusCode(statusMatcher));
-    response.setStatusInfo(getStatusInfo(statusMatcher));
+    response.setStatusCode(statusLine.getStatusCode());
+    response.setStatusInfo(statusLine.getStatusInfo());
     response.setBody(getBody(operation));
 
     return response;
-  }
-
-  private Matcher prepareStatusLineMatcher(final Line httpStatusLine) throws BatchException {
-    final Pattern regexPattern = Pattern.compile(REG_EX_STATUS_LINE);
-    final Matcher matcher = regexPattern.matcher(httpStatusLine.toString());
-
-    if (matcher.find()) {
-      return matcher;
-    } else {
-      throw new BatchException(BatchException.INVALID_STATUS_LINE.addContent(httpStatusLine.toString())
-          .addContent(httpStatusLine.getLineNumber()));
-    }
   }
 
   private String getBody(final BatchQueryOperation operation) throws BatchException {
     int contentLength = BatchTransformatorCommon.getContentLength(operation.getHeaders());
 
     if (contentLength == -1) {
-      return BatchParserCommon.stringListToString(operation.getBody());
+      return BatchParserCommon.lineListToString(operation.getBody());
     } else {
       return BatchParserCommon.trimLineListToLength(operation.getBody(), contentLength);
     }
-  }
-
-  private String getStatusCode(final Matcher matcher) throws BatchException {
-    return matcher.group(1);
-  }
-
-  private String getStatusInfo(final Matcher matcher) throws BatchException {
-    return matcher.group(2);
   }
 
 }

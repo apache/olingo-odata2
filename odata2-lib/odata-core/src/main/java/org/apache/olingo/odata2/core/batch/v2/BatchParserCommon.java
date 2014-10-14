@@ -20,8 +20,6 @@ package org.apache.olingo.odata2.core.batch.v2;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,10 +33,6 @@ import java.util.regex.Pattern;
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
-import org.apache.olingo.odata2.api.uri.PathInfo;
-import org.apache.olingo.odata2.api.uri.PathSegment;
-import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
-import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.AcceptParser;
 import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.commons.Decoder;
@@ -58,16 +52,16 @@ public class BatchParserCommon {
   public static final Pattern PATTERN_HEADER_LINE = Pattern.compile("([a-zA-Z\\-]+):\\s?(.*)\\s*");
   public static final Pattern PATTERN_CONTENT_TYPE_APPLICATION_HTTP = Pattern.compile(REG_EX_APPLICATION_HTTP,
       Pattern.CASE_INSENSITIVE);
-  private static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(\\?.*)?");
+  public static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(\\?.*)?");
 
   public static String trimLineListToLength(final List<Line> list, final int length) {
-    final String message = stringListToString(list);
+    final String message = lineListToString(list);
     final int lastIndex = Math.min(length, message.length());
 
     return (lastIndex > 0) ? message.substring(0, lastIndex) : "";
   }
 
-  public static String stringListToString(final List<Line> list) {
+  public static String lineListToString(final List<Line> list) {
     StringBuilder builder = new StringBuilder();
 
     for (Line currentLine : list) {
@@ -77,16 +71,16 @@ public class BatchParserCommon {
     return builder.toString();
   }
 
-  public static InputStream convertMessageToInputStream(final List<Line> messageList, final int contentLength)
+  public static InputStream convertLineListToInputStream(final List<Line> messageList, final int contentLength)
       throws BatchException {
     final String message = trimLineListToLength(messageList, contentLength);
 
     return new ByteArrayInputStream(message.getBytes());
   }
 
-  public static InputStream convertMessageToInputStream(final List<Line> messageList)
+  public static InputStream convertLineListToInputStream(final List<Line> messageList)
       throws BatchException {
-    final String message = stringListToString(messageList);
+    final String message = lineListToString(messageList);
 
     return new ByteArrayInputStream(message.getBytes());
   }
@@ -158,14 +152,14 @@ public class BatchParserCommon {
   }
 
   public static Header consumeHeaders(final List<Line> remainingMessage) throws BatchException {
-    final int lineNumberOfHeader = remainingMessage.size() != 0 ? remainingMessage.get(0).getLineNumber() : 0;
-    final Header headers = new Header(lineNumberOfHeader);
-    boolean isHeader = true;
+    final int headerLineNumber = remainingMessage.size() != 0 ? remainingMessage.get(0).getLineNumber() : 0;
+    final Header headers = new Header(headerLineNumber);
     final Iterator<Line> iter = remainingMessage.iterator();
     final AcceptParser acceptParser = new AcceptParser();
     Line currentLine;
     int acceptLineNumber = 0;
     int acceptLanguageLineNumber = 0;
+    boolean isHeader = true;
 
     while (iter.hasNext() && isHeader) {
       currentLine = iter.next();
@@ -224,6 +218,14 @@ public class BatchParserCommon {
     }
   }
 
+  private static String trimQuota(String boundary) {
+    if (boundary.matches("\".*\"")) {
+      boundary = boundary.replace("\"", "");
+    }
+
+    return boundary;
+  }
+  
   public static Map<String, List<String>> parseQueryParameter(final Line httpRequest) {
     Map<String, List<String>> queryParameter = new HashMap<String, List<String>>();
 
@@ -253,76 +255,5 @@ public class BatchParserCommon {
     }
 
     return queryParameter;
-  }
-
-  public static PathInfo parseRequestUri(final Line httpStatusLine, final PathInfo batchRequestPathInfo,
-      final String baseUri, final int line)
-          throws BatchException {
-
-    final String odataPathSegmentsAsString;
-    final String queryParametersAsString;
-
-    PathInfoImpl pathInfo = new PathInfoImpl();
-    pathInfo.setServiceRoot(batchRequestPathInfo.getServiceRoot());
-    pathInfo.setPrecedingPathSegment(batchRequestPathInfo.getPrecedingSegments());
-
-    String[] requestParts = httpStatusLine.toString().split(" ");
-    if (requestParts.length == 3) {
-      String uri = requestParts[1];
-      Pattern regexRequestUri;
-
-      try {
-        URI uriObject = new URI(uri);
-        if (uriObject.isAbsolute()) {
-          regexRequestUri = Pattern.compile(baseUri + "/([^/][^?]*)(\\?.*)?");
-        } else {
-          regexRequestUri = PATTERN_RELATIVE_URI;
-
-        }
-
-        Matcher uriParts = regexRequestUri.matcher(uri);
-
-        if (uriParts.lookingAt() && uriParts.groupCount() == 2) {
-          odataPathSegmentsAsString = uriParts.group(1);
-          queryParametersAsString = uriParts.group(2) != null ? uriParts.group(2) : "";
-
-          pathInfo.setODataPathSegment(parseODataPathSegments(odataPathSegmentsAsString));
-          if (!odataPathSegmentsAsString.startsWith("$")) {
-            String requestUri = baseUri + "/" + odataPathSegmentsAsString + queryParametersAsString;
-            pathInfo.setRequestUri(new URI(requestUri));
-          }
-
-        } else {
-          throw new BatchException(BatchException.INVALID_URI.addContent(httpStatusLine.getLineNumber()));
-        }
-
-      } catch (URISyntaxException e) {
-        throw new BatchException(BatchException.INVALID_URI.addContent(line), e);
-      }
-    } else {
-      throw new BatchException(BatchException.INVALID_REQUEST_LINE.addContent(httpStatusLine.toString())
-          .addContent(line));
-    }
-
-    return pathInfo;
-  }
-
-  public static List<PathSegment> parseODataPathSegments(final String odataPathSegmentsAsString) {
-    final List<PathSegment> odataPathSegments = new ArrayList<PathSegment>();
-    final String[] pathParts = odataPathSegmentsAsString.split("/");
-
-    for (final String pathSegment : pathParts) {
-      odataPathSegments.add(new ODataPathSegmentImpl(pathSegment, null));
-    }
-
-    return odataPathSegments;
-  }
-
-  private static String trimQuota(String boundary) {
-    if (boundary.matches("\".*\"")) {
-      boundary = boundary.replace("\"", "");
-    }
-
-    return boundary;
   }
 }

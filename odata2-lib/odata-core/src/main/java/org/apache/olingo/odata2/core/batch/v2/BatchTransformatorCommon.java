@@ -18,16 +18,29 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch.v2;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
+import org.apache.olingo.odata2.api.uri.PathInfo;
+import org.apache.olingo.odata2.api.uri.PathSegment;
+import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
+import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.batch.v2.Header.HeaderField;
 
 public class BatchTransformatorCommon {
-
   public static void validateContentType(final Header headers) throws BatchException {
     List<String> contentTypes = headers.getHeaders(HttpHeaders.CONTENT_TYPE);
 
@@ -86,5 +99,178 @@ public class BatchTransformatorCommon {
     }
 
     return -1;
+  }
+  
+  public static class HttpResponsetStatusLine {
+    private static final String REG_EX_STATUS_LINE = "(?:HTTP/[0-9]\\.[0-9])\\s([0-9]{3})\\s([\\S ]+)\\s*";
+    private Line httpStatusLine;
+    private String statusCode;
+    private String statusInfo;
+
+    public HttpResponsetStatusLine(final Line httpStatusLine) throws BatchException {
+      this.httpStatusLine = httpStatusLine;
+      parse();
+    }
+
+    private void parse() throws BatchException {
+      final Pattern regexPattern = Pattern.compile(REG_EX_STATUS_LINE);
+      final Matcher matcher = regexPattern.matcher(httpStatusLine.toString());
+
+      if (matcher.find()) {
+        statusCode = matcher.group(1);
+        statusInfo = matcher.group(2);
+      } else {
+        throw new BatchException(BatchException.INVALID_STATUS_LINE.addContent(httpStatusLine.toString())
+            .addContent(httpStatusLine.getLineNumber()));
+      }
+    }
+
+    public String getStatusCode() {
+      return statusCode;
+    }
+
+    public String getStatusInfo() {
+      return statusInfo;
+    }
+  }
+
+  public static class HttpRequestStatusLine {
+    private static final Set<String> HTTP_BATCH_METHODS = new HashSet<String>(Arrays.asList(new String[] { "GET" }));
+    private static final Set<String> HTTP_CHANGE_SET_METHODS = new HashSet<String>(Arrays.asList(new String[] { "POST",
+        "PUT", "DELETE", "MERGE", "PATCH" }));
+    private static final String HTTP_VERSION = "HTTP/1.1";
+    
+    final private Line statusLine;
+    final String requestBaseUri;
+    final PathInfo batchRequestPathInfo;
+
+    private ODataHttpMethod method;
+    private PathInfo pathInfo;
+    private String httpVersion;
+
+    public HttpRequestStatusLine(final Line httpStatusLine, final String baseUri, final PathInfo pathInfo)
+        throws BatchException {
+      statusLine = httpStatusLine;
+      requestBaseUri = baseUri;
+      batchRequestPathInfo = pathInfo;
+
+      parse();
+    }
+
+    private void parse() throws BatchException {
+      final String[] parts = statusLine.toString().split(" ");
+
+      if (parts.length == 3) {
+        try {
+          method = parseMethod(parts[0]);
+          pathInfo = parseUri(parts[1]);
+          httpVersion = parseHttpVersion(parts[2]);
+        } catch (IllegalArgumentException e) {
+          throw new BatchException(BatchException.MISSING_METHOD.addContent(statusLine.getLineNumber()), e);
+        }
+      } else {
+        throw new BatchException(BatchException.INVALID_REQUEST_LINE.addContent(statusLine.toString())
+            .addContent(statusLine.getLineNumber()));
+      }
+    }
+
+    private ODataHttpMethod parseMethod(final String method) throws BatchException {
+      try {
+        return ODataHttpMethod.valueOf(method.trim());
+      } catch (IllegalArgumentException e) {
+        throw new BatchException(BatchException.MISSING_METHOD.addContent(statusLine.getLineNumber()), e);
+      }
+    }
+
+    private PathInfo parseUri(final String uri)
+        throws BatchException {
+      final PathInfoImpl pathInfo = new PathInfoImpl();
+      final String odataPathSegmentsAsString;
+      final String queryParametersAsString;
+      Pattern regexRequestUri;
+
+      pathInfo.setServiceRoot(batchRequestPathInfo.getServiceRoot());
+      pathInfo.setPrecedingPathSegment(batchRequestPathInfo.getPrecedingSegments());
+
+      try {
+        URI uriObject = new URI(uri);
+        if (uriObject.isAbsolute()) {
+          regexRequestUri = Pattern.compile(requestBaseUri + "/([^/][^?]*)(\\?.*)?");
+        } else {
+          regexRequestUri = BatchParserCommon.PATTERN_RELATIVE_URI;
+
+        }
+
+        Matcher uriParts = regexRequestUri.matcher(uri);
+
+        if (uriParts.lookingAt() && uriParts.groupCount() == 2) {
+          odataPathSegmentsAsString = uriParts.group(1);
+          queryParametersAsString = uriParts.group(2) != null ? uriParts.group(2) : "";
+
+          pathInfo.setODataPathSegment(parseODataPathSegments(odataPathSegmentsAsString));
+          if (!odataPathSegmentsAsString.startsWith("$")) {
+            String requestUri = requestBaseUri + "/" + odataPathSegmentsAsString + queryParametersAsString;
+            pathInfo.setRequestUri(new URI(requestUri));
+          }
+
+        } else {
+          throw new BatchException(BatchException.INVALID_URI.addContent(statusLine.getLineNumber()));
+        }
+      } catch (URISyntaxException e) {
+        throw new BatchException(BatchException.INVALID_URI.addContent(statusLine.getLineNumber()), e);
+      }
+
+      return pathInfo;
+    }
+
+    private List<PathSegment> parseODataPathSegments(final String odataPathSegmentsAsString) {
+      final List<PathSegment> odataPathSegments = new ArrayList<PathSegment>();
+      final String[] pathParts = odataPathSegmentsAsString.split("/");
+
+      for (final String pathSegment : pathParts) {
+        odataPathSegments.add(new ODataPathSegmentImpl(pathSegment, null));
+      }
+
+      return odataPathSegments;
+    }
+
+    private String parseHttpVersion(final String httpVersion) throws BatchException {
+      if (!HTTP_VERSION.equals(httpVersion.trim())) {
+        throw new BatchException(BatchException.INVALID_REQUEST_LINE
+                                                  .addContent(statusLine.toString())
+                                                  .addContent(statusLine.getLineNumber()));
+      } else {
+        return HTTP_VERSION;
+      }
+    }
+
+    public void validateHttpMethod(boolean isChangeSet) throws BatchException {
+      Set<String> validMethods = (isChangeSet) ? HTTP_CHANGE_SET_METHODS : HTTP_BATCH_METHODS;
+      
+      if (!validMethods.contains(getMethod().toString())) {
+        if (isChangeSet) {
+          throw new BatchException(BatchException.INVALID_CHANGESET_METHOD.addContent(statusLine.getLineNumber()));
+        } else {
+          throw new BatchException(BatchException.INVALID_QUERY_OPERATION_METHOD
+              .addContent(statusLine.getLineNumber()));
+        }
+      }
+    }
+
+    public ODataHttpMethod getMethod() {
+      return method;
+    }
+
+    public PathInfo getPathInfo() {
+      return pathInfo;
+    }
+
+    public String getHttpVersion() {
+      return httpVersion;
+    }
+
+    public int getLineNumber() {
+      return statusLine.getLineNumber();
+    }
   }
 }
