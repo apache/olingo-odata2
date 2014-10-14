@@ -45,10 +45,9 @@ import org.apache.olingo.odata2.api.exception.ODataNotAcceptableException;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
-import org.apache.olingo.odata2.core.batch.BatchRequestParser;
 import org.apache.olingo.odata2.core.batch.BatchRequestWriter;
-import org.apache.olingo.odata2.core.batch.BatchResponseParser;
 import org.apache.olingo.odata2.core.batch.BatchResponseWriter;
+import org.apache.olingo.odata2.core.batch.v2.BatchParser;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.edm.provider.EdmImplProv;
 import org.apache.olingo.odata2.core.edm.provider.EdmxProvider;
@@ -235,7 +234,7 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   @Override
   public List<BatchRequestPart> parseBatchRequest(final String contentType, final InputStream content,
       final EntityProviderBatchProperties properties) throws BatchException {
-    List<BatchRequestPart> batchParts = new BatchRequestParser(contentType, properties).parse(content);
+    List<BatchRequestPart> batchParts = new BatchParser(contentType, properties, true).parseBatchRequest(content);
     return batchParts;
   }
 
@@ -254,7 +253,7 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   @Override
   public List<BatchSingleResponse> parseBatchResponse(final String contentType, final InputStream content)
       throws BatchException {
-    List<BatchSingleResponse> responses = new BatchResponseParser(contentType).parse(content);
+    List<BatchSingleResponse> responses = new BatchParser(contentType, true).parseBatchResponse(content);
     return responses;
   }
 

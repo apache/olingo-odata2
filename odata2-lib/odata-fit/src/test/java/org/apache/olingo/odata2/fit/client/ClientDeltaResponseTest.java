@@ -51,8 +51,10 @@ import org.apache.olingo.odata2.ref.edm.ScenarioEdmProvider;
 import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class ClientDeltaResponseTest extends AbstractFitTest {
 
   public ClientDeltaResponseTest(final ServletType servletType) {

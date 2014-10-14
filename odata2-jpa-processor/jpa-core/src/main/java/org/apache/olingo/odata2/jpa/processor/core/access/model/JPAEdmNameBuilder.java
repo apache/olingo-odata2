@@ -148,7 +148,11 @@ public class JPAEdmNameBuilder {
       propertyName = jpaAttributeName;
       if (isForeignKey == true) {
         joinColumnNames = view.getJPAJoinColumns().get(view.getJPAJoinColumns().size() - 1);
-        propertyName = FK_PREFIX + UNDERSCORE + joinColumnNames[0];
+        propertyName = mappingModelAccess.mapJPAAttribute(view.getJPAEdmEntityTypeView().getJPAEntityType().getName(), 
+            joinColumnNames[0]);
+        if (propertyName == null) {
+          propertyName = FK_PREFIX + UNDERSCORE + joinColumnNames[0];
+        }
       }
     }
 

@@ -77,7 +77,7 @@ public class StringHelper {
       BufferedReader br = new BufferedReader(new StringReader(asString()));
       StringBuilder sb = new StringBuilder(br.readLine());
       String line = br.readLine();
-      while(line != null) {
+      while (line != null) {
         sb.append(separator).append(line);
         line = br.readLine();
       }
@@ -134,6 +134,23 @@ public class StringHelper {
       if (preserveLineBreaks) {
         stringBuilder.append("\n");
       }
+    }
+
+    bufferedReader.close();
+
+    final String result = stringBuilder.toString();
+
+    return result;
+  }
+
+  public static String inputStreamToStringCRLFLineBreaks(final InputStream in) throws IOException {
+    final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
+    final StringBuilder stringBuilder = new StringBuilder();
+    String line = null;
+
+    while ((line = bufferedReader.readLine()) != null) {
+      stringBuilder.append(line);
+      stringBuilder.append("\r\n");
     }
 
     bufferedReader.close();

@@ -34,6 +34,8 @@ import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataInternalServerErrorException;
+import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
@@ -110,6 +112,10 @@ public final class ODataSubLocator {
   private Response returnNotImplementedResponse(final MessageReference messageReference) {
     // RFC 2616, 5.1.1: "An origin server SHOULD return the status code [...]
     // 501 (Not Implemented) if the method is unrecognized [...] by the origin server."
+    return returnException(new ODataNotImplementedException(messageReference));
+  }
+
+  private Response returnException(final ODataMessageException messageException) {
     ODataContextImpl context = new ODataContextImpl(request, serviceFactory);
     context.setRequest(request);
     context.setAcceptableLanguages(request.getAcceptableLanguages());
@@ -119,8 +125,12 @@ public final class ODataSubLocator {
     ODataExceptionWrapper exceptionWrapper =
         new ODataExceptionWrapper(context, request.getQueryParameters(), request.getAcceptHeaders());
     ODataResponse response =
-        exceptionWrapper.wrapInExceptionResponse(new ODataNotImplementedException(messageReference));
+        exceptionWrapper.wrapInExceptionResponse(messageException);
     return RestUtil.convertResponse(response);
+  }
+  
+  private Response returnNoServiceResponse(MessageReference messageReference) {
+    return returnException(new ODataInternalServerErrorException(messageReference));
   }
 
   @OPTIONS
@@ -146,7 +156,9 @@ public final class ODataSubLocator {
     context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, httpRequest);
 
     ODataService service = serviceFactory.createService(context);
-
+    if(service == null){
+      return returnNoServiceResponse(ODataInternalServerErrorException.NOSERVICE);
+    }
     service.getProcessor().setContext(context);
     context.setService(service);
 
@@ -157,6 +169,8 @@ public final class ODataSubLocator {
 
     return response;
   }
+
+
 
   public static ODataSubLocator create(final SubLocatorParameter param) throws ODataException {
     ODataSubLocator subLocator = new ODataSubLocator();

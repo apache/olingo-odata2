@@ -130,7 +130,7 @@ public class BatchTest extends AbstractRefTest {
   private String execute(final String batchResource) throws Exception {
     HttpResponse response = execute(batchResource, "batch_123");
 
-    String responseBody = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
+    String responseBody = StringHelper.inputStreamToStringCRLFLineBreaks(response.getEntity().getContent());
     return responseBody;
   }
 
@@ -139,7 +139,7 @@ public class BatchTest extends AbstractRefTest {
     final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
     post.setHeader("Content-Type", "multipart/mixed;boundary=" + boundary);
 
-    String body = StringHelper.inputStreamToString(this.getClass().getResourceAsStream(batchResource), true);
+    String body = StringHelper.inputStreamToStringCRLFLineBreaks(this.getClass().getResourceAsStream(batchResource));
     HttpEntity entity = new StringEntity(body);
     post.setEntity(entity);
     HttpResponse response = getHttpClient().execute(post);

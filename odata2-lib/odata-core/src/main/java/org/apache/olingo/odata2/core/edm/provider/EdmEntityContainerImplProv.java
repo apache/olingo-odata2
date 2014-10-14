@@ -260,7 +260,7 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
       return entityContainerHierachy;
     }
 
-    List<EntityContainer> entityContainerHierachy = new ArrayList<EntityContainer>();
+    entityContainerHierachy = new ArrayList<EntityContainer>();
     Map<String, EntityContainer> name2Container = getEntityContainerMap();
     String currentName = getName();
     while (currentName != null) {

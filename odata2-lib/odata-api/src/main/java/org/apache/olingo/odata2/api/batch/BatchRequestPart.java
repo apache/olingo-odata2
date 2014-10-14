@@ -26,7 +26,7 @@ import org.apache.olingo.odata2.api.processor.ODataRequest;
  * A BatchPart
  * <p> BatchPart represents a distinct MIME part of a Batch Request body. It can be ChangeSet or Query Operation
  */
-public interface BatchRequestPart {
+public interface BatchRequestPart extends BatchParserResult {
 
   /**
    * Get the info if a BatchPart is a ChangeSet

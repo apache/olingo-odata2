@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -104,29 +105,23 @@ public class EdmServiceMetadataImplProv implements EdmServiceMetadata {
     if (dataServiceVersion == null) {
       dataServiceVersion = ODataServiceVersion.V10;
 
-      if (schemas != null) {
-        for (Schema schema : schemas) {
-          List<EntityType> entityTypes = schema.getEntityTypes();
-          if (entityTypes != null) {
-            for (EntityType entityType : entityTypes) {
-              List<Property> properties = entityType.getProperties();
-              if (properties != null) {
-                for (Property property : properties) {
-                  if (property.getCustomizableFeedMappings() != null) {
-                    if (property.getCustomizableFeedMappings().getFcKeepInContent() != null) {
-                      if (!property.getCustomizableFeedMappings().getFcKeepInContent()) {
-                        dataServiceVersion = ODataServiceVersion.V20;
-                        return dataServiceVersion;
-                      }
-                    }
-                  }
+      for (Schema schema : listOrEmptyList(schemas)) {
+        List<EntityType> entityTypes = listOrEmptyList(schema.getEntityTypes());
+        for (EntityType entityType : entityTypes) {
+          List<Property> properties = listOrEmptyList(entityType.getProperties());
+          for (Property property : properties) {
+            if (property.getCustomizableFeedMappings() != null) {
+              if (property.getCustomizableFeedMappings().getFcKeepInContent() != null) {
+                if (!property.getCustomizableFeedMappings().getFcKeepInContent()) {
+                  dataServiceVersion = ODataServiceVersion.V20;
+                  return dataServiceVersion;
                 }
-                if (entityType.getCustomizableFeedMappings() != null) {
-                  if (entityType.getCustomizableFeedMappings().getFcKeepInContent() != null) {
-                    if (entityType.getCustomizableFeedMappings().getFcKeepInContent()) {
-                      dataServiceVersion = ODataServiceVersion.V20;
-                      return dataServiceVersion;
-                    }
+              }
+              if (entityType.getCustomizableFeedMappings() != null) {
+                if (entityType.getCustomizableFeedMappings().getFcKeepInContent() != null) {
+                  if (entityType.getCustomizableFeedMappings().getFcKeepInContent()) {
+                    dataServiceVersion = ODataServiceVersion.V20;
+                    return dataServiceVersion;
                   }
                 }
               }
@@ -148,8 +143,8 @@ public class EdmServiceMetadataImplProv implements EdmServiceMetadata {
       }
 
       for (Schema schema : schemas) {
-        for (EntityContainer entityContainer : schema.getEntityContainers()) {
-          for (EntitySet entitySet : entityContainer.getEntitySets()) {
+        for (EntityContainer entityContainer : listOrEmptyList(schema.getEntityContainers())) {
+          for (EntitySet entitySet : listOrEmptyList(entityContainer.getEntitySets())) {
             EdmEntitySetInfo entitySetInfo = new EdmEntitySetInfoImplProv(entitySet, entityContainer);
             entitySetInfos.add(entitySetInfo);
           }
@@ -159,5 +154,19 @@ public class EdmServiceMetadataImplProv implements EdmServiceMetadata {
     }
 
     return entitySetInfos;
+  }
+
+  /**
+   * Return original list if parameter is not NULL or an empty list.
+   *
+   * @param list list which is checked and probably returned
+   * @param <T> type of list
+   * @return original list if parameter is not NULL or an empty list
+   */
+  private <T> List<T> listOrEmptyList(List<T> list) {
+    if(list == null) {
+      return Collections.emptyList();
+    }
+    return list;
   }
 }

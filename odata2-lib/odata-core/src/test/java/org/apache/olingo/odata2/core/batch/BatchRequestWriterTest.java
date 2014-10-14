@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,8 @@ import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
 import org.apache.olingo.odata2.api.client.batch.BatchPart;
 import org.apache.olingo.odata2.api.client.batch.BatchQueryPart;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
@@ -43,6 +46,7 @@ public class BatchRequestWriterTest {
   private static final String GET = "GET";
   private static final String PUT = "PUT";
   private static final String BOUNDARY = "batch_123";
+  private static final Object CRLF = "\r\n";
 
   private void checkMimeHeaders(final String requestBody) {
     assertTrue(requestBody.contains("Content-Type: application/http"));
@@ -67,7 +71,7 @@ public class BatchRequestWriterTest {
     assertTrue(requestBody.contains("--batch_"));
     assertTrue(requestBody.contains("GET Employees HTTP/1.1"));
     checkHeaders(headers, requestBody);
-    assertEquals(8, StringHelper.countLines(requestBody));
+    assertEquals(9, StringHelper.countLines(requestBody));
   }
 
   @Test
@@ -122,7 +126,7 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    String requestBody = StringHelper.inputStreamToString(batchRequest);
+    String requestBody = StringHelper.inputStreamToString(batchRequest, true);
     assertNotNull(batchRequest);
     checkMimeHeaders(requestBody);
 
@@ -131,6 +135,50 @@ public class BatchRequestWriterTest {
     assertTrue(requestBody.contains("GET Employees HTTP/1.1"));
     assertTrue(requestBody.contains("POST Employees HTTP/1.1"));
     assertTrue(requestBody.contains(body));
+  }
+
+  @Test
+  public void testGetRequest() throws IOException {
+    List<BatchPart> batch = new ArrayList<BatchPart>();
+
+    Map<String, String> headers = new HashMap<String, String>();
+    headers.put("Accept", "application/json");
+    BatchPart request = BatchQueryPart.method(GET).uri("Employees").headers(headers).contentId("123").build();
+
+    batch.add(request);
+    batch.add(request);
+
+    BatchRequestWriter writer = new BatchRequestWriter();
+    InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
+    
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
+    List<Line> lines = reader.toList();
+    reader.close();
+    
+    int line = 0;
+    assertEquals("--" + BOUNDARY + CRLF, lines.get(line++).toString());
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(line++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(line++).toString());
+    assertEquals("Content-Id: 123" + CRLF, lines.get(line++).toString());
+    assertEquals(CRLF, lines.get(line++).toString());
+    assertEquals("GET Employees HTTP/1.1" + CRLF, lines.get(line++).toString());
+    assertEquals("Accept: application/json" + CRLF, lines.get(line++).toString());
+    assertEquals(CRLF, lines.get(line++).toString());   // Belongs to the GET request [OData Protocol - 2.2.7.2.1]
+    
+    assertEquals(CRLF, lines.get(line++).toString());   // Belongs conceptually to the boundary [RFC 2046 - 5.1.1]
+    assertEquals("--" + BOUNDARY + CRLF, lines.get(line++).toString());
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(line++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(line++).toString());
+    assertEquals("Content-Id: 123" + CRLF, lines.get(line++).toString());
+    assertEquals(CRLF, lines.get(line++).toString());
+    assertEquals("GET Employees HTTP/1.1" + CRLF, lines.get(line++).toString());
+    assertEquals("Accept: application/json" + CRLF, lines.get(line++).toString());
+    assertEquals(CRLF, lines.get(line++).toString());   // Belongs to the GET request [OData Protocol - 2.2.7.2.1]
+    
+    assertEquals(CRLF, lines.get(line++).toString());   // Belongs conceptually to the boundary [RFC 2046 - 5.1.1]
+    assertEquals("--" + BOUNDARY + "--", lines.get(line++).toString());
+    assertEquals(19, lines.size());
   }
 
   @Test
