@@ -41,7 +41,6 @@ import org.apache.olingo.odata2.api.ep.EntityProviderBatchProperties;
 import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.v2.BatchParser;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -132,19 +131,6 @@ public class BatchRequestTest {
   }
 
   @Test
-      /*
-       * --batch_123
-       * Content-Type: application/http
-       * Content-Transfer-Encoding: binary
-       * Content-Id: 000
-       * 
-       * GET Employees HTTP/1.1
-       * Accept: application/json <- Missing CRLF => Even ABAP can`t understand this request
-       * --batch_123
-       * ...
-       * ....
-       */
-  @Ignore
   public void testBatchWithGetAndPost() throws BatchException, IOException {
     List<BatchPart> batch = new ArrayList<BatchPart>();
     Map<String, String> headers = new HashMap<String, String>();
@@ -176,7 +162,7 @@ public class BatchRequestTest {
     assertTrue(requestBody.contains("GET Employees HTTP/1.1"));
     assertTrue(requestBody.contains("POST Employees HTTP/1.1"));
     assertTrue(requestBody.contains(body));
-    assertEquals(23, batchRequestStream.linesCount());
+    assertEquals(25, batchRequestStream.linesCount());
 
     String contentType = "multipart/mixed; boundary=" + BOUNDARY;
     BatchParser parser = new BatchParser(contentType, parseProperties, true);
