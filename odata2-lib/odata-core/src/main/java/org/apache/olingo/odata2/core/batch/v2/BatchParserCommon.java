@@ -193,7 +193,7 @@ public class BatchParserCommon {
 
   public static void consumeBlankLine(final List<Line> remainingMessage, final boolean isStrict)
       throws BatchException {
-    if (remainingMessage.size() > 0 && "".equals(remainingMessage.get(0).toString().trim())) {
+    if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*\r\n\\s*")) {
       remainingMessage.remove(0);
     } else {
       if (isStrict) {

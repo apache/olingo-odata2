@@ -70,44 +70,44 @@ public class BasicBatchTest extends AbstractBasicTest {
     super(servletType);
   }
 
-  private static final String LF = "\n";
+  private static final String CRLF = "\r\n";
   private static final String REG_EX_BOUNDARY =
       "(([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\(\\),/:=\\?]" +
           "{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\")";
   private static final String REG_EX = "multipart/mixed;\\s*boundary=" + REG_EX_BOUNDARY + "\\s*";
 
   private static final String REQUEST_PAYLOAD =
-      "--batch_98c1-8b13-36bb" + LF
-          + "Content-Type: application/http" + LF
-          + "Content-Transfer-Encoding: binary" + LF
-          + "Content-Id: mimeHeaderContentId1" + LF
-          + LF
-          + "GET Employees('1')/EmployeeName HTTP/1.1" + LF
-          + "Host: localhost:19000" + LF
-          + "Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1" + LF
-          + "Accept-Language: en" + LF
-          + "MaxDataServiceVersion: 2.0" + LF
-          + "Content-Id: requestHeaderContentId1" + LF
-          + LF
-          + LF
-          + "--batch_98c1-8b13-36bb" + LF
-          + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + LF
-          + LF
-          + "--changeset_f980-1cb6-94dd" + LF
-          + "Content-Type: application/http" + LF
-          + "Content-Transfer-Encoding: binary" + LF
-          + "Content-Id: mimeHeaderContentId2" + LF
-          + LF
-          + "PUT Employees('1')/EmployeeName HTTP/1.1" + LF
-          + "Host: localhost:19000" + LF
-          + "Content-Type: application/json;odata=verbose" + LF
-          + "MaxDataServiceVersion: 2.0" + LF
-          + "Content-Id: requestHeaderContentId2" + LF
-          + LF
-          + "{\"EmployeeName\":\"Walter Winter MODIFIED\"}" + LF
-          + LF
-          + "--changeset_f980-1cb6-94dd--" + LF
-          + LF
+      "--batch_98c1-8b13-36bb" + CRLF
+          + "Content-Type: application/http" + CRLF
+          + "Content-Transfer-Encoding: binary" + CRLF
+          + "Content-Id: mimeHeaderContentId1" + CRLF
+          + CRLF
+          + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
+          + "Host: localhost:19000" + CRLF
+          + "Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1" + CRLF
+          + "Accept-Language: en" + CRLF
+          + "MaxDataServiceVersion: 2.0" + CRLF
+          + "Content-Id: requestHeaderContentId1" + CRLF
+          + CRLF
+          + CRLF
+          + "--batch_98c1-8b13-36bb" + CRLF
+          + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
+          + CRLF
+          + "--changeset_f980-1cb6-94dd" + CRLF
+          + "Content-Type: application/http" + CRLF
+          + "Content-Transfer-Encoding: binary" + CRLF
+          + "Content-Id: mimeHeaderContentId2" + CRLF
+          + CRLF
+          + "PUT Employees('1')/EmployeeName HTTP/1.1" + CRLF
+          + "Host: localhost:19000" + CRLF
+          + "Content-Type: application/json;odata=verbose" + CRLF
+          + "MaxDataServiceVersion: 2.0" + CRLF
+          + "Content-Id: requestHeaderContentId2" + CRLF
+          + CRLF
+          + "{\"EmployeeName\":\"Walter Winter MODIFIED\"}" + CRLF
+          + CRLF
+          + "--changeset_f980-1cb6-94dd--" + CRLF
+          + CRLF
           + "--batch_98c1-8b13-36bb--";
 
   @Test
@@ -138,7 +138,7 @@ public class BasicBatchTest extends AbstractBasicTest {
   public void testBatchInvalidContentTypeForPut() throws Exception {
     final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
     post.setHeader("Content-Type", "multipart/mixed;boundary=batch_98c1-8b13-36bb");
-    String replacedEntity = REQUEST_PAYLOAD.replace("Content-Type: application/json;odata=verbose" + LF, "");
+    String replacedEntity = REQUEST_PAYLOAD.replace("Content-Type: application/json;odata=verbose" + CRLF, "");
     HttpEntity entity = new StringEntity(replacedEntity);
     post.setEntity(entity);
     HttpResponse response = getHttpClient().execute(post);

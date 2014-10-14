@@ -389,7 +389,21 @@ public class BatchRequestParserTest {
         + "--batch_8194-cf13-1f56--";
     parseInvalidBatchBody(batch);
   }
-
+  
+  @Test(expected = BatchException.class)
+  public void testGetRequestMissingCRLF() throws BatchException {
+    String batch = "--batch_8194-cf13-1f56" + CRLF
+        + MIME_HEADERS
+        + "Content-ID: 1" + CRLF
+        + CRLF
+        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
+        //+ CRLF  // Belongs to the GET request
+        + CRLF    //Belongs to the 
+        + "--batch_8194-cf13-1f56--";
+    
+    parseInvalidBatchBody(batch);
+  }
+  
   @Test(expected = BatchException.class)
   public void testInvalidMethodForBatch() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
@@ -961,6 +975,7 @@ public class BatchRequestParserTest {
         + "accept: */*,application/atom+xml,application/atomsvc+xml,application/xml" + CRLF
         + "Content-Id: BBB" + CRLF
         + CRLF
+        + CRLF
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
         + CRLF
@@ -1073,6 +1088,7 @@ public class BatchRequestParserTest {
         + "GET Employees HTTP/1.1" + CRLF
         + "accept: */*,application/atom+xml,application/atomsvc+xml,application/xml" + CRLF
         + "Content-Id: BBB" + CRLF
+        + CRLF
         + CRLF
         + "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
