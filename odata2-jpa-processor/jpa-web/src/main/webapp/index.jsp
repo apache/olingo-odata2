@@ -297,13 +297,13 @@ th,td {
 				<ul>
 					<li><a
 						href="SalesOrderProcessing.svc/SalesOrders?$top=1&$inlinecount=allpages"
-						target="_blank">SalesOrderProcessing.svc/SalesOrders?$top=1&$inlinecount=allpages"</a></li>
+						target="_blank">SalesOrderProcessing.svc/SalesOrders?$top=1&amp;$inlinecount=allpages"</a></li>
 					<li><a
 						href="SalesOrderProcessing.svc/SalesOrders?$top=1&$inlinecount=allpages&$skiptoken=5"
-						target="_blank">SalesOrderProcessing.svc/SalesOrders?$top=1&$inlinecount=allpages&$skiptoken=5</a></li>
+						target="_blank">SalesOrderProcessing.svc/SalesOrders?$top=1&amp;$inlinecount=allpages&amp;$skiptoken=5</a></li>
 					<li><a
 						href="SalesOrderProcessing.svc/SalesOrders?$top=1&$skip=4&$inlinecount=allpages&$skiptoken=5"
-						target="_blank">SalesOrderProcessing.svc/SalesOrders?$top=1&$skip=4&$inlinecount=allpages&$skiptoken=5</a></li>
+						target="_blank">SalesOrderProcessing.svc/SalesOrders?$top=1&amp;$skip=4&amp;$inlinecount=allpages&amp;$skiptoken=5</a></li>
 				</ul>
 			</td>
 			<td valign="top">&nbsp;</td>

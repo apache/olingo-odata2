@@ -219,27 +219,41 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
     PathInfo pathInfo = getContext().getPathInfo();
     EntityProviderBatchProperties batchProperties = EntityProviderBatchProperties.init().pathInfo(pathInfo).build();
     List<BatchRequestPart> batchParts = EntityProvider.parseBatchRequest(contentType, content, batchProperties);
+
     for (BatchRequestPart batchPart : batchParts) {
       batchResponseParts.add(handler.handleBatchPart(batchPart));
     }
     batchResponse = EntityProvider.writeBatchResponse(batchResponseParts);
     return batchResponse;
+
   }
 
   @Override
   public BatchResponsePart executeChangeSet(final BatchHandler handler, final List<ODataRequest> requests)
       throws ODataException {
     List<ODataResponse> responses = new ArrayList<ODataResponse>();
-    for (ODataRequest request : requests) {
-      ODataResponse response = handler.handleRequest(request);
-      if (response.getStatus().getStatusCode() >= HttpStatusCodes.BAD_REQUEST.getStatusCode()) {
-        // Rollback
-        List<ODataResponse> errorResponses = new ArrayList<ODataResponse>(1);
-        errorResponses.add(response);
-        return BatchResponsePart.responses(errorResponses).changeSet(false).build();
+    try {
+      oDataJPAContext.getEntityManager().getTransaction().begin();
+
+      for (ODataRequest request : requests) {
+        ODataResponse response = handler.handleRequest(request);
+        if (response.getStatus().getStatusCode() >= HttpStatusCodes.BAD_REQUEST.getStatusCode()) {
+          // Rollback
+          oDataJPAContext.getEntityManager().getTransaction().rollback();
+          List<ODataResponse> errorResponses = new ArrayList<ODataResponse>(1);
+          errorResponses.add(response);
+          return BatchResponsePart.responses(errorResponses).changeSet(false).build();
+        }
+        responses.add(response);
       }
-      responses.add(response);
+      oDataJPAContext.getEntityManager().getTransaction().commit();
+
+      return BatchResponsePart.responses(responses).changeSet(true).build();
+    } catch (Exception e) {
+      
+      List<ODataResponse> errorResponses = new ArrayList<ODataResponse>(1);
+      errorResponses.add(ODataResponse.entity(e).status(HttpStatusCodes.INTERNAL_SERVER_ERROR).build());
+      return BatchResponsePart.responses(errorResponses).changeSet(false).build();
     }
-    return BatchResponsePart.responses(responses).changeSet(true).build();
   }
 }

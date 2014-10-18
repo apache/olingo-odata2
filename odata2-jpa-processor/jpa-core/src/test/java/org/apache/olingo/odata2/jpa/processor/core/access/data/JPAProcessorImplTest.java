@@ -321,6 +321,7 @@ public class JPAProcessorImplTest {
     entityTransaction.begin(); // testing void method
     entityTransaction.commit();// testing void method
     entityTransaction.commit();// testing void method
+    EasyMock.expect(entityTransaction.isActive()).andReturn(false).anyTimes();
     EasyMock.replay(entityTransaction);
     return entityTransaction;
   }

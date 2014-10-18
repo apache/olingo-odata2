@@ -377,7 +377,16 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         for (Attribute<?, ?> referencedAttribute : referencedEntityType.getAttributes()) {
           if (referencedAttribute.getPersistentAttributeType() == PersistentAttributeType.BASIC &&
               ((SingularAttribute<?, ?>) referencedAttribute).isId()) {
-            name[1] = referencedAttribute.getName();
+            AnnotatedElement annotatedElement = (AnnotatedElement) referencedAttribute.getJavaMember();
+            Column referencedColumn = null;
+            if (annotatedElement != null) {
+              referencedColumn = annotatedElement.getAnnotation(Column.class);
+            }
+            if (referencedColumn != null) {
+              name[1] = referencedColumn.name();
+            } else {
+              name[1] = referencedAttribute.getName();
+            }
             joinColumnNames.add(name);
             currentRefAttribute = referencedAttribute;
             break;

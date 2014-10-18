@@ -144,6 +144,7 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
       if (currentRole == null) {
         currentRole = new ReferentialConstraintRole();
         String jpaAttributeType = null;
+        String jpaColumnName = null;
         EntityType edmEntityType = null;
 
         if (roleType == RoleType.PRINCIPAL) {
@@ -165,9 +166,10 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
         if (edmEntityType != null) {
           for (String[] columnName : jpaColumnNames) {
             for (Property property : edmEntityType.getProperties()) {
-              if (columnName[0].equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName()) ||
+              jpaColumnName = ((JPAEdmMapping) property.getMapping()).getJPAColumnName();
+              if (columnName[0].equals(jpaColumnName) ||
                   columnName[0].equals(property.getName()) ||
-                  columnName[1].equals(((JPAEdmMapping) property.getMapping()).getJPAColumnName()) ||
+                  columnName[1].equals(jpaColumnName) ||
                   columnName[1].equals(property.getName())) {
                 PropertyRef propertyRef = new PropertyRef();
                 propertyRef.setName(property.getName());

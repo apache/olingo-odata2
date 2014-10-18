@@ -360,6 +360,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     entityTransaction.begin(); // testing void method
     entityTransaction.commit();// testing void method
     entityTransaction.rollback();// testing void method
+    EasyMock.expect(entityTransaction.isActive()).andReturn(false);
     EasyMock.replay(entityTransaction);
     return entityTransaction;
   }
