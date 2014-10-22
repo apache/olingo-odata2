@@ -574,13 +574,17 @@ public class XmlMetadataProducer {
       xmlStreamWriter.writeStartElement(XmlMetadataConstants.DOCUMENTATION);
       writeAnnotationAttributes(documentation.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
 
-      xmlStreamWriter.writeStartElement(XmlMetadataConstants.SUMMARY);
-      xmlStreamWriter.writeCharacters(documentation.getSummary());
-      xmlStreamWriter.writeEndElement();
+      if (documentation.getSummary() != null) {
+        xmlStreamWriter.writeStartElement(XmlMetadataConstants.SUMMARY);
+        xmlStreamWriter.writeCharacters(documentation.getSummary());
+        xmlStreamWriter.writeEndElement();
+      }
 
-      xmlStreamWriter.writeStartElement(XmlMetadataConstants.LONG_DESCRIPTION);
-      xmlStreamWriter.writeCharacters(documentation.getLongDescription());
-      xmlStreamWriter.writeEndElement();
+      if (documentation.getLongDescription() != null) {
+        xmlStreamWriter.writeStartElement(XmlMetadataConstants.LONG_DESCRIPTION);
+        xmlStreamWriter.writeCharacters(documentation.getLongDescription());
+        xmlStreamWriter.writeEndElement();
+      }
 
       writeAnnotationElements(documentation.getAnnotationElements(), predefinedNamespaces, xmlStreamWriter);
       xmlStreamWriter.writeEndElement();
