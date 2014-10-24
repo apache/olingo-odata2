@@ -18,11 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
+import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathNotExists;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +35,11 @@ import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.OnWriteEntryContent;
+import org.apache.olingo.odata2.api.ep.callback.OnWriteFeedContent;
 import org.apache.olingo.odata2.api.ep.callback.WriteEntryCallbackContext;
 import org.apache.olingo.odata2.api.ep.callback.WriteEntryCallbackResult;
+import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackContext;
+import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
@@ -145,6 +150,78 @@ public class ExpandSelectProducerWithBuilderTest extends AbstractProviderTest {
     String xml = StringHelper.inputStreamToString((InputStream) entry.getEntity());
     assertXpathExists("/a:entry/a:content/m:properties", xml);
     assertXpathExists("/a:entry/a:link[@type]/m:inline", xml);
+  }
+
+  @Test
+  public void expandBuildingAndRooms() throws Exception {
+    EdmEntitySet roomsSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    List<String> expandedNavigationProperties = new ArrayList<String>();
+    expandedNavigationProperties.add("nr_Building");
+
+    final ExpandSelectTreeNode expandSelectTree =
+            ExpandSelectTreeNode.entitySet(roomsSet).expandedLinks(expandedNavigationProperties).build();
+
+    Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
+    callbacks.put("nr_Building", new OnWriteEntryContent(){
+      @Override
+      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context)
+              throws ODataApplicationException {
+        WriteEntryCallbackResult writeEntryCallbackResult = new WriteEntryCallbackResult();
+
+        ExpandSelectTreeNode innerExpandSelectTree;
+        try {
+          EdmEntitySet buildingsSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings");
+          innerExpandSelectTree = ExpandSelectTreeNode.entitySet(buildingsSet)
+                          .expandedLinks(Arrays.asList("nb_Rooms")).build();
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+
+        Map<String, ODataCallback> innerCallbacks = new HashMap<String, ODataCallback>();
+        innerCallbacks.put("nb_Rooms", new OnWriteFeedContent(){
+          @Override
+          public WriteFeedCallbackResult retrieveFeedResult(WriteFeedCallbackContext context) {
+            WriteFeedCallbackResult writeEntryCallbackResult = new WriteFeedCallbackResult();
+
+            ExpandSelectTreeNode innerExpandSelectTree = context.getCurrentExpandSelectTreeNode();
+            EntityProviderWriteProperties inlineProperties =
+                    EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES)
+                            .expandSelectTree(innerExpandSelectTree).build();
+            writeEntryCallbackResult.setInlineProperties(inlineProperties);
+            Map<String, Object> roomsData = new HashMap<String, Object>();
+            roomsData.put("Id", "1");
+            roomsData.put("Name", "MyInnerRoom");
+            writeEntryCallbackResult.setFeedData(Arrays.asList(roomsData));
+            return writeEntryCallbackResult;
+          }
+        });
+
+        EntityProviderWriteProperties inlineProperties =
+                EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES)
+                        .callbacks(innerCallbacks)
+                        .expandSelectTree(innerExpandSelectTree).build();
+        writeEntryCallbackResult.setInlineProperties(inlineProperties);
+        Map<String, Object> buildingData = new HashMap<String, Object>();
+        buildingData.put("Id", "1");
+        buildingData.put("Name", "BuildingName");
+        writeEntryCallbackResult.setEntryData(buildingData);
+        return writeEntryCallbackResult;
+      }
+    });
+
+    EntityProviderWriteProperties properties =
+            EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).callbacks(callbacks).expandSelectTree(
+                    expandSelectTree).build();
+    ODataResponse entry = EntityProvider.writeEntry("application/xml", roomsSet, roomData, properties);
+
+    String xml = StringHelper.inputStreamToString((InputStream) entry.getEntity());
+    assertXpathExists("/a:entry/a:content/m:properties", xml);
+    assertXpathExists("/a:entry/a:link[@type]/m:inline", xml);
+    assertXpathEvaluatesTo("Buildings", "/a:entry/a:link[@type]/m:inline/a:entry/a:title", xml);
+    assertXpathEvaluatesTo("Rooms",
+            "/a:entry/a:link[@type]/m:inline/a:entry/a:link[@type]/m:inline/a:feed/a:title", xml);
+    assertXpathEvaluatesTo("http://host:80/service/Rooms('1')",
+            "/a:entry/a:link[@type]/m:inline/a:entry/a:link[@type]/m:inline/a:feed/a:entry/a:id", xml);
   }
 
   @Test
