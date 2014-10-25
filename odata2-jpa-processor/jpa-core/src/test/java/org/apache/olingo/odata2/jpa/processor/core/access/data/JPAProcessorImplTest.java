@@ -57,6 +57,7 @@ import org.apache.olingo.odata2.api.edm.provider.Mapping;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
+import org.apache.olingo.odata2.api.uri.NavigationSegment;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
@@ -196,6 +197,7 @@ public class JPAProcessorImplTest {
     EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
     EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(null);
     EasyMock.expect(objUriInfo.getCustomQueryOptions()).andStubReturn(null);
+    EasyMock.expect(objUriInfo.getNavigationSegments()).andStubReturn(new ArrayList<NavigationSegment>());
     EasyMock.replay(objUriInfo);
     return objUriInfo;
   }

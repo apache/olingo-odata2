@@ -139,8 +139,7 @@ public class JPAProcessorImpl implements JPAProcessor {
     }
     JPQLContextType contextType = null;
     try {
-      if (!uriParserResultView.getStartEntitySet().getName()
-          .equals(uriParserResultView.getTargetEntitySet().getName())) {
+      if (uriParserResultView.getNavigationSegments().size() > 0) {
         contextType = JPQLContextType.JOIN;
       } else {
         contextType = JPQLContextType.SELECT;
@@ -210,19 +209,13 @@ public class JPAProcessorImpl implements JPAProcessor {
       throws ODataJPAModelException, ODataJPARuntimeException {
 
     JPQLContextType contextType = null;
-    try {
-      if (uriParserResultView instanceof GetEntityUriInfo) {
-        uriParserResultView = ((GetEntityUriInfo) uriParserResultView);
-        if (!((GetEntityUriInfo) uriParserResultView).getStartEntitySet().getName()
-            .equals(((GetEntityUriInfo) uriParserResultView).getTargetEntitySet().getName())) {
-          contextType = JPQLContextType.JOIN_SINGLE;
-        } else {
-          contextType = JPQLContextType.SELECT_SINGLE;
-        }
+    if (uriParserResultView instanceof GetEntityUriInfo) {
+      uriParserResultView = ((GetEntityUriInfo) uriParserResultView);
+      if (uriParserResultView.getNavigationSegments().size() > 0) {
+        contextType = JPQLContextType.JOIN_SINGLE;
+      } else {
+        contextType = JPQLContextType.SELECT_SINGLE;
       }
-    } catch (EdmException e) {
-      ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.GENERAL, e);
     }
 
     return readEntity(uriParserResultView, contextType);

@@ -183,14 +183,22 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
             isConsistent = false;
             return;
           }
-          AssociationEnd end = association.getEnd1();
-          if (end.getType().getName().equals(edmEntityType.getName())) {
-            currentRole.setRole(end.getRole());
+          // First condition is required for Self Joins where the entity type on both ends are same
+          AssociationEnd end1 = association.getEnd1();
+          AssociationEnd end2 = association.getEnd2();
+          if (end1.getType().getName().equals(end2.getType().getName())) {
+            if (roleType == RoleType.PRINCIPAL) {
+              currentRole.setRole(end1.getRole());
+            } else {
+              currentRole.setRole(end2.getRole());
+            }
             isConsistent = true;
           } else {
-            end = association.getEnd2();
-            if (end.getType().getName().equals(edmEntityType.getName())) {
-              currentRole.setRole(end.getRole());
+            if (end1.getType().getName().equals(edmEntityType.getName())) {
+              currentRole.setRole(end1.getRole());
+              isConsistent = true;
+            } else if (end2.getType().getName().equals(edmEntityType.getName())) {
+              currentRole.setRole(end2.getRole());
               isConsistent = true;
             }
           }

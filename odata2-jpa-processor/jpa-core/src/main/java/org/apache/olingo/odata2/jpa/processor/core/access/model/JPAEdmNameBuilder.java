@@ -503,7 +503,16 @@ public class JPAEdmNameBuilder {
 
     navProp.setName(navPropName);
 
-    if (toName.equals(associationEndTypeOne.getName())) {
+    // Condition for self join
+    if (associationEndTypeOne.getName().equals(associationEndTypeTwo.getName())) {
+      if (jpaAttribute.isCollection()) {
+        navProp.setFromRole(association.getEnd2().getRole());
+        navProp.setToRole(association.getEnd1().getRole());
+      } else {
+        navProp.setToRole(association.getEnd2().getRole());
+        navProp.setFromRole(association.getEnd1().getRole());        
+      }
+    } else if (toName.equals(associationEndTypeOne.getName())) {
       navProp.setFromRole(association.getEnd2().getRole());
       navProp.setToRole(association.getEnd1().getRole());
     } else if (toName.equals(associationEndTypeTwo.getName())) {
