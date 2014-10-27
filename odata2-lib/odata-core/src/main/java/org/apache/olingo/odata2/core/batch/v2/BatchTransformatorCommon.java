@@ -47,7 +47,7 @@ public class BatchTransformatorCommon {
     if (contentTypes.size() == 0) {
       throw new BatchException(BatchException.MISSING_CONTENT_TYPE);
     }
-    if (!headers.isHeaderMatching(HttpHeaders.CONTENT_TYPE, BatchParserCommon.PATTERN_MULTIPART_BOUNDARY)
+    if (!headers.isHeaderMatching(HttpHeaders.CONTENT_TYPE, BatchParserCommon.PATTERN_MULTIPART_MIXED)
       & !headers.isHeaderMatching(HttpHeaders.CONTENT_TYPE, BatchParserCommon.PATTERN_CONTENT_TYPE_APPLICATION_HTTP)) {
       throw new BatchException(BatchException.INVALID_CONTENT_TYPE.addContent(
           HttpContentType.MULTIPART_MIXED + " or " + HttpContentType.APPLICATION_HTTP));

@@ -70,7 +70,7 @@ public class BatchBodyPart implements BatchPart {
   }
 
   private boolean isContentTypeMultiPartMixed(final String contentType) {
-    return BatchParserCommon.PATTERN_MULTIPART_BOUNDARY.matcher(contentType).matches();
+    return BatchParserCommon.PATTERN_MULTIPART_MIXED.matcher(contentType).matches();
   }
 
   private List<BatchQueryOperation> consumeRequest(final List<Line> remainingMessage) throws BatchException {

@@ -354,7 +354,20 @@ public class BatchRequestParserTest {
         + "--batch_8194-cf13-1f56--";
     parseInvalidBatchBody(batch);
   }
-
+  
+  @Test
+  public void testContentTypeCharset() throws BatchException {
+    final String contentType = "multipart/mixed; charset=UTF-8;boundary=batch_14d1-b293-b99a";
+    final String batch = ""
+                    + "--batch_14d1-b293-b99a" + CRLF
+                    + GET_REQUEST
+                    + "--batch_14d1-b293-b99a--";
+    final BatchParser parser = new BatchParser(contentType, batchProperties, true);
+    final List<BatchRequestPart> parts = parser.parseBatchRequest(new ByteArrayInputStream(batch.getBytes()));
+    
+    assertEquals(1, parts.size());
+  }
+  
   @Test(expected = BatchException.class)
   public void testNoContentType() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF

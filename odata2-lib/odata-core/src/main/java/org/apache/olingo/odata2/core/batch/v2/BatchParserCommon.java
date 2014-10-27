@@ -45,10 +45,9 @@ public class BatchParserCommon {
       "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\" +
           "(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\""; // See RFC 2046
 
-  private static final String REX_EX_MULTIPART_BOUNDARY = "multipart/mixed;\\s*boundary=(.+)";
-  private static final String REG_EX_APPLICATION_HTTP = "application/http";
-  public static final Pattern PATTERN_MULTIPART_BOUNDARY = Pattern.compile(REX_EX_MULTIPART_BOUNDARY,
-      Pattern.CASE_INSENSITIVE);
+  public static final Pattern PATTERN_MULTIPART_MIXED = Pattern
+      .compile("multipart/mixed(.*)", Pattern.CASE_INSENSITIVE);
+  final static String REG_EX_APPLICATION_HTTP = "application/http";
   public static final Pattern PATTERN_HEADER_LINE = Pattern.compile("([a-zA-Z\\-]+):\\s?(.*)\\s*");
   public static final Pattern PATTERN_CONTENT_TYPE_APPLICATION_HTTP = Pattern.compile(REG_EX_APPLICATION_HTTP,
       Pattern.CASE_INSENSITIVE);
@@ -204,18 +203,23 @@ public class BatchParserCommon {
   }
 
   public static String getBoundary(final String contentType, final int line) throws BatchException {
-    final Matcher boundaryMatcher = PATTERN_MULTIPART_BOUNDARY.matcher(contentType);
+    if (contentType.toLowerCase(Locale.ENGLISH).startsWith("multipart/mixed")) {
+      final String[] parameter = contentType.split(";");
 
-    if (boundaryMatcher.matches()) {
-      final String boundary = boundaryMatcher.group(1);
-      if (boundary.matches(REG_EX_BOUNDARY)) {
-        return trimQuota(boundary);
-      } else {
-        throw new BatchException(BatchException.INVALID_BOUNDARY.addContent(line));
+      for (final String pair : parameter) {
+
+        final String[] attrValue = pair.split("=");
+        if (attrValue.length == 2 && "boundary".equals(attrValue[0].trim().toLowerCase(Locale.ENGLISH))) {
+          if (attrValue[1].matches(REG_EX_BOUNDARY)) {
+            return trimQuota(attrValue[1].trim());
+          } else {
+            throw new BatchException(BatchException.INVALID_BOUNDARY.addContent(line));
+          }
+        }
+
       }
-    } else {
-      throw new BatchException(BatchException.INVALID_CONTENT_TYPE.addContent(HttpContentType.MULTIPART_MIXED));
     }
+    throw new BatchException(BatchException.INVALID_CONTENT_TYPE.addContent(HttpContentType.MULTIPART_MIXED));
   }
 
   private static String trimQuota(String boundary) {
@@ -225,7 +229,7 @@ public class BatchParserCommon {
 
     return boundary;
   }
-  
+
   public static Map<String, List<String>> parseQueryParameter(final Line httpRequest) {
     Map<String, List<String>> queryParameter = new HashMap<String, List<String>>();
 

@@ -76,7 +76,7 @@ public class HeaderTest {
     Header header = new Header(1);
     header.addHeader(HttpHeaders.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + ";boundary=123", 1);
 
-    assertTrue(header.isHeaderMatching(HttpHeaders.CONTENT_TYPE, BatchParserCommon.PATTERN_MULTIPART_BOUNDARY));
+    assertTrue(header.isHeaderMatching(HttpHeaders.CONTENT_TYPE, BatchParserCommon.PATTERN_MULTIPART_MIXED));
   }
 
   @Test
@@ -110,7 +110,7 @@ public class HeaderTest {
   public void testMatcherNoHeader() {
     Header header = new Header(1);
 
-    assertFalse(header.isHeaderMatching(HttpHeaders.CONTENT_TYPE, BatchParserCommon.PATTERN_MULTIPART_BOUNDARY));
+    assertFalse(header.isHeaderMatching(HttpHeaders.CONTENT_TYPE,  BatchParserCommon.PATTERN_MULTIPART_MIXED));
   }
 
   @Test
