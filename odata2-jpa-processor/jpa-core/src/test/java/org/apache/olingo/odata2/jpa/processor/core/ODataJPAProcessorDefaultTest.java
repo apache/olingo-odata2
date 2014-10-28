@@ -79,7 +79,6 @@ import org.junit.Test;
 public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
 
   ODataJPAProcessorDefault objODataJPAProcessorDefault;
-  ODataJPAProcessorDefaultTest objODataJPAProcessorDefaultTest;
 
   private static final String STR_LOCAL_URI = "http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/";
   private static final String SALESORDERPROCESSING_CONTAINER = "salesorderprocessingContainer";
@@ -87,12 +86,13 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   private static final String SALES_ORDER = "SalesOrder";
   private static final String SALES_ORDER_HEADERS = "SalesOrderHeaders";
   private static final String STR_CONTENT_TYPE = "Content-Type";
+  
 
   @Before
   public void setUp() {
-    objODataJPAProcessorDefaultTest = new ODataJPAProcessorDefaultTest();
     objODataJPAProcessorDefault = new ODataJPAProcessorDefault(getLocalmockODataJPAContext());
   }
+  
 
   @Test
   public void testReadEntitySetGetEntitySetUriInfoString() {
@@ -171,7 +171,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
       Assert.assertTrue(true); // Expected TODO - need to revisit
     }
   }
-
+  
   private PutMergePatchUriInfo getPutUriInfo() {
     return (PutMergePatchUriInfo) getDeletetUriInfo();
   }
@@ -321,6 +321,8 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     EasyMock.expect(odataJPAContext.getPersistenceUnitName()).andStubReturn("salesorderprocessing");
     EasyMock.expect(odataJPAContext.getEntityManagerFactory()).andStubReturn(mockEntityManagerFactory());
     EasyMock.expect(odataJPAContext.getODataContext()).andStubReturn(getLocalODataContext());
+    odataJPAContext.setODataContext((ODataContext) EasyMock.anyObject());
+    EasyMock.expectLastCall().anyTimes();
     EasyMock.expect(odataJPAContext.getEntityManager()).andStubReturn(getLocalEntityManager());
     EasyMock.replay(odataJPAContext);
     return odataJPAContext;
