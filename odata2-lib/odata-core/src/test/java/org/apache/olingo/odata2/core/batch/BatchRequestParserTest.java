@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -118,7 +118,7 @@ public class BatchRequestParserTest {
       }
     }
   }
-  
+
   @Test
   public void testImageInContent() throws IOException, BatchException, URISyntaxException {
     String fileName = "/batchWithContent.batch";
@@ -270,7 +270,7 @@ public class BatchRequestParserTest {
     parseInvalidBatchBody(batch);
   }
 
-  @Test(expected=BatchException.class)
+  @Test(expected = BatchException.class)
   public void testMissingHttpVersion() throws BatchException {
     String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
@@ -281,11 +281,11 @@ public class BatchRequestParserTest {
         + "Host: localhost:8080" + CRLF
         + CRLF
         + "--batch_8194-cf13-1f56--";
-    
+
     parseInvalidBatchBody(batch);
   }
-  
-  @Test(expected=BatchException.class)
+
+  @Test(expected = BatchException.class)
   public void testMissingHttpVersion2() throws BatchException {
     String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
@@ -296,11 +296,11 @@ public class BatchRequestParserTest {
         + "Host: localhost:8080" + CRLF
         + CRLF
         + "--batch_8194-cf13-1f56--";
-    
+
     parseInvalidBatchBody(batch);
   }
-  
-  @Test(expected=BatchException.class)
+
+  @Test(expected = BatchException.class)
   public void testMissingHttpVersion3() throws BatchException {
     String batch = ""
         + "--batch_8194-cf13-1f56" + CRLF
@@ -311,10 +311,10 @@ public class BatchRequestParserTest {
         + "Host: localhost:8080" + CRLF
         + CRLF
         + "--batch_8194-cf13-1f56--";
-    
+
     parseInvalidBatchBody(batch);
   }
-  
+
   @Test(expected = BatchException.class)
   public void testBoundaryWithoutHyphen() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
@@ -355,6 +355,45 @@ public class BatchRequestParserTest {
     parseInvalidBatchBody(batch);
   }
 
+  @Test
+  public void testContentTypeCharset() throws BatchException {
+    final String contentType = "multipart/mixed; charset=UTF-8;boundary=batch_14d1-b293-b99a";
+    final String batch = ""
+        + "--batch_14d1-b293-b99a" + CRLF
+        + GET_REQUEST
+        + "--batch_14d1-b293-b99a--";
+    final BatchParser parser = new BatchParser(contentType, batchProperties, true);
+    final List<BatchRequestPart> parts = parser.parseBatchRequest(new ByteArrayInputStream(batch.getBytes()));
+
+    assertEquals(1, parts.size());
+  }
+
+  @Test
+  public void testContentTypeCharsetWrongBoundaryAtEnd() throws BatchException {
+    final String contentType = "multipart/mixed; charset=UTF-8;boundary=batch_14d1-b293-b99a;boundary=wrong_boundary";
+    final String batch = ""
+        + "--batch_14d1-b293-b99a" + CRLF
+        + GET_REQUEST
+        + "--batch_14d1-b293-b99a--";
+    final BatchParser parser = new BatchParser(contentType, batchProperties, true);
+    final List<BatchRequestPart> parts = parser.parseBatchRequest(new ByteArrayInputStream(batch.getBytes()));
+
+    assertEquals(1, parts.size());
+  }
+
+  @Test(expected = BatchException.class)
+  public void testContentTypeCharsetWrongBoundaryAtBeginning() throws BatchException {
+    final String contentType = "multipart/mixed; charset=UTF-8;boundary=wrong_boundary;boundary=batch_14d1-b293-b99a";
+    final String batch = ""
+        + "--batch_14d1-b293-b99a" + CRLF
+        + GET_REQUEST
+        + "--batch_14d1-b293-b99a--";
+    final BatchParser parser = new BatchParser(contentType, batchProperties, true);
+    final List<BatchRequestPart> parts = parser.parseBatchRequest(new ByteArrayInputStream(batch.getBytes()));
+
+    assertEquals(1, parts.size());
+  }
+
   @Test(expected = BatchException.class)
   public void testNoContentType() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
@@ -389,7 +428,7 @@ public class BatchRequestParserTest {
         + "--batch_8194-cf13-1f56--";
     parseInvalidBatchBody(batch);
   }
-  
+
   @Test(expected = BatchException.class)
   public void testGetRequestMissingCRLF() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
@@ -397,13 +436,13 @@ public class BatchRequestParserTest {
         + "Content-ID: 1" + CRLF
         + CRLF
         + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        //+ CRLF  // Belongs to the GET request
-        + CRLF    //Belongs to the 
+        // + CRLF // Belongs to the GET request
+        + CRLF // Belongs to the
         + "--batch_8194-cf13-1f56--";
-    
+
     parseInvalidBatchBody(batch);
   }
-  
+
   @Test(expected = BatchException.class)
   public void testInvalidMethodForBatch() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
@@ -458,7 +497,7 @@ public class BatchRequestParserTest {
     parseInvalidBatchBody(batch);
   }
 
-  @Test(expected=BatchException.class)
+  @Test(expected = BatchException.class)
   public void testInvalidChangeSetBoundary() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -475,8 +514,8 @@ public class BatchRequestParserTest {
         + "--batch_8194-cf13-1f56--";
     parseInvalidBatchBody(batch);
   }
-  
-  @Test(expected=BatchException.class)
+
+  @Test(expected = BatchException.class)
   public void testNestedChangeset() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
         + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
@@ -500,7 +539,7 @@ public class BatchRequestParserTest {
         + "--batch_8194-cf13-1f56--";
     parse(batch);
   }
-  
+
   @Test(expected = BatchException.class)
   public void testMissingContentTransferEncoding() throws BatchException {
     String batch = "--batch_8194-cf13-1f56" + CRLF
