@@ -116,6 +116,36 @@ public class BatchResponseParserTest {
     }
   }
 
+  @Test
+  public void testResponseToChangeSetNoContentButContentLength() throws BatchException {
+    String putResponse =
+            "--batch_123" + CRLF
+            + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + CRLF
+            + CRLF
+            + "--changeset_12ks93js84d" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-ID: 1" + CRLF
+            + CRLF
+            + "HTTP/1.1 204 No Content" + CRLF
+            + "Content-Length: 0" + CRLF
+            + "DataServiceVersion: 2.0" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12ks93js84d--" + CRLF
+            + CRLF
+            + "--batch_123--";
+
+    InputStream in = new ByteArrayInputStream(putResponse.getBytes());
+    BatchParser parser = new BatchParser("multipart/mixed;boundary=batch_123", true);
+    List<BatchSingleResponse> responses = parser.parseBatchResponse(in);
+    for (BatchSingleResponse response : responses) {
+      assertEquals("204", response.getStatusCode());
+      assertEquals("No Content", response.getStatusInfo());
+      assertEquals("1", response.getContentId());
+    }
+  }
+
   @Test(expected = BatchException.class)
   public void testInvalidMimeHeader() throws BatchException {
     String putResponse = "--batch_123" + CRLF
