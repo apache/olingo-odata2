@@ -376,7 +376,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
 
     facets = funcImpParamList.get(1).getFacets();
     assertNotNull(facets);
-    assertEquals(false, facets.isNullable());
+    assertEquals(true, facets.isNullable());
     assertEquals(10, facets.getPrecision().intValue());
     assertEquals(2, facets.getScale().intValue());
 
@@ -399,7 +399,7 @@ public class JPAEdmFunctionImportTest extends JPAEdmTestModelView {
     EdmFacets facets = funcImpParamList.get(0).getFacets();
     assertNotNull(facets);
     assertNull(facets.getMaxLength());
-    assertEquals(false, facets.isNullable());
+    assertEquals(true, facets.isNullable());
     assertNull(facets.getPrecision());
     assertNull(facets.getScale());
 

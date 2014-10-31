@@ -38,9 +38,9 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 @EdmEntitySet(name = "Employees")
 public class Employee {
   @EdmKey
-  @EdmProperty(name = "EmployeeId", type = EdmType.STRING)
+  @EdmProperty(name = "EmployeeId", type = EdmType.STRING, facets = @EdmFacets(nullable = false))
   private String employeeId;
-  @EdmProperty(name = "EmployeeName")
+  @EdmProperty(name = "EmployeeName", facets = @EdmFacets(maxLength = 20))
   private String employeeName;
   @EdmProperty
   private Integer age;

@@ -308,6 +308,8 @@ public class AnnotationEdmProviderTest {
     assertEquals("EmployeeId", employeeKeys.get(0).getName());
     assertEquals(6, employee.getProperties().size());
     assertEquals(3, employee.getNavigationProperties().size());
+    Property name = getProperty(employee, "EmployeeName");
+    assertEquals(Integer.valueOf(20), name.getFacets().getMaxLength());
 
     for (NavigationProperty navigationProperty : employee.getNavigationProperties()) {
       if (navigationProperty.getName().equals("ne_Manager")) {
@@ -320,6 +322,27 @@ public class AnnotationEdmProviderTest {
         fail("Got unexpected navigation property with name '" + navigationProperty.getName() + "'.");
       }
     }
+  }
+
+
+  @Test
+  public void facetsTest() throws Exception {
+    EntityType employee = aep.getEntityType(new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, "Employee"));
+    assertEquals("Employee", employee.getName());
+    Property name = getProperty(employee, "EmployeeName");
+    assertEquals(Integer.valueOf(20), name.getFacets().getMaxLength());
+    assertTrue(name.getFacets().isNullable());
+    Property id = getProperty(employee, "EmployeeId");
+    assertFalse(id.getFacets().isNullable());
+
+    ComplexType city = aep.getComplexType(new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, "c_City"));
+    Property postalCode = getProperty(city.getProperties(), "PostalCode");
+    assertEquals(Integer.valueOf(5), postalCode.getFacets().getMaxLength());
+
+    EntityType room = aep.getEntityType(new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, "Room"));
+    Property version = getProperty(room, "Version");
+    assertEquals(Integer.valueOf(0), version.getFacets().getScale());
+    assertEquals(Integer.valueOf(0), version.getFacets().getPrecision());
   }
 
   @Test
@@ -443,12 +466,17 @@ public class AnnotationEdmProviderTest {
     return getProperty(properties, propertyName) != null;
   }
 
+  private Property getProperty(EntityType entity, String propertyName) {
+    return getProperty(entity.getProperties(), propertyName);
+  }
+
   private Property getProperty(final List<Property> properties, final String name) {
     for (Property property : properties) {
       if (name.equals(property.getName())) {
         return property;
       }
     }
+    fail("Requested property with name '" + name + "' not available.");
     return null;
   }
 
