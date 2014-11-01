@@ -80,7 +80,8 @@ public class ODataExpressionParser {
 
       switch (unaryExpression.getOperator()) {
       case NOT:
-        return JPQLStatement.Operator.NOT + "(" + operand + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+        return JPQLStatement.Operator.NOT + JPQLStatement.DELIMITER.PARENTHESIS_LEFT + operand
+            + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT; //$NON-NLS-1$ //$NON-NLS-2$
       case MINUS:
         if (operand.startsWith("-")) {
           return operand.substring(1);
@@ -106,22 +107,37 @@ public class ODataExpressionParser {
 
       switch (binaryExpression.getOperator()) {
       case AND:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.AND + JPQLStatement.DELIMITER.SPACE
-            + right;
+        return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
+            + JPQLStatement.Operator.AND + JPQLStatement.DELIMITER.SPACE
+            + right + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case OR:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.OR + JPQLStatement.DELIMITER.SPACE + right;
+        return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
+            + JPQLStatement.Operator.OR + JPQLStatement.DELIMITER.SPACE + right
+            + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case EQ:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.EQ + JPQLStatement.DELIMITER.SPACE + right;
+        return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
+            + JPQLStatement.Operator.EQ + JPQLStatement.DELIMITER.SPACE + right
+            + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case NE:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.NE + JPQLStatement.DELIMITER.SPACE + right;
+        return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
+            + JPQLStatement.Operator.NE + JPQLStatement.DELIMITER.SPACE + right
+            + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case LT:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.LT + JPQLStatement.DELIMITER.SPACE + right;
+        return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
+            + JPQLStatement.Operator.LT + JPQLStatement.DELIMITER.SPACE + right
+            + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case LE:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.LE + JPQLStatement.DELIMITER.SPACE + right;
+        return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
+            + JPQLStatement.Operator.LE + JPQLStatement.DELIMITER.SPACE + right
+            + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case GT:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.GT + JPQLStatement.DELIMITER.SPACE + right;
+        return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
+            + JPQLStatement.Operator.GT + JPQLStatement.DELIMITER.SPACE + right
+            + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case GE:
-        return left + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.GE + JPQLStatement.DELIMITER.SPACE + right;
+        return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
+            + JPQLStatement.Operator.GE + JPQLStatement.DELIMITER.SPACE + right
+            + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case PROPERTY_ACCESS:
         throw new ODataNotImplementedException();
       default:
