@@ -35,6 +35,7 @@ public class Room extends RefBase {
   @EdmProperty
   private Integer seats;
   @EdmProperty(facets = @EdmFacets(scale = 0, precision = 0))
+  @EdmConcurrencyControl
   private Integer version;
   @EdmNavigationProperty(name = "nr_Building", association = "BuildingRooms")
   private Building building;

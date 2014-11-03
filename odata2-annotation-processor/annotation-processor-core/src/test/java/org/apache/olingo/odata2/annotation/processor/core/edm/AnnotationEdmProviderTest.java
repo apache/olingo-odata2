@@ -40,6 +40,7 @@ import org.apache.olingo.odata2.annotation.processor.core.model.Team;
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -331,6 +332,7 @@ public class AnnotationEdmProviderTest {
     assertEquals("Employee", employee.getName());
     Property name = getProperty(employee, "EmployeeName");
     assertEquals(Integer.valueOf(20), name.getFacets().getMaxLength());
+    assertNull(name.getFacets().getConcurrencyMode());
     assertTrue(name.getFacets().isNullable());
     Property id = getProperty(employee, "EmployeeId");
     assertFalse(id.getFacets().isNullable());
@@ -343,6 +345,7 @@ public class AnnotationEdmProviderTest {
     Property version = getProperty(room, "Version");
     assertEquals(Integer.valueOf(0), version.getFacets().getScale());
     assertEquals(Integer.valueOf(0), version.getFacets().getPrecision());
+    assertEquals(EdmConcurrencyMode.Fixed, version.getFacets().getConcurrencyMode());
   }
 
   @Test
