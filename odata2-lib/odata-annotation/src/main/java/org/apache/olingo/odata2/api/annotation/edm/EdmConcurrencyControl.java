@@ -31,5 +31,5 @@ import java.lang.annotation.Target;
  * = NONE</code>.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
+@Target(ElementType.FIELD)
 public @interface EdmConcurrencyControl {}

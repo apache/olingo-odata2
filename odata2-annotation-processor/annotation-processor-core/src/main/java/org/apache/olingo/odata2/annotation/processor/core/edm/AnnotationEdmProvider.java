@@ -35,13 +35,16 @@ import java.util.UUID;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
 import org.apache.olingo.odata2.annotation.processor.core.util.ClassHelper;
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmConcurrencyControl;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFacets;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmType;
+import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
@@ -57,6 +60,7 @@ import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
+import org.apache.olingo.odata2.api.edm.provider.Facets;
 import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata2.api.edm.provider.Key;
 import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
@@ -460,8 +464,25 @@ public class AnnotationEdmProvider extends EdmProvider {
         type = getEdmType(field.getType());
       }
       sp.setType(ANNOTATION_HELPER.mapTypeKind(type));
-
+      sp.setFacets(createFacets(ep.facets(), field.getAnnotation(EdmConcurrencyControl.class)));
       return sp;
+    }
+
+    private Facets createFacets(final EdmFacets facets, final EdmConcurrencyControl concurrencyControl) {
+      Facets resultFacets = new Facets().setNullable(facets.nullable());
+      if(facets.maxLength() > -1) {
+        resultFacets.setMaxLength(facets.maxLength());
+      }
+      if(facets.precision() > -1) {
+        resultFacets.setPrecision(facets.precision());
+      }
+      if(facets.scale() > -1) {
+        resultFacets.setScale(facets.scale());
+      }
+      if (concurrencyControl != null) {
+        resultFacets.setConcurrencyMode(EdmConcurrencyMode.Fixed);
+      }
+      return resultFacets;
     }
 
     private Property createComplexProperty(final Field field, final String defaultNamespace) {

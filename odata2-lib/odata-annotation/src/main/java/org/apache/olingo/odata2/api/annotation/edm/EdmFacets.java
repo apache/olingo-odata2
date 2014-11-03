@@ -56,9 +56,9 @@ public @interface EdmFacets {
 
   /**
    * The information if the type in use is nullable.
-   * The default value for nullable is <code>false</code>.
+   * The default value for nullable is <code>true</code>.
    * 
    * @return <code>true</code> if the type in use is nullable, <code>false</code> otherwise.
    */
-  boolean nullable() default false;
+  boolean nullable() default true;
 }
