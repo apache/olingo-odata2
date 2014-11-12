@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
+import org.apache.olingo.odata2.api.edm.EdmMappable;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
@@ -167,7 +168,7 @@ public class ODataExpressionParser {
         tempExp = member.getPath();
       }
       memberExpStr =
-          ((EdmProperty) ((PropertyExpression) tempExp).getEdmProperty()).getMapping().getInternalName()
+          ((EdmMappable) ((PropertyExpression) tempExp).getEdmProperty()).getMapping().getInternalName()
               + JPQLStatement.DELIMITER.PERIOD + memberExpStr;
       return tableAlias + JPQLStatement.DELIMITER.PERIOD + memberExpStr;
 
