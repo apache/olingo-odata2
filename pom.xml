@@ -72,6 +72,8 @@
 
 		<version.eclipselink>2.5.1</version.eclipselink>
 		<version.javax.persistence>2.0.5</version.javax.persistence>
+
+		<spring.version>3.2.12.RELEASE</spring.version>
 	</properties>
 
 	<modules>

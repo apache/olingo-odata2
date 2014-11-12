@@ -30,5 +30,6 @@
         <module>odata-fit</module>
         <module>odata-ref</module>
         <module>odata-web</module>
+        <module>odata-spring</module>
     </modules>
 </project>
