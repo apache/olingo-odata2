@@ -5,4 +5,4 @@
     in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
     ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under
     the License. -->
-http\://www.apache.org/olingo/odata2/spring/namespace=org.apache.olingo.odata2.spring.OlingoNamespaceHandler
+http\://www.apache.org/olingo/odata2/spring/odata=org.apache.olingo.odata2.spring.OlingoNamespaceHandler

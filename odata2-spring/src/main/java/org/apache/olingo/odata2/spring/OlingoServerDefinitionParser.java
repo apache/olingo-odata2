@@ -47,7 +47,6 @@ public class OlingoServerDefinitionParser extends JAXRSServerFactoryBeanDefiniti
   @Override
   protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder bean) {
     super.doParse(element, parserContext, bean);
-    ManagedList<BeanDefinition> services = new ManagedList<BeanDefinition>(3);
 
     if (!parserContext.getRegistry().containsBeanDefinition("OlingoODataExceptionHandler")) {
       AbstractBeanDefinition definition =
@@ -65,28 +64,20 @@ public class OlingoServerDefinitionParser extends JAXRSServerFactoryBeanDefiniti
       registerBeanDefinition(holder, parserContext.getRegistry());
     }
 
-    if (!element.hasAttribute("factory")) {
-      if (!parserContext.getRegistry().containsBeanDefinition("OlingoODataRootLocator")) {
-        AbstractBeanDefinition definition =
-            BeanDefinitionBuilder.genericBeanDefinition(ODataRootLocator.class).getBeanDefinition();
-        definition.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-        BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, "OlingoODataRootLocator", new String[0]);
-        registerBeanDefinition(holder, parserContext.getRegistry());
-      }
-      services.add(parserContext.getRegistry().getBeanDefinition("OlingoODataRootLocator"));
-    } else {
-      BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(ODataRootLocator.class);
-      builder.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-      builder.addPropertyReference("serviceFactory", element.getAttribute("factory"));
-      AbstractBeanDefinition definition = builder.getBeanDefinition();
-      BeanDefinitionHolder holder =
-          new BeanDefinitionHolder(definition, "OlingoODataRootLocator-" + element.getAttribute("factory"),
-              new String[0]);
-      registerBeanDefinition(holder, parserContext.getRegistry());
-      services.add(definition);
-
+    BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(ODataRootLocator.class);
+    builder.setScope(BeanDefinition.SCOPE_PROTOTYPE);
+    builder.addPropertyReference("serviceFactory", element.getAttribute("factory"));
+    if (element.hasAttribute("pathsplit")) {
+      builder.addPropertyValue("pathSplit", element.getAttribute("pathsplit"));
     }
+    AbstractBeanDefinition definition = builder.getBeanDefinition();
+    BeanDefinitionHolder holder =
+        new BeanDefinitionHolder(definition, "OlingoODataRootLocator-" + element.getAttribute("id") + "-" + element.getAttribute("factory"),
+            new String[0]);
+    registerBeanDefinition(holder, parserContext.getRegistry());
 
+    ManagedList<BeanDefinition> services = new ManagedList<BeanDefinition>(3);
+    services.add(definition);
     services.add(parserContext.getRegistry().getBeanDefinition("OlingoODataExceptionHandler"));
     services.add(parserContext.getRegistry().getBeanDefinition("OlingoODataProvider"));
     bean.addPropertyValue("serviceBeans", services);
