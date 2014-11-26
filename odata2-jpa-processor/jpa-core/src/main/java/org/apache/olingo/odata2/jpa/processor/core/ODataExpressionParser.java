@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -377,7 +378,7 @@ public class ODataExpressionParser {
 
   public static HashMap<String, String> parseKeyPropertiesToJPAOrderByExpression(
       final List<EdmProperty> edmPropertylist, final String tableAlias) throws ODataJPARuntimeException {
-    HashMap<String, String> orderByMap = new HashMap<String, String>();
+    LinkedHashMap<String, String> orderByMap = new LinkedHashMap<String, String>();
     String propertyName = null;
     for (EdmProperty edmProperty : edmPropertylist) {
       try {
