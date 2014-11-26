@@ -20,7 +20,6 @@ package org.apache.olingo.odata2.core.rest.spring;
 
 import java.util.List;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Encoded;
 import javax.ws.rs.HeaderParam;
@@ -62,12 +61,10 @@ public class ODataRootLocator {
   @Context
   private Request request;
   @Context
-  private ServletConfig servletConfig;
-  @Context
-  private HttpServletRequest servletRequest;
+  protected HttpServletRequest servletRequest;
 
   @Context
-  private Application app;
+  protected Application app;
 
   // These next two members are exposed so that they can be injected with Spring
   private ODataServiceFactory serviceFactory;
@@ -108,13 +105,13 @@ public class ODataRootLocator {
     }
 
     final SubLocatorParameter param = new SubLocatorParameter();
-    param.setServiceFactory(serviceFactory);
+    param.setServiceFactory(getServiceFactory());
     param.setPathSegments(pathSegments);
     param.setHttpHeaders(httpHeaders);
     param.setUriInfo(uriInfo);
     param.setRequest(request);
     param.setServletRequest(servletRequest);
-    param.setPathSplit(pathSplit);
+    param.setPathSplit(getPathSplit());
 
     return ODataSubLocator.create(param);
   }
@@ -124,18 +121,18 @@ public class ODataRootLocator {
   }
 
   public ODataServiceFactory getServiceFactory() {
-	return serviceFactory;
+    return serviceFactory;
   }
 
   public void setServiceFactory(ODataServiceFactory serviceFactory) {
-	this.serviceFactory = serviceFactory;
+    this.serviceFactory = serviceFactory;
   }
 
   public int getPathSplit() {
-	return pathSplit;
+    return pathSplit;
   }
 
   public void setPathSplit(int pathSplit) {
-	this.pathSplit = pathSplit;
+    this.pathSplit = pathSplit;
   }
 }

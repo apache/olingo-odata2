@@ -71,9 +71,8 @@ public class OlingoServerDefinitionParser extends JAXRSServerFactoryBeanDefiniti
       builder.addPropertyValue("pathSplit", element.getAttribute("pathsplit"));
     }
     AbstractBeanDefinition definition = builder.getBeanDefinition();
-    BeanDefinitionHolder holder =
-        new BeanDefinitionHolder(definition, "OlingoODataRootLocator-" + element.getAttribute("id") + "-" + element.getAttribute("factory"),
-            new String[0]);
+    BeanDefinitionHolder holder = new BeanDefinitionHolder(definition,
+        "OlingoODataRootLocator-" + element.getAttribute("id") + "-" + element.getAttribute("factory"), new String[0]);
     registerBeanDefinition(holder, parserContext.getRegistry());
 
     ManagedList<BeanDefinition> services = new ManagedList<BeanDefinition>(3);
