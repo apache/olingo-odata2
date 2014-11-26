@@ -70,6 +70,8 @@ public class ODataJPARuntimeException extends ODataJPAException {
       "ERROR_JPA_BLOB_NULL");
   public static final MessageReference ERROR_JPA_CLOB_NULL = createMessageReference(ODataJPARuntimeException.class,
       "ERROR_JPA_CLOB_NULL");
+  public static final MessageReference OPERATOR_EQ_NE_MISSING = createMessageReference(ODataJPARuntimeException.class,
+      "OPERATOR_EQ_NE_MISSING");
 
   private ODataJPARuntimeException(final String localizedMessage, final Throwable e, final MessageReference msgRef) {
     super(localizedMessage, e, msgRef);
