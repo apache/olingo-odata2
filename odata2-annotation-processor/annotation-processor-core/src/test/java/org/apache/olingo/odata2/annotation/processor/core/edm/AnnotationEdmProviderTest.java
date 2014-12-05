@@ -40,12 +40,14 @@ import org.apache.olingo.odata2.annotation.processor.core.model.Team;
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
 import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
+import org.apache.olingo.odata2.api.edm.provider.ComplexProperty;
 import org.apache.olingo.odata2.api.edm.provider.ComplexType;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
@@ -69,7 +71,9 @@ public class AnnotationEdmProviderTest {
 
   @EdmEntityType
   @EdmEntitySet
-  private static final class GeneratedNamesTestClass {}
+  private static final class GeneratedNamesTestClass {
+    @EdmProperty GeneratedNamesComplexTestClass myComplexProperty;
+  }
 
   @EdmComplexType
   private static final class GeneratedNamesComplexTestClass {}
@@ -96,9 +100,10 @@ public class AnnotationEdmProviderTest {
   }
 
   @Test
-  public void defaultNamespaceGeneration() throws ODataException {
+  public void defaultNameAndNamespaceGeneration() throws ODataException {
     Collection<Class<?>> localAnnotatedClasses = new ArrayList<Class<?>>();
     localAnnotatedClasses.add(GeneratedNamesTestClass.class);
+    localAnnotatedClasses.add(GeneratedNamesComplexTestClass.class);
     AnnotationEdmProvider localAep = new AnnotationEdmProvider(localAnnotatedClasses);
     // validate
     EntityType testType = localAep.getEntityType(new FullQualifiedName(
@@ -107,6 +112,20 @@ public class AnnotationEdmProviderTest {
     assertNotNull("Requested entity not found.", testType);
     assertEquals("GeneratedNamesTestClass", testType.getName());
     assertNull("This should not have a base type", testType.getBaseType());
+    List<Property> properties = testType.getProperties();
+    assertEquals(1, properties.size());
+    ComplexProperty propComplex = (ComplexProperty) properties.get(0);
+    assertEquals("MyComplexProperty", propComplex.getName());
+    assertEquals(GeneratedNamesComplexTestClass.class.getPackage().getName(), propComplex.getType().getNamespace());
+    assertEquals(GeneratedNamesComplexTestClass.class.getSimpleName(), propComplex.getType().getName());
+
+
+    ComplexType testComplexType = localAep.getComplexType(
+        new FullQualifiedName(GeneratedNamesComplexTestClass.class.getPackage().getName(),
+            GeneratedNamesComplexTestClass.class.getSimpleName()));
+    assertNotNull("Requested entity not found.", testComplexType);
+    assertEquals("GeneratedNamesComplexTestClass", testComplexType.getName());
+    assertNull("This should not have a base type", testComplexType.getBaseType());
   }
 
   @Test

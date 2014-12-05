@@ -497,7 +497,8 @@ public class AnnotationEdmProvider extends EdmProvider {
       if (complexEntityNamespace.isEmpty()) {
         complexEntityNamespace = defaultNamespace;
       }
-      cp.setType(new FullQualifiedName(complexEntityNamespace, ece.name()));
+      String name = ANNOTATION_HELPER.extractComplexTypeName(field.getType());
+      cp.setType(new FullQualifiedName(complexEntityNamespace, name));
 
       return cp;
     }
