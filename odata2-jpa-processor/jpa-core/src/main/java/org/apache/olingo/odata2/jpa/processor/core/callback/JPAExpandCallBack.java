@@ -81,7 +81,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       if (navigationLinks.size() > 0) {
         currentNavPropertyList = new ArrayList<EdmNavigationProperty>();
         List<EdmNavigationProperty> nextNavProperty =
-                getNextNavigationProperty(context.getSourceEntitySet().getEntityType(), context.getNavigationProperty());
+            getNextNavigationProperty(context.getSourceEntitySet().getEntityType(), context.getNavigationProperty());
         if (nextNavProperty != null) {
           currentNavPropertyList.addAll(nextNavProperty);
         }
