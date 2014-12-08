@@ -283,7 +283,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   private void handleEntityContainer(final Class<?> aClass) {
     EdmEntityType entityType = aClass.getAnnotation(EdmEntityType.class);
     if (entityType != null) {
-      FullQualifiedName typeName = createFqnForEntityType(aClass, entityType);
+      FullQualifiedName typeName = createFqnForEntityType(aClass);
       String containerName = ANNOTATION_HELPER.extractContainerName(aClass);
       ContainerBuilder builder = containerName2ContainerBuilder.get(containerName);
       if (builder == null) {
@@ -302,7 +302,7 @@ public class AnnotationEdmProvider extends EdmProvider {
     return new EntitySet().setName(entitySetName).setEntityType(typeName);
   }
 
-  private FullQualifiedName createFqnForEntityType(final Class<?> annotatedClass, final EdmEntityType entityType) {
+  private FullQualifiedName createFqnForEntityType(final Class<?> annotatedClass) {
     return ANNOTATION_HELPER.extractEntityTypeFqn(annotatedClass);
   }
 
@@ -366,7 +366,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       for (Field field : fields) {
         EdmProperty ep = field.getAnnotation(EdmProperty.class);
         if (ep != null) {
-          properties.add(createProperty(ep, field, namespace));
+          properties.add(createProperty(ep, field));
           EdmKey eti = field.getAnnotation(EdmKey.class);
           if (eti != null) {
             keyProperties.add(createKeyProperty(ep, field));
@@ -446,9 +446,9 @@ public class AnnotationEdmProvider extends EdmProvider {
       return keyProperty.setName(entityName);
     }
 
-    private Property createProperty(final EdmProperty ep, final Field field, final String defaultNamespace) {
+    private Property createProperty(final EdmProperty ep, final Field field) {
       if (isAnnotatedEntity(field.getType())) {
-        return createComplexProperty(field, defaultNamespace);
+        return createComplexProperty(field);
       } else {
         return createSimpleProperty(ep, field);
       }
@@ -485,20 +485,15 @@ public class AnnotationEdmProvider extends EdmProvider {
       return resultFacets;
     }
 
-    private Property createComplexProperty(final Field field, final String defaultNamespace) {
+    private Property createComplexProperty(final Field field) {
       ComplexProperty cp = new ComplexProperty();
       // settings from property
       String entityName = ANNOTATION_HELPER.getPropertyName(field);
       cp.setName(entityName);
 
       // settings from related complex entity
-      EdmComplexType ece = field.getType().getAnnotation(EdmComplexType.class);
-      String complexEntityNamespace = ece.namespace();
-      if (complexEntityNamespace.isEmpty()) {
-        complexEntityNamespace = defaultNamespace;
-      }
-      String name = ANNOTATION_HELPER.extractComplexTypeName(field.getType());
-      cp.setType(new FullQualifiedName(complexEntityNamespace, name));
+      FullQualifiedName fqn = ANNOTATION_HELPER.extractComplexTypeFqn(field.getType());
+      cp.setType(fqn);
 
       return cp;
     }
