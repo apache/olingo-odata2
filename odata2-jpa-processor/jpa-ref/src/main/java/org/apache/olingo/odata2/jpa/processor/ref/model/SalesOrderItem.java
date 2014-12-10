@@ -61,11 +61,11 @@ public class SalesOrderItem {
   @Column
   private boolean delivered;
 
-  public Boolean isDelivered() {
+  public boolean isDelivered() {
     return delivered;
   }
 
-  public void setDelivered(final Boolean deliveryStatus) {
+  public void setDelivered(final boolean deliveryStatus) {
     delivered = deliveryStatus;
   }
 

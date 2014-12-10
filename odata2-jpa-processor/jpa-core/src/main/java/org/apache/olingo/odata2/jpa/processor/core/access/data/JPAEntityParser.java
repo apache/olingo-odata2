@@ -174,7 +174,7 @@ public final class JPAEntityParser {
           methodName = getAccessModifierName(navigationProperty.getName(),
               navigationProperty.getMapping(), ACCESS_MODIFIER_GET);
           Method getterMethod = jpaEntity.getClass()
-              .getDeclaredMethod(methodName, (Class<?>[]) null);
+              .getMethod(methodName, (Class<?>[]) null);
           getterMethod.setAccessible(true);
           result = getPropertyValue(getterMethod, jpaEntity);
           navigationMap.put(navigationProperty.getName(), result);

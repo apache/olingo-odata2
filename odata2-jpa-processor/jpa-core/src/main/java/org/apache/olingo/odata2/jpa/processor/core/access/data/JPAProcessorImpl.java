@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import org.apache.olingo.odata2.api.commons.InlineCount;
@@ -138,8 +139,7 @@ public class JPAProcessorImpl implements JPAProcessor {
     }
     JPQLContextType contextType = null;
     try {
-      if (!uriParserResultView.getStartEntitySet().getName()
-          .equals(uriParserResultView.getTargetEntitySet().getName())) {
+      if (uriParserResultView.getNavigationSegments().size() > 0) {
         contextType = JPQLContextType.JOIN;
       } else {
         contextType = JPQLContextType.SELECT;
@@ -203,72 +203,19 @@ public class JPAProcessorImpl implements JPAProcessor {
     }
   }
 
-  private List<Object> handlePaging(final List<Object> result, final GetEntitySetUriInfo uriParserResultView) {
-    if (result == null) {
-      return null;
-    }
-    JPAPageBuilder pageBuilder = new JPAPageBuilder();
-    pageBuilder.pageSize(oDataJPAContext.getPageSize())
-        .entities(result)
-        .skipToken(uriParserResultView.getSkipToken());
-
-    // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
-    if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
-      pageBuilder.skip(uriParserResultView.getSkip().intValue());
-    }
-
-    if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
-      pageBuilder.top(uriParserResultView.getTop().intValue());
-    }
-
-    JPAPage page = pageBuilder.build();
-    oDataJPAContext.setPaging(page);
-
-    return page.getPagedEntities();
-  }
-
-  private List<Object> handlePaging(final Query query, final GetEntitySetUriInfo uriParserResultView) {
-
-    JPAPageBuilder pageBuilder = new JPAPageBuilder();
-    pageBuilder.pageSize(oDataJPAContext.getPageSize())
-        .query(query)
-        .skipToken(uriParserResultView.getSkipToken());
-
-    // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
-    if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
-      pageBuilder.skip(uriParserResultView.getSkip().intValue());
-    }
-
-    if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
-      pageBuilder.top(uriParserResultView.getTop().intValue());
-    }
-
-    JPAPage page = pageBuilder.build();
-    oDataJPAContext.setPaging(page);
-
-    return page.getPagedEntities();
-
-  }
-
   /* Process Get Entity Request (Read) */
   @Override
   public <T> Object process(GetEntityUriInfo uriParserResultView)
       throws ODataJPAModelException, ODataJPARuntimeException {
 
     JPQLContextType contextType = null;
-    try {
-      if (uriParserResultView instanceof GetEntityUriInfo) {
-        uriParserResultView = ((GetEntityUriInfo) uriParserResultView);
-        if (!((GetEntityUriInfo) uriParserResultView).getStartEntitySet().getName()
-            .equals(((GetEntityUriInfo) uriParserResultView).getTargetEntitySet().getName())) {
-          contextType = JPQLContextType.JOIN_SINGLE;
-        } else {
-          contextType = JPQLContextType.SELECT_SINGLE;
-        }
+    if (uriParserResultView instanceof GetEntityUriInfo) {
+      uriParserResultView = ((GetEntityUriInfo) uriParserResultView);
+      if (uriParserResultView.getNavigationSegments().size() > 0) {
+        contextType = JPQLContextType.JOIN_SINGLE;
+      } else {
+        contextType = JPQLContextType.SELECT_SINGLE;
       }
-    } catch (EdmException e) {
-      ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.GENERAL, e);
     }
 
     return readEntity(uriParserResultView, contextType);
@@ -378,12 +325,115 @@ public class JPAProcessorImpl implements JPAProcessor {
     return processUpdate(updateView, null, content, null);
   }
 
+  /* Process Delete Entity Request */
+  @Override
+  public Object process(DeleteUriInfo uriParserResultView, final String contentType)
+      throws ODataJPAModelException, ODataJPARuntimeException {
+    JPQLContextType contextType = null;
+    try {
+      if (uriParserResultView instanceof DeleteUriInfo) {
+        if (((UriInfo) uriParserResultView).isLinks()) {
+          return deleteLink(uriParserResultView);
+        }
+        uriParserResultView = ((DeleteUriInfo) uriParserResultView);
+        if (!((DeleteUriInfo) uriParserResultView).getStartEntitySet().getName()
+            .equals(((DeleteUriInfo) uriParserResultView).getTargetEntitySet().getName())) {
+          contextType = JPQLContextType.JOIN_SINGLE;
+        } else {
+          contextType = JPQLContextType.SELECT_SINGLE;
+        }
+      }
+    } catch (EdmException e) {
+      ODataJPARuntimeException.throwException(
+          ODataJPARuntimeException.GENERAL, e);
+    }
+
+    Object selectedObject = readEntity(uriParserResultView, contextType);
+    if (selectedObject != null) {
+      try {
+        boolean isLocalTransaction = setTransaction();
+        em.remove(selectedObject);
+        em.flush();
+        if (isLocalTransaction) {
+          em.getTransaction().commit();
+        }
+
+      } catch (Exception e) {
+        throw ODataJPARuntimeException.throwException(
+            ODataJPARuntimeException.ERROR_JPQL_DELETE_REQUEST, e);
+      }
+    }
+    return selectedObject;
+  }
+
+  /* Process Get Entity Link Request */
+  @Override
+  public Object process(final GetEntityLinkUriInfo uriParserResultView)
+      throws ODataJPAModelException, ODataJPARuntimeException {
+
+    return this.process((GetEntityUriInfo) uriParserResultView);
+  }
+
+  /* Process Get Entity Set Link Request */
+  @Override
+  public List<Object> process(final GetEntitySetLinksUriInfo uriParserResultView)
+      throws ODataJPAModelException, ODataJPARuntimeException {
+    return this.process((GetEntitySetUriInfo) uriParserResultView);
+  }
+
+  @Override
+  public void process(final PostUriInfo uriInfo,
+      final InputStream content, final String requestContentType, final String contentType)
+      throws ODataJPARuntimeException, ODataJPAModelException {
+    JPALink link = new JPALink(oDataJPAContext);
+    link.create(uriInfo, content, requestContentType, contentType);
+    link.save();
+  }
+
+  @Override
+  public void process(final PutMergePatchUriInfo putUriInfo,
+      final InputStream content, final String requestContentType, final String contentType)
+      throws ODataJPARuntimeException, ODataJPAModelException {
+
+    JPALink link = new JPALink(oDataJPAContext);
+    link.update(putUriInfo, content, requestContentType, contentType);
+    link.save();
+
+  }
+
+  /* Common method for Read and Delete */
+  private Object readEntity(final Object uriParserResultView, final JPQLContextType contextType)
+      throws ODataJPAModelException, ODataJPARuntimeException {
+
+    Object selectedObject = null;
+
+    if (uriParserResultView instanceof DeleteUriInfo || uriParserResultView instanceof GetEntityUriInfo
+        || uriParserResultView instanceof PutMergePatchUriInfo) {
+
+      JPQLContext selectJPQLContext = JPQLContext.createBuilder(
+          contextType, uriParserResultView).build();
+
+      JPQLStatement selectJPQLStatement = JPQLStatement.createBuilder(
+          selectJPQLContext).build();
+      Query query = null;
+      try {
+        query = em.createQuery(selectJPQLStatement.toString());
+        if (!query.getResultList().isEmpty()) {
+          selectedObject = query.getResultList().get(0);
+        }
+      } catch (IllegalArgumentException e) {
+        throw ODataJPARuntimeException.throwException(
+            ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      }
+    }
+    return selectedObject;
+  }
+
   private Object processCreate(final PostUriInfo createView, final InputStream content,
       final Map<String, Object> properties,
       final String requestedContentType) throws ODataJPAModelException,
       ODataJPARuntimeException {
     try {
-
       final EdmEntitySet oDataEntitySet = createView.getTargetEntitySet();
       final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
       final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet, oDataJPAContext);
@@ -400,15 +450,15 @@ public class JPAProcessorImpl implements JPAProcessor {
         return null;
       }
 
-      em.getTransaction().begin();
+      boolean isLocalTransaction = setTransaction();
       jpaEntity = virtualJPAEntity.getJPAEntity();
 
       em.persist(jpaEntity);
       if (em.contains(jpaEntity)) {
-        em.getTransaction().commit();
-
+        if (isLocalTransaction) {
+          em.getTransaction().commit();
+        }
         return jpaEntity;
-
       }
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
@@ -417,13 +467,13 @@ public class JPAProcessorImpl implements JPAProcessor {
     return null;
   }
 
-  public <T> Object processUpdate(PutMergePatchUriInfo updateView,
+  private <T> Object processUpdate(PutMergePatchUriInfo updateView,
       final InputStream content, final Map<String, Object> properties, final String requestContentType)
       throws ODataJPAModelException, ODataJPARuntimeException {
     JPQLContextType contextType = null;
     Object jpaEntity = null;
     try {
-      em.getTransaction().begin();
+      boolean isLocalTransaction = setTransaction();
       if (updateView instanceof PutMergePatchUriInfo) {
         updateView = ((PutMergePatchUriInfo) updateView);
         if (!((PutMergePatchUriInfo) updateView).getStartEntitySet().getName()
@@ -456,52 +506,15 @@ public class JPAProcessorImpl implements JPAProcessor {
         return null;
       }
       em.flush();
-      em.getTransaction().commit();
+      if (isLocalTransaction) {
+        em.getTransaction().commit();
+      }
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_UPDATE_REQUEST, e);
     }
 
     return jpaEntity;
-  }
-
-  /* Process Delete Entity Request */
-  @Override
-  public Object process(DeleteUriInfo uriParserResultView, final String contentType)
-      throws ODataJPAModelException, ODataJPARuntimeException {
-    JPQLContextType contextType = null;
-    try {
-      if (uriParserResultView instanceof DeleteUriInfo) {
-        if (((UriInfo) uriParserResultView).isLinks()) {
-          return deleteLink(uriParserResultView);
-        }
-        uriParserResultView = ((DeleteUriInfo) uriParserResultView);
-        if (!((DeleteUriInfo) uriParserResultView).getStartEntitySet().getName()
-            .equals(((DeleteUriInfo) uriParserResultView).getTargetEntitySet().getName())) {
-          contextType = JPQLContextType.JOIN_SINGLE;
-        } else {
-          contextType = JPQLContextType.SELECT_SINGLE;
-        }
-      }
-    } catch (EdmException e) {
-      ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.GENERAL, e);
-    }
-
-    Object selectedObject = readEntity(uriParserResultView, contextType);
-    if (selectedObject != null) {
-      try {
-        em.getTransaction().begin();
-        em.remove(selectedObject);
-        em.flush();
-        em.getTransaction().commit();
-
-      } catch (Exception e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.ERROR_JPQL_DELETE_REQUEST, e);
-      }
-    }
-    return selectedObject;
   }
 
   private Object deleteLink(final DeleteUriInfo uriParserResultView) throws ODataJPARuntimeException {
@@ -511,66 +524,60 @@ public class JPAProcessorImpl implements JPAProcessor {
     return link.getTargetJPAEntity();
   }
 
-  /* Process Get Entity Link Request */
-  @Override
-  public Object process(final GetEntityLinkUriInfo uriParserResultView)
-      throws ODataJPAModelException, ODataJPARuntimeException {
-
-    return this.process((GetEntityUriInfo) uriParserResultView);
-  }
-
-  /* Process Get Entity Set Link Request */
-  @Override
-  public List<Object> process(final GetEntitySetLinksUriInfo uriParserResultView)
-      throws ODataJPAModelException, ODataJPARuntimeException {
-    return this.process((GetEntitySetUriInfo) uriParserResultView);
-  }
-
-  @Override
-  public void process(final PostUriInfo uriInfo,
-      final InputStream content, final String requestContentType, final String contentType)
-      throws ODataJPARuntimeException, ODataJPAModelException {
-    JPALink link = new JPALink(oDataJPAContext);
-    link.create(uriInfo, content, requestContentType, contentType);
-    link.save();
-  }
-
-  /* Common method for Read and Delete */
-  private Object readEntity(final Object uriParserResultView, final JPQLContextType contextType)
-      throws ODataJPAModelException, ODataJPARuntimeException {
-
-    Object selectedObject = null;
-
-    if (uriParserResultView instanceof DeleteUriInfo || uriParserResultView instanceof GetEntityUriInfo
-        || uriParserResultView instanceof PutMergePatchUriInfo) {
-
-      JPQLContext selectJPQLContext = JPQLContext.createBuilder(
-          contextType, uriParserResultView).build();
-
-      JPQLStatement selectJPQLStatement = JPQLStatement.createBuilder(
-          selectJPQLContext).build();
-      Query query = null;
-      try {
-        query = em.createQuery(selectJPQLStatement.toString());
-        if (!query.getResultList().isEmpty()) {
-          selectedObject = query.getResultList().get(0);
-        }
-      } catch (IllegalArgumentException e) {
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
-      }
+  private List<Object> handlePaging(final List<Object> result, final GetEntitySetUriInfo uriParserResultView) {
+    if (result == null) {
+      return null;
     }
-    return selectedObject;
+    JPAPageBuilder pageBuilder = new JPAPageBuilder();
+    pageBuilder.pageSize(oDataJPAContext.getPageSize())
+        .entities(result)
+        .skipToken(uriParserResultView.getSkipToken());
+
+    // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
+    if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
+      pageBuilder.skip(uriParserResultView.getSkip().intValue());
+    }
+
+    if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
+      pageBuilder.top(uriParserResultView.getTop().intValue());
+    }
+
+    JPAPage page = pageBuilder.build();
+    oDataJPAContext.setPaging(page);
+
+    return page.getPagedEntities();
   }
 
-  @Override
-  public void process(final PutMergePatchUriInfo putUriInfo,
-      final InputStream content, final String requestContentType, final String contentType)
-      throws ODataJPARuntimeException, ODataJPAModelException {
+  private List<Object> handlePaging(final Query query, final GetEntitySetUriInfo uriParserResultView) {
 
-    JPALink link = new JPALink(oDataJPAContext);
-    link.update(putUriInfo, content, requestContentType, contentType);
-    link.save();
+    JPAPageBuilder pageBuilder = new JPAPageBuilder();
+    pageBuilder.pageSize(oDataJPAContext.getPageSize())
+        .query(query)
+        .skipToken(uriParserResultView.getSkipToken());
 
+    // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
+    if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
+      pageBuilder.skip(uriParserResultView.getSkip().intValue());
+    }
+
+    if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
+      pageBuilder.top(uriParserResultView.getTop().intValue());
+    }
+
+    JPAPage page = pageBuilder.build();
+    oDataJPAContext.setPaging(page);
+
+    return page.getPagedEntities();
+
+  }
+
+  private boolean setTransaction() {
+    final EntityTransaction transaction = em.getTransaction();
+    if (!transaction.isActive()) {
+      em.getTransaction().begin();
+      return true;
+    }
+
+    return false;
   }
 }

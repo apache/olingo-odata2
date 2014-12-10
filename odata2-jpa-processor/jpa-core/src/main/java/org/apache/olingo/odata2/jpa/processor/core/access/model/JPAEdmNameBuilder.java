@@ -148,7 +148,7 @@ public class JPAEdmNameBuilder {
       propertyName = jpaAttributeName;
       if (isForeignKey == true) {
         joinColumnNames = view.getJPAJoinColumns().get(view.getJPAJoinColumns().size() - 1);
-        propertyName = mappingModelAccess.mapJPAAttribute(view.getJPAEdmEntityTypeView().getJPAEntityType().getName(), 
+        propertyName = mappingModelAccess.mapJPAAttribute(view.getJPAEdmEntityTypeView().getJPAEntityType().getName(),
             joinColumnNames[0]);
         if (propertyName == null) {
           propertyName = FK_PREFIX + UNDERSCORE + joinColumnNames[0];
@@ -166,11 +166,13 @@ public class JPAEdmNameBuilder {
       Column column = annotatedElement.getAnnotation(Column.class);
       if (column != null) {
         mapping.setJPAColumnName(column.name());
+      } else if (joinColumnNames != null) {
+        mapping.setJPAColumnName(joinColumnNames[0]);
       } else {
-        if (joinColumnNames != null) {
-          mapping.setJPAColumnName(joinColumnNames[0]);
-          jpaAttributeName += "." + view.getJPAReferencedAttribute().getName();
-        }
+        mapping.setJPAColumnName(jpaAttributeName);
+      }
+      if (isForeignKey) {
+        jpaAttributeName += "." + view.getJPAReferencedAttribute().getName();
       }
     } else {
       ManagedType<?> managedType = jpaAttribute.getDeclaringType();
@@ -501,7 +503,16 @@ public class JPAEdmNameBuilder {
 
     navProp.setName(navPropName);
 
-    if (toName.equals(associationEndTypeOne.getName())) {
+    // Condition for self join
+    if (associationEndTypeOne.getName().equals(associationEndTypeTwo.getName())) {
+      if (jpaAttribute.isCollection()) {
+        navProp.setFromRole(association.getEnd2().getRole());
+        navProp.setToRole(association.getEnd1().getRole());
+      } else {
+        navProp.setToRole(association.getEnd2().getRole());
+        navProp.setFromRole(association.getEnd1().getRole());        
+      }
+    } else if (toName.equals(associationEndTypeOne.getName())) {
       navProp.setFromRole(association.getEnd2().getRole());
       navProp.setToRole(association.getEnd1().getRole());
     } else if (toName.equals(associationEndTypeTwo.getName())) {

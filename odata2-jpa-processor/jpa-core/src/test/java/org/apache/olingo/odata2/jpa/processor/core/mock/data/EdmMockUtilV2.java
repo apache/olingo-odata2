@@ -197,6 +197,7 @@ public class EdmMockUtilV2 {
   public static EdmAssociation mockEdmAssociation(final String navigationPropertyName) throws EdmException {
     EdmAssociation edmAssociation = EasyMock.createMock(EdmAssociation.class);
     EasyMock.expect(edmAssociation.getEnd("TO")).andReturn(mockEdmAssociatioEnd(navigationPropertyName, "TO"));
+    EasyMock.expect(edmAssociation.getEnd2()).andReturn(mockEdmAssociatioEnd(navigationPropertyName, "TO"));
     EasyMock.expect(edmAssociation.getEnd("FROM")).andReturn(mockEdmAssociatioEnd(navigationPropertyName, "FROM"));
     EasyMock.replay(edmAssociation);
     return edmAssociation;
@@ -230,7 +231,8 @@ public class EdmMockUtilV2 {
     EasyMock.expect(navigationProperty.getMapping()).andReturn(
         (EdmMapping) mockEdmMapping(null, null, navigationPropertyName)).anyTimes();
     EasyMock.expect(navigationProperty.getToRole()).andReturn("TO");
-    EasyMock.expect(navigationProperty.getRelationship()).andReturn(mockEdmAssociation(navigationPropertyName));
+    EasyMock.expect(navigationProperty.getRelationship()).andReturn(mockEdmAssociation(navigationPropertyName))
+        .anyTimes();
     if (multiplicity.equals(EdmMultiplicity.ONE)) {
       EasyMock.expect(navigationProperty.getName()).andReturn(JPATypeMock.NAVIGATION_PROPERTY_X).anyTimes();
     }

@@ -302,12 +302,14 @@ public class JPALink {
       JPAEntityParser entityParser = new JPAEntityParser();
       Method setMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
           navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
-
       switch (navigationProperty.getMultiplicity()) {
       case MANY:
         Method getMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
             navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
         Collection<Object> relatedEntities = (Collection<Object>) getMethod.invoke(sourceJPAEntity);
+        if(relatedEntities == null){
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ERROR_JPQL_CREATE_REQUEST, null);
+        }
         relatedEntities.addAll(targetJPAEntities);
         setMethod.invoke(sourceJPAEntity, relatedEntities);
         break;

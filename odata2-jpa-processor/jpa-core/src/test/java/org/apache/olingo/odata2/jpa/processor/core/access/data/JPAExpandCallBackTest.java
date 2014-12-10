@@ -112,13 +112,14 @@ public class JPAExpandCallBackTest {
 
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void testGetNextNavigationProperty() {
     JPAExpandCallBack callBack = getJPAExpandCallBackObject();
     List<ArrayList<NavigationPropertySegment>> expandList = EdmMockUtil.getExpandList();
     ArrayList<NavigationPropertySegment> expands = expandList.get(0);
     expands.add(EdmMockUtil.mockThirdNavigationPropertySegment());
-    EdmNavigationProperty result = null;
+    List<EdmNavigationProperty> result = null;
     try {
       Field field = callBack.getClass().getDeclaredField("expandList");
       field.setAccessible(true);
@@ -127,8 +128,8 @@ public class JPAExpandCallBackTest {
       Object[] actualParams = { EdmMockUtil.mockSourceEdmEntityType(), EdmMockUtil.mockNavigationProperty() };
       Method method = callBack.getClass().getDeclaredMethod("getNextNavigationProperty", formalParams);
       method.setAccessible(true);
-      result = (EdmNavigationProperty) method.invoke(callBack, actualParams);
-      assertEquals("MaterialDetails", result.getName());
+      result = (List<EdmNavigationProperty>) method.invoke(callBack, actualParams);
+      assertEquals("MaterialDetails", result.get(0).getName());
 
     } catch (SecurityException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);

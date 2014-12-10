@@ -356,7 +356,7 @@ public class RestUtil {
     }
 
     int indexServletPath = requestUri.indexOf(servletRequest.getServletPath());
-    if (indexServletPath > 0) {
+    if (indexServletPath >= 0) {
       pathInfoString = pathInfoString.substring(servletRequest.getServletPath().length());
     }
     return pathInfoString;

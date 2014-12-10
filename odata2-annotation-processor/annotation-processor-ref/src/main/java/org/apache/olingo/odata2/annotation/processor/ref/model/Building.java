@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFacets;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty.Multiplicity;
@@ -37,7 +38,7 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmType;
 @EdmEntitySet(name = "Buildings")
 public class Building {
   @EdmKey
-  @EdmProperty(type = EdmType.INT32)
+  @EdmProperty(type = EdmType.INT32, facets = @EdmFacets(nullable = false))
   private int id;
   @EdmProperty
   private String name;

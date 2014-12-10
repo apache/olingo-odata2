@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.annotation.processor.core.model;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFacets;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 
 /**
@@ -27,7 +28,7 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 @EdmComplexType(name = "c_City", namespace = ModelSharedConstants.NAMESPACE_1)
 public class City {
 
-  @EdmProperty
+  @EdmProperty(facets = @EdmFacets(maxLength = 5))
   private String postalCode;
   @EdmProperty
   private String cityName;

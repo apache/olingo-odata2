@@ -50,34 +50,17 @@ public class ODataServlet extends HttpServlet {
 
   private static final String HTTP_METHOD_OPTIONS = "OPTIONS";
   private static final String HTTP_METHOD_HEAD = "HEAD";
+
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
-  private ODataServiceFactory serviceFactory;
-  private int pathSplit = 0;
 
   @Override
   protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
     final String factoryClassName = getInitParameter(ODataServiceFactory.FACTORY_LABEL);
     if (factoryClassName == null) {
       throw new ODataRuntimeException("config missing: org.apache.olingo.odata2.processor.factory");
-    }
-    try {
-
-      ClassLoader cl = (ClassLoader) req.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
-      if (cl == null) {
-        serviceFactory = (ODataServiceFactory) Class.forName(factoryClassName).newInstance();
-      } else {
-        serviceFactory = (ODataServiceFactory) Class.forName(factoryClassName, true, cl).newInstance();
-      }
-
-    } catch (Exception e) {
-      throw new ODataRuntimeException(e);
-    }
-    final String pathSplitAsString = getInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL);
-    if (pathSplitAsString != null) {
-      pathSplit = Integer.parseInt(pathSplitAsString);
     }
     String xHttpMethod = req.getHeader("X-HTTP-Method");
     String xHttpMethodOverride = req.getHeader("X-HTTP-Method-Override");
@@ -104,7 +87,7 @@ public class ODataServlet extends HttpServlet {
     } else if (ODataHttpMethod.POST.name().equals(method)) {
       if (xHttpMethod == null && xHttpMethodOverride == null) {
         handleRequest(req, ODataHttpMethod.POST, resp);
-      } else if (xHttpMethod == null && xHttpMethodOverride != null) {
+      } else if (xHttpMethod == null) {
         /* tunneling */
         boolean methodHandled = handleHttpTunneling(req, resp, xHttpMethodOverride);
         if (!methodHandled) {
@@ -159,6 +142,11 @@ public class ODataServlet extends HttpServlet {
       handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp)
           throws IOException {
     try {
+      final String pathSplitAsString = getInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL);
+      int pathSplit = 0;
+      if (pathSplitAsString != null) {
+        pathSplit = Integer.parseInt(pathSplitAsString);
+      }
       if (req.getHeader(HttpHeaders.ACCEPT) != null && req.getHeader(HttpHeaders.ACCEPT).isEmpty()) {
         createNotAcceptableResponse(req, ODataNotAcceptableException.COMMON, resp);
       }
@@ -171,22 +159,38 @@ public class ODataServlet extends HttpServlet {
           .requestHeaders(RestUtil.extractHeaders(req))
           .body(req.getInputStream())
           .build();
+      ODataServiceFactory serviceFactory = createServiceFactory(req);
       ODataContextImpl context = new ODataContextImpl(odataRequest, serviceFactory);
       context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, req);
 
       ODataService service = serviceFactory.createService(context);
       if(service == null){
         createServiceUnavailableResponse(req, ODataInternalServerErrorException.NOSERVICE, resp);
-      }
-      context.setService(service);
-      service.getProcessor().setContext(context);
+      } else {
+        context.setService(service);
+        service.getProcessor().setContext(context);
 
-      ODataRequestHandler requestHandler = new ODataRequestHandler(serviceFactory, service, context);
-      final ODataResponse odataResponse = requestHandler.handle(odataRequest);
-      createResponse(resp, odataResponse);
+        ODataRequestHandler requestHandler = new ODataRequestHandler(serviceFactory, service, context);
+        final ODataResponse odataResponse = requestHandler.handle(odataRequest);
+        createResponse(resp, odataResponse);
+      }
     } catch (ODataException e) {
       ODataExceptionWrapper wrapper = new ODataExceptionWrapper(req);
       createResponse(resp, wrapper.wrapInExceptionResponse(e));
+    }
+  }
+
+  private ODataServiceFactory createServiceFactory(HttpServletRequest req) {
+    try {
+      final String factoryClassName = getInitParameter(ODataServiceFactory.FACTORY_LABEL);
+      ClassLoader cl = (ClassLoader) req.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
+      if (cl == null) {
+        return (ODataServiceFactory) Class.forName(factoryClassName).newInstance();
+      } else {
+        return (ODataServiceFactory) Class.forName(factoryClassName, true, cl).newInstance();
+      }
+    } catch (Exception e) {
+      throw new ODataRuntimeException(e);
     }
   }
 
@@ -234,7 +238,7 @@ public class ODataServlet extends HttpServlet {
     Object entity = response.getEntity();
     if (entity != null) {
       ServletOutputStream out = resp.getOutputStream();
-      int curByte = -1;
+      int curByte;
       if (entity instanceof InputStream) {
         while ((curByte = ((InputStream) entity).read()) != -1) {
           out.write((char) curByte);

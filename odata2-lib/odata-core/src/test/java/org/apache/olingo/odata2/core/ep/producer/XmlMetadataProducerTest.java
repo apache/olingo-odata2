@@ -34,6 +34,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
 import org.apache.olingo.odata2.api.edm.provider.DataServices;
+import org.apache.olingo.odata2.api.edm.provider.Documentation;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
 import org.apache.olingo.odata2.api.edm.provider.Key;
 import org.apache.olingo.odata2.api.edm.provider.Property;
@@ -163,14 +164,23 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
     List<Property> properties = new ArrayList<Property>();
     properties.add(new SimpleProperty().setName("Id").setType(EdmSimpleTypeKind.String));
     EntityType entityType = new EntityType().setName("testType").setKey(key).setProperties(properties);
+    entityType.setDocumentation(new Documentation());
+
+    List<PropertyRef> keys2 = new ArrayList<PropertyRef>();
+    keys2.add(new PropertyRef().setName("SecondId"));
+    Key key2 = new Key().setKeys(keys2);
+    List<Property> properties2 = new ArrayList<Property>();
+    properties2.add(new SimpleProperty().setName("SecondId").setType(EdmSimpleTypeKind.String));
+    EntityType entityType2 = new EntityType().setName("SecondTestType").setKey(key2).setProperties(properties2);
+    entityType2.setDocumentation(new Documentation().setSummary("Doc_TlDr").setLongDescription("Some long desc."));
     List<EntityType> entityTypes = new ArrayList<EntityType>();
     entityTypes.add(entityType);
+    entityTypes.add(entityType2);
     schema.setEntityTypes(entityTypes);
 
     DataServices data = new DataServices().setSchemas(schemas).setDataServiceVersion(ODataServiceVersion.V20);
-    OutputStreamWriter writer = null;
     CircleStreamBuffer csb = new CircleStreamBuffer();
-    writer = new OutputStreamWriter(csb.getOutputStream(), "UTF-8");
+    OutputStreamWriter writer = new OutputStreamWriter(csb.getOutputStream(), "UTF-8");
     XMLStreamWriter xmlStreamWriter = xmlStreamWriterFactory.createXMLStreamWriter(writer);
     XmlMetadataProducer.writeMetadata(data, xmlStreamWriter, null);
 
@@ -183,6 +193,10 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
 
     String metadata = StringHelper.inputStreamToString(csb.getInputStream());
     assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:test", metadata);
+
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/a:EntityType[@Name=\"testType\"]", metadata);
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/a:Schema/" +
+            "a:EntityType[@Name=\"SecondTestType\"]/a:Documentation/a:Summary", metadata);
   }
 
   // Elements with namespace and attributes without namespace

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -35,13 +35,16 @@ import java.util.UUID;
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
 import org.apache.olingo.odata2.annotation.processor.core.util.ClassHelper;
 import org.apache.olingo.odata2.api.annotation.edm.EdmComplexType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmConcurrencyControl;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmFacets;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmType;
+import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
@@ -57,6 +60,7 @@ import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
+import org.apache.olingo.odata2.api.edm.provider.Facets;
 import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata2.api.edm.provider.Key;
 import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
@@ -69,7 +73,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 
 /**
  * Provider for the entity data model used in the reference scenario
- * 
+ *
  */
 public class AnnotationEdmProvider extends EdmProvider {
 
@@ -279,7 +283,7 @@ public class AnnotationEdmProvider extends EdmProvider {
   private void handleEntityContainer(final Class<?> aClass) {
     EdmEntityType entityType = aClass.getAnnotation(EdmEntityType.class);
     if (entityType != null) {
-      FullQualifiedName typeName = createFqnForEntityType(aClass, entityType);
+      FullQualifiedName typeName = createFqnForEntityType(aClass);
       String containerName = ANNOTATION_HELPER.extractContainerName(aClass);
       ContainerBuilder builder = containerName2ContainerBuilder.get(containerName);
       if (builder == null) {
@@ -298,7 +302,7 @@ public class AnnotationEdmProvider extends EdmProvider {
     return new EntitySet().setName(entitySetName).setEntityType(typeName);
   }
 
-  private FullQualifiedName createFqnForEntityType(final Class<?> annotatedClass, final EdmEntityType entityType) {
+  private FullQualifiedName createFqnForEntityType(final Class<?> annotatedClass) {
     return ANNOTATION_HELPER.extractEntityTypeFqn(annotatedClass);
   }
 
@@ -362,7 +366,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       for (Field field : fields) {
         EdmProperty ep = field.getAnnotation(EdmProperty.class);
         if (ep != null) {
-          properties.add(createProperty(ep, field, namespace));
+          properties.add(createProperty(ep, field));
           EdmKey eti = field.getAnnotation(EdmKey.class);
           if (eti != null) {
             keyProperties.add(createKeyProperty(ep, field));
@@ -442,9 +446,9 @@ public class AnnotationEdmProvider extends EdmProvider {
       return keyProperty.setName(entityName);
     }
 
-    private Property createProperty(final EdmProperty ep, final Field field, final String defaultNamespace) {
+    private Property createProperty(final EdmProperty ep, final Field field) {
       if (isAnnotatedEntity(field.getType())) {
-        return createComplexProperty(field, defaultNamespace);
+        return createComplexProperty(field);
       } else {
         return createSimpleProperty(ep, field);
       }
@@ -460,24 +464,36 @@ public class AnnotationEdmProvider extends EdmProvider {
         type = getEdmType(field.getType());
       }
       sp.setType(ANNOTATION_HELPER.mapTypeKind(type));
-
+      sp.setFacets(createFacets(ep.facets(), field.getAnnotation(EdmConcurrencyControl.class)));
       return sp;
     }
 
-    private Property createComplexProperty(final Field field, final String defaultNamespace) {
+    private Facets createFacets(final EdmFacets facets, final EdmConcurrencyControl concurrencyControl) {
+      Facets resultFacets = new Facets().setNullable(facets.nullable());
+      if(facets.maxLength() > -1) {
+        resultFacets.setMaxLength(facets.maxLength());
+      }
+      if(facets.precision() > -1) {
+        resultFacets.setPrecision(facets.precision());
+      }
+      if(facets.scale() > -1) {
+        resultFacets.setScale(facets.scale());
+      }
+      if (concurrencyControl != null) {
+        resultFacets.setConcurrencyMode(EdmConcurrencyMode.Fixed);
+      }
+      return resultFacets;
+    }
+
+    private Property createComplexProperty(final Field field) {
       ComplexProperty cp = new ComplexProperty();
       // settings from property
       String entityName = ANNOTATION_HELPER.getPropertyName(field);
       cp.setName(entityName);
 
       // settings from related complex entity
-      EdmComplexType ece = field.getType().getAnnotation(EdmComplexType.class);
-      String complexEntityNamespace = ece.namespace();
-      if (complexEntityNamespace.isEmpty()) {
-        complexEntityNamespace = defaultNamespace;
-      }
-      String cpeName = ANNOTATION_HELPER.extractComplexTypeName(field.getType());
-      cp.setType(new FullQualifiedName(complexEntityNamespace, cpeName));
+      FullQualifiedName fqn = ANNOTATION_HELPER.extractComplexTypeFqn(field.getType());
+      cp.setType(fqn);
 
       return cp;
     }

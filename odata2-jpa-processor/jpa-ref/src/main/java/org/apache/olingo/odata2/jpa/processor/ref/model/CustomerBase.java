@@ -16,20 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.api.annotation.edm;
+package org.apache.olingo.odata2.jpa.processor.ref.model;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Related to <code>ConcurrencyMode</code> in OData specification.
- * If a property is annotated with {@link EdmConcurrencyControl} this is equivalent with <code>ConcurrencyMode =
- * FIXED</code>.
- * Default of a property not annotated with {@link EdmConcurrencyControl} this is equivalent with <code>ConcurrencyMode
- * = NONE</code>.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface EdmConcurrencyControl {}
+import javax.persistence.CascadeType;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
+
+@MappedSuperclass
+public class CustomerBase {
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+  private List<SalesOrderHeader> orders = new ArrayList<SalesOrderHeader>();
+
+  public List<SalesOrderHeader> getOrders() {
+    return orders;
+  }
+
+  public void setOrders(final List<SalesOrderHeader> orders) {
+    this.orders = orders;
+  }
+}
