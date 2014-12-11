@@ -64,6 +64,61 @@ public class BatchResponseParserTest {
       assertEquals("text/plain;charset=utf-8", response.getHeaders().get(HttpHeaders.CONTENT_TYPE));
       assertEquals("22", response.getHeaders().get("Content-length"));
       assertEquals("1", response.getContentId());
+      assertEquals("Frederic Fall MODIFIED", response.getBody());
+    }
+  }
+
+  @Test
+  public void testSimpleBatchResponseWithLinebreak() throws BatchException {
+    String getResponse = "--batch_123" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-ID: 1" + CRLF
+        + CRLF
+        + "HTTP/1.1 200 OK" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + "Content-Type: text/plain;charset=utf-8" + CRLF
+        + "Content-length: 24" + CRLF
+        + CRLF
+        + "Frederic Fall MODIFIED" + CRLF
+        + CRLF
+        + "--batch_123--";
+
+    InputStream in = new ByteArrayInputStream(getResponse.getBytes());
+    BatchParser parser = new BatchParser("multipart/mixed;boundary=batch_123", true);
+    List<BatchSingleResponse> responses = parser.parseBatchResponse(in);
+    for (BatchSingleResponse response : responses) {
+      assertEquals("200", response.getStatusCode());
+      assertEquals("OK", response.getStatusInfo());
+      assertEquals("text/plain;charset=utf-8", response.getHeaders().get(HttpHeaders.CONTENT_TYPE));
+      assertEquals("24", response.getHeaders().get("Content-length"));
+      assertEquals("1", response.getContentId());
+      assertEquals("Frederic Fall MODIFIED\r\n", response.getBody());
+    }
+  }
+
+  @Test
+  public void testNoContentResponse() throws Exception {
+    String responseContent =
+        "--ejjeeffe1\r\n" +
+            "Content-Type: application/http\r\n" +
+            "Content-Length: 96\r\n" +
+            "content-transfer-encoding: binary\r\n" +
+            "\r\n" +
+            "HTTP/1.1 204 No Content\r\n" +
+            "Content-Type: text/html\r\n" +
+            "dataserviceversion: 2.0\r\n" +
+            "\r\n" +
+            "\r\n" +
+            "--ejjeeffe1--\r\n";
+
+    InputStream in = new ByteArrayInputStream(responseContent.getBytes());
+    BatchParser parser = new BatchParser("multipart/mixed;boundary=ejjeeffe1", true);
+    List<BatchSingleResponse> responses = parser.parseBatchResponse(in);
+    for (BatchSingleResponse response : responses) {
+      assertEquals("204", response.getStatusCode());
+      assertEquals("No Content", response.getStatusInfo());
+      assertEquals("text/html", response.getHeaders().get(HttpHeaders.CONTENT_TYPE));
     }
   }
 
@@ -119,7 +174,7 @@ public class BatchResponseParserTest {
   @Test
   public void testResponseToChangeSetNoContentButContentLength() throws BatchException {
     String putResponse =
-            "--batch_123" + CRLF
+        "--batch_123" + CRLF
             + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + CRLF
             + CRLF
             + "--changeset_12ks93js84d" + CRLF

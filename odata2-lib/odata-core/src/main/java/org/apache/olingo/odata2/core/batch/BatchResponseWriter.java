@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 public class BatchResponseWriter {
   private static final String COLON = ":";
   private static final String SP = " ";
-  private static final String LF = "\r\n";
+  private static final String CRLF = "\r\n";
   private ResponseWriter writer = new ResponseWriter();
 
   public ODataResponse writeResponse(final List<BatchResponsePart> batchResponseParts) throws BatchException {
@@ -49,18 +49,18 @@ public class BatchResponseWriter {
   private void appendChangeSet(final BatchResponsePart batchResponsePart) throws BatchException {
     String boundary = BatchHelper.generateBoundary("changeset");
     writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP)
-        .append("multipart/mixed; boundary=" + boundary).append(LF).append(LF);
+        .append("multipart/mixed; boundary=" + boundary).append(CRLF).append(CRLF);
     for (ODataResponse response : batchResponsePart.getResponses()) {
-      writer.append("--").append(boundary).append(LF);
+      writer.append("--").append(boundary).append(CRLF);
       appendResponsePartBody(response);
     }
-    writer.append("--").append(boundary).append("--").append(LF).append(LF);
+    writer.append("--").append(boundary).append("--").append(CRLF);
   }
 
   private void appendResponsePart(final List<BatchResponsePart> batchResponseParts, final String boundary)
       throws BatchException {
     for (BatchResponsePart batchResponsePart : batchResponseParts) {
-      writer.append("--").append(boundary).append(LF);
+      writer.append("--").append(boundary).append(CRLF);
       if (batchResponsePart.isChangeSet()) {
         appendChangeSet(batchResponsePart);
       } else {
@@ -73,16 +73,16 @@ public class BatchResponseWriter {
 
   private void appendResponsePartBody(final ODataResponse response) throws BatchException {
     writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP)
-        .append(HttpContentType.APPLICATION_HTTP).append(LF);
+        .append(HttpContentType.APPLICATION_HTTP).append(CRLF);
     writer.append(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING).append(COLON).append(SP)
-        .append(BatchHelper.BINARY_ENCODING).append(LF);
+        .append(BatchHelper.BINARY_ENCODING).append(CRLF);
     if (response.getHeader(BatchHelper.MIME_HEADER_CONTENT_ID) != null) {
       writer.append(BatchHelper.HTTP_CONTENT_ID).append(COLON).append(SP)
-          .append(response.getHeader(BatchHelper.MIME_HEADER_CONTENT_ID)).append(LF);
+          .append(response.getHeader(BatchHelper.MIME_HEADER_CONTENT_ID)).append(CRLF);
     }
-    writer.append(LF);
+    writer.append(CRLF);
     writer.append("HTTP/1.1").append(SP).append(String.valueOf(response.getStatus().getStatusCode())).append(SP)
-        .append(response.getStatus().getInfo()).append(LF);
+        .append(response.getStatus().getInfo()).append(CRLF);
     appendHeader(response);
     if (!HttpStatusCodes.NO_CONTENT.equals(response.getStatus())) {
       String body;
@@ -93,20 +93,23 @@ public class BatchResponseWriter {
         body = response.getEntity().toString();
       }
       writer.append(HttpHeaders.CONTENT_LENGTH).append(COLON).append(SP)
-          .append(String.valueOf(BatchHelper.getBytes(body).length)).append(LF).append(LF);
+          .append(String.valueOf(BatchHelper.getBytes(body).length)).append(CRLF).append(CRLF);
       writer.append(body);
+    } else {
+      // No header if status code equals to 204 (No content)
+      writer.append(CRLF);
     }
-    writer.append(LF).append(LF);
+    writer.append(CRLF);
   }
 
   private void appendHeader(final ODataResponse response) {
     for (String name : response.getHeaderNames()) {
       if (!BatchHelper.MIME_HEADER_CONTENT_ID.equalsIgnoreCase(name)
           && !BatchHelper.REQUEST_HEADER_CONTENT_ID.equalsIgnoreCase(name)) {
-        writer.append(name).append(COLON).append(SP).append(response.getHeader(name)).append(LF);
+        writer.append(name).append(COLON).append(SP).append(response.getHeader(name)).append(CRLF);
       } else if (BatchHelper.REQUEST_HEADER_CONTENT_ID.equalsIgnoreCase(name)) {
         writer.append(BatchHelper.HTTP_CONTENT_ID).append(COLON).append(SP)
-            .append(response.getHeader(name)).append(LF);
+            .append(response.getHeader(name)).append(CRLF);
       }
     }
   }
