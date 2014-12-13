@@ -374,9 +374,13 @@ public class AnnotationEdmProvider extends EdmProvider {
         }
         EdmNavigationProperty enp = field.getAnnotation(EdmNavigationProperty.class);
         if (enp != null) {
-          final NavigationProperty navProperty = createNavigationProperty(namespace, enp, field);
+          Class<?> fromClass = field.getDeclaringClass();
+          Class<?> toClass = ClassHelper.getFieldType(field);
+          AnnotationHelper.AnnotatedNavInfo info = ANNOTATION_HELPER.getCommonNavigationInfo(fromClass, toClass);
+
+          final NavigationProperty navProperty = createNavigationProperty(namespace, field, info);
           navProperties.add(navProperty);
-          Association association = createAssociation(field, navProperty);
+          Association association = createAssociation(info);
           associations.add(association);
         }
         EdmMediaResourceContent emrc = field.getAnnotation(EdmMediaResourceContent.class);
@@ -498,17 +502,15 @@ public class AnnotationEdmProvider extends EdmProvider {
       return cp;
     }
 
-    private NavigationProperty createNavigationProperty(final String namespace, final EdmNavigationProperty enp,
-        final Field field) {
+    private NavigationProperty createNavigationProperty(final String namespace, Field field,
+                                                        AnnotationHelper.AnnotatedNavInfo navInfo) {
       NavigationProperty navProp = new NavigationProperty();
       navProp.setName(ANNOTATION_HELPER.getPropertyName(field));
-      String fromRole = ANNOTATION_HELPER.extractFromRoleName(enp, field);
+      String fromRole = navInfo.getFromRoleName();
       navProp.setFromRole(fromRole);
+      navProp.setToRole(navInfo.getToRoleName());
 
-      String toRole = ANNOTATION_HELPER.extractToRoleName(enp, field);
-      navProp.setToRole(toRole);
-
-      String relationshipName = ANNOTATION_HELPER.extractRelationshipName(enp, field);
+      String relationshipName = navInfo.getRelationshipName();
       navProp.setRelationship(new FullQualifiedName(namespace, relationshipName));
 
       return navProp;
@@ -600,25 +602,22 @@ public class AnnotationEdmProvider extends EdmProvider {
       return ANNOTATION_HELPER.extractEntityTypeFqn(baseEntityClass);
     }
 
-    private Association createAssociation(final Field field, final NavigationProperty navProperty) {
+    private Association createAssociation(final AnnotationHelper.AnnotatedNavInfo info) {
       Association association = new Association();
-      EdmNavigationProperty navigation = field.getAnnotation(EdmNavigationProperty.class);
 
       AssociationEnd fromEnd = new AssociationEnd();
-      fromEnd.setRole(navProperty.getFromRole());
-      String typeName = ANNOTATION_HELPER.extractEntityTypeName(field.getDeclaringClass());
-      fromEnd.setType(new FullQualifiedName(namespace, typeName));
-      fromEnd.setMultiplicity(EdmMultiplicity.ONE);
+      fromEnd.setRole(info.getFromRoleName());
+      fromEnd.setType(new FullQualifiedName(namespace, info.getFromTypeName()));
+      fromEnd.setMultiplicity(info.getFromMultiplicity());
       association.setEnd1(fromEnd);
 
       AssociationEnd toEnd = new AssociationEnd();
-      toEnd.setRole(navProperty.getToRole());
-      String toTypeName = ANNOTATION_HELPER.extractEntitTypeName(navigation, field);
-      toEnd.setType(new FullQualifiedName(namespace, toTypeName));
-      toEnd.setMultiplicity(ANNOTATION_HELPER.getMultiplicity(navigation, field));
+      toEnd.setRole(info.getToRoleName());
+      toEnd.setType(new FullQualifiedName(namespace, info.getToTypeName()));
+      toEnd.setMultiplicity(info.getToMultiplicity());
       association.setEnd2(toEnd);
 
-      String associationName = navProperty.getRelationship().getName();
+      String associationName = info.getRelationshipName();
       association.setName(associationName);
       return association;
     }

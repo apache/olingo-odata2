@@ -101,17 +101,17 @@ public class MetadataTest extends AbstractRefXmlTest {
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityType[@Name='Employee' and" +
             " @m:HasStream='true']/edm:NavigationProperty[@Name='ne_Manager' and " +
-            "@Relationship='RefScenario.ManagerEmployees' and @FromRole='r_Employee' and @ToRole='r_Manager']",
+            "@Relationship='RefScenario.ManagerEmployees' and @FromRole='r_Employees' and @ToRole='r_Manager']",
         payload);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityType[@Name='Employee' and" +
             " @m:HasStream='true']/edm:NavigationProperty[@Name='ne_Team' and " +
-            "@Relationship='RefScenario.TeamEmployees' and @FromRole='r_Employee' and @ToRole='r_Team']",
+            "@Relationship='RefScenario.TeamEmployees' and @FromRole='r_Employees' and @ToRole='r_Team']",
         payload);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityType[@Name='Employee' and " +
             "@m:HasStream='true']/edm:NavigationProperty[@Name='ne_Room' and " +
-            "@Relationship='RefScenario.r_Employee-r_Room' and @FromRole='r_Employee' and @ToRole='r_Room']",
+            "@Relationship='RefScenario.r_Employees-r_Room' and @FromRole='r_Employees' and @ToRole='r_Room']",
         payload);
 
     // Team
@@ -126,7 +126,7 @@ public class MetadataTest extends AbstractRefXmlTest {
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityType[@Name='Team' and " +
             "@BaseType='RefScenario.Base']/edm:NavigationProperty[@Name='nt_Employees' and " +
-            "@Relationship='RefScenario.TeamEmployees' and @FromRole='r_Team' and @ToRole='r_Employee']",
+            "@Relationship='RefScenario.TeamEmployees' and @FromRole='r_Team' and @ToRole='r_Employees']",
         payload);
 
     // Room
@@ -144,12 +144,12 @@ public class MetadataTest extends AbstractRefXmlTest {
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityType[@Name='Room' and" +
             " @BaseType='RefScenario.Base']/edm:NavigationProperty[@Name='nr_Employees' and " +
-            "@Relationship='RefScenario.r_Employee-r_Room' and @FromRole='r_Room' and @ToRole='r_Employee']",
+            "@Relationship='RefScenario.r_Employees-r_Room' and @FromRole='r_Room' and @ToRole='r_Employees']",
         payload);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityType[@Name='Room' and " +
             "@BaseType='RefScenario.Base']/edm:NavigationProperty[@Name='nr_Building' and " +
-            "@Relationship='RefScenario.BuildingRooms' and @FromRole='r_Room' and @ToRole='r_Building']",
+            "@Relationship='RefScenario.BuildingRooms' and @FromRole='r_Rooms' and @ToRole='r_Building']",
         payload);
 
     // Manager
@@ -157,7 +157,7 @@ public class MetadataTest extends AbstractRefXmlTest {
             "@BaseType='RefScenario.Employee']", payload);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityType[@Name='Manager' and " +
             "@BaseType='RefScenario.Employee']/edm:NavigationProperty[@Name='nm_Employees' and " +
-            "@Relationship='RefScenario.ManagerEmployees' and @FromRole='r_Manager' and @ToRole='r_Employee']",
+            "@Relationship='RefScenario.ManagerEmployees' and @FromRole='r_Manager' and @ToRole='r_Employees']",
         payload);
 
     // Building
@@ -174,7 +174,7 @@ public class MetadataTest extends AbstractRefXmlTest {
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityType[@Name='Building']" +
                 "/edm:NavigationProperty[@Name='nb_Rooms' and @Relationship='RefScenario.BuildingRooms' " +
-                "and @FromRole='r_Building' and @ToRole='r_Room']", payload);
+                "and @FromRole='r_Building' and @ToRole='r_Rooms']", payload);
 
     // Base
     assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityType[@Name='Base' and @Abstract='true']",
@@ -219,22 +219,22 @@ public class MetadataTest extends AbstractRefXmlTest {
     // ManagerEmployees
     assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='ManagerEmployees']", payload);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='ManagerEmployees']" +
-            "/edm:End[@Type='RefScenario.Employee' and @Multiplicity='*' and @Role='r_Employee']", payload);
+            "/edm:End[@Type='RefScenario.Employee' and @Multiplicity='*' and @Role='r_Employees']", payload);
     assertXpathExists( "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='ManagerEmployees']" +
             "/edm:End[@Type='RefScenario.Manager' and @Multiplicity='1' and @Role='r_Manager']", payload);
 
     // TeamEmployees
     assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='TeamEmployees']", payload);
     assertXpathExists( "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='TeamEmployees']" +
-            "/edm:End[@Type='RefScenario.Employee' and @Multiplicity='*' and @Role='r_Employee']", payload);
+            "/edm:End[@Type='RefScenario.Employee' and @Multiplicity='*' and @Role='r_Employees']", payload);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='TeamEmployees']" +
             "/edm:End[@Type='RefScenario.Team' and @Multiplicity='1' and @Role='r_Team']", payload);
 
     // RoomEmployees
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='r_Employee-r_Room']", payload);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='r_Employee-r_Room']" +
-            "/edm:End[@Type='RefScenario.Employee' and @Multiplicity='*' and @Role='r_Employee']", payload);
-    assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='r_Employee-r_Room']" +
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='r_Employees-r_Room']", payload);
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='r_Employees-r_Room']" +
+            "/edm:End[@Type='RefScenario.Employee' and @Multiplicity='*' and @Role='r_Employees']", payload);
+    assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='r_Employees-r_Room']" +
             "/edm:End[@Type='RefScenario.Room' and @Multiplicity='1' and @Role='r_Room']", payload);
 
     // BuildingRooms
@@ -242,7 +242,7 @@ public class MetadataTest extends AbstractRefXmlTest {
     assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='BuildingRooms']" +
             "/edm:End[@Type='RefScenario.Building' and @Multiplicity='1' and @Role='r_Building']", payload);
     assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='BuildingRooms']" +
-            "/edm:End[@Type='RefScenario.Room' and @Multiplicity='*' and @Role='r_Room']", payload);
+            "/edm:End[@Type='RefScenario.Room' and @Multiplicity='*' and @Role='r_Rooms']", payload);
   }
 
   @Test
@@ -291,7 +291,7 @@ public class MetadataTest extends AbstractRefXmlTest {
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityContainer[@Name='DefaultContainer' and " +
             "@m:IsDefaultEntityContainer='true']/edm:AssociationSet[@Name='ManagerEmployees' and " +
-            "@Association='RefScenario.ManagerEmployees']/edm:End[@EntitySet='Employees' and @Role='r_Employee']",
+            "@Association='RefScenario.ManagerEmployees']/edm:End[@EntitySet='Employees' and @Role='r_Employees']",
         payload);
 
     assertXpathExists(
@@ -307,23 +307,23 @@ public class MetadataTest extends AbstractRefXmlTest {
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityContainer[@Name='DefaultContainer' and " +
             "@m:IsDefaultEntityContainer='true']/edm:AssociationSet[@Name='TeamEmployees' and " +
-            "@Association='RefScenario.TeamEmployees']/edm:End[@EntitySet='Employees' and @Role='r_Employee']",
+            "@Association='RefScenario.TeamEmployees']/edm:End[@EntitySet='Employees' and @Role='r_Employees']",
         payload);
 
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityContainer[@Name='DefaultContainer' and " +
-            "@m:IsDefaultEntityContainer='true']/edm:AssociationSet[@Name='r_Employee-r_Room' and " +
-            "@Association='RefScenario.r_Employee-r_Room']",
+            "@m:IsDefaultEntityContainer='true']/edm:AssociationSet[@Name='r_Employees-r_Room' and " +
+            "@Association='RefScenario.r_Employees-r_Room']",
         payload);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityContainer[@Name='DefaultContainer' and " +
-            "@m:IsDefaultEntityContainer='true']/edm:AssociationSet[@Name='r_Employee-r_Room' and " +
-            "@Association='RefScenario.r_Employee-r_Room']/edm:End[@EntitySet='Rooms' and @Role='r_Room']",
+            "@m:IsDefaultEntityContainer='true']/edm:AssociationSet[@Name='r_Employees-r_Room' and " +
+            "@Association='RefScenario.r_Employees-r_Room']/edm:End[@EntitySet='Rooms' and @Role='r_Room']",
         payload);
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityContainer[@Name='DefaultContainer' and " +
-            "@m:IsDefaultEntityContainer='true']/edm:AssociationSet[@Name='r_Employee-r_Room' and " +
-            "@Association='RefScenario.r_Employee-r_Room']/edm:End[@EntitySet='Employees' and @Role='r_Employee']",
+            "@m:IsDefaultEntityContainer='true']/edm:AssociationSet[@Name='r_Employees-r_Room' and " +
+            "@Association='RefScenario.r_Employees-r_Room']/edm:End[@EntitySet='Employees' and @Role='r_Employees']",
         payload);
 
     assertXpathExists(
@@ -339,7 +339,7 @@ public class MetadataTest extends AbstractRefXmlTest {
     assertXpathExists(
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:EntityContainer[@Name='DefaultContainer' and " +
             "@m:IsDefaultEntityContainer='true']/edm:AssociationSet[@Name='BuildingRooms' and " +
-            "@Association='RefScenario.BuildingRooms']/edm:End[@EntitySet='Rooms' and @Role='r_Room']",
+            "@Association='RefScenario.BuildingRooms']/edm:End[@EntitySet='Rooms' and @Role='r_Rooms']",
         payload);
   }
 }
