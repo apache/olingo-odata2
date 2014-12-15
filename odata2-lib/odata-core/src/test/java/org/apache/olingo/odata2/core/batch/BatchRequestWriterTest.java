@@ -19,7 +19,6 @@
 package org.apache.olingo.odata2.core.batch;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -37,7 +36,6 @@ import org.apache.olingo.odata2.api.client.batch.BatchPart;
 import org.apache.olingo.odata2.api.client.batch.BatchQueryPart;
 import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
 import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
-import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
 public class BatchRequestWriterTest {
@@ -47,11 +45,6 @@ public class BatchRequestWriterTest {
   private static final String PUT = "PUT";
   private static final String BOUNDARY = "batch_123";
   private static final Object CRLF = "\r\n";
-
-  private void checkMimeHeaders(final String requestBody) {
-    assertTrue(requestBody.contains("Content-Type: application/http"));
-    assertTrue(requestBody.contains("Content-Transfer-Encoding: binary"));
-  }
 
   @Test
   public void testBatchQueryPart() throws BatchException, IOException {
@@ -63,15 +56,22 @@ public class BatchRequestWriterTest {
 
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
-
-    String requestBody = StringHelper.toStream(batchRequest).asString();
-    assertNotNull(batchRequest);
-    checkMimeHeaders(requestBody);
-
-    assertTrue(requestBody.contains("--batch_"));
-    assertTrue(requestBody.contains("GET Employees HTTP/1.1"));
-    checkHeaders(headers, requestBody);
-    assertEquals(9, StringHelper.countLines(requestBody));
+    
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
+    List<Line> lines = reader.toList();
+    reader.close();
+    int index = 0;
+    
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("GET Employees HTTP/1.1" + CRLF, lines.get(index++).toString());
+    assertEquals("Accept: application/json" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
   }
 
   @Test
@@ -81,7 +81,7 @@ public class BatchRequestWriterTest {
     headers.put("content-type", "application/json");
     BatchChangeSetPart request = BatchChangeSetPart.method(PUT)
         .uri("Employees('2')")
-        .body("{\"Возраст\":40}")
+        .body("{\"Age\":40}")
         .headers(headers)
         .contentId("111")
         .build();
@@ -92,15 +92,27 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    String requestBody = StringHelper.inputStreamToString(batchRequest, true);
-    assertNotNull(batchRequest);
-    checkMimeHeaders(requestBody);
-    checkHeaders(headers, requestBody);
-
-    assertTrue(requestBody.contains("--batch_"));
-    assertTrue(requestBody.contains("--changeset_"));
-    assertTrue(requestBody.contains("PUT Employees('2') HTTP/1.1"));
-    assertTrue(requestBody.contains("{\"Возраст\":40}"));
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
+    List<Line> lines = reader.toList();
+    reader.close();
+    int index = 0;
+     
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index++).toString().startsWith("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Id: 111" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("PUT Employees('2') HTTP/1.1" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 10" + CRLF, lines.get(index++).toString());
+    assertEquals("content-type: application/json" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("{\"Age\":40}" + CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
   }
 
   @Test
@@ -126,15 +138,37 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    String requestBody = StringHelper.inputStreamToString(batchRequest, true);
-    assertNotNull(batchRequest);
-    checkMimeHeaders(requestBody);
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
+    List<Line> lines = reader.toList();
+    reader.close();
+    int index = 0;
 
-    checkHeaders(headers, requestBody);
-    checkHeaders(changeSetHeaders, requestBody);
-    assertTrue(requestBody.contains("GET Employees HTTP/1.1"));
-    assertTrue(requestBody.contains("POST Employees HTTP/1.1"));
-    assertTrue(requestBody.contains(body));
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Id: 000" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("GET Employees HTTP/1.1" + CRLF, lines.get(index++).toString());
+    assertEquals("Accept: application/json" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index++).toString().startsWith("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Id: 111" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("POST Employees HTTP/1.1" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 68" + CRLF, lines.get(index++).toString());
+    assertEquals("content-type: application/json" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals(body + CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
   }
 
   @Test
@@ -150,12 +184,12 @@ public class BatchRequestWriterTest {
 
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
-    
+
     BufferedReaderIncludingLineEndings reader =
         new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
     List<Line> lines = reader.toList();
     reader.close();
-    
+
     int line = 0;
     assertEquals("--" + BOUNDARY + CRLF, lines.get(line++).toString());
     assertEquals("Content-Type: application/http" + CRLF, lines.get(line++).toString());
@@ -164,9 +198,9 @@ public class BatchRequestWriterTest {
     assertEquals(CRLF, lines.get(line++).toString());
     assertEquals("GET Employees HTTP/1.1" + CRLF, lines.get(line++).toString());
     assertEquals("Accept: application/json" + CRLF, lines.get(line++).toString());
-    assertEquals(CRLF, lines.get(line++).toString());   // Belongs to the GET request [OData Protocol - 2.2.7.2.1]
-    
-    assertEquals(CRLF, lines.get(line++).toString());   // Belongs conceptually to the boundary [RFC 2046 - 5.1.1]
+    assertEquals(CRLF, lines.get(line++).toString()); // Belongs to the GET request [OData Protocol - 2.2.7.2.1]
+
+    assertEquals(CRLF, lines.get(line++).toString()); // Belongs conceptually to the boundary [RFC 2046 - 5.1.1]
     assertEquals("--" + BOUNDARY + CRLF, lines.get(line++).toString());
     assertEquals("Content-Type: application/http" + CRLF, lines.get(line++).toString());
     assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(line++).toString());
@@ -174,9 +208,9 @@ public class BatchRequestWriterTest {
     assertEquals(CRLF, lines.get(line++).toString());
     assertEquals("GET Employees HTTP/1.1" + CRLF, lines.get(line++).toString());
     assertEquals("Accept: application/json" + CRLF, lines.get(line++).toString());
-    assertEquals(CRLF, lines.get(line++).toString());   // Belongs to the GET request [OData Protocol - 2.2.7.2.1]
-    
-    assertEquals(CRLF, lines.get(line++).toString());   // Belongs conceptually to the boundary [RFC 2046 - 5.1.1]
+    assertEquals(CRLF, lines.get(line++).toString()); // Belongs to the GET request [OData Protocol - 2.2.7.2.1]
+
+    assertEquals(CRLF, lines.get(line++).toString()); // Belongs conceptually to the boundary [RFC 2046 - 5.1.1]
     assertEquals("--" + BOUNDARY + "--", lines.get(line++).toString());
     assertEquals(19, lines.size());
   }
@@ -200,7 +234,7 @@ public class BatchRequestWriterTest {
     changeSetHeaders = new HashMap<String, String>();
     changeSetHeaders.put("content-type", "application/json;odata=verbose");
     BatchChangeSetPart changeRequest2 = BatchChangeSetPart.method(PUT)
-        .uri("$/ManagerId")
+        .uri("$1/ManagerId")
         .body("{\"ManagerId\":1}")
         .headers(changeSetHeaders)
         .contentId("2")
@@ -211,16 +245,39 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    String requestBody = StringHelper.inputStreamToString(batchRequest);
-    assertNotNull(batchRequest);
-    checkMimeHeaders(requestBody);
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
+    List<Line> lines = reader.toList();
+    reader.close();
 
-    assertTrue(requestBody.contains("POST Employees('2') HTTP/1.1"));
-    assertTrue(requestBody.contains("PUT $/ManagerId HTTP/1.1"));
-    assertTrue(requestBody.contains(BatchHelper.HTTP_CONTENT_ID + ": 1"));
-    assertTrue(requestBody.contains(BatchHelper.HTTP_CONTENT_ID + ": 2"));
-    assertTrue(requestBody.contains(body));
-
+    int index = 0;
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index++).toString().startsWith("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Id: 1" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("POST Employees('2') HTTP/1.1" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 68" + CRLF, lines.get(index++).toString());
+    assertEquals("content-type: application/json" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals(body + CRLF, lines.get(index++).toString());
+    
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Id: 2" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("PUT $1/ManagerId HTTP/1.1" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 15" + CRLF, lines.get(index++).toString());
+    assertEquals("content-type: application/json;odata=verbose" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("{\"ManagerId\":1}" + CRLF, lines.get(index++).toString());
+    
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
   }
 
   @Test
@@ -254,22 +311,43 @@ public class BatchRequestWriterTest {
 
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
+    
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
+    List<Line> lines = reader.toList();
+    reader.close();
 
-    String requestBody = StringHelper.inputStreamToString(batchRequest);
-    assertNotNull(batchRequest);
-    checkMimeHeaders(requestBody);
-
-    assertTrue(requestBody.contains("POST Employees HTTP/1.1"));
-    assertTrue(requestBody.contains("PUT Employees('2')/ManagerId HTTP/1.1"));
-
-    assertTrue(requestBody.contains(body));
-
-  }
-
-  private void checkHeaders(final Map<String, String> headers, final String requestBody) {
-    for (Map.Entry<String, String> header : headers.entrySet()) {
-      assertTrue(requestBody.contains(header.getKey() + ": " + header.getValue()));
-    }
+    int index = 0;
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index++).toString().startsWith("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("POST Employees HTTP/1.1" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 68" + CRLF, lines.get(index++).toString());
+    assertEquals("content-type: application/json" + CRLF, lines.get(index++).toString());
+    assertEquals("content-Id: 111" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals(body + CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index++).toString().startsWith("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("PUT Employees('2')/ManagerId HTTP/1.1" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 15" + CRLF, lines.get(index++).toString());
+    assertEquals("content-type: application/json;odata=verbose" + CRLF, lines.get(index++).toString());
+    assertEquals("content-Id: 222" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("{\"ManagerId\":1}" + CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
   }
 
   @Test(expected = IllegalArgumentException.class)

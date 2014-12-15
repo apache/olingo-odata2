@@ -170,7 +170,70 @@ public class BatchResponseParserTest {
       assertEquals("1", response.getContentId());
     }
   }
+  
+  @Test
+  public void testResponseChangeSetBodyWithoutCRLF() throws BatchException {
+    String putResponse = "--batch_123" + CRLF
+        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-ID: 1" + CRLF
+        + CRLF
+        + "HTTP/1.1 200 Ok" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + "Content-Length: 19" + CRLF
+        + CRLF
+        + "TestBodyWithoutCRLF" + CRLF
+        + "--changeset_12ks93js84d--" + CRLF
+        + CRLF
+        + "--batch_123--";
 
+    InputStream in = new ByteArrayInputStream(putResponse.getBytes());
+    BatchParser parser = new BatchParser("multipart/mixed;boundary=batch_123", true);
+    List<BatchSingleResponse> responses = parser.parseBatchResponse(in);
+    for (BatchSingleResponse response : responses) {
+      assertEquals("200", response.getStatusCode());
+      assertEquals("Ok", response.getStatusInfo());
+      assertEquals("19", response.getHeader(HttpHeaders.CONTENT_LENGTH));
+      assertEquals("TestBodyWithoutCRLF", response.getBody());
+      assertEquals("1", response.getContentId());
+    }
+  }
+  
+  @Test
+  public void testResponseChangeSetBodyWithCRLF() throws BatchException {
+    String putResponse = "--batch_123" + CRLF
+        + "Content-Type: " + HttpContentType.MULTIPART_MIXED + ";boundary=changeset_12ks93js84d" + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + "Content-ID: 1" + CRLF
+        + CRLF
+        + "HTTP/1.1 200 Ok" + CRLF
+        + "DataServiceVersion: 2.0" + CRLF
+        + "Content-Length: 18" + CRLF
+        + CRLF
+        + "TestBodyWithCRLF" + CRLF
+        + CRLF
+        + "--changeset_12ks93js84d--" + CRLF
+        + CRLF
+        + "--batch_123--";
+
+    InputStream in = new ByteArrayInputStream(putResponse.getBytes());
+    BatchParser parser = new BatchParser("multipart/mixed;boundary=batch_123", true);
+    List<BatchSingleResponse> responses = parser.parseBatchResponse(in);
+    for (BatchSingleResponse response : responses) {
+      assertEquals("200", response.getStatusCode());
+      assertEquals("Ok", response.getStatusInfo());
+      assertEquals("18", response.getHeader(HttpHeaders.CONTENT_LENGTH));
+      assertEquals("TestBodyWithCRLF" + CRLF, response.getBody());
+      assertEquals("1", response.getContentId());
+    }
+  }
+  
   @Test
   public void testResponseToChangeSetNoContentButContentLength() throws BatchException {
     String putResponse =
