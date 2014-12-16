@@ -126,7 +126,9 @@ public class AnnotationRefServiceFactory extends ODataServiceFactory {
     teamDs.create(createTeam("Team Beta", false));
     teamDs.create(createTeam("Team Gamma", false));
     teamDs.create(createTeam("Team Omega", true));
-    teamDs.create(createTeam("Team Zeta", true));
+    Team subTeam = createTeam("SubTeamOne", false);
+    teamDs.create(subTeam);
+    teamDs.create(createTeam("Team Zeta", true, subTeam));
 
     DataStore<Building> buildingsDs = getDataStore(Building.class);
     Building redBuilding = createBuilding("Red Building");
@@ -179,9 +181,14 @@ public class AnnotationRefServiceFactory extends ODataServiceFactory {
   }
 
   private static Team createTeam(final String teamName, final boolean isScrumTeam) {
+    return createTeam(teamName, isScrumTeam, null);
+  }
+
+  private static Team createTeam(final String teamName, final boolean isScrumTeam, Team subTeam) {
     Team team = new Team();
     team.setName(teamName);
     team.setScrumTeam(isScrumTeam);
+    team.setSubTeam(subTeam);
     return team;
   }
 

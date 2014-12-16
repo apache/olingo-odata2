@@ -144,7 +144,12 @@ public class AnnotationInMemoryDs implements DataSource {
 
     AnnotatedNavInfo navInfo = ANNOTATION_HELPER.getCommonNavigationInfo(
         sourceStore.getDataTypeClass(), targetStore.getDataTypeClass());
-    Field sourceField = navInfo.getFromField();
+    final Field sourceField;
+    if(navInfo.isBiDirectional()) {
+      sourceField = navInfo.getToField();
+    } else {
+      sourceField = navInfo.getFromField();
+    }
     if (sourceField == null) {
       throw new AnnotationRuntimeException("Missing source field for related data (sourceStore='" + sourceStore
           + "', targetStore='" + targetStore + "').");

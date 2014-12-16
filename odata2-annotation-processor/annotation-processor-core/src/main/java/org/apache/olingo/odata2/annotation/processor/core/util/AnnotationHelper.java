@@ -103,22 +103,18 @@ public class AnnotationHelper {
 
   private boolean isEqual(final Object firstKey, final Object secondKey) {
     if (firstKey == null) {
-      if (secondKey == null) {
-        return true;
-      } else {
-        return secondKey.equals(firstKey);
-      }
+      return secondKey == null || secondKey.equals(firstKey);
     } else {
       return firstKey.equals(secondKey);
     }
   }
 
-  public String extractEntitTypeName(final EdmNavigationProperty enp, final Class<?> fallbackClass) {
+  public String extractEntityTypeName(final EdmNavigationProperty enp, final Class<?> fallbackClass) {
     Class<?> entityTypeClass = enp.toType();
     return extractEntityTypeName(entityTypeClass == Object.class ? fallbackClass : entityTypeClass);
   }
 
-  public String extractEntitTypeName(final EdmNavigationProperty enp, final Field field) {
+  public String extractEntityTypeName(final EdmNavigationProperty enp, final Field field) {
     Class<?> entityTypeClass = enp.toType();
     if (entityTypeClass == Object.class) {
       Class<?> toClass = field.getType();
@@ -199,8 +195,7 @@ public class AnnotationHelper {
   }
 
   public String generateNamespace(final Class<?> annotatedClass) {
-    String packageName = annotatedClass.getPackage().getName();
-    return packageName;
+    return annotatedClass.getPackage().getName();
   }
 
   /**
@@ -263,40 +258,53 @@ public class AnnotationHelper {
     return propertyName;
   }
 
-  public String extractFromRoleName(final EdmNavigationProperty enp, final Field field) {
-    return getCanonicalRole(field.getDeclaringClass());
-  }
-
   public String extractToRoleName(final EdmNavigationProperty enp, final Field field) {
     String role = enp.toRole();
     if (role.isEmpty()) {
-      role = getCanonicalRole(
-          field.getType().isArray() || Collection.class.isAssignableFrom(field.getType()) ?
-              (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0] : field.getType());
+      role = getCanonicalRoleName(field.getName());
     }
     return role;
   }
 
-  public String getCanonicalRole(final Class<?> fallbackClass) {
-    String toRole = extractEntityTypeName(fallbackClass);
-    return "r_" + toRole;
+  public String extractFromRoleEntityName(final Field field) {
+    return extractEntityTypeName(field.getDeclaringClass());
+  }
+
+  public String extractToRoleEntityName(final EdmNavigationProperty enp, final Field field) {
+    Class<?> clazz = enp.toType();
+    if (clazz == Object.class) {
+      if(field.getType().isArray() || Collection.class.isAssignableFrom(field.getType())) {
+        clazz = (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+      } else {
+        clazz = field.getType();
+      }
+    }
+    return extractEntityTypeName(clazz);
+  }
+
+  public String getCanonicalRoleName(String name) {
+    return "r_" + name.substring(0, 1).toUpperCase(Locale.ENGLISH) + name.substring(1);
   }
 
   public String extractRelationshipName(final EdmNavigationProperty enp, final Field field) {
     String relationshipName = enp.association();
     if (relationshipName.isEmpty()) {
-      final String fromRole = extractFromRoleName(enp, field);
-      final String toRole = extractToRoleName(enp, field);
-      if (fromRole.compareTo(toRole) > 0) {
-        relationshipName = toRole + "-" + fromRole;
-      } else {
-        relationshipName = fromRole + "-" + toRole;
-      }
+      final String fromRole = extractFromRoleEntityName(field);
+      final String toRole = extractToRoleEntityName(enp, field);
+      return createCanonicalRelationshipName(fromRole, toRole);
     }
     return relationshipName;
   }
 
-  public EdmMultiplicity getMultiplicity(final EdmNavigationProperty enp, final Field field) {
+  public String createCanonicalRelationshipName(String fromRole, String toRole) {
+      if (fromRole.compareTo(toRole) > 0) {
+        return toRole + "-" + fromRole;
+      } else {
+        return fromRole + "-" + toRole;
+      }
+  }
+
+  public EdmMultiplicity extractMultiplicity(final EdmNavigationProperty enp, final Field field) {
     EdmMultiplicity multiplicity = mapMultiplicity(enp.toMultiplicity());
     final boolean isCollectionType = field.getType().isArray() || Collection.class.isAssignableFrom(field.getType());
 
@@ -357,48 +365,131 @@ public class AnnotationHelper {
       return fromField;
     }
 
+    public String getFromRoleName() {
+      if(isBiDirectional()) {
+        return extractFromRoleEntityName(toField);
+      }
+      return extractToRoleName(toNavigation, toField);
+    }
+
     public Field getToField() {
       return toField;
     }
 
+    public String getToRoleName() {
+      if(isBiDirectional()) {
+        return extractToRoleName(toNavigation, toField);
+      }
+      return extractToRoleName(fromNavigation, fromField);
+    }
+
     public EdmMultiplicity getFromMultiplicity() {
-      return getMultiplicity(toNavigation, toField);
+      if(isBiDirectional()) {
+        return EdmMultiplicity.ONE;
+      }
+      return extractMultiplicity(toNavigation, toField);
     }
 
     public EdmMultiplicity getToMultiplicity() {
-      return getMultiplicity(fromNavigation, fromField);
+      if(isBiDirectional()) {
+        return extractMultiplicity(toNavigation, toField);
+      }
+      return extractMultiplicity(fromNavigation, fromField);
     }
 
     public boolean isBiDirectional() {
-      return toNavigation != null;
+      return fromNavigation == null;
+    }
+
+    public String getRelationshipName() {
+      String toAssociation = toNavigation.association();
+      String fromAssociation = "";
+      if(!isBiDirectional()) {
+        fromAssociation = fromNavigation.association();
+      }
+
+      if(fromAssociation.isEmpty() && fromAssociation.equals(toAssociation)) {
+        return createCanonicalRelationshipName(getFromRoleName(), getToRoleName());
+      } else if(toAssociation.isEmpty()) {
+        return fromAssociation;
+      } else if(!toAssociation.equals(fromAssociation)) {
+        throw new AnnotationRuntimeException("Invalid associations for navigation properties '" +
+            this.toString() + "'");
+      }
+      return toAssociation;
+    }
+
+    public String getFromTypeName() {
+      if(isBiDirectional()) {
+        return extractEntityTypeName(toField.getDeclaringClass());
+      }
+      return extractEntityTypeName(fromField.getDeclaringClass());
+    }
+
+    public String getToTypeName() {
+      if(isBiDirectional()) {
+        return extractEntityTypeName(ClassHelper.getFieldType(toField));
+      }
+      return extractEntityTypeName(toField.getDeclaringClass());
+    }
+
+    @Override
+    public String toString() {
+      if(isBiDirectional()) {
+        return "AnnotatedNavInfo{biDirectional = true" +
+            ", toField=" + toField.getName() +
+            ", toNavigation=" + toNavigation.name() + '}';
+      }
+      return "AnnotatedNavInfo{" +
+          "fromField=" + fromField.getName() +
+          ", toField=" + toField.getName() +
+          ", fromNavigation=" + fromNavigation.name() +
+          ", toNavigation=" + toNavigation.name() + '}';
     }
   }
+
 
   public AnnotatedNavInfo getCommonNavigationInfo(final Class<?> sourceClass, final Class<?> targetClass) {
     List<Field> sourceFields = getAnnotatedFields(sourceClass, EdmNavigationProperty.class);
     List<Field> targetFields = getAnnotatedFields(targetClass, EdmNavigationProperty.class);
 
+    if(sourceClass == targetClass) {
+      // special case, actual handled as bi-directional
+      return getCommonNavigationInfoBiDirectional(sourceClass, targetClass);
+    }
+
     // first try via association name to get full navigation information
     for (Field sourceField : sourceFields) {
-      final EdmNavigationProperty sourceNav = sourceField.getAnnotation(EdmNavigationProperty.class);
-      final String sourceAssociation = extractRelationshipName(sourceNav, sourceField);
-      for (Field targetField : targetFields) {
-        final EdmNavigationProperty targetNav = targetField.getAnnotation(EdmNavigationProperty.class);
-        final String targetAssociation = extractRelationshipName(targetNav, targetField);
-        if (sourceAssociation.equals(targetAssociation)) {
-          return new AnnotatedNavInfo(sourceField, targetField, sourceNav, targetNav);
+      if(ClassHelper.getFieldType(sourceField) == targetClass) {
+        final EdmNavigationProperty sourceNav = sourceField.getAnnotation(EdmNavigationProperty.class);
+        final String sourceAssociation = extractRelationshipName(sourceNav, sourceField);
+        for (Field targetField : targetFields) {
+          if(ClassHelper.getFieldType(targetField) == sourceClass) {
+            final EdmNavigationProperty targetNav = targetField.getAnnotation(EdmNavigationProperty.class);
+            final String targetAssociation = extractRelationshipName(targetNav, targetField);
+            if (sourceAssociation.equals(targetAssociation)) {
+              return new AnnotatedNavInfo(sourceField, targetField, sourceNav, targetNav);
+            }
+          }
         }
       }
     }
 
-    // if nothing was found assume none bi-directinal navigation
+    // if nothing was found assume/guess none bi-directional navigation
+    return getCommonNavigationInfoBiDirectional(sourceClass, targetClass);
+  }
+
+  private AnnotatedNavInfo getCommonNavigationInfoBiDirectional(final Class<?> sourceClass,
+                                                                final Class<?> targetClass) {
+    List<Field> sourceFields = getAnnotatedFields(sourceClass, EdmNavigationProperty.class);
+
     String targetEntityTypeName = extractEntityTypeName(targetClass);
     for (Field sourceField : sourceFields) {
       final EdmNavigationProperty sourceNav = sourceField.getAnnotation(EdmNavigationProperty.class);
-      final String navTargetEntityName = extractEntitTypeName(sourceNav, sourceField);
+      final String navTargetEntityName = extractEntityTypeName(sourceNav, sourceField);
 
       if (navTargetEntityName.equals(targetEntityTypeName)) {
-        return new AnnotatedNavInfo(sourceField, null, sourceNav, null);
+        return new AnnotatedNavInfo(null, sourceField, null, sourceNav);
       }
     }
 
@@ -576,7 +667,6 @@ public class AnnotationHelper {
 
   /**
    * 
-   * @param instance
    * @param resultClass
    * @param annotation
    * @param inherited

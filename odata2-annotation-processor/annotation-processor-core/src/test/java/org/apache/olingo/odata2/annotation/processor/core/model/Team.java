@@ -38,6 +38,8 @@ public class Team extends RefBase {
   private Boolean isScrumTeam;
   @EdmNavigationProperty(name = "nt_Employees", association = "TeamEmployees", toMultiplicity = Multiplicity.MANY)
   private List<Employee> employees = new ArrayList<Employee>();
+  @EdmNavigationProperty
+  private Team subTeam;
 
   public Team() {
     super(-1, null);
@@ -61,6 +63,10 @@ public class Team extends RefBase {
 
   public List<Employee> getEmployees() {
     return employees;
+  }
+
+  public Team getSubTeam() {
+    return subTeam;
   }
 
   @Override
