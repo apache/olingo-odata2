@@ -48,7 +48,7 @@ public class NullServiceTest extends AbstractFitTest {
 
   @Test
   public void nullServiceMustResultInODataResponse() throws Exception {
-    System.out.println("The following internal Server Error is wanted if this test doesnt fail!");
+    disableLogging();
     final HttpResponse response = executeGetRequest("$metadata");
     assertEquals(HttpStatusCodes.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusLine().getStatusCode());
 

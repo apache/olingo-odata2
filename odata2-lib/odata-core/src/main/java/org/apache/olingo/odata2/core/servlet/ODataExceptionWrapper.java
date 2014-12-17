@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
@@ -37,9 +38,11 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataHttpException;
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
+import org.apache.olingo.odata2.api.processor.ODataErrorCallback;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.commons.ContentType;
+import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 import org.apache.olingo.odata2.core.exception.MessageService;
 import org.apache.olingo.odata2.core.exception.MessageService.Message;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
@@ -57,8 +60,9 @@ public class ODataExceptionWrapper {
   private final Locale messageLocale;
   private final URI requestUri;
   private final Map<String, List<String>> httpRequestHeaders;
+  private final ODataErrorCallback callback;
 
-  public ODataExceptionWrapper(final HttpServletRequest req) {
+  public ODataExceptionWrapper(final HttpServletRequest req, ODataServiceFactory serviceFactory) {
     try {
       requestUri = new URI(req.getRequestURI());
     } catch (URISyntaxException e) {
@@ -70,6 +74,7 @@ public class ODataExceptionWrapper {
     List<String> acceptHeaders = RestUtil.extractAcceptHeaders(req.getHeader("Accept"));
     contentType = getContentType(queryParameters, acceptHeaders).toContentTypeString();
     messageLocale = MessageService.getSupportedLocale(getLanguages(acceptableLanguages), DEFAULT_RESPONSE_LOCALE);
+    callback = serviceFactory.getCallback(ODataErrorCallback.class);
   }
 
   public ODataResponse wrapInExceptionResponse(final Exception exception) {
@@ -83,11 +88,11 @@ public class ODataExceptionWrapper {
       }
 
       ODataResponse oDataResponse;
-      // if (callback != null) {
-      // oDataResponse = handleErrorCallback(callback);
-      // } else {
-      oDataResponse = EntityProvider.writeErrorDocument(errorContext);
-      // }
+      if (callback != null) {
+        oDataResponse = handleErrorCallback(callback);
+      } else {
+        oDataResponse = EntityProvider.writeErrorDocument(errorContext);
+      }
       if (!oDataResponse.containsHeader(org.apache.olingo.odata2.api.commons.HttpHeaders.CONTENT_TYPE)) {
         oDataResponse = ODataResponse.fromResponse(oDataResponse).contentHeader(contentType).build();
       }
@@ -98,6 +103,18 @@ public class ODataExceptionWrapper {
           .status(HttpStatusCodes.INTERNAL_SERVER_ERROR).build();
       return response;
     }
+  }
+
+  private ODataResponse handleErrorCallback(final ODataErrorCallback callback) throws EntityProviderException {
+    ODataResponse oDataResponse;
+    try {
+      oDataResponse = callback.handleError(errorContext);
+    } catch (ODataApplicationException e) {
+      fillErrorContext(e);
+      enhanceContextWithApplicationException(e);
+      oDataResponse = new ProviderFacadeImpl().writeErrorDocument(errorContext);
+    }
+    return oDataResponse;
   }
 
   private Exception extractException(final Exception exception) {

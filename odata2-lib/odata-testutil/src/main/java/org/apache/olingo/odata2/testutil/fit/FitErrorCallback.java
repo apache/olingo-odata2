@@ -39,7 +39,6 @@ public class FitErrorCallback implements ODataErrorCallback {
     if (context.getHttpStatus() == HttpStatusCodes.INTERNAL_SERVER_ERROR) {
       LOG.error("Internal Server Error", context.getException());
     }
-
     return EntityProvider.writeErrorDocument(context);
   }
 

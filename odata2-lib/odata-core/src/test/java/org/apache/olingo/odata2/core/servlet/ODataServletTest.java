@@ -110,5 +110,4 @@ public class ODataServletTest {
     String factoryClassName = ODataServiceFactoryImpl.class.getName();
     Mockito.when(configMock.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(factoryClassName);
   }
-
 }
