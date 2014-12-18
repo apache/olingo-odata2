@@ -176,7 +176,121 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
       + "<EntityType Name= \"Photo\"><Key><PropertyRef Name=\"Id\"/></Key><Property Name=\"Id\" Type=\"Edm.Int32\" " +
       "Nullable=\"false\" MaxLength=\"Max\"/><Property Name=\"Name\" Type=\"Edm.Int32\" MaxLength=\"max\"/>"
       + "</EntityType></Schema></edmx:DataServices></edmx:Edmx>";
-
+  
+  @Test
+  public void testMetadataDokumentWithWhitepaces() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "           <EntityType Name= \"Photo\">"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Id\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "               <MyAnnotation xmlns=\"http://company.com/odata\">   "
+        + "                 <child> value1</child>"
+        + "                 <child>value2</child>"
+        + "               </MyAnnotation>"
+        + "           </EntityType>"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+    
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    DataServices result = parser.readMetadata(reader, true);
+    
+    assertEquals(1, result.getSchemas().size());
+    List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
+    assertEquals(1, entityTypes.size());
+    EntityType entityType = entityTypes.get(0);
+    List<AnnotationElement> annotationElements = entityType.getAnnotationElements();
+    assertEquals(1, annotationElements.size());
+    AnnotationElement annotationElement = annotationElements.get(0);
+    List<AnnotationElement> childElements = annotationElement.getChildElements();
+    assertEquals(2, childElements.size());
+    
+    assertEquals(" value1", childElements.get(0).getText());
+    assertEquals("value2", childElements.get(1).getText());
+  }
+  
+  @Test
+  public void testMetadataDokumentWithWhitepacesMultiline() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "           <EntityType Name= \"Photo\">"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Id\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "               <MyAnnotation xmlns=\"http://company.com/odata\">   "
+        + "                 <child> value1\n"
+        + "                 long long long multiline attribute</child>"
+        + "                 <child>value2</child>"
+        + "               </MyAnnotation>"
+        + "           </EntityType>"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+    
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    DataServices result = parser.readMetadata(reader, true);
+    
+    assertEquals(1, result.getSchemas().size());
+    List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
+    assertEquals(1, entityTypes.size());
+    EntityType entityType = entityTypes.get(0);
+    List<AnnotationElement> annotationElements = entityType.getAnnotationElements();
+    assertEquals(1, annotationElements.size());
+    AnnotationElement annotationElement = annotationElements.get(0);
+    List<AnnotationElement> childElements = annotationElement.getChildElements();
+    assertEquals(2, childElements.size());
+    
+    assertEquals(" value1\n" + 
+        "                 long long long multiline attribute", childElements.get(0).getText());
+    assertEquals("value2", childElements.get(1).getText());
+  }
+  
+  @Test
+  public void testMetadataDokumentWithWhitepaces2() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "           <EntityType Name= \"Photo\">"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Id\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "               <MyAnnotation xmlns=\"http://company.com/odata\">   "
+        + "                 <child> value1"
+        + "</child></MyAnnotation>"
+        + "           </EntityType>"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+    
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    DataServices result = parser.readMetadata(reader, true);
+    
+    assertEquals(1, result.getSchemas().size());
+    List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
+    assertEquals(1, entityTypes.size());
+    EntityType entityType = entityTypes.get(0);
+    List<AnnotationElement> annotationElements = entityType.getAnnotationElements();
+    assertEquals(1, annotationElements.size());
+    AnnotationElement annotationElement = annotationElements.get(0);
+    List<AnnotationElement> childElements = annotationElement.getChildElements();
+    assertEquals(1, childElements.size());
+    
+    assertEquals(" value1", childElements.get(0).getText());
+  }
+  
   @Test
   public void stringValueForMaxLegthFacet() throws Exception {
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
