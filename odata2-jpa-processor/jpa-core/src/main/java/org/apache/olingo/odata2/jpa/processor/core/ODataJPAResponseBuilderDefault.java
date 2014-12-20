@@ -267,9 +267,12 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
       if (result != null) {
         ODataResponse response = null;
-
-        final String value = type.valueToString(result, EdmLiteralKind.DEFAULT, null);
-        response = EntityProvider.writeText(value);
+        if (type.getDefaultType().equals(byte[].class)) {
+          response = EntityProvider.writeBinary("application/octet-stream", (byte[]) result);
+        } else {
+          final String value = type.valueToString(result, EdmLiteralKind.DEFAULT, null);
+          response = EntityProvider.writeText(value);
+        }
 
         return ODataResponse.fromResponse(response).build();
       } else {

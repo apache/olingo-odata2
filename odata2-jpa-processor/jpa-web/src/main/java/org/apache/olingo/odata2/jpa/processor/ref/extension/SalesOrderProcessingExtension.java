@@ -63,6 +63,7 @@ public class SalesOrderProcessingExtension implements JPAEdmExtension {
   @Override
   public void extendWithOperation(final JPAEdmSchemaView view) {
     view.registerOperations(SalesOrderHeaderProcessor.class, null);
+    view.registerOperations(CustomerImageProcessor.class, null);
 
   }
 
