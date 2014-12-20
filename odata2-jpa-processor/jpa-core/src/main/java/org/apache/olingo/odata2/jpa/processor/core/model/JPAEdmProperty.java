@@ -372,7 +372,14 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
       String[] name = { null, null };
       name[0] = joinColumn.name().equals("") == true ? jpaAttribute.getName() : joinColumn.name();
 
-      EntityType<?> referencedEntityType = metaModel.entity(jpaAttribute.getJavaType());
+      EntityType<?> referencedEntityType = null;
+      if (jpaAttribute.isCollection()) {
+        referencedEntityType =
+            metaModel.entity(((PluralAttribute<?, ?, ?>) currentAttribute).getElementType().getJavaType());
+      } else {
+        referencedEntityType = metaModel.entity(jpaAttribute.getJavaType());
+      }
+
       if (joinColumn.referencedColumnName().equals("")) {
         for (Attribute<?, ?> referencedAttribute : referencedEntityType.getAttributes()) {
           if (referencedAttribute.getPersistentAttributeType() == PersistentAttributeType.BASIC &&
