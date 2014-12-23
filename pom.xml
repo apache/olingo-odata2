@@ -350,6 +350,8 @@
 										<exclude>**/NOTICE</exclude>
 										<exclude>**/DEPENDENCIES</exclude>
 										<exclude>**/goal.txt</exclude>
+										<exclude>**/target/**</exclude>
+										<exclude>**/*.iml</exclude>
 									</excludes>
 								</configuration>
 							</execution>
