@@ -24,7 +24,7 @@
 	<bean id="serviceFactory" class="org.apache.olingo.odata2.spring.TestFactory" />
 
 	<!-- This is what is actually being tested -->
-	<odata:server id="testServer" address="/service.svc" factory="serviceFactory" pathsplit="3"/>
+	<odata:server id="testServer" address="/service.svc" factory="serviceFactory" pathSplit="3"/>
 
 	<!-- In order to be useful in a real environment, Apache CXF needs to be configured correctly as well.
 	     This context file doesn't handle this, since the unit test only tests that the namespace handler

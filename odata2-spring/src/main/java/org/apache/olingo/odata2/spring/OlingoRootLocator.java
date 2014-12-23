@@ -16,9 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.rest.spring;
+package org.apache.olingo.odata2.spring;
 
-import java.util.List;
+import org.apache.olingo.odata2.api.ODataServiceFactory;
+import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
+import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.core.rest.ODataRedirectLocator;
+import org.apache.olingo.odata2.core.rest.ODataSubLocator;
+import org.apache.olingo.odata2.core.rest.SubLocatorParameter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Encoded;
@@ -31,13 +36,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
-
-import org.apache.olingo.odata2.api.ODataServiceFactory;
-import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
-import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.core.rest.ODataRedirectLocator;
-import org.apache.olingo.odata2.core.rest.ODataSubLocator;
-import org.apache.olingo.odata2.core.rest.SubLocatorParameter;
+import java.util.List;
 
 /**
  * Default OData root locator responsible to handle the whole path and delegate all calls to a sub locator:<p>
@@ -52,7 +51,7 @@ import org.apache.olingo.odata2.core.rest.SubLocatorParameter;
  *
  */
 @Path("/")
-public class ODataRootLocator {
+public class OlingoRootLocator {
 
   @Context
   private HttpHeaders httpHeaders;
@@ -61,10 +60,7 @@ public class ODataRootLocator {
   @Context
   private Request request;
   @Context
-  protected HttpServletRequest servletRequest;
-
-  @Context
-  protected Application app;
+  private HttpServletRequest servletRequest;
 
   // These next two members are exposed so that they can be injected with Spring
   private ODataServiceFactory serviceFactory;
@@ -76,7 +72,7 @@ public class ODataRootLocator {
    * @param xHttpMethod HTTP Header X-HTTP-Method for tunneling through POST
    * @param xHttpMethodOverride HTTP Header X-HTTP-Method-Override for tunneling through POST
    * @return a locator handling OData protocol
-   * @throws ODataException
+   * @throws org.apache.olingo.odata2.api.exception.ODataException
    * @throws ClassNotFoundException
    * @throws IllegalAccessException
    * @throws InstantiationException

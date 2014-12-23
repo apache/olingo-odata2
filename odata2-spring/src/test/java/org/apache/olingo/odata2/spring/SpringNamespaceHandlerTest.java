@@ -18,12 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.spring;
 
-import static org.junit.Assert.*;
-
 import org.apache.cxf.jaxrs.spring.JAXRSServerFactoryBeanDefinitionParser.SpringJAXRSServerFactoryBean;
 import org.apache.olingo.odata2.core.rest.ODataExceptionMapperImpl;
 import org.apache.olingo.odata2.core.rest.app.ODataApplication;
-import org.apache.olingo.odata2.core.rest.spring.ODataRootLocator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +28,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:spring/applicationContext.xml")
@@ -44,15 +46,15 @@ public class SpringNamespaceHandlerTest {
   public void testSuccessfullyCreated() {
     assertTrue(appCtx.containsBean("testServer"));
 
-    assertTrue(appCtx.containsBean("OlingoODataExceptionHandler"));
-    assertTrue(appCtx.containsBean("OlingoODataProvider"));
+    assertTrue(appCtx.containsBean(OlingoServerDefinitionParser.OLINGO_ODATA_EXCEPTION_HANDLER));
+    assertTrue(appCtx.containsBean(OlingoServerDefinitionParser.OLINGO_ODATA_PROVIDER));
 
     assertEquals(ODataExceptionMapperImpl.class, appCtx.getType("OlingoODataExceptionHandler"));
     assertEquals(ODataApplication.MyProvider.class, appCtx.getType("OlingoODataProvider"));
 
-    String rootLocatorName = "OlingoODataRootLocator-testServer-serviceFactory";
+    String rootLocatorName = "OlingoRootLocator-testServer-serviceFactory";
     assertTrue(appCtx.containsBean(rootLocatorName));
-    assertEquals(ODataRootLocator.class, appCtx.getType(rootLocatorName));
+    assertEquals(OlingoRootLocator.class, appCtx.getType(rootLocatorName));
 
     SpringJAXRSServerFactoryBean server = appCtx.getBean("testServer", SpringJAXRSServerFactoryBean.class);
     assertEquals("/service.svc", server.getAddress());
@@ -60,8 +62,8 @@ public class SpringNamespaceHandlerTest {
 
   @Test
   public void testCorrectFactoryAndPathSplit() {
-    String rootLocatorName = "OlingoODataRootLocator-testServer-serviceFactory";
-    ODataRootLocator rootLocator = appCtx.getBean(rootLocatorName, ODataRootLocator.class);
+    String rootLocatorName = "OlingoRootLocator-testServer-serviceFactory";
+    OlingoRootLocator rootLocator = appCtx.getBean(rootLocatorName, OlingoRootLocator.class);
     assertNotNull(rootLocator.getServiceFactory());
     assertSame(appCtx.getBean("serviceFactory"), rootLocator.getServiceFactory());
     assertEquals(3, rootLocator.getPathSplit());

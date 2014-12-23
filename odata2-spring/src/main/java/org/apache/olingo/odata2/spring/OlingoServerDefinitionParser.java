@@ -21,7 +21,6 @@ package org.apache.olingo.odata2.spring;
 import org.apache.cxf.jaxrs.spring.JAXRSServerFactoryBeanDefinitionParser;
 import org.apache.olingo.odata2.core.rest.ODataExceptionMapperImpl;
 import org.apache.olingo.odata2.core.rest.app.ODataApplication;
-import org.apache.olingo.odata2.core.rest.spring.ODataRootLocator;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -30,7 +29,19 @@ import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+/**
+ *
+ */
 public class OlingoServerDefinitionParser extends JAXRSServerFactoryBeanDefinitionParser {
+
+  protected static final String OLINGO_ROOT_LOCATOR = "OlingoRootLocator";
+  protected static final String OLINGO_ODATA_PROVIDER = "OlingoODataProvider";
+  protected static final String OLINGO_ODATA_EXCEPTION_HANDLER = "OlingoODataExceptionHandler";
+  protected static final String SERVICE_FACTORY = "serviceFactory";
+  protected static final String SERVICE_BEANS = "serviceBeans";
+  protected static final String ID = "id";
+  protected static final String FACTORY = "factory";
+  protected static final String PATH_SPLIT = "pathSplit";
 
   public OlingoServerDefinitionParser() {
     super();
@@ -39,7 +50,7 @@ public class OlingoServerDefinitionParser extends JAXRSServerFactoryBeanDefiniti
 
   @Override
   protected void mapAttribute(BeanDefinitionBuilder bean, Element e, String name, String val) {
-    if ("id".equals(name) || "address".equals(name)) {
+    if (ID.equals(name) || "address".equals(name)) {
       mapToProperty(bean, name, val);
     }
   }
@@ -48,38 +59,38 @@ public class OlingoServerDefinitionParser extends JAXRSServerFactoryBeanDefiniti
   protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder bean) {
     super.doParse(element, parserContext, bean);
 
-    if (!parserContext.getRegistry().containsBeanDefinition("OlingoODataExceptionHandler")) {
+    if (!parserContext.getRegistry().containsBeanDefinition(OLINGO_ODATA_EXCEPTION_HANDLER)) {
       AbstractBeanDefinition definition =
           BeanDefinitionBuilder.genericBeanDefinition(ODataExceptionMapperImpl.class).getBeanDefinition();
       definition.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-      BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, "OlingoODataExceptionHandler", new String[0]);
+      BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, OLINGO_ODATA_EXCEPTION_HANDLER, new String[0]);
       registerBeanDefinition(holder, parserContext.getRegistry());
     }
 
-    if (!parserContext.getRegistry().containsBeanDefinition("OlingoODataProvider")) {
+    if (!parserContext.getRegistry().containsBeanDefinition(OLINGO_ODATA_PROVIDER)) {
       AbstractBeanDefinition definition =
           BeanDefinitionBuilder.genericBeanDefinition(ODataApplication.MyProvider.class).getBeanDefinition();
       definition.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-      BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, "OlingoODataProvider", new String[0]);
+      BeanDefinitionHolder holder = new BeanDefinitionHolder(definition, OLINGO_ODATA_PROVIDER, new String[0]);
       registerBeanDefinition(holder, parserContext.getRegistry());
     }
 
-    BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(ODataRootLocator.class);
+    BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(OlingoRootLocator.class);
     builder.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-    builder.addPropertyReference("serviceFactory", element.getAttribute("factory"));
-    if (element.hasAttribute("pathsplit")) {
-      builder.addPropertyValue("pathSplit", element.getAttribute("pathsplit"));
+    builder.addPropertyReference(SERVICE_FACTORY, element.getAttribute(FACTORY));
+    if (element.hasAttribute(PATH_SPLIT)) {
+      builder.addPropertyValue(PATH_SPLIT, element.getAttribute(PATH_SPLIT));
     }
     AbstractBeanDefinition definition = builder.getBeanDefinition();
     BeanDefinitionHolder holder = new BeanDefinitionHolder(definition,
-        "OlingoODataRootLocator-" + element.getAttribute("id") + "-" + element.getAttribute("factory"), new String[0]);
+        OLINGO_ROOT_LOCATOR + "-" + element.getAttribute(ID) + "-" + element.getAttribute(FACTORY));
     registerBeanDefinition(holder, parserContext.getRegistry());
 
     ManagedList<BeanDefinition> services = new ManagedList<BeanDefinition>(3);
     services.add(definition);
-    services.add(parserContext.getRegistry().getBeanDefinition("OlingoODataExceptionHandler"));
-    services.add(parserContext.getRegistry().getBeanDefinition("OlingoODataProvider"));
-    bean.addPropertyValue("serviceBeans", services);
+    services.add(parserContext.getRegistry().getBeanDefinition(OLINGO_ODATA_EXCEPTION_HANDLER));
+    services.add(parserContext.getRegistry().getBeanDefinition(OLINGO_ODATA_PROVIDER));
+    bean.addPropertyValue(SERVICE_BEANS, services);
   }
 
 }

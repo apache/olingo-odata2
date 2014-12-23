@@ -24,7 +24,7 @@
 				<xsd:extension base="beans:identifiedType">
 					<xsd:attribute name="address" type="xsd:string" use="required" />
 					<xsd:attribute name="factory" type="xsd:string" use="required" />
-					<xsd:attribute name="pathsplit" type="xsd:int" use="optional" />
+					<xsd:attribute name="pathSplit" type="xsd:int" use="optional" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
