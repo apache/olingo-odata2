@@ -102,13 +102,9 @@ public class ODataRootLocator {
       return handleRedirect();
     }
 
-    ODataServiceFactory serviceFactory = createServiceFactoryFromContext(app, servletRequest, servletConfig);
+    ODataServiceFactory serviceFactory = getServiceFactory();
 
-    int pathSplit = 0;
-    final String pathSplitAsString = servletConfig.getInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL);
-    if (pathSplitAsString != null) {
-      pathSplit = Integer.parseInt(pathSplitAsString);
-    }
+    int pathSplit = getPathSplit();
 
     final SubLocatorParameter param = new SubLocatorParameter();
     param.setServiceFactory(serviceFactory);
@@ -120,6 +116,19 @@ public class ODataRootLocator {
     param.setPathSplit(pathSplit);
 
     return ODataSubLocator.create(param);
+  }
+
+  public ODataServiceFactory getServiceFactory() {
+    return createServiceFactoryFromContext(app, servletRequest, servletConfig);
+  }
+
+  public int getPathSplit() {
+    int pathSplit = 0;
+    final String pathSplitAsString = servletConfig.getInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL);
+    if (pathSplitAsString != null) {
+      pathSplit = Integer.parseInt(pathSplitAsString);
+    }
+    return pathSplit;
   }
 
   public static ODataServiceFactory createServiceFactoryFromContext(final Application app,

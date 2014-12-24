@@ -24,6 +24,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.core.rest.ODataRedirectLocator;
 import org.apache.olingo.odata2.core.rest.ODataSubLocator;
 import org.apache.olingo.odata2.core.rest.SubLocatorParameter;
+import org.apache.olingo.odata2.core.rest.ODataRootLocator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Encoded;
@@ -51,71 +52,13 @@ import java.util.List;
  *
  */
 @Path("/")
-public class OlingoRootLocator {
-
-  @Context
-  private HttpHeaders httpHeaders;
-  @Context
-  private UriInfo uriInfo;
-  @Context
-  private Request request;
-  @Context
-  private HttpServletRequest servletRequest;
+public class OlingoRootLocator extends ODataRootLocator {
 
   // These next two members are exposed so that they can be injected with Spring
   private ODataServiceFactory serviceFactory;
   private int pathSplit = 0;
 
-  /**
-   * Default root behavior which will delegate all paths to a ODataLocator.
-   * @param pathSegments URI path segments - all segments have to be OData
-   * @param xHttpMethod HTTP Header X-HTTP-Method for tunneling through POST
-   * @param xHttpMethodOverride HTTP Header X-HTTP-Method-Override for tunneling through POST
-   * @return a locator handling OData protocol
-   * @throws org.apache.olingo.odata2.api.exception.ODataException
-   * @throws ClassNotFoundException
-   * @throws IllegalAccessException
-   * @throws InstantiationException
-   */
-  @Path("/{pathSegments: .*}")
-  public Object handleRequest(
-      @Encoded @PathParam("pathSegments") final List<PathSegment> pathSegments,
-      @HeaderParam("X-HTTP-Method") final String xHttpMethod,
-      @HeaderParam("X-HTTP-Method-Override") final String xHttpMethodOverride)
-      throws ODataException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-
-    if (xHttpMethod != null && xHttpMethodOverride != null) {
-
-      /*
-       * X-HTTP-Method-Override : implemented by CXF
-       * X-HTTP-Method : implemented in ODataSubLocator:handlePost
-       */
-
-      if (!xHttpMethod.equalsIgnoreCase(xHttpMethodOverride)) {
-        throw new ODataBadRequestException(ODataBadRequestException.AMBIGUOUS_XMETHOD);
-      }
-    }
-
-    if (servletRequest.getPathInfo() == null) {
-      return handleRedirect();
-    }
-
-    final SubLocatorParameter param = new SubLocatorParameter();
-    param.setServiceFactory(getServiceFactory());
-    param.setPathSegments(pathSegments);
-    param.setHttpHeaders(httpHeaders);
-    param.setUriInfo(uriInfo);
-    param.setRequest(request);
-    param.setServletRequest(servletRequest);
-    param.setPathSplit(getPathSplit());
-
-    return ODataSubLocator.create(param);
-  }
-
-  private Object handleRedirect() {
-    return new ODataRedirectLocator();
-  }
-
+  @Override
   public ODataServiceFactory getServiceFactory() {
     return serviceFactory;
   }
@@ -124,6 +67,7 @@ public class OlingoRootLocator {
     this.serviceFactory = serviceFactory;
   }
 
+  @Override
   public int getPathSplit() {
     return pathSplit;
   }
