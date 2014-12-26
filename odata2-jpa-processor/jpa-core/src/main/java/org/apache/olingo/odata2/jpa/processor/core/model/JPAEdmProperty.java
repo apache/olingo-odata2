@@ -414,6 +414,10 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         }
       }
 
+      if (currentRefAttribute == null) {
+        throw ODataJPAModelException.throwException(ODataJPAModelException.REF_ATTRIBUTE_NOT_FOUND
+            .addContent(referencedEntityType.getName()), null);
+      }
       if (joinColumn.insertable() && joinColumn.updatable()) {
         currentSimpleProperty = new SimpleProperty();
         properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty, true));
