@@ -19,25 +19,9 @@
 package org.apache.olingo.odata2.spring;
 
 import org.apache.olingo.odata2.api.ODataServiceFactory;
-import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
-import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.core.rest.ODataRedirectLocator;
-import org.apache.olingo.odata2.core.rest.ODataSubLocator;
-import org.apache.olingo.odata2.core.rest.SubLocatorParameter;
 import org.apache.olingo.odata2.core.rest.ODataRootLocator;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Encoded;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.PathSegment;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.UriInfo;
-import java.util.List;
 
 /**
  * Default OData root locator responsible to handle the whole path and delegate all calls to a sub locator:<p>

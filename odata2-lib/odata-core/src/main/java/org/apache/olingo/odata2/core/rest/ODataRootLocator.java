@@ -151,8 +151,7 @@ public class ODataRootLocator {
           factoryClass = Class.forName(factoryClassName, true, cl);
         }
       }
-      ODataServiceFactory serviceFactory = (ODataServiceFactory) factoryClass.newInstance();
-      return serviceFactory;
+      return (ODataServiceFactory) factoryClass.newInstance();
     } catch (Exception e) {
       throw new ODataRuntimeException("Exception during ODataServiceFactory creation occured.", e);
     }
