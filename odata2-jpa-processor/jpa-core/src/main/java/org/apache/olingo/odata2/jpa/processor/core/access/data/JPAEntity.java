@@ -336,6 +336,9 @@ public class JPAEntity {
         } else if (parameterType.equals(Character.class)) {
           Character c = Character.valueOf(((String) entityPropertyValue).charAt(0));
           method.invoke(entity, c);
+        } else if (parameterType.isEnum()) {
+          Enum e = Enum.valueOf((Class<Enum>) parameterType, (String) entityPropertyValue);
+          method.invoke(entity, e);
         }
       } else if (parameterType.equals(Blob.class)) {
         if (onJPAWriteContent == null) {
