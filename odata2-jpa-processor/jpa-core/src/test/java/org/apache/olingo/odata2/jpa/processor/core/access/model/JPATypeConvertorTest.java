@@ -42,6 +42,9 @@ public class JPATypeConvertorTest {
   private EdmSimpleTypeKind edmSimpleKindTypeByte;
   private EdmSimpleTypeKind edmSimpleKindTypeBoolean;
   private EdmSimpleTypeKind edmSimpleKindTypeUUID;
+  private EdmSimpleTypeKind edmSimpleKindTypeStringFromEnum;
+
+  enum SomeEnum {TEST}
 
   @Test
   public void testConvertToEdmSimpleType() {
@@ -56,6 +59,7 @@ public class JPATypeConvertorTest {
     Byte byteObj = new Byte((byte) 0);
     Boolean booleanObj = Boolean.TRUE;
     UUID uUID = new UUID(0, 0);
+    SomeEnum someEnum = SomeEnum.TEST;
 
     try {
       edmSimpleKindTypeString = JPATypeConvertor.convertToEdmSimpleType(str.getClass(), null);
@@ -68,6 +72,7 @@ public class JPATypeConvertorTest {
       edmSimpleKindTypeBigDecimal = JPATypeConvertor.convertToEdmSimpleType(bigDecimalObj.getClass(), null);
       edmSimpleKindTypeByte = JPATypeConvertor.convertToEdmSimpleType(byteObj.getClass(), null);
       edmSimpleKindTypeBoolean = JPATypeConvertor.convertToEdmSimpleType(booleanObj.getClass(), null);
+      edmSimpleKindTypeStringFromEnum = JPATypeConvertor.convertToEdmSimpleType(someEnum.getClass(), null);
       /*
        * edmSimpleKindTypeDate = JPATypeConvertor
        * .convertToEdmSimpleType(dateObj.getClass(),null);
@@ -89,6 +94,7 @@ public class JPATypeConvertorTest {
     assertEquals(EdmSimpleTypeKind.Boolean, edmSimpleKindTypeBoolean);
     // assertEquals(EdmSimpleTypeKind.DateTime, edmSimpleKindTypeDate);
     assertEquals(EdmSimpleTypeKind.Guid, edmSimpleKindTypeUUID);
+    assertEquals(EdmSimpleTypeKind.String, edmSimpleKindTypeStringFromEnum);
   }
 
 }
