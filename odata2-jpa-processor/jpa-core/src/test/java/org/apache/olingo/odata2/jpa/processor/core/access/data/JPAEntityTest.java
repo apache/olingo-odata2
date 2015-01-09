@@ -86,7 +86,6 @@ public class JPAEntityTest {
       jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, mockODataJPAContext());
       jpaEntity.create(ODataEntryMockUtil.mockODataEntry(JPATypeMock.ENTITY_NAME));
     } catch (ODataJPARuntimeException e) {
-      e.printStackTrace();
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
           + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (EdmException e) {
