@@ -86,6 +86,7 @@ public class JPAEntityTest {
       jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, mockODataJPAContext());
       jpaEntity.create(ODataEntryMockUtil.mockODataEntry(JPATypeMock.ENTITY_NAME));
     } catch (ODataJPARuntimeException e) {
+      e.printStackTrace();
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
           + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (EdmException e) {
@@ -101,6 +102,7 @@ public class JPAEntityTest {
     assertEquals(ODataEntryMockUtil.VALUE_C.charAt(0), jpaTypeMock.getMC());
     assertEquals(ODataEntryMockUtil.VALUE_CARRAY, new String(jpaTypeMock.getMCArray()));
     assertEquals(ODataEntryMockUtil.VALUE_CHAR, jpaTypeMock.getMChar().toString());
+    assertEquals(ODataEntryMockUtil.VALUE_ENUM, jpaTypeMock.getMSomeEnum());
     assertEquals(ODataEntryMockUtil.VALUE_CHARARRAY, JPAEntityParser.toString(jpaTypeMock.getMCharArray()));
     assertTrue(jpaTypeMock.getMDateTime().equals(ODataEntryMockUtil.VALUE_DATE_TIME));
   }
@@ -229,6 +231,7 @@ public class JPAEntityTest {
     JPATypeMock jpaTypeMock = (JPATypeMock) jpaEntity.getJPAEntity();
     assertEquals(jpaTypeMock.getMInt(), 0);// Key should not be changed
     assertEquals(jpaTypeMock.getMString(), ODataEntryMockUtil.VALUE_MSTRING);
+    assertEquals(ODataEntryMockUtil.VALUE_ENUM, jpaTypeMock.getMSomeEnum());
     assertTrue(jpaTypeMock.getMDateTime().equals(ODataEntryMockUtil.VALUE_DATE_TIME));
   }
 

@@ -28,6 +28,8 @@ import java.util.UUID;
 /* ========================================================================= */
 public class JPATypeMock {
 
+  enum JPATypeMockEnum {VALUE, MORE_VALUE}
+
   public static final String ENTITY_NAME = "JPATypeMock";
   public static final String PROPERTY_NAME_MINT = "mInt";
   public static final String PROPERTY_NAME_MSTRING = "mString";
@@ -40,6 +42,7 @@ public class JPATypeMock {
   public static final String PROPERTY_NAME_MCARRAY = "mCArray";
   public static final String PROPERTY_NAME_MKEY = "key";
   public static final String PROPERTY_NAME_MCOMPLEXTYPE = "complexType";
+  public static final String PROPERTY_NAME_ENUM = "mSomeEnum";
 
   public static final String NAVIGATION_PROPERTY_X = "mRelatedEntity";
   public static final String NAVIGATION_PROPERTY_XS = "mRelatedEntities";
@@ -55,6 +58,7 @@ public class JPATypeMock {
   private char[] mCArray;
   private Character mChar;
   private Character[] mCharArray;
+  private JPATypeMockEnum mSomeEnum;
 
   public Clob getMClob() {
     return mClob;
@@ -161,6 +165,14 @@ public class JPATypeMock {
 
   public void setMBlob(final Blob mBlob) {
     this.mBlob = mBlob;
+  }
+
+  public JPATypeMockEnum getMSomeEnum() {
+    return mSomeEnum;
+  }
+
+  public void setMSomeEnum(JPATypeMockEnum mSomeEnum) {
+    this.mSomeEnum = mSomeEnum;
   }
 
   /* ========================================================================= */
