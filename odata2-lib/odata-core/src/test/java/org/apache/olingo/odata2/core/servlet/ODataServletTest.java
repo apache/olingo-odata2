@@ -18,16 +18,22 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.servlet;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import javax.servlet.GenericServlet;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.ODataResponseImpl;
 import org.apache.olingo.odata2.core.rest.ODataServiceFactoryImpl;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -89,6 +95,82 @@ public class ODataServletTest {
 
     Mockito.verify(respMock).setStatus(HttpStatusCodes.TEMPORARY_REDIRECT.getStatusCode());
     Mockito.verify(respMock).setHeader(HttpHeaders.LOCATION, "/");
+  }
+
+  @Test
+  public void contentLengthCalculatedString() throws Exception {
+    final Method createResponse =
+        ODataServlet.class.getDeclaredMethod("createResponse", HttpServletResponse.class, ODataResponse.class);
+    createResponse.setAccessible(true);
+
+    final ODataServlet servlet = new ODataServlet();
+    final String content = "Test\r\n";
+    final ODataResponse response = ODataResponseImpl.status(HttpStatusCodes.OK).entity(content).build();
+    prepareResponseMockToWrite(respMock);
+    prepareServlet(servlet);
+
+    createResponse.invoke(servlet, respMock, response);
+    Mockito.verify(respMock).setContentLength(content.getBytes("utf-8").length);
+  }
+
+  @Test
+  public void contentLengthCalculatedStream() throws Exception {
+    final Method createResponse =
+        ODataServlet.class.getDeclaredMethod("createResponse", HttpServletResponse.class, ODataResponse.class);
+    createResponse.setAccessible(true);
+
+    final ODataServlet servlet = new ODataServlet();
+    final String content = "Test\r\n";
+
+    final ODataResponse response =
+        ODataResponseImpl.status(HttpStatusCodes.OK).entity(new ByteArrayInputStream(content.getBytes("utf-8")))
+            .build();
+    prepareResponseMockToWrite(respMock);
+    prepareServlet(servlet);
+
+    createResponse.invoke(servlet, respMock, response);
+    Mockito.verify(respMock).setContentLength(content.getBytes("utf-8").length);
+  }
+
+  @Test
+  public void contentLengthHeader() throws Exception {
+    final Method createResponse =
+        ODataServlet.class.getDeclaredMethod("createResponse", HttpServletResponse.class, ODataResponse.class);
+    createResponse.setAccessible(true);
+    final ODataServlet servlet = new ODataServlet();
+    final ODataResponse response =
+        ODataResponseImpl.status(HttpStatusCodes.OK).header(HttpHeaders.CONTENT_LENGTH, "15").entity("").build();
+    prepareResponseMockToWrite(respMock);
+    prepareServlet(servlet);
+
+    createResponse.invoke(servlet, respMock, response);
+
+    Mockito.verify(respMock).setHeader(HttpHeaders.CONTENT_LENGTH, "15");
+    Mockito.verify(respMock).setContentLength(15);
+  }
+
+  @Test
+  public void contentLengthHeaderInvalid() throws Exception {
+    final Method createResponse =
+        ODataServlet.class.getDeclaredMethod("createResponse", HttpServletResponse.class, ODataResponse.class);
+    createResponse.setAccessible(true);
+    final ODataServlet servlet = new ODataServlet();
+    final ODataResponse response =
+        ODataResponseImpl.status(HttpStatusCodes.OK).header(HttpHeaders.CONTENT_LENGTH, "ab").entity("Test").build();
+    prepareResponseMockToWrite(respMock);
+    prepareServlet(servlet);
+
+    createResponse.invoke(servlet, respMock, response);
+
+    Mockito.verify(respMock).setHeader(HttpHeaders.CONTENT_LENGTH, "ab");
+    Mockito.verify(respMock).setContentLength(4); // ||"Test"|| = 4
+  }
+
+  private void prepareResponseMockToWrite(final HttpServletResponse response) throws IOException {
+    Mockito.when(response.getOutputStream()).thenReturn(new ServletOutputStream() {
+      @Override
+      public void write(int b) throws IOException {}
+    });
   }
 
   private void prepareRequest(final HttpServletRequest req, final String contextPath, final String servletPath) {
