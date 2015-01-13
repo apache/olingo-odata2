@@ -37,6 +37,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
@@ -180,7 +181,8 @@ public class RestUtil {
   public static PathInfoImpl buildODataPathInfo(final SubLocatorParameter param) throws ODataException {
     PathInfoImpl pathInfo = splitPath(param);
 
-    pathInfo.setServiceRoot(buildBaseUri(param.getServletRequest(), pathInfo.getPrecedingSegments()));
+    pathInfo.setServiceRoot(buildBaseUri(param.getUriInfo(),
+        param.getServletRequest(), pathInfo.getPrecedingSegments()));
     pathInfo.setRequestUri(buildRequestUri(param.getServletRequest()));
 
     return pathInfo;
@@ -224,10 +226,10 @@ public class RestUtil {
     return pathInfo;
   }
 
-  private static URI buildBaseUri(final HttpServletRequest request,
+  private static URI buildBaseUri(final UriInfo uriInfo, final HttpServletRequest request,
       final List<PathSegment> precedingPathSegments) throws ODataException {
     try {
-      String path = request.getContextPath() + request.getServletPath();
+      String path = uriInfo.getBaseUri().getPath();
       UriBuilder uriBuilder = UriBuilder.fromUri(path);
       for (final PathSegment ps : precedingPathSegments) {
         uriBuilder = uriBuilder.path(ps.getPath());

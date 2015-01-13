@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -49,7 +49,7 @@ import org.apache.olingo.odata2.core.rest.app.AbstractODataApplication;
  * The first segment defined by a servlet mapping belong to customer context and the following segments are OData
  * specific.
  * </p>
- * 
+ *
  */
 @Path("/")
 public class ODataRootLocator {
@@ -102,13 +102,9 @@ public class ODataRootLocator {
       return handleRedirect();
     }
 
-    ODataServiceFactory serviceFactory = createServiceFactoryFromContext(app, servletRequest, servletConfig);
+    ODataServiceFactory serviceFactory = getServiceFactory();
 
-    int pathSplit = 0;
-    final String pathSplitAsString = servletConfig.getInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL);
-    if (pathSplitAsString != null) {
-      pathSplit = Integer.parseInt(pathSplitAsString);
-    }
+    int pathSplit = getPathSplit();
 
     final SubLocatorParameter param = new SubLocatorParameter();
     param.setServiceFactory(serviceFactory);
@@ -120,6 +116,19 @@ public class ODataRootLocator {
     param.setPathSplit(pathSplit);
 
     return ODataSubLocator.create(param);
+  }
+
+  public ODataServiceFactory getServiceFactory() {
+    return createServiceFactoryFromContext(app, servletRequest, servletConfig);
+  }
+
+  public int getPathSplit() {
+    int pathSplit = 0;
+    final String pathSplitAsString = servletConfig.getInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL);
+    if (pathSplitAsString != null) {
+      pathSplit = Integer.parseInt(pathSplitAsString);
+    }
+    return pathSplit;
   }
 
   public static ODataServiceFactory createServiceFactoryFromContext(final Application app,
@@ -142,8 +151,7 @@ public class ODataRootLocator {
           factoryClass = Class.forName(factoryClassName, true, cl);
         }
       }
-      ODataServiceFactory serviceFactory = (ODataServiceFactory) factoryClass.newInstance();
-      return serviceFactory;
+      return (ODataServiceFactory) factoryClass.newInstance();
     } catch (Exception e) {
       throw new ODataRuntimeException("Exception during ODataServiceFactory creation occured.", e);
     }
