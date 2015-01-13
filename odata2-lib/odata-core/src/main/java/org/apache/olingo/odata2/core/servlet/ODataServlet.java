@@ -245,16 +245,31 @@ public class ODataServlet extends HttpServlet {
     if (entity != null) {
       ServletOutputStream out = resp.getOutputStream();
       int curByte;
+      int contentLength = 0;
+
       if (entity instanceof InputStream) {
         while ((curByte = ((InputStream) entity).read()) != -1) {
+          contentLength++;
           out.write((char) curByte);
         }
         ((InputStream) entity).close();
       } else if (entity instanceof String) {
         String body = (String) entity;
-        out.write(body.getBytes("utf-8"));
+        final byte[] entityBytes = body.getBytes("utf-8");
+        out.write(entityBytes);
+        contentLength = entityBytes.length;
       }
 
+      if (response.getHeader(HttpHeaders.CONTENT_LENGTH) != null) {
+        // Override content length
+        try {
+          contentLength = Integer.parseInt(response.getHeader(HttpHeaders.CONTENT_LENGTH));
+        } catch (NumberFormatException e) {
+          // Ignore
+        }
+      }
+
+      resp.setContentLength(contentLength);
       out.flush();
       out.close();
     }
