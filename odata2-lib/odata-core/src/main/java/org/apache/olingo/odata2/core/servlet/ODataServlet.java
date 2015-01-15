@@ -33,7 +33,6 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
-import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataHttpException;
 import org.apache.olingo.odata2.api.exception.ODataInternalServerErrorException;
 import org.apache.olingo.odata2.api.exception.ODataMethodNotAllowedException;
@@ -179,7 +178,7 @@ public class ODataServlet extends HttpServlet {
         final ODataResponse odataResponse = requestHandler.handle(odataRequest);
         createResponse(resp, odataResponse);
       }
-    } catch (ODataException e) {
+    } catch (Exception e) {
       ODataExceptionWrapper wrapper = new ODataExceptionWrapper(req, serviceFactory);
       createResponse(resp, wrapper.wrapInExceptionResponse(e));
     }
