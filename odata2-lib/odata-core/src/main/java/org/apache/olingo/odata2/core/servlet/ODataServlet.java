@@ -59,7 +59,7 @@ public class ODataServlet extends HttpServlet {
   protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
     final String factoryClassName = getInitParameter(ODataServiceFactory.FACTORY_LABEL);
     if (factoryClassName == null) {
-      throw new ODataRuntimeException("config missing: org.apache.olingo.odata2.processor.factory");
+      throw new ODataRuntimeException("config missing: " + ODataServiceFactory.FACTORY_LABEL);
     }
 
     // We have to create the Service Factory here because otherwise we do not have access to the error callback
