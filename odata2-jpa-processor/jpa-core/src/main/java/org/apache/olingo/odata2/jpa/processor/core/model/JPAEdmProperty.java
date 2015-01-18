@@ -276,7 +276,10 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         case ONE_TO_ONE:
         case MANY_TO_ONE:
 
-          addForeignKey(currentAttribute);
+          if (attributeType.equals(PersistentAttributeType.MANY_TO_ONE)
+              || attributeType.equals(PersistentAttributeType.ONE_TO_ONE)) {
+            addForeignKey(currentAttribute);
+          }
 
           JPAEdmAssociationEndView associationEndView = new JPAEdmAssociationEnd(entityTypeView, JPAEdmProperty.this);
           associationEndView.getBuilder().build();
@@ -289,14 +292,17 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
             associationView.addJPAEdmAssociationView(associationViewLocal, associationEndView);
           }
 
-          JPAEdmReferentialConstraintView refConstraintView = new JPAEdmReferentialConstraint(
-              associationView, entityTypeView, JPAEdmProperty.this);
-          refConstraintView.getBuilder().build();
+          if (attributeType.equals(PersistentAttributeType.MANY_TO_ONE)
+              || attributeType.equals(PersistentAttributeType.ONE_TO_ONE)) {
 
-          if (refConstraintView.isExists()) {
-            associationView.addJPAEdmRefConstraintView(refConstraintView);
+            JPAEdmReferentialConstraintView refConstraintView = new JPAEdmReferentialConstraint(
+                associationView, entityTypeView, JPAEdmProperty.this);
+            refConstraintView.getBuilder().build();
+
+            if (refConstraintView.isExists()) {
+              associationView.addJPAEdmRefConstraintView(refConstraintView);
+            }
           }
-
           if (navigationPropertyView == null) {
             navigationPropertyView = new JPAEdmNavigationProperty(schemaView);
           }
