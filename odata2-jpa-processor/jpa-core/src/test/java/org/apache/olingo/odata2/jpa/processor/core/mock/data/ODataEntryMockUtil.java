@@ -52,6 +52,7 @@ public class ODataEntryMockUtil {
   public static final float VALUE_MFLOAT = 2.00F;
   public static final UUID VALUE_UUID = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
   public static final short VALUE_SHORT = 2;
+  public static final JPATypeMock.JPATypeMockEnum VALUE_ENUM = JPATypeMock.JPATypeMockEnum.VALUE;
 
   public static ODataEntry mockODataEntry(final String entityName) {
     ODataEntry oDataEntry = EasyMock.createMock(ODataEntry.class);
@@ -77,6 +78,7 @@ public class ODataEntryMockUtil {
 
     if (entityName.equals(JPATypeMock.ENTITY_NAME)) {
       propertyMap.put(JPATypeMock.PROPERTY_NAME_MINT, VALUE_MINT);
+      propertyMap.put(JPATypeMock.PROPERTY_NAME_ENUM, "VALUE");
 
       VALUE_DATE_TIME = Calendar.getInstance(TimeZone.getDefault());
       VALUE_DATE_TIME.set(2013, 1, 1, 1, 1, 1);

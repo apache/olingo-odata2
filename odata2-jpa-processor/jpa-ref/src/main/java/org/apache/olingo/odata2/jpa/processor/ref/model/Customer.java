@@ -23,6 +23,8 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -39,6 +41,10 @@ public class Customer extends CustomerBase {
 
   @Column(name = "NAME")
   private String name;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "IMPORTANCE")
+  private Importance importance;
 
   @Embedded
   private Address address;
@@ -77,13 +83,13 @@ public class Customer extends CustomerBase {
     this.name = name;
   }
 
-//  public List<SalesOrderHeader> getOrders() {
-//    return orders;
-//  }
-//
-//  public void setOrders(final List<SalesOrderHeader> orders) {
-//    this.orders = orders;
-//  }
+  public Importance getImportance() {
+    return importance;
+  }
+
+  public void setImportance(Importance importance) {
+    this.importance = importance;
+  }
 
   public Address getAddress() {
     return address;
