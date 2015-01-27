@@ -23,6 +23,7 @@ import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -179,6 +180,21 @@ public class ClassHelper {
       }
     }
   }
+
+  /**
+   * Get the type of the field. For arrays and collections the type of the array or collection is returned.
+   *
+   * @param field field for which the type is extracted
+   * @return type of the field (also for arrays or collections)
+   */
+  public static Class<?> getFieldType(Field field) {
+    if(field.getType().isArray() || Collection.class.isAssignableFrom(field.getType())) {
+      return (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+    } else {
+      return field.getType();
+    }
+  }
+
 
   public static Object getFieldValue(final Object instance, final Field field) {
     try {

@@ -26,6 +26,7 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.PluralAttribute;
 
+import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
@@ -142,12 +143,15 @@ public class JPAEdmNameBuilder {
                 jpaAttributeName);
       }
     }
+    if (isForeignKey == true) {
+      joinColumnNames = view.getJPAJoinColumns().get(view.getJPAJoinColumns().size() - 1);
+    }
+
     if (skipDefaultNaming == false && propertyName == null) {
       propertyName = Character.toUpperCase(jpaAttributeName.charAt(0)) + jpaAttributeName.substring(1);
     } else if (propertyName == null) {
       propertyName = jpaAttributeName;
-      if (isForeignKey == true) {
-        joinColumnNames = view.getJPAJoinColumns().get(view.getJPAJoinColumns().size() - 1);
+      if (isForeignKey) {
         propertyName = mappingModelAccess.mapJPAAttribute(view.getJPAEdmEntityTypeView().getJPAEntityType().getName(),
             joinColumnNames[0]);
         if (propertyName == null) {
@@ -379,19 +383,6 @@ public class JPAEdmNameBuilder {
 
   }
 
-  private static String buildNamespace(final JPAEdmBaseView view) {
-    JPAEdmMappingModelAccess mappingModelAccess = view.getJPAEdmMappingModelAccess();
-    String namespace = null;
-    if (mappingModelAccess != null && mappingModelAccess.isMappingModelExists()) {
-      namespace = mappingModelAccess.mapJPAPersistenceUnit(view.getpUnitName());
-    }
-    if (namespace == null) {
-      namespace = view.getpUnitName();
-    }
-
-    return namespace;
-  }
-
   /*
    * ************************************************************************
    * EDM Association Name - RULES
@@ -408,16 +399,23 @@ public class JPAEdmNameBuilder {
     String end1Name = association.getEnd1().getType().getName();
     String end2Name = association.getEnd2().getType().getName();
 
-    if (end1Name.compareToIgnoreCase(end2Name) > 0) {
-      associationName = end2Name + UNDERSCORE + end1Name;
-    } else {
+    if (end1Name.equals(end2Name)) {
       associationName = end1Name + UNDERSCORE + end2Name;
+      associationName =
+          associationName + UNDERSCORE + multiplicityToString(association.getEnd1().getMultiplicity()) + UNDERSCORE
+              + multiplicityToString(association.getEnd2().getMultiplicity()) + Integer.toString(count);
+    } else {
+      if (end1Name.compareToIgnoreCase(end2Name) > 0) {
+        associationName = end2Name + UNDERSCORE + end1Name;
+      } else {
+        associationName = end1Name + UNDERSCORE + end2Name;
+      }
+      if (count > 1) {
+        associationName = associationName + Integer.toString(count - 1);
+      }
     }
-    if (count > 1) {
-      associationName = associationName + Integer.toString(count - 1);
-    }
-    association.setName(associationName);
 
+    association.setName(associationName);
   }
 
   /*
@@ -506,11 +504,21 @@ public class JPAEdmNameBuilder {
     // Condition for self join
     if (associationEndTypeOne.getName().equals(associationEndTypeTwo.getName())) {
       if (jpaAttribute.isCollection()) {
-        navProp.setFromRole(association.getEnd2().getRole());
-        navProp.setToRole(association.getEnd1().getRole());
+        if (association.getEnd2().getMultiplicity().equals(EdmMultiplicity.MANY)) {
+          navProp.setToRole(association.getEnd2().getRole());
+          navProp.setFromRole(association.getEnd1().getRole());
+        } else {
+          navProp.setToRole(association.getEnd1().getRole());
+          navProp.setFromRole(association.getEnd2().getRole());
+        }
       } else {
-        navProp.setToRole(association.getEnd2().getRole());
-        navProp.setFromRole(association.getEnd1().getRole());        
+        if (association.getEnd2().getMultiplicity().equals(EdmMultiplicity.ONE)) {
+          navProp.setToRole(association.getEnd2().getRole());
+          navProp.setFromRole(association.getEnd1().getRole());
+        } else {
+          navProp.setToRole(association.getEnd1().getRole());
+          navProp.setFromRole(association.getEnd2().getRole());
+        }
       }
     } else if (toName.equals(associationEndTypeOne.getName())) {
       navProp.setFromRole(association.getEnd2().getRole());
@@ -520,6 +528,33 @@ public class JPAEdmNameBuilder {
       navProp.setToRole(association.getEnd2().getRole());
       navProp.setFromRole(association.getEnd1().getRole());
     }
+  }
+
+  private static String multiplicityToString(EdmMultiplicity multiplicity) {
+    switch (multiplicity) {
+    case MANY:
+      return "Many";
+    case ONE:
+      return "One";
+    case ZERO_TO_ONE:
+      return "ZeroToOne";
+    default:
+      break;
+    }
+    return "";
+  }
+
+  private static String buildNamespace(final JPAEdmBaseView view) {
+    JPAEdmMappingModelAccess mappingModelAccess = view.getJPAEdmMappingModelAccess();
+    String namespace = null;
+    if (mappingModelAccess != null && mappingModelAccess.isMappingModelExists()) {
+      namespace = mappingModelAccess.mapJPAPersistenceUnit(view.getpUnitName());
+    }
+    if (namespace == null) {
+      namespace = view.getpUnitName();
+    }
+
+    return namespace;
   }
 
 }

@@ -60,6 +60,8 @@ public class ODataJPAModelException extends ODataJPAException {
       "INNER_EXCEPTION");
   public static final MessageReference FUNC_PARAM_NAME_EXP = createMessageReference(ODataJPAModelException.class,
       "FUNC_PARAM_NAME_EXP");
+  public static final MessageReference REF_ATTRIBUTE_NOT_FOUND = createMessageReference(ODataJPAModelException.class,
+      "REF_ATTRIBUTE_NOT_FOUND");
 
   private ODataJPAModelException(final String localizedMessage, final Throwable e, final MessageReference msgRef) {
     super(localizedMessage, e, msgRef);

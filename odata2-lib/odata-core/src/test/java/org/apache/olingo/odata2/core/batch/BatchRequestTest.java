@@ -101,7 +101,7 @@ public class BatchRequestTest {
     headers.put("content-type", "application/json");
     BatchChangeSetPart request = BatchChangeSetPart.method(PUT)
         .uri("Employees('2')")
-        .body("{\"Ð’Ð¾Ð·Ñ€Ð°Ñ�Ñ‚\":40}")
+        .body("{\"Возраст\":40}")
         .headers(headers)
         .contentId("111")
         .build();
@@ -121,8 +121,8 @@ public class BatchRequestTest {
     assertTrue(requestBody.contains("--batch_"));
     assertTrue(requestBody.contains("--changeset_"));
     assertTrue(requestBody.contains("PUT Employees('2') HTTP/1.1"));
-    assertTrue(requestBody.contains("{\"Ð’Ð¾Ð·Ñ€Ð°Ñ�Ñ‚\":40}"));
-    assertEquals(16, batchRequestStream.linesCount());
+    assertTrue(requestBody.contains("{\"Возраст\":40}"));
+    assertEquals(15, batchRequestStream.linesCount());
 
     String contentType = "multipart/mixed; boundary=" + BOUNDARY;
     BatchParser parser = new BatchParser(contentType, parseProperties, true);
@@ -162,7 +162,7 @@ public class BatchRequestTest {
     assertTrue(requestBody.contains("GET Employees HTTP/1.1"));
     assertTrue(requestBody.contains("POST Employees HTTP/1.1"));
     assertTrue(requestBody.contains(body));
-    assertEquals(25, batchRequestStream.linesCount());
+    assertEquals(24, batchRequestStream.linesCount());
 
     String contentType = "multipart/mixed; boundary=" + BOUNDARY;
     BatchParser parser = new BatchParser(contentType, parseProperties, true);

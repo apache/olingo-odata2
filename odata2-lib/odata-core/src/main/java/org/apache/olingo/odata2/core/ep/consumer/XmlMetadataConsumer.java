@@ -104,7 +104,7 @@ public class XmlMetadataConsumer {
               .getLocalName())) {
             dataServices.setDataServiceVersion(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, "DataServiceVersion"));
           }
-        } 
+        }
       }
 
       if (!reader.isEndElement() || !XmlMetadataConstants.EDMX_TAG.equals(reader.getLocalName())) {
@@ -870,17 +870,32 @@ public class XmlMetadataConsumer {
     if (!annotationAttributes.isEmpty()) {
       aElement.setAttributes(annotationAttributes);
     }
-    while (reader.hasNext() && !(reader.isEndElement() && aElement.getName() != null
-        && aElement.getName().equals(reader.getLocalName()))) {
+
+    boolean justRead = false;
+    if (reader.hasNext()) {
       reader.next();
+      justRead = true;
+    }
+
+    while (justRead && !(reader.isEndElement() && aElement.getName() != null
+        && aElement.getName().equals(reader.getLocalName()))) {
+      justRead = false;
       if (reader.isStartElement()) {
         annotationElements.add(readAnnotationElement(reader));
+        if (reader.hasNext()) {
+          reader.next();
+          justRead = true;
+        }
       } else if (reader.isCharacters()) {
         String elementText = "";
         do {
+          justRead = false;
           elementText = elementText + reader.getText();
-          reader.next();
-        } while (reader.isCharacters());
+          if (reader.hasNext()) {
+            reader.next();
+            justRead = true;
+          }
+        } while (justRead && reader.isCharacters());
         aElement.setText(elementText);
       }
     }

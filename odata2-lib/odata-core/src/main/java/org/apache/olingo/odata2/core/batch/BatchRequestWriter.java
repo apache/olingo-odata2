@@ -59,7 +59,6 @@ public class BatchRequestWriter {
             request.getContentId());
       }
       
-      writer.append(CRLF);  // CRLF belongs to the boundary delimiter or boundary closing delimiter
     }
     writer.append("--").append(boundary).append("--");
     InputStream batchRequestBody;
@@ -109,6 +108,8 @@ public class BatchRequestWriter {
 
     if (body != null && !body.isEmpty()) {
       writer.append(body);
+    } else {
+      writer.append(CRLF);
     }
   }
 

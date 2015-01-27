@@ -105,7 +105,10 @@ public class JPATypeConvertor {
       return EdmSimpleTypeKind.Binary;
     } else if (jpaType.equals(Clob.class) && isBlob(currentAttribute)) {
       return EdmSimpleTypeKind.String;
+    } else if (jpaType.isEnum()) {
+      return EdmSimpleTypeKind.String;
     }
+
     throw ODataJPAModelException.throwException(ODataJPAModelException.TYPE_NOT_SUPPORTED
         .addContent(jpaType.toString()), null);
   }

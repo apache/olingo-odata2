@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.jpa.processor.api.factory;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmMappingModelAccess;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAProcessor;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmModelView;
 
 /**
@@ -66,4 +67,10 @@ public interface JPAAccessFactory {
    * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmMappingModelAccess}
    */
   public JPAEdmMappingModelAccess getJPAEdmMappingModelAccess(ODataJPAContext oDataJPAContext);
+
+  /**
+   * The method instantiates a JPAEdmMapping instance.
+   * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping}
+   */
+  public JPAEdmMapping getJPAEdmMappingInstance();
 }

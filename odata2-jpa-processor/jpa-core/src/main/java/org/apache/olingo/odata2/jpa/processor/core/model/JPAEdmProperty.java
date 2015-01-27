@@ -276,7 +276,10 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         case ONE_TO_ONE:
         case MANY_TO_ONE:
 
-          addForeignKey(currentAttribute);
+          if (attributeType.equals(PersistentAttributeType.MANY_TO_ONE)
+              || attributeType.equals(PersistentAttributeType.ONE_TO_ONE)) {
+            addForeignKey(currentAttribute);
+          }
 
           JPAEdmAssociationEndView associationEndView = new JPAEdmAssociationEnd(entityTypeView, JPAEdmProperty.this);
           associationEndView.getBuilder().build();
@@ -289,14 +292,17 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
             associationView.addJPAEdmAssociationView(associationViewLocal, associationEndView);
           }
 
-          JPAEdmReferentialConstraintView refConstraintView = new JPAEdmReferentialConstraint(
-              associationView, entityTypeView, JPAEdmProperty.this);
-          refConstraintView.getBuilder().build();
+          if (attributeType.equals(PersistentAttributeType.MANY_TO_ONE)
+              || attributeType.equals(PersistentAttributeType.ONE_TO_ONE)) {
 
-          if (refConstraintView.isExists()) {
-            associationView.addJPAEdmRefConstraintView(refConstraintView);
+            JPAEdmReferentialConstraintView refConstraintView = new JPAEdmReferentialConstraint(
+                associationView, entityTypeView, JPAEdmProperty.this);
+            refConstraintView.getBuilder().build();
+
+            if (refConstraintView.isExists()) {
+              associationView.addJPAEdmRefConstraintView(refConstraintView);
+            }
           }
-
           if (navigationPropertyView == null) {
             navigationPropertyView = new JPAEdmNavigationProperty(schemaView);
           }
@@ -372,7 +378,14 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
       String[] name = { null, null };
       name[0] = joinColumn.name().equals("") == true ? jpaAttribute.getName() : joinColumn.name();
 
-      EntityType<?> referencedEntityType = metaModel.entity(jpaAttribute.getJavaType());
+      EntityType<?> referencedEntityType = null;
+      if (jpaAttribute.isCollection()) {
+        referencedEntityType =
+            metaModel.entity(((PluralAttribute<?, ?, ?>) currentAttribute).getElementType().getJavaType());
+      } else {
+        referencedEntityType = metaModel.entity(jpaAttribute.getJavaType());
+      }
+
       if (joinColumn.referencedColumnName().equals("")) {
         for (Attribute<?, ?> referencedAttribute : referencedEntityType.getAttributes()) {
           if (referencedAttribute.getPersistentAttributeType() == PersistentAttributeType.BASIC &&
@@ -407,6 +420,10 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         }
       }
 
+      if (currentRefAttribute == null) {
+        throw ODataJPAModelException.throwException(ODataJPAModelException.REF_ATTRIBUTE_NOT_FOUND
+            .addContent(referencedEntityType.getName()), null);
+      }
       if (joinColumn.insertable() && joinColumn.updatable()) {
         currentSimpleProperty = new SimpleProperty();
         properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty, true));

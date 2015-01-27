@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBu
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextView;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement.JPQLStatementBuilder;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmModelView;
 import org.apache.olingo.odata2.jpa.processor.core.ODataJPAContextImpl;
 import org.apache.olingo.odata2.jpa.processor.core.ODataJPAProcessorDefault;
@@ -53,6 +54,7 @@ import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLSelectContext;
 import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLSelectSingleContext;
 import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLSelectSingleStatementBuilder;
 import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLSelectStatementBuilder;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmModel;
 
 public class ODataJPAFactoryImpl extends ODataJPAFactory {
@@ -238,6 +240,11 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
       JPAEdmMappingModelAccess mappingModelAccess = new JPAEdmMappingModelService(oDataJPAContext);
 
       return mappingModelAccess;
+    }
+
+    @Override
+    public JPAEdmMapping getJPAEdmMappingInstance() {
+      return new JPAEdmMappingImpl();
     }
 
   }

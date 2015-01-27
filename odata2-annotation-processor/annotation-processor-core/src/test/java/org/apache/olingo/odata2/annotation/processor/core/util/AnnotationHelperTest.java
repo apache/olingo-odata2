@@ -17,6 +17,7 @@ package org.apache.olingo.odata2.annotation.processor.core.util;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -160,23 +161,33 @@ public class AnnotationHelperTest {
   }
 
   @Test
-  public void extractEntitTypeNameViaNavigation() throws Exception {
+  public void extractEntityTypeNameViaNavigation() throws Exception {
     Field field = NavigationAnnotated.class.getDeclaredField("navigationPropertySimpleEntity");
     EdmNavigationProperty enp = field.getAnnotation(EdmNavigationProperty.class);
 
-    String name = annotationHelper.extractEntitTypeName(enp, SimpleEntity.class);
+    String name = annotationHelper.extractEntityTypeName(enp, SimpleEntity.class);
 
     Assert.assertEquals("SimpleEntity", name);
   }
 
   @Test
-  public void extractEntitTypeNameViaNavigationField() throws Exception {
+  public void extractEntityTypeNameViaNavigationField() throws Exception {
     Field field = NavigationAnnotated.class.getDeclaredField("navigationPropertyDefault");
     EdmNavigationProperty enp = field.getAnnotation(EdmNavigationProperty.class);
 
-    String name = annotationHelper.extractEntitTypeName(enp, field);
+    String name = annotationHelper.extractEntityTypeName(enp, field);
 
     Assert.assertEquals("SimpleEntity", name);
+  }
+
+  @Test
+  public void selfReferencedEntityTypeNameViaNavigationField() throws Exception {
+    Field field = NavigationAnnotated.class.getDeclaredField("selfReferencedNavigation");
+    EdmNavigationProperty enp = field.getAnnotation(EdmNavigationProperty.class);
+
+    String name = annotationHelper.extractToRoleName(enp, field);
+
+    Assert.assertEquals("r_SelfReferencedNavigation", name);
   }
 
   @Test
@@ -247,11 +258,14 @@ public class AnnotationHelperTest {
     }
   }
 
+  @EdmEntityType
   private class NavigationAnnotated {
     @EdmNavigationProperty(toType = SimpleEntity.class)
     SimpleEntity navigationPropertySimpleEntity;
     @EdmNavigationProperty
     SimpleEntity navigationPropertyDefault;
+    @EdmNavigationProperty
+    List<NavigationAnnotated> selfReferencedNavigation;
   }
 
   private class ConversionProperty {

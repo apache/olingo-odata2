@@ -217,8 +217,6 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
   @Override
   public int getNumberOfAssociationsWithSimilarEndPoints(final JPAEdmAssociationEndView view) {
     int count = 0;
-    AssociationEnd currentAssociationEnd1 = view.getEdmAssociationEnd1();
-    AssociationEnd currentAssociationEnd2 = view.getEdmAssociationEnd2();
     AssociationEnd end1 = null;
     AssociationEnd end2 = null;
     for (String key : associationMap.keySet()) {
@@ -226,10 +224,7 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
       if (association != null) {
         end1 = association.getEnd1();
         end2 = association.getEnd2();
-        if ((end1.getType().equals(currentAssociationEnd1.getType()) && end2.getType().equals(
-            currentAssociationEnd2.getType()))
-            || (end1.getType().equals(currentAssociationEnd2.getType()) && end2.getType().equals(
-                currentAssociationEnd1.getType()))) {
+        if (view.compare(end1, end2)) {
           count++;
         }
       }

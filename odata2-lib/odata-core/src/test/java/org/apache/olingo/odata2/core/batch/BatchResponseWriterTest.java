@@ -19,11 +19,12 @@
 package org.apache.olingo.odata2.core.batch;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +32,13 @@ import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.junit.Test;
 
 public class BatchResponseWriterTest {
+
+  private static final String CRLF = "\r\n";
 
   @Test
   public void testBatchResponse() throws BatchException, IOException {
@@ -57,16 +62,35 @@ public class BatchResponseWriterTest {
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
     String body = (String) batchResponse.getEntity();
-    
-    assertTrue(body.contains("--batch"));
-    assertTrue(body.contains("--changeset"));
-    assertTrue(body.contains("HTTP/1.1 200 OK"));
-    assertTrue(body.contains("Content-Type: application/http"));
-    assertTrue(body.contains("Content-Transfer-Encoding: binary"));
-    assertTrue(body.contains("Walter Winter"));
-    assertTrue(body.contains("multipart/mixed; boundary=changeset"));
-    assertTrue(body.contains("HTTP/1.1 204 No Content"));
 
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(body.getBytes())));
+    List<Line> lines = reader.toList();
+    reader.close();
+    int index = 0;
+
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("HTTP/1.1 200 OK" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Type: application/json" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 13" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("Walter Winter" + CRLF, lines.get(index++).toString());
+    
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index++).toString().startsWith("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("HTTP/1.1 204 No Content" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
   }
 
   @Test
@@ -83,15 +107,23 @@ public class BatchResponseWriterTest {
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
     String body = (String) batchResponse.getEntity();
-
-    assertTrue(body.contains("--batch"));
-    assertFalse(body.contains("--changeset"));
-    assertTrue(body.contains("HTTP/1.1 200 OK" + "\r\n"));
-    assertTrue(body.contains("Content-Type: application/http" + "\r\n"));
-    assertTrue(body.contains("Content-Transfer-Encoding: binary" + "\r\n"));
-    assertTrue(body.contains("Walter Winter"));
-    assertFalse(body.contains("multipart/mixed; boundary=changeset"));
-
+    
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(body.getBytes())));
+    List<Line> lines = reader.toList();
+    reader.close();
+    int index = 0;
+    
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("HTTP/1.1 200 OK" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Type: application/json" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 13" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("Walter Winter" + CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
   }
 
   @Test
@@ -108,15 +140,25 @@ public class BatchResponseWriterTest {
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
     String body = (String) batchResponse.getEntity();
-    assertTrue(body.contains("--batch"));
-    assertTrue(body.contains("--changeset"));
-    assertTrue(body.indexOf("--changeset") != body.lastIndexOf("--changeset"));
-    assertFalse(body.contains("HTTP/1.1 200 OK" + "\r\n"));
-    assertTrue(body.contains("Content-Type: application/http" + "\r\n"));
-    assertTrue(body.contains("Content-Transfer-Encoding: binary" + "\r\n"));
-    assertTrue(body.contains("HTTP/1.1 204 No Content" + "\r\n"));
-    assertTrue(body.contains("Content-Type: multipart/mixed; boundary=changeset"));
-
+    
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(body.getBytes())));
+    List<Line> lines = reader.toList();
+    reader.close();
+    int index = 0;
+    
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index++).toString().startsWith("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("HTTP/1.1 204 No Content" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
   }
 
   @Test
@@ -137,17 +179,25 @@ public class BatchResponseWriterTest {
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
     String body = (String) batchResponse.getEntity();
+    
+    BufferedReaderIncludingLineEndings reader =
+        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(body.getBytes())));
+    List<Line> lines = reader.toList();
+    reader.close();
+    int index = 0;
 
-    String mimeHeader = "Content-Type: application/http" + "\r\n"
-        + "Content-Transfer-Encoding: binary" + "\r\n"
-        + "Content-Id: mimeHeaderContentId123" + "\r\n";
-
-    String requestHeader = "Content-Id: requestHeaderContentId123" + "\r\n"
-        + "Content-Type: application/json" + "\r\n"
-        + "Content-Length: 13" + "\r\n";
-
-    assertTrue(body.contains(mimeHeader));
-    assertTrue(body.contains(requestHeader));
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Id: mimeHeaderContentId123" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("HTTP/1.1 200 OK" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Id: requestHeaderContentId123" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Type: application/json" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 13" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("Walter Winter" + CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
   }
 
 }

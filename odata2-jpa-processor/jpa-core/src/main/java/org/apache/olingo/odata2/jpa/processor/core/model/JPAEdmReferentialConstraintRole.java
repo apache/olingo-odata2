@@ -141,6 +141,7 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
 
     private void buildRole() throws SecurityException, NoSuchFieldException {
 
+      int index = 0;
       if (currentRole == null) {
         currentRole = new ReferentialConstraintRole();
         String jpaAttributeType = null;
@@ -157,6 +158,7 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
             jpaAttributeType = type.toString().substring(lastIndexOfDot + 1);
           }
           edmEntityType = entityTypeView.searchEdmEntityType(jpaAttributeType);
+          index = 1;
         } else if (roleType == RoleType.DEPENDENT) {
           edmEntityType =
               entityTypeView.searchEdmEntityType(jpaAttribute.getDeclaringType().getJavaType().getSimpleName());
@@ -167,10 +169,8 @@ public class JPAEdmReferentialConstraintRole extends JPAEdmBaseViewImpl implemen
           for (String[] columnName : jpaColumnNames) {
             for (Property property : edmEntityType.getProperties()) {
               jpaColumnName = ((JPAEdmMapping) property.getMapping()).getJPAColumnName();
-              if (columnName[0].equals(jpaColumnName) ||
-                  columnName[0].equals(property.getName()) ||
-                  columnName[1].equals(jpaColumnName) ||
-                  columnName[1].equals(property.getName())) {
+              if (columnName[index].equals(jpaColumnName) ||
+                  columnName[index].equals(property.getName())) {
                 PropertyRef propertyRef = new PropertyRef();
                 propertyRef.setName(property.getName());
                 propertyRefs.add(propertyRef);

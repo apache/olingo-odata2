@@ -33,7 +33,6 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.exception.MessageReference;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
-import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataHttpException;
 import org.apache.olingo.odata2.api.exception.ODataInternalServerErrorException;
 import org.apache.olingo.odata2.api.exception.ODataMethodNotAllowedException;
@@ -60,86 +59,91 @@ public class ODataServlet extends HttpServlet {
   protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
     final String factoryClassName = getInitParameter(ODataServiceFactory.FACTORY_LABEL);
     if (factoryClassName == null) {
-      throw new ODataRuntimeException("config missing: org.apache.olingo.odata2.processor.factory");
+      throw new ODataRuntimeException("config missing: " + ODataServiceFactory.FACTORY_LABEL);
     }
+
+    // We have to create the Service Factory here because otherwise we do not have access to the error callback
+    ODataServiceFactory serviceFactory = createServiceFactory(req);
+
     String xHttpMethod = req.getHeader("X-HTTP-Method");
     String xHttpMethodOverride = req.getHeader("X-HTTP-Method-Override");
     if (xHttpMethod != null && xHttpMethodOverride != null) {
       if (!xHttpMethod.equalsIgnoreCase(xHttpMethodOverride)) {
-        ODataExceptionWrapper wrapper = new ODataExceptionWrapper(req);
+        ODataExceptionWrapper wrapper = new ODataExceptionWrapper(req, serviceFactory);
         createResponse(resp, wrapper.wrapInExceptionResponse(
             new ODataBadRequestException(ODataBadRequestException.AMBIGUOUS_XMETHOD)));
       }
     }
 
     if (req.getPathInfo() != null) {
-      handle(req, resp, xHttpMethod, xHttpMethodOverride);
+      handle(req, resp, xHttpMethod, xHttpMethodOverride, serviceFactory);
     } else {
-      handleRedirect(req, resp);
+      handleRedirect(req, resp, serviceFactory);
     }
   }
 
   private void handle(final HttpServletRequest req, final HttpServletResponse resp, final String xHttpMethod,
-      final String xHttpMethodOverride) throws IOException {
+      final String xHttpMethodOverride, ODataServiceFactory serviceFactory) throws IOException {
     String method = req.getMethod();
     if (ODataHttpMethod.GET.name().equals(method)) {
-      handleRequest(req, ODataHttpMethod.GET, resp);
+      handleRequest(req, ODataHttpMethod.GET, resp, serviceFactory);
     } else if (ODataHttpMethod.POST.name().equals(method)) {
       if (xHttpMethod == null && xHttpMethodOverride == null) {
-        handleRequest(req, ODataHttpMethod.POST, resp);
+        handleRequest(req, ODataHttpMethod.POST, resp, serviceFactory);
       } else if (xHttpMethod == null) {
         /* tunneling */
-        boolean methodHandled = handleHttpTunneling(req, resp, xHttpMethodOverride);
+        boolean methodHandled = handleHttpTunneling(req, resp, xHttpMethodOverride, serviceFactory);
         if (!methodHandled) {
-          createMethodNotAllowedResponse(req, ODataHttpException.COMMON, resp);
+          createMethodNotAllowedResponse(req, ODataHttpException.COMMON, resp, serviceFactory);
         }
       } else {
         /* tunneling */
-        boolean methodHandled = handleHttpTunneling(req, resp, xHttpMethod);
+        boolean methodHandled = handleHttpTunneling(req, resp, xHttpMethod, serviceFactory);
         if (!methodHandled) {
-          createNotImplementedResponse(req, ODataNotImplementedException.TUNNELING, resp);
+          createNotImplementedResponse(req, ODataNotImplementedException.TUNNELING, resp, serviceFactory);
         }
       }
 
     } else if (ODataHttpMethod.PUT.name().equals(method)) {
-      handleRequest(req, ODataHttpMethod.PUT, resp);
+      handleRequest(req, ODataHttpMethod.PUT, resp, serviceFactory);
     } else if (ODataHttpMethod.DELETE.name().equals(method)) {
-      handleRequest(req, ODataHttpMethod.DELETE, resp);
+      handleRequest(req, ODataHttpMethod.DELETE, resp, serviceFactory);
     } else if (ODataHttpMethod.PATCH.name().equals(method)) {
-      handleRequest(req, ODataHttpMethod.PATCH, resp);
+      handleRequest(req, ODataHttpMethod.PATCH, resp, serviceFactory);
     } else if (ODataHttpMethod.MERGE.name().equals(method)) {
-      handleRequest(req, ODataHttpMethod.MERGE, resp);
+      handleRequest(req, ODataHttpMethod.MERGE, resp, serviceFactory);
     } else if (HTTP_METHOD_HEAD.equals(method) || HTTP_METHOD_OPTIONS.equals(method)) {
-      createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
+      createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp, serviceFactory);
     } else {
-      createNotImplementedResponse(req, ODataHttpException.COMMON, resp);
+      createNotImplementedResponse(req, ODataHttpException.COMMON, resp, serviceFactory);
     }
   }
 
   private boolean handleHttpTunneling(final HttpServletRequest req, final HttpServletResponse resp,
-      final String xHttpMethod) throws IOException {
+      final String xHttpMethod, ODataServiceFactory serviceFactory) throws IOException {
     if (ODataHttpMethod.MERGE.name().equals(xHttpMethod)) {
-      handleRequest(req, ODataHttpMethod.MERGE, resp);
+      handleRequest(req, ODataHttpMethod.MERGE, resp, serviceFactory);
     } else if (ODataHttpMethod.PATCH.name().equals(xHttpMethod)) {
-      handleRequest(req, ODataHttpMethod.PATCH, resp);
+      handleRequest(req, ODataHttpMethod.PATCH, resp, serviceFactory);
     } else if (ODataHttpMethod.DELETE.name().equals(xHttpMethod)) {
-      handleRequest(req, ODataHttpMethod.DELETE, resp);
+      handleRequest(req, ODataHttpMethod.DELETE, resp, serviceFactory);
     } else if (ODataHttpMethod.PUT.name().equals(xHttpMethod)) {
-      handleRequest(req, ODataHttpMethod.PUT, resp);
+      handleRequest(req, ODataHttpMethod.PUT, resp, serviceFactory);
     } else if (ODataHttpMethod.GET.name().equals(xHttpMethod)) {
-      handleRequest(req, ODataHttpMethod.GET, resp);
+      handleRequest(req, ODataHttpMethod.GET, resp, serviceFactory);
     } else if (ODataHttpMethod.POST.name().equals(xHttpMethod)) {
-      handleRequest(req, ODataHttpMethod.POST, resp);
+      handleRequest(req, ODataHttpMethod.POST, resp, serviceFactory);
     } else if (HTTP_METHOD_HEAD.equals(xHttpMethod) || HTTP_METHOD_OPTIONS.equals(xHttpMethod)) {
-      createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
+      createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp, serviceFactory);
     } else {
-      createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp);
+      createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp, serviceFactory);
     }
     return true;
   }
 
   private void
-      handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp)
+      handleRequest(final HttpServletRequest req, final ODataHttpMethod method, final HttpServletResponse resp,
+          ODataServiceFactory serviceFactory)
           throws IOException {
     try {
       final String pathSplitAsString = getInitParameter(ODataServiceFactory.PATH_SPLIT_LABEL);
@@ -148,7 +152,7 @@ public class ODataServlet extends HttpServlet {
         pathSplit = Integer.parseInt(pathSplitAsString);
       }
       if (req.getHeader(HttpHeaders.ACCEPT) != null && req.getHeader(HttpHeaders.ACCEPT).isEmpty()) {
-        createNotAcceptableResponse(req, ODataNotAcceptableException.COMMON, resp);
+        createNotAcceptableResponse(req, ODataNotAcceptableException.COMMON, resp, serviceFactory);
       }
       ODataRequest odataRequest = ODataRequest.method(method)
           .contentType(RestUtil.extractRequestContentType(req.getContentType()).toContentTypeString())
@@ -159,13 +163,13 @@ public class ODataServlet extends HttpServlet {
           .requestHeaders(RestUtil.extractHeaders(req))
           .body(req.getInputStream())
           .build();
-      ODataServiceFactory serviceFactory = createServiceFactory(req);
+
       ODataContextImpl context = new ODataContextImpl(odataRequest, serviceFactory);
       context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, req);
 
       ODataService service = serviceFactory.createService(context);
-      if(service == null){
-        createServiceUnavailableResponse(req, ODataInternalServerErrorException.NOSERVICE, resp);
+      if (service == null) {
+        createServiceUnavailableResponse(req, ODataInternalServerErrorException.NOSERVICE, resp, serviceFactory);
       } else {
         context.setService(service);
         service.getProcessor().setContext(context);
@@ -174,8 +178,8 @@ public class ODataServlet extends HttpServlet {
         final ODataResponse odataResponse = requestHandler.handle(odataRequest);
         createResponse(resp, odataResponse);
       }
-    } catch (ODataException e) {
-      ODataExceptionWrapper wrapper = new ODataExceptionWrapper(req);
+    } catch (Exception e) {
+      ODataExceptionWrapper wrapper = new ODataExceptionWrapper(req, serviceFactory);
       createResponse(resp, wrapper.wrapInExceptionResponse(e));
     }
   }
@@ -194,7 +198,8 @@ public class ODataServlet extends HttpServlet {
     }
   }
 
-  private void handleRedirect(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
+  private void handleRedirect(final HttpServletRequest req, final HttpServletResponse resp,
+      ODataServiceFactory serviceFactory) throws IOException {
     String method = req.getMethod();
     if (ODataHttpMethod.GET.name().equals(method) ||
         ODataHttpMethod.POST.name().equals(method) ||
@@ -209,7 +214,7 @@ public class ODataServlet extends HttpServlet {
           .build();
       createResponse(resp, odataResponse);
     } else {
-      createNotImplementedResponse(req, ODataHttpException.COMMON, resp);
+      createNotImplementedResponse(req, ODataHttpException.COMMON, resp, serviceFactory);
     }
 
   }
@@ -239,26 +244,41 @@ public class ODataServlet extends HttpServlet {
     if (entity != null) {
       ServletOutputStream out = resp.getOutputStream();
       int curByte;
+      int contentLength = 0;
+
       if (entity instanceof InputStream) {
         while ((curByte = ((InputStream) entity).read()) != -1) {
+          contentLength++;
           out.write((char) curByte);
         }
         ((InputStream) entity).close();
       } else if (entity instanceof String) {
         String body = (String) entity;
-        out.write(body.getBytes("utf-8"));
+        final byte[] entityBytes = body.getBytes("utf-8");
+        out.write(entityBytes);
+        contentLength = entityBytes.length;
       }
 
+      if (response.getHeader(HttpHeaders.CONTENT_LENGTH) != null) {
+        // Override content length
+        try {
+          contentLength = Integer.parseInt(response.getHeader(HttpHeaders.CONTENT_LENGTH));
+        } catch (NumberFormatException e) {
+          // Ignore
+        }
+      }
+
+      resp.setContentLength(contentLength);
       out.flush();
       out.close();
     }
   }
 
   private void createNotImplementedResponse(final HttpServletRequest req, final MessageReference messageReference,
-      final HttpServletResponse resp) throws IOException {
+      final HttpServletResponse resp, ODataServiceFactory serviceFactory) throws IOException {
     // RFC 2616, 5.1.1: "An origin server SHOULD return the status code [...]
     // 501 (Not Implemented) if the method is unrecognized [...] by the origin server."
-    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req);
+    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req, serviceFactory);
     ODataResponse response =
         exceptionWrapper.wrapInExceptionResponse(new ODataNotImplementedException(messageReference));
 //    resp.setStatus(HttpStatusCodes.NOT_IMPLEMENTED.getStatusCode());
@@ -266,24 +286,24 @@ public class ODataServlet extends HttpServlet {
   }
 
   private void createMethodNotAllowedResponse(final HttpServletRequest req, final MessageReference messageReference,
-      final HttpServletResponse resp) throws IOException {
-    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req);
+      final HttpServletResponse resp, ODataServiceFactory serviceFactory) throws IOException {
+    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req, serviceFactory);
     ODataResponse response =
         exceptionWrapper.wrapInExceptionResponse(new ODataMethodNotAllowedException(messageReference));
     createResponse(resp, response);
   }
 
   private void createNotAcceptableResponse(final HttpServletRequest req, final MessageReference messageReference,
-      final HttpServletResponse resp) throws IOException {
-    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req);
+      final HttpServletResponse resp, ODataServiceFactory serviceFactory) throws IOException {
+    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req, serviceFactory);
     ODataResponse response =
         exceptionWrapper.wrapInExceptionResponse(new ODataNotAcceptableException(messageReference));
     createResponse(resp, response);
   }
 
   private void createServiceUnavailableResponse(HttpServletRequest req, MessageReference messageReference,
-      HttpServletResponse resp) throws IOException {
-    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req);
+      HttpServletResponse resp, ODataServiceFactory serviceFactory) throws IOException {
+    ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req, serviceFactory);
     ODataResponse response =
         exceptionWrapper.wrapInExceptionResponse(new ODataInternalServerErrorException(messageReference));
     createResponse(resp, response);

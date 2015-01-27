@@ -24,9 +24,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Member;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EmbeddableType;
@@ -34,9 +38,11 @@ import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.Type;
 
+import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
+import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
@@ -51,15 +57,18 @@ import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.Com
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEdmMockData.SimpleType;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEmbeddableTypeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAEntityTypeMock;
+import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAJavaMemberMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAMetaModelMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAPluralAttributeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPASingularAttributeMock;
+import org.easymock.EasyMock;
 import org.junit.Test;
 
 public class JPAEdmPropertyTest extends JPAEdmTestModelView {
 
   private JPAEdmPropertyTest objJPAEdmPropertyTest;
   private JPAEdmProperty objJPAEdmProperty;
+  private static java.lang.String testCase = "Default";
 
   private static PersistentAttributeType ATTRIBUTE_TYPE = PersistentAttributeType.BASIC;
 
@@ -157,8 +166,10 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
   @Test
   public void testBuildManyToOne() {
     ATTRIBUTE_TYPE = PersistentAttributeType.MANY_TO_ONE;
+    testCase = "Default";
     objJPAEdmPropertyTest = new JPAEdmPropertyTest();
     objJPAEdmProperty = new JPAEdmProperty(objJPAEdmPropertyTest);
+
     try {
       objJPAEdmProperty.getBuilder().build();
     } catch (ODataJPAModelException e) {
@@ -167,7 +178,32 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
-    assertNotNull(objJPAEdmProperty.getJPAEdmNavigationPropertyView().getEdmNavigationProperty());
+    NavigationProperty navigationProperty =
+        objJPAEdmProperty.getJPAEdmNavigationPropertyView().getEdmNavigationProperty();
+    assertNotNull(navigationProperty);
+  }
+
+  @Test
+  public void testBuildManyToOneNoJoinColumnNames() {
+    ATTRIBUTE_TYPE = PersistentAttributeType.MANY_TO_ONE;
+    testCase = "NoJoinColumnNames";
+    objJPAEdmPropertyTest = new JPAEdmPropertyTest();
+    objJPAEdmProperty = new JPAEdmProperty(objJPAEdmPropertyTest);
+
+    try {
+      objJPAEdmProperty.getBuilder().build();
+    } catch (ODataJPAModelException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+
+    NavigationProperty navigationProperty =
+        objJPAEdmProperty.getJPAEdmNavigationPropertyView().getEdmNavigationProperty();
+    assertNotNull(navigationProperty);
+    assertEquals("String", navigationProperty.getFromRole());
+    assertEquals("salesorderprocessing", navigationProperty.getToRole());
+    assertEquals("StringDetails", navigationProperty.getName());
   }
 
   @Override
@@ -227,9 +263,20 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
   @Override
   public Association getEdmAssociation() {
     Association association = new Association();
+    AssociationEnd end1 = new AssociationEnd();
+    end1.setType(new FullQualifiedName("salesorderprocessing", "SalesOrderHeader"));
+    end1.setMultiplicity(EdmMultiplicity.MANY);
+    end1.setRole("salesorderprocessing");
+
+    AssociationEnd end2 = new AssociationEnd();
+    end2.setType(new FullQualifiedName("String", "SalesOrderHeader"));
+    end2.setMultiplicity(EdmMultiplicity.ONE);
+    end2.setRole("String");
+
     association
-        .setEnd1(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "SalesOrderHeader")));
-    association.setEnd2(new AssociationEnd().setType(new FullQualifiedName("salesorderprocessing", "String")));
+        .setEnd1(end1);
+    association.setEnd2(end2);
+    association.setName("salesorderprocessing_String");
 
     return association;
   }
@@ -254,6 +301,58 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
     return this;
   }
 
+  @Override
+  public Attribute<?, ?> getJPAReferencedAttribute() {
+    JPAEdmAttribute<Object, String> refAttribute =
+        new JPAEdmAttribute<Object, String>(java.lang.String.class, "SOLITID");
+
+    return refAttribute;
+  }
+
+  @SuppressWarnings("hiding")
+  private static class JPAEdmAttribute<Object, String> extends JPASingularAttributeMock<Object, String> {
+
+    @Override
+    public PersistentAttributeType getPersistentAttributeType() {
+      if (attributeName.equals("SOLITID")) {
+        return PersistentAttributeType.BASIC;
+      }
+      return ATTRIBUTE_TYPE;
+    }
+
+    Class<String> clazz;
+    java.lang.String attributeName;
+
+    public JPAEdmAttribute(final Class<String> javaType, final java.lang.String name) {
+      this.clazz = javaType;
+      this.attributeName = name;
+
+    }
+
+    @Override
+    public Class<String> getJavaType() {
+      return clazz;
+    }
+
+    @Override
+    public java.lang.String getName() {
+      return this.attributeName;
+    }
+
+    @Override
+    public boolean isId() {
+      return true;
+    }
+
+    @Override
+    public Member getJavaMember() {
+      if (this.attributeName.equals("SOLITID")) {
+        return new JPAJavaMember();
+      }
+      return null;
+    }
+  }
+
   private class JPAEdmMetaModel extends JPAMetaModelMock {
     Set<EntityType<?>> entities;
     Set<EmbeddableType<?>> embeddableSet;
@@ -265,7 +364,7 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
 
     @Override
     public Set<EntityType<?>> getEntities() {
-      entities.add(new JPAEdmEntityType());
+      entities.add(new JPAEdmEntityType<String>());
       return entities;
     }
 
@@ -275,16 +374,39 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
       return embeddableSet;
     }
 
-    private class JPAEdmEntityType extends JPAEntityTypeMock<String> {
-      @Override
-      public String getName() {
-        return "SalesOrderHeader";
-      }
+    @SuppressWarnings("unchecked")
+    @Override
+    public <X> EntityType<X> entity(final Class<X> arg0) {
+      JPAEdmRefEntityType<String> refEntityType = new JPAEdmRefEntityType<String>();
+      return (EntityType<X>) refEntityType;
+
     }
   }
 
   @SuppressWarnings("hiding")
-  private class JPAEdmEntityType<String> extends JPAEntityTypeMock<String> {
+  private static class JPAEdmRefEntityType<String> extends JPAEntityTypeMock<String> {
+    Set<Attribute<? super String, ?>> attributeSet = new HashSet<Attribute<? super String, ?>>();
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void setValuesToSet() {
+      attributeSet.add((Attribute<? super String, String>) new JPAEdmAttribute(java.lang.String.class, "SOLITID"));
+      attributeSet.add((Attribute<? super String, String>) new JPAEdmAttribute(java.lang.String.class, "SONAME"));
+    }
+
+    @Override
+    public Set<Attribute<? super String, ?>> getAttributes() {
+      setValuesToSet();
+      return attributeSet;
+    }
+
+    @Override
+    public java.lang.String getName() {
+      return "salesorderitemdetails";
+    }
+  }
+
+  @SuppressWarnings("hiding")
+  private static class JPAEdmEntityType<String> extends JPAEntityTypeMock<String> {
     Set<Attribute<? super String, ?>> attributeSet = new HashSet<Attribute<? super String, ?>>();
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -306,6 +428,16 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
     }
 
     private class JPAEdmPluralAttribute extends JPAPluralAttributeMock {
+
+      @Override
+      public Member getJavaMember() {
+        if (ATTRIBUTE_TYPE.equals(PersistentAttributeType.MANY_TO_ONE)) {
+          return new JPAJavaMember();
+        }
+        return null;
+
+      }
+
       @Override
       public java.lang.String getName() {
         return "salesorderheaderdetails";
@@ -336,38 +468,6 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
           }
 
         };
-      }
-    }
-
-    private class JPAEdmAttribute<Object, String> extends JPASingularAttributeMock<Object, String> {
-
-      @Override
-      public PersistentAttributeType getPersistentAttributeType() {
-        return ATTRIBUTE_TYPE;
-      }
-
-      Class<String> clazz;
-      java.lang.String attributeName;
-
-      public JPAEdmAttribute(final Class<String> javaType, final java.lang.String name) {
-        this.clazz = javaType;
-        this.attributeName = name;
-
-      }
-
-      @Override
-      public Class<String> getJavaType() {
-        return clazz;
-      }
-
-      @Override
-      public java.lang.String getName() {
-        return this.attributeName;
-      }
-
-      @Override
-      public boolean isId() {
-        return true;
       }
     }
   }
@@ -433,6 +533,48 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
       }
     }
 
+  }
+
+  private static class JPAJavaMember extends JPAJavaMemberMock {
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends Annotation> T getAnnotation(final Class<T> annotationClass) {
+
+      if (annotationClass.equals(JoinColumn.class)) {
+
+        if (testCase.equals("Default")) {
+          JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
+          EasyMock.expect(joinColumn.name()).andReturn("FSOID").anyTimes();
+          EasyMock.expect(joinColumn.referencedColumnName()).andReturn("SOLITID").anyTimes();
+          EasyMock.expect(joinColumn.insertable()).andReturn(true).anyTimes();
+          EasyMock.expect(joinColumn.updatable()).andReturn(true).anyTimes();
+          EasyMock.replay(joinColumn);
+          return (T) joinColumn;
+        } else if (testCase.equals("NoJoinColumnNames")) {
+          JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
+          EasyMock.expect(joinColumn.name()).andReturn("").anyTimes();
+          EasyMock.expect(joinColumn.referencedColumnName()).andReturn("").anyTimes();
+          EasyMock.expect(joinColumn.insertable()).andReturn(true).anyTimes();
+          EasyMock.expect(joinColumn.updatable()).andReturn(true).anyTimes();
+          EasyMock.replay(joinColumn);
+          return (T) joinColumn;
+        }
+
+      } else {
+
+        if (testCase.equals("Default")) {
+          Column column = EasyMock.createMock(Column.class);
+          EasyMock.expect(column.name()).andReturn("SOLITID").anyTimes();
+          EasyMock.expect(column.nullable()).andReturn(true).anyTimes();
+          EasyMock.expect(column.length()).andReturn(30).anyTimes();
+          EasyMock.replay(column);
+          return (T) column;
+        }
+
+      }
+      return null;
+    }
   }
 
 }
