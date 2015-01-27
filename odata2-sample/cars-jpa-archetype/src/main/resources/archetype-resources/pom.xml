@@ -22,7 +22,7 @@
 		<version.cxf>2.7.6</version.cxf>
 		<version.eclipselink>2.5.1</version.eclipselink>
 		<version.javax.persistence>2.0.5</version.javax.persistence>
-		<version.olingo>2.0.2-SNAPSHOT</version.olingo>
+		<version.olingo>2.0.2-RC01</version.olingo>
 	</properties>
 
 	<dependencies>
