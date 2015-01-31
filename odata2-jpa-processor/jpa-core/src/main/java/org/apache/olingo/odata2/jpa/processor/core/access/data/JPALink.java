@@ -54,7 +54,7 @@ public class JPALink {
 
   private static final String SPACE = " ";
   private static final String ODATA_COMMAND_FILTER = "$filter";
-  private static final String ODATA_OPERATOR_AND = "and";
+  private static final String ODATA_OPERATOR_OR = "or";
   private static final String ODATA_OPERATOR_NE = "ne";
 
   private ODataJPAContext context;
@@ -120,7 +120,7 @@ public class JPALink {
         condition.append(ODATA_OPERATOR_NE).append(SPACE);
         condition.append(literal).append(SPACE);
         if (i != size - 1) {
-          condition.append(ODATA_OPERATOR_AND).append(SPACE);
+          condition.append(ODATA_OPERATOR_OR).append(SPACE);
         }
       }
       options.put(ODATA_COMMAND_FILTER, condition.toString());
