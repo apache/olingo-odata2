@@ -107,6 +107,7 @@ public class EdmMockUtilV2 {
           mockEdmProperty(entityName, JPATypeMock.PROPERTY_NAME_MCOMPLEXTYPE)).anyTimes();
       EasyMock.expect(entityType.getProperty(JPATypeMock.NAVIGATION_PROPERTY_X)).andReturn(
           mockEdmNavigationProperty(JPATypeMock.NAVIGATION_PROPERTY_X, EdmMultiplicity.ONE)).anyTimes();
+      EasyMock.expect(entityType.getProperty(JPATypeMock.NAVIGATION_PROPERTY_XS)).andReturn(null).anyTimes();
     } else if (entityName.equals(JPARelatedTypeMock.ENTITY_NAME)) {
       EasyMock.expect(entityType.getProperty(JPARelatedTypeMock.PROPERTY_NAME_MLONG)).andReturn(
           mockEdmProperty(entityName, JPARelatedTypeMock.PROPERTY_NAME_MLONG)).anyTimes();
@@ -130,8 +131,11 @@ public class EdmMockUtilV2 {
 
   public static List<String> mockNavigationPropertyNames(final String entityName) {
     List<String> propertyNames = new ArrayList<String>();
-    propertyNames.add(JPATypeMock.NAVIGATION_PROPERTY_X);
-    propertyNames.add(JPATypeMock.NAVIGATION_PROPERTY_XS);
+    if (JPATypeMock.ENTITY_NAME.equals(entityName)) {
+
+      propertyNames.add(JPATypeMock.NAVIGATION_PROPERTY_X);
+      propertyNames.add(JPATypeMock.NAVIGATION_PROPERTY_XS);
+    }
     return propertyNames;
   }
 

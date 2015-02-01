@@ -61,7 +61,9 @@ public class JPAEntity {
   private JPAEntityParser jpaEntityParser = null;
   private ODataJPAContext oDataJPAContext;
   private OnJPAWriteContent onJPAWriteContent = null;
+  private List<String> relatedJPAEntityLink = new ArrayList<String>();
   public HashMap<String, List<Object>> relatedJPAEntityMap = null;
+  private EdmNavigationProperty viaNavigationProperty;
 
   public JPAEntity(final EdmEntityType oDataEntityType, final EdmEntitySet oDataEntitySet,
       final ODataJPAContext context) {
@@ -94,146 +96,59 @@ public class JPAEntity {
     return jpaEntity;
   }
 
-  @SuppressWarnings("unchecked")
-  private void write(final Map<String, Object> oDataEntryProperties,
-      final boolean isCreate)
-      throws ODataJPARuntimeException {
-    try {
+  public void setViaNavigationProperty(EdmNavigationProperty viaNavigationProperty) {
+    this.viaNavigationProperty = viaNavigationProperty;
+  }
 
-      EdmStructuralType structuralType = null;
-      final List<String> keyNames = oDataEntityType.getKeyPropertyNames();
-
-      if (isCreate) {
-        jpaEntity = instantiateJPAEntity();
-      } else if (jpaEntity == null) {
-        throw ODataJPARuntimeException
-            .throwException(ODataJPARuntimeException.RESOURCE_NOT_FOUND, null);
-      }
-
-      if (accessModifiersWrite == null) {
-        accessModifiersWrite =
-            jpaEntityParser.getAccessModifiers(jpaEntity, oDataEntityType, JPAEntityParser.ACCESS_MODIFIER_SET);
-      }
-
-      if (oDataEntityType == null || oDataEntryProperties == null) {
-        throw ODataJPARuntimeException
-            .throwException(ODataJPARuntimeException.GENERAL, null);
-      }
-
-      final HashMap<String, String> embeddableKeys =
-          jpaEntityParser.getJPAEmbeddableKeyMap(jpaEntity.getClass().getName());
-      Set<String> propertyNames = null;
-      if (embeddableKeys != null) {
-        setEmbeddableKeyProperty(embeddableKeys, oDataEntityType.getKeyProperties(), oDataEntryProperties,
-            jpaEntity);
-
-        propertyNames = new HashSet<String>();
-        propertyNames.addAll(oDataEntryProperties.keySet());
-        for (String key : embeddableKeys.keySet()) {
-          propertyNames.remove(key);
-        }
-      } else {
-        propertyNames = oDataEntryProperties.keySet();
-      }
-
-      for (String propertyName : propertyNames) {
-        EdmTyped edmTyped = (EdmTyped) oDataEntityType.getProperty(propertyName);
-
-        Method accessModifier = null;
-
-        switch (edmTyped.getType().getKind()) {
-        case SIMPLE:
-          if (isCreate == false) {
-            if (keyNames.contains(edmTyped.getName())) {
-              continue;
-            }
-          }
-          accessModifier = accessModifiersWrite.get(propertyName);
-          setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
-              .getType());
-
-          break;
-        case COMPLEX:
-          structuralType = (EdmStructuralType) edmTyped.getType();
-          accessModifier = accessModifiersWrite.get(propertyName);
-          setComplexProperty(accessModifier, jpaEntity,
-              structuralType,
-              (HashMap<String, Object>) oDataEntryProperties.get(propertyName));
-          break;
-        case NAVIGATION:
-        case ENTITY:
-          if (isCreate) {
-            structuralType = (EdmStructuralType) edmTyped.getType();
-            EdmNavigationProperty navProperty = (EdmNavigationProperty) edmTyped;
-            EdmEntitySet edmRelatedEntitySet = oDataEntitySet.getRelatedEntitySet(navProperty);
-            List<ODataEntry> relatedEntries = (List<ODataEntry>) oDataEntryProperties.get(propertyName);
-            if (relatedJPAEntityMap == null) {
-              relatedJPAEntityMap = new HashMap<String, List<Object>>();
-            }
-            List<Object> relatedJPAEntities = new ArrayList<Object>();
-            JPAEntity relatedEntity =
-                new JPAEntity((EdmEntityType) structuralType, edmRelatedEntitySet, oDataJPAContext);
-            for (ODataEntry oDataEntry : relatedEntries) {
-              relatedEntity.setParentJPAEntity(this);
-              relatedEntity.create(oDataEntry);
-              relatedJPAEntities.add(relatedEntity.getJPAEntity());
-            }
-            relatedJPAEntityMap.put(navProperty.getName(), relatedJPAEntities);
-          }
-        default:
-          continue;
-        }
-      }
-    } catch (Exception e) {
-      if (e instanceof ODataJPARuntimeException) {
-        throw (ODataJPARuntimeException) e;
-      }
-      throw ODataJPARuntimeException
-          .throwException(ODataJPARuntimeException.GENERAL
-              .addContent(e.getMessage()), e);
-    }
+  public EdmNavigationProperty getViaNavigationProperty() {
+    return viaNavigationProperty;
   }
 
   public void create(final ODataEntry oDataEntry) throws ODataJPARuntimeException {
+
     if (oDataEntry == null) {
       throw ODataJPARuntimeException
           .throwException(ODataJPARuntimeException.GENERAL, null);
     }
-    Map<String, Object> oDataEntryProperties = oDataEntry.getProperties();
-    if (oDataEntry.containsInlineEntry()) {
-      normalizeInlineEntries(oDataEntryProperties);
-    }
-    write(oDataEntryProperties, true);
-
-    EntryMetadata entryMetadata = oDataEntry.getMetadata();
-    List<String> leftNavPrpNames = new ArrayList<String>();
     try {
-      for (String navigationPropertyName : oDataEntityType.getNavigationPropertyNames()) {
-        List<String> links = entryMetadata.getAssociationUris(navigationPropertyName);
-        if (links.isEmpty()) {
-          continue;
-        } else {
+      EntryMetadata entryMetadata = oDataEntry.getMetadata();
+      Map<String, Object> oDataEntryProperties = oDataEntry.getProperties();
+      if (oDataEntry.containsInlineEntry()) {
+        normalizeInlineEntries(oDataEntryProperties);
+      }
+
+      if (oDataEntry.getProperties().size() > 0) {
+
+        write(oDataEntryProperties, true);
+
+        for (String navigationPropertyName : oDataEntityType.getNavigationPropertyNames()) {
           EdmNavigationProperty navProperty =
               (EdmNavigationProperty) oDataEntityType.getProperty(navigationPropertyName);
           if (relatedJPAEntityMap != null && relatedJPAEntityMap.containsKey(navigationPropertyName)) {
+            oDataEntry.getProperties().get(navigationPropertyName);
             JPALink.linkJPAEntities(relatedJPAEntityMap.get(navigationPropertyName), jpaEntity,
                 navProperty);
-          } else if (parentJPAEntity != null
-              &&
-              parentJPAEntity.getEdmEntitySet().getName().equals(
-                  oDataEntitySet.getRelatedEntitySet(navProperty).getName())) {
+            continue;
+          }
+          // The second condition is required to ensure that there is an explicit request to link
+          // two entities. Else the third condition will always be true for cases where two navigations
+          // point to same entity types.
+          if (parentJPAEntity != null
+              && navProperty.getRelationship().equals(getViaNavigationProperty().getRelationship())) {
             List<Object> targetJPAEntities = new ArrayList<Object>();
             targetJPAEntities.add(parentJPAEntity.getJPAEntity());
             JPALink.linkJPAEntities(targetJPAEntities, jpaEntity, navProperty);
-          } else {
-            leftNavPrpNames.add(navigationPropertyName);
+          } else if (!entryMetadata.getAssociationUris(navigationPropertyName).isEmpty()) {
+            if (!relatedJPAEntityLink.contains(navigationPropertyName)) {
+              relatedJPAEntityLink.add(navigationPropertyName);
+            }
           }
         }
       }
-      if (!leftNavPrpNames.isEmpty()) {
+      if (!relatedJPAEntityLink.isEmpty()) {
         JPALink link = new JPALink(oDataJPAContext);
         link.setSourceJPAEntity(jpaEntity);
-        link.create(oDataEntitySet, oDataEntry, leftNavPrpNames);
+        link.create(oDataEntitySet, oDataEntry, relatedJPAEntityLink);
       }
     } catch (EdmException e) {
       throw ODataJPARuntimeException
@@ -316,6 +231,7 @@ public class JPAEntity {
     }
   }
 
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   protected void setProperty(final Method method, final Object entity, final Object entityPropertyValue,
       final EdmSimpleType type) throws
       IllegalAccessException, IllegalArgumentException, InvocationTargetException, ODataJPARuntimeException {
@@ -444,6 +360,116 @@ public class JPAEntity {
         }
       }
     } catch (EdmException e) {
+      throw ODataJPARuntimeException
+          .throwException(ODataJPARuntimeException.GENERAL
+              .addContent(e.getMessage()), e);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void write(final Map<String, Object> oDataEntryProperties,
+      final boolean isCreate)
+      throws ODataJPARuntimeException {
+    try {
+
+      EdmStructuralType structuralType = null;
+      final List<String> keyNames = oDataEntityType.getKeyPropertyNames();
+
+      if (isCreate) {
+        jpaEntity = instantiateJPAEntity();
+      } else if (jpaEntity == null) {
+        throw ODataJPARuntimeException
+            .throwException(ODataJPARuntimeException.RESOURCE_NOT_FOUND, null);
+      }
+
+      if (accessModifiersWrite == null) {
+        accessModifiersWrite =
+            jpaEntityParser.getAccessModifiers(jpaEntity, oDataEntityType, JPAEntityParser.ACCESS_MODIFIER_SET);
+      }
+
+      if (oDataEntityType == null || oDataEntryProperties == null) {
+        throw ODataJPARuntimeException
+            .throwException(ODataJPARuntimeException.GENERAL, null);
+      }
+
+      final HashMap<String, String> embeddableKeys =
+          jpaEntityParser.getJPAEmbeddableKeyMap(jpaEntity.getClass().getName());
+      Set<String> propertyNames = null;
+      if (embeddableKeys != null) {
+        setEmbeddableKeyProperty(embeddableKeys, oDataEntityType.getKeyProperties(), oDataEntryProperties,
+            jpaEntity);
+
+        propertyNames = new HashSet<String>();
+        propertyNames.addAll(oDataEntryProperties.keySet());
+        for (String key : embeddableKeys.keySet()) {
+          propertyNames.remove(key);
+        }
+      } else {
+        propertyNames = oDataEntryProperties.keySet();
+      }
+
+      for (String propertyName : propertyNames) {
+        EdmTyped edmTyped = (EdmTyped) oDataEntityType.getProperty(propertyName);
+
+        Method accessModifier = null;
+
+        switch (edmTyped.getType().getKind()) {
+        case SIMPLE:
+          if (isCreate == false) {
+            if (keyNames.contains(edmTyped.getName())) {
+              continue;
+            }
+          }
+          accessModifier = accessModifiersWrite.get(propertyName);
+          setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
+              .getType());
+
+          break;
+        case COMPLEX:
+          structuralType = (EdmStructuralType) edmTyped.getType();
+          accessModifier = accessModifiersWrite.get(propertyName);
+          setComplexProperty(accessModifier, jpaEntity,
+              structuralType,
+              (HashMap<String, Object>) oDataEntryProperties.get(propertyName));
+          break;
+        case NAVIGATION:
+        case ENTITY:
+          if (isCreate) {
+            structuralType = (EdmStructuralType) edmTyped.getType();
+            EdmNavigationProperty navProperty = (EdmNavigationProperty) edmTyped;
+            EdmEntitySet edmRelatedEntitySet = oDataEntitySet.getRelatedEntitySet(navProperty);
+            List<ODataEntry> relatedEntries = (List<ODataEntry>) oDataEntryProperties.get(propertyName);
+            if (relatedJPAEntityMap == null) {
+              relatedJPAEntityMap = new HashMap<String, List<Object>>();
+            }
+            List<Object> relatedJPAEntities = new ArrayList<Object>();
+            JPAEntity relatedEntity =
+                new JPAEntity((EdmEntityType) structuralType, edmRelatedEntitySet, oDataJPAContext);
+            for (ODataEntry oDataEntry : relatedEntries) {
+              relatedEntity.setParentJPAEntity(this);
+              relatedEntity.setViaNavigationProperty(navProperty);
+              relatedEntity.create(oDataEntry);
+              if (oDataEntry.getProperties().size() == 0) {
+                if (!oDataEntry.getMetadata().getUri().isEmpty()
+                    && !relatedJPAEntityLink.contains(navProperty.getName())) {
+                  relatedJPAEntityLink.add(navProperty.getName());
+                }
+              } else {
+                relatedJPAEntities.add(relatedEntity.getJPAEntity());
+              }
+            }
+            if (!relatedJPAEntities.isEmpty()) {
+              relatedJPAEntityMap.put(navProperty.getName(), relatedJPAEntities);
+            }
+          }
+        default:
+          continue;
+        }
+      }
+    } catch (Exception e) {
+      if (e instanceof ODataJPARuntimeException) {
+        throw (ODataJPARuntimeException) e;
+      }
       throw ODataJPARuntimeException
           .throwException(ODataJPARuntimeException.GENERAL
               .addContent(e.getMessage()), e);

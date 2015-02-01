@@ -35,6 +35,7 @@ public class SalesOrderHeader {
   }
 
   private List<SalesOrderLineItem> salesOrderLineItems = new ArrayList<SalesOrderLineItem>();
+  private List<Note> notes = new ArrayList<Note>();
 
   public String getDescription() {
     return description;
@@ -58,6 +59,14 @@ public class SalesOrderHeader {
 
   public void setSalesOrderLineItems(final List<SalesOrderLineItem> salesOrderLineItems) {
     this.salesOrderLineItems = salesOrderLineItems;
+  }
+
+  public List<Note> getNotesDetails() {
+    return notes;
+  }
+
+  public void setNotesDetails(List<Note> notes) {
+    this.notes = notes;
   }
 
 }

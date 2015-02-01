@@ -410,7 +410,7 @@ public class JPAEdmNameBuilder {
       } else {
         associationName = end1Name + UNDERSCORE + end2Name;
       }
-      if (count > 1) {
+      if (count >= 1) {
         associationName = associationName + Integer.toString(count - 1);
       }
     }

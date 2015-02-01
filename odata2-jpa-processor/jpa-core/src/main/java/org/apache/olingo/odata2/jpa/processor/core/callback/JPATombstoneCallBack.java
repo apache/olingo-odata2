@@ -47,14 +47,20 @@ public class JPATombstoneCallBack implements TombstoneCallback {
 
   private String buildToken() {
     StringBuilder tokenBuilder = new StringBuilder();
-    tokenBuilder.append(baseUri);
+    if (baseUri != null) {
+      tokenBuilder.append(baseUri);
+    }
     try {
-      tokenBuilder.append(resultsView.getTargetEntitySet().getName());
+      if (resultsView != null) {
+        tokenBuilder.append(resultsView.getTargetEntitySet().getName());
+      }
     } catch (EdmException e) {
       // Nothing
     }
     tokenBuilder.append(DELTA_TOKEN_STRING);
-    tokenBuilder.append(deltaTokenValue);
+    if (deltaTokenValue != null) {
+      tokenBuilder.append(deltaTokenValue);
+    }
     return tokenBuilder.toString();
   }
 }

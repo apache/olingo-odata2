@@ -19,16 +19,17 @@
 package org.apache.olingo.odata2.jpa.processor.ref.model;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -52,21 +53,17 @@ public class Customer extends CustomerBase {
   @Column(name = "CREATED_AT")
   private Timestamp createdAt;
 
-  public Customer getInternal() {
-    return internal;
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+  private List<SalesOrderHeader> orders = new ArrayList<SalesOrderHeader>();
+
+  public List<SalesOrderHeader> getOrders() {
+    return orders;
   }
 
-  public void setInternal(Customer internal) {
-    this.internal = internal;
+  public void setOrders(List<SalesOrderHeader> orders) {
+    this.orders = orders;
   }
 
-//  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-//  private List<SalesOrderHeader> orders = new ArrayList<SalesOrderHeader>();
-  
-  @ManyToOne(fetch=FetchType.LAZY)
-  @JoinColumn(name="internal_id", referencedColumnName="ID")
-  private Customer internal;
-  
   public Long getId() {
     return id;
   }

@@ -18,10 +18,14 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.mock;
 
+import java.net.URI;
+import java.util.List;
+
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.uri.PathInfo;
+import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.easymock.EasyMock;
 
 public class ODataContextMock {
