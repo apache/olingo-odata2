@@ -57,7 +57,7 @@ import org.junit.Test;
 public class JPAEdmAssociationTest extends JPAEdmTestModelView {
 
   private JPAEdmAssociation objAssociation = null;
-  private static String ASSOCIATION_NAME = "SalesOrderHeader_String";
+  private static String ASSOCIATION_NAME = "SalesOrderHeader_String0";
   private JPAEdmAssociationTest localView = null;
   private static final String PUNIT_NAME = "salesorderprocessing";
   private int variant;
@@ -347,7 +347,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
       Field field = objAssociation.getClass().getDeclaredField("associationEndMap");
       field.setAccessible(true);
       Map<String, JPAEdmAssociationEndView> associationEndMap = new HashMap<String, JPAEdmAssociationEndView>();
-      associationEndMap.put("SalesOrderHeader_String", objJPAEdmAssociationEnd);
+      associationEndMap.put("SalesOrderHeader_String0", objJPAEdmAssociationEnd);
       field.set(objAssociation, associationEndMap);
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -363,7 +363,7 @@ public class JPAEdmAssociationTest extends JPAEdmTestModelView {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
-    assertEquals("SalesOrderHeader_String", objAssociation.searchAssociation(objJPAEdmAssociationEnd).getName());
+    assertEquals("SalesOrderHeader_String0", objAssociation.searchAssociation(objJPAEdmAssociationEnd).getName());
 
   }
 

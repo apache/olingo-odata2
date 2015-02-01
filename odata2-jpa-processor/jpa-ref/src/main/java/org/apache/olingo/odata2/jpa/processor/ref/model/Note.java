@@ -22,6 +22,7 @@ import java.sql.Clob;
 import java.util.Calendar;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -39,13 +40,12 @@ public class Note {
 
   public Note() {}
 
-  public Note(final Calendar creationTime, final Calendar creationDate, final String createdBy,
-      final Clob text) {
+  public Note(final Calendar creationTime, final Calendar creationDate, final String createdBy) {
     super();
     this.creationTime = creationTime;
     this.creationDate = creationDate;
     this.createdBy = createdBy;
-    this.text = text;
+
   }
 
   @Id
@@ -61,6 +61,7 @@ public class Note {
 
   @Column
   @Lob
+  @Convert(converter = org.apache.olingo.odata2.jpa.processor.ref.converter.ClobToStringConverter.class)
   private Clob text;
 
   @Column(name = "SO_ID")

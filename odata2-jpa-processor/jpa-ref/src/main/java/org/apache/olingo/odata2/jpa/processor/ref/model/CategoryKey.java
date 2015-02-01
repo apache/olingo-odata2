@@ -18,65 +18,61 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.ref.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
+import java.util.Arrays;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+public class CategoryKey implements Serializable {
 
-@Entity
-@Table(name = "T_CATEGORY")
-@IdClass(value = CategoryKey.class)
-public class Category {
+  private static final long serialVersionUID = 1L;
 
-  @Id
-  @Column(name = "CODE")
   private char code[] = new char[2];
-
-  @Id
-  @Column(name = "ID")
   private long id;
 
-  @Column(name = "DESC")
-  private String description;
-
-  @OneToMany(mappedBy = "category")
-  private List<Material> materials = new ArrayList<Material>();
-
-  public List<Material> getMaterials() {
-    return materials;
+  public char[] getCode() {
+    return code;
   }
 
-  public void setMaterials(final List<Material> materials) {
-    this.materials = materials;
+  public void setCode(char[] code) {
+    this.code = code;
   }
 
   public long getId() {
     return id;
   }
 
-  public void setId(final long id) {
+  public void setId(long id) {
     this.id = id;
   }
 
-  public char[] getCode() {
-    return code;
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.hashCode(code);
+    result = prime * result + (int) (id ^ (id >>> 32));
+    return result;
   }
 
-  public void setCode(final char[] code) {
-    this.code = code;
-  }
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    CategoryKey other = (CategoryKey) obj;
+    if (!Arrays.equals(code, other.code)) {
+      return false;
+    }
+    if (id != other.id) {
+      return false;
+    }
 
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(final String description) {
-    this.description = description;
+    return true;
   }
 
 }

@@ -60,7 +60,7 @@ public class Material {
 
   @Column(name = "MEASUREMENT_UNIT")
   private String measurementUnit;
-
+  
   @Lob
   @Column(name = "MIMAGE")
   @Convert(converter = org.apache.olingo.odata2.jpa.processor.ref.converter.BlobToByteConverter.class)

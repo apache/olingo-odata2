@@ -41,8 +41,8 @@ public class PathInfoMock {
 
   public PathInfo mock() {
     PathInfo pathInfo = EasyMock.createMock(PathInfo.class);
-    EasyMock.expect(pathInfo.getODataSegments()).andReturn(pathSegments);
-    EasyMock.expect(pathInfo.getServiceRoot()).andReturn(uri);
+    EasyMock.expect(pathInfo.getODataSegments()).andReturn(pathSegments).anyTimes();
+    EasyMock.expect(pathInfo.getServiceRoot()).andReturn(uri).anyTimes();
 
     EasyMock.replay(pathInfo);
     return pathInfo;
