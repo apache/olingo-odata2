@@ -170,7 +170,7 @@ public class BatchResponseParserTest {
       assertEquals("1", response.getContentId());
     }
   }
-  
+
   @Test
   public void testResponseChangeSetBodyWithoutCRLF() throws BatchException {
     String putResponse = "--batch_123" + CRLF
@@ -201,7 +201,7 @@ public class BatchResponseParserTest {
       assertEquals("1", response.getContentId());
     }
   }
-  
+
   @Test
   public void testResponseChangeSetBodyWithCRLF() throws BatchException {
     String putResponse = "--batch_123" + CRLF
@@ -233,7 +233,7 @@ public class BatchResponseParserTest {
       assertEquals("1", response.getContentId());
     }
   }
-  
+
   @Test
   public void testResponseToChangeSetNoContentButContentLength() throws BatchException {
     String putResponse =
@@ -436,7 +436,8 @@ public class BatchResponseParserTest {
 
   @Test
   public void parseWithAdditionalLineEndingAtTheEnd() throws Exception {
-    String fileString = readFile("BatchResponseWithAdditionalLineEnding.batch");
+    InputStream fileStream = getFileAsStream("BatchResponseWithAdditionalLineEnding.batch");
+    String fileString = StringHelper.inputStreamToStringCRLFLineBreaks(fileStream);
     assertTrue(fileString.contains("\r\n--batch_123--"));
     InputStream stream = new ByteArrayInputStream(fileString.getBytes());
     BatchSingleResponse response =
@@ -449,6 +450,7 @@ public class BatchResponseParserTest {
   @Test
   public void parseWithWindowsLineEndingsInBody() throws Exception {
     InputStream stream = getFileAsStream("BatchResponseWithLinesInBodyWin.batch");
+    stream = StringHelper.toStream(stream).asStreamWithLineSeparation(CRLF);
     BatchSingleResponse response =
         EntityProvider.parseBatchResponse(stream, "multipart/mixed;boundary=batch_123").get(0);
     String body =

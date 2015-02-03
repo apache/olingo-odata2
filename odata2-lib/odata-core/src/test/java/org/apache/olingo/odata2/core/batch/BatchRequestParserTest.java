@@ -73,6 +73,8 @@ public class BatchRequestParserTest {
     if (in == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");
     }
+    
+    in = StringHelper.toStream(in).asStreamWithLineSeparation(CRLF);
 
     BatchParser parser = new BatchParser(contentType, batchProperties, true);
     List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
@@ -1192,6 +1194,7 @@ public class BatchRequestParserTest {
     if (in == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");
     }
+    in = StringHelper.toStream(in).asStreamWithLineSeparation(CRLF);
     BatchParser parser = new BatchParser(contentType, batchProperties, true);
     parser.parseBatchRequest(in);
   }
