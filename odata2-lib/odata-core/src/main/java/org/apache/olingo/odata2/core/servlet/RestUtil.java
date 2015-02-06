@@ -92,13 +92,15 @@ public class RestUtil {
     Map<String, String> queryParametersMap = new HashMap<String, String>();
     if (queryString != null) {
       // At first the queryString will be decoded.
-      List<String> queryParameters = Arrays.asList(Decoder.decode(queryString).split("\\&"));
+      List<String> queryParameters = Arrays.asList(queryString.split("\\&"));
       for (String param : queryParameters) {
-        int indexOfEqualSign = param.indexOf("=");
+        String decodedParam = Decoder.decode(param);
+        int indexOfEqualSign = decodedParam.indexOf("=");
         if (indexOfEqualSign < 0) {
-          queryParametersMap.put(param, "");
+          queryParametersMap.put(decodedParam, "");
         } else {
-          queryParametersMap.put(param.substring(0, indexOfEqualSign), param.substring(indexOfEqualSign + 1));
+          queryParametersMap.put(decodedParam.substring(0, indexOfEqualSign), decodedParam
+              .substring(indexOfEqualSign + 1));
         }
       }
     }
@@ -110,23 +112,25 @@ public class RestUtil {
 
     if (queryString != null) {
       // At first the queryString will be decoded.
-      List<String> queryParameters = Arrays.asList(Decoder.decode(queryString).split("\\&"));
+      List<String> queryParameters = Arrays.asList(queryString.split("\\&"));
       for (String param : queryParameters) {
-        int indexOfEqualSign = param.indexOf("=");
+        String decodedParam = Decoder.decode(param);
+        int indexOfEqualSign = decodedParam.indexOf("=");
 
         if (indexOfEqualSign < 0) {
-          final List<String> parameterList = allQueryParameterMap.containsKey(param) ? allQueryParameterMap.get(param)
-              : new LinkedList<String>();
-          allQueryParameterMap.put(param, parameterList);
+          final List<String> parameterList =
+              allQueryParameterMap.containsKey(decodedParam) ? allQueryParameterMap.get(decodedParam)
+                  : new LinkedList<String>();
+          allQueryParameterMap.put(decodedParam, parameterList);
 
           parameterList.add("");
         } else {
-          final String key = param.substring(0, indexOfEqualSign);
+          final String key = decodedParam.substring(0, indexOfEqualSign);
           final List<String> parameterList = allQueryParameterMap.containsKey(key) ? allQueryParameterMap.get(key)
               : new LinkedList<String>();
 
           allQueryParameterMap.put(key, parameterList);
-          parameterList.add(param.substring(indexOfEqualSign + 1));
+          parameterList.add(decodedParam.substring(indexOfEqualSign + 1));
         }
       }
     }
