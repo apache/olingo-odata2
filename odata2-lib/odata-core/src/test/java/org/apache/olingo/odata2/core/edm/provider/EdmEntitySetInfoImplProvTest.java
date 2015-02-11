@@ -27,6 +27,7 @@ import java.net.URI;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
+import org.apache.olingo.odata2.core.commons.Decoder;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.Test;
 
@@ -72,4 +73,65 @@ public class EdmEntitySetInfoImplProvTest extends BaseTest {
     assertFalse(info.isDefaultEntityContainer());
   }
 
+  @Test
+  public void checkValidColonName() throws Exception {
+    String entitySetNameOriginal = "::Name";
+    String entitySetNameEscaped = "%3A%3AName";
+    // Write
+    EntitySet entitySetRead = new EntitySet().setName(entitySetNameOriginal);
+    EntityContainerInfo entityContainerInfo = new EntityContainerInfo().setDefaultEntityContainer(true);
+
+    EdmEntitySetInfo infoWrite = new EdmEntitySetInfoImplProv(entitySetRead, entityContainerInfo);
+
+    assertEquals(entitySetNameOriginal, infoWrite.getEntitySetName());
+    assertEquals(entitySetNameEscaped, infoWrite.getEntitySetUri().toASCIIString());
+
+    // Read
+    EntitySet entitySetWrite = new EntitySet().setName(Decoder.decode(entitySetNameEscaped));
+    EdmEntitySetInfo infoRead = new EdmEntitySetInfoImplProv(entitySetWrite, entityContainerInfo);
+
+    assertEquals(entitySetNameOriginal, infoRead.getEntitySetName());
+    assertEquals(entitySetNameEscaped, infoRead.getEntitySetUri().toASCIIString());
+  }
+
+  @Test
+  public void checkValidUTF8Name() throws Exception {
+    String entitySetNameOriginal = "Содержание";
+    String entitySetNameEscaped = "%D0%A1%D0%BE%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D0%BD%D0%B8%D0%B5";
+    // Write
+    EntitySet entitySetRead = new EntitySet();
+    entitySetRead.setName(entitySetNameOriginal);
+    EntityContainerInfo entityContainerInfo = new EntityContainerInfo().setDefaultEntityContainer(true);
+
+    EdmEntitySetInfo info = new EdmEntitySetInfoImplProv(entitySetRead, entityContainerInfo);
+
+    assertEquals("Содержание", info.getEntitySetName());
+    assertEquals(entitySetNameEscaped, info.getEntitySetUri().toASCIIString());
+
+    // Read
+    EntitySet entitySetWrite = new EntitySet().setName(Decoder.decode(entitySetNameEscaped));
+    EdmEntitySetInfo infoRead = new EdmEntitySetInfoImplProv(entitySetWrite, entityContainerInfo);
+
+    assertEquals(entitySetNameOriginal, infoRead.getEntitySetName());
+    assertEquals(entitySetNameEscaped, infoRead.getEntitySetUri().toASCIIString());
+  }
+
+  @Test
+  public void checkValidNameWithoutDefaultContainer() throws Exception {
+    String entitySetName = "::Name";
+    String entityContainerName = "Container";
+
+    EntitySet entitySet = new EntitySet();
+    entitySet.setName(entitySetName);
+
+    EntityContainerInfo entityContainerInfo = new EntityContainerInfo();
+    entityContainerInfo.setName(entityContainerName).setDefaultEntityContainer(false);
+
+    EdmEntitySetInfo info = new EdmEntitySetInfoImplProv(entitySet, entityContainerInfo);
+
+    assertEquals(entitySetName, info.getEntitySetName());
+    assertEquals("Container.%3A%3AName", info.getEntitySetUri().toASCIIString());
+    assertEquals(entityContainerName, info.getEntityContainerName());
+    assertFalse(info.isDefaultEntityContainer());
+  }
 }

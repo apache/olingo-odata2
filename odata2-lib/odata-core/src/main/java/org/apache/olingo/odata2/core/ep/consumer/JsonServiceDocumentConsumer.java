@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.core.commons.Decoder;
 import org.apache.olingo.odata2.core.edm.provider.EdmEntitySetInfoImplProv;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.servicedocument.ServiceDocumentImpl;
@@ -91,13 +92,14 @@ public class JsonServiceDocumentConsumer {
         // Looking for the last dot: "\\.(?=[^.]+$)"
         String[] names = currentHandledObjectName.split("\\" + Edm.DELIMITER + "(?=[^" + Edm.DELIMITER + "]+$)");
         if (names.length == 1) {
-          EntitySet entitySet = new EntitySet().setName(names[0]);
+          EntitySet entitySet = new EntitySet().setName(Decoder.decode(names[0]));
           EntityContainerInfo container = new EntityContainerInfo().setDefaultEntityContainer(true);
           EdmEntitySetInfo entitySetInfo = new EdmEntitySetInfoImplProv(entitySet, container);
           entitySets.add(entitySetInfo);
         } else {
-          EntitySet entitySet = new EntitySet().setName(names[1]);
-          EntityContainerInfo container = new EntityContainerInfo().setName(names[0]).setDefaultEntityContainer(false);
+          EntitySet entitySet = new EntitySet().setName(Decoder.decode(names[1]));
+          EntityContainerInfo container =
+              new EntityContainerInfo().setName(Decoder.decode(names[0])).setDefaultEntityContainer(false);
           EdmEntitySetInfo entitySetInfo = new EdmEntitySetInfoImplProv(entitySet, container);
           entitySets.add(entitySetInfo);
         }

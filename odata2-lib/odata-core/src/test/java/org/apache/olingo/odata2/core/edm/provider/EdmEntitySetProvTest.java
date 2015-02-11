@@ -135,6 +135,26 @@ public class EdmEntitySetProvTest extends BaseTest {
     assertEquals(edmEntitySetFoo.getEntityType().getName(), edmProvider.getEntityType(
         new FullQualifiedName("namespace", "fooEntityType")).getName());
   }
+  
+  @Test
+  public void checkValidColonName() throws Exception {
+    EntitySet provES = new EntitySet().setName("::Name");
+    EdmEntitySet entitySet = new EdmEntitySetImplProv(null, provES , null);
+    assertEquals("::Name", entitySet.getName());
+    
+    provES = new EntitySet().setName(":Name");
+    entitySet = new EdmEntitySetImplProv(null, provES , null);
+    assertEquals(":Name", entitySet.getName());
+  }
+  
+  @Test
+  public void checkValidName() throws Exception {
+    EntitySet provES = new EntitySet().setName("Содержание");
+    EdmEntitySet entitySet = new EdmEntitySetImplProv(null, provES , null);
+    assertEquals("Содержание", entitySet.getName());
+  }
+  
+  
 
   @Test
   public void getAnnotations() throws Exception {

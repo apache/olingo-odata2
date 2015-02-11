@@ -39,7 +39,7 @@ public class JsonServiceDocumentConsumerTest {
     ServiceDocument serviceDoc = parser.parseJson(in);
     List<EdmEntitySetInfo> entitySetsInfo = serviceDoc.getEntitySetsInfo();
     assertNotNull(entitySetsInfo);
-    assertEquals(6, entitySetsInfo.size());
+    assertEquals(7, entitySetsInfo.size());
     for (EdmEntitySetInfo entitySetInfo : entitySetsInfo) {
       if (!entitySetInfo.isDefaultEntityContainer()) {
         if ("Container2".equals(entitySetInfo.getEntityContainerName())) {
@@ -51,6 +51,16 @@ public class JsonServiceDocumentConsumerTest {
         }
       }
     }
+  }
+  
+  @Test
+  public void checkDecodingOfEntitySetNames() throws Exception {
+    JsonServiceDocumentConsumer parser = new JsonServiceDocumentConsumer();
+    InputStream in = ClassLoader.class.getResourceAsStream("/svcDocJson.json");
+    ServiceDocument serviceDoc = parser.parseJson(in);
+    EdmEntitySetInfo entitySetInfo = serviceDoc.getEntitySetsInfo().get(6);
+    assertEquals(":EncodedName", entitySetInfo.getEntitySetName());
+    assertEquals("%3AEncodedName", entitySetInfo.getEntitySetUri().toASCIIString());
   }
 
   @Test(expected = EntityProviderException.class)

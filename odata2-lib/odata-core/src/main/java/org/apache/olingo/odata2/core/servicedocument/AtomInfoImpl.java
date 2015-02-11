@@ -32,6 +32,7 @@ import org.apache.olingo.odata2.api.servicedocument.Collection;
 import org.apache.olingo.odata2.api.servicedocument.CommonAttributes;
 import org.apache.olingo.odata2.api.servicedocument.ExtensionElement;
 import org.apache.olingo.odata2.api.servicedocument.Workspace;
+import org.apache.olingo.odata2.core.commons.Decoder;
 import org.apache.olingo.odata2.core.edm.provider.EdmEntitySetInfoImplProv;
 
 /**
@@ -79,14 +80,14 @@ public class AtomInfoImpl implements AtomInfo {
         String[] names = collection.getHref().split("\\" + Edm.DELIMITER + "(?=[^" + Edm.DELIMITER + "]+$)");
         try {
           if (names.length == 1) {
-            EntitySet entitySet = new EntitySet().setName(names[0]);
+            EntitySet entitySet = new EntitySet().setName(Decoder.decode(names[0]));
             EntityContainerInfo container = new EntityContainerInfo().setDefaultEntityContainer(true);
             EdmEntitySetInfo entitySetInfo = new EdmEntitySetInfoImplProv(entitySet, container);
             entitySets.add(entitySetInfo);
           } else if (names.length == 2) {
-            EntitySet entitySet = new EntitySet().setName(names[1]);
+            EntitySet entitySet = new EntitySet().setName(Decoder.decode(names[1]));
             EntityContainerInfo container =
-                new EntityContainerInfo().setName(names[0]).setDefaultEntityContainer(false);
+                new EntityContainerInfo().setName(Decoder.decode(names[0])).setDefaultEntityContainer(false);
             EdmEntitySetInfo entitySetInfo = new EdmEntitySetInfoImplProv(entitySet, container);
             entitySets.add(entitySetInfo);
           }

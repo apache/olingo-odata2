@@ -83,7 +83,7 @@ public class ServiceDocumentConsumerTest extends BaseTest {
     assertNotNull(serviceDoc);
     assertNull(serviceDoc.getAtomInfo());
     List<EdmEntitySetInfo> entitySetsInfo = serviceDoc.getEntitySetsInfo();
-    assertEquals(6, entitySetsInfo.size());
+    assertEquals(7, entitySetsInfo.size());
     for (EdmEntitySetInfo entitySetInfo : entitySetsInfo) {
       if (!entitySetInfo.isDefaultEntityContainer()) {
         if ("Container2".equals(entitySetInfo.getEntityContainerName())) {

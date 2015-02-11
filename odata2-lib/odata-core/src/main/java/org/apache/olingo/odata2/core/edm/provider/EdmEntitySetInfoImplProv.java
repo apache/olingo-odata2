@@ -25,6 +25,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
+import org.apache.olingo.odata2.core.commons.Encoder;
 
 public class EdmEntitySetInfoImplProv implements EdmEntitySetInfo {
 
@@ -42,9 +43,9 @@ public class EdmEntitySetInfoImplProv implements EdmEntitySetInfo {
 
     try {
       if (isDefaultEntityContainer) {
-        entitySetUri = new URI(entitySetName);
+        entitySetUri = new URI(Encoder.encode(entitySetName));
       } else {
-        entitySetUri = new URI(entityContainerName + "." + entitySetName);
+        entitySetUri = new URI(Encoder.encode(entityContainerName + "." + entitySetName));
       }
     } catch (URISyntaxException e) {
       throw new EdmException(EdmException.COMMON, e);

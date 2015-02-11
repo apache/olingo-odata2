@@ -82,31 +82,6 @@ public class AtomServiceDocumentProducer {
         xmlStreamWriter.writeEndElement();
       }
 
-      // Collection<Schema> schemas = edmProvider.getSchemas();
-      // if (schemas != null) {
-      // for (Schema schema : schemas) {
-      // Collection<EntityContainer> entityContainers = schema.getEntityContainers();
-      // if (entityContainers != null) {
-      // for (EntityContainer entityContainer : entityContainers) {
-      // Collection<EntitySet> entitySets = entityContainer.getEntitySets();
-      // for (EntitySet entitySet : entitySets) {
-      // xmlStreamWriter.writeStartElement(FormatXml.APP_COLLECTION);
-      // if (entityContainer.isDefaultEntityContainer()) {
-      // xmlStreamWriter.writeAttribute(FormatXml.ATOM_HREF, entitySet.getName());
-      // } else {
-      // xmlStreamWriter.writeAttribute(FormatXml.ATOM_HREF, entityContainer.getName() + Edm.DELIMITER +
-      // entitySet.getName());
-      // }
-      // xmlStreamWriter.writeStartElement(Edm.NAMESPACE_ATOM_2005, FormatXml.ATOM_TITLE);
-      // xmlStreamWriter.writeCharacters(entitySet.getName());
-      // xmlStreamWriter.writeEndElement();
-      // xmlStreamWriter.writeEndElement();
-      // }
-      // }
-      // }
-      // }
-      // }
-
       xmlStreamWriter.writeEndElement();
       xmlStreamWriter.writeEndElement();
       xmlStreamWriter.writeEndDocument();

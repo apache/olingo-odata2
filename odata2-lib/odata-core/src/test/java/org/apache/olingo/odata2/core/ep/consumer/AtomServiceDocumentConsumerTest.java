@@ -32,6 +32,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.servicedocument.AtomInfo;
 import org.apache.olingo.odata2.api.servicedocument.Categories;
@@ -52,6 +53,17 @@ public class AtomServiceDocumentConsumerTest extends AbstractXmlConsumerTest {
   private static final String NAMESPACE = "http://www.foo.bar/Data";
   private static final String PREFIX = "foo";
 
+  @Test
+  public void checkDecodingOfEntitySetNames() throws Exception {
+    AtomServiceDocumentConsumer svcDocumentParser = new AtomServiceDocumentConsumer();
+    ServiceDocument svcDocument = svcDocumentParser.readServiceDokument(createStreamReader("/serviceDocument.xml"));
+    assertNotNull(svcDocument);
+    
+    EdmEntitySetInfo edmEntitySetInfo = svcDocument.getEntitySetsInfo().get(6);
+    assertEquals(":EncodedName", edmEntitySetInfo.getEntitySetName());
+    assertEquals("%3AEncodedName", edmEntitySetInfo.getEntitySetUri().toASCIIString());
+  }
+  
   @Test
   public void testServiceDocument() throws IOException, EntityProviderException {
     AtomServiceDocumentConsumer svcDocumentParser = new AtomServiceDocumentConsumer();
