@@ -53,7 +53,7 @@ public class JsonServiceDocumentProducer {
         } else {
           jsonStreamWriter.separator();
         }
-        jsonStreamWriter.stringValue(info.getEntitySetUri().toASCIIString());
+        jsonStreamWriter.stringValue(createEntitySetName(info));
       }
 
       jsonStreamWriter.endArray()
@@ -67,5 +67,15 @@ public class JsonServiceDocumentProducer {
           .getSimpleName()), e);
     }
 
+  }
+
+  private static String createEntitySetName(EdmEntitySetInfo info) {
+    String entitySetName;
+    if (info.isDefaultEntityContainer()) {
+      entitySetName = info.getEntitySetName();
+    } else {
+      entitySetName = info.getEntityContainerName() + "." + info.getEntitySetName();
+    }
+    return entitySetName;
   }
 }

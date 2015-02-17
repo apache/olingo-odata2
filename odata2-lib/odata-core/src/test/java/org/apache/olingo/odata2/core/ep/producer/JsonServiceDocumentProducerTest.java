@@ -65,9 +65,11 @@ public class JsonServiceDocumentProducerTest extends BaseTest {
     Edm edm = mock(Edm.class);
     EdmServiceMetadata metadata = mock(EdmServiceMetadata.class);
     EdmEntitySetInfo entitySetInfo1 = mock(EdmEntitySetInfo.class);
-    when(entitySetInfo1.getEntitySetUri()).thenReturn(URI.create("EntitySet"));
+    when(entitySetInfo1.isDefaultEntityContainer()).thenReturn(true);
+    when(entitySetInfo1.getEntitySetName()).thenReturn("EntitySet");
     EdmEntitySetInfo entitySetInfo2 = mock(EdmEntitySetInfo.class);
-    when(entitySetInfo2.getEntitySetUri()).thenReturn(URI.create("Container2.EntitySet2"));
+    when(entitySetInfo2.getEntityContainerName()).thenReturn("Container2");
+    when(entitySetInfo2.getEntitySetName()).thenReturn("EntitySet2");
     when(metadata.getEntitySetInfos()).thenReturn(Arrays.asList(entitySetInfo1, entitySetInfo2));
     when(edm.getServiceMetadata()).thenReturn(metadata);
     final ODataResponse response = new JsonEntityProvider().writeServiceDocument(edm, "http://host:80/service/");

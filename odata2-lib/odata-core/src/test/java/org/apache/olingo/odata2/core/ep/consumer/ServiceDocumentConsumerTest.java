@@ -109,6 +109,7 @@ public class ServiceDocumentConsumerTest extends BaseTest {
 
     assertEquals(entitySetsInfoJson.size(), entitySetsInfoAtom.size());
     for (int i = 0; i < entitySetsInfoJson.size(); i++) {
+      assertEquals(entitySetsInfoJson.get(i).getEntitySetName(), entitySetsInfoAtom.get(i).getEntitySetName());
       assertEquals(entitySetsInfoJson.get(i).getEntitySetUri(), entitySetsInfoAtom.get(i).getEntitySetUri());
     }
   }
