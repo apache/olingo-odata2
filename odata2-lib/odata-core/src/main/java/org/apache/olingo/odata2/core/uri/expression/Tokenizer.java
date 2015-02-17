@@ -306,8 +306,8 @@ public class Tokenizer {
           wasApostroph = false; // a double ' is a normal character '
         } else {
           wasApostroph = true;
-          token = token + curCharacter;
         }
+        token = token + curCharacter;
       }
       curPosition = curPosition + 1;
     }

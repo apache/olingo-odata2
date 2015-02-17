@@ -318,7 +318,10 @@ public class TestParser extends TestBase {
   @Test
   public void testString() {
     GetPTF("'TEST'").aSerialized("'TEST'");
-    GetPTF("'TE''ST'").aSerialized("'TE'ST'");
+    //old GetPTF("'TE''ST'").aSerialized("'TE'ST'");
+    GetPTF("'TE''ST'").aSerialized("'TE''ST'");
+    GetPTF("'TE''''ST'").aSerialized("'TE''''ST'");
+    GetPTF("'A''B''C'").aSerialized("'A''B''C'");
   }
 
   @Test

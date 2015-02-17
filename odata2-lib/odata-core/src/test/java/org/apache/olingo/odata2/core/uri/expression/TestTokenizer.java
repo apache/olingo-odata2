@@ -86,6 +86,9 @@ public class TestTokenizer {
 
     // string
     getTT("'a'").aKind(TokenKind.SIMPLE_TYPE).aUriLiteral("'a'").aPosition(0);
+    getTT("'a''B'").aKind(TokenKind.SIMPLE_TYPE).aUriLiteral("'a''B'").aPosition(0);
+    getTT("'a''''B'").aKind(TokenKind.SIMPLE_TYPE).aUriLiteral("'a''''B'").aPosition(0);
+    getTT("'a''''B''c'").aKind(TokenKind.SIMPLE_TYPE).aUriLiteral("'a''''B''c'").aPosition(0);
     getTT("abc 'a'").at(1).aKind(TokenKind.SIMPLE_TYPE).aUriLiteral("'a'").aPosition(4);
 
     // "prefixed type
@@ -117,6 +120,8 @@ public class TestTokenizer {
     // http://services.odata.org/Northwind/Northwind.svc/Products(1)/Supplier?$filter='a
     // -->Unterminated string literal at position 2 in ''a'.
     getTT("'a").aExMsgText("Unterminated string literal at position 1 in \"'a\".");
+    
+    getTT("'a'''b'").aExMsgText("Unterminated string literal at position 7 in \"'a'''b'\".");
 
     // http://services.odata.org/Northwind/Northwind.svc/Products(1)/Supplier?$filter=X'g'
     // -->Unrecognized 'Edm.Binary' literal 'X'g'' in '0'.
