@@ -342,6 +342,26 @@ public class ODataExpressionParser {
     }
   }
 
+  public static HashMap<String, String> parseKeyPropertiesToJPAOrderByExpression(
+      final List<EdmProperty> edmPropertylist, final String tableAlias) throws ODataJPARuntimeException {
+    LinkedHashMap<String, String> orderByMap = new LinkedHashMap<String, String>();
+    String propertyName = null;
+    for (EdmProperty edmProperty : edmPropertylist) {
+      try {
+        EdmMapping mapping = edmProperty.getMapping();
+        if (mapping != null && mapping.getInternalName() != null) {
+          propertyName = mapping.getInternalName();// For embedded/complex keys
+        } else {
+          propertyName = edmProperty.getName();
+        }
+      } catch (EdmException e) {
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+      }
+      orderByMap.put(tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName, EMPTY);
+    }
+    return orderByMap;
+  }
+
   /**
    * This method evaluates the expression based on the type instance. Used for adding escape characters where necessary.
    * 
@@ -355,6 +375,7 @@ public class ODataExpressionParser {
 
     if (edmSimpleType == EdmSimpleTypeKind.String.getEdmSimpleTypeInstance()
         || edmSimpleType == EdmSimpleTypeKind.Guid.getEdmSimpleTypeInstance()) {
+      value = value.replaceAll("'", "''");
       value = "\'" + value + "\'"; //$NON-NLS-1$	//$NON-NLS-2$
     } else if (edmSimpleType == EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance()
         || edmSimpleType == EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance()) {
@@ -400,26 +421,6 @@ public class ODataExpressionParser {
       value = value + JPQLStatement.DELIMITER.LONG; //$NON-NLS-1$
     }
     return value;
-  }
-
-  public static HashMap<String, String> parseKeyPropertiesToJPAOrderByExpression(
-      final List<EdmProperty> edmPropertylist, final String tableAlias) throws ODataJPARuntimeException {
-    LinkedHashMap<String, String> orderByMap = new LinkedHashMap<String, String>();
-    String propertyName = null;
-    for (EdmProperty edmProperty : edmPropertylist) {
-      try {
-        EdmMapping mapping = edmProperty.getMapping();
-        if (mapping != null && mapping.getInternalName() != null) {
-          propertyName = mapping.getInternalName();// For embedded/complex keys
-        } else {
-          propertyName = edmProperty.getName();
-        }
-      } catch (EdmException e) {
-        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
-      }
-      orderByMap.put(tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName, EMPTY);
-    }
-    return orderByMap;
   }
 
 }
