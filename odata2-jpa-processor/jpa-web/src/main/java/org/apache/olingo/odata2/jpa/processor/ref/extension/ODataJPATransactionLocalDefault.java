@@ -19,36 +19,36 @@
 package org.apache.olingo.odata2.jpa.processor.ref.extension;
 
 
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransactionContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-public class ODataJPATransactionLocalDefaultContext implements ODataJPATransactionContext {
+public class ODataJPATransactionLocalDefault implements ODataJPATransaction {
 
     EntityTransaction tx = null;
 
-    public ODataJPATransactionLocalDefaultContext(EntityManager em) {
+    public ODataJPATransactionLocalDefault(EntityManager em) {
         this.tx = em.getTransaction();
     }
 
     @Override
-    public void beginTransaction() {
+    public void begin() {
         tx.begin();
     }
 
     @Override
-    public void commitTransaction() {
+    public void commit() {
         tx.commit();
     }
 
     @Override
-    public void rollbackTransaction() {
+    public void rollback() {
         tx.rollback();
     }
 
     @Override
-    public boolean transactionIsActive() {
+    public boolean isActive() {
         return tx.isActive();
     }
 }

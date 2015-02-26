@@ -25,7 +25,7 @@ import org.apache.olingo.odata2.jpa.processor.api.ODataJPAServiceFactory;
 import org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
-import org.apache.olingo.odata2.jpa.processor.ref.extension.ODataJPATransactionLocalDefaultContext;
+import org.apache.olingo.odata2.jpa.processor.ref.extension.ODataJPATransactionLocalDefault;
 import org.apache.olingo.odata2.jpa.processor.ref.extension.OnDBWriteContent;
 import org.apache.olingo.odata2.jpa.processor.ref.extension.SalesOrderProcessingExtension;
 import org.apache.olingo.odata2.jpa.processor.ref.factory.JPAEntityManagerFactory;
@@ -51,9 +51,9 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
     oDataJPAContext.setDefaultNaming(false);
     setErrorLevel();
     setOnWriteJPAContent(onDBWriteContent);
-    if(getoDataJPATransactionContext() == null) {
+    if(getoDataJPATransaction() == null) {
         setODataJPATransactionContext(
-                new ODataJPATransactionLocalDefaultContext(getODataJPAContext().getEntityManager()));
+                new ODataJPATransactionLocalDefault(getODataJPAContext().getEntityManager()));
     }
 
 

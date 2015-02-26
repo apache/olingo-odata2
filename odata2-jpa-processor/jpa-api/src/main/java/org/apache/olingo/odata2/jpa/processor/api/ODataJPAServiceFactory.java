@@ -81,7 +81,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
   private ODataContext oDataContext;
   private boolean setDetailErrors = false;
   private OnJPAWriteContent onJPAWriteContent = null;
-  private ODataJPATransactionContext oDataJPATransactionContext = null;
+  private ODataJPATransaction oDataJPATransaction = null;
 
   /**
    * Creates an OData Service based on the values set in
@@ -203,9 +203,9 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
       }
     }
 
-      if (oDataJPATransactionContext != null) {
-          if (callbackInterface.isAssignableFrom(ODataJPATransactionContext.class)) {
-              return (T) oDataJPATransactionContext;
+      if (oDataJPATransaction != null) {
+          if (callbackInterface.isAssignableFrom(ODataJPATransaction.class)) {
+              return (T) oDataJPATransaction;
           }
       }
 
@@ -216,12 +216,12 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
 
     /**
      * The methods sets the context with a callback implementation for JPA transaction specific content.
-     * For details refer to {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPATransactionContext}
-     * @param oDataJPATransactionContext is an instance of type
-     * {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPATransactionContext}
+     * For details refer to {@link ODataJPATransaction}
+     * @param oDataJPATransaction is an instance of type
+     * {@link ODataJPATransaction}
      */
-    protected void setODataJPATransactionContext(final ODataJPATransactionContext oDataJPATransactionContext) {
-        this.oDataJPATransactionContext = oDataJPATransactionContext;
+    protected void setODataJPATransactionContext(final ODataJPATransaction oDataJPATransaction) {
+        this.oDataJPATransaction = oDataJPATransaction;
     }
 
     /**
@@ -229,7 +229,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
      *
      * @return the current ODataJPATransactionContext
      */
-    public ODataJPATransactionContext getoDataJPATransactionContext() {
-        return oDataJPATransactionContext;
+    public ODataJPATransaction getoDataJPATransaction() {
+        return oDataJPATransaction;
     }
 }

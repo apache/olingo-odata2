@@ -49,7 +49,7 @@ import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransactionContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAFunction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAMethodContext;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAProcessor;
@@ -355,7 +355,7 @@ public class JPAProcessorImpl implements JPAProcessor {
         em.remove(selectedObject);
         em.flush();
         if (isLocalTransaction) {
-          oDataJPAContext.getODataJpaTransactionContext().commitTransaction();
+          oDataJPAContext.getODataJpaTransactionContext().commit();
         }
 
       } catch (Exception e) {
@@ -456,7 +456,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       em.persist(jpaEntity);
       if (em.contains(jpaEntity)) {
         if (isLocalTransaction) {
-          oDataJPAContext.getODataJpaTransactionContext().commitTransaction();
+          oDataJPAContext.getODataJpaTransactionContext().commit();
         }
         return jpaEntity;
       }
@@ -507,7 +507,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       }
       em.flush();
       if (isLocalTransaction) {
-        oDataJPAContext.getODataJpaTransactionContext().commitTransaction();
+        oDataJPAContext.getODataJpaTransactionContext().commit();
       }
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
@@ -572,9 +572,9 @@ public class JPAProcessorImpl implements JPAProcessor {
   }
 
   private boolean setTransaction() {
-    ODataJPATransactionContext transactionContext = oDataJPAContext.getODataJpaTransactionContext();
-    if (!transactionContext.transactionIsActive()) {
-      transactionContext.beginTransaction();
+    ODataJPATransaction transactionContext = oDataJPAContext.getODataJpaTransactionContext();
+    if (!transactionContext.isActive()) {
+      transactionContext.begin();
       return true;
     }
 

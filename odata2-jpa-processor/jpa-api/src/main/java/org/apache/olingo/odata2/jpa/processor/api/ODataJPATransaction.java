@@ -25,27 +25,27 @@ import org.apache.olingo.odata2.api.ODataCallback;
  * an override may used to insert JTA compatible transactions as well.
  *
  */
-public interface ODataJPATransactionContext extends ODataCallback {
+public interface ODataJPATransaction extends ODataCallback {
 
     /**
      * implement the start of the transaction
      */
-    public void beginTransaction();
+    public void begin();
 
     /**
      * implement the commit of the transaction
      */
-    public void commitTransaction();
+    public void commit();
 
     /**
      * implement the rollback of the transaction
      */
-    public void rollbackTransaction();
+    public void rollback();
 
     /**
      * implement status of the transaction context
      */
-    public boolean transactionIsActive();
+    public boolean isActive();
 
 
 }

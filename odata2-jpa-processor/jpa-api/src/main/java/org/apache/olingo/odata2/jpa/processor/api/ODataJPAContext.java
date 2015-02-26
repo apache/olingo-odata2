@@ -231,5 +231,5 @@ public interface ODataJPAContext {
    /**
     * The transaction context
     */
-   public ODataJPATransactionContext getODataJpaTransactionContext();
+   public ODataJPATransaction getODataJpaTransactionContext();
 }
