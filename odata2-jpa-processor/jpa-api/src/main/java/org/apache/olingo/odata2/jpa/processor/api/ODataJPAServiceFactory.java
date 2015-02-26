@@ -218,9 +218,9 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
      * The methods sets the context with a callback implementation for JPA transaction specific content.
      * For details refer to {@link ODataJPATransaction}
      * @param oDataJPATransaction is an instance of type
-     * {@link ODataJPATransaction}
+     * {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction}
      */
-    protected void setODataJPATransactionContext(final ODataJPATransaction oDataJPATransaction) {
+    protected void setODataJPATransaction(final ODataJPATransaction oDataJPATransaction) {
         this.oDataJPATransaction = oDataJPATransaction;
     }
 

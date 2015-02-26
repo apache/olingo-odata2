@@ -52,7 +52,7 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
     setErrorLevel();
     setOnWriteJPAContent(onDBWriteContent);
     if(getoDataJPATransaction() == null) {
-        setODataJPATransactionContext(
+        setODataJPATransaction(
                 new ODataJPATransactionLocalDefault(getODataJPAContext().getEntityManager()));
     }
 
