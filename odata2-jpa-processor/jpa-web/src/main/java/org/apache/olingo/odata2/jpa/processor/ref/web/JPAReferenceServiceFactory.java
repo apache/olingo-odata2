@@ -25,6 +25,7 @@ import org.apache.olingo.odata2.jpa.processor.api.ODataJPAServiceFactory;
 import org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
+import org.apache.olingo.odata2.jpa.processor.ref.extension.ODataJPATransactionLocalDefault;
 import org.apache.olingo.odata2.jpa.processor.ref.extension.OnDBWriteContent;
 import org.apache.olingo.odata2.jpa.processor.ref.extension.SalesOrderProcessingExtension;
 import org.apache.olingo.odata2.jpa.processor.ref.factory.JPAEntityManagerFactory;
@@ -44,19 +45,21 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
     oDataJPAContext.setEntityManagerFactory(JPAEntityManagerFactory.getEntityManagerFactory(PUNIT_NAME));
     oDataJPAContext.setPersistenceUnitName(PUNIT_NAME);
     oDataJPAContext.setJPAEdmMappingModel(MAPPING_MODEL);
-    oDataJPAContext
-        .setJPAEdmExtension((JPAEdmExtension) new SalesOrderProcessingExtension());
+    oDataJPAContext.setJPAEdmExtension(new SalesOrderProcessingExtension());
     oDataJPAContext.setPageSize(PAGE_SIZE);
     oDataJPAContext.setDefaultNaming(false);
     setErrorLevel();
     setOnWriteJPAContent(onDBWriteContent);
+    if(getDataJPATransaction() == null) {
+        setODataJPATransaction(new ODataJPATransactionLocalDefault(getODataJPAContext().getEntityManager()));
+    }
 
     return oDataJPAContext;
   }
 
   private void setErrorLevel() {
     ResourceBundle config = ResourceBundle.getBundle(CONFIG);
-    boolean error = Boolean.parseBoolean((String) config.getObject(SHOW_DETAIL_ERROR));
+    boolean error = Boolean.parseBoolean(config.getString(SHOW_DETAIL_ERROR));
     setDetailErrors(error);
   }
 }

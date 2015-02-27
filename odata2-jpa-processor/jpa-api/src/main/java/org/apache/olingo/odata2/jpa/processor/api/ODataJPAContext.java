@@ -218,7 +218,7 @@ public interface ODataJPAContext {
 
   /**
    * The method sets the server side paging object
-   * @param an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging}
+   * @param paging an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging}
    */
   public void setPaging(JPAPaging paging);
 
@@ -227,4 +227,10 @@ public interface ODataJPAContext {
    * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging}
    */
   public JPAPaging getPaging();
+
+   /**
+    * The transaction context
+    * @return transaction context
+    */
+   public ODataJPATransaction getODataJpaTransaction();
 }
