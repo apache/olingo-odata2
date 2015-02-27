@@ -264,21 +264,22 @@ public class ODataJPAProcessorDefault extends ODataJPAProcessor {
       throws ODataException {
     List<ODataResponse> responses = new ArrayList<ODataResponse>();
     try {
-      oDataJPAContext.getEntityManager().getTransaction().begin();
+      oDataJPAContext.getODataJpaTransaction().begin();
 
       for (ODataRequest request : requests) {
         oDataJPAContext.setODataContext(getContext());
         ODataResponse response = handler.handleRequest(request);
         if (response.getStatus().getStatusCode() >= HttpStatusCodes.BAD_REQUEST.getStatusCode()) {
           // Rollback
-          oDataJPAContext.getEntityManager().getTransaction().rollback();
+          oDataJPAContext.getODataJpaTransaction().rollback();
           List<ODataResponse> errorResponses = new ArrayList<ODataResponse>(1);
           errorResponses.add(response);
           return BatchResponsePart.responses(errorResponses).changeSet(false).build();
         }
         responses.add(response);
       }
-      oDataJPAContext.getEntityManager().getTransaction().commit();
+      oDataJPAContext.getODataJpaTransaction().commit();
+
 
       return BatchResponsePart.responses(responses).changeSet(true).build();
     } catch (Exception e) {
