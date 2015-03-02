@@ -81,7 +81,6 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
   private ODataContext oDataContext;
   private boolean setDetailErrors = false;
   private OnJPAWriteContent onJPAWriteContent = null;
-  private ODataJPATransaction oDataJPATransaction = null;
 
   /**
    * Creates an OData Service based on the values set in
@@ -202,33 +201,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
         return (T) onJPAWriteContent;
       }
     }
-
-      if (oDataJPATransaction != null) {
-          if (callbackInterface.isAssignableFrom(ODataJPATransaction.class)) {
-              return (T) oDataJPATransaction;
-          }
-      }
-
-
-      return null;
+    return null;
   }
 
-  /**
-   * The methods sets the context with a callback implementation for JPA transaction specific content.
-   * For details refer to {@link ODataJPATransaction}
-   * @param oDataJPATransaction is an instance of type
-   * {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction}
-   */
-  protected void setODataJPATransaction(final ODataJPATransaction oDataJPATransaction) {
-      this.oDataJPATransaction = oDataJPATransaction;
-  }
-
-  /**
-   * Simple method to retrieve the current ODataJPATransactionContext optimized for fast access
-   *
-   * @return the current ODataJPATransaction
-   */
-  public ODataJPATransaction getDataJPATransaction() {
-      return oDataJPATransaction;
-  }
 }

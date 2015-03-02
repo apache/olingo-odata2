@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -43,7 +44,6 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
@@ -149,9 +149,10 @@ public class JPALink {
 
   public void save() {
     EntityManager em = context.getEntityManager();
-    ODataJPATransaction tx = context.getODataJpaTransaction();
+    EntityTransaction tx = em.getTransaction();
+
     if (!tx.isActive()) {
-      tx.begin();
+      em.getTransaction().begin();
       if (sourceJPAEntity != null) {
         em.persist(sourceJPAEntity);
       }
@@ -159,7 +160,7 @@ public class JPALink {
         em.persist(targetJPAEntity);
         em.flush();
       }
-      tx.commit();
+      em.getTransaction().commit();
     }
 
   }

@@ -67,7 +67,6 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
@@ -321,23 +320,12 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     ODataJPAContext odataJPAContext = EasyMock.createMock(ODataJPAContext.class);
     EasyMock.expect(odataJPAContext.getPersistenceUnitName()).andStubReturn("salesorderprocessing");
     EasyMock.expect(odataJPAContext.getEntityManagerFactory()).andStubReturn(mockEntityManagerFactory());
-    EasyMock.expect(odataJPAContext.getODataJpaTransaction()).andStubReturn(getLocalJpaTransaction());
     EasyMock.expect(odataJPAContext.getODataContext()).andStubReturn(getLocalODataContext());
     odataJPAContext.setODataContext((ODataContext) EasyMock.anyObject());
     EasyMock.expectLastCall().anyTimes();
     EasyMock.expect(odataJPAContext.getEntityManager()).andStubReturn(getLocalEntityManager());
     EasyMock.replay(odataJPAContext);
     return odataJPAContext;
-  }
-
-  private ODataJPATransaction getLocalJpaTransaction() {
-    ODataJPATransaction tx = EasyMock.createMock(ODataJPATransaction.class);
-    tx.begin(); // testing void method
-    tx.commit();// testing void method
-    tx.rollback();// testing void method
-    EasyMock.expect(tx.isActive()).andReturn(false);
-    EasyMock.replay(tx);
-    return tx;
   }
 
   private EntityManagerFactory mockEntityManagerFactory() {

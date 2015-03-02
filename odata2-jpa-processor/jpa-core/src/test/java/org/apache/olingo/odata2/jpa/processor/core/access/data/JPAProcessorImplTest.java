@@ -67,7 +67,6 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
@@ -286,7 +285,6 @@ public class JPAProcessorImplTest {
     ODataJPAContext odataJPAContext = EasyMock.createMock(ODataJPAContext.class);
     EasyMock.expect(odataJPAContext.getPersistenceUnitName()).andStubReturn("salesorderprocessing");
     EasyMock.expect(odataJPAContext.getEntityManagerFactory()).andStubReturn(mockEntityManagerFactory());
-    EasyMock.expect(odataJPAContext.getODataJpaTransaction()).andStubReturn(getLocalJpaTransaction());
     EasyMock.expect(odataJPAContext.getODataContext()).andStubReturn(getLocalODataContext());
     EasyMock.expect(odataJPAContext.getEntityManager()).andStubReturn(getLocalEntityManager());
     EasyMock.expect(odataJPAContext.getPageSize()).andReturn(10).anyTimes();
@@ -295,19 +293,6 @@ public class JPAProcessorImplTest {
     EasyMock.replay(odataJPAContext);
     return odataJPAContext;
   }
-
-  private ODataJPATransaction getLocalJpaTransaction() {
-    ODataJPATransaction tx = EasyMock.createMock(ODataJPATransaction.class);
-    EasyMock.expect(tx.isActive()).andReturn(false);
-    tx.begin(); // testing void method
-    tx.commit();// testing void method
-    EasyMock.expect(tx.isActive()).andReturn(false);
-    tx.begin(); // testing void method
-    tx.commit();// testing void method
-    EasyMock.replay(tx);
-    return tx;
-  }
-
 
   private EntityManagerFactory mockEntityManagerFactory() {
     EntityManagerFactory emf = EasyMock.createMock(EntityManagerFactory.class);
