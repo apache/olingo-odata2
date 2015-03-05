@@ -227,4 +227,9 @@ public interface ODataJPAContext {
    * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging}
    */
   public JPAPaging getPaging();
+
+   /**
+    * The transaction context
+    */
+   public ODataJPATransaction getODataJpaTransactionContext();
 }

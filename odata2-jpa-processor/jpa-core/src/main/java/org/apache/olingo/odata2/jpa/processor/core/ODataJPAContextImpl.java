@@ -25,6 +25,7 @@ import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
 
@@ -165,5 +166,10 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   @Override
   public JPAPaging getPaging() {
     return jpaPaging;
+  }
+
+  @Override
+  public ODataJPATransaction getODataJpaTransactionContext() {
+      return odataContext.getServiceFactory().getCallback(ODataJPATransaction.class);
   }
 }
