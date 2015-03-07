@@ -16,8 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.jpa.processor.ref.extension;
-
+package org.apache.olingo.odata2.jpa.processor.core;
 
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 
@@ -29,26 +28,28 @@ public class ODataJPATransactionLocalDefault implements ODataJPATransaction {
   private EntityTransaction tx = null;
 
   public ODataJPATransactionLocalDefault(EntityManager em) {
-      this.tx = em.getTransaction();
+    this.tx = em.getTransaction();
   }
 
   @Override
   public void begin() {
+    if (!isActive()) {
       tx.begin();
+    }
   }
 
   @Override
   public void commit() {
-      tx.commit();
+    tx.commit();
   }
 
   @Override
   public void rollback() {
-      tx.rollback();
+    tx.rollback();
   }
 
   @Override
   public boolean isActive() {
-      return tx.isActive();
+    return tx.isActive();
   }
 }

@@ -149,19 +149,21 @@ public class JPALink {
 
   public void save() {
     EntityManager em = context.getEntityManager();
-    ODataJPATransaction tx = context.getODataJpaTransaction();
+    ODataJPATransaction tx = context.getODataJPATransaction();
+    boolean isLocalTransaction = false;
     if (!tx.isActive()) {
       tx.begin();
-      if (sourceJPAEntity != null) {
-        em.persist(sourceJPAEntity);
-      }
-      if (targetJPAEntity != null) {
-        em.persist(targetJPAEntity);
-        em.flush();
-      }
+      isLocalTransaction = true;
+    }
+    if (sourceJPAEntity != null) {
+      em.persist(sourceJPAEntity);
+    }
+    if (targetJPAEntity != null) {
+      em.persist(targetJPAEntity);
+    }
+    if (isLocalTransaction && (em.contains(sourceJPAEntity) || em.contains(targetJPAEntity))) {
       tx.commit();
     }
-
   }
 
   public void create(final EdmEntitySet entitySet, final ODataEntry oDataEntry,

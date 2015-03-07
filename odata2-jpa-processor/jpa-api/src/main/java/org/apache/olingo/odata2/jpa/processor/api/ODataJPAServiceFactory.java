@@ -84,6 +84,34 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
   private ODataJPATransaction oDataJPATransaction = null;
 
   /**
+   * Implement this method and initialize OData JPA Context. It is mandatory
+   * to set an instance of type {@link javax.persistence.EntityManagerFactory} into the context. An exception of type
+   * {@link org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException} is thrown if
+   * EntityManagerFactory is not initialized. <br>
+   * <br>
+   * <b>Sample Code:</b> <code>
+   * <p>public class JPAReferenceServiceFactory extends ODataJPAServiceFactory{</p>
+   * 
+   * <blockquote>private static final String PUNIT_NAME = "punit";
+   * <br>
+   * public ODataJPAContext initializeODataJPAContext() {
+   * <blockquote>ODataJPAContext oDataJPAContext = this.getODataJPAContext();
+   * <br>
+   * EntityManagerFactory emf = Persistence.createEntityManagerFactory(PUNIT_NAME);
+   * <br>
+   * oDataJPAContext.setEntityManagerFactory(emf);
+   * oDataJPAContext.setPersistenceUnitName(PUNIT_NAME);
+   * <br> return oDataJPAContext;</blockquote>
+   * }</blockquote>
+   * } </code>
+   * <p>
+   * 
+   * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext}
+   * @throws ODataJPARuntimeException
+   */
+  public abstract ODataJPAContext initializeODataJPAContext() throws ODataJPARuntimeException;
+
+  /**
    * Creates an OData Service based on the values set in
    * {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext} and
    * {@link org.apache.olingo.odata2.api.processor.ODataContext}.
@@ -114,42 +142,6 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
     return createODataSingleProcessorService(edmProvider, odataJPAProcessor);
   }
 
-  private void validatePreConditions() throws ODataJPARuntimeException {
-
-    if (oDataJPAContext.getEntityManagerFactory() == null) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ENTITY_MANAGER_NOT_INITIALIZED, null);
-    }
-
-  }
-
-  /**
-   * Implement this method and initialize OData JPA Context. It is mandatory
-   * to set an instance of type {@link javax.persistence.EntityManagerFactory} into the context. An exception of type
-   * {@link org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException} is thrown if
-   * EntityManagerFactory is not initialized. <br>
-   * <br>
-   * <b>Sample Code:</b> <code>
-   * <p>public class JPAReferenceServiceFactory extends ODataJPAServiceFactory{</p>
-   * 
-   * <blockquote>private static final String PUNIT_NAME = "punit";
-   * <br>
-   * public ODataJPAContext initializeODataJPAContext() {
-   * <blockquote>ODataJPAContext oDataJPAContext = this.getODataJPAContext();
-   * <br>
-   * EntityManagerFactory emf = Persistence.createEntityManagerFactory(PUNIT_NAME);
-   * <br>
-   * oDataJPAContext.setEntityManagerFactory(emf);
-   * oDataJPAContext.setPersistenceUnitName(PUNIT_NAME);
-   * <br> return oDataJPAContext;</blockquote>
-   * }</blockquote>
-   * } </code>
-   * <p>
-   * 
-   * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext}
-   * @throws ODataJPARuntimeException
-   */
-  public abstract ODataJPAContext initializeODataJPAContext() throws ODataJPARuntimeException;
-
   /**
    * @return an instance of type {@link ODataJPAContext}
    * @throws ODataJPARuntimeException
@@ -165,6 +157,47 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
 
   }
 
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+    if (setDetailErrors == true) {
+      if (callbackInterface.isAssignableFrom(ODataErrorCallback.class)) {
+        return (T) new ODataJPAErrorCallback();
+      }
+    }
+    if (onJPAWriteContent != null) {
+      if (callbackInterface.isAssignableFrom(OnJPAWriteContent.class)) {
+        return (T) onJPAWriteContent;
+      }
+    }
+    if (oDataJPATransaction != null) {
+      if (callbackInterface.isAssignableFrom(ODataJPATransaction.class)) {
+        return (T) oDataJPATransaction;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * The methods sets the context with a callback implementation for JPA provider specific content.
+   * For details refer to {@link org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent}
+   * @param onJPAWriteContent is an instance of type
+   * {@link org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent}
+   */
+  protected void setOnWriteJPAContent(final OnJPAWriteContent onJPAWriteContent) {
+    this.onJPAWriteContent = onJPAWriteContent;
+  }
+
+  /**
+   * The methods sets the context with a callback implementation for JPA transaction specific content.
+   * For details refer to {@link ODataJPATransaction}
+   * @param oDataJPATransaction is an instance of type
+   * {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction}
+   */
+  protected void setODataJPATransaction(final ODataJPATransaction oDataJPATransaction) {
+    this.oDataJPATransaction = oDataJPATransaction;
+  }
+
   /**
    * The method sets the context whether a detail error message should be thrown
    * or a less detail error message should be thrown by the library.
@@ -178,57 +211,11 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
     this.setDetailErrors = setDetailErrors;
   }
 
-  /**
-   * The methods sets the context with a callback implementation for JPA provider specific content.
-   * For details refer to {@link org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent}
-   * @param onJPAWriteContent is an instance of type
-   * {@link org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent}
-   */
-  protected void setOnWriteJPAContent(final OnJPAWriteContent onJPAWriteContent) {
-    this.onJPAWriteContent = onJPAWriteContent;
-  }
+  private void validatePreConditions() throws ODataJPARuntimeException {
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
-    if (setDetailErrors == true) {
-      if (callbackInterface.isAssignableFrom(ODataErrorCallback.class)) {
-        return (T) new ODataJPAErrorCallback();
-      }
+    if (oDataJPAContext.getEntityManagerFactory() == null) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ENTITY_MANAGER_NOT_INITIALIZED, null);
     }
 
-    if (onJPAWriteContent != null) {
-      if (callbackInterface.isAssignableFrom(OnJPAWriteContent.class)) {
-        return (T) onJPAWriteContent;
-      }
-    }
-
-      if (oDataJPATransaction != null) {
-          if (callbackInterface.isAssignableFrom(ODataJPATransaction.class)) {
-              return (T) oDataJPATransaction;
-          }
-      }
-
-
-      return null;
-  }
-
-  /**
-   * The methods sets the context with a callback implementation for JPA transaction specific content.
-   * For details refer to {@link ODataJPATransaction}
-   * @param oDataJPATransaction is an instance of type
-   * {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction}
-   */
-  protected void setODataJPATransaction(final ODataJPATransaction oDataJPATransaction) {
-      this.oDataJPATransaction = oDataJPATransaction;
-  }
-
-  /**
-   * Simple method to retrieve the current ODataJPATransactionContext optimized for fast access
-   *
-   * @return the current ODataJPATransaction
-   */
-  public ODataJPATransaction getDataJPATransaction() {
-      return oDataJPATransaction;
   }
 }

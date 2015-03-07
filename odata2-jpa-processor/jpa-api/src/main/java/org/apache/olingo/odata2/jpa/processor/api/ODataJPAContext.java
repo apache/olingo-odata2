@@ -229,8 +229,8 @@ public interface ODataJPAContext {
   public JPAPaging getPaging();
 
    /**
-    * The transaction context
-    * @return transaction context
+    * The method returns the ODataJPATransaction.
+    * @return ODataJPATransaction
     */
-   public ODataJPATransaction getODataJpaTransaction();
+   public ODataJPATransaction getODataJPATransaction();
 }

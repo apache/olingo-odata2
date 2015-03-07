@@ -286,7 +286,7 @@ public class JPAProcessorImplTest {
     ODataJPAContext odataJPAContext = EasyMock.createMock(ODataJPAContext.class);
     EasyMock.expect(odataJPAContext.getPersistenceUnitName()).andStubReturn("salesorderprocessing");
     EasyMock.expect(odataJPAContext.getEntityManagerFactory()).andStubReturn(mockEntityManagerFactory());
-    EasyMock.expect(odataJPAContext.getODataJpaTransaction()).andStubReturn(getLocalJpaTransaction());
+    EasyMock.expect(odataJPAContext.getODataJPATransaction()).andStubReturn(getLocalJpaTransaction());
     EasyMock.expect(odataJPAContext.getODataContext()).andStubReturn(getLocalODataContext());
     EasyMock.expect(odataJPAContext.getEntityManager()).andStubReturn(getLocalEntityManager());
     EasyMock.expect(odataJPAContext.getPageSize()).andReturn(10).anyTimes();

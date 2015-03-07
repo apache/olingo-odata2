@@ -355,7 +355,7 @@ public class JPAProcessorImpl implements JPAProcessor {
         em.remove(selectedObject);
         em.flush();
         if (isLocalTransaction) {
-          oDataJPAContext.getODataJpaTransaction().commit();
+          oDataJPAContext.getODataJPATransaction().commit();
         }
 
       } catch (Exception e) {
@@ -456,7 +456,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       em.persist(jpaEntity);
       if (em.contains(jpaEntity)) {
         if (isLocalTransaction) {
-          oDataJPAContext.getODataJpaTransaction().commit();
+          oDataJPAContext.getODataJPATransaction().commit();
         }
         return jpaEntity;
       }
@@ -507,7 +507,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       }
       em.flush();
       if (isLocalTransaction) {
-        oDataJPAContext.getODataJpaTransaction().commit();
+        oDataJPAContext.getODataJPATransaction().commit();
       }
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
@@ -572,12 +572,11 @@ public class JPAProcessorImpl implements JPAProcessor {
   }
 
   private boolean setTransaction() {
-    ODataJPATransaction transactionContext = oDataJPAContext.getODataJpaTransaction();
-    if (!transactionContext.isActive()) {
-      transactionContext.begin();
+    ODataJPATransaction transaction = oDataJPAContext.getODataJPATransaction();
+    if (!transaction.isActive()) {
+      transaction.begin();
       return true;
     }
-
     return false;
   }
 }

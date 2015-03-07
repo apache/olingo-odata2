@@ -43,6 +43,7 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   private JPAPaging jpaPaging;
   private static final ThreadLocal<ODataContext> oDataContextThreadLocal = new ThreadLocal<ODataContext>();
   private boolean defaultNaming = true;
+  private ODataJPATransaction transaction = null;
 
   @Override
   public String getPersistenceUnitName() {
@@ -169,7 +170,14 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   }
 
   @Override
-  public ODataJPATransaction getODataJpaTransaction() {
-      return odataContext.getServiceFactory().getCallback(ODataJPATransaction.class);
+  public ODataJPATransaction getODataJPATransaction() {
+    if (transaction == null) {
+      transaction = odataContext.getServiceFactory().getCallback(ODataJPATransaction.class);
+      // Fallback to RESOURCE_LOCAL based transaction
+      if (transaction == null) {
+        transaction = new ODataJPATransactionLocalDefault(getEntityManager());
+      }
+    }
+    return transaction;
   }
 }
