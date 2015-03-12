@@ -217,8 +217,8 @@ public class ODataExpressionParser {
         return String.format("SUBSTRING(%s, %s + 1 %s)", first, second, third);
       case SUBSTRINGOF:
         first = first.substring(1, first.length() - 1);
-        if (methodFlag.get() == 1) {
-          methodFlag.set(0);
+        if (methodFlag.get() != null && methodFlag.get() == 1) {
+          methodFlag.set(null);
           return String.format("(CASE WHEN (%s LIKE '%%%s%%') THEN TRUE ELSE FALSE END)", second, first);
         } else {
           return String.format("(CASE WHEN (%s LIKE '%%%s%%') THEN TRUE ELSE FALSE END) = true", second, first);
