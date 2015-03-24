@@ -90,7 +90,7 @@ public class RestUtil {
    */
   public static Map<String, String> extractQueryParameters(final String queryString) {
     Map<String, String> queryParametersMap = new HashMap<String, String>();
-    if (queryString != null) {
+    if (queryString != null && queryString.length() > 0) {
       // At first the queryString will be decoded.
       List<String> queryParameters = Arrays.asList(queryString.split("\\&"));
       for (String param : queryParameters) {
@@ -110,7 +110,7 @@ public class RestUtil {
   public static Map<String, List<String>> extractAllQueryParameters(final String queryString) {
     Map<String, List<String>> allQueryParameterMap = new HashMap<String, List<String>>();
 
-    if (queryString != null) {
+    if (queryString != null && queryString.length() > 0) {
       // At first the queryString will be decoded.
       List<String> queryParameters = Arrays.asList(queryString.split("\\&"));
       for (String param : queryParameters) {
