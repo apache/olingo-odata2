@@ -418,8 +418,10 @@ public class JPAProcessorImpl implements JPAProcessor {
       Query query = null;
       try {
         query = em.createQuery(selectJPQLStatement.toString());
-        if (!query.getResultList().isEmpty()) {
-          selectedObject = query.getResultList().get(0);
+        @SuppressWarnings("rawtypes")
+        final List resultList = query.getResultList();
+        if (!resultList.isEmpty()) {
+          selectedObject = resultList.get(0);
         }
       } catch (IllegalArgumentException e) {
         throw ODataJPARuntimeException.throwException(
