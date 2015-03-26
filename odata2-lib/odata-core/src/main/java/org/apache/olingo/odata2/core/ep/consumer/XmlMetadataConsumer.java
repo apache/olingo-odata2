@@ -303,6 +303,7 @@ public class XmlMetadataConsumer {
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
 
     functionParameter.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
+    functionParameter.setMode(reader.getAttributeValue(null, XmlMetadataConstants.EDM_FUNCTION_PARAMETER_MODE));
     String type = reader.getAttributeValue(null, XmlMetadataConstants.EDM_TYPE);
     if (type == null) {
       throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE
