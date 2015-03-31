@@ -185,7 +185,7 @@ public class JPATypeMock {
     return propertyWithXmlAdapter;
   }
 
-  public void setPropertyWithXmlAdapter(EntityWithXmlAdapterOnProperty self) {
+  public void setPropertyWithXmlAdapter(EntityWithXmlAdapterOnProperty propertyWithXmlAdapter) {
     this.propertyWithXmlAdapter = propertyWithXmlAdapter;
   }
 

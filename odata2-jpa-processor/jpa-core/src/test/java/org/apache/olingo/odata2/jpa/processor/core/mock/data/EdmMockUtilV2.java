@@ -166,6 +166,7 @@ public class EdmMockUtilV2 {
       propertyNames.add(JPATypeMock.PROPERTY_NAME_MCHAR);
       propertyNames.add(JPATypeMock.PROPERTY_NAME_MCHARARRAY);
       propertyNames.add(JPATypeMock.PROPERTY_NAME_ENUM);
+      propertyNames.add(JPATypeMock.PROPERTY_NAME_XMLADAPTER);
     } else if (entityName.equals(JPARelatedTypeMock.ENTITY_NAME)) {
       propertyNames.add(JPARelatedTypeMock.PROPERTY_NAME_MLONG);
       propertyNames.add(JPARelatedTypeMock.PROPERTY_NAME_MBYTE);
@@ -287,7 +288,8 @@ public class EdmMockUtilV2 {
       } else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_MBLOB)) {
         EasyMock.<Class<?>> expect(edmType.getDefaultType()).andReturn(Blob.class).anyTimes();
       } else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_XMLADAPTER)) {
-    	  EasyMock.<Class<?>> expect(edmType.getDefaultType()).andReturn(EntityWithXmlAdapterOnProperty.class).anyTimes();
+    	  EasyMock.<Class<?>> expect(edmType.getDefaultType())
+    	  	.andReturn(String.class).anyTimes();
       } else {
         EasyMock.<Class<?>> expect(edmType.getDefaultType()).andReturn(Integer.class).anyTimes();
       }
@@ -390,6 +392,9 @@ public class EdmMockUtilV2 {
     } else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_MCHARARRAY)) {
       mapping.setJPAType(Character[].class);
       ((Mapping) mapping).setInternalName(JPATypeMock.PROPERTY_NAME_MCHARARRAY);
+    } else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_XMLADAPTER)) {
+        mapping.setJPAType(EntityWithXmlAdapterOnProperty.class);
+        ((Mapping) mapping).setInternalName(JPATypeMock.PROPERTY_NAME_XMLADAPTER);
     } else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_MDATETIME)) {
       mapping.setJPAType(Calendar.class);
       ((Mapping) mapping).setInternalName(JPATypeMock.PROPERTY_NAME_MDATETIME);

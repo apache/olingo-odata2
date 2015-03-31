@@ -37,8 +37,6 @@ import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.metamodel.ManagedType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
@@ -248,7 +246,8 @@ public class JPATypeConvertorTest {
   public void testConvertTypeTemporalNull2() {
     testCase = "temporalnull2";
     try {
-      EdmSimpleTypeKind edmDateType = JPATypeConvertor.convertToEdmSimpleType(Calendar.class, new JPASimpleAttribute());
+      EdmSimpleTypeKind edmDateType =
+    		  JPATypeConvertor.convertToEdmSimpleType(Calendar.class,new JPASimpleAttribute());
       assertEquals(EdmSimpleTypeKind.DateTime, edmDateType);
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -258,10 +257,14 @@ public class JPATypeConvertorTest {
   @Test
   public void testConvertPropertyWithXmlAdapter() {
 	  try {
-		 EdmSimpleTypeKind edmDateType = JPATypeConvertor.convertToEdmSimpleType(EntityWithXmlAdapterOnProperty.class, new JPAAttributeWithXmlAdapterType());
+		 EdmSimpleTypeKind edmDateType =
+				 JPATypeConvertor
+				 .convertToEdmSimpleType(EntityWithXmlAdapterOnProperty.class,
+						 new JPAAttributeWithXmlAdapterType());
 		 assertEquals(EdmSimpleTypeKind.String, edmDateType);
 	} catch (ODataJPAModelException e) {
-		fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+		fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() +
+				ODataJPATestConstants.EXCEPTION_MSG_PART_2);
 	}
   }
 

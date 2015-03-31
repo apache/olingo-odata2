@@ -261,16 +261,24 @@ public class JPAEntity {
           Enum e = Enum.valueOf((Class<Enum>) parameterType, (String) entityPropertyValue);
           method.invoke(entity, e);
         } else {
-        	if(method.isAnnotationPresent(XmlJavaTypeAdapter.class)) {
-        		try {
-					XmlAdapter xmlAdapter = method.getAnnotation(XmlJavaTypeAdapter.class).value().newInstance();
-					method.invoke(entity, xmlAdapter.unmarshal(entityPropertyValue));
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-        	}
+          String setterName = method.getName();
+      	  String getterName = setterName.replace("set", "get");
+      	  try {
+  			Method getMethod = entity.getClass().getDeclaredMethod(getterName);
+  			if(getMethod.isAnnotationPresent(XmlJavaTypeAdapter.class)) {
+  				XmlAdapter xmlAdapter = getMethod.getAnnotation(XmlJavaTypeAdapter.class)
+  						.value().newInstance();
+  				method.invoke(entity, xmlAdapter.unmarshal(entityPropertyValue));
+  			}
+  		  } catch (SecurityException e) {
+  			throw new IllegalAccessException(e.toString());
+  		  } catch (NoSuchMethodException e) {
+  			throw new IllegalAccessException(e.toString());
+  		  } catch (InstantiationException e) {
+  			throw new IllegalAccessException(e.toString());
+  		  } catch (Exception e) {
+  			throw new IllegalAccessException(e.toString());
+  		  }
         }
       } else if (parameterType.equals(Blob.class)) {
         if (onJPAWriteContent == null) {
@@ -298,7 +306,7 @@ public class JPAEntity {
         long timeInMs = ((Calendar) entityPropertyValue).getTimeInMillis();
         method.invoke(entity, new java.sql.Time(timeInMs));
       } else {
-        method.invoke(entity, entityPropertyValue);
+    	  method.invoke(entity, entityPropertyValue);
       }
     }
   }
