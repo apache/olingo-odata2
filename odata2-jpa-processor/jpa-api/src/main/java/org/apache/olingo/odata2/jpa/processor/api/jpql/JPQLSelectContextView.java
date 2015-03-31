@@ -49,6 +49,8 @@ public interface JPQLSelectContextView extends JPQLContextView {
    * in the order based on the expression specified
    * (accessible with <code>Map.entrySet(..)</code>).
    * 
+   * https://issues.apache.org/jira/browse/OLINGO-606
+   * 
    * @return an ordered map of (JPA Property Name,Sort Order)
    */
   public Map<String, String> getOrderByCollection();
