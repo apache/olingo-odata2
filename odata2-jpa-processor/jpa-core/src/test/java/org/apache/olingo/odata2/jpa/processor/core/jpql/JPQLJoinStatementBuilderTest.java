@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAJoinClause;
@@ -53,7 +54,7 @@ public class JPQLJoinStatementBuilderTest {
     EasyMock.expect(context.getType()).andStubReturn(JPQLContextType.SELECT);
     EasyMock.expect(context.getSelectExpression()).andStubReturn("mat");
     EasyMock.expect(context.getWhereExpression()).andStubReturn("soh.buyerId = 2");
-    HashMap<String, String> orderByMap = new HashMap<String, String>();
+    HashMap<String, String> orderByMap = new LinkedHashMap<String, String>();
     orderByMap.put("mat.buyerId", "asc");
     orderByMap.put("mat.city", "desc");
     EasyMock.expect(context.getOrderByCollection()).andStubReturn(orderByMap);
