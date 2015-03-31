@@ -36,10 +36,14 @@ import java.util.UUID;
 import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.metamodel.ManagedType;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.jpa.processor.core.mock.data.EntityWithXmlAdapterOnProperty;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAJavaMemberMock;
 import org.easymock.EasyMock;
@@ -250,6 +254,16 @@ public class JPATypeConvertorTest {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
   }
+  
+  @Test
+  public void testConvertPropertyWithXmlAdapter() {
+	  try {
+		 EdmSimpleTypeKind edmDateType = JPATypeConvertor.convertToEdmSimpleType(EntityWithXmlAdapterOnProperty.class, new JPAAttributeWithXmlAdapterType());
+		 assertEquals(EdmSimpleTypeKind.String, edmDateType);
+	} catch (ODataJPAModelException e) {
+		fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+	}
+  }
 
   private static class JPASimpleAttribute extends JPAAttributeMock<Object, String> {
 
@@ -297,5 +311,19 @@ public class JPATypeConvertorTest {
       return null;
 
     }
+  }
+  
+  private static class JPAAttributeWithXmlAdapterType extends JPAAttributeMock<EntityWithXmlAdapterOnProperty, String> {
+	  @Override
+	  public String getName() {
+		  return "self";
+	  }
+	  
+	  public ManagedType<EntityWithXmlAdapterOnProperty> getDeclaringType() {
+		ManagedType<EntityWithXmlAdapterOnProperty> mock = EasyMock.createMock(ManagedType.class);
+		EasyMock.expect(mock.getJavaType()).andStubReturn(EntityWithXmlAdapterOnProperty.class);
+		EasyMock.replay(mock);
+		return mock;
+	  }
   }
 }

@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -52,6 +55,8 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 
 public class JPAEntity {
 
+	
+	
   private Object jpaEntity = null;
   private JPAEntity parentJPAEntity = null;
   private EdmEntityType oDataEntityType = null;
@@ -255,6 +260,17 @@ public class JPAEntity {
         } else if (parameterType.isEnum()) {
           Enum e = Enum.valueOf((Class<Enum>) parameterType, (String) entityPropertyValue);
           method.invoke(entity, e);
+        } else {
+        	if(method.isAnnotationPresent(XmlJavaTypeAdapter.class)) {
+        		try {
+					XmlAdapter xmlAdapter = method.getAnnotation(XmlJavaTypeAdapter.class).value().newInstance();
+					method.invoke(entity, xmlAdapter.unmarshal(entityPropertyValue));
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+        	}
         }
       } else if (parameterType.equals(Blob.class)) {
         if (onJPAWriteContent == null) {

@@ -105,6 +105,8 @@ public class EdmMockUtilV2 {
           mockEdmProperty(entityName, JPATypeMock.PROPERTY_NAME_MCHARARRAY)).anyTimes();
       EasyMock.expect(entityType.getProperty(JPATypeMock.PROPERTY_NAME_MCOMPLEXTYPE)).andReturn(
           mockEdmProperty(entityName, JPATypeMock.PROPERTY_NAME_MCOMPLEXTYPE)).anyTimes();
+      EasyMock.expect(entityType.getProperty(JPATypeMock.PROPERTY_NAME_XMLADAPTER)).andReturn(
+              mockEdmProperty(entityName, JPATypeMock.PROPERTY_NAME_XMLADAPTER)).anyTimes();
       EasyMock.expect(entityType.getProperty(JPATypeMock.NAVIGATION_PROPERTY_X)).andReturn(
           mockEdmNavigationProperty(JPATypeMock.NAVIGATION_PROPERTY_X, EdmMultiplicity.ONE)).anyTimes();
       EasyMock.expect(entityType.getProperty(JPATypeMock.NAVIGATION_PROPERTY_XS)).andReturn(null).anyTimes();
@@ -262,12 +264,14 @@ public class EdmMockUtilV2 {
         propertyName.equals(JPATypeMock.PROPERTY_NAME_MC) ||
         propertyName.equals(JPATypeMock.PROPERTY_NAME_MCHAR) ||
         propertyName.equals(JPATypeMock.PROPERTY_NAME_MCHARARRAY) ||
+        propertyName.equals(JPATypeMock.PROPERTY_NAME_XMLADAPTER) ||
         propertyName.equals(JPATypeMock.JPATypeEmbeddableMock.PROPERTY_NAME_MSHORT) ||
         propertyName.equals(JPATypeMock.JPATypeEmbeddableMock2.PROPERTY_NAME_MFLOAT) ||
         propertyName.equals(JPATypeMock.JPATypeEmbeddableMock2.PROPERTY_NAME_MUUID) ||
         propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MLONG) ||
         propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MBYTE) ||
         propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MDOUBLE) ||
+        
         propertyName.equals(JPARelatedTypeMock.PROPERTY_NAME_MBYTEARRAY)) {
 
       EdmSimpleType edmType = EasyMock.createMock(EdmSimpleType.class);
@@ -282,6 +286,8 @@ public class EdmMockUtilV2 {
         EasyMock.<Class<?>> expect(edmType.getDefaultType()).andReturn(String.class).anyTimes();
       } else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_MBLOB)) {
         EasyMock.<Class<?>> expect(edmType.getDefaultType()).andReturn(Blob.class).anyTimes();
+      } else if (propertyName.equals(JPATypeMock.PROPERTY_NAME_XMLADAPTER)) {
+    	  EasyMock.<Class<?>> expect(edmType.getDefaultType()).andReturn(EntityWithXmlAdapterOnProperty.class).anyTimes();
       } else {
         EasyMock.<Class<?>> expect(edmType.getDefaultType()).andReturn(Integer.class).anyTimes();
       }
@@ -289,6 +295,9 @@ public class EdmMockUtilV2 {
       EasyMock.expect(edmType.isCompatible(EasyMock.isA(EdmSimpleType.class))).andReturn(true).anyTimes();
       EasyMock.replay(edmType);
       EasyMock.expect(edmProperty.getName()).andReturn(propertyName).anyTimes();
+      
+      
+      
       EasyMock.expect(edmProperty.getMapping()).andReturn((EdmMapping) mockEdmMapping(entityName, propertyName, null))
           .anyTimes();
 
