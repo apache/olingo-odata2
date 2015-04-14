@@ -25,7 +25,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Arrays;
 
 import org.apache.olingo.odata2.api.ODataServiceVersion;
