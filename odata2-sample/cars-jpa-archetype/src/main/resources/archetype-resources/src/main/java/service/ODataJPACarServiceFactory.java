@@ -24,9 +24,16 @@ package ${package}.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.persistence.config.PersistenceUnitProperties;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAServiceFactory;
@@ -40,12 +47,10 @@ import ${package}.model.Manufacturer;
 
 public class ODataJPACarServiceFactory extends ODataJPAServiceFactory {
 
-	private static final String PUNIT_NAME = "MyFormula";
 	private static final int PAGE_SIZE = 5;
 
 	/** Load Sample Data **/
 	static {
-
 		List<Car> cars = new ArrayList<Car>();
 		Calendar mfDate = Calendar.getInstance();
 		mfDate.set(2013, 02, 01);
@@ -65,8 +70,8 @@ public class ODataJPACarServiceFactory extends ODataJPAServiceFactory {
 		cars.add(car);
 		driver.setCar(car);
 
-		EntityManager em = Persistence.createEntityManagerFactory(PUNIT_NAME)
-				.createEntityManager();
+
+		EntityManager em = EmfHolder.createInstance().createEntityManager();
 		em.getTransaction().begin();
 		em.persist(mf);
 		em.persist(driver);
@@ -79,13 +84,60 @@ public class ODataJPACarServiceFactory extends ODataJPAServiceFactory {
 	public ODataJPAContext initializeODataJPAContext()
 			throws ODataJPARuntimeException {
 		ODataJPAContext oDataJPAContext = getODataJPAContext();
-		oDataJPAContext.setEntityManagerFactory(Persistence
-				.createEntityManagerFactory(PUNIT_NAME));
-		oDataJPAContext.setPersistenceUnitName(PUNIT_NAME);
+		EmfHolder emfHolder = EmfHolder.createInstance();
+		oDataJPAContext.setEntityManagerFactory(emfHolder.getEntityManagerFactory());
+		oDataJPAContext.setPersistenceUnitName(emfHolder.getPersistenceUnitName());
 
 		oDataJPAContext.setPageSize(PAGE_SIZE);
 		setDetailErrors(true);
 
 		return oDataJPAContext;
+	}
+
+	/**
+	 *
+	 */
+	private static class EmfHolder {
+		private static final String PUNIT_NAME = "MyFormulaHsqlDb";
+		private static final String PUNIT_NAME_DEFAULT = "MyFormulaJeeDb";
+		private static final String DATA_SOURCE_NAME = "java:comp/env/jdbc/DefaultDB";
+
+		final private EntityManagerFactory emf;
+		final private String persistenceUnitName;
+
+		private EmfHolder(EntityManagerFactory emf, String unitName) {
+			this.emf = emf;
+			this.persistenceUnitName = unitName;
+		}
+
+		public EntityManagerFactory getEntityManagerFactory() {
+			return emf;
+		}
+
+		public String getPersistenceUnitName() {
+			return persistenceUnitName;
+		}
+
+		public static EntityManager createEntityManager() {
+			return createInstance().getEntityManagerFactory().createEntityManager();
+		}
+
+
+		public static synchronized EmfHolder createInstance() {
+			try {
+				InitialContext ctx = new InitialContext();
+				DataSource ds = (DataSource) ctx.lookup(DATA_SOURCE_NAME);
+				Map<String, Object> properties = new HashMap<String, Object>();
+				properties.put(PersistenceUnitProperties.NON_JTA_DATASOURCE, ds);
+				EntityManagerFactory emf =
+						Persistence.createEntityManagerFactory(PUNIT_NAME_DEFAULT, properties);
+				emf.createEntityManager();
+				return new EmfHolder(emf, PUNIT_NAME_DEFAULT);
+			} catch (javax.persistence.PersistenceException e) {
+				return new EmfHolder(Persistence.createEntityManagerFactory(PUNIT_NAME), PUNIT_NAME);
+			} catch (NamingException e) {
+				return new EmfHolder(Persistence.createEntityManagerFactory(PUNIT_NAME), PUNIT_NAME);
+			}
+		}
 	}
 }
