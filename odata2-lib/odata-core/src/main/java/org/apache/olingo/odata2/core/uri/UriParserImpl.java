@@ -167,13 +167,13 @@ public class UriParserImpl extends UriParser {
     } else {
 
       currentPathSegment = pathSegments.remove(0);
-      final String encodedPath = percentDecode(currentPathSegment);
+      final String decodedPath = percentDecode(currentPathSegment);
       
-      if ("$metadata".equals(encodedPath)) {
+      if ("$metadata".equals(decodedPath)) {
         ensureLastSegment();
         uriResult.setUriType(UriType.URI8);
 
-      } else if ("$batch".equals(encodedPath)) {
+      } else if ("$batch".equals(decodedPath)) {
         ensureLastSegment();
         uriResult.setUriType(UriType.URI9);
 
