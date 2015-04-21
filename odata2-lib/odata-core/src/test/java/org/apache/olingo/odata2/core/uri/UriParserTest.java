@@ -130,7 +130,17 @@ public class UriParserTest extends BaseTest {
     assertEquals(1, pathSegments.size());
     assertEquals("$metadata", pathSegments.get(0).getPath());
   }
-
+  
+  @Test
+  public void copyPathSegmentsTestEncoded() throws Exception {
+    List<PathSegment> pathSegments = new ArrayList<PathSegment>();
+    pathSegments.add(new ODataPathSegmentImpl("%24metadata", null));
+    UriInfoImpl result = (UriInfoImpl) new UriParserImpl(edm).parse(pathSegments, 
+        Collections.<String, String> emptyMap());
+    assertNotNull(result);
+    assertEquals(UriType.URI8, result.getUriType());
+  }
+  
   @Test
   public void parseNonsense() throws Exception {
     parseWrongUri("/bla", UriNotMatchingException.NOTFOUND);
@@ -244,6 +254,18 @@ public class UriParserTest extends BaseTest {
   }
 
   @Test
+  public void parseEmployeesEntityWithKeyEncoded() throws Exception {
+    UriInfoImpl result = parse("/%45mployees('1')");
+    assertNull(result.getEntityContainer().getName());
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI2, result.getUriType());
+
+    assertEquals(1, result.getKeyPredicates().size());
+    assertEquals("1", result.getKeyPredicates().get(0).getLiteral());
+    assertEquals("EmployeeId", result.getKeyPredicates().get(0).getProperty().getName());
+  }
+  
+  @Test
   public void parseEmployeesEntity() throws Exception {
     UriInfoImpl result = parse("/Employees('1')");
     assertNull(result.getEntityContainer().getName());
@@ -291,7 +313,19 @@ public class UriParserTest extends BaseTest {
     assertEquals("1", result.getKeyPredicates().get(0).getLiteral());
     assertEquals("EmployeeId", result.getKeyPredicates().get(0).getProperty().getName());
   }
+  
+  @Test
+  public void parseEmployeesEntityWithKeyCountEncoded() throws Exception {
+    UriInfoImpl result = parse("/Employees('1')/%24count");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI16, result.getUriType());
+    assertTrue(result.isCount());
 
+    assertEquals(1, result.getKeyPredicates().size());
+    assertEquals("1", result.getKeyPredicates().get(0).getLiteral());
+    assertEquals("EmployeeId", result.getKeyPredicates().get(0).getProperty().getName());
+  }
+  
   @Test
   public void parseEmployeesSimpleProperty() throws Exception {
     UriInfoImpl result = parse("/Employees('1')/EmployeeName");
@@ -310,7 +344,17 @@ public class UriParserTest extends BaseTest {
     assertEquals("EmployeeName", result.getPropertyPath().get(0).getName());
     assertTrue(result.isValue());
   }
-
+  
+  @Test
+  public void parseEmployeesSimplePropertyValueEncoded() throws Exception {
+    UriInfoImpl result = parse("/Employees('1')/EmployeeName/%24value");
+    assertNull(result.getEntityContainer().getName());
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI5, result.getUriType());
+    assertEquals("EmployeeName", result.getPropertyPath().get(0).getName());
+    assertTrue(result.isValue());
+  }
+  
   @Test
   public void parseEmployeesComplexProperty() throws Exception {
     UriInfoImpl result = parse("/Employees('1')/Location");
@@ -403,7 +447,15 @@ public class UriParserTest extends BaseTest {
     assertTrue(result.isLinks());
     assertEquals(UriType.URI7B, result.getUriType());
   }
-
+  
+  @Test
+  public void parseNavigationPropertyWithLinksManyEncoded() throws Exception {
+    UriInfoImpl result = parse("/Managers('1')/%24links/nm_Employees");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertTrue(result.isLinks());
+    assertEquals(UriType.URI7B, result.getUriType());
+  }
+  
   @Test
   public void parseNavigationPropertyWithManagersCount() throws Exception {
     UriInfoImpl result = parse("/Employees('1')/ne_Manager/$count");
@@ -591,7 +643,12 @@ public class UriParserTest extends BaseTest {
     assertEquals("MaximalAge", result.getFunctionImport().getName());
     assertTrue(result.isValue());
     assertEquals(UriType.URI14, result.getUriType());
-
+    
+    result = parse("MaximalAge/%24value");
+    assertEquals("MaximalAge", result.getFunctionImport().getName());
+    assertTrue(result.isValue());
+    assertEquals(UriType.URI14, result.getUriType());
+    
     result = parse("MostCommonLocation");
     assertEquals("MostCommonLocation", result.getFunctionImport().getName());
     assertEquals(UriType.URI12, result.getUriType());
@@ -646,7 +703,16 @@ public class UriParserTest extends BaseTest {
     assertEquals("abc", result.getSkipToken());
     assertEquals(2, result.getSkip().intValue());
     assertEquals(1, result.getTop().intValue());
-
+    
+    result = parse("Employees?$format=json&%24inlinecount=allpages&%24skiptoken=abc&%24skip=2&$top=1");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("json", result.getFormat());
+    assertEquals(InlineCount.ALLPAGES, result.getInlineCount());
+    assertEquals("abc", result.getSkipToken());
+    assertEquals(2, result.getSkip().intValue());
+    assertEquals(1, result.getTop().intValue());
+    
     result = parse("Employees?$format=atom&$inlinecount=none&$skip=0&$top=0");
     assertEquals("Employees", result.getTargetEntitySet().getName());
     assertEquals(UriType.URI1, result.getUriType());
@@ -824,7 +890,13 @@ public class UriParserTest extends BaseTest {
     assertEquals(UriType.URI1, result.getUriType());
     assertEquals(1, result.getSelect().size());
     assertEquals("EmployeeName", result.getSelect().get(0).getProperty().getName());
-
+    
+    result = parse("Employees?%24select=EmployeeName");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(1, result.getSelect().size());
+    assertEquals("EmployeeName", result.getSelect().get(0).getProperty().getName());
+    
     result = parse("Employees?$select=*");
     assertEquals("Employees", result.getTargetEntitySet().getName());
     assertEquals(UriType.URI1, result.getUriType());
@@ -903,6 +975,15 @@ public class UriParserTest extends BaseTest {
   @Test
   public void parseSystemQueryOptionExpand() throws Exception {
     UriInfoImpl result = parse("Managers('1')?$expand=nm_Employees");
+    assertEquals("Managers", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI2, result.getUriType());
+    assertEquals(1, result.getExpand().size());
+    assertEquals(1, result.getExpand().get(0).size());
+    assertEquals("Employees", result.getExpand().get(0).get(0).getTargetEntitySet().getName());
+    assertEquals(result.getTargetEntitySet().getEntityType().getProperty("nm_Employees"), result.getExpand().get(0)
+        .get(0).getNavigationProperty());
+    
+    result = parse("Managers('1')?%24expand=nm_Employees");
     assertEquals("Managers", result.getTargetEntitySet().getName());
     assertEquals(UriType.URI2, result.getUriType());
     assertEquals(1, result.getExpand().size());
