@@ -30,19 +30,11 @@
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>target/maven-shared-archive-resources</directory>
+                <filtering>false</filtering>
             </resource>
         </resources>
 
         <plugins>
-            <plugin>
-                <groupId>com.sap.research</groupId>
-                <artifactId>nwcloud-maven-plugin</artifactId>
-                <version>1.0.0.RELEASE</version>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>

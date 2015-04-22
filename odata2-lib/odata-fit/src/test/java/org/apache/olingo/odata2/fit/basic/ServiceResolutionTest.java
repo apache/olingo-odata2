@@ -32,7 +32,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -117,7 +116,7 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testSplit0() throws ClientProtocolException, IOException, ODataException {
+  public void testSplit0() throws IOException, ODataException {
     server.setPathSplit(0);
     startServer();
 
@@ -134,7 +133,7 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testSplit1() throws ClientProtocolException, IOException, ODataException {
+  public void testSplit1() throws IOException, ODataException {
     server.setPathSplit(1);
     startServer();
 
@@ -151,7 +150,7 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testSplit2() throws ClientProtocolException, IOException, ODataException {
+  public void testSplit2() throws IOException, ODataException {
     server.setPathSplit(2);
     startServer();
 
@@ -169,7 +168,7 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testSplitUrlToShort() throws ClientProtocolException, IOException, ODataException {
+  public void testSplitUrlToShort() throws IOException, ODataException {
     server.setPathSplit(3);
     startServer();
 
@@ -180,7 +179,7 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testSplitUrlServiceDocument() throws ClientProtocolException, IOException, ODataException {
+  public void testSplitUrlServiceDocument() throws IOException, ODataException {
     server.setPathSplit(1);
     startServer();
 
@@ -197,7 +196,7 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testMatrixParameterInNonODataPath() throws ClientProtocolException, IOException, ODataException {
+  public void testMatrixParameterInNonODataPath() throws IOException, ODataException {
     server.setPathSplit(1);
     startServer();
 
@@ -222,7 +221,7 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testNoMatrixParameterInODataPath() throws ClientProtocolException, IOException, ODataException {
+  public void testNoMatrixParameterInODataPath() throws IOException, ODataException {
     server.setPathSplit(0);
     startServer();
 
@@ -238,7 +237,7 @@ public class ServiceResolutionTest extends BaseTest {
   }
 
   @Test
-  public void testBaseUriWithMatrixParameter() throws ClientProtocolException, IOException, ODataException,
+  public void testBaseUriWithMatrixParameter() throws IOException, ODataException,
       URISyntaxException {
     server.setPathSplit(3);
     startServer();
@@ -251,11 +250,12 @@ public class ServiceResolutionTest extends BaseTest {
 
     final ODataContext ctx = service.getProcessor().getContext();
     assertNotNull(ctx);
-    assertEquals(endpoint + "aaa/bbb;n=2,3;m=1/ccc/", ctx.getPathInfo().getServiceRoot().toASCIIString());
+    validateServiceRoot(ctx.getPathInfo().getServiceRoot().toASCIIString(),
+        endpoint + "aaa/bbb;", "/ccc/", "n=2,3", "m=1");
   }
 
   @Test
-  public void testMetadataUriWithMatrixParameter() throws ClientProtocolException, IOException, ODataException,
+  public void testMetadataUriWithMatrixParameter() throws IOException, ODataException,
       URISyntaxException {
     server.setPathSplit(3);
     startServer();
@@ -268,12 +268,13 @@ public class ServiceResolutionTest extends BaseTest {
 
     final ODataContext ctx = service.getProcessor().getContext();
     assertNotNull(ctx);
-    assertEquals(endpoint + "aaa/bbb;n=2,3;m=1/ccc/", ctx.getPathInfo().getServiceRoot().toASCIIString());
+    validateServiceRoot(ctx.getPathInfo().getServiceRoot().toASCIIString(),
+        endpoint + "aaa/bbb;", "/ccc/", "n=2,3", "m=1");
     assertEquals("$metadata", ctx.getPathInfo().getODataSegments().get(0).getPath());
   }
 
   @Test
-  public void testBaseUriWithEncoding() throws ClientProtocolException, IOException, ODataException,
+  public void testBaseUriWithEncoding() throws IOException, ODataException,
       URISyntaxException {
     server.setPathSplit(3);
     startServer();
@@ -289,8 +290,17 @@ public class ServiceResolutionTest extends BaseTest {
 
     final ODataContext context = service.getProcessor().getContext();
     assertNotNull(context);
-    assertEquals(server.getEndpoint() + "aaa/%C3%A4%D0%B4%D0%B5%D1%80%D0%B6b;n=2,%203;m=1/c%20c/", context
-        .getPathInfo().getServiceRoot().toASCIIString());
+    validateServiceRoot(context.getPathInfo().getServiceRoot().toASCIIString(),
+        server.getEndpoint() + "aaa/%C3%A4%D0%B4%D0%B5%D1%80%D0%B6b;", "/c%20c/", "n=2,%203", "m=1");
   }
 
+  private void validateServiceRoot(String serviceRoot, String prefix, String postfix, String ... matrixParameter) {
+    assertTrue("Service root '" + serviceRoot + "' does not start with '" + prefix + "'.",
+        serviceRoot.startsWith(prefix));
+    assertTrue("Service root '" + serviceRoot + "' does not end with '" + postfix + "'.", serviceRoot.endsWith
+        (postfix));
+    for (String s : matrixParameter) {
+      assertTrue("Service root '" + serviceRoot + "' misses matrix parameter '" + s + "'", serviceRoot.contains(s));
+    }
+  }
 }
