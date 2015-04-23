@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,14 +34,21 @@ public class ODataPathSegmentImpl implements PathSegment {
   private String path;
   private Map<String, List<String>> matrixParameter;
 
+  /**
+   * Constructor for an path segment object.
+   * @param path path of created path segment
+   * @param matrixParameters Map of Lists of matrix parameters for this path segment (can be null if no matrix
+   *                         parameters should be set for this path segment)
+   */
   public ODataPathSegmentImpl(final String path, final Map<String, List<String>> matrixParameters) {
     this.path = path;
 
     Map<String, List<String>> unmodifiableMap = new HashMap<String, List<String>>();
     if (matrixParameters != null) {
       for (String key : matrixParameters.keySet()) {
-        List<String> values = Collections.unmodifiableList(matrixParameters.get(key));
-        unmodifiableMap.put(key, values);
+        List<String> values = matrixParameters.get(key);
+        List<String> tempList = values == null ? null: Collections.unmodifiableList(new ArrayList<String>(values));
+        unmodifiableMap.put(key, tempList);
       }
     }
 

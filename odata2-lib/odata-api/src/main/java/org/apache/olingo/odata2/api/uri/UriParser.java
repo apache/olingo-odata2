@@ -208,8 +208,9 @@ public abstract class UriParser {
   /**
    * Creates an path segment object.
    * @param path path of created path segment
-   * @param matrixParameters Map of Lists of matrix parameters for this path segemt
-   * @return create path segment
+   * @param matrixParameters Map of Lists of matrix parameters for this path segment (can be null if no matrix
+   *                         parameters should be set for this path segment)
+   * @return created path segment
    */
   protected abstract PathSegment buildPathSegment(String path, Map<String, List<String>> matrixParameters);
 
@@ -217,8 +218,9 @@ public abstract class UriParser {
   /**
    * Creates an path segment object.
    * @param path path of created path segment
-   * @param matrixParameters Map of Lists of matrix parameters for this path segemt
-   * @return create path segment
+   * @param matrixParameters Map of Lists of matrix parameters for this path segment (can be null if no matrix
+   *                         parameters should be set for this path segment)
+   * @return created path segment
    */
   public static PathSegment createPathSegment(String path, Map<String, List<String>> matrixParameters) {
     return RuntimeDelegate.getUriParser(null).buildPathSegment(path, matrixParameters);
