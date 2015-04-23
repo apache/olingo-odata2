@@ -48,8 +48,8 @@ import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.UriNotMatchingException;
+import org.apache.olingo.odata2.api.uri.UriParser;
 import org.apache.olingo.odata2.api.uri.UriSyntaxException;
-import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.junit.Before;
@@ -64,7 +64,7 @@ public class UriParserTest extends BaseTest {
   private Edm edm;
 
   @Before
-  public void getEdm() throws ODataException, EdmException {
+  public void getEdm() throws ODataException {
     edm = MockFacade.getMockEdm();
   }
 
@@ -124,7 +124,7 @@ public class UriParserTest extends BaseTest {
   @Test
   public void copyPathSegmentsTest() throws Exception {
     List<PathSegment> pathSegments = new ArrayList<PathSegment>();
-    pathSegments.add(new ODataPathSegmentImpl("$metadata", null));
+    pathSegments.add(UriParser.createPathSegment("$metadata", null));
     UriInfo result = new UriParserImpl(edm).parse(pathSegments, Collections.<String, String> emptyMap());
     assertNotNull(result);
     assertEquals(1, pathSegments.size());
@@ -134,8 +134,8 @@ public class UriParserTest extends BaseTest {
   @Test
   public void copyPathSegmentsTestEncoded() throws Exception {
     List<PathSegment> pathSegments = new ArrayList<PathSegment>();
-    pathSegments.add(new ODataPathSegmentImpl("%24metadata", null));
-    UriInfoImpl result = (UriInfoImpl) new UriParserImpl(edm).parse(pathSegments, 
+    pathSegments.add(UriParser.createPathSegment("%24metadata", null));
+    UriInfoImpl result = (UriInfoImpl) new UriParserImpl(edm).parse(pathSegments,
         Collections.<String, String> emptyMap());
     assertNotNull(result);
     assertEquals(UriType.URI8, result.getUriType());
@@ -951,8 +951,8 @@ public class UriParserTest extends BaseTest {
     assertEquals("EmployeeName", result.getSelect().get(0).getProperty().getName());
     assertEquals("Location", result.getSelect().get(1).getProperty().getName());
     assertEquals(1, result.getSelect().get(0).getNavigationPropertySegments().size());
-    assertEquals("Employees", result.getSelect().get(0).getNavigationPropertySegments().get(0).getTargetEntitySet()
-        .getName());
+    assertEquals("Employees",
+        result.getSelect().get(0).getNavigationPropertySegments().get(0).getTargetEntitySet().getName());
   }
 
   @Test
@@ -980,8 +980,8 @@ public class UriParserTest extends BaseTest {
     assertEquals(1, result.getExpand().size());
     assertEquals(1, result.getExpand().get(0).size());
     assertEquals("Employees", result.getExpand().get(0).get(0).getTargetEntitySet().getName());
-    assertEquals(result.getTargetEntitySet().getEntityType().getProperty("nm_Employees"), result.getExpand().get(0)
-        .get(0).getNavigationProperty());
+    assertEquals(result.getTargetEntitySet().getEntityType().getProperty("nm_Employees"),
+        result.getExpand().get(0).get(0).getNavigationProperty());
     
     result = parse("Managers('1')?%24expand=nm_Employees");
     assertEquals("Managers", result.getTargetEntitySet().getName());
@@ -989,8 +989,8 @@ public class UriParserTest extends BaseTest {
     assertEquals(1, result.getExpand().size());
     assertEquals(1, result.getExpand().get(0).size());
     assertEquals("Employees", result.getExpand().get(0).get(0).getTargetEntitySet().getName());
-    assertEquals(result.getTargetEntitySet().getEntityType().getProperty("nm_Employees"), result.getExpand().get(0)
-        .get(0).getNavigationProperty());
+    assertEquals(result.getTargetEntitySet().getEntityType().getProperty("nm_Employees"),
+        result.getExpand().get(0).get(0).getNavigationProperty());
   }
 
   @Test
@@ -1056,5 +1056,21 @@ public class UriParserTest extends BaseTest {
     wrongGetKey(entitySet2, "Photos(Id=11,Type='test')", null, UriNotMatchingException.CONTAINERNOTFOUND);
     wrongGetKey(entitySet2, "anotherContainer.Photos(Id=12,Type='test')", null,
         UriNotMatchingException.CONTAINERNOTFOUND);
+  }
+
+  @Test
+  public void createPathSegment() {
+    PathSegment segment = UriParser.createPathSegment("simple", null);
+    assertEquals("simple", segment.getPath());
+    assertTrue(segment.getMatrixParameters().isEmpty());
+
+    Map<String, List<String>> matrixParameter = new HashMap<String, List<String>>();
+    matrixParameter.put("parameter1", Arrays.asList("one", "two"));
+    PathSegment segmentWithMatrix = UriParser.createPathSegment("matrix", matrixParameter);
+    assertEquals("matrix", segmentWithMatrix.getPath());
+    assertEquals(1, segmentWithMatrix.getMatrixParameters().size());
+    assertEquals(2, segmentWithMatrix.getMatrixParameters().get("parameter1").size());
+    assertTrue(segmentWithMatrix.getMatrixParameters().get("parameter1").contains("one"));
+    assertTrue(segmentWithMatrix.getMatrixParameters().get("parameter1").contains("two"));
   }
 }

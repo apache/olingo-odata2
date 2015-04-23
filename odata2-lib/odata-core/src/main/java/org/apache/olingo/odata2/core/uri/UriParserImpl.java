@@ -62,6 +62,7 @@ import org.apache.olingo.odata2.api.uri.UriSyntaxException;
 import org.apache.olingo.odata2.api.uri.expression.ExpressionParserException;
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
+import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.core.commons.Decoder;
 import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
@@ -891,6 +892,11 @@ public class UriParserImpl extends UriParser {
   public ExpandSelectTreeNode buildExpandSelectTree(final List<SelectItem> select,
       final List<ArrayList<NavigationPropertySegment>> expand) throws EdmException {
     return new ExpandSelectTreeCreator(select, expand).create();
+  }
+
+  @Override
+  protected PathSegment buildPathSegment(String path, Map<String, List<String>> matrixParameters) {
+    return new ODataPathSegmentImpl(path, matrixParameters);
   }
 
   @Override
