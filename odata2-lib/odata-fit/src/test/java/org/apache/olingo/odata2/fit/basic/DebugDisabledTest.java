@@ -56,17 +56,17 @@ public class DebugDisabledTest extends AbstractBasicTest {
     HttpResponse response = executeGetRequest("/?odata-debug=json");
     assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
     String payload = StringHelper.inputStreamToString(response.getEntity().getContent());
-    assertEquals("service document", payload);
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><servicedocument/>", payload);
 
     response = executeGetRequest("/?odata-debug=html");
     assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
     payload = StringHelper.inputStreamToString(response.getEntity().getContent());
-    assertEquals("service document", payload);
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><servicedocument/>", payload);
 
     response = executeGetRequest("/?odata-debug=download");
     assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
     payload = StringHelper.inputStreamToString(response.getEntity().getContent());
-    assertEquals("service document", payload);
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><servicedocument/>", payload);
 
     stopCustomServer();
   }
@@ -77,17 +77,17 @@ public class DebugDisabledTest extends AbstractBasicTest {
     HttpResponse response = executeGetRequest("/?odata-debug=json");
     assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
     String payload = StringHelper.inputStreamToString(response.getEntity().getContent());
-    assertEquals("service document", payload);
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><servicedocument/>", payload);
 
     response = executeGetRequest("/?odata-debug=html");
     assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
     payload = StringHelper.inputStreamToString(response.getEntity().getContent());
-    assertEquals("service document", payload);
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><servicedocument/>", payload);
 
     response = executeGetRequest("/?odata-debug=download");
     assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
     payload = StringHelper.inputStreamToString(response.getEntity().getContent());
-    assertEquals("service document", payload);
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><servicedocument/>", payload);
 
     stopCustomServer();
   }
@@ -100,22 +100,22 @@ public class DebugDisabledTest extends AbstractBasicTest {
     response = executeGetRequest("/?odata-debug=json");
     assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
     payload = StringHelper.inputStreamToString(response.getEntity().getContent());
-    assertFalse("service document".equals(payload));
+    assertFalse("<?xml version=\"1.0\" encoding=\"UTF-8\"?><servicedocument/>".equals(payload));
     assertTrue(payload.startsWith("{\"request\":{\"method\":\"GET\""));
-    assertTrue(payload.contains("service document"));
+    assertTrue(payload.contains("<servicedocument/>"));
 
     response = executeGetRequest("/?odata-debug=html");
     assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
     payload = StringHelper.inputStreamToString(response.getEntity().getContent());
-    assertFalse("service document".equals(payload));
+    assertFalse("<?xml version=\"1.0\" encoding=\"UTF-8\"?><servicedocument/>".equals(payload));
     assertTrue(payload.startsWith("<!DOCTYPE html"));
-    assertTrue(payload.contains("service document"));
+    assertTrue(payload.contains("&lt;servicedocument/&gt"));
 
     response = executeGetRequest("/?odata-debug=download");
     assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
     payload = StringHelper.inputStreamToString(response.getEntity().getContent());
-    assertFalse("service document".equals(payload));
-    assertTrue(payload.contains("service document"));
+    assertFalse("<?xml version=\"1.0\" encoding=\"UTF-8\"?><servicedocument/>".equals(payload));
+    assertTrue(payload.contains("&lt;servicedocument/&gt"));
 
     stopCustomServer();
   }
@@ -129,7 +129,7 @@ public class DebugDisabledTest extends AbstractBasicTest {
   @Override
   @After
   public void after() {
-    // Do nothing here to stop default server from ending
+    stopCustomServer();
   }
 
   @Override
@@ -138,7 +138,9 @@ public class DebugDisabledTest extends AbstractBasicTest {
     when(
         ((ServiceDocumentProcessor) processor).readServiceDocument(any(GetServiceDocumentUriInfo.class),
             any(String.class)))
-        .thenReturn(ODataResponse.entity("service document").status(HttpStatusCodes.OK).build());
+        .thenReturn(
+            ODataResponse.entity("<?xml version=\"1.0\" encoding=\"UTF-8\"?><servicedocument/>").status(
+                HttpStatusCodes.OK).build());
     return processor;
   }
 
