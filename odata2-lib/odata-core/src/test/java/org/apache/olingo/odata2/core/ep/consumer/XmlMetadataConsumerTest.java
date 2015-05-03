@@ -696,7 +696,7 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
             + "</FunctionImport>"
             + "<FunctionImport Name=\"RoomSearch\" ReturnType=\"Collection(RefScenario.Room)\" " +
             "EntitySet=\"Rooms\" m:HttpMethod=\"GET\">"
-            + "<Parameter Name=\"q1\" Type=\"Edm.String\" Nullable=\"true\" />"
+            + "<Parameter Name=\"q1\" Type=\"Edm.String\" Nullable=\"true\" Mode=\"In\"/>"
             + "<Parameter Name=\"q2\" Type=\"Edm.Int32\" Nullable=\"false\" />"
             + "</FunctionImport>"
             + "<FunctionImport Name=\"NoParamters\" ReturnType=\"Collection(RefScenario.Room)\" " +
@@ -742,13 +742,16 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertEquals("GET", functionImport2.getHttpMethod());
         assertEquals(2, functionImport2.getParameters().size());
 
-        assertEquals("q1", functionImport2.getParameters().get(0).getName());
+        FunctionImportParameter functionImportParameter = functionImport2.getParameters().get(0);
+		assertEquals("q1", functionImportParameter.getName());
         assertEquals(EdmSimpleTypeKind.String, functionImport2.getParameters().get(0).getType());
         assertEquals(Boolean.TRUE, functionImport2.getParameters().get(0).getFacets().isNullable());
+        assertEquals("In", functionImportParameter.getMode()); 
 
         assertEquals("q2", functionImport2.getParameters().get(1).getName());
         assertEquals(EdmSimpleTypeKind.Int32, functionImport2.getParameters().get(1).getType());
         assertEquals(Boolean.FALSE, functionImport2.getParameters().get(1).getFacets().isNullable());
+        assertEquals(null, functionImport2.getParameters().get(1).getMode()); 
 
         FunctionImport functionImport3 = container.getFunctionImports().get(2);
 

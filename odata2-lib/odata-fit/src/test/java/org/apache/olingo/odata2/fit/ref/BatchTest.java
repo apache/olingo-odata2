@@ -55,6 +55,24 @@ public class BatchTest extends AbstractRefTest {
         .contains("<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"));
     assertTrue(responseBody.contains("<edmx:Edmx Version=\"1.0\""));
   }
+  
+  @Test
+  public void functionImportBatch() throws Exception {
+	    String responseBody = execute("/functionImport.batch");
+	    assertFalse(responseBody
+	        .contains("<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"));
+	    assertTrue(responseBody.contains("HTTP/1.1 200 OK"));
+	    assertTrue(responseBody.contains("<?xml version='1.0' encoding='utf-8'?><ManagerPhoto xmlns="));
+  }
+  
+  @Test
+  public void employeesWithFilterBatch() throws Exception {
+	    String responseBody = execute("/employeesWithFilter.batch");
+	    assertFalse(responseBody
+	        .contains("<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"));
+	    assertTrue(responseBody.contains("HTTP/1.1 200 OK"));
+	    assertTrue(responseBody.contains("<d:EmployeeName>Walter Winter</d:EmployeeName>"));
+  }
 
   @Test
   public void testChangeSetBatch() throws Exception {

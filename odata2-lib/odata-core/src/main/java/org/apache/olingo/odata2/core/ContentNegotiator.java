@@ -130,7 +130,7 @@ public class ContentNegotiator {
         return ContentType.APPLICATION_ATOM_SVC;
       } else if (uriInfo.getUriType() == UriType.URI1) {
         return ContentType.APPLICATION_ATOM_XML_FEED;
-      } else if (uriInfo.getUriType() == UriType.URI2) {
+      } else if (uriInfo.getUriType() == UriType.URI2 || uriInfo.getUriType() == UriType.URI10) {
         return ContentType.APPLICATION_ATOM_XML_ENTRY;
       }
     } else if (URI_INFO_FORMAT_JSON.equals(format)) {

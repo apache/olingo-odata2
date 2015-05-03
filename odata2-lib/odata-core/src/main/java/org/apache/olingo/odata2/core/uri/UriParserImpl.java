@@ -62,6 +62,7 @@ import org.apache.olingo.odata2.api.uri.UriSyntaxException;
 import org.apache.olingo.odata2.api.uri.expression.ExpressionParserException;
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
+import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.core.commons.Decoder;
 import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
@@ -167,12 +168,13 @@ public class UriParserImpl extends UriParser {
     } else {
 
       currentPathSegment = pathSegments.remove(0);
-
-      if ("$metadata".equals(currentPathSegment)) {
+      final String decodedPath = percentDecode(currentPathSegment);
+      
+      if ("$metadata".equals(decodedPath)) {
         ensureLastSegment();
         uriResult.setUriType(UriType.URI8);
 
-      } else if ("$batch".equals(currentPathSegment)) {
+      } else if ("$batch".equals(decodedPath)) {
         ensureLastSegment();
         uriResult.setUriType(UriType.URI9);
 
@@ -245,12 +247,13 @@ public class UriParserImpl extends UriParser {
 
   private void handleNavigationPathOptions() throws UriSyntaxException, UriNotMatchingException, EdmException {
     currentPathSegment = pathSegments.remove(0);
-
+    final String decodedPath = percentDecode(currentPathSegment);
+    
     checkCount();
     if (uriResult.isCount()) {
       uriResult.setUriType(UriType.URI16); // Count of multiple entities is handled elsewhere
 
-    } else if ("$value".equals(currentPathSegment)) {
+    } else if ("$value".equals(decodedPath)) {
       if (uriResult.getTargetEntitySet().getEntityType().hasStream()) {
         ensureLastSegment();
         uriResult.setUriType(UriType.URI17);
@@ -259,7 +262,7 @@ public class UriParserImpl extends UriParser {
         throw new UriSyntaxException(UriSyntaxException.NOMEDIARESOURCE);
       }
 
-    } else if ("$links".equals(currentPathSegment)) {
+    } else if ("$links".equals(decodedPath)) {
       uriResult.setLinks(true);
       if (pathSegments.isEmpty()) {
         throw new UriSyntaxException(UriSyntaxException.MUSTNOTBELASTSEGMENT.addContent(currentPathSegment));
@@ -392,7 +395,7 @@ public class UriParserImpl extends UriParser {
       currentPathSegment = percentDecode(pathSegments.remove(0));
       switch (type.getKind()) {
       case SIMPLE:
-        if ("$value".equals(currentPathSegment)) {
+        if ("$value".equals(percentDecode(currentPathSegment))) {
           ensureLastSegment();
           uriResult.setValue(true);
           if (uriResult.getPropertyPath().size() == 1) {
@@ -428,7 +431,7 @@ public class UriParserImpl extends UriParser {
   }
 
   private void checkCount() throws UriSyntaxException {
-    if ("$count".equals(currentPathSegment)) {
+    if ("$count".equals(percentDecode(currentPathSegment))) {
       if (pathSegments.isEmpty()) {
         uriResult.setCount(true);
       } else {
@@ -520,7 +523,7 @@ public class UriParserImpl extends UriParser {
     if (!pathSegments.isEmpty()) {
       if (uriResult.getUriType() == UriType.URI14) {
         currentPathSegment = pathSegments.remove(0);
-        if ("$value".equals(currentPathSegment)) {
+        if ("$value".equals(percentDecode(currentPathSegment))) {
           uriResult.setValue(true);
         } else {
           throw new UriSyntaxException(UriSyntaxException.INVALIDSEGMENT.addContent(currentPathSegment));
@@ -532,15 +535,16 @@ public class UriParserImpl extends UriParser {
 
   private void distributeQueryParameters(final Map<String, List<String>> queryParameters) throws UriSyntaxException {
     for (final String queryOptionString : queryParameters.keySet()) {
+      final String decodedString = percentDecode(queryOptionString);
       final List<String> valueList = queryParameters.get(queryOptionString);
 
       if (valueList.size() >= 1) {
         String value = valueList.get(0);
-
-        if (queryOptionString.startsWith("$")) {
+        
+        if (decodedString.startsWith("$")) {
           SystemQueryOption queryOption;
           try {
-            queryOption = SystemQueryOption.valueOf(queryOptionString);
+            queryOption = SystemQueryOption.valueOf(decodedString);
           } catch (IllegalArgumentException e) {
             throw new UriSyntaxException(UriSyntaxException.INVALIDSYSTEMQUERYOPTION.addContent(queryOptionString), e);
           }
@@ -555,7 +559,7 @@ public class UriParserImpl extends UriParser {
             }
           }
         } else {
-          otherQueryParameters.put(queryOptionString, value);
+          otherQueryParameters.put(decodedString, value);
         }
       } else {
         throw new UriSyntaxException(UriSyntaxException.INVALIDNULLVALUE.addContent(queryOptionString));
@@ -888,6 +892,11 @@ public class UriParserImpl extends UriParser {
   public ExpandSelectTreeNode buildExpandSelectTree(final List<SelectItem> select,
       final List<ArrayList<NavigationPropertySegment>> expand) throws EdmException {
     return new ExpandSelectTreeCreator(select, expand).create();
+  }
+
+  @Override
+  protected PathSegment buildPathSegment(String path, Map<String, List<String>> matrixParameters) {
+    return new ODataPathSegmentImpl(path, matrixParameters);
   }
 
   @Override

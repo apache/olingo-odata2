@@ -135,6 +135,30 @@ public class BasicBatchTest extends AbstractBasicTest {
   }
 
   @Test
+  public void testBatchUriEncoded() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "%24batch"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=batch_98c1-8b13-36bb");
+    HttpEntity entity = new StringEntity(REQUEST_PAYLOAD);
+    post.setEntity(entity);
+    HttpResponse response = getHttpClient().execute(post);
+
+    assertNotNull(response);
+    assertEquals(202, response.getStatusLine().getStatusCode());
+    assertEquals("HTTP/1.1", response.getProtocolVersion().toString());
+    assertTrue(response.containsHeader("Content-Length"));
+    assertTrue(response.containsHeader("Content-Type"));
+    assertTrue(response.containsHeader("DataServiceVersion"));
+    assertTrue(response.getEntity().getContentType().getValue().matches(REG_EX));
+    assertNotNull(response.getEntity().getContent());
+
+    String body = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId2"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId2"));
+  }
+  
+  @Test
   public void testBatchInvalidContentTypeForPut() throws Exception {
     final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
     post.setHeader("Content-Type", "multipart/mixed;boundary=batch_98c1-8b13-36bb");

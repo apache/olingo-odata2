@@ -38,6 +38,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.expression.ExpressionParserException;
@@ -77,13 +78,14 @@ public class ODataDebugResponseWrapper {
   public ODataResponse wrapResponse() {
     try {
       final List<DebugInfo> parts = createParts();
-      return ODataResponse.status(HttpStatusCodes.OK)
+      ODataResponseBuilder builder = ODataResponse.status(HttpStatusCodes.OK)
           .entity(isJson ? wrapInJson(parts) : wrapInHtml(parts))
-          .contentHeader(isJson ? HttpContentType.APPLICATION_JSON : HttpContentType.TEXT_HTML)
-          .header("Content-Disposition", isDownload ?
-              "attachment; filename=OData-Response." + new Date().toString().replace(' ', '_').replace(':', '.')
-                  + ".html" : null)
-          .build();
+          .contentHeader(isJson ? HttpContentType.APPLICATION_JSON_UTF8 : HttpContentType.TEXT_HTML);
+      if (isDownload) {
+        builder.header("Content-Disposition", "attachment; filename=OData-Response."
+            + new Date().toString().replace(' ', '_').replace(':', '.') + ".html");
+      }
+      return builder.build();
     } catch (final ODataException e) {
       throw new ODataRuntimeException("Should not happen", e);
     } catch (final IOException e) {
@@ -228,7 +230,8 @@ public class ODataDebugResponseWrapper {
     writer.append("</body>\n")
         .append("</html>\n")
         .close();
-    return new ByteArrayInputStream(writer.toString().getBytes("UTF-8"));
+    byte[] bytes = writer.toString().getBytes("UTF-8");
+    return new ByteArrayInputStream(bytes);
   }
 
   protected static String escapeHtml(final String value) {

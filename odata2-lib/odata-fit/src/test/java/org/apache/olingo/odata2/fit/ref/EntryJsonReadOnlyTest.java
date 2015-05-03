@@ -61,7 +61,21 @@ public class EntryJsonReadOnlyTest extends AbstractRefTest {
         + "\"ne_Team\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Employees('3')/ne_Team\"}}}}",
         getBody(response));
   }
+  
+  @Test
+  public void mediaLinkEntryWithEncodedSystemQueryParameters() throws Exception {
+    final HttpResponse response = callUri("Employees('3')?%24select=Age,EntryDate,ne_Team&%24format=json");
+    checkMediaType(response, HttpContentType.APPLICATION_JSON);
+    assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + getEndpoint() + "Employees('3')\","
+        + "\"uri\":\"" + getEndpoint() + "Employees('3')\",\"type\":\"RefScenario.Employee\","
+        + "\"content_type\":\"image/jpeg\",\"media_src\":\"Employees('3')/$value\","
+        + "\"edit_media\":\"" + getEndpoint() + "Employees('3')/$value\"},"
+        + "\"Age\":56,\"EntryDate\":null,"
+        + "\"ne_Team\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Employees('3')/ne_Team\"}}}}",
+        getBody(response));
+  }
 
+  
   @Test
   public void entryFromNonDefaultContainer() throws Exception {
     final HttpResponse response = callUri("Container2.Photos(Id=1,Type='image%2Fpng')?$format=json");

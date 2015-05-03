@@ -62,5 +62,13 @@ public class MetadataTest extends AbstractBasicTest {
     final String payload = StringHelper.inputStreamToString(response.getEntity().getContent());
     assertEquals("metadata", payload);
   }
+  
+  @Test
+  public void readMetadataEncoded() throws ClientProtocolException, IOException, ODataException {
+    final HttpResponse response = executeGetRequest("%24metadata");
+    assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
 
+    final String payload = StringHelper.inputStreamToString(response.getEntity().getContent());
+    assertEquals("metadata", payload);
+  }
 }

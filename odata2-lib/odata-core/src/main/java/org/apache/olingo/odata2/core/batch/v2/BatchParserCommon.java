@@ -242,17 +242,13 @@ public class BatchParserCommon {
 
         for (String parameter : parameters) {
           String[] parameterParts = parameter.split("=");
-          String parameterName = parameterParts[0].toLowerCase(Locale.ENGLISH);
+          String parameterName = parameterParts[0];
 
           if (parameterParts.length == 2) {
             List<String> valueList = queryParameter.get(parameterName);
             valueList = valueList == null ? new LinkedList<String>() : valueList;
             queryParameter.put(parameterName, valueList);
-
-            String[] valueParts = parameterParts[1].split(",");
-            for (String value : valueParts) {
-              valueList.add(Decoder.decode(value));
-            }
+            valueList.add(Decoder.decode(parameterParts[1]));
           }
         }
       }

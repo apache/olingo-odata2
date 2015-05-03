@@ -206,6 +206,27 @@ public abstract class UriParser {
       List<ArrayList<NavigationPropertySegment>> expand) throws EdmException;
 
   /**
+   * Creates an path segment object.
+   * @param path path of created path segment
+   * @param matrixParameters Map of Lists of matrix parameters for this path segment (can be null if no matrix
+   *                         parameters should be set for this path segment)
+   * @return created path segment
+   */
+  protected abstract PathSegment buildPathSegment(String path, Map<String, List<String>> matrixParameters);
+
+
+  /**
+   * Creates an path segment object.
+   * @param path path of created path segment
+   * @param matrixParameters Map of Lists of matrix parameters for this path segment (can be null if no matrix
+   *                         parameters should be set for this path segment)
+   * @return created path segment
+   */
+  public static PathSegment createPathSegment(String path, Map<String, List<String>> matrixParameters) {
+    return RuntimeDelegate.getUriParser(null).buildPathSegment(path, matrixParameters);
+  }
+
+  /**
    * <p>Retrieves the key predicates from a canonical link to an entity.</p>
    * <p>A canonical link to an entity must follow the pattern
    * <code>[&lt;service root&gt;][&lt;entityContainer&gt;.]&lt;entitySet&gt;(&lt;key&gt;)</code>, i.e.,
