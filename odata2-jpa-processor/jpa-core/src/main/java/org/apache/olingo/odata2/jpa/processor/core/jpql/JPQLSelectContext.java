@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,8 +17,6 @@
  * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.jpql;
-
-import java.util.HashMap;
 
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -35,7 +33,7 @@ import org.apache.olingo.odata2.jpa.processor.core.ODataExpressionParser;
 public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextView {
 
   protected String selectExpression;
-  protected HashMap<String, String> orderByCollection;
+  protected String orderByCollection;
   protected String whereCondition;
 
   protected boolean isCountOnly = false;// Support for $count
@@ -44,7 +42,7 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
     this.isCountOnly = isCountOnly;
   }
 
-  protected final void setOrderByCollection(final HashMap<String, String> orderByCollection) {
+  protected final void setOrderByCollection(final String orderByCollection) {
     this.orderByCollection = orderByCollection;
   }
 
@@ -62,7 +60,7 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
   }
 
   @Override
-  public HashMap<String, String> getOrderByCollection() {
+  public String getOrderByCollection() {
     return orderByCollection;
   }
 
@@ -72,7 +70,7 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
   }
 
   public class JPQLSelectContextBuilder extends
-      org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder {
+  org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder {
 
     protected GetEntitySetUriInfo entitySetView;
 
@@ -134,7 +132,7 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
     /*
      * Generate Order By Clause Fields
      */
-    protected HashMap<String, String> generateOrderByFileds() throws ODataJPARuntimeException, EdmException {
+    protected String generateOrderByFileds() throws ODataJPARuntimeException, EdmException {
 
       if (entitySetView.getOrderBy() != null) {
 

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,9 +17,6 @@
  * under the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.jpql;
-
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
@@ -69,23 +66,10 @@ public class JPQLSelectStatementBuilder extends JPQLStatementBuilder {
       jpqlQuery.append(context.getWhereExpression());
     }
 
-    if (context.getOrderByCollection() != null && context.getOrderByCollection().size() > 0) {
+    if (context.getOrderByCollection() != null && context.getOrderByCollection().length() > 0) {
 
       StringBuilder orderByBuilder = new StringBuilder();
-      Iterator<Entry<String, String>> orderItr = context.getOrderByCollection().entrySet().iterator();
-
-      int i = 0;
-
-      while (orderItr.hasNext()) {
-        if (i != 0) {
-          orderByBuilder.append(JPQLStatement.DELIMITER.SPACE).append(JPQLStatement.DELIMITER.COMMA).append(
-              JPQLStatement.DELIMITER.SPACE);
-        }
-        Entry<String, String> entry = orderItr.next();
-        orderByBuilder.append(entry.getKey()).append(JPQLStatement.DELIMITER.SPACE);
-        orderByBuilder.append(entry.getValue());
-        i++;
-      }
+      orderByBuilder.append(context.getOrderByCollection());
       jpqlQuery.append(JPQLStatement.DELIMITER.SPACE);
       jpqlQuery.append(JPQLStatement.KEYWORD.ORDERBY).append(JPQLStatement.DELIMITER.SPACE);
       jpqlQuery.append(orderByBuilder);
