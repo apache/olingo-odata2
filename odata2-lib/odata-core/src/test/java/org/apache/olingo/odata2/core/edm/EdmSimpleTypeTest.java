@@ -686,6 +686,8 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertEquals("255", instance.valueToString(255L, EdmLiteralKind.DEFAULT, null));
     assertEquals("12345678901234567890123456789", instance.valueToString(
         new BigInteger("12345678901234567890123456789"), EdmLiteralKind.DEFAULT, null));
+    assertEquals("1234567890123456789012345678901234567890", instance.valueToString(
+        new BigInteger("1234567890123456789012345678901234567890"), EdmLiteralKind.DEFAULT, null));
     assertEquals("0.00390625", instance.valueToString(1.0 / 256, EdmLiteralKind.DEFAULT, null));
     assertEquals("-0.125", instance.valueToString(-0.125f, EdmLiteralKind.DEFAULT, null));
     assertEquals("-1234567890.1234567890", instance.valueToString(new BigDecimal("-1234567890.1234567890"),
@@ -699,15 +701,14 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertEquals("32768", instance.valueToString(32768, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(5, null)));
     assertEquals("0.5", instance.valueToString(0.5, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(1, null)));
     assertEquals("0.5", instance.valueToString(0.5, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(null, 1)));
-    assertEquals("100", instance.valueToString(new BigDecimal(BigInteger.ONE, -2), EdmLiteralKind.DEFAULT,
-        getPrecisionScaleFacets(3, null)));
+    assertEquals("100", instance
+        .valueToString(new BigDecimal(BigInteger.ONE, -2), EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(3, null)));
 
-    expectErrorInValueToString(instance, new BigInteger("123456789012345678901234567890"), EdmLiteralKind.DEFAULT,
-        null, EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT);
-    expectErrorInValueToString(instance, new BigDecimal(BigInteger.TEN, -28), EdmLiteralKind.DEFAULT, null,
-        EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT);
-    expectErrorInValueToString(instance, new BigDecimal(BigInteger.ONE, 30), EdmLiteralKind.DEFAULT, null,
-        EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT);
+    assertEquals("1000000000000000000000000000000000000000",
+        instance.valueToString(new BigDecimal(BigInteger.TEN, -38), EdmLiteralKind.DEFAULT, null));
+    assertEquals("0.0000000000000000000000000000000000000001",
+        instance.valueToString(new BigDecimal(BigInteger.ONE, 40), EdmLiteralKind.DEFAULT, null));
+
     expectErrorInValueToString(instance, -1234, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(2, null),
         EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
     expectErrorInValueToString(instance, 1234, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(3, null),
@@ -1294,6 +1295,13 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertEquals(new BigDecimal("-12345678901234567890"), instance.valueOfString("-12345678901234567890M",
         EdmLiteralKind.URI, null, BigDecimal.class));
     assertEquals(Short.valueOf((short) 0), instance.valueOfString("0M", EdmLiteralKind.URI, null, Short.class));
+    // 0.9646153846153846153846153846153800
+    assertEquals(new BigDecimal("0.9646153846153846153846153846153800"),
+        instance.valueOfString("0.9646153846153846153846153846153800M",
+        EdmLiteralKind.URI, null, BigDecimal.class));
+    assertEquals(new BigDecimal("1234567890123456789012345678901234567890"),
+        instance.valueOfString("1234567890123456789012345678901234567890M",
+            EdmLiteralKind.URI, null, BigDecimal.class));
 
     assertEquals(Integer.valueOf(-32768), instance.valueOfString("-32768", EdmLiteralKind.DEFAULT,
         getPrecisionScaleFacets(42, null), Integer.class));
@@ -1339,8 +1347,6 @@ public class EdmSimpleTypeTest extends BaseTest {
     expectErrorInValueOfString(instance, "0F", EdmLiteralKind.URI, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
     expectErrorInValueOfString(instance, "0x42", EdmLiteralKind.DEFAULT, null,
-        EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
-    expectErrorInValueOfString(instance, "123456789012345678901234567890", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
 
     expectTypeErrorInValueOfString(instance, "1", EdmLiteralKind.DEFAULT);
