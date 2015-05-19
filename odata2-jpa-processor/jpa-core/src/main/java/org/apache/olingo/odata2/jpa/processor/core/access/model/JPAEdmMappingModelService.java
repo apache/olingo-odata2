@@ -83,9 +83,11 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
         ODataJPAModelException.throwException(ODataJPAModelException.GENERAL, e);
       } finally {
         try {
-          is.close();
+          if (is != null) {
+            is.close();
+          }
         } catch (IOException e) {
-          //do nothing
+          // do nothing
         }
       }
     }
