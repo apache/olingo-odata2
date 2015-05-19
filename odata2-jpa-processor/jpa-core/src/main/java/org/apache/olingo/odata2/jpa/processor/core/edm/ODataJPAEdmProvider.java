@@ -110,9 +110,10 @@ public class ODataJPAEdmProvider extends EdmProvider {
   @Override
   public EntityType getEntityType(final FullQualifiedName edmFQName) throws ODataException {
 
-    String strEdmFQName = edmFQName.toString();
+    String strEdmFQName = null;
 
     if (edmFQName != null) {
+      strEdmFQName = edmFQName.toString();
       if (entityTypes.containsKey(strEdmFQName)) {
         return entityTypes.get(strEdmFQName);
       } else if (schemas == null) {

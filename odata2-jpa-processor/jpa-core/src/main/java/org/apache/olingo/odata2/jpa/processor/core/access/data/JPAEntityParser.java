@@ -262,13 +262,14 @@ public final class JPAEntityParser {
   }
 
   public static String getString(final Clob clob) throws ODataJPARuntimeException {
+    Reader stringReader = null;
     try {
 
       if (clob == null) {
         return null;
       }
 
-      Reader stringReader = clob.getCharacterStream();
+      stringReader = clob.getCharacterStream();
       StringWriter buffer = null;
       long clobSize = clob.length();
       long remainingClobSize = clobSize;
@@ -283,7 +284,6 @@ public final class JPAEntityParser {
         buffer = new StringWriter((int) clobSize);
         len = (int) clobSize;
       }
-      stringReader = clob.getCharacterStream();
       char c[] = new char[len];
       while (remainingClobSize > len) {
         stringReader.read(c, off, len);
@@ -309,18 +309,26 @@ public final class JPAEntityParser {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (IOException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } finally {
+      if (stringReader != null) {
+        try {
+          stringReader.close();
+        } catch (IOException e) {
+          //do nothing
+        }
+      }
     }
 
   }
 
   public static byte[] getBytes(final Blob blob) throws ODataJPARuntimeException {
+    InputStream is = null;
+    ByteArrayOutputStream buffer = null;
     try {
 
       if (blob == null) {
         return null;
       }
-      InputStream is = null;
-      ByteArrayOutputStream buffer = null;
 
       long blobSize = blob.length();
       long remainingBlobSize = blobSize;
@@ -361,6 +369,14 @@ public final class JPAEntityParser {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (IOException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    } finally {
+      if (is != null) {
+        try {
+          is.close();
+        } catch (IOException e) {
+          // do nothing
+        }
+      }
     }
   }
 
