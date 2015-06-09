@@ -79,6 +79,7 @@ public class UriParserImpl extends UriParser {
       .compile("(?:([^.()]+)\\.)?([^.()]+)(?:\\((.+)\\)|(\\(\\)))?");
   private static final Pattern NAVIGATION_SEGMENT_PATTERN = Pattern.compile("([^()]+)(?:\\((.+)\\)|(\\(\\)))?");
   private static final Pattern NAMED_VALUE_PATTERN = Pattern.compile("(?:([^=]+)=)?([^=]+)");
+  private static final Pattern STRING_KEY_PATTERN = Pattern.compile("'([^']*)'");
 
   private final Edm edm;
   private final EdmSimpleTypeFacade simpleTypeFacade;
@@ -446,8 +447,9 @@ public class UriParserImpl extends UriParser {
     ArrayList<EdmProperty> parsedKeyProperties = new ArrayList<EdmProperty>();
     ArrayList<KeyPredicate> keyPredicates = new ArrayList<KeyPredicate>();
 
-    for (final String key : keyPredicate.split(",", -1)) {
-
+    Matcher keyMatcher = STRING_KEY_PATTERN.matcher(keyPredicate);
+    String[] keys = keyMatcher.matches() ? new String[]{keyPredicate} : keyPredicate.split(",", -1);
+    for (final String key : keys) {
       final Matcher matcher = NAMED_VALUE_PATTERN.matcher(key);
       if (!matcher.matches()) {
         throw new UriSyntaxException(UriSyntaxException.INVALIDKEYPREDICATE.addContent(keyPredicate));
