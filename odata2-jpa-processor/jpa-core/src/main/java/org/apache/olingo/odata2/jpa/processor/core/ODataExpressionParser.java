@@ -422,7 +422,7 @@ public class ODataExpressionParser {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
 
-    } else if (EdmSimpleTypeKind.Int64.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)) {
+    } else if (edmSimpleType.getDefaultType().equals(Long.class)) {
       uriLiteral = uriLiteral + JPQLStatement.DELIMITER.LONG; //$NON-NLS-1$
     }
     return uriLiteral;

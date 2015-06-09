@@ -65,13 +65,13 @@ public class ODataFilterExpressionParserTest {
       "(E1.oValue.Currency NOT LIKE CONCAT('%',LOWER('INR')) )" };
   private static final String[] EXPRESSION_NESTED_METHOD = {
       "endswith(substring(oValue/Currency,2),'INR') eq false",
-      "(SUBSTRING(E1.oValue.Currency, 2L + 1 ) NOT LIKE CONCAT('%','INR') )" };
+      "(SUBSTRING(E1.oValue.Currency, 2 + 1 ) NOT LIKE CONCAT('%','INR') )" };
   private static final String[] EXPRESSION_SUBSTRING_OF = {
       "substringof(id,'123') ne true",
       "((CASE WHEN ('123' LIKE CONCAT('%',E1.id,'%')) THEN TRUE ELSE FALSE END) <> true)" };
   private static final String[] EXPRESSION_STARTS_WITH_WRONG_OP = { "startswith(oValue/Currency,'INR') lt true", "" };
   private static final String[] EXPRESSION_SUBSTRING_ALL_OP = { "substring(oValue/Currency,1,3) eq 'INR'",
-      "(SUBSTRING(E1.oValue.Currency, 1L + 1 , 3L) = 'INR')" };
+      "(SUBSTRING(E1.oValue.Currency, 1 + 1 , 3) = 'INR')" };
   private static final String[] EXPRESSION_SUBSTRINGOF_INJECTION1 = {
       "substringof('a'' OR 1=1 OR E1.id LIKE ''b',id) eq true",
       "((CASE WHEN (E1.id LIKE CONCAT('%','a'' OR 1=1 OR E1.id LIKE ''b','%')) THEN TRUE ELSE FALSE END) = true)" };
@@ -83,7 +83,7 @@ public class ODataFilterExpressionParserTest {
   private static final String[] EXPRESSION_SUBSTRINGOF_INJECTION3 =
   {
       "substringof( substring(' ) OR execute_my_sql OR '' LIKE ',3),'de''') eq true",
-      "((CASE WHEN ('de''' LIKE CONCAT('%',SUBSTRING(' ) OR execute_my_sql OR '' LIKE ', 3L + 1 ),'%')) "
+      "((CASE WHEN ('de''' LIKE CONCAT('%',SUBSTRING(' ) OR execute_my_sql OR '' LIKE ', 3 + 1 ),'%')) "
           + "THEN TRUE ELSE FALSE END) = true)" };
   private static final String[] EXPRESSION_ENDSWITH_INJECTION1 = { "endswith(id,'Str''eet') eq true",
       "(E1.id LIKE CONCAT('%','Str''eet') )" };

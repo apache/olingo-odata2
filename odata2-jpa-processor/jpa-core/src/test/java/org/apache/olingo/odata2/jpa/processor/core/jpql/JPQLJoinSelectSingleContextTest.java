@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.NavigationSegment;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
@@ -198,7 +199,7 @@ public class JPQLJoinSelectSingleContextTest {
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("soid");
     EasyMock.expect(edmProperty.getMapping()).andStubReturn(edmMapping);
     EasyMock.expect(edmProperty.getName()).andStubReturn("soid");
-    EdmSimpleType edmType = EasyMock.createMock(EdmSimpleType.class);
+    EdmSimpleType edmType = EdmSimpleTypeKind.Int32.getEdmSimpleTypeInstance();
     if (toThrowException) {
       EasyMock.expect(edmProperty.getType()).andStubThrow(new EdmException(null));
     } else {
@@ -206,7 +207,7 @@ public class JPQLJoinSelectSingleContextTest {
     }
     EasyMock.expect(keyPredicate.getProperty()).andStubReturn(edmProperty);
 
-    EasyMock.replay(edmType, edmMapping, edmProperty, keyPredicate);
+    EasyMock.replay(edmMapping, edmProperty, keyPredicate);
     List<KeyPredicate> keyPredicates = new ArrayList<KeyPredicate>();
     keyPredicates.add(keyPredicate);
     return keyPredicates;
