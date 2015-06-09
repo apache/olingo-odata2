@@ -87,13 +87,11 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
   private static final String SALES_ORDER = "SalesOrder";
   private static final String SALES_ORDER_HEADERS = "SalesOrderHeaders";
   private static final String STR_CONTENT_TYPE = "Content-Type";
-  
 
   @Before
   public void setUp() {
     objODataJPAProcessorDefault = new ODataJPAProcessorDefault(getLocalmockODataJPAContext());
   }
-  
 
   @Test
   public void testReadEntitySetGetEntitySetUriInfoString() {
@@ -172,7 +170,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
       Assert.assertTrue(true); // Expected TODO - need to revisit
     }
   }
-  
+
   private PutMergePatchUriInfo getPutUriInfo() {
     return (PutMergePatchUriInfo) getDeletetUriInfo();
   }
@@ -362,9 +360,12 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
         getQueryForSelectCount());
     EasyMock.expect(em.getEntityManagerFactory()).andStubReturn(mockEntityManagerFactory2());// For create
     EasyMock.expect(em.getTransaction()).andStubReturn(getLocalTransaction()); // For Delete
+    EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
     Address obj = new Address();
     em.remove(obj);// testing void method
     em.flush();
+    em.close();
+    EasyMock.expectLastCall().anyTimes();
     EasyMock.replay(em);
     return em;
   }
@@ -543,6 +544,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     ODataContext objODataContext = EasyMock.createMock(ODataContext.class);
     try {
       EasyMock.expect(objODataContext.getPathInfo()).andStubReturn(getLocalPathInfo());
+      EasyMock.expect(objODataContext.isInBatchMode()).andReturn(false).anyTimes();
     } catch (ODataException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }

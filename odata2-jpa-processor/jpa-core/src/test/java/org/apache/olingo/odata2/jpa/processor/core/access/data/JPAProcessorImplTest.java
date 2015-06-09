@@ -308,7 +308,6 @@ public class JPAProcessorImplTest {
     return tx;
   }
 
-
   private EntityManagerFactory mockEntityManagerFactory() {
     EntityManagerFactory emf = EasyMock.createMock(EntityManagerFactory.class);
     EasyMock.expect(emf.getMetamodel()).andStubReturn(mockMetaModel());
@@ -323,6 +322,7 @@ public class JPAProcessorImplTest {
     EasyMock.expect(em.createQuery("SELECT COUNT ( E1 ) FROM SalesOrderHeaders E1")).andStubReturn(
         getQueryForSelectCount());
     EasyMock.expect(em.getTransaction()).andStubReturn(getLocalTransaction()); // For Delete
+    EasyMock.expect(em.isOpen()).andReturn(false);
     em.flush();
     em.flush();
     Address obj = new Address();

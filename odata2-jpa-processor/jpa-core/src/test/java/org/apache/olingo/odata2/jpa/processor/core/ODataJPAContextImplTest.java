@@ -52,6 +52,7 @@ public class ODataJPAContextImplTest {
     edmProvider = new ODataJPAEdmProvider();
     emf = EasyMock.createMock(EntityManagerFactory.class);
     em = EasyMock.createMock(EntityManager.class);
+    EasyMock.expect(em.isOpen()).andReturn(false);
     EasyMock.replay(em);
 
     EasyMock.expect(emf.createEntityManager()).andStubReturn(em);
