@@ -79,7 +79,8 @@ public class UriParserImpl extends UriParser {
       .compile("(?:([^.()]+)\\.)?([^.()]+)(?:\\((.+)\\)|(\\(\\)))?");
   private static final Pattern NAVIGATION_SEGMENT_PATTERN = Pattern.compile("([^()]+)(?:\\((.+)\\)|(\\(\\)))?");
   private static final Pattern NAMED_VALUE_PATTERN = Pattern.compile("(?:([^=]+)=)?([^=]+)");
-  private static final Pattern STRING_KEY_PATTERN = Pattern.compile("'([^']*)'");
+  private static final char COMMA = ',';
+  private static final char SQUOTE = '\'';
 
   private final Edm edm;
   private final EdmSimpleTypeFacade simpleTypeFacade;
@@ -447,8 +448,7 @@ public class UriParserImpl extends UriParser {
     ArrayList<EdmProperty> parsedKeyProperties = new ArrayList<EdmProperty>();
     ArrayList<KeyPredicate> keyPredicates = new ArrayList<KeyPredicate>();
 
-    Matcher keyMatcher = STRING_KEY_PATTERN.matcher(keyPredicate);
-    String[] keys = keyMatcher.matches() ? new String[]{keyPredicate} : keyPredicate.split(",", -1);
+    final List<String> keys = splitKeyPredicate(keyPredicate);
     for (final String key : keys) {
       final Matcher matcher = NAMED_VALUE_PATTERN.matcher(key);
       if (!matcher.matches()) {
@@ -490,6 +490,54 @@ public class UriParserImpl extends UriParser {
     }
 
     return keyPredicates;
+  }
+
+  /**
+   * Split the <code>keyPredicate</code> string into separate keys (named keys).
+   * e.g. <b>EmployeeId='1,,,2',Test='as'</b> will result in a list with two elements
+   * <b>EmployeeId='1,,,2'</b> and <b>Test='as'</b>.
+   *
+   * e.g. <b>'42'</b> will result in a list with onw element <b>'42'</b>.
+   *
+   * Snippets from ABNF (odata-abnf-construction-rules)
+   *
+   * <code>
+   *   keyPredicate     = simpleKey / compoundKey
+   *   simpleKey        = OPEN keyPropertyValue CLOSE
+   *   compoundKey      = OPEN keyValuePair *( COMMA keyValuePair ) CLOSE
+   *   keyValuePair     = ( primitiveKeyProperty / keyPropertyAlias ) EQ keyPropertyValue
+   *   keyPropertyValue = primitiveLiteral
+   *   keyPropertyAlias = odataIdentifier
+   * </code>
+   *
+   * <code>
+   *   string           = SQUOTE *( SQUOTE-in-string / pchar-no-SQUOTE ) SQUOTE
+   *   SQUOTE-in-string = SQUOTE SQUOTE ; two consecutive single quotes represent one within a string literal
+   * </code>
+   *
+   * @param keyPredicate keyPredicate to split
+   * @return list of separate (named) key values
+   */
+  private List<String> splitKeyPredicate(String keyPredicate) {
+    StringBuilder b = new StringBuilder();
+    final List<String> keys = new ArrayList<String>();
+    boolean inStringKeyValue = false;
+    for (int i = 0; i < keyPredicate.length(); i++) {
+      final char curChar = keyPredicate.charAt(i);
+      if(SQUOTE == curChar) {
+        // also works with SQUOTE-in-string
+        inStringKeyValue = !inStringKeyValue;
+        b.append(curChar);
+      } else if(COMMA == curChar && !inStringKeyValue) {
+        keys.add(b.toString());
+        b = new StringBuilder();
+      } else {
+        b.append(curChar);
+      }
+    }
+    keys.add(b.toString());
+
+    return keys;
   }
 
   private void handleFunctionImport(final EdmFunctionImport functionImport, final String emptyParentheses,
@@ -880,13 +928,13 @@ public class UriParserImpl extends UriParser {
 
   @Override
   public FilterExpression parseFilterString(final EdmEntityType entityType, final String expression)
-      throws ExpressionParserException, ODataMessageException {
+      throws ODataMessageException {
     return new FilterParserImpl(entityType).parseFilterString(expression);
   }
 
   @Override
   public OrderByExpression parseOrderByString(final EdmEntityType entityType, final String expression)
-      throws ExpressionParserException, ODataMessageException {
+      throws ODataMessageException {
     return new OrderByParserImpl(entityType).parseOrderByString(expression);
   }
 

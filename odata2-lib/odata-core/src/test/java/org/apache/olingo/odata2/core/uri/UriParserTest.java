@@ -266,6 +266,19 @@ public class UriParserTest extends BaseTest {
   }
 
   @Test
+  public void parseEmployeesEntityWithKeyWithSquoteInString() throws Exception {
+    UriInfoImpl result = parse("/Employees('1''2')");
+    assertNull(result.getEntityContainer().getName());
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI2, result.getUriType());
+
+    assertEquals(1, result.getKeyPredicates().size());
+    assertEquals("1'2", result.getKeyPredicates().get(0).getLiteral());
+    assertEquals("EmployeeId", result.getKeyPredicates().get(0).getProperty().getName());
+  }
+
+
+  @Test
   public void parseEmployeesEntityWithKeyEncoded() throws Exception {
     UriInfoImpl result = parse("/%45mployees('1')");
     assertNull(result.getEntityContainer().getName());
@@ -298,6 +311,30 @@ public class UriParserTest extends BaseTest {
 
     assertEquals(1, result.getKeyPredicates().size());
     assertEquals("1", result.getKeyPredicates().get(0).getLiteral());
+    assertEquals("EmployeeId", result.getKeyPredicates().get(0).getProperty().getName());
+  }
+
+  @Test
+  public void parseEmployeesEntityWithExplicitKeyAndComma() throws Exception {
+    UriInfoImpl result = parse("/Employees(EmployeeId='1,2')");
+    assertNull(result.getEntityContainer().getName());
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI2, result.getUriType());
+
+    assertEquals(1, result.getKeyPredicates().size());
+    assertEquals("1,2", result.getKeyPredicates().get(0).getLiteral());
+    assertEquals("EmployeeId", result.getKeyPredicates().get(0).getProperty().getName());
+  }
+
+  @Test
+  public void parseEmployeesEntityWithExplicitKeyAndSquoteInString() throws Exception {
+    UriInfoImpl result = parse("/Employees(EmployeeId='1''2')");
+    assertNull(result.getEntityContainer().getName());
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI2, result.getUriType());
+
+    assertEquals(1, result.getKeyPredicates().size());
+    assertEquals("1'2", result.getKeyPredicates().get(0).getLiteral());
     assertEquals("EmployeeId", result.getKeyPredicates().get(0).getProperty().getName());
   }
 
