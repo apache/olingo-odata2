@@ -70,7 +70,7 @@ public abstract class ODataServiceFactory {
    * @param callbackInterface a interface type to query for implementation
    * @return a callback implementation for this interface or null
    */
-  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+  public <T extends ODataCallback> T getCallback(final Class<T> callbackInterface) {
     return null;
   }
 

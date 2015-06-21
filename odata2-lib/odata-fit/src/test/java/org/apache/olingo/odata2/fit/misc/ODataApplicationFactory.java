@@ -33,7 +33,7 @@ public class ODataApplicationFactory extends ODataServiceFactory {
   }
 
   @Override
-  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+  public <T extends ODataCallback> T getCallback(final Class<T> callbackInterface) {
     return new ScenarioServiceFactory().getCallback(callbackInterface);
   }
 

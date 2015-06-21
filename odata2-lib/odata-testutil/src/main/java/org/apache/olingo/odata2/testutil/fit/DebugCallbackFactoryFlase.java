@@ -25,7 +25,7 @@ public class DebugCallbackFactoryFlase extends FitStaticServiceFactory {
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+  public <T extends ODataCallback> T getCallback(final Class<T> callbackInterface) {
     if (callbackInterface.isAssignableFrom(FitErrorCallback.class)) {
       return (T) new FitErrorCallback();
     } else if (callbackInterface.isAssignableFrom(ODataDebugCallback.class)) {
