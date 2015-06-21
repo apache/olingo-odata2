@@ -366,9 +366,10 @@ public class RestUtil {
       pathInfoString = pathInfoString.substring(servletRequest.getContextPath().length());
     }
 
-    int indexServletPath = requestUri.indexOf(servletRequest.getServletPath());
+    int indexServletPath = pathInfoString.indexOf(servletRequest.getServletPath());
     if (indexServletPath >= 0) {
-      pathInfoString = pathInfoString.substring(servletRequest.getServletPath().length());
+      int substringFromPos = indexServletPath + servletRequest.getServletPath().length();
+      pathInfoString = pathInfoString.substring(substringFromPos);
     }
     return pathInfoString;
   }
