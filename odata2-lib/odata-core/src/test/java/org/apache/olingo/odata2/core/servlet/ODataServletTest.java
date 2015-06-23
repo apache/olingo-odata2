@@ -105,7 +105,7 @@ public class ODataServletTest {
   @Test
   public void contentLengthCalculatedString() throws Exception {
     final Method createResponse =
-        AbstractODataServlet.class.getDeclaredMethod("createResponse", HttpServletResponse.class, ODataResponse.class);
+        ODataServlet.class.getDeclaredMethod("createResponse", HttpServletResponse.class, ODataResponse.class);
     createResponse.setAccessible(true);
 
     final ODataServlet servlet = new ODataServlet();
@@ -121,7 +121,7 @@ public class ODataServletTest {
   @Test
   public void contentLengthCalculatedStream() throws Exception {
     final Method createResponse =
-        AbstractODataServlet.class.getDeclaredMethod("createResponse", HttpServletResponse.class, ODataResponse.class);
+        ODataServlet.class.getDeclaredMethod("createResponse", HttpServletResponse.class, ODataResponse.class);
     createResponse.setAccessible(true);
 
     final ODataServlet servlet = new ODataServlet();
@@ -171,7 +171,7 @@ public class ODataServletTest {
     Mockito.verify(configMock).getInitParameter(ODataServiceFactory.FACTORY_LABEL);
     Mockito.verify(reqMock).getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
 
-    Assert.assertEquals(ODataServiceFactoryImpl.class, servlet.createODataServiceFactory(reqMock).getClass());
+    Assert.assertEquals(ODataServiceFactoryImpl.class, servlet.getServiceFactory(reqMock).getClass());
   }
 
 
@@ -186,7 +186,7 @@ public class ODataServletTest {
     Mockito.when(req.getMethod()).thenReturn("GET");
     Mockito.when(req.getContextPath()).thenReturn(contextPath);
     Mockito.when(req.getServletPath()).thenReturn(servletPath);
-    Mockito.when(req.getHeaderNames()).thenReturn(Collections.emptyEnumeration());
+    Mockito.when(req.getHeaderNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
   }
 
   private void prepareRequest(final HttpServletRequest req) {
