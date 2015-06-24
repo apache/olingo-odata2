@@ -154,7 +154,9 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       if (!(collection instanceof Collection)) {
         // make a collection out of it
         Collection<Object> myCollection = new ArrayList<Object>();
-        myCollection.add(collection);
+        if(collection != null) {
+          myCollection.add(collection);
+        }
         collection = myCollection;
       }
       @SuppressWarnings({ "unchecked" })
