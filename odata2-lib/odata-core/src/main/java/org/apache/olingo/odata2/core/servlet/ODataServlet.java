@@ -18,14 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.servlet;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
@@ -45,6 +37,13 @@ import org.apache.olingo.odata2.core.ODataContextImpl;
 import org.apache.olingo.odata2.core.ODataRequestHandler;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class ODataServlet extends HttpServlet {
 
   private static final String HTTP_METHOD_OPTIONS = "OPTIONS";
@@ -57,13 +56,12 @@ public class ODataServlet extends HttpServlet {
 
   @Override
   protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
-    final String factoryClassName = getInitParameter(ODataServiceFactory.FACTORY_LABEL);
-    if (factoryClassName == null) {
-      throw new ODataRuntimeException("config missing: " + ODataServiceFactory.FACTORY_LABEL);
-    }
-
     // We have to create the Service Factory here because otherwise we do not have access to the error callback
-    ODataServiceFactory serviceFactory = createServiceFactory(req);
+    ODataServiceFactory serviceFactory = getServiceFactory(req);
+    if(serviceFactory == null) {
+      throw new ODataRuntimeException("Unable to get Service Factory. Check either '" +
+          ODataServiceFactory.FACTORY_LABEL + "' or '" + ODataServiceFactory.FACTORY_INSTANCE_LABEL + "' config.");
+    }
 
     String xHttpMethod = req.getHeader("X-HTTP-Method");
     String xHttpMethodOverride = req.getHeader("X-HTTP-Method-Override");
@@ -82,7 +80,27 @@ public class ODataServlet extends HttpServlet {
     }
   }
 
-  private void handle(final HttpServletRequest req, final HttpServletResponse resp, final String xHttpMethod,
+  /**
+   * Get the service factory instance which is used for creation of the
+   * <code>ODataService</code> which handles the processing of the request.
+   *
+   * @param request the http request which is processed as an OData request
+   * @return an instance of an ODataServiceFactory
+   */
+  protected ODataServiceFactory getServiceFactory(HttpServletRequest request) {
+    try {
+      ODataServiceFactory factoryInstance = getODataServiceFactoryInstance(request);
+      if(factoryInstance == null) {
+        return createODataServiceFactory(request);
+      }
+      return factoryInstance;
+
+    } catch (Exception e) {
+      throw new ODataRuntimeException(e);
+    }
+  }
+
+  protected void handle(final HttpServletRequest req, final HttpServletResponse resp, final String xHttpMethod,
       final String xHttpMethodOverride, ODataServiceFactory serviceFactory) throws IOException {
     String method = req.getMethod();
     if (ODataHttpMethod.GET.name().equals(method)) {
@@ -184,22 +202,8 @@ public class ODataServlet extends HttpServlet {
     }
   }
 
-  private ODataServiceFactory createServiceFactory(HttpServletRequest req) {
-    try {
-      final String factoryClassName = getInitParameter(ODataServiceFactory.FACTORY_LABEL);
-      ClassLoader cl = (ClassLoader) req.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
-      if (cl == null) {
-        return (ODataServiceFactory) Class.forName(factoryClassName).newInstance();
-      } else {
-        return (ODataServiceFactory) Class.forName(factoryClassName, true, cl).newInstance();
-      }
-    } catch (Exception e) {
-      throw new ODataRuntimeException(e);
-    }
-  }
-
-  private void handleRedirect(final HttpServletRequest req, final HttpServletResponse resp,
-      ODataServiceFactory serviceFactory) throws IOException {
+  protected void handleRedirect(final HttpServletRequest req, final HttpServletResponse resp,
+                                ODataServiceFactory serviceFactory) throws IOException {
     String method = req.getMethod();
     if (ODataHttpMethod.GET.name().equals(method) ||
         ODataHttpMethod.POST.name().equals(method) ||
@@ -233,7 +237,7 @@ public class ODataServlet extends HttpServlet {
     return location.toString();
   }
 
-  private void createResponse(final HttpServletResponse resp, final ODataResponse response) throws IOException {
+  protected void createResponse(final HttpServletResponse resp, final ODataResponse response) throws IOException {
     resp.setStatus(response.getStatus().getStatusCode());
     resp.setContentType(response.getContentHeader());
     for (String headerName : response.getHeaderNames()) {
@@ -309,4 +313,48 @@ public class ODataServlet extends HttpServlet {
     createResponse(resp, response);
   }
 
+  /**
+   * Create an instance of a ODataServiceFactory via factory class
+   * from servlet init parameter ODataServiceFactory.FACTORY_LABEL
+   * and ODataServiceFactory.FACTORY_CLASSLOADER_LABEL (if set).
+   *
+   * @see ODataServiceFactory#FACTORY_LABEL
+   * @see ODataServiceFactory#FACTORY_CLASSLOADER_LABEL
+   *
+   * @param req http servlet request
+   * @return instance of a ODataServiceFactory
+   */
+  private ODataServiceFactory createODataServiceFactory(HttpServletRequest req)
+      throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    final String factoryClassName = getInitParameter(ODataServiceFactory.FACTORY_LABEL);
+    if(factoryClassName == null) {
+      return null;
+    }
+
+    ClassLoader cl = (ClassLoader) req.getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
+    if (cl == null) {
+      return (ODataServiceFactory) Class.forName(factoryClassName).newInstance();
+    } else {
+      return (ODataServiceFactory) Class.forName(factoryClassName, true, cl).newInstance();
+    }
+  }
+
+  /**
+   * Get an instance of a ODataServiceFactory from request attribute
+   * ODataServiceFactory.FACTORY_INSTANCE_LABEL
+   *
+   * @see ODataServiceFactory#FACTORY_INSTANCE_LABEL
+   *
+   * @param req http servlet request
+   * @return instance of a ODataServiceFactory
+   */
+  private ODataServiceFactory getODataServiceFactoryInstance(HttpServletRequest req) {
+    Object factory = req.getAttribute(ODataServiceFactory.FACTORY_INSTANCE_LABEL);
+    if(factory == null) {
+      return null;
+    } else if(factory instanceof ODataServiceFactory) {
+      return (ODataServiceFactory) factory;
+    }
+    throw new ODataRuntimeException("Invalid service factory instance of type " + factory.getClass());
+  }
 }
