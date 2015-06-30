@@ -277,12 +277,17 @@ public class ODataExpressionParser {
       for (OrderExpression orderBy : orderBys) {
 
         try {
-          orderByField = getPropertyName(orderBy.getExpression());
+          if (orderBy.getExpression().getKind() == ExpressionKind.MEMBER) {
+            orderByField = parseToJPAWhereExpression(orderBy.getExpression(), tableAlias);
+          } else {
+            orderByField = tableAlias + JPQLStatement.DELIMITER.PERIOD + getPropertyName(orderBy.getExpression());
+          }
           orderByDirection = (orderBy.getSortOrder() == SortOrder.asc) ? EMPTY :
               JPQLStatement.DELIMITER.SPACE + "DESC"; //$NON-NLS-1$
-          jpqlOrderByExpression +=
-              tableAlias + JPQLStatement.DELIMITER.PERIOD + orderByField + orderByDirection + " , ";
+          jpqlOrderByExpression += orderByField + orderByDirection + " , ";
         } catch (EdmException e) {
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+        } catch (ODataException e) {
           throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         }
       }

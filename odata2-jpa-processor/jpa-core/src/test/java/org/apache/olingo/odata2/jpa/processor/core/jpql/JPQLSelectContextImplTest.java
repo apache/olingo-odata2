@@ -104,6 +104,7 @@ public class JPQLSelectContextImplTest {
       }
 
       PropertyExpression commonExpression = EasyMock.createMock(PropertyExpression.class);
+      EasyMock.expect(commonExpression.getKind()).andReturn(ExpressionKind.PROPERTY).anyTimes();
       EasyMock.expect(commonExpression.getEdmType()).andStubReturn(edmType);
 
       EdmProperty edmTyped = EasyMock.createMock(EdmProperty.class);
