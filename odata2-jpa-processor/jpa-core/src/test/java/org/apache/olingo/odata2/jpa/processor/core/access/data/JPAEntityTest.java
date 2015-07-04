@@ -23,6 +23,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.net.URISyntaxException;
+
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -33,6 +35,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.mock.ODataContextMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.ODataJPAContextMock;
+import org.apache.olingo.odata2.jpa.processor.core.mock.PathInfoMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.EdmMockUtilV2;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.JPATypeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.JPATypeMock.JPARelatedTypeMock;
@@ -235,7 +238,16 @@ public class JPAEntityTest {
   }
 
   private ODataJPAContext mockODataJPAContext() throws ODataException {
-    ODataContext context = new ODataContextMock().mock();
+    PathInfoMock pathInfoMock = new PathInfoMock();
+    try {
+      pathInfoMock.setServiceRootURI("http://olingo.apache.org/service.svc");
+    } catch (URISyntaxException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
+          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+    ODataContextMock contextMock = new ODataContextMock();
+    contextMock.setPathInfo(pathInfoMock.mock());
+    ODataContext context = contextMock.mock();
     ODataJPAContext jpaContext = ODataJPAContextMock.mockODataJPAContext(context);
     return jpaContext;
   }
