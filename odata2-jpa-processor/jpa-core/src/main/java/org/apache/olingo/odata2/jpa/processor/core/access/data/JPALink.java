@@ -123,7 +123,9 @@ public class JPALink {
           condition.append(ODATA_OPERATOR_OR).append(SPACE);
         }
       }
-      options.put(ODATA_COMMAND_FILTER, condition.toString());
+      if (condition.length() > 0) {
+        options.put(ODATA_COMMAND_FILTER, condition.toString());
+      }
 
       UriInfo parsedUriInfo = parser.parseLinkSegments(linkSegments, options);
       List<Object> relatedEntities = jpaProcessor.process((GetEntitySetUriInfo) parsedUriInfo);
@@ -161,7 +163,9 @@ public class JPALink {
     if (targetJPAEntity != null) {
       em.persist(targetJPAEntity);
     }
-    if (isLocalTransaction && (em.contains(sourceJPAEntity) || em.contains(targetJPAEntity))) {
+    if (isLocalTransaction
+        && ((sourceJPAEntity != null && em.contains(sourceJPAEntity)) || (targetJPAEntity != null && em
+            .contains(targetJPAEntity)))) {
       tx.commit();
     }
   }
