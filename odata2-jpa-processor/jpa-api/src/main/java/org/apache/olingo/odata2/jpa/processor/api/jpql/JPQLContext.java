@@ -159,6 +159,8 @@ public abstract class JPQLContext implements JPQLContextView {
    * 
    */
   public static abstract class JPQLContextBuilder {
+    private static final String ALIAS = "E";
+
     /**
      * alias counter is an integer counter that is incremented by "1" for
      * every new alias name generation. The value of counter is used in the
@@ -228,7 +230,7 @@ public abstract class JPQLContext implements JPQLContextView {
      * @return a String representing JPA entity alias name
      */
     protected String generateJPAEntityAlias() {
-      return new String("E" + ++aliasCounter);
+      return new String(ALIAS + ++aliasCounter);
     }
   }
 }
