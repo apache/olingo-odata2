@@ -53,6 +53,8 @@ public class ODataServlet extends HttpServlet {
    * 
    */
   private static final long serialVersionUID = 1L;
+  private static final int DEFAULT_BUFFER_SIZE = 32768;
+  private static final String DEFAULT_READ_CHARSET = "utf-8";
 
   @Override
   protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
@@ -247,18 +249,20 @@ public class ODataServlet extends HttpServlet {
     Object entity = response.getEntity();
     if (entity != null) {
       ServletOutputStream out = resp.getOutputStream();
-      int curByte;
+      int len;
       int contentLength = 0;
+      byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 
       if (entity instanceof InputStream) {
-        while ((curByte = ((InputStream) entity).read()) != -1) {
-          contentLength++;
-          out.write((char) curByte);
+        InputStream stream = (InputStream) entity;
+        while ((len = stream.read(buffer)) != -1) {
+          contentLength += len;
+          out.write(buffer, 0, len);
         }
-        ((InputStream) entity).close();
+        stream.close();
       } else if (entity instanceof String) {
         String body = (String) entity;
-        final byte[] entityBytes = body.getBytes("utf-8");
+        final byte[] entityBytes = body.getBytes(DEFAULT_READ_CHARSET);
         out.write(entityBytes);
         contentLength = entityBytes.length;
       }
