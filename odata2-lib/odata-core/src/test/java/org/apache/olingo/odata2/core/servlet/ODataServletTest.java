@@ -19,10 +19,15 @@
 package org.apache.olingo.odata2.core.servlet;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Random;
 
 import javax.servlet.GenericServlet;
 import javax.servlet.ServletConfig;
@@ -136,6 +141,69 @@ public class ODataServletTest {
     createResponse.invoke(servlet, respMock, response);
     Mockito.verify(respMock).setContentLength(content.getBytes("utf-8").length);
   }
+
+
+  @Test
+  public void inputStreamResponse() throws Exception {
+    testInputStreamResponse("123", "utf-8", null);
+    testInputStreamResponse("1234567890", "utf-8", "5");
+    testInputStreamResponse(testData(200000), "utf-8", null);
+    testInputStreamResponse(testData(200000), "utf-8", "8192");
+    testInputStreamResponse(testData(200000), "utf-8", "32768");
+    //
+    testInputStreamResponse("üäö", "iso-8859-1", "8192");
+    testInputStreamResponse(testData(200000), "iso-8859-1", "32768");
+    testInputStreamResponse(testData(200000), "iso-8859-1", "8192");
+    testInputStreamResponse(testData(200000), "iso-8859-1", "32768");
+    //
+    testInputStreamResponse("1234567890", "utf-8", "5");
+    testInputStreamResponse("1234567890", "utf-8", "ABD");
+    testInputStreamResponse("1234567890", "utf-8", "");
+    testInputStreamResponse("1234567890", "utf-8", "-29");
+  }
+
+
+  private void testInputStreamResponse(String content, String encoding, String bufferSize) throws Exception {
+    ODataServlet servlet = new ODataServlet();
+    Mockito.when(configMock.getInitParameter(
+        "org.apache.olingo.odata2.core.servlet.buffer.size")).thenReturn(bufferSize);
+    prepareServlet(servlet);
+
+    final Charset charset = Charset.forName(encoding);
+    final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    final ServletOutputStream out = new ServletOutputStream() {
+      @Override
+      public void write(int i) throws IOException {
+        bout.write(i);
+      }
+    };
+    Mockito.when(respMock.getOutputStream()).thenReturn(out);
+
+    HttpServletResponse servletResponse = Mockito.mock(HttpServletResponse.class);
+    Mockito.when(servletResponse.getOutputStream()).thenReturn(out);
+
+    ODataResponse odataResponse = Mockito.mock(ODataResponse.class);
+    Mockito.when(odataResponse.getStatus()).thenReturn(HttpStatusCodes.ACCEPTED);
+    Mockito.when(odataResponse.getHeaderNames()).thenReturn(new HashSet<String>());
+    InputStream input = new ByteArrayInputStream(content.getBytes(charset));
+    Mockito.when(odataResponse.getEntity()).thenReturn(input);
+    servlet.createResponse(servletResponse, odataResponse);
+
+    String outputContent = new String(bout.toByteArray(), charset);
+    Assert.assertEquals(content, outputContent);
+  }
+
+
+  private String testData(int amount) {
+    StringBuilder result = new StringBuilder();
+    Random r = new Random();
+    for (int i = 0; i < amount; i++) {
+      result.append((char)(r.nextInt(26) + 'a'));
+    }
+
+    return result.toString();
+  }
+
 
   @Test
   public void serviceInstance() throws Exception {

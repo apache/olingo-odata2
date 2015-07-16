@@ -50,6 +50,11 @@ public class ODataServlet extends HttpServlet {
   private static final String HTTP_METHOD_HEAD = "HEAD";
 
   /**
+   * Label used in web.xml to assign servlet init parameter for a path split (service resolution).
+   */
+  private static final String BUFFER_SIZE = "org.apache.olingo.odata2.core.servlet.buffer.size";
+
+  /**
    * 
    */
   private static final long serialVersionUID = 1L;
@@ -249,17 +254,10 @@ public class ODataServlet extends HttpServlet {
     Object entity = response.getEntity();
     if (entity != null) {
       ServletOutputStream out = resp.getOutputStream();
-      int contentLength = 0;
+      int contentLength;
 
       if (entity instanceof InputStream) {
-        int len;
-        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-        InputStream stream = (InputStream) entity;
-        while ((len = stream.read(buffer)) != -1) {
-          contentLength += len;
-          out.write(buffer, 0, len);
-        }
-        stream.close();
+        contentLength = handleStream((InputStream) entity, out);
       } else if (entity instanceof String) {
         String body = (String) entity;
         final byte[] entityBytes = body.getBytes(DEFAULT_READ_CHARSET);
@@ -282,6 +280,39 @@ public class ODataServlet extends HttpServlet {
       out.flush();
       out.close();
     }
+  }
+
+  private int handleStream(InputStream stream, ServletOutputStream out) throws IOException {
+    int contentLength = 0;
+    byte[] buffer = getBuffer();
+
+    try {
+      int len;
+      while ((len = stream.read(buffer)) != -1) {
+        contentLength += len;
+        out.write(buffer, 0, len);
+      }
+    } finally {
+      stream.close();
+    }
+    return contentLength;
+  }
+
+  private byte[] getBuffer() {
+    int bufferSize = DEFAULT_BUFFER_SIZE;
+    String bufSizeInit = getInitParameter(BUFFER_SIZE);
+    if(bufSizeInit != null) {
+      try {
+        bufferSize = Integer.parseInt(bufSizeInit);
+        if(bufferSize <= 0) {
+          bufferSize = DEFAULT_BUFFER_SIZE;
+        }
+      } catch (NumberFormatException ignored) {
+        // this exception is ignored because if parameter is not parse able the default is used
+      }
+    }
+
+    return new byte[bufferSize];
   }
 
   private void createNotImplementedResponse(final HttpServletRequest req, final MessageReference messageReference,
