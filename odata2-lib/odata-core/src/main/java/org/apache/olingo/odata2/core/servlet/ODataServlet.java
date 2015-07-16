@@ -249,11 +249,11 @@ public class ODataServlet extends HttpServlet {
     Object entity = response.getEntity();
     if (entity != null) {
       ServletOutputStream out = resp.getOutputStream();
-      int len;
       int contentLength = 0;
-      byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 
       if (entity instanceof InputStream) {
+        int len;
+        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         InputStream stream = (InputStream) entity;
         while ((len = stream.read(buffer)) != -1) {
           contentLength += len;
@@ -265,6 +265,8 @@ public class ODataServlet extends HttpServlet {
         final byte[] entityBytes = body.getBytes(DEFAULT_READ_CHARSET);
         out.write(entityBytes);
         contentLength = entityBytes.length;
+      } else {
+        throw new IOException("Illegal entity object in ODataResponse of type '" + entity.getClass() + "'.");
       }
 
       if (response.getHeader(HttpHeaders.CONTENT_LENGTH) != null) {

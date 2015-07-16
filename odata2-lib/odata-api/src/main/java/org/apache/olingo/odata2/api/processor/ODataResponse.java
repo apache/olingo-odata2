@@ -58,11 +58,12 @@ public abstract class ODataResponse {
    * @throws ODataException throws ODataException in case of entity is not a stream (internal ClassCastException)
    */
   public InputStream getEntityAsStream() throws ODataException {
-    try {
-      return (InputStream) getEntity();
-    } catch (ClassCastException e) {
-      throw new ODataException(e);
+    Object obj = getEntity();
+    if(obj instanceof InputStream) {
+      return (InputStream) obj;
     }
+    throw new ODataException("Entity is not an instance of an InputStream (entity class: " +
+        (obj == null ? "NULL": obj.getClass()) + ")");
   }
 
   /**
