@@ -18,13 +18,19 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
+import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.core.commons.ContentType;
 
 public class BatchChangeSetPartImpl extends BatchChangeSetPart {
+  private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
+  private static final String CONTENT_TYPE = "content-type";
   private String method;
   private Map<String, String> headers = new HashMap<String, String>();
   private String body;
@@ -40,6 +46,34 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   @Override
   public String getBody() {
     return body;
+  }
+
+  @Override
+  public byte[] getBodyAsBytes() {
+    if(body == null) {
+      return new byte[0];
+    }
+    Charset charset = getCharset();
+    return body.getBytes(charset);
+  }
+
+  private Charset getCharset() {
+//    String contentType = headers.get(HttpHeaders.CONTENT_TYPE);
+    String contentType = null;
+    for (Map.Entry<String, String> s : headers.entrySet()) {
+      if(s.getKey().equalsIgnoreCase(HttpHeaders.CONTENT_TYPE)) {
+        contentType = s.getValue();
+        break;
+      }
+    }
+    ContentType ct = ContentType.parse(contentType);
+    if(ct != null) {
+      String charsetString = ct.getParameters().get(ContentType.PARAMETER_CHARSET);
+      if (charsetString != null && Charset.isSupported(charsetString)) {
+        return Charset.forName(charsetString);
+      }
+    }
+    return DEFAULT_CHARSET;
   }
 
   @Override
@@ -79,6 +113,10 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
 
     @Override
     public BatchChangeSetPartBuilder headers(final Map<String, String> headers) {
+//      this.headers = new HashMap<String, String>(headers.size());
+//      for (Map.Entry<String, String> entry : headers.entrySet()) {
+//        this.headers.put(entry.getKey().toLowerCase(Locale.ENGLISH), entry.getValue());
+//      }
       this.headers = headers;
       return this;
     }

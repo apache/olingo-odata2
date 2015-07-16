@@ -32,6 +32,8 @@ public abstract class BatchChangeSetPart {
 
   public abstract String getBody();
 
+  public abstract byte[] getBodyAsBytes();
+
   public abstract String getUri();
 
   public abstract String getMethod();
