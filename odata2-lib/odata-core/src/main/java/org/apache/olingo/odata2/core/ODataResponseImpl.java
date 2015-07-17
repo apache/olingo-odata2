@@ -20,12 +20,14 @@ package org.apache.olingo.odata2.core;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.batch.BatchHelper;
 
 /**
  *  
@@ -43,6 +45,11 @@ public class ODataResponseImpl extends ODataResponse {
 
   @Override
   public Object getEntity() {
+    // TODO: check type of entity??
+    // current default (defined by test cases is String)
+//    if(entity instanceof InputStream) {
+//      return BatchHelper.convertToString(this);
+//    }
     return entity;
   }
 

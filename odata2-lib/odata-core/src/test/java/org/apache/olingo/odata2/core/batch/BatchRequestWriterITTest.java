@@ -229,7 +229,7 @@ public class BatchRequestWriterITTest {
   }
 
   private String streamToString(final InputStream in) throws IOException {
-    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
+    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(in);
     final StringBuilder builder = new StringBuilder();
     String line;
 

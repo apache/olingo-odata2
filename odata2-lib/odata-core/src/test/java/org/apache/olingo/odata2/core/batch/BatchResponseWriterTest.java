@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +32,11 @@ import java.util.List;
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.odata2.core.batch.v2.Line;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
 public class BatchResponseWriterTest {
@@ -41,7 +44,7 @@ public class BatchResponseWriterTest {
   private static final String CRLF = "\r\n";
 
   @Test
-  public void testBatchResponse() throws BatchException, IOException {
+  public void testBatchResponse() throws ODataException, IOException {
     List<BatchResponsePart> parts = new ArrayList<BatchResponsePart>();
     ODataResponse response = ODataResponse.entity("Walter Winter")
         .status(HttpStatusCodes.OK)
@@ -61,11 +64,14 @@ public class BatchResponseWriterTest {
 
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
-    String body = (String) batchResponse.getEntity();
+//    StringHelper.Stream stream = StringHelper.toStream((InputStream) batchResponse.getEntity());
+//    String body = stream.toString();
 
+//    BufferedReaderIncludingLineEndings reader =
+//        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(body.getBytes())));
     BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(body.getBytes())));
-    List<Line> lines = reader.toList();
+        new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
+    List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
 
@@ -94,7 +100,7 @@ public class BatchResponseWriterTest {
   }
 
   @Test
-  public void testResponse() throws BatchException, IOException {
+  public void testResponse() throws Exception {
     List<BatchResponsePart> parts = new ArrayList<BatchResponsePart>();
     ODataResponse response =
         ODataResponse.entity("Walter Winter").status(HttpStatusCodes.OK).contentHeader("application/json").build();
@@ -106,11 +112,11 @@ public class BatchResponseWriterTest {
 
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
-    String body = (String) batchResponse.getEntity();
+//    String body = (String) batchResponse.getEntity();
     
     BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(body.getBytes())));
-    List<Line> lines = reader.toList();
+        new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
+    List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
     
@@ -127,7 +133,7 @@ public class BatchResponseWriterTest {
   }
 
   @Test
-  public void testChangeSetResponse() throws BatchException, IOException {
+  public void testChangeSetResponse() throws Exception {
     List<BatchResponsePart> parts = new ArrayList<BatchResponsePart>();
     ODataResponse changeSetResponse = ODataResponse.status(HttpStatusCodes.NO_CONTENT).build();
     List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
@@ -139,11 +145,10 @@ public class BatchResponseWriterTest {
 
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
-    String body = (String) batchResponse.getEntity();
-    
+
     BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(body.getBytes())));
-    List<Line> lines = reader.toList();
+        new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
+    List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
     
@@ -162,7 +167,7 @@ public class BatchResponseWriterTest {
   }
 
   @Test
-  public void testContentIdEchoing() throws BatchException, IOException {
+  public void testContentIdEchoing() throws Exception {
     List<BatchResponsePart> parts = new ArrayList<BatchResponsePart>();
     ODataResponse response = ODataResponse.entity("Walter Winter")
         .status(HttpStatusCodes.OK)
@@ -178,11 +183,10 @@ public class BatchResponseWriterTest {
 
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
-    String body = (String) batchResponse.getEntity();
-    
+
     BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(body.getBytes())));
-    List<Line> lines = reader.toList();
+        new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
+    List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
 

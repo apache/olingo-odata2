@@ -58,22 +58,7 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   }
 
   private Charset getCharset() {
-//    String contentType = headers.get(HttpHeaders.CONTENT_TYPE);
-    String contentType = null;
-    for (Map.Entry<String, String> s : headers.entrySet()) {
-      if(s.getKey().equalsIgnoreCase(HttpHeaders.CONTENT_TYPE)) {
-        contentType = s.getValue();
-        break;
-      }
-    }
-    ContentType ct = ContentType.parse(contentType);
-    if(ct != null) {
-      String charsetString = ct.getParameters().get(ContentType.PARAMETER_CHARSET);
-      if (charsetString != null && Charset.isSupported(charsetString)) {
-        return Charset.forName(charsetString);
-      }
-    }
-    return DEFAULT_CHARSET;
+    return BatchHelper.extractCharset(this.headers);
   }
 
   @Override

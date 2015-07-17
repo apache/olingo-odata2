@@ -31,7 +31,6 @@ import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.ep.EntityProviderBatchProperties;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.PathSegment;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class BatchParser {
@@ -94,8 +93,8 @@ public class BatchParser {
   private List<List<Line>> splitBodyParts(final InputStream in, final String boundary)
       throws IOException, BatchException {
 
-    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
-    final List<Line> message = reader.toList();
+    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(in);
+    final List<Line> message = reader.toLineList();
     reader.close();
 
     return BatchParserCommon.splitMessageByBoundary(message, boundary);

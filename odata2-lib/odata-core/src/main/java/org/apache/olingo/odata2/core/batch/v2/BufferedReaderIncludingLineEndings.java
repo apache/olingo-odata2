@@ -18,104 +18,133 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch.v2;
 
+import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.core.commons.ContentType;
+
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class BufferedReaderIncludingLineEndings extends Reader {
-  private static final char CR = '\r';
-  private static final char LF = '\n';
+public class BufferedReaderIncludingLineEndings {
+  private static final byte CR = '\r';
+  private static final byte LF = '\n';
   private static final int EOF = -1;
   private static final int BUFFER_SIZE = 8192;
-  private Reader reader;
-  private char[] buffer;
+  private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  private static final Charset CS_ISO_8859_1 = Charset.forName("iso-8859-1");
+  private static final String CONTENT_TYPE = "content-type";
+  public static final String BOUNDARY = "boundary";
+  public static final String DOUBLE_DASH = "--";
+  public static final String CRLF = "\r\n";
+  private Charset currentCharset = DEFAULT_CHARSET;
+  private String currentBoundary = null;
+  private ReadState readState = new ReadState();
+  private InputStream reader;
+  private byte[] buffer;
   private int offset = 0;
   private int limit = 0;
 
-  public BufferedReaderIncludingLineEndings(final Reader reader) {
+  public BufferedReaderIncludingLineEndings(final InputStream reader) {
     this(reader, BUFFER_SIZE);
   }
 
-  public BufferedReaderIncludingLineEndings(final Reader reader, final int bufferSize) {
+  public BufferedReaderIncludingLineEndings(final InputStream reader, final int bufferSize) {
     if (bufferSize <= 0) {
       throw new IllegalArgumentException("Buffer size must be greater than zero.");
     }
 
     this.reader = reader;
-    buffer = new char[bufferSize];
+    buffer = new byte[bufferSize];
   }
 
-  @Override
-  public int read(final char[] charBuffer, final int bufferOffset, final int length) throws IOException {
-    if ((bufferOffset + length) > charBuffer.length) {
-      throw new IndexOutOfBoundsException("Buffer is too small");
-    }
-
-    if (length < 0 || bufferOffset < 0) {
-      throw new IndexOutOfBoundsException("Offset and length must be grater than zero");
-    }
-
-    // Check if buffer is filled. Return if EOF is reached
-    // Is buffer refill required
-    if (limit == offset || isEOF()) {
-      fillBuffer();
-
-      if (isEOF()) {
-        return EOF;
-      }
-    }
-
-    int bytesRead = 0;
-    int bytesToRead = length;
-    int currentOutputOffset = bufferOffset;
-
-    while (bytesToRead != 0) {
-      // Is buffer refill required?
-      if (limit == offset) {
-        fillBuffer();
-
-        if (isEOF()) {
-          bytesToRead = 0;
-        }
-      }
-
-      if (bytesToRead > 0) {
-        int readByte = Math.min(limit - offset, bytesToRead);
-        bytesRead += readByte;
-        bytesToRead -= readByte;
-
-        for (int i = 0; i < readByte; i++) {
-          charBuffer[currentOutputOffset++] = buffer[offset++];
-        }
-      }
-    }
-
-    return bytesRead;
+  public void close() throws IOException {
+    reader.close();
   }
 
-  public List<Line> toList() throws IOException {
+  public List<String> toList() throws IOException {
+    final List<String> result = new ArrayList<String>();
+    String currentLine = readLine();
+    if(currentLine != null) {
+      currentBoundary = currentLine.trim();
+      result.add(currentLine);
+
+      while ((currentLine = readLine()) != null) {
+        result.add(currentLine);
+      }
+    }
+    return result;
+  }
+
+  public List<Line> toLineList() throws IOException {
     final List<Line> result = new ArrayList<Line>();
-    String currentLine;
-    int counter = 1;
-
-    while ((currentLine = readLine()) != null) {
+    String currentLine = readLine();
+    if(currentLine != null) {
+      currentBoundary = currentLine.trim();
+      int counter = 1;
       result.add(new Line(currentLine, counter++));
+
+      while ((currentLine = readLine()) != null) {
+        result.add(new Line(currentLine, counter++));
+      }
     }
 
     return result;
   }
 
+  private void updateCurrentCharset(String currentLine) {
+    if(currentLine != null) {
+      if(isContentTypeHeaderLine(currentLine)) {
+        currentLine = currentLine.substring(13, currentLine.length() - 2).trim();
+        ContentType ct = ContentType.parse(currentLine);
+        if (ct != null) {
+          String charsetString = ct.getParameters().get(ContentType.PARAMETER_CHARSET);
+          if (charsetString != null) {
+            currentCharset = Charset.forName(charsetString);
+          } else {
+            currentCharset = DEFAULT_CHARSET;
+          }
+          // boundary
+          String boundary = ct.getParameters().get(BOUNDARY);
+          if (boundary != null) {
+            currentBoundary = DOUBLE_DASH + boundary;
+          }
+        }
+      } else if(CRLF.equals(currentLine)) {
+        readState.foundLinebreak();
+      } else if(isBoundary(currentLine)) {
+        readState.foundBoundary();
+      }
+    }
+  }
+
+  private boolean isContentTypeHeaderLine(String currentLine) {
+    return currentLine.toLowerCase(Locale.ENGLISH).startsWith(CONTENT_TYPE);
+  }
+
+  private boolean isBoundary(String currentLine) {
+    if((currentBoundary + CRLF).equals(currentLine)) {
+      return true;
+    } else if((currentBoundary + DOUBLE_DASH + CRLF).equals(currentLine)) {
+      return true;
+    }
+    return false;
+  }
+
+  // TODO: mibo: check visibility
   public String readLine() throws IOException {
     if (limit == EOF) {
       return null;
     }
 
-    final StringBuilder stringBuffer = new StringBuilder();
+    ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
     boolean foundLineEnd = false; // EOF will be considered as line ending
 
     while (!foundLineEnd) {
-     // Is buffer refill required?
+      // Is buffer refill required?
       if (limit == offset) {
         if (fillBuffer() == EOF) {
           foundLineEnd = true;
@@ -123,94 +152,47 @@ public class BufferedReaderIncludingLineEndings extends Reader {
       }
 
       if (!foundLineEnd) {
-        char currentChar = buffer[offset++];
-        stringBuffer.append(currentChar);
+        byte currentChar = this.buffer[offset++];
+        if(!buffer.hasRemaining()) {
+          buffer.flip();
+          ByteBuffer tmp = ByteBuffer.allocate(buffer.limit() *2);
+          tmp.put(buffer);
+          buffer = tmp;
+        }
+        buffer.put(currentChar);
 
         if (currentChar == LF) {
           foundLineEnd = true;
         } else if (currentChar == CR) {
           foundLineEnd = true;
 
-          // Check next char. Consume \n if available
+          // Check next byte. Consume \n if available
           // Is buffer refill required?
           if (limit == offset) {
             fillBuffer();
           }
 
           // Check if there is at least one character
-          if (limit != EOF && buffer[offset] == LF) {
-            stringBuffer.append(LF);
+          if (limit != EOF && this.buffer[offset] == LF) {
+            buffer.put(LF);
             offset++;
           }
         }
       }
     }
 
-    return (stringBuffer.length() == 0) ? null : stringBuffer.toString();
-  }
-
-  @Override
-  public void close() throws IOException {
-    reader.close();
-  }
-
-  @Override
-  public boolean ready() throws IOException {
-    // Not EOF and buffer refill is not required
-    return !isEOF() && !(limit == offset);
-  }
-
-  @Override
-  public void reset() throws IOException {
-    throw new IOException("Reset is not supported");
-  }
-
-  @Override
-  public void mark(final int readAheadLimit) throws IOException {
-    throw new IOException("Mark is not supported");
-  }
-
-  @Override
-  public boolean markSupported() {
-    return false;
-  }
-
-  @Override
-  public long skip(final long n) throws IOException {
-    if (n == 0) {
-      return 0;
-    } else if (n < 0) {
-      throw new IllegalArgumentException("skip value is negative");
+    if(buffer.position() == 0) {
+      return null;
     } else {
-      long charactersToSkip = n;
-      long charactersSkiped = 0;
-
-      while (charactersToSkip != 0) {
-        // Is buffer refill required?
-        if (limit == offset) {
-          fillBuffer();
-
-          if (isEOF()) {
-            charactersToSkip = 0;
-          }
-        }
-
-        // Check if more characters are available
-        if (!isEOF()) {
-          int skipChars = (int) Math.min(limit - offset, charactersToSkip);
-
-          charactersSkiped += skipChars;
-          charactersToSkip -= skipChars;
-          offset += skipChars;
-        }
+      String currentLine;
+      if(readState.isReadBody()) {
+        currentLine = new String(buffer.array(), 0, buffer.position(), getCurrentCharset());
+      } else {
+        currentLine = new String(buffer.array(), 0, buffer.position(), CS_ISO_8859_1);
       }
-
-      return charactersSkiped;
+      updateCurrentCharset(currentLine);
+      return currentLine;
     }
-  }
-
-  private boolean isEOF() {
-    return limit == EOF;
   }
 
   private int fillBuffer() throws IOException {
@@ -220,56 +202,64 @@ public class BufferedReaderIncludingLineEndings extends Reader {
     return limit;
   }
 
-  public static class Line {
-    private final int lineNumber;
-    private final String content;
+  private Charset getCurrentCharset() {
+    return currentCharset;
+  }
 
-    public Line(final String content, final int lineNumber) {
-      this.content = content;
-      this.lineNumber = lineNumber;
+  /**
+   * Read state indicator (whether currently the <code>body</code> or <code>header</code> part is read).
+   */
+  private class ReadState {
+    private int state = 0;
+
+    public void foundLinebreak() {
+      state++;
     }
-
-    public int getLineNumber() {
-      return lineNumber;
+    public void foundBoundary() {
+      state = 0;
+    }
+    public boolean isReadBody() {
+      return state >= 2;
     }
 
     @Override
     public String toString() {
-      return content;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((content == null) ? 0 : content.hashCode());
-      result = prime * result + lineNumber;
-      return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      Line other = (Line) obj;
-      if (content == null) {
-        if (other.content != null) {
-          return false;
-        }
-      } else if (!content.equals(other.content)) {
-        return false;
-      }
-      if (lineNumber != other.lineNumber) {
-        return false;
-      }
-      return true;
+      return String.valueOf(state);
     }
   }
+
+
+//    @Override
+//    public int hashCode() {
+//      final int prime = 31;
+//      int result = 1;
+//      result = prime * result + ((content == null) ? 0 : content.hashCode());
+//      result = prime * result + lineNumber;
+//      return result;
+//    }
+//
+//    @Override
+//    public boolean equals(final Object obj) {
+//      if (this == obj) {
+//        return true;
+//      }
+//      if (obj == null) {
+//        return false;
+//      }
+//      if (getClass() != obj.getClass()) {
+//        return false;
+//      }
+//      Line other = (Line) obj;
+//      if (content == null) {
+//        if (other.content != null) {
+//          return false;
+//        }
+//      } else if (!content.equals(other.content)) {
+//        return false;
+//      }
+//      if (lineNumber != other.lineNumber) {
+//        return false;
+//      }
+//      return true;
+//    }
 }

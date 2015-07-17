@@ -18,8 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.api.processor;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Set;
 
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
@@ -37,6 +39,8 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
  * 
  */
 public abstract class ODataResponse {
+
+  private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
 
   /**
    * Do not subclass ODataResponse!
@@ -61,6 +65,10 @@ public abstract class ODataResponse {
     Object obj = getEntity();
     if(obj instanceof InputStream) {
       return (InputStream) obj;
+    } else if(obj instanceof byte[]) {
+      return new ByteArrayInputStream((byte[]) obj);
+    } else if(obj instanceof String) {
+      return new ByteArrayInputStream(((String) obj).getBytes(DEFAULT_CHARSET));
     }
     throw new ODataException("Entity is not an instance of an InputStream (entity class: " +
         (obj == null ? "NULL": obj.getClass()) + ")");

@@ -20,8 +20,6 @@ package org.apache.olingo.odata2.core.batch;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +41,7 @@ public class BatchRequestWriter {
   public static final String BOUNDARY_PREAMBLE = "changeset";
   public static final String HTTP_1_1 = "HTTP/1.1";
   private String batchBoundary;
-  private BodyBuilder writer = new BodyBuilder();
+  private BatchHelper.BodyBuilder writer = new BatchHelper.BodyBuilder();
 
   public InputStream writeBatchRequest(final List<BatchPart> batchParts, final String boundary) {
     if (boundary.matches(REG_EX_BOUNDARY)) {
@@ -84,16 +82,16 @@ public class BatchRequestWriter {
 
   private void appendRequestBodyPart(BatchQueryPart request) {
     appendRequestBodyPart(request.getMethod(), request.getUri(), request.getHeaders(),
-        new Body(null), request.getContentId());
+        new BatchHelper.Body(), request.getContentId());
   }
 
   private void appendRequestBodyPart(BatchChangeSetPart request) {
     appendRequestBodyPart(request.getMethod(), request.getUri(), request.getHeaders(),
-        new Body(request), request.getContentId());
+        new BatchHelper.Body(request), request.getContentId());
   }
 
   private void appendRequestBodyPart(String method, String uri,
-                                     Map<String, String> headers, Body body, String contentId) {
+                                     Map<String, String> headers, BatchHelper.Body body, String contentId) {
 
     boolean isContentLengthPresent = false;
     writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(HttpContentType.APPLICATION_HTTP)
@@ -138,85 +136,5 @@ public class BatchRequestWriter {
       }
     }
     return null;
-  }
-
-  /**
-   * Builder class to create the body and the header.
-   */
-  private class BodyBuilder {
-    private final Charset CHARSET_ISO_8859_1 = Charset.forName("iso-8859-1");
-    private ByteBuffer buffer = ByteBuffer.allocate(8192);
-    private boolean isClosed = false;
-
-    public byte[] getContent() {
-      isClosed = true;
-      byte[] tmp = new byte[buffer.position()];
-      buffer.flip();
-      buffer.get(tmp, 0, buffer.limit());
-      return tmp;
-    }
-
-    public BodyBuilder append(String string) {
-      byte [] b = string.getBytes(CHARSET_ISO_8859_1);
-      put(b);
-      return this;
-    }
-
-    private void put(byte[] b) {
-      if(isClosed) {
-        throw new RuntimeException("BodyBuilder is closed.");
-      }
-      if(buffer.remaining() < b.length) {
-        buffer.flip();
-        ByteBuffer tmp = ByteBuffer.allocate(buffer.limit() *2);
-        tmp.put(buffer);
-        buffer = tmp;
-      }
-      buffer.put(b);
-    }
-
-    public BodyBuilder append(int statusCode) {
-      return append(String.valueOf(statusCode));
-    }
-
-    public BodyBuilder append(Body body) {
-      put(body.getContent());
-      return this;
-    }
-
-    public String toString() {
-      return new String(buffer.array(), 0, buffer.position());
-    }
-  }
-
-  /**
-   * Body part which is read and stored as bytes (no charset conversion).
-   */
-  private class Body {
-    private final byte[] content;
-
-    public Body(BatchChangeSetPart response) {
-      this.content = getBody(response);
-    }
-
-    public int getLength() {
-      return content.length;
-    }
-
-    public byte[] getContent() {
-      return content;
-    }
-
-    public boolean isEmpty() {
-      return content.length == 0;
-    }
-
-    private byte[] getBody(final BatchChangeSetPart response) {
-      if (response == null || response.getBodyAsBytes() == null) {
-        return new byte[0];
-      }
-
-      return response.getBodyAsBytes();
-    }
   }
 }

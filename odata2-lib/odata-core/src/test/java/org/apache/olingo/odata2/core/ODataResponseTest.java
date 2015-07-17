@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -34,6 +35,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
 /**
@@ -61,11 +63,13 @@ public class ODataResponseTest extends BaseTest {
     assertNotNull(response.getEntityAsStream());
   }
 
-  @Test(expected = ODataException.class)
-  public void buildEntityAsStreamResponseFailTest() throws ODataException {
+  @Test
+  public void buildEntityAsStreamResponseFailTest() throws Exception {
     ODataResponse response = ODataResponse.entity("abc").build();
     assertNull(response.getStatus());
-    assertNotNull(response.getEntityAsStream());
+    InputStream entityAsStream = response.getEntityAsStream();
+    assertNotNull(entityAsStream);
+    assertEquals("abc", StringHelper.inputStreamToString(entityAsStream));
   }
 
   @Test

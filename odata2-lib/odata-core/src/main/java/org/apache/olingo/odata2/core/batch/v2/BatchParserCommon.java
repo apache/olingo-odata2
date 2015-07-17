@@ -34,7 +34,6 @@ import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.core.batch.AcceptParser;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.commons.Decoder;
 
 public class BatchParserCommon {
