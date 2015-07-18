@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch.v2;
 
-import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.core.commons.ContentType;
 
 import java.io.IOException;

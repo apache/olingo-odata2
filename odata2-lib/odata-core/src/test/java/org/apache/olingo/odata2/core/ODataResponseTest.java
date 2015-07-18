@@ -57,19 +57,33 @@ public class ODataResponseTest extends BaseTest {
   }
 
   @Test
-  public void buildEntityAsStreamResponseTest() throws ODataException {
-    ODataResponse response = ODataResponse.entity(new ByteArrayInputStream("abc".getBytes())).build();
-    assertNull(response.getStatus());
-    assertNotNull(response.getEntityAsStream());
-  }
-
-  @Test
-  public void buildEntityAsStreamResponseFailTest() throws Exception {
+  public void buildEntityAsStreamResponseTest() throws Exception {
     ODataResponse response = ODataResponse.entity("abc").build();
     assertNull(response.getStatus());
     InputStream entityAsStream = response.getEntityAsStream();
     assertNotNull(entityAsStream);
     assertEquals("abc", StringHelper.inputStreamToString(entityAsStream));
+  }
+
+  @Test
+  public void buildEntityAsStreamResponseTestCharset() throws Exception {
+    ODataResponse response = ODataResponse.entity("äbc")
+        .contentHeader("app/json; charset=utf-8").build();
+    assertNull(response.getStatus());
+    InputStream entityAsStream = response.getEntityAsStream();
+    assertNotNull(entityAsStream);
+    assertEquals("äbc", StringHelper.inputStreamToString(entityAsStream));
+  }
+
+  @Test
+  public void buildEntityAsStreamResponseTestCharsetIso() throws Exception {
+    ODataResponse response = ODataResponse.entity("äbc")
+        .contentHeader("app/json; charset=iso-8859-1").build();
+    assertNull(response.getStatus());
+    InputStream entityAsStream = response.getEntityAsStream();
+    assertNotNull(entityAsStream);
+    StringHelper.Stream s = StringHelper.toStream(entityAsStream);
+    assertEquals("äbc", s.asString("iso-8859-1"));
   }
 
   @Test

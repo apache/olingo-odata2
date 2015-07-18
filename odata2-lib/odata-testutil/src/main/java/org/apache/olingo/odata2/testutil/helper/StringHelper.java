@@ -117,8 +117,12 @@ public class StringHelper {
   }
 
   public static Stream toStream(final String content) {
+    return toStream(content, "utf-8");
+  }
+
+  public static Stream toStream(final String content, final String charset) {
     try {
-      return new Stream(content, "UTF-8");
+      return new Stream(content, charset);
     } catch (UnsupportedEncodingException e) {
       throw new RuntimeException("UTF-8 should be supported on each system.");
     }

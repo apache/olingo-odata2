@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.exception.ODataException;
@@ -41,6 +43,7 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 public abstract class ODataResponse {
 
   private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
+  public static final Pattern CHARSET_MATCHER_PATTERN = Pattern.compile("(charset=[\\w-]*)", Pattern.CASE_INSENSITIVE);
 
   /**
    * Do not subclass ODataResponse!
@@ -68,10 +71,26 @@ public abstract class ODataResponse {
     } else if(obj instanceof byte[]) {
       return new ByteArrayInputStream((byte[]) obj);
     } else if(obj instanceof String) {
-      return new ByteArrayInputStream(((String) obj).getBytes(DEFAULT_CHARSET));
+      return getInputStream((String) obj);
     }
     throw new ODataException("Entity is not an instance of an InputStream (entity class: " +
         (obj == null ? "NULL": obj.getClass()) + ")");
+  }
+
+  private InputStream getInputStream(String stringEntity) throws ODataException {
+    try {
+      String contentHeader = getContentHeader();
+      Charset charset = DEFAULT_CHARSET;
+      if(contentHeader != null) {
+        Matcher matcher = CHARSET_MATCHER_PATTERN.matcher(contentHeader);
+        if(matcher.find()) {
+          charset = Charset.forName(matcher.group(0).split("=")[1]);
+        }
+      }
+      return new ByteArrayInputStream(stringEntity.getBytes(charset));
+    } catch (Exception e) {
+      throw new ODataException("Unexpected exception for wrapping of String entity into InputStream.");
+    }
   }
 
   /**

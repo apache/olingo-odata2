@@ -18,10 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.Charset;
-import java.util.List;
-
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
@@ -29,17 +25,33 @@ import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 
+import java.util.List;
+
 public class BatchResponseWriter {
   private static final String COLON = ":";
   private static final String SP = " ";
   private static final String CRLF = "\r\n";
   private BatchHelper.BodyBuilder writer = new BatchHelper.BodyBuilder();
 //  private static final Charset DEFAULT_CHARSET = BatchHelper.DEFAULT_CHARSET;
+  private final boolean writeEntityAsUtf8String;
+
+  public BatchResponseWriter() {
+    this(true);
+  }
+
+  public BatchResponseWriter(boolean writeEntityAsUtf8String) {
+    this.writeEntityAsUtf8String = writeEntityAsUtf8String;
+  }
 
   public ODataResponse writeResponse(final List<BatchResponsePart> batchResponseParts) throws BatchException {
     String boundary = BatchHelper.generateBoundary("batch");
     appendResponsePart(batchResponseParts, boundary);
-    String batchResponseBody = writer.getContentAsString(BatchHelper.DEFAULT_CHARSET);
+    final Object batchResponseBody;
+    if(writeEntityAsUtf8String) {
+      batchResponseBody = writer.getContentAsString(BatchHelper.DEFAULT_CHARSET);
+    } else {
+      batchResponseBody = writer.getContentAsStream();
+    }
     return ODataResponse.entity(batchResponseBody).status(HttpStatusCodes.ACCEPTED)
         .header(HttpHeaders.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + "; boundary=" + boundary)
         .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(writer.getLength()))
