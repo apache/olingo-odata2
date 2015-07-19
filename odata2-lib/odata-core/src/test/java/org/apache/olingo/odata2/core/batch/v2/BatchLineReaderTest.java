@@ -16,21 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.batch;
+package org.apache.olingo.odata2.core.batch.v2;
 
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.odata2.core.batch.v2.BatchLineReader;
 import org.apache.olingo.odata2.core.batch.v2.Line;
 import org.junit.Test;
 
-public class BufferedReaderIncludingLineEndingsTest {
+public class BatchLineReaderTest {
 
   private static final String TEXT_COMBINED = "Test\r" +
       "Test2\r\n" +
@@ -44,14 +43,12 @@ public class BufferedReaderIncludingLineEndingsTest {
       "Test7\n" +
       "\n";
 
-  private static final String TEXT_SMALL = "Test\r" +
-      "123";
   private static final String TEXT_EMPTY = "";
 
   @Test
   public void testSimpleText() throws IOException {
     final String TEXT = "Test";
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
 
     assertEquals(TEXT, reader.readLine());
     assertNull(reader.readLine());
@@ -62,7 +59,7 @@ public class BufferedReaderIncludingLineEndingsTest {
   @Test
   public void testNoText() throws IOException {
     final String TEXT = "";
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
 
     assertNull(reader.readLine());
     assertNull(reader.readLine());
@@ -71,8 +68,8 @@ public class BufferedReaderIncludingLineEndingsTest {
 
   @Test
   public void testNoBytes() throws IOException {
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new ByteArrayInputStream(new byte[0]));
+    BatchLineReader reader =
+        new BatchLineReader(new ByteArrayInputStream(new byte[0]));
 
     assertNull(reader.readLine());
     assertNull(reader.readLine());
@@ -84,7 +81,7 @@ public class BufferedReaderIncludingLineEndingsTest {
     final String TEXT = "Test\r\n" +
         "Test2";
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
 
     assertEquals("Test\r\n", reader.readLine());
     assertEquals("Test2", reader.readLine());
@@ -98,7 +95,7 @@ public class BufferedReaderIncludingLineEndingsTest {
     final String TEXT = "Test\n" +
         "Test2";
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
 
     assertEquals("Test\n", reader.readLine());
     assertEquals("Test2", reader.readLine());
@@ -112,7 +109,7 @@ public class BufferedReaderIncludingLineEndingsTest {
     final String TEXT = "Test\r" +
         "Test2";
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT);
+    BatchLineReader reader = create(TEXT);
 
     assertEquals("Test\r", reader.readLine());
     assertEquals("Test2", reader.readLine());
@@ -123,7 +120,7 @@ public class BufferedReaderIncludingLineEndingsTest {
 
   @Test
   public void testCombined() throws IOException {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_COMBINED);
+    BatchLineReader reader = create(TEXT_COMBINED);
 
     assertEquals("Test\r", reader.readLine());
     assertEquals("Test2\r\n", reader.readLine());
@@ -143,7 +140,7 @@ public class BufferedReaderIncludingLineEndingsTest {
 
   @Test
   public void testCombinedBufferSizeTwo() throws IOException {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_COMBINED, 2);
+    BatchLineReader reader = create(TEXT_COMBINED, 2);
 
     assertEquals("Test\r", reader.readLine());
     assertEquals("Test2\r\n", reader.readLine());
@@ -175,7 +172,7 @@ public class BufferedReaderIncludingLineEndingsTest {
         "Test7\n" +
         "\r\n";
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT, 1);
+    BatchLineReader reader = create(TEXT, 1);
 
     assertEquals("Test\r", reader.readLine());
     assertEquals("Test2\r\n", reader.readLine());
@@ -199,7 +196,7 @@ public class BufferedReaderIncludingLineEndingsTest {
     final String TEXT = "Test\r" +
         "\r";
 
-    BufferedReaderIncludingLineEndings reader = create(TEXT, 1);
+    BatchLineReader reader = create(TEXT, 1);
 
     assertEquals("Test\r", reader.readLine());
     assertEquals("\r", reader.readLine());
@@ -210,26 +207,26 @@ public class BufferedReaderIncludingLineEndingsTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testFailBufferSizeZero() throws IOException {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY, 0);
+    BatchLineReader reader = create(TEXT_EMPTY, 0);
     reader.close();
   }
 
   @Test(expected = NullPointerException.class)
   public void testInputStreamIsNull() throws IOException {
     // Same behaviour like BufferedReader
-    BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(null);
+    BatchLineReader reader = new BatchLineReader(null);
     reader.close();
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testFailBufferSizeNegative() throws IOException {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_EMPTY, -1);
+    BatchLineReader reader = create(TEXT_EMPTY, -1);
     reader.close();
   }
 
   @Test
   public void testToList() throws IOException {
-    BufferedReaderIncludingLineEndings reader = create(TEXT_COMBINED);
+    BatchLineReader reader = create(TEXT_COMBINED);
     List<Line> stringList = reader.toLineList();
 
     assertEquals(11, stringList.size());
@@ -247,12 +244,12 @@ public class BufferedReaderIncludingLineEndingsTest {
     reader.close();
   }
 
-  private BufferedReaderIncludingLineEndings create(final String inputString) throws UnsupportedEncodingException {
-    return new BufferedReaderIncludingLineEndings(new ByteArrayInputStream(inputString.getBytes("UTF-8")));
+  private BatchLineReader create(final String inputString) throws UnsupportedEncodingException {
+    return new BatchLineReader(new ByteArrayInputStream(inputString.getBytes("UTF-8")));
   }
 
-  private BufferedReaderIncludingLineEndings create(final String inputString, int bufferSize)
+  private BatchLineReader create(final String inputString, int bufferSize)
       throws UnsupportedEncodingException {
-    return new BufferedReaderIncludingLineEndings(new ByteArrayInputStream(inputString.getBytes("UTF-8")), bufferSize);
+    return new BatchLineReader(new ByteArrayInputStream(inputString.getBytes("UTF-8")), bufferSize);
   }
 }

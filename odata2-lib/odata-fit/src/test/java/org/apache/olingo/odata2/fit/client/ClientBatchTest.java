@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
@@ -127,8 +128,56 @@ public class ClientBatchTest extends AbstractRefTest {
         fail();
       }
     }
-
   }
+
+  @Test
+  public void testChangeSetBatchUmlauts() throws Exception {
+    List<BatchPart> batch = new ArrayList<BatchPart>();
+
+    BatchChangeSet changeSet = BatchChangeSet.newBuilder().build();
+    Map<String, String> changeSetHeaders = new HashMap<String, String>();
+    changeSetHeaders.put("content-type", "application/json;odata=verbose");
+
+    BatchChangeSetPart changeRequest = BatchChangeSetPart.method(PUT)
+        .uri("Employees('2')/EmployeeName")
+        .body("{\"EmployeeName\":\"Frederic üäö Fall\"}")
+        .headers(changeSetHeaders)
+        .build();
+    changeSet.add(changeRequest);
+    batch.add(changeSet);
+
+    BatchPart request = BatchQueryPart.method(GET)
+        .uri("Employees('2')/EmployeeName/$value")
+        .build();
+    batch.add(request);
+
+    InputStream body = EntityProvider.writeBatchRequest(batch, BOUNDARY);
+    StringHelper.Stream bodyStream = StringHelper.toStream(body);
+    String bodyAsString = bodyStream.asStringWithLineSeparation("\r\n");
+    checkMimeHeaders(bodyAsString);
+    checkBoundaryDelimiters(bodyAsString);
+
+    assertTrue(bodyAsString.contains("PUT Employees('2')/EmployeeName HTTP/1.1"));
+    assertTrue(bodyAsString.contains("GET Employees('2')/EmployeeName/$value HTTP/1.1"));
+    assertTrue(bodyAsString.contains("content-type: application/json;odata=verbose"));
+
+    HttpResponse batchResponse = execute(bodyStream.asStreamWithLineSeparation("\r\n"));
+    InputStream responseBody = batchResponse.getEntity().getContent();
+    //
+    String contentType = batchResponse.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
+    List<BatchSingleResponse> responses = EntityProvider.parseBatchResponse(responseBody, contentType);
+    for (BatchSingleResponse response : responses) {
+      if ("204".equals(response.getStatusCode())) {
+        assertEquals("No Content", response.getStatusInfo());
+      } else if ("200".equals(response.getStatusCode())) {
+        assertEquals("OK", response.getStatusInfo());
+        assertTrue(response.getBody().contains("Frederic üäö Fall"));
+      } else {
+        fail();
+      }
+    }
+  }
+
 
   @Test
   public void testContentIdReferencing() throws Exception {
@@ -221,6 +270,20 @@ public class ClientBatchTest extends AbstractRefTest {
 
     post.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
     HttpEntity entity = new StringEntity(body);
+    post.setEntity(entity);
+    HttpResponse response = getHttpClient().execute(post);
+
+    assertNotNull(response);
+    assertEquals(202, response.getStatusLine().getStatusCode());
+
+    return response;
+  }
+
+  private HttpResponse execute(final InputStream body) throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+
+    post.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
+    HttpEntity entity = new InputStreamEntity(body, -1);
     post.setEntity(entity);
     HttpResponse response = getHttpClient().execute(post);
 

@@ -22,7 +22,7 @@ import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.odata2.core.batch.v2.BatchLineReader;
 import org.apache.olingo.odata2.core.batch.v2.Line;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
@@ -61,8 +61,8 @@ public class BatchResponseWriterTest {
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
+    BatchLineReader reader =
+        new BatchLineReader(batchResponse.getEntityAsStream());
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
@@ -106,8 +106,8 @@ public class BatchResponseWriterTest {
     assertNotNull(batchResponse.getEntity());
 //    String body = (String) batchResponse.getEntity();
     
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
+    BatchLineReader reader =
+        new BatchLineReader(batchResponse.getEntityAsStream());
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
@@ -138,8 +138,8 @@ public class BatchResponseWriterTest {
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
+    BatchLineReader reader =
+        new BatchLineReader(batchResponse.getEntityAsStream());
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
@@ -176,8 +176,8 @@ public class BatchResponseWriterTest {
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
+    BatchLineReader reader =
+        new BatchLineReader(batchResponse.getEntityAsStream());
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
@@ -214,8 +214,8 @@ public class BatchResponseWriterTest {
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
+    BatchLineReader reader =
+        new BatchLineReader(batchResponse.getEntityAsStream());
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
@@ -252,8 +252,8 @@ public class BatchResponseWriterTest {
     assertNotNull(batchResponse.getEntity());
 //    String body = (String) batchResponse.getEntity();
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
+    BatchLineReader reader =
+        new BatchLineReader(batchResponse.getEntityAsStream());
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;

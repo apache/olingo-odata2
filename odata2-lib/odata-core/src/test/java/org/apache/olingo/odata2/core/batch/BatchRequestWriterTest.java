@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +33,8 @@ import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
 import org.apache.olingo.odata2.api.client.batch.BatchPart;
 import org.apache.olingo.odata2.api.client.batch.BatchQueryPart;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.odata2.core.batch.v2.BatchLineReader;
 import org.apache.olingo.odata2.core.batch.v2.Line;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class BatchRequestWriterTest {
@@ -58,8 +56,8 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
     
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchRequest);
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
@@ -93,8 +91,8 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchRequest);
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
@@ -134,8 +132,8 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchRequest);
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
@@ -175,8 +173,8 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchRequest);
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
@@ -221,8 +219,8 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchRequest);
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
     List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
@@ -268,8 +266,8 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchRequest);
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
     List<Line> lines = reader.toLineList();
     reader.close();
 
@@ -328,8 +326,8 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchRequest);
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
     List<Line> lines = reader.toLineList();
     reader.close();
 
@@ -395,8 +393,8 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
     
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(batchRequest);
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
     List<Line> lines = reader.toLineList();
     reader.close();
 

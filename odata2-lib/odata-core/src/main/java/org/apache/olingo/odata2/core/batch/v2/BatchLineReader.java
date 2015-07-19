@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class BufferedReaderIncludingLineEndings {
+public class BatchLineReader {
   private static final byte CR = '\r';
   private static final byte LF = '\n';
   private static final int EOF = -1;
@@ -47,11 +47,11 @@ public class BufferedReaderIncludingLineEndings {
   private int offset = 0;
   private int limit = 0;
 
-  public BufferedReaderIncludingLineEndings(final InputStream reader) {
+  public BatchLineReader(final InputStream reader) {
     this(reader, BUFFER_SIZE);
   }
 
-  public BufferedReaderIncludingLineEndings(final InputStream reader, final int bufferSize) {
+  public BatchLineReader(final InputStream reader, final int bufferSize) {
     if (bufferSize <= 0) {
       throw new IllegalArgumentException("Buffer size must be greater than zero.");
     }
@@ -133,8 +133,7 @@ public class BufferedReaderIncludingLineEndings {
     return false;
   }
 
-  // TODO: mibo: check visibility
-  public String readLine() throws IOException {
+  String readLine() throws IOException {
     if (limit == EOF) {
       return null;
     }
