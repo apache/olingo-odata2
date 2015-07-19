@@ -42,6 +42,7 @@ import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.v2.BatchParser;
 import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -125,6 +126,53 @@ public class BatchRequestWriterITTest {
     assertEquals("111", oDataRequestPost.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID));
     assertEquals(body, streamToString(oDataRequestPost.getBody()));
     assertEquals("application/json", oDataRequestPost.getRequestHeaderValue(HttpHeaders.CONTENT_TYPE));
+  }
+
+  @Test
+  public void testChangeSetIso() throws Exception {
+    List<BatchPart> batch = new ArrayList<BatchPart>();
+    Map<String, String> headers = new HashMap<String, String>();
+    headers.put("Accept", "application/json");
+    BatchPart request = BatchQueryPart.method(GET).uri("Employees").headers(headers).contentId("000").build();
+    batch.add(request);
+
+    Map<String, String> changeSetHeaders = new HashMap<String, String>();
+    String charset = "iso-8859-1";
+    changeSetHeaders.put("content-type", "application/json; charset=" + charset);
+    String body = "äöü/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEA";
+    BatchChangeSetPart changeRequest = BatchChangeSetPart.method(POST)
+        .uri("Employees")
+        .body(body)
+        .headers(changeSetHeaders)
+        .contentId("111")
+        .build();
+    BatchChangeSet changeSet = BatchChangeSet.newBuilder().build();
+    changeSet.add(changeRequest);
+    batch.add(changeSet);
+    BatchRequestWriter writer = new BatchRequestWriter();
+    InputStream stream = writer.writeBatchRequest(batch, BOUNDARY);
+
+    final List<BatchRequestPart> parsedRequestParts = parseBatchRequest(stream);
+    assertEquals(2, parsedRequestParts.size());
+
+    // Get Request
+    final BatchRequestPart partGet = parsedRequestParts.get(0);
+    assertFalse(partGet.isChangeSet());
+    assertEquals(1, partGet.getRequests().size());
+    final ODataRequest oDataRequestGet = partGet.getRequests().get(0);
+    assertEquals("Employees", oDataRequestGet.getPathInfo().getODataSegments().get(0).getPath());
+    assertEquals("application/json", oDataRequestGet.getAcceptHeaders().get(0));
+
+    // Change set
+    final BatchRequestPart partChangeSet = parsedRequestParts.get(1);
+    assertTrue(partChangeSet.isChangeSet());
+    assertEquals(1, partChangeSet.getRequests().size());
+    final ODataRequest oDataRequestPost = partChangeSet.getRequests().get(0);
+    assertEquals("Employees", oDataRequestGet.getPathInfo().getODataSegments().get(0).getPath());
+    assertEquals("111", oDataRequestPost.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID));
+    assertEquals(body, streamToString(oDataRequestPost.getBody()));
+    assertEquals("application/json; charset=" + charset,
+        oDataRequestPost.getRequestHeaderValue(HttpHeaders.CONTENT_TYPE));
   }
 
   @Test
@@ -229,15 +277,6 @@ public class BatchRequestWriterITTest {
   }
 
   private String streamToString(final InputStream in) throws IOException {
-    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(in);
-    final StringBuilder builder = new StringBuilder();
-    String line;
-
-    while ((line = reader.readLine()) != null) {
-      builder.append(line);
-    }
-
-    reader.close();
-    return builder.toString();
+    return StringHelper.toStream(in).asString();
   }
 }

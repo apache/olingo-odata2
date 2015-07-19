@@ -31,26 +31,37 @@ public class BatchResponseWriter {
   private static final String COLON = ":";
   private static final String SP = " ";
   private static final String CRLF = "\r\n";
+  private final boolean writeEntityAsInputStream;
   private BatchHelper.BodyBuilder writer = new BatchHelper.BodyBuilder();
-//  private static final Charset DEFAULT_CHARSET = BatchHelper.DEFAULT_CHARSET;
-  private final boolean writeEntityAsUtf8String;
 
+  /**
+   * Creates a BatchResponseWriter which write the <code>entity</code> as a String with
+   * default charset (see BatchHelper.DEFAULT_CHARSET).
+   */
   public BatchResponseWriter() {
-    this(true);
+    this(false);
   }
 
-  public BatchResponseWriter(boolean writeEntityAsUtf8String) {
-    this.writeEntityAsUtf8String = writeEntityAsUtf8String;
+  /**
+   * Creates a BatchResponseWriter
+   *
+   * @param writeEntityAsInputStream
+   *        if <code>true</code> the <code>entity</code> is set a InputStream.
+   *        if <code>false</code> the <code>entity</code> is set a String with
+   *        default charset (see BatchHelper.DEFAULT_CHARSET).
+   */
+  public BatchResponseWriter(boolean writeEntityAsInputStream) {
+    this.writeEntityAsInputStream = writeEntityAsInputStream;
   }
 
   public ODataResponse writeResponse(final List<BatchResponsePart> batchResponseParts) throws BatchException {
     String boundary = BatchHelper.generateBoundary("batch");
     appendResponsePart(batchResponseParts, boundary);
     final Object batchResponseBody;
-    if(writeEntityAsUtf8String) {
-      batchResponseBody = writer.getContentAsString(BatchHelper.DEFAULT_CHARSET);
-    } else {
+    if(writeEntityAsInputStream) {
       batchResponseBody = writer.getContentAsStream();
+    } else {
+      batchResponseBody = writer.getContentAsString(BatchHelper.DEFAULT_CHARSET);
     }
     return ODataResponse.entity(batchResponseBody).status(HttpStatusCodes.ACCEPTED)
         .header(HttpHeaders.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + "; boundary=" + boundary)

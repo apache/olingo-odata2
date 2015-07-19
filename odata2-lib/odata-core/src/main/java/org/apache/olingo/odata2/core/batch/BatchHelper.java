@@ -18,6 +18,12 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
+import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.commons.ContentType;
+import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,16 +34,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
-import org.apache.olingo.odata2.api.commons.HttpHeaders;
-import org.apache.olingo.odata2.api.processor.ODataResponse;
-import org.apache.olingo.odata2.core.ODataResponseImpl;
-import org.apache.olingo.odata2.core.commons.ContentType;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class BatchHelper {
 
@@ -60,27 +58,6 @@ public class BatchHelper {
     } catch (UnsupportedEncodingException e) {
       throw new ODataRuntimeException(e);
     }
-  }
-
-  public static String convertToString(ODataResponseImpl oDataResponse) {
-    Object entity = oDataResponse.getEntity();
-
-    if(entity == null) {
-      return null;
-    } else if(entity instanceof String) {
-      return (String) entity;
-    } else if(entity instanceof byte[]) {
-      String contentHeader = oDataResponse.getContentHeader();
-      Charset charset = getCharset(contentHeader);
-      return convertByteArray((byte[]) entity, charset);
-    } else if(entity instanceof InputStream) {
-      String contentHeader = oDataResponse.getContentHeader();
-      Charset charset = getCharset(contentHeader);
-      Body b = new Body(oDataResponse);
-      return convertByteArray(b.getContent(), charset);
-    }
-    throw new ODataRuntimeException("Unable to convert ODataResponse entity of type '" +
-        entity.getClass() + "' to String.");
   }
 
   public static Charset extractCharset(Map<String, String> headers) {

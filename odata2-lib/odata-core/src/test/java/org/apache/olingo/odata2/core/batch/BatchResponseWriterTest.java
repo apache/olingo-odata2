@@ -18,18 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.exception.ODataException;
@@ -38,6 +26,14 @@ import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings
 import org.apache.olingo.odata2.core.batch.v2.Line;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class BatchResponseWriterTest {
 
@@ -64,11 +60,7 @@ public class BatchResponseWriterTest {
 
     assertEquals(202, batchResponse.getStatus().getStatusCode());
     assertNotNull(batchResponse.getEntity());
-//    StringHelper.Stream stream = StringHelper.toStream((InputStream) batchResponse.getEntity());
-//    String body = stream.toString();
 
-//    BufferedReaderIncludingLineEndings reader =
-//        new BufferedReaderIncludingLineEndings(new InputStreamReader(new ByteArrayInputStream(body.getBytes())));
     BufferedReaderIncludingLineEndings reader =
         new BufferedReaderIncludingLineEndings(batchResponse.getEntityAsStream());
     List<Line> lines = reader.toLineList();
@@ -96,7 +88,7 @@ public class BatchResponseWriterTest {
     assertEquals(CRLF, lines.get(index++).toString());
     assertEquals(CRLF, lines.get(index++).toString());
     assertTrue(lines.get(index++).toString().startsWith("--changeset"));
-    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index).toString().startsWith("--batch"));
   }
 
   @Test
@@ -129,7 +121,7 @@ public class BatchResponseWriterTest {
     assertEquals("Content-Length: 13" + CRLF, lines.get(index++).toString());
     assertEquals(CRLF, lines.get(index++).toString());
     assertEquals("Walter Winter" + CRLF, lines.get(index++).toString());
-    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index).toString().startsWith("--batch"));
   }
 
   @Test
@@ -163,7 +155,7 @@ public class BatchResponseWriterTest {
     assertEquals(CRLF, lines.get(index++).toString());
     assertEquals(CRLF, lines.get(index++).toString());
     assertTrue(lines.get(index++).toString().startsWith("--changeset"));
-    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index).toString().startsWith("--batch"));
   }
 
   @Test
@@ -201,7 +193,7 @@ public class BatchResponseWriterTest {
     assertEquals("Content-Length: 13" + CRLF, lines.get(index++).toString());
     assertEquals(CRLF, lines.get(index++).toString());
     assertEquals("Walter Winter" + CRLF, lines.get(index++).toString());
-    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index).toString().startsWith("--batch"));
   }
 
   @Test
@@ -209,7 +201,6 @@ public class BatchResponseWriterTest {
     List<BatchResponsePart> parts = new ArrayList<BatchResponsePart>();
     StringHelper.Stream stream = StringHelper.toStream("Wälter Winter", "iso-8859-1");
     ODataResponse response =
-//        ODataResponse.entity(stream.asString("iso-8859-1"))
         ODataResponse.entity(stream.asStream())
             .contentHeader("application/json; charset=iso-8859-1")
             .status(HttpStatusCodes.OK)
@@ -217,7 +208,7 @@ public class BatchResponseWriterTest {
     List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
     responses.add(response);
     parts.add(BatchResponsePart.responses(responses).changeSet(false).build());
-    BatchResponseWriter writer = new BatchResponseWriter(false);
+    BatchResponseWriter writer = new BatchResponseWriter(true);
     ODataResponse batchResponse = writer.writeResponse(parts);
 
     assertEquals(202, batchResponse.getStatus().getStatusCode());
@@ -238,7 +229,7 @@ public class BatchResponseWriterTest {
     assertEquals("Content-Length: 13" + CRLF, lines.get(index++).toString());
     assertEquals(CRLF, lines.get(index++).toString());
     assertEquals("Wälter Winter" + CRLF, lines.get(index++).toString());
-    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index).toString().startsWith("--batch"));
   }
 
   @Test
@@ -276,6 +267,6 @@ public class BatchResponseWriterTest {
     assertEquals("Content-Length: 14" + CRLF, lines.get(index++).toString());
     assertEquals(CRLF, lines.get(index++).toString());
     assertEquals("Wälter Winter" + CRLF, lines.get(index++).toString());
-    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index).toString().startsWith("--batch"));
   }
 }
