@@ -86,7 +86,8 @@ public class BatchParserCommon {
    * @return Content of BatchQueryOperation as InputStream in according charset and length
    * @throws BatchException if something goes wrong
    */
-  public static InputStream convertToInputStream(final String contentType, final List<Line> body, final int contentLength)
+  public static InputStream convertToInputStream(final String contentType, final List<Line> body,
+                                                 final int contentLength)
       throws BatchException {
     Charset charset = BatchHelper.extractCharset(contentType);
     final String message;
@@ -140,7 +141,8 @@ public class BatchParserCommon {
     }
 
     if (messageParts.size() == 0) {
-      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING.addContent(boundary).addContent(lineNumber));
+      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING
+          .addContent(boundary).addContent(lineNumber));
     }
 
     return messageParts;
