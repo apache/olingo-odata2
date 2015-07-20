@@ -77,6 +77,7 @@ public class ODataServlet extends HttpServlet {
         ODataExceptionWrapper wrapper = new ODataExceptionWrapper(req, serviceFactory);
         createResponse(resp, wrapper.wrapInExceptionResponse(
             new ODataBadRequestException(ODataBadRequestException.AMBIGUOUS_XMETHOD)));
+        return;
       }
     }
 
