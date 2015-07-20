@@ -72,6 +72,13 @@ public class BatchHelper {
     return getCharset(contentType);
   }
 
+  public static Charset extractCharset(String contentType) {
+    if(contentType == null) {
+      return DEFAULT_CHARSET;
+    }
+    return getCharset(contentType);
+  }
+
   private static Charset getCharset(String contentType) {
     ContentType ct = ContentType.parse(contentType);
     if(ct != null) {

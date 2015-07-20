@@ -135,7 +135,6 @@ public class BatchRequestWriterITTest {
    * @throws Exception
    */
   @Test
-  @Ignore("Rework for test necessary")
   public void testChangeSetIso() throws Exception {
     List<BatchPart> batch = new ArrayList<BatchPart>();
     Map<String, String> headers = new HashMap<String, String>();
@@ -147,9 +146,10 @@ public class BatchRequestWriterITTest {
     String charset = "iso-8859-1";
     changeSetHeaders.put("content-type", "application/json; charset=" + charset);
     String body = "äöü/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEA";
+    StringHelper.Stream stBody = StringHelper.toStream(body, charset);
     BatchChangeSetPart changeRequest = BatchChangeSetPart.method(POST)
         .uri("Employees")
-        .body(body)
+        .body(stBody.asString(charset))
         .headers(changeSetHeaders)
         .contentId("111")
         .build();
@@ -178,7 +178,7 @@ public class BatchRequestWriterITTest {
     assertEquals("Employees", oDataRequestGet.getPathInfo().getODataSegments().get(0).getPath());
     assertEquals("111", oDataRequestPost.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID));
     StringHelper.Stream st = StringHelper.toStream(oDataRequestPost.getBody());
-    assertEquals(body, st.asString("utf-8"));
+    assertEquals(body, st.asString("utf-8")); 
     assertEquals("application/json; charset=" + charset,
         oDataRequestPost.getRequestHeaderValue(HttpHeaders.CONTENT_TYPE));
   }

@@ -127,12 +127,7 @@ public class BatchRequestTransformator implements BatchTransformator {
       return new ByteArrayInputStream(new byte[0]);
     } else {
       int contentLength = BatchTransformatorCommon.getContentLength(headers);
-
-      if (contentLength == -1) {
-        return BatchParserCommon.convertLineListToInputStream(operation.getBody());
-      } else {
-        return BatchParserCommon.convertLineListToInputStream(operation.getBody(), contentLength);
-      }
+      return BatchParserCommon.convertToInputStream(operation, contentLength);
     }
   }
 

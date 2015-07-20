@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.batch.v2;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.core.batch.AcceptParser;
+import org.apache.olingo.odata2.core.batch.BatchHelper;
 import org.apache.olingo.odata2.core.commons.Decoder;
 
 public class BatchParserCommon {
@@ -69,18 +71,31 @@ public class BatchParserCommon {
     return builder.toString();
   }
 
-  public static InputStream convertLineListToInputStream(final List<Line> messageList, final int contentLength)
+  /**
+   * Convert body of BatchQueryOperation into a InputStream.
+   * The body will get via the charset set in ContentType and
+   * if no charset is set with Olingo default charset (see <code>BatchHelper.DEFAULT_CHARSET</code>).
+   *
+   * If content length is a positive value the content is trimmed to according length.
+   * Otherwise the whole content is written into the InputStream.
+   *
+   * @param operation from which the content is written into the InputStream
+   * @param contentLength if it is a positive value the content is trimmed to according length.
+   *                      Otherwise the whole content is written into the InputStream.
+   * @return Content of BatchQueryOperation as InputStream in according charset and length
+   * @throws BatchException if something goes wrong
+   */
+  public static InputStream convertToInputStream(BatchQueryOperation operation, int contentLength)
       throws BatchException {
-    final String message = trimLineListToLength(messageList, contentLength);
-
-    return new ByteArrayInputStream(message.getBytes());
-  }
-
-  public static InputStream convertLineListToInputStream(final List<Line> messageList)
-      throws BatchException {
-    final String message = lineListToString(messageList);
-
-    return new ByteArrayInputStream(message.getBytes());
+    String contentType = operation.getHeaders().getHeader(HttpHeaders.CONTENT_TYPE);
+    Charset charset = BatchHelper.extractCharset(contentType);
+    final String message;
+    if(contentLength <= -1) {
+      message = lineListToString(operation.getBody());
+    } else {
+      message = trimLineListToLength(operation.getBody(), contentLength);
+    }
+    return new ByteArrayInputStream(message.getBytes(charset));
   }
 
   static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)
