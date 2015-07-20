@@ -179,6 +179,7 @@ public class ODataServlet extends HttpServlet {
       }
       if (req.getHeader(HttpHeaders.ACCEPT) != null && req.getHeader(HttpHeaders.ACCEPT).isEmpty()) {
         createNotAcceptableResponse(req, ODataNotAcceptableException.COMMON, resp, serviceFactory);
+        return;
       }
       ODataRequest odataRequest = ODataRequest.method(method)
           .contentType(RestUtil.extractRequestContentType(req.getContentType()).toContentTypeString())
