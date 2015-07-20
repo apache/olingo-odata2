@@ -72,28 +72,28 @@ public class BatchParserCommon {
   }
 
   /**
-   * Convert body of BatchQueryOperation into a InputStream.
-   * The body will get via the charset set in ContentType and
+   * Convert body in form of List of Line items into a InputStream.
+   * The body is transformed with the charset set in ContentType and
    * if no charset is set with Olingo default charset (see <code>BatchHelper.DEFAULT_CHARSET</code>).
    *
    * If content length is a positive value the content is trimmed to according length.
    * Otherwise the whole content is written into the InputStream.
    *
-   * @param operation from which the content is written into the InputStream
+   * @param contentType content type value
+   * @param body content which is written into the InputStream
    * @param contentLength if it is a positive value the content is trimmed to according length.
    *                      Otherwise the whole content is written into the InputStream.
    * @return Content of BatchQueryOperation as InputStream in according charset and length
    * @throws BatchException if something goes wrong
    */
-  public static InputStream convertToInputStream(BatchQueryOperation operation, int contentLength)
+  public static InputStream convertToInputStream(final String contentType, final List<Line> body, final int contentLength)
       throws BatchException {
-    String contentType = operation.getHeaders().getHeader(HttpHeaders.CONTENT_TYPE);
     Charset charset = BatchHelper.extractCharset(contentType);
     final String message;
     if(contentLength <= -1) {
-      message = lineListToString(operation.getBody());
+      message = lineListToString(body);
     } else {
-      message = trimLineListToLength(operation.getBody(), contentLength);
+      message = trimLineListToLength(body, contentLength);
     }
     return new ByteArrayInputStream(message.getBytes(charset));
   }
@@ -126,21 +126,21 @@ public class BatchParserCommon {
       }
     }
 
-    final int lineNumer = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
+    final int lineNumber = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
     // Remove preamble
     if (messageParts.size() > 0) {
       messageParts.remove(0);
     } else {
 
-      throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER.addContent(lineNumer));
+      throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER.addContent(lineNumber));
     }
 
     if (!isEndReached) {
-      throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER.addContent(lineNumer));
+      throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER.addContent(lineNumber));
     }
 
     if (messageParts.size() == 0) {
-      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING.addContent(boundary).addContent(lineNumer));
+      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING.addContent(boundary).addContent(lineNumber));
     }
 
     return messageParts;

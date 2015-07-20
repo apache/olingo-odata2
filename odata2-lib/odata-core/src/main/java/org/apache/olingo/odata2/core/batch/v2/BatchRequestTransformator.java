@@ -88,13 +88,13 @@ public class BatchRequestTransformator implements BatchTransformator {
     statusLine.validateHttpMethod(isChangeSet);
 
     validateBody(statusLine, operation);
-    InputStream bodyStrean = getBodyStream(operation, headers, statusLine);
+    InputStream bodyStream = getBodyStream(operation, headers, statusLine);
 
     ODataRequestBuilder requestBuilder = ODataRequest.method(statusLine.getMethod())
         .acceptableLanguages(getAcceptLanguageHeaders(headers))
         .acceptHeaders(headers.getHeaders(HttpHeaders.ACCEPT))
         .allQueryParameters(BatchParserCommon.parseQueryParameter(operation.getHttpStatusLine()))
-        .body(bodyStrean)
+        .body(bodyStream)
         .requestHeaders(headers.toMultiMap())
         .pathInfo(statusLine.getPathInfo());
 
@@ -127,7 +127,8 @@ public class BatchRequestTransformator implements BatchTransformator {
       return new ByteArrayInputStream(new byte[0]);
     } else {
       int contentLength = BatchTransformatorCommon.getContentLength(headers);
-      return BatchParserCommon.convertToInputStream(operation, contentLength);
+      String contentType = headers.getHeader(HttpHeaders.CONTENT_TYPE);
+      return BatchParserCommon.convertToInputStream(contentType, operation.getBody(), contentLength);
     }
   }
 

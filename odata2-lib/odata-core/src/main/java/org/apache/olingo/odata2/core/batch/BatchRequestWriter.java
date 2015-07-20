@@ -80,18 +80,18 @@ public class BatchRequestWriter {
     writer.append(CRLF).append("--").append(boundary).append("--").append(CRLF);
   }
 
-  private void appendRequestBodyPart(BatchQueryPart request) {
+  private void appendRequestBodyPart(final BatchQueryPart request) {
     appendRequestBodyPart(request.getMethod(), request.getUri(), request.getHeaders(),
         new BatchHelper.Body(), request.getContentId());
   }
 
-  private void appendRequestBodyPart(BatchChangeSetPart request) {
+  private void appendRequestBodyPart(final BatchChangeSetPart request) {
     appendRequestBodyPart(request.getMethod(), request.getUri(), request.getHeaders(),
         new BatchHelper.Body(request), request.getContentId());
   }
 
-  private void appendRequestBodyPart(String method, String uri,
-                                     Map<String, String> headers, BatchHelper.Body body, String contentId) {
+  private void appendRequestBodyPart(final String method, final String uri, final Map<String, String> headers,
+                                     final BatchHelper.Body body, final String contentId) {
 
     boolean isContentLengthPresent = false;
     writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(HttpContentType.APPLICATION_HTTP)

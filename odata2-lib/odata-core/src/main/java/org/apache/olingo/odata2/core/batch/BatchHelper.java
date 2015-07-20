@@ -90,10 +90,6 @@ public class BatchHelper {
     return DEFAULT_CHARSET;
   }
 
-  private static String convertByteArray(byte[] entity, Charset charset) {
-    return new String(entity, charset);
-  }
-
   /**
    * Builder class to create the body and the header.
    */

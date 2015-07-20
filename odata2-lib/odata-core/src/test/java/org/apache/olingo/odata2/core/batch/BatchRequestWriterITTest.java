@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +42,6 @@ import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.v2.BatchParser;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class BatchRequestWriterITTest {
@@ -128,14 +126,17 @@ public class BatchRequestWriterITTest {
     assertEquals("application/json", oDataRequestPost.getRequestHeaderValue(HttpHeaders.CONTENT_TYPE));
   }
 
-  /**
-   * BatchChangeSetPart can only handle utf-8 (DEFAULT_CHARSET for Olingo [BatchHelper.DEFAULT_ENCODING]).
-   * Hence it is not relevant which charset is set in changeSetHeader
-   * 
-   * @throws Exception
-   */
   @Test
   public void testChangeSetIso() throws Exception {
+    testChangeSetWithCharset("iso-8859-1");
+  }
+
+  @Test
+  public void testChangeSetUtf8() throws Exception {
+    testChangeSetWithCharset("utf-8");
+  }
+
+  private void testChangeSetWithCharset(final String charset) throws Exception {
     List<BatchPart> batch = new ArrayList<BatchPart>();
     Map<String, String> headers = new HashMap<String, String>();
     headers.put("Accept", "application/json");
@@ -143,7 +144,6 @@ public class BatchRequestWriterITTest {
     batch.add(request);
 
     Map<String, String> changeSetHeaders = new HashMap<String, String>();
-    String charset = "iso-8859-1";
     changeSetHeaders.put("content-type", "application/json; charset=" + charset);
     String body = "äöü/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEA";
     StringHelper.Stream stBody = StringHelper.toStream(body, charset);
@@ -178,7 +178,7 @@ public class BatchRequestWriterITTest {
     assertEquals("Employees", oDataRequestGet.getPathInfo().getODataSegments().get(0).getPath());
     assertEquals("111", oDataRequestPost.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID));
     StringHelper.Stream st = StringHelper.toStream(oDataRequestPost.getBody());
-    assertEquals(body, st.asString("utf-8")); 
+    assertEquals(body, st.asString(charset));
     assertEquals("application/json; charset=" + charset,
         oDataRequestPost.getRequestHeaderValue(HttpHeaders.CONTENT_TYPE));
   }
