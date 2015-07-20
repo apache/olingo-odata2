@@ -77,6 +77,7 @@ public class ODataServlet extends HttpServlet {
         ODataExceptionWrapper wrapper = new ODataExceptionWrapper(req, serviceFactory);
         createResponse(resp, wrapper.wrapInExceptionResponse(
             new ODataBadRequestException(ODataBadRequestException.AMBIGUOUS_XMETHOD)));
+        return;
       }
     }
 
@@ -178,6 +179,7 @@ public class ODataServlet extends HttpServlet {
       }
       if (req.getHeader(HttpHeaders.ACCEPT) != null && req.getHeader(HttpHeaders.ACCEPT).isEmpty()) {
         createNotAcceptableResponse(req, ODataNotAcceptableException.COMMON, resp, serviceFactory);
+        return;
       }
       ODataRequest odataRequest = ODataRequest.method(method)
           .contentType(RestUtil.extractRequestContentType(req.getContentType()).toContentTypeString())

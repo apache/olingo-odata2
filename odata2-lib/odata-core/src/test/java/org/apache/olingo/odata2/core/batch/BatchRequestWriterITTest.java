@@ -43,6 +43,7 @@ import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.v2.BatchParser;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class BatchRequestWriterITTest {
@@ -134,6 +135,7 @@ public class BatchRequestWriterITTest {
    * @throws Exception
    */
   @Test
+  @Ignore("Rework for test necessary")
   public void testChangeSetIso() throws Exception {
     List<BatchPart> batch = new ArrayList<BatchPart>();
     Map<String, String> headers = new HashMap<String, String>();
