@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -126,6 +127,12 @@ public class BatchRequestWriterITTest {
     assertEquals("application/json", oDataRequestPost.getRequestHeaderValue(HttpHeaders.CONTENT_TYPE));
   }
 
+  /**
+   * BatchChangeSetPart can only handle utf-8 (DEFAULT_CHARSET for Olingo [BatchHelper.DEFAULT_ENCODING]).
+   * Hence it is not relevant which charset is set in changeSetHeader
+   * 
+   * @throws Exception
+   */
   @Test
   public void testChangeSetIso() throws Exception {
     List<BatchPart> batch = new ArrayList<BatchPart>();
@@ -168,7 +175,8 @@ public class BatchRequestWriterITTest {
     final ODataRequest oDataRequestPost = partChangeSet.getRequests().get(0);
     assertEquals("Employees", oDataRequestGet.getPathInfo().getODataSegments().get(0).getPath());
     assertEquals("111", oDataRequestPost.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID));
-    assertEquals(body, streamToString(oDataRequestPost.getBody()));
+    StringHelper.Stream st = StringHelper.toStream(oDataRequestPost.getBody());
+    assertEquals(body, st.asString("utf-8"));
     assertEquals("application/json; charset=" + charset,
         oDataRequestPost.getRequestHeaderValue(HttpHeaders.CONTENT_TYPE));
   }
