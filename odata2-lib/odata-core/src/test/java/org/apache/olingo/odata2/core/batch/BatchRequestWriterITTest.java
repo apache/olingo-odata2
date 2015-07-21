@@ -140,6 +140,7 @@ public class BatchRequestWriterITTest {
     List<BatchPart> batch = new ArrayList<BatchPart>();
     Map<String, String> headers = new HashMap<String, String>();
     headers.put("Accept", "application/json");
+    headers.put("CustomHeader", "HeäderVälüe");
     BatchPart request = BatchQueryPart.method(GET).uri("Employees").headers(headers).contentId("000").build();
     batch.add(request);
 
@@ -168,7 +169,8 @@ public class BatchRequestWriterITTest {
     assertEquals(1, partGet.getRequests().size());
     final ODataRequest oDataRequestGet = partGet.getRequests().get(0);
     assertEquals("Employees", oDataRequestGet.getPathInfo().getODataSegments().get(0).getPath());
-    assertEquals("application/json", oDataRequestGet.getAcceptHeaders().get(0));
+    validateHeader(oDataRequestGet, "Accept", "application/json");
+    validateHeader(oDataRequestGet, "CustomHeader", "HeäderVälüe");
 
     // Change set
     final BatchRequestPart partChangeSet = parsedRequestParts.get(1);
@@ -286,5 +288,12 @@ public class BatchRequestWriterITTest {
 
   private String streamToString(final InputStream in) throws IOException {
     return StringHelper.toStream(in).asString();
+  }
+
+  private void validateHeader(ODataRequest request, String headerName, String expectedValue) {
+    String actualValue = request.getRequestHeaderValue(headerName);
+    assertNotNull("Expected header '" + headerName + "' is not available.", actualValue);
+    assertEquals("Header '" + headerName + "' has value '" + actualValue
+        + "' instead of expected '" + expectedValue + "'.", expectedValue, actualValue);
   }
 }
