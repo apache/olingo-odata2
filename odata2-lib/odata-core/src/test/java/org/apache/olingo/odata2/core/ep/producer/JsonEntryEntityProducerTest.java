@@ -364,7 +364,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         + "\"id\":\"" + BASE_URI + "Container2.Photos(Id=1,Type='image%2Fpng')\","
         + "\"uri\":\"" + BASE_URI + "Container2.Photos(Id=1,Type='image%2Fpng')\","
         + "\"type\":\"RefScenario2.Photo\",\"etag\":\"W/\\\"1\\\"\",\"content_type\":\"image/png\","
-        + "\"media_src\":\"Container2.Photos(Id=1,Type='image%2Fpng')/$value\","
+        + "\"media_src\":\"" + BASE_URI + "Container2.Photos(Id=1,Type='image%2Fpng')/$value\","
         + "\"edit_media\":\"" + BASE_URI + "Container2.Photos(Id=1,Type='image%2Fpng')/$value\"},"
         + "\"Id\":1,\"Name\":null,\"Type\":\"image/png\",\"Image\":null,"
         + "\"BinaryData\":\"/wABAg==\",\"Содержание\":null,\"CustomProperty\":null}}",
@@ -394,7 +394,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         + "\"id\":\"" + BASE_URI + "Employees('1')\","
         + "\"uri\":\"" + BASE_URI + "Employees('1')\","
         + "\"type\":\"RefScenario.Employee\",\"content_type\":\"image/jpeg\","
-        + "\"media_src\":\"Employees('1')/$value\","
+        + "\"media_src\":\"" + BASE_URI + "Employees('1')/$value\","
         + "\"edit_media\":\"" + BASE_URI + "Employees('1')/$value\"},"
         + "\"EntryDate\":\"\\/Date(0)\\/\"}}",
         json);

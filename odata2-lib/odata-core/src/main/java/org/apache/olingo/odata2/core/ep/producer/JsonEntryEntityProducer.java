@@ -200,10 +200,15 @@ public class JsonEntryEntityProducer {
 
   private void writeMetadata(final EntityInfoAggregator entityInfo, final Map<String, Object> data,
       final EdmEntityType type) throws IOException, EntityProviderException, EdmException {
+    if (properties.getServiceRoot() == null) {
+      location =  "";
+    } else {
+      location = properties.getServiceRoot().toASCIIString() +
+          AtomEntryEntityProducer.createSelfLink(entityInfo, data, null);
+    }
+
     jsonStreamWriter.name(FormatJson.METADATA);
     jsonStreamWriter.beginObject();
-    final String self = AtomEntryEntityProducer.createSelfLink(entityInfo, data, null);
-    location = (properties.getServiceRoot() == null ? "" : properties.getServiceRoot().toASCIIString()) + self;
     jsonStreamWriter.namedStringValue(FormatJson.ID, location);
     jsonStreamWriter.separator();
     jsonStreamWriter.namedStringValue(FormatJson.URI, location);
@@ -229,7 +234,7 @@ public class JsonEntryEntityProducer {
           mediaSrc = (String) data.get(mediaResourceSourceKey);
         }
         if (mediaSrc == null) {
-          mediaSrc = self + "/$value";
+          mediaSrc = location + "/$value";
         }
         String mediaResourceMimeTypeKey = entityTypeMapping.getMediaResourceMimeTypeKey();
         if (mediaResourceMimeTypeKey != null) {
@@ -239,7 +244,7 @@ public class JsonEntryEntityProducer {
           mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
         }
       } else {
-        mediaSrc = self + "/$value";
+        mediaSrc = location + "/$value";
         mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
       }
 
