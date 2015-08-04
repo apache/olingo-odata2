@@ -130,30 +130,4 @@ public class BatchResponseWriter {
       }
     }
   }
-
-//  private String readBody(final InputStream in) throws BatchException {
-//    byte[] tmp = new byte[2048];
-//    int count;
-//    BatchException cachedException = null;
-//    StringBuffer b = new StringBuffer();
-//    try {
-//      count = in.read(tmp);
-//      while (count >= 0) {
-//        b.append(new String(tmp, 0, count, BatchHelper.DEFAULT_ENCODING));
-//        count = in.read(tmp);
-//      }
-//    } catch (IOException e) {
-//      cachedException = new BatchException(ODataMessageException.COMMON, e);
-//      throw cachedException;
-//    } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
-//      try {
-//        in.close();
-//      } catch (IOException e) {
-//        if (cachedException != null) {
-//          throw cachedException;
-//        }
-//      }
-//    }
-//    return b.toString();
-//  }
 }
