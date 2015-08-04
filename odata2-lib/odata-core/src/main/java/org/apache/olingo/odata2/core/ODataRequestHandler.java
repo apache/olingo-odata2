@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -199,8 +200,8 @@ public class ODataRequestHandler {
       try {
         final boolean isValid = ODataServiceVersion.validateDataServiceVersion(requestDataServiceVersion);
         if (!isValid || ODataServiceVersion.isBiggerThan(requestDataServiceVersion, serverDataServiceVersion)) {
-          throw new ODataBadRequestException(ODataBadRequestException.VERSIONERROR.addContent(requestDataServiceVersion
-              .toString()));
+          throw new ODataBadRequestException(ODataBadRequestException.VERSIONERROR
+              .addContent(requestDataServiceVersion));
         }
       } catch (final IllegalArgumentException e) {
         throw new ODataBadRequestException(ODataBadRequestException.PARSEVERSIONERROR
@@ -473,9 +474,10 @@ public class ODataRequestHandler {
   }
 
   private static List<ContentType> getSupportedContentTypes(final EdmProperty property) throws EdmException {
-    return property.getType() == EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance() ? Arrays.asList(property
-        .getMimeType() == null ? ContentType.WILDCARD : ContentType.create(property.getMimeType())) : Arrays.asList(
-        ContentType.TEXT_PLAIN, ContentType.TEXT_PLAIN_CS_UTF_8);
+    return property.getType() == EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance()
+        ? Collections.singletonList(property.getMimeType() == null
+          ? ContentType.WILDCARD : ContentType.create(property.getMimeType()))
+          : Arrays.asList(ContentType.TEXT_PLAIN, ContentType.TEXT_PLAIN_CS_UTF_8);
   }
 
   private List<String> getSupportedContentTypes(final UriInfoImpl uriInfo, final ODataHttpMethod method)
@@ -510,11 +512,15 @@ public class ODataRequestHandler {
     if ((method == ODataHttpMethod.PUT || method == ODataHttpMethod.PATCH || method == ODataHttpMethod.MERGE
         || method == ODataHttpMethod.DELETE)
         && ifMatch == null && ifNoneMatch == null && ifModifiedSince == null && ifUnmodifiedSince == null
-        && Arrays.asList(UriType.URI2, UriType.URI6A, UriType.URI3, UriType.URI4, UriType.URI5, UriType.URI17)
-            .contains(uriInfo.getUriType())
+        && checkUriType(uriInfo.getUriType())
         && hasConcurrencyControl(uriInfo.getTargetEntitySet().getEntityType())) {
       throw new ODataPreconditionRequiredException(ODataPreconditionRequiredException.COMMON);
     }
+  }
+
+  private static boolean checkUriType(UriType uriType) {
+    return uriType == UriType.URI2 || uriType == UriType.URI6A || uriType == UriType.URI3
+         || uriType == UriType.URI4 || uriType == UriType.URI5 || uriType == UriType.URI17;
   }
 
   private static boolean hasConcurrencyControl(final EdmEntityType entityType) throws EdmException {
