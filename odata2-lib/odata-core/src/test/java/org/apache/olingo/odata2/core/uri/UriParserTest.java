@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.uri;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -719,6 +720,18 @@ public class UriParserTest extends BaseTest {
     assertEquals(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance(), result.getFunctionImportParameters().get("q")
         .getType());
     assertEquals("Hugo", result.getFunctionImportParameters().get("q").getLiteral());
+  }
+  
+  @Test
+  public void parseFunctionImportParametersWithFacets() throws Exception {
+    UriInfoImpl result = parse("FINullableParameter");
+    assertEquals("FINullableParameter", result.getFunctionImport().getName());
+    assertTrue(result.getFunctionImportParameters().isEmpty());
+    
+    result = parse("FINullableParameter?Id='A'");
+    assertEquals("FINullableParameter", result.getFunctionImport().getName());
+    assertFalse(result.getFunctionImportParameters().isEmpty());
+    assertEquals("A", result.getFunctionImportParameters().get("Id").getLiteral());
   }
 
   @Test

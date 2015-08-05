@@ -171,7 +171,7 @@ public class UriParserImpl extends UriParser {
 
       currentPathSegment = pathSegments.remove(0);
       final String decodedPath = percentDecode(currentPathSegment);
-      
+
       if ("$metadata".equals(decodedPath)) {
         ensureLastSegment();
         uriResult.setUriType(UriType.URI8);
@@ -250,7 +250,7 @@ public class UriParserImpl extends UriParser {
   private void handleNavigationPathOptions() throws UriSyntaxException, UriNotMatchingException, EdmException {
     currentPathSegment = pathSegments.remove(0);
     final String decodedPath = percentDecode(currentPathSegment);
-    
+
     checkCount();
     if (uriResult.isCount()) {
       uriResult.setUriType(UriType.URI16); // Count of multiple entities is handled elsewhere
@@ -502,17 +502,17 @@ public class UriParserImpl extends UriParser {
    * Snippets from ABNF (odata-abnf-construction-rules)
    *
    * <code>
-   *   keyPredicate     = simpleKey / compoundKey
-   *   simpleKey        = OPEN keyPropertyValue CLOSE
-   *   compoundKey      = OPEN keyValuePair *( COMMA keyValuePair ) CLOSE
-   *   keyValuePair     = ( primitiveKeyProperty / keyPropertyAlias ) EQ keyPropertyValue
-   *   keyPropertyValue = primitiveLiteral
-   *   keyPropertyAlias = odataIdentifier
+   * keyPredicate = simpleKey / compoundKey
+   * simpleKey = OPEN keyPropertyValue CLOSE
+   * compoundKey = OPEN keyValuePair *( COMMA keyValuePair ) CLOSE
+   * keyValuePair = ( primitiveKeyProperty / keyPropertyAlias ) EQ keyPropertyValue
+   * keyPropertyValue = primitiveLiteral
+   * keyPropertyAlias = odataIdentifier
    * </code>
    *
    * <code>
-   *   string           = SQUOTE *( SQUOTE-in-string / pchar-no-SQUOTE ) SQUOTE
-   *   SQUOTE-in-string = SQUOTE SQUOTE ; two consecutive single quotes represent one within a string literal
+   * string = SQUOTE *( SQUOTE-in-string / pchar-no-SQUOTE ) SQUOTE
+   * SQUOTE-in-string = SQUOTE SQUOTE ; two consecutive single quotes represent one within a string literal
    * </code>
    *
    * @param keyPredicate keyPredicate to split
@@ -524,11 +524,11 @@ public class UriParserImpl extends UriParser {
     boolean inStringKeyValue = false;
     for (int i = 0; i < keyPredicate.length(); i++) {
       final char curChar = keyPredicate.charAt(i);
-      if(SQUOTE == curChar) {
+      if (SQUOTE == curChar) {
         // also works with SQUOTE-in-string
         inStringKeyValue = !inStringKeyValue;
         b.append(curChar);
-      } else if(COMMA == curChar && !inStringKeyValue) {
+      } else if (COMMA == curChar && !inStringKeyValue) {
         keys.add(b.toString());
         b = new StringBuilder();
       } else {
@@ -590,7 +590,7 @@ public class UriParserImpl extends UriParser {
 
       if (valueList.size() >= 1) {
         String value = valueList.get(0);
-        
+
         if (decodedString.startsWith("$")) {
           SystemQueryOption queryOption;
           try {
@@ -864,7 +864,8 @@ public class UriParserImpl extends UriParser {
         final String value = otherQueryParameters.remove(parameterName);
 
         if (value == null) {
-          if (parameter.getFacets() == null || parameter.getFacets().isNullable()) {
+          if (parameter.getFacets() == null || parameter.getFacets().isNullable() == null
+              || parameter.getFacets().isNullable()) {
             continue;
           } else {
             throw new UriSyntaxException(UriSyntaxException.MISSINGPARAMETER);

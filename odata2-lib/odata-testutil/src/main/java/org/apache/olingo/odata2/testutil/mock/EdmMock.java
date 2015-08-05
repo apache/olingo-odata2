@@ -195,6 +195,19 @@ class EdmMock {
         createFunctionImportMock(defaultContainer, "OldestEmployee", employeeType, EdmMultiplicity.ONE);
     when(oldestEmployeeFunctionImport.getEntitySet()).thenReturn(employeeEntitySet);
 
+    // Issue with not explicitly nullable parameters and facets
+    EdmFunctionImport functionImportNullableParameter =
+        createFunctionImportMock(defaultContainer, "FINullableParameter", EdmSimpleTypeKind.Boolean
+            .getEdmSimpleTypeInstance(), EdmMultiplicity.ONE);
+    EdmParameter nullableFIParameter = mock(EdmParameter.class);
+    when(nullableFIParameter.getType()).thenReturn(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance());
+    EdmFacets nullableFIParameterFacets = mock(EdmFacets.class);
+    when(nullableFIParameterFacets.isNullable()).thenReturn(null);
+    when(nullableFIParameterFacets.getMaxLength()).thenReturn(new Integer(1));
+    when(nullableFIParameter.getFacets()).thenReturn(nullableFIParameterFacets);
+    when(functionImportNullableParameter.getParameterNames()).thenReturn(Arrays.asList("Id"));
+    when(functionImportNullableParameter.getParameter("Id")).thenReturn(nullableFIParameter);
+
     EdmEntityContainer specificContainer = mock(EdmEntityContainer.class);
     when(specificContainer.getEntitySet("Employees")).thenReturn(employeeEntitySet);
     when(specificContainer.getName()).thenReturn("Container1");
