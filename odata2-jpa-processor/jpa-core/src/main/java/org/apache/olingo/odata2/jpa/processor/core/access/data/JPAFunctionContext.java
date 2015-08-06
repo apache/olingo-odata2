@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +82,14 @@ public class JPAFunctionContext extends JPAMethodContext {
       return JPAFunctionContext.this;
     }
 
+    @Override
+    protected void setResultsView(final Object resultsView) {
+      if (resultsView instanceof GetFunctionImportUriInfo) {
+        functiontView = (GetFunctionImportUriInfo) resultsView;
+      }
+    
+    }
+
     private JPAFunction generateJPAFunction() throws EdmException, NoSuchMethodException, SecurityException,
         ODataJPAModelException, ODataJPARuntimeException {
 
@@ -100,7 +109,8 @@ public class JPAFunctionContext extends JPAMethodContext {
       if (edmArguements == null) {
         return null;
       } else {
-        Object[] args = new Object[edmArguements.size()];
+        Collection<String> paramNames = functionImport.getParameterNames();
+        Object[] args = new Object[paramNames.size()];
         int i = 0;
         for (String paramName : functionImport.getParameterNames()) {
           EdmLiteral literal = edmArguements.get(paramName);
@@ -116,9 +126,11 @@ public class JPAFunctionContext extends JPAMethodContext {
 
     private Object convertArguement(final EdmLiteral edmLiteral, final EdmFacets facets, final Class<?> targetType)
         throws EdmSimpleTypeException {
-      EdmSimpleType edmType = edmLiteral.getType();
-      Object value = edmType.valueOfString(edmLiteral.getLiteral(), EdmLiteralKind.DEFAULT, facets, targetType);
-
+      Object value = null;
+      if (edmLiteral != null) {
+        EdmSimpleType edmType = edmLiteral.getType();
+        value = edmType.valueOfString(edmLiteral.getLiteral(), EdmLiteralKind.DEFAULT, facets, targetType);
+      }
       return value;
     }
 
@@ -155,14 +167,6 @@ public class JPAFunctionContext extends JPAMethodContext {
       Object[] params = null;
 
       return type.getConstructor((Class<?>[]) params).newInstance(params);
-
-    }
-
-    @Override
-    protected void setResultsView(final Object resultsView) {
-      if (resultsView instanceof GetFunctionImportUriInfo) {
-        functiontView = (GetFunctionImportUriInfo) resultsView;
-      }
 
     }
 
