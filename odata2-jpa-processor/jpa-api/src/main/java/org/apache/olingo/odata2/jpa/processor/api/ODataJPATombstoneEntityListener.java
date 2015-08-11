@@ -57,4 +57,11 @@ public abstract class ODataJPATombstoneEntityListener {
    */
   public abstract String generateDeltaToken(List<Object> deltas, Query query);
 
+  /**
+   * Implement this method to indicate whether the extended class can handle OData Tombstone feature as well
+   * @return true by default
+   */
+  public boolean isTombstoneSupported() {
+    return true;
+  }
 }

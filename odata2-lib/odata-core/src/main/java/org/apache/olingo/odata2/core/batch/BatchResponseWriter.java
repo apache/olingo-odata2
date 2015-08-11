@@ -18,31 +18,54 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
-import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+
+import java.util.List;
 
 public class BatchResponseWriter {
   private static final String COLON = ":";
   private static final String SP = " ";
   private static final String CRLF = "\r\n";
-  private ResponseWriter writer = new ResponseWriter();
+  private final boolean writeEntityAsInputStream;
+  private BatchHelper.BodyBuilder writer = new BatchHelper.BodyBuilder();
+
+  /**
+   * Creates a BatchResponseWriter which write the <code>entity</code> as a String with
+   * default charset (see BatchHelper.DEFAULT_CHARSET).
+   */
+  public BatchResponseWriter() {
+    this(false);
+  }
+
+  /**
+   * Creates a BatchResponseWriter
+   *
+   * @param writeEntityAsInputStream
+   *        if <code>true</code> the <code>entity</code> is set a InputStream.
+   *        if <code>false</code> the <code>entity</code> is set a String with
+   *        default charset (see BatchHelper.DEFAULT_CHARSET).
+   */
+  public BatchResponseWriter(boolean writeEntityAsInputStream) {
+    this.writeEntityAsInputStream = writeEntityAsInputStream;
+  }
 
   public ODataResponse writeResponse(final List<BatchResponsePart> batchResponseParts) throws BatchException {
     String boundary = BatchHelper.generateBoundary("batch");
     appendResponsePart(batchResponseParts, boundary);
-    String batchResponseBody = writer.toString();
+    final Object batchResponseBody;
+    if(writeEntityAsInputStream) {
+      batchResponseBody = writer.getContentAsStream();
+    } else {
+      batchResponseBody = writer.getContentAsString(BatchHelper.DEFAULT_CHARSET);
+    }
     return ODataResponse.entity(batchResponseBody).status(HttpStatusCodes.ACCEPTED)
         .header(HttpHeaders.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + "; boundary=" + boundary)
-        .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(writer.length()))
+        .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(writer.getLength()))
         .build();
   }
 
@@ -85,15 +108,9 @@ public class BatchResponseWriter {
         .append(response.getStatus().getInfo()).append(CRLF);
     appendHeader(response);
     if (!HttpStatusCodes.NO_CONTENT.equals(response.getStatus())) {
-      String body;
-      if (response.getEntity() instanceof InputStream) {
-        InputStream in = (InputStream) response.getEntity();
-        body = readBody(in);
-      } else {
-        body = response.getEntity().toString();
-      }
+      BatchHelper.Body body = new BatchHelper.Body(response);
       writer.append(HttpHeaders.CONTENT_LENGTH).append(COLON).append(SP)
-          .append(String.valueOf(BatchHelper.getBytes(body).length)).append(CRLF).append(CRLF);
+          .append(String.valueOf(body.getLength())).append(CRLF).append(CRLF);
       writer.append(body);
     } else {
       // No header if status code equals to 204 (No content)
@@ -113,51 +130,4 @@ public class BatchResponseWriter {
       }
     }
   }
-
-  private String readBody(final InputStream in) throws BatchException {
-    byte[] tmp = new byte[2048];
-    int count;
-    BatchException cachedException = null;
-    StringBuffer b = new StringBuffer();
-    try {
-      count = in.read(tmp);
-      while (count >= 0) {
-        b.append(new String(tmp, 0, count, BatchHelper.DEFAULT_ENCODING));
-        count = in.read(tmp);
-      }
-    } catch (IOException e) {
-      cachedException = new BatchException(ODataMessageException.COMMON, e);
-      throw cachedException;
-    } finally {// NOPMD (suppress DoNotThrowExceptionInFinally)
-      try {
-        in.close();
-      } catch (IOException e) {
-        if (cachedException != null) {
-          throw cachedException;
-        }
-      }
-    }
-    return b.toString();
-  }
-
-  private static class ResponseWriter {
-    private StringBuilder sb = new StringBuilder();
-    private int length = 0;
-
-    public ResponseWriter append(final String content) {
-      length += BatchHelper.getBytes(content).length;
-      sb.append(content);
-      return this;
-    }
-
-    public int length() {
-      return length;
-    }
-
-    @Override
-    public String toString() {
-      return sb.toString();
-    }
-  }
-
 }

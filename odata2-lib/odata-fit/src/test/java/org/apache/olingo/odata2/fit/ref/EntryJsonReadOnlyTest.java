@@ -55,13 +55,27 @@ public class EntryJsonReadOnlyTest extends AbstractRefTest {
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + getEndpoint() + "Employees('3')\","
         + "\"uri\":\"" + getEndpoint() + "Employees('3')\",\"type\":\"RefScenario.Employee\","
-        + "\"content_type\":\"image/jpeg\",\"media_src\":\"Employees('3')/$value\","
+        + "\"content_type\":\"image/jpeg\",\"media_src\":\"" + getEndpoint() + "Employees('3')/$value\","
+        + "\"edit_media\":\"" + getEndpoint() + "Employees('3')/$value\"},"
+        + "\"Age\":56,\"EntryDate\":null,"
+        + "\"ne_Team\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Employees('3')/ne_Team\"}}}}",
+        getBody(response));
+  }
+  
+  @Test
+  public void mediaLinkEntryWithEncodedSystemQueryParameters() throws Exception {
+    final HttpResponse response = callUri("Employees('3')?%24select=Age,EntryDate,ne_Team&%24format=json");
+    checkMediaType(response, HttpContentType.APPLICATION_JSON);
+    assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + getEndpoint() + "Employees('3')\","
+        + "\"uri\":\"" + getEndpoint() + "Employees('3')\",\"type\":\"RefScenario.Employee\","
+        + "\"content_type\":\"image/jpeg\",\"media_src\":\"" + getEndpoint() + "Employees('3')/$value\","
         + "\"edit_media\":\"" + getEndpoint() + "Employees('3')/$value\"},"
         + "\"Age\":56,\"EntryDate\":null,"
         + "\"ne_Team\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Employees('3')/ne_Team\"}}}}",
         getBody(response));
   }
 
+  
   @Test
   public void entryFromNonDefaultContainer() throws Exception {
     final HttpResponse response = callUri("Container2.Photos(Id=1,Type='image%2Fpng')?$format=json");
@@ -69,7 +83,7 @@ public class EntryJsonReadOnlyTest extends AbstractRefTest {
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + getEndpoint() + "Container2.Photos(Id=1,Type='image%2Fpng')\","
         + "\"uri\":\"" + getEndpoint() + "Container2.Photos(Id=1,Type='image%2Fpng')\","
         + "\"type\":\"RefScenario2.Photo\",\"etag\":\"W/\\\"1\\\"\",\"content_type\":\"image/png\","
-        + "\"media_src\":\"Container2.Photos(Id=1,Type='image%2Fpng')/$value\","
+        + "\"media_src\":\"" + getEndpoint() + "Container2.Photos(Id=1,Type='image%2Fpng')/$value\","
         + "\"edit_media\":\"" + getEndpoint() + "Container2.Photos(Id=1,Type='image%2Fpng')/$value\"},"
         + "\"Id\":1,\"Name\":\"Photo 1\",\"Type\":\"image/png\","
         + "\"ImageUrl\":\"http://localhost/Employee_1.png\","
@@ -126,7 +140,7 @@ public class EntryJsonReadOnlyTest extends AbstractRefTest {
         + "\"id\":\"" + getEndpoint() + "Employees('5')\","
         + "\"uri\":\"" + getEndpoint() + "Employees('5')\","
         + "\"type\":\"RefScenario.Employee\",\"content_type\":\"image/jpeg\","
-        + "\"media_src\":\"Employees('5')/$value\","
+        + "\"media_src\":\"" + getEndpoint() + "Employees('5')/$value\","
         + "\"edit_media\":\"" + getEndpoint() + "Employees('5')/$value\"},"
         + "\"Age\":42,"
         + "\"ne_Room\":{\"__metadata\":{\"id\":\"" + getEndpoint() + "Rooms('3')\","
@@ -146,7 +160,7 @@ public class EntryJsonReadOnlyTest extends AbstractRefTest {
         + "\"id\":\"" + getEndpoint() + "Employees('1')\","
         + "\"uri\":\"" + getEndpoint() + "Employees('1')\","
         + "\"type\":\"RefScenario.Employee\",\"content_type\":\"image/jpeg\","
-        + "\"media_src\":\"Employees('1')/$value\","
+        + "\"media_src\":\"" + getEndpoint() + "Employees('1')/$value\","
         + "\"edit_media\":\"" + getEndpoint() + "Employees('1')/$value\"},"
         + "\"EntryDate\":\"\\/Date(915148800000)\\/\","
         + "\"ne_Manager\":{\"__deferred\":{\"uri\":\"" + getEndpoint() + "Employees('1')/ne_Manager\"}},"

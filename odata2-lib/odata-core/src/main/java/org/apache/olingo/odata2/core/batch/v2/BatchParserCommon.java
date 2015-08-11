@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.batch.v2;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,7 +35,7 @@ import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.core.batch.AcceptParser;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.odata2.core.batch.BatchHelper;
 import org.apache.olingo.odata2.core.commons.Decoder;
 
 public class BatchParserCommon {
@@ -70,18 +71,32 @@ public class BatchParserCommon {
     return builder.toString();
   }
 
-  public static InputStream convertLineListToInputStream(final List<Line> messageList, final int contentLength)
+  /**
+   * Convert body in form of List of Line items into a InputStream.
+   * The body is transformed with the charset set in ContentType and
+   * if no charset is set with Olingo default charset (see <code>BatchHelper.DEFAULT_CHARSET</code>).
+   *
+   * If content length is a positive value the content is trimmed to according length.
+   * Otherwise the whole content is written into the InputStream.
+   *
+   * @param contentType content type value
+   * @param body content which is written into the InputStream
+   * @param contentLength if it is a positive value the content is trimmed to according length.
+   *                      Otherwise the whole content is written into the InputStream.
+   * @return Content of BatchQueryOperation as InputStream in according charset and length
+   * @throws BatchException if something goes wrong
+   */
+  public static InputStream convertToInputStream(final String contentType, final List<Line> body,
+                                                 final int contentLength)
       throws BatchException {
-    final String message = trimLineListToLength(messageList, contentLength);
-
-    return new ByteArrayInputStream(message.getBytes());
-  }
-
-  public static InputStream convertLineListToInputStream(final List<Line> messageList)
-      throws BatchException {
-    final String message = lineListToString(messageList);
-
-    return new ByteArrayInputStream(message.getBytes());
+    Charset charset = BatchHelper.extractCharset(contentType);
+    final String message;
+    if(contentLength <= -1) {
+      message = lineListToString(body);
+    } else {
+      message = trimLineListToLength(body, contentLength);
+    }
+    return new ByteArrayInputStream(message.getBytes(charset));
   }
 
   static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)
@@ -112,21 +127,22 @@ public class BatchParserCommon {
       }
     }
 
-    final int lineNumer = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
+    final int lineNumber = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
     // Remove preamble
     if (messageParts.size() > 0) {
       messageParts.remove(0);
     } else {
 
-      throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER.addContent(lineNumer));
+      throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER.addContent(lineNumber));
     }
 
     if (!isEndReached) {
-      throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER.addContent(lineNumer));
+      throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER.addContent(lineNumber));
     }
 
     if (messageParts.size() == 0) {
-      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING.addContent(boundary).addContent(lineNumer));
+      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING
+          .addContent(boundary).addContent(lineNumber));
     }
 
     return messageParts;
@@ -242,17 +258,13 @@ public class BatchParserCommon {
 
         for (String parameter : parameters) {
           String[] parameterParts = parameter.split("=");
-          String parameterName = parameterParts[0].toLowerCase(Locale.ENGLISH);
+          String parameterName = parameterParts[0];
 
           if (parameterParts.length == 2) {
             List<String> valueList = queryParameter.get(parameterName);
             valueList = valueList == null ? new LinkedList<String>() : valueList;
             queryParameter.put(parameterName, valueList);
-
-            String[] valueParts = parameterParts[1].split(",");
-            for (String value : valueParts) {
-              valueList.add(Decoder.decode(value));
-            }
+            valueList.add(Decoder.decode(parameterParts[1]));
           }
         }
       }

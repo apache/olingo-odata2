@@ -148,7 +148,7 @@ public class JsonFunctionImportTest extends BaseTest {
         + "\"id\":\"" + uri + "Employees('1')\","
         + "\"uri\":\"" + uri + "Employees('1')\","
         + "\"type\":\"RefScenario.Employee\",\"content_type\":\"image/jpeg\","
-        + "\"media_src\":\"Employees('1')/$value\","
+        + "\"media_src\":\"" + uri + "Employees('1')/$value\","
         + "\"edit_media\":\"" + uri + "Employees('1')/$value\"},"
         + "\"EmployeeId\":\"1\",\"EmployeeName\":null,"
         + "\"ManagerId\":null,\"RoomId\":null,\"TeamId\":null,"

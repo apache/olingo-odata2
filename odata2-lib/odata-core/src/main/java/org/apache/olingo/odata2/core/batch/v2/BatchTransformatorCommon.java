@@ -37,7 +37,6 @@ import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.batch.v2.Header.HeaderField;
 
 public class BatchTransformatorCommon {

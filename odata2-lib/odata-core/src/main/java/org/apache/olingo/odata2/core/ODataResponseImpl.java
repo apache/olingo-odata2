@@ -43,6 +43,11 @@ public class ODataResponseImpl extends ODataResponse {
 
   @Override
   public Object getEntity() {
+    // TODO: check type of entity??
+    // current default (defined by test cases is String)
+//    if(entity instanceof InputStream) {
+//      return BatchHelper.convertToString(this);
+//    }
     return entity;
   }
 

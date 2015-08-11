@@ -41,7 +41,7 @@ public class BatchRequestWriter {
   public static final String BOUNDARY_PREAMBLE = "changeset";
   public static final String HTTP_1_1 = "HTTP/1.1";
   private String batchBoundary;
-  private StringBuilder writer = new StringBuilder();
+  private BatchHelper.BodyBuilder writer = new BatchHelper.BodyBuilder();
 
   public InputStream writeBatchRequest(final List<BatchPart> batchParts, final String boundary) {
     if (boundary.matches(REG_EX_BOUNDARY)) {
@@ -55,16 +55,16 @@ public class BatchRequestWriter {
         appendChangeSet((BatchChangeSet) batchPart);
       } else if (batchPart instanceof BatchQueryPart) {
         BatchQueryPart request = (BatchQueryPart) batchPart;
-        appendRequestBodyPart(request.getMethod(), request.getUri(), null, request.getHeaders(),
-            request.getContentId());
+        appendRequestBodyPart(request);
       }
       
     }
     writer.append("--").append(boundary).append("--");
     InputStream batchRequestBody;
-    batchRequestBody = new ByteArrayInputStream(BatchHelper.getBytes(writer.toString()));
+    batchRequestBody = new ByteArrayInputStream(writer.getContent());
     return batchRequestBody;
   }
+
 
   private void appendChangeSet(final BatchChangeSet batchChangeSet) {
     String boundary = BatchHelper.generateBoundary(BOUNDARY_PREAMBLE);
@@ -75,14 +75,24 @@ public class BatchRequestWriter {
         HttpContentType.MULTIPART_MIXED + "; boundary=" + boundary).append(CRLF);
     for (BatchChangeSetPart request : batchChangeSet.getChangeSetParts()) {
       writer.append(CRLF).append("--").append(boundary).append(CRLF);
-      appendRequestBodyPart(request.getMethod(), request.getUri(), request.getBody(), request.getHeaders(), request
-          .getContentId());
+      appendRequestBodyPart(request);
     }
     writer.append(CRLF).append("--").append(boundary).append("--").append(CRLF);
   }
 
-  private void appendRequestBodyPart(final String method, final String uri, final String body,
-      final Map<String, String> headers, final String contentId) {
+  private void appendRequestBodyPart(final BatchQueryPart request) {
+    appendRequestBodyPart(request.getMethod(), request.getUri(), request.getHeaders(),
+        new BatchHelper.Body(), request.getContentId());
+  }
+
+  private void appendRequestBodyPart(final BatchChangeSetPart request) {
+    appendRequestBodyPart(request.getMethod(), request.getUri(), request.getHeaders(),
+        new BatchHelper.Body(request), request.getContentId());
+  }
+
+  private void appendRequestBodyPart(final String method, final String uri, final Map<String, String> headers,
+                                     final BatchHelper.Body body, final String contentId) {
+
     boolean isContentLengthPresent = false;
     writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(HttpContentType.APPLICATION_HTTP)
         .append(CRLF);
@@ -99,14 +109,13 @@ public class BatchRequestWriter {
     writer.append(method).append(SP).append(uri).append(SP).append(HTTP_1_1);
     writer.append(CRLF);
 
-    if (!isContentLengthPresent && body != null && !body.isEmpty()) {
-      writer.append(HttpHeaders.CONTENT_LENGTH).append(COLON).append(SP).append(BatchHelper.getBytes(body).length)
-          .append(CRLF);
+    if (!isContentLengthPresent && !body.isEmpty()) {
+      writer.append(HttpHeaders.CONTENT_LENGTH).append(COLON).append(SP).append(body.getLength()).append(CRLF);
     }
     appendHeader(headers);
     writer.append(CRLF);
 
-    if (body != null && !body.isEmpty()) {
+    if (!body.isEmpty()) {
       writer.append(body);
     } else {
       writer.append(CRLF);

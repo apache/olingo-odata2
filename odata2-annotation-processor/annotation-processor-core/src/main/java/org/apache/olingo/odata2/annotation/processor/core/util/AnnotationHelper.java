@@ -298,9 +298,9 @@ public class AnnotationHelper {
 
   public String createCanonicalRelationshipName(String fromRole, String toRole) {
       if (fromRole.compareTo(toRole) > 0) {
-        return toRole + "-" + fromRole;
+        return toRole + "_2_" + fromRole;
       } else {
-        return fromRole + "-" + toRole;
+        return fromRole + "_2_" + toRole;
       }
   }
 

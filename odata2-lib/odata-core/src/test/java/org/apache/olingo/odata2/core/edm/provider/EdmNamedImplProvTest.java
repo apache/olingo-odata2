@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm.provider;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -37,5 +38,56 @@ public class EdmNamedImplProvTest extends BaseTest {
 
     SimpleProperty propertySimple = new SimpleProperty().setName("Prop;ertyName").setType(EdmSimpleTypeKind.String);
     new EdmSimplePropertyImplProv(edmImplProv, propertySimple);
+  }
+
+  @Test(expected = EdmException.class)
+  public void testPropertyIllegalStartWithNumber() throws Exception {
+
+    EdmProvider edmProvider = mock(EdmProvider.class);
+    EdmImplProv edmImplProv = new EdmImplProv(edmProvider);
+
+    SimpleProperty propertySimple = new SimpleProperty().setName("1_PropertyName").setType(EdmSimpleTypeKind.String);
+    new EdmSimplePropertyImplProv(edmImplProv, propertySimple);
+  }
+
+  @Test
+  public void testPropertyWithNumber() throws Exception {
+
+    EdmProvider edmProvider = mock(EdmProvider.class);
+    EdmImplProv edmImplProv = new EdmImplProv(edmProvider);
+
+    SimpleProperty propertySimple = new SimpleProperty().setName("Prop_1_Name").setType(EdmSimpleTypeKind
+        .String);
+    new EdmSimplePropertyImplProv(edmImplProv, propertySimple);
+    assertEquals("Prop_1_Name", new EdmSimplePropertyImplProv(edmImplProv, propertySimple).getName());
+  }
+
+  @Test
+  public void testPropertyUmlaut() throws Exception {
+    EdmProvider edmProvider = mock(EdmProvider.class);
+    EdmImplProv edmImplProv = new EdmImplProv(edmProvider);
+
+    SimpleProperty propertySimple = new SimpleProperty().setName("ÄropertyName").setType(EdmSimpleTypeKind.String);
+    assertEquals("ÄropertyName", new EdmSimplePropertyImplProv(edmImplProv, propertySimple).getName());
+  }
+
+  @Test
+  public void testPropertyUnicode() throws Exception {
+    EdmProvider edmProvider = mock(EdmProvider.class);
+    EdmImplProv edmImplProv = new EdmImplProv(edmProvider);
+
+    SimpleProperty propertySimple = new SimpleProperty().setName("\u00C0roperty\u00C1ame\u00C0\u00D5\u00D6")
+        .setType(EdmSimpleTypeKind.String);
+    assertEquals("ÀropertyÁameÀÕÖ", new EdmSimplePropertyImplProv(edmImplProv, propertySimple).getName());
+  }
+
+  @Test
+  public void testPropertyUnicodeTwo() throws Exception {
+    EdmProvider edmProvider = mock(EdmProvider.class);
+    EdmImplProv edmImplProv = new EdmImplProv(edmProvider);
+
+    SimpleProperty propertySimple = new SimpleProperty().setName("Содержание")
+        .setType(EdmSimpleTypeKind.String);
+    assertEquals("Содержание", new EdmSimplePropertyImplProv(edmImplProv, propertySimple).getName());
   }
 }

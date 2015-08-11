@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.batch.v2.Header.HeaderField;
 
 public class BatchBodyPart implements BatchPart {

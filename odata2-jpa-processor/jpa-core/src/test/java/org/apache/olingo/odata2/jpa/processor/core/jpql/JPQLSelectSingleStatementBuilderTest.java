@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,6 +30,7 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.SelectItem;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
@@ -67,7 +68,7 @@ public class JPQLSelectSingleStatementBuilderTest {
     // Setting up the expected value
     KeyPredicate keyPredicate = EasyMock.createMock(KeyPredicate.class);
     EdmProperty kpProperty = EasyMock.createMock(EdmProperty.class);
-    EdmSimpleType edmType = EasyMock.createMock(EdmSimpleType.class);
+    EdmSimpleType edmType = EdmSimpleTypeKind.Int32.getEdmSimpleTypeInstance();
     EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("Field1");
     EasyMock.expect(keyPredicate.getLiteral()).andStubReturn("1");
@@ -81,7 +82,7 @@ public class JPQLSelectSingleStatementBuilderTest {
       fail("this should not happen");
     }
     EasyMock.expect(keyPredicate.getProperty()).andStubReturn(kpProperty);
-    EasyMock.replay(edmMapping, edmType, kpProperty, keyPredicate);
+    EasyMock.replay(edmMapping, kpProperty, keyPredicate);
     EasyMock.expect(getEntityView.getTargetEntitySet()).andStubReturn(edmEntitySet);
     EasyMock.expect(getEntityView.getSelect()).andStubReturn(selectItemList);
 

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,14 +17,13 @@
  * under the License.
  ******************************************************************************/
 /**
- * 
+ *
  */
 package org.apache.olingo.odata2.jpa.processor.core.jpql;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -109,10 +108,7 @@ public class JPQLSelectStatementBuilderTest {
     OrderByExpression orderByExpression = EasyMock.createMock(OrderByExpression.class);
 
     JPQLSelectContext jpqlSelectContextImpl = createSelectContext(orderByExpression, null);
-    HashMap<String, String> orderByCollection = new HashMap<String, String>();
-    orderByCollection.put("E1.soID", "ASC");
-    orderByCollection.put("E1.buyerId", "DESC");
-    jpqlSelectContextImpl.setOrderByCollection(orderByCollection);
+    jpqlSelectContextImpl.setOrderByCollection("E1.soID ASC , E1.buyerId DESC");
     jpqlSelectStatementBuilder = new JPQLSelectStatementBuilder(jpqlSelectContextImpl);
 
     assertEquals("SELECT E1 FROM SalesOrderHeader E1 ORDER BY E1.soID ASC , E1.buyerId DESC",

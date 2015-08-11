@@ -269,6 +269,8 @@ public class XmlMetadataConsumer {
       if (returnTypeString.startsWith("Collection") || returnTypeString.startsWith("collection")) {
         returnType.setMultiplicity(EdmMultiplicity.MANY);
         returnTypeString = returnTypeString.substring(returnTypeString.indexOf("(") + 1, returnTypeString.length() - 1);
+      } else {
+        returnType.setMultiplicity(EdmMultiplicity.ONE);
       }
       FullQualifiedName fqName = extractFQName(returnTypeString);
       returnType.setTypeName(fqName);

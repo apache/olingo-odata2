@@ -118,7 +118,7 @@ public class ODataExceptionWrapperTest extends BaseTest {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+    public <T extends ODataCallback> T getCallback(final Class<T> callbackInterface) {
       if (callbackInterface == ODataErrorCallback.class) {
         if (errorCallback == null) {
           return (T) new ODataErrorHandlerCallbackImpl();

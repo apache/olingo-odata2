@@ -38,7 +38,7 @@ public class ODataServiceFactoryWithCallbackImpl extends ODataServiceFactory {
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+  public <T extends ODataCallback> T getCallback(final Class<T> callbackInterface) {
     T callback = null;
 
     if (callbackInterface == ODataErrorCallback.class) {

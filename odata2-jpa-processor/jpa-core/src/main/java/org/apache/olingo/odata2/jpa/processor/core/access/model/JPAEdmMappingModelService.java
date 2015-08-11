@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.model;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -58,14 +59,14 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
 
   @Override
   public void loadMappingModel() {
-
+    InputStream is = null;
     if (mappingModelExists) {
       JAXBContext context;
       try {
         context = JAXBContext.newInstance(JPAEdmMappingModel.class);
 
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream is = loadMappingModelInputStream();
+        is = loadMappingModelInputStream();
         if (is == null) {
           mappingModelExists = false;
           return;
@@ -80,6 +81,14 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
       } catch (JAXBException e) {
         mappingModelExists = false;
         ODataJPAModelException.throwException(ODataJPAModelException.GENERAL, e);
+      } finally {
+        try {
+          if (is != null) {
+            is.close();
+          }
+        } catch (IOException e) {
+          // do nothing
+        }
       }
     }
   }
@@ -181,7 +190,7 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   private JPAEntityTypeMapType searchJPAEntityTypeMapType(final String jpaEntityTypeName) {
-    if(mappingModel != null) {
+    if (mappingModel != null) {
       List<JPAEntityTypeMapType> types = mappingModel.getPersistenceUnit().getJPAEntityTypes().getJPAEntityType();
       for (JPAEntityTypeMapType jpaEntityType : types) {
         if (jpaEntityType.getName().equals(jpaEntityTypeName)) {

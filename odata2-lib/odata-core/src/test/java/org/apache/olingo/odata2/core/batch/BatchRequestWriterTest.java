@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +33,8 @@ import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
 import org.apache.olingo.odata2.api.client.batch.BatchPart;
 import org.apache.olingo.odata2.api.client.batch.BatchQueryPart;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.odata2.core.batch.v2.BatchLineReader;
+import org.apache.olingo.odata2.core.batch.v2.Line;
 import org.junit.Test;
 
 public class BatchRequestWriterTest {
@@ -57,9 +56,9 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
     
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
-    List<Line> lines = reader.toList();
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
+    List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
     
@@ -92,9 +91,9 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
-    List<Line> lines = reader.toList();
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
+    List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
      
@@ -111,6 +110,88 @@ public class BatchRequestWriterTest {
     assertEquals("content-type: application/json" + CRLF, lines.get(index++).toString());
     assertEquals(CRLF, lines.get(index++).toString());
     assertEquals("{\"Age\":40}" + CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+  }
+
+  @Test
+  public void testBatchChangeSetUtf8() throws IOException, BatchException {
+    List<BatchPart> batch = new ArrayList<BatchPart>();
+    Map<String, String> headers = new HashMap<String, String>();
+    headers.put("content-type", "application/json; charset=utf-8");
+    BatchChangeSetPart request = BatchChangeSetPart.method(PUT)
+        .uri("Employees('2')")
+        .body("{\"Age\":40, \"Name\": \"Wälter Winter\"}")
+        .headers(headers)
+        .contentId("111")
+        .build();
+    BatchChangeSet changeSet = BatchChangeSet.newBuilder().build();
+    changeSet.add(request);
+    batch.add(changeSet);
+
+    BatchRequestWriter writer = new BatchRequestWriter();
+    InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
+
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
+    List<Line> lines = reader.toLineList();
+    reader.close();
+    int index = 0;
+
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index++).toString().startsWith("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Id: 111" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("PUT Employees('2') HTTP/1.1" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 36" + CRLF, lines.get(index++).toString());
+    assertEquals("content-type: application/json; charset=utf-8" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("{\"Age\":40, \"Name\": \"Wälter Winter\"}" + CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+  }
+
+  @Test
+  public void testBatchChangeSetIso() throws IOException, BatchException {
+    List<BatchPart> batch = new ArrayList<BatchPart>();
+    Map<String, String> headers = new HashMap<String, String>();
+    headers.put("content-type", "application/json; charset=iso-8859-1");
+    BatchChangeSetPart request = BatchChangeSetPart.method(PUT)
+        .uri("Employees('2')")
+        .body("{\"Age\":40, \"Name\": \"Wälter Winter\"}")
+        .headers(headers)
+        .contentId("111")
+        .build();
+    BatchChangeSet changeSet = BatchChangeSet.newBuilder().build();
+    changeSet.add(request);
+    batch.add(changeSet);
+
+    BatchRequestWriter writer = new BatchRequestWriter();
+    InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
+
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
+    List<Line> lines = reader.toLineList();
+    reader.close();
+    int index = 0;
+
+    assertTrue(lines.get(index++).toString().startsWith("--batch"));
+    assertTrue(lines.get(index++).toString().startsWith("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertTrue(lines.get(index++).toString().startsWith("--changeset"));
+    assertEquals("Content-Type: application/http" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Id: 111" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("PUT Employees('2') HTTP/1.1" + CRLF, lines.get(index++).toString());
+    assertEquals("Content-Length: 35" + CRLF, lines.get(index++).toString());
+    assertEquals("content-type: application/json; charset=iso-8859-1" + CRLF, lines.get(index++).toString());
+    assertEquals(CRLF, lines.get(index++).toString());
+    assertEquals("{\"Age\":40, \"Name\": \"Wälter Winter\"}" + CRLF, lines.get(index++).toString());
     assertTrue(lines.get(index++).toString().startsWith("--changeset"));
     assertTrue(lines.get(index++).toString().startsWith("--batch"));
   }
@@ -138,9 +219,9 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
-    List<Line> lines = reader.toList();
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
+    List<Line> lines = reader.toLineList();
     reader.close();
     int index = 0;
 
@@ -185,9 +266,9 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
-    List<Line> lines = reader.toList();
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
+    List<Line> lines = reader.toLineList();
     reader.close();
 
     int line = 0;
@@ -245,9 +326,9 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
 
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
-    List<Line> lines = reader.toList();
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
+    List<Line> lines = reader.toLineList();
     reader.close();
 
     int index = 0;
@@ -312,9 +393,9 @@ public class BatchRequestWriterTest {
     BatchRequestWriter writer = new BatchRequestWriter();
     InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
     
-    BufferedReaderIncludingLineEndings reader =
-        new BufferedReaderIncludingLineEndings(new InputStreamReader(batchRequest));
-    List<Line> lines = reader.toList();
+    BatchLineReader reader =
+        new BatchLineReader(batchRequest);
+    List<Line> lines = reader.toLineList();
     reader.close();
 
     int index = 0;

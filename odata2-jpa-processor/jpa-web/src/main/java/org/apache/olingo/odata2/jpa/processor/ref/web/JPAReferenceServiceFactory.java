@@ -46,6 +46,7 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
     oDataJPAContext.setJPAEdmExtension(new SalesOrderProcessingExtension());
     oDataJPAContext.setPageSize(PAGE_SIZE);
     oDataJPAContext.setDefaultNaming(false);
+    oDataJPAContext.getODataContext().setDebugMode(true);
     setErrorLevel();
     setOnWriteJPAContent(onDBWriteContent);
     return oDataJPAContext;

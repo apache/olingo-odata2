@@ -62,6 +62,7 @@ import org.apache.olingo.odata2.api.uri.UriSyntaxException;
 import org.apache.olingo.odata2.api.uri.expression.ExpressionParserException;
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
+import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.core.commons.Decoder;
 import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
@@ -78,6 +79,8 @@ public class UriParserImpl extends UriParser {
       .compile("(?:([^.()]+)\\.)?([^.()]+)(?:\\((.+)\\)|(\\(\\)))?");
   private static final Pattern NAVIGATION_SEGMENT_PATTERN = Pattern.compile("([^()]+)(?:\\((.+)\\)|(\\(\\)))?");
   private static final Pattern NAMED_VALUE_PATTERN = Pattern.compile("(?:([^=]+)=)?([^=]+)");
+  private static final char COMMA = ',';
+  private static final char SQUOTE = '\'';
 
   private final Edm edm;
   private final EdmSimpleTypeFacade simpleTypeFacade;
@@ -167,12 +170,13 @@ public class UriParserImpl extends UriParser {
     } else {
 
       currentPathSegment = pathSegments.remove(0);
+      final String decodedPath = percentDecode(currentPathSegment);
 
-      if ("$metadata".equals(currentPathSegment)) {
+      if ("$metadata".equals(decodedPath)) {
         ensureLastSegment();
         uriResult.setUriType(UriType.URI8);
 
-      } else if ("$batch".equals(currentPathSegment)) {
+      } else if ("$batch".equals(decodedPath)) {
         ensureLastSegment();
         uriResult.setUriType(UriType.URI9);
 
@@ -245,12 +249,13 @@ public class UriParserImpl extends UriParser {
 
   private void handleNavigationPathOptions() throws UriSyntaxException, UriNotMatchingException, EdmException {
     currentPathSegment = pathSegments.remove(0);
+    final String decodedPath = percentDecode(currentPathSegment);
 
     checkCount();
     if (uriResult.isCount()) {
       uriResult.setUriType(UriType.URI16); // Count of multiple entities is handled elsewhere
 
-    } else if ("$value".equals(currentPathSegment)) {
+    } else if ("$value".equals(decodedPath)) {
       if (uriResult.getTargetEntitySet().getEntityType().hasStream()) {
         ensureLastSegment();
         uriResult.setUriType(UriType.URI17);
@@ -259,7 +264,7 @@ public class UriParserImpl extends UriParser {
         throw new UriSyntaxException(UriSyntaxException.NOMEDIARESOURCE);
       }
 
-    } else if ("$links".equals(currentPathSegment)) {
+    } else if ("$links".equals(decodedPath)) {
       uriResult.setLinks(true);
       if (pathSegments.isEmpty()) {
         throw new UriSyntaxException(UriSyntaxException.MUSTNOTBELASTSEGMENT.addContent(currentPathSegment));
@@ -392,7 +397,7 @@ public class UriParserImpl extends UriParser {
       currentPathSegment = percentDecode(pathSegments.remove(0));
       switch (type.getKind()) {
       case SIMPLE:
-        if ("$value".equals(currentPathSegment)) {
+        if ("$value".equals(percentDecode(currentPathSegment))) {
           ensureLastSegment();
           uriResult.setValue(true);
           if (uriResult.getPropertyPath().size() == 1) {
@@ -428,7 +433,7 @@ public class UriParserImpl extends UriParser {
   }
 
   private void checkCount() throws UriSyntaxException {
-    if ("$count".equals(currentPathSegment)) {
+    if ("$count".equals(percentDecode(currentPathSegment))) {
       if (pathSegments.isEmpty()) {
         uriResult.setCount(true);
       } else {
@@ -443,8 +448,8 @@ public class UriParserImpl extends UriParser {
     ArrayList<EdmProperty> parsedKeyProperties = new ArrayList<EdmProperty>();
     ArrayList<KeyPredicate> keyPredicates = new ArrayList<KeyPredicate>();
 
-    for (final String key : keyPredicate.split(",", -1)) {
-
+    final List<String> keys = splitKeyPredicate(keyPredicate);
+    for (final String key : keys) {
       final Matcher matcher = NAMED_VALUE_PATTERN.matcher(key);
       if (!matcher.matches()) {
         throw new UriSyntaxException(UriSyntaxException.INVALIDKEYPREDICATE.addContent(keyPredicate));
@@ -487,6 +492,54 @@ public class UriParserImpl extends UriParser {
     return keyPredicates;
   }
 
+  /**
+   * Split the <code>keyPredicate</code> string into separate keys (named keys).
+   * e.g. <b>EmployeeId='1,,,2',Test='as'</b> will result in a list with two elements
+   * <b>EmployeeId='1,,,2'</b> and <b>Test='as'</b>.
+   *
+   * e.g. <b>'42'</b> will result in a list with onw element <b>'42'</b>.
+   *
+   * Snippets from ABNF (odata-abnf-construction-rules)
+   *
+   * <code>
+   * keyPredicate = simpleKey / compoundKey
+   * simpleKey = OPEN keyPropertyValue CLOSE
+   * compoundKey = OPEN keyValuePair *( COMMA keyValuePair ) CLOSE
+   * keyValuePair = ( primitiveKeyProperty / keyPropertyAlias ) EQ keyPropertyValue
+   * keyPropertyValue = primitiveLiteral
+   * keyPropertyAlias = odataIdentifier
+   * </code>
+   *
+   * <code>
+   * string = SQUOTE *( SQUOTE-in-string / pchar-no-SQUOTE ) SQUOTE
+   * SQUOTE-in-string = SQUOTE SQUOTE ; two consecutive single quotes represent one within a string literal
+   * </code>
+   *
+   * @param keyPredicate keyPredicate to split
+   * @return list of separate (named) key values
+   */
+  private List<String> splitKeyPredicate(String keyPredicate) {
+    StringBuilder b = new StringBuilder();
+    final List<String> keys = new ArrayList<String>();
+    boolean inStringKeyValue = false;
+    for (int i = 0; i < keyPredicate.length(); i++) {
+      final char curChar = keyPredicate.charAt(i);
+      if (SQUOTE == curChar) {
+        // also works with SQUOTE-in-string
+        inStringKeyValue = !inStringKeyValue;
+        b.append(curChar);
+      } else if (COMMA == curChar && !inStringKeyValue) {
+        keys.add(b.toString());
+        b = new StringBuilder();
+      } else {
+        b.append(curChar);
+      }
+    }
+    keys.add(b.toString());
+
+    return keys;
+  }
+
   private void handleFunctionImport(final EdmFunctionImport functionImport, final String emptyParentheses,
       final String keyPredicate) throws UriSyntaxException, UriNotMatchingException, EdmException {
     final EdmTyped returnType = functionImport.getReturnType();
@@ -520,7 +573,7 @@ public class UriParserImpl extends UriParser {
     if (!pathSegments.isEmpty()) {
       if (uriResult.getUriType() == UriType.URI14) {
         currentPathSegment = pathSegments.remove(0);
-        if ("$value".equals(currentPathSegment)) {
+        if ("$value".equals(percentDecode(currentPathSegment))) {
           uriResult.setValue(true);
         } else {
           throw new UriSyntaxException(UriSyntaxException.INVALIDSEGMENT.addContent(currentPathSegment));
@@ -532,15 +585,16 @@ public class UriParserImpl extends UriParser {
 
   private void distributeQueryParameters(final Map<String, List<String>> queryParameters) throws UriSyntaxException {
     for (final String queryOptionString : queryParameters.keySet()) {
+      final String decodedString = percentDecode(queryOptionString);
       final List<String> valueList = queryParameters.get(queryOptionString);
 
       if (valueList.size() >= 1) {
         String value = valueList.get(0);
 
-        if (queryOptionString.startsWith("$")) {
+        if (decodedString.startsWith("$")) {
           SystemQueryOption queryOption;
           try {
-            queryOption = SystemQueryOption.valueOf(queryOptionString);
+            queryOption = SystemQueryOption.valueOf(decodedString);
           } catch (IllegalArgumentException e) {
             throw new UriSyntaxException(UriSyntaxException.INVALIDSYSTEMQUERYOPTION.addContent(queryOptionString), e);
           }
@@ -555,7 +609,7 @@ public class UriParserImpl extends UriParser {
             }
           }
         } else {
-          otherQueryParameters.put(queryOptionString, value);
+          otherQueryParameters.put(decodedString, value);
         }
       } else {
         throw new UriSyntaxException(UriSyntaxException.INVALIDNULLVALUE.addContent(queryOptionString));
@@ -810,7 +864,8 @@ public class UriParserImpl extends UriParser {
         final String value = otherQueryParameters.remove(parameterName);
 
         if (value == null) {
-          if (parameter.getFacets() == null || parameter.getFacets().isNullable()) {
+          if (parameter.getFacets() == null || parameter.getFacets().isNullable() == null
+              || parameter.getFacets().isNullable()) {
             continue;
           } else {
             throw new UriSyntaxException(UriSyntaxException.MISSINGPARAMETER);
@@ -874,13 +929,13 @@ public class UriParserImpl extends UriParser {
 
   @Override
   public FilterExpression parseFilterString(final EdmEntityType entityType, final String expression)
-      throws ExpressionParserException, ODataMessageException {
+      throws ODataMessageException {
     return new FilterParserImpl(entityType).parseFilterString(expression);
   }
 
   @Override
   public OrderByExpression parseOrderByString(final EdmEntityType entityType, final String expression)
-      throws ExpressionParserException, ODataMessageException {
+      throws ODataMessageException {
     return new OrderByParserImpl(entityType).parseOrderByString(expression);
   }
 
@@ -888,6 +943,11 @@ public class UriParserImpl extends UriParser {
   public ExpandSelectTreeNode buildExpandSelectTree(final List<SelectItem> select,
       final List<ArrayList<NavigationPropertySegment>> expand) throws EdmException {
     return new ExpandSelectTreeCreator(select, expand).create();
+  }
+
+  @Override
+  protected PathSegment buildPathSegment(String path, Map<String, List<String>> matrixParameters) {
+    return new ODataPathSegmentImpl(path, matrixParameters);
   }
 
   @Override

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,8 +23,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+=======
+>>>>>>> refs/remotes/apache/master
 import java.util.List;
 
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAJoinClause;
@@ -54,10 +57,10 @@ public class JPQLJoinStatementBuilderTest {
     EasyMock.expect(context.getType()).andStubReturn(JPQLContextType.SELECT);
     EasyMock.expect(context.getSelectExpression()).andStubReturn("mat");
     EasyMock.expect(context.getWhereExpression()).andStubReturn("soh.buyerId = 2");
-    HashMap<String, String> orderByMap = new LinkedHashMap<String, String>();
-    orderByMap.put("mat.buyerId", "asc");
-    orderByMap.put("mat.city", "desc");
+
+    String orderByMap = new String("mat.buyerId asc , mat.city desc");
     EasyMock.expect(context.getOrderByCollection()).andStubReturn(orderByMap);
+
     EasyMock.expect(context.getJPAJoinClauses()).andStubReturn(joinClauseList);
     EasyMock.replay(context);
   }
@@ -91,7 +94,7 @@ public class JPQLJoinStatementBuilderTest {
               "soh.createdBy = 'Peter' AND soi.shId = soh.soId AND mat.id = 'abc' "
               +
               "ORDER BY mat.buyerId asc , mat.city desc",
-          jpqlStatement.toString());
+              jpqlStatement.toString());
     } catch (ODataJPARuntimeException e) {
       fail("Should not have come here");
     }

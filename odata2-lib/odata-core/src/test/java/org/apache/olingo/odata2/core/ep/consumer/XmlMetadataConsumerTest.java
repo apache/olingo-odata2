@@ -39,6 +39,7 @@ import org.apache.olingo.odata2.api.edm.EdmContentKind;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -704,6 +705,9 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
             + "</FunctionImport>"
             + "<FunctionImport Name=\"NoReturn\" " +
             "EntitySet=\"Rooms\" m:HttpMethod=\"GET\"/>"
+            + "<FunctionImport Name=\"SingleRoomReturnType\" ReturnType=\"RefScenario.Room\" " +
+            "EntitySet=\"Rooms\" m:HttpMethod=\"GET\">"
+            + "</FunctionImport>"
             + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmWithEntityContainer);
@@ -713,7 +717,7 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertEquals("Container1", container.getName());
         assertEquals(Boolean.TRUE, container.isDefaultEntityContainer());
 
-        assertEquals(4, container.getFunctionImports().size());
+        assertEquals(5, container.getFunctionImports().size());
         FunctionImport functionImport1 = container.getFunctionImports().get(0);
 
         assertEquals("EmployeeSearch", functionImport1.getName());
@@ -732,8 +736,8 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertEquals(EdmSimpleTypeKind.Int32, functionImport1.getParameters().get(1).getType());
         assertEquals(Boolean.FALSE, functionImport1.getParameters().get(1).getFacets().isNullable());
 
-        FunctionImport functionImport2 = container.getFunctionImports().get(1);
 
+        FunctionImport functionImport2 = container.getFunctionImports().get(1);
         assertEquals("RoomSearch", functionImport2.getName());
         assertEquals("Rooms", functionImport2.getEntitySet());
         assertEquals(NAMESPACE, functionImport2.getReturnType().getTypeName().getNamespace());
@@ -741,12 +745,15 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertEquals(EdmMultiplicity.MANY, functionImport2.getReturnType().getMultiplicity());
         assertEquals("GET", functionImport2.getHttpMethod());
         assertEquals(2, functionImport2.getParameters().size());
+        assertEquals(new FullQualifiedName("RefScenario","Room"),
+            functionImport2.getReturnType().getTypeName());
+        assertEquals(EdmMultiplicity.MANY, functionImport2.getReturnType().getMultiplicity());
 
         FunctionImportParameter functionImportParameter = functionImport2.getParameters().get(0);
-		assertEquals("q1", functionImportParameter.getName());
+    		assertEquals("q1", functionImportParameter.getName());
         assertEquals(EdmSimpleTypeKind.String, functionImport2.getParameters().get(0).getType());
         assertEquals(Boolean.TRUE, functionImport2.getParameters().get(0).getFacets().isNullable());
-        assertEquals("In", functionImportParameter.getMode()); 
+        assertEquals("In", functionImportParameter.getMode());
 
         assertEquals("q2", functionImport2.getParameters().get(1).getName());
         assertEquals(EdmSimpleTypeKind.Int32, functionImport2.getParameters().get(1).getType());
@@ -754,7 +761,6 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertEquals(null, functionImport2.getParameters().get(1).getMode()); 
 
         FunctionImport functionImport3 = container.getFunctionImports().get(2);
-
         assertEquals("NoParamters", functionImport3.getName());
         List<FunctionImportParameter> parameters3 = functionImport3.getParameters();
         assertNotNull(parameters3);
@@ -766,6 +772,16 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertNotNull(parameters4);
         assertEquals(0, parameters4.size());
         assertNull(functionImport4.getReturnType());
+
+        FunctionImport functionImport5 = container.getFunctionImports().get(4);
+        assertEquals("SingleRoomReturnType", functionImport5.getName());
+        List<FunctionImportParameter> parameters5 = functionImport5.getParameters();
+        assertNotNull(parameters5);
+        assertEquals(0, parameters5.size());
+        assertEquals(new FullQualifiedName("RefScenario", "Room"),
+            functionImport5.getReturnType().getTypeName());
+        assertEquals(EdmMultiplicity.ONE, functionImport5.getReturnType().getMultiplicity());
+
       }
     }
   }

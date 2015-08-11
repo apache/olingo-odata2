@@ -18,20 +18,17 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.mock;
 
-import java.net.URI;
-import java.util.List;
-
 import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.uri.PathInfo;
-import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.easymock.EasyMock;
 
 public class ODataContextMock {
 
   private ODataService odataService;
   private PathInfo pathInfo;
+  private boolean isInBatchMode;
 
   public void setODataService(final ODataService service) {
     odataService = service;
@@ -41,6 +38,10 @@ public class ODataContextMock {
     this.pathInfo = pathInfo;
   }
 
+  public void isInBatchMode(final boolean isInBatchMode) {
+    this.isInBatchMode = isInBatchMode;
+  }
+
   public ODataContext mock() throws ODataException {
     ODataContext context = EasyMock.createMock(ODataContext.class);
     EasyMock.expect(context.getService()).andReturn(odataService).anyTimes();
@@ -48,6 +49,7 @@ public class ODataContextMock {
     ODataJPAServiceFactoryMock mockServiceFactory = new ODataJPAServiceFactoryMock(context);
     mockServiceFactory.initializeODataJPAContext();
     EasyMock.expect(context.getServiceFactory()).andReturn(mockServiceFactory).anyTimes();
+    EasyMock.expect(context.isInBatchMode()).andReturn(this.isInBatchMode).anyTimes();
     EasyMock.replay(context);
     return context;
   }
@@ -56,6 +58,7 @@ public class ODataContextMock {
     ODataContext context = EasyMock.createMock(ODataContext.class);
     EasyMock.expect(context.getService()).andReturn(odataService).anyTimes();
     EasyMock.expect(context.getPathInfo()).andReturn(pathInfo).anyTimes();
+    EasyMock.expect(context.isInBatchMode()).andReturn(this.isInBatchMode).anyTimes();
     ODataJPAServiceFactoryMock mockServiceFactory = new ODataJPAServiceFactoryMock(context);
     mockServiceFactory.initializeODataJPAContextX();
     EasyMock.expect(context.getServiceFactory()).andReturn(mockServiceFactory).anyTimes();

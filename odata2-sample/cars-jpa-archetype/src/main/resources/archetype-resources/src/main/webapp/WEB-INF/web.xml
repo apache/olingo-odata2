@@ -22,6 +22,12 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
+	<!-- Enable usage of default JEE persistence service -->
+	<resource-ref>
+		<res-ref-name>jdbc/DefaultDB</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+	</resource-ref>
+
 	<servlet>
 		<servlet-name>CarServiceServlet</servlet-name>
 		<servlet-class>org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet</servlet-class>

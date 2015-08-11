@@ -22,7 +22,8 @@
 		<version.cxf>2.7.6</version.cxf>
 		<version.eclipselink>2.5.1</version.eclipselink>
 		<version.javax.persistence>2.0.5</version.javax.persistence>
-		<version.olingo>2.0.4-SNAPSHOT</version.olingo>
+		<version.hsqldb>2.3.2</version.hsqldb>
+		<version.olingo>2.0.5-SNAPSHOT</version.olingo>
 	</properties>
 
 	<dependencies>
@@ -72,7 +73,7 @@
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.10</version>
+			<version>${version.hsqldb}</version>
 		</dependency>
 
 		<!-- Web Support -->

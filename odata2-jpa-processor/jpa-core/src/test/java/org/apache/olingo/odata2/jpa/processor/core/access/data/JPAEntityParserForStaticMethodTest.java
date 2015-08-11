@@ -24,11 +24,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
@@ -248,7 +247,7 @@ public class JPAEntityParserForStaticMethodTest {
     final String fileName = "SalesOrderProcessingMappingModels.xml";
 
     try {
-      FileInputStream fis = getFileStream(fileName);
+      InputStream fis = JPAEntityParserForStaticMethodTest.class.getClassLoader().getResourceAsStream(fileName);
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       int content = fis.read();
@@ -279,17 +278,6 @@ public class JPAEntityParserForStaticMethodTest {
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
-  }
-
-  private FileInputStream getFileStream(final String name) throws SerialException, FileNotFoundException {
-    final String fileName = "SalesOrderProcessingMappingModels.xml";
-    FileInputStream fis;
-
-    URL fileURL = JPAEntityParserForStaticMethodTest.class.getClassLoader().getResource(fileName);
-    fis = new FileInputStream(fileURL.getPath());
-
-    return fis;
-
   }
 
   public Character getCharacter() {

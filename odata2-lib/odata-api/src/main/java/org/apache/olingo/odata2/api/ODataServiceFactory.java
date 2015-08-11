@@ -42,6 +42,11 @@ public abstract class ODataServiceFactory {
   public static final String FACTORY_CLASSLOADER_LABEL = "org.apache.olingo.odata2.service.factory.classloader";
 
   /**
+   * Label used in web.xml to assign servlet init parameter to factory class instance.
+   */
+  public static final String FACTORY_INSTANCE_LABEL = "org.apache.olingo.odata2.service.factory.instance";
+
+  /**
    * Label used in web.xml to assign servlet init parameter for a path split (service resolution).
    */
   public static final String PATH_SPLIT_LABEL = "org.apache.olingo.odata2.path.split";
@@ -70,7 +75,7 @@ public abstract class ODataServiceFactory {
    * @param callbackInterface a interface type to query for implementation
    * @return a callback implementation for this interface or null
    */
-  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+  public <T extends ODataCallback> T getCallback(final Class<T> callbackInterface) {
     return null;
   }
 

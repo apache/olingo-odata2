@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.olingo</groupId>
     <artifactId>olingo-odata2-annotation-processor</artifactId>
-    <version>2.0.4-SNAPSHOT</version>
+    <version>2.0.5-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -37,7 +37,7 @@
       </resource>
       <resource>
         <directory>src/main/resources</directory>
-        <filtering>true</filtering>
+        <filtering>false</filtering>
       </resource>
       <resource>
         <directory>target/maven-shared-archive-resources</directory>

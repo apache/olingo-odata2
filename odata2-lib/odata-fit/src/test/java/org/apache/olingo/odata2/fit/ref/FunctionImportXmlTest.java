@@ -66,7 +66,7 @@ public class FunctionImportXmlTest extends AbstractRefXmlTest {
     checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
     String body = getBody(response);
     assertXpathExists("/d:AllLocations/d:element/d:City[d:CityName=\"" + CITY_2_NAME + "\"]", body);
-    final HttpResponse metadataResponse = callUri("$metadata"); 
+    final HttpResponse metadataResponse = callUri("$metadata");
     final EdmEntityContainer entityContainer = EntityProvider.readMetadata(metadataResponse.getEntity().getContent(),
         false).getDefaultEntityContainer();
     getBody(metadataResponse);
@@ -121,6 +121,21 @@ public class FunctionImportXmlTest extends AbstractRefXmlTest {
     badRequest("ManagerPhoto");
     badRequest("OldestEmployee()");
     notFound("ManagerPhoto?Id='2'");
+  }
+
+  @Test
+  public void functionImportsAcceptFormatEqualsAtom() throws Exception {
+    HttpResponse response = callUri("OldestEmployee?$format=atom");
+    checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8);
+    assertXpathEvaluatesTo(EMPLOYEE_3_NAME, "/atom:entry/m:properties/d:EmployeeName", getBody(response));
+  }
+
+  @Test
+  public void functionImportsAcceptEqualsAtom() throws Exception {
+    HttpResponse response =
+        callUri("OldestEmployee?$format=atom", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_ATOM_XML_ENTRY);
+    checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_ENTRY_UTF8);
+    assertXpathEvaluatesTo(EMPLOYEE_3_NAME, "/atom:entry/m:properties/d:EmployeeName", getBody(response));
   }
 
   @Test

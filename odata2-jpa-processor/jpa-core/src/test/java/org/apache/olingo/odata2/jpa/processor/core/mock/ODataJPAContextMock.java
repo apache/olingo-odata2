@@ -54,6 +54,7 @@ public abstract class ODataJPAContextMock {
     EasyMock.expect(odataJPAContext.getJPAEdmExtension()).andReturn(null);
     EasyMock.expect(odataJPAContext.getDefaultNaming()).andReturn(true);
     EasyMock.expect(odataJPAContext.getODataContext()).andReturn(context).anyTimes();
+    EasyMock.expect(odataJPAContext.getPageSize()).andReturn(0);
 
     EasyMock.replay(odataJPAContext);
     return odataJPAContext;

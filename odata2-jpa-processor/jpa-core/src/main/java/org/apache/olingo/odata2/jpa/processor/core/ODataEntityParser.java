@@ -44,9 +44,15 @@ public final class ODataEntityParser {
 
   private ODataJPAContext context;
   private Edm edm;
+  private String serviceRoot = null;
 
   public ODataEntityParser(final ODataJPAContext context) {
     this.context = context;
+    try {
+      serviceRoot = context.getODataContext().getPathInfo().getServiceRoot().toString();
+    } catch (ODataException e) {
+      serviceRoot = "";
+    }
   }
 
   public final ODataEntry parseEntry(final EdmEntitySet entitySet,
@@ -160,7 +166,7 @@ public final class ODataEntityParser {
 
       @Override
       public String getPath() {
-        return path;
+        return path.replace(serviceRoot, "");
       }
 
       @Override

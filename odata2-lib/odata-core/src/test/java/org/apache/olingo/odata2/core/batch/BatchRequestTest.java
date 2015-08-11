@@ -131,6 +131,46 @@ public class BatchRequestTest {
   }
 
   @Test
+  public void testBatchChangeSetIso() throws IOException, BatchException {
+    List<BatchPart> batch = new ArrayList<BatchPart>();
+    Map<String, String> headers = new HashMap<String, String>();
+    headers.put("Content-type", "application/json; charset=iso-8859-1");
+    BatchChangeSetPart request = BatchChangeSetPart.method(PUT)
+        .uri("Employees('2')")
+        .body("{\"Name\":Wälter}")
+        .headers(headers)
+        .contentId("111")
+        .build();
+    BatchChangeSet changeSet = BatchChangeSet.newBuilder().build();
+    changeSet.add(request);
+    batch.add(changeSet);
+
+    BatchRequestWriter writer = new BatchRequestWriter();
+    InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
+    assertNotNull(batchRequest);
+
+    StringHelper.Stream batchRequestStream = StringHelper.toStream(batchRequest);
+    String requestBody = batchRequestStream.asString("iso-8859-1");
+    checkMimeHeaders(requestBody);
+    checkHeaders(headers, requestBody);
+
+    System.out.println(requestBody);
+
+    assertTrue(requestBody.contains("--batch_"));
+    assertTrue(requestBody.contains("--changeset_"));
+    assertTrue(requestBody.contains("PUT Employees('2') HTTP/1.1"));
+    assertTrue(requestBody.contains("Content-Length: 15"));
+    assertTrue(requestBody.contains("{\"Name\":Wälter}"));
+    assertEquals(15, batchRequestStream.linesCount());
+
+    String contentType = "multipart/mixed; boundary=" + BOUNDARY;
+    BatchParser parser = new BatchParser(contentType, parseProperties, true);
+    List<BatchRequestPart> parseResult = parser.parseBatchRequest(batchRequestStream.asStream());
+    assertEquals(1, parseResult.size());
+  }
+
+
+  @Test
   public void testBatchWithGetAndPost() throws BatchException, IOException {
     List<BatchPart> batch = new ArrayList<BatchPart>();
     Map<String, String> headers = new HashMap<String, String>();

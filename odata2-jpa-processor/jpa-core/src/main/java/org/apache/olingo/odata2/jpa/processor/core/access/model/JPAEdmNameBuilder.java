@@ -152,8 +152,11 @@ public class JPAEdmNameBuilder {
     } else if (propertyName == null) {
       propertyName = jpaAttributeName;
       if (isForeignKey) {
-        propertyName = mappingModelAccess.mapJPAAttribute(view.getJPAEdmEntityTypeView().getJPAEntityType().getName(),
-            joinColumnNames[0]);
+        if (mappingModelAccess != null) {
+          propertyName =
+              mappingModelAccess.mapJPAAttribute(view.getJPAEdmEntityTypeView().getJPAEntityType().getName(),
+                  joinColumnNames[0]);
+        }
         if (propertyName == null) {
           propertyName = FK_PREFIX + UNDERSCORE + joinColumnNames[0];
         }
@@ -399,22 +402,10 @@ public class JPAEdmNameBuilder {
     String end1Name = association.getEnd1().getType().getName();
     String end2Name = association.getEnd2().getType().getName();
 
-    if (end1Name.equals(end2Name)) {
-      associationName = end1Name + UNDERSCORE + end2Name;
-      associationName =
-          associationName + UNDERSCORE + multiplicityToString(association.getEnd1().getMultiplicity()) + UNDERSCORE
-              + multiplicityToString(association.getEnd2().getMultiplicity()) + Integer.toString(count);
-    } else {
-      if (end1Name.compareToIgnoreCase(end2Name) > 0) {
-        associationName = end2Name + UNDERSCORE + end1Name;
-      } else {
-        associationName = end1Name + UNDERSCORE + end2Name;
-      }
-      if (count >= 1) {
-        associationName = associationName + Integer.toString(count - 1);
-      }
-    }
-
+    associationName = end1Name + UNDERSCORE + end2Name;
+    associationName =
+        associationName + UNDERSCORE + multiplicityToString(association.getEnd1().getMultiplicity()) + UNDERSCORE
+            + multiplicityToString(association.getEnd2().getMultiplicity()) + Integer.toString(count);
     association.setName(associationName);
   }
 

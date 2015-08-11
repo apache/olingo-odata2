@@ -44,7 +44,7 @@ public class ScenarioServiceFactory extends ODataServiceFactory {
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+  public <T extends ODataCallback> T getCallback(final Class<T> callbackInterface) {
     return (T) (callbackInterface.isAssignableFrom(ScenarioErrorCallback.class) ?
         new ScenarioErrorCallback() : callbackInterface.isAssignableFrom(ODataDebugCallback.class) ?
             new ScenarioDebugCallback() : super.getCallback(callbackInterface));

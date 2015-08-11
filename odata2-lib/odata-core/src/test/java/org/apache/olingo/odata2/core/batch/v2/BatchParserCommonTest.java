@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.batch;
+package org.apache.olingo.odata2.core.batch.v2;
 
 import static org.junit.Assert.*;
 
@@ -25,9 +25,10 @@ import java.util.List;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.core.batch.BatchHelper;
 import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.batch.v2.Header;
+import org.apache.olingo.odata2.core.batch.v2.Line;
 import org.junit.Test;
 
 public class BatchParserCommonTest {

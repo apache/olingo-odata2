@@ -18,7 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.api.jpql;
 
-import java.util.Map;
 
 /**
  * The interface provide a view on JPQL select context.The interface provides
@@ -40,7 +39,7 @@ public interface JPQLSelectContextView extends JPQLContextView {
   public String getSelectExpression();
 
   /**
-   * The method returns an ordered map of JPQL ORDERBY clause. The ORDERBY clause
+   * The method returns an JPQL ORDERBY clause. The ORDERBY clause
    * is built from $orderby OData system query option. The hash map contains
    * <ol>
    * <li>Key - JPA Entity Property name to be ordered</li>
@@ -53,7 +52,7 @@ public interface JPQLSelectContextView extends JPQLContextView {
    * 
    * @return an ordered map of (JPA Property Name,Sort Order)
    */
-  public Map<String, String> getOrderByCollection();
+  public String getOrderByCollection();
 
   /**
    * The method returns a JPQL WHERE condition as string. The WHERE condition
