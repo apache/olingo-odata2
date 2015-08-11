@@ -23,11 +23,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-=======
->>>>>>> refs/remotes/apache/master
 import java.util.List;
 
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAJoinClause;
