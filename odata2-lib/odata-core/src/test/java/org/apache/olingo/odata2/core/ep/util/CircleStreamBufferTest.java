@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.Before;
@@ -34,6 +35,7 @@ import org.junit.Test;
 public class CircleStreamBufferTest extends BaseTest {
 
   private static final boolean LOG_ON = false;
+  private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
 
   public CircleStreamBufferTest() {}
 
@@ -111,14 +113,14 @@ public class CircleStreamBufferTest extends BaseTest {
     OutputStream outStream = csb.getOutputStream();
     InputStream inStream = csb.getInputStream();
 
-    // first writeInternal/read cyclus
+    // first writeInternal/read cycle
     outStream.write("Test_1".getBytes());
     String firstResult = readFrom(inStream);
 
     log("Test result = [" + firstResult + "]");
     assertEquals("Test_1", firstResult);
 
-    // second writeInternal/read cyclus
+    // second writeInternal/read cycle
     outStream.write("Test_2".getBytes());
     String secondResult = readFrom(inStream);
 
@@ -179,6 +181,93 @@ public class CircleStreamBufferTest extends BaseTest {
     assertEquals(testData, result);
   }
 
+  @Test
+  public void testSimpleWriteMoreThenDefaultBufferSize() throws Exception {
+    CircleStreamBuffer csb = new CircleStreamBuffer();
+
+    OutputStream outStream = csb.getOutputStream();
+    InputStream inStream = csb.getInputStream();
+    final int signs = 70110;
+
+    String testData = createTestString(signs);
+    outStream.write(testData.getBytes(DEFAULT_CHARSET));
+    String result = readFrom(inStream);
+
+    assertEquals(signs, result.length());
+    assertEquals(testData, result);
+  }
+
+  @Test
+  public void testSimpleWriteMoreThenBufferSize() throws Exception {
+    int bufferSize = 4096;
+    CircleStreamBuffer csb = new CircleStreamBuffer(bufferSize);
+
+    OutputStream outStream = csb.getOutputStream();
+    InputStream inStream = csb.getInputStream();
+    final int signs = bufferSize * 10;
+
+    String testData = createTestString(signs);
+    outStream.write(testData.getBytes(DEFAULT_CHARSET));
+    String result = readFrom(inStream, bufferSize * 2);
+
+    assertEquals(signs, result.length());
+    assertEquals(testData, result);
+  }
+
+  @Test
+  public void testSimpleWriteMoreThenBufferSizeAndUmlauts() throws Exception {
+    int bufferSize = 4096;
+    CircleStreamBuffer csb = new CircleStreamBuffer(bufferSize);
+
+    OutputStream outStream = csb.getOutputStream();
+    InputStream inStream = csb.getInputStream();
+    final int signs = bufferSize * 10;
+
+    String testData = createTestString(signs);
+    testData = "äüöÄÜÖ" + testData + "äüöÄÜÖ";
+    outStream.write(testData.getBytes(DEFAULT_CHARSET));
+    String result = readFrom(inStream);
+
+    assertEquals(testData.length(), result.length());
+    assertEquals(testData, result);
+  }
+
+  @Test
+  public void testSimpleWriteMoreThenBufferSizeAndUmlautsIso() throws Exception {
+    int bufferSize = 4096;
+    CircleStreamBuffer csb = new CircleStreamBuffer(bufferSize);
+
+    OutputStream outStream = csb.getOutputStream();
+    InputStream inStream = csb.getInputStream();
+    final int signs = bufferSize * 10;
+
+    String testData = createTestString(signs);
+    testData = "äüöÄÜÖ" + testData + "äüöÄÜÖ";
+    outStream.write(testData.getBytes("iso-8859-1"));
+    String result = readFrom(inStream, "iso-8859-1");
+
+    assertEquals(testData.length(), result.length());
+    assertEquals(testData, result);
+  }
+
+  @Test
+  public void testSimpleWriteALotMoreThenBufferSize() throws Exception {
+    int bufferSize = 4096;
+    CircleStreamBuffer csb = new CircleStreamBuffer(bufferSize);
+
+    OutputStream outStream = csb.getOutputStream();
+    InputStream inStream = csb.getInputStream();
+    final int signs = bufferSize * 100;
+
+    String testData = createTestString(signs);
+    outStream.write(testData.getBytes(DEFAULT_CHARSET));
+    String result = readFrom(inStream, bufferSize * 2);
+
+    assertEquals(signs, result.length());
+    assertEquals(testData, result);
+  }
+
+
   @Test(expected = IOException.class)
   public void testCloseInputStream() throws Exception {
     CircleStreamBuffer csb = new CircleStreamBuffer();
@@ -213,11 +302,19 @@ public class CircleStreamBufferTest extends BaseTest {
   }
 
   private String readFrom(final InputStream stream, final int bufferSize) throws IOException {
+    return readFrom(stream, DEFAULT_CHARSET, bufferSize);
+  }
+
+  private String readFrom(final InputStream stream, final String charset) throws IOException {
+    return readFrom(stream, Charset.forName(charset), 128);
+  }
+
+  private String readFrom(final InputStream stream, final Charset charset, final int bufferSize) throws IOException {
     StringBuilder b = new StringBuilder();
     int count;
     byte[] buffer = new byte[bufferSize];
     while ((count = stream.read(buffer)) >= 0) {
-      b.append(new String(buffer, 0, count));
+      b.append(new String(buffer, 0, count, charset));
     }
     return b.toString();
   }
