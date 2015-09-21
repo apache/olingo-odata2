@@ -272,6 +272,11 @@ public class MetadataTest extends AbstractRefXmlTest {
         "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='TeamEmployees']" +
             "/edm:End[@Type='RefScenario.Team' and @Multiplicity='1' and @Role='r_Team']",
         payload);
+    assertXpathExists(
+        "/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='TeamEmployees']" +
+            "/edm:End[@Type='RefScenario.Team' and @Multiplicity='1' and @Role='r_Team']" +
+            "/edm:OnDelete[@Action='None']",
+        payload);
 
     // RoomEmployees
     assertXpathExists("/edmx:Edmx/edmx:DataServices/edm:Schema/edm:Association[@Name='RoomEmployees']", payload);

@@ -73,6 +73,7 @@ public class JPALinkTest {
   private static Edm edm;
   private static SalesOrderHeader header;
   private static Note note;
+  @SuppressWarnings("unused")
   private static short testCase = 0;
   private InputStream requestPayload = null;
 
