@@ -179,4 +179,9 @@ public class ODataJPAContextImpl implements ODataJPAContext {
     }
     return transaction;
   }
+
+  @Override
+  public void setEntityManager(EntityManager em) {
+    this.em = em;
+  }
 }
