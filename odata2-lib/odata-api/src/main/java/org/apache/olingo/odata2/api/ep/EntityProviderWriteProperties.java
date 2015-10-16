@@ -45,6 +45,7 @@ public class EntityProviderWriteProperties {
   private boolean omitJsonWrapper;
   private boolean contentOnly;
   private boolean omitETag;
+  private boolean validatingFacets = true;
 
   private EntityProviderWriteProperties() {}
 
@@ -133,6 +134,10 @@ public class EntityProviderWriteProperties {
 
   public static ODataEntityProviderPropertiesBuilder serviceRoot(final URI serviceRoot) {
     return new ODataEntityProviderPropertiesBuilder().serviceRoot(serviceRoot);
+  }
+
+  public boolean isValidatingFacets() {
+    return validatingFacets;
   }
 
   public static class ODataEntityProviderPropertiesBuilder {
@@ -235,6 +240,11 @@ public class EntityProviderWriteProperties {
       return this;
     }
 
+    public ODataEntityProviderPropertiesBuilder validatingFacets(final boolean validatingFacets) {
+      properties.validatingFacets = validatingFacets;
+      return this;
+    }
+
     public ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
       this.properties.inlineCountType = properties.getInlineCountType();
       this.properties.inlineCount = properties.getInlineCount();
@@ -247,6 +257,7 @@ public class EntityProviderWriteProperties {
       this.properties.omitJsonWrapper = properties.omitJsonWrapper;
       this.properties.contentOnly = properties.contentOnly;
       this.properties.omitETag = properties.omitETag;
+      this.properties.validatingFacets = properties.validatingFacets;
       return this;
     }
 

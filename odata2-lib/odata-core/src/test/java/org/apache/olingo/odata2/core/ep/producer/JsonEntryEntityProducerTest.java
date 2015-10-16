@@ -39,11 +39,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.olingo.odata2.api.ODataCallback;
-import org.apache.olingo.odata2.api.edm.EdmEntitySet;
-import org.apache.olingo.odata2.api.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.edm.EdmFacets;
-import org.apache.olingo.odata2.api.edm.EdmMapping;
-import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.OnWriteEntryContent;
@@ -314,6 +310,62 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         + "\"nt_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Teams('1')/nt_Employees\"}}}",
         json);
   }
+
+  @Test(expected = EdmSimpleTypeException.class)
+  public void serializeWithFacetsValidation() throws Throwable {
+    Edm edm = MockFacade.getMockEdm();
+    EdmTyped roomNameProperty = edm.getEntityType("RefScenario", "Room").getProperty("Name");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(3);
+    when(((EdmProperty) roomNameProperty).getFacets()).thenReturn(facets);
+    EdmEntitySet entitySet = edm.getDefaultEntityContainer().getEntitySet("Rooms");
+
+    String name = "1234567";
+    Map<String, Object> roomData = new HashMap<String, Object>();
+    roomData.put("Id", "4711");
+    roomData.put("Name", name);
+    EntityProviderWriteProperties properties = EntityProviderWriteProperties
+        .fromProperties(DEFAULT_PROPERTIES).validatingFacets(true).build();
+    try {
+      final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, roomData, properties);
+      final String json = verifyResponse(response);
+      assertNotNull(response);
+      assertEquals("{\"__metadata\":{\"id\":\"" + BASE_URI + "Teams('1')\","
+              + "\"uri\":\"" + BASE_URI + "Teams('1')\",\"type\":\"RefScenario.Team\"},"
+              + "\"Id\":\"1\",\"Name\":null,\"isScrumTeam\":true,"
+              + "\"nt_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Teams('1')/nt_Employees\"}}}",
+          json);
+    } catch(EntityProviderException e) {
+      throw e.getCause();
+    }
+  }
+
+  @Test
+  public void serializeWithoutFacetsValidation() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmTyped roomNameProperty = edm.getEntityType("RefScenario", "Room").getProperty("Name");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(3);
+    when(((EdmProperty) roomNameProperty).getFacets()).thenReturn(facets);
+    EdmEntitySet entitySet = edm.getDefaultEntityContainer().getEntitySet("Rooms");
+
+    String name = "1234567890";
+    Map<String, Object> roomData = new HashMap<String, Object>();
+    roomData.put("Id", "4711");
+    roomData.put("Name", name);
+    EntityProviderWriteProperties properties = EntityProviderWriteProperties
+        .fromProperties(DEFAULT_PROPERTIES).validatingFacets(false).build();
+    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, roomData, properties);
+    final String json = verifyResponse(response);
+    assertNotNull(response);
+    assertEquals("{\"d\":{\"__metadata\":{\"id\":\"http://host:80/service/Rooms('4711')\"," +
+            "\"uri\":\"http://host:80/service/Rooms('4711')\",\"type\":\"RefScenario.Room\"}," +
+            "\"Id\":\"4711\",\"Name\":\"1234567890\",\"Seats\":null,\"Version\":null," +
+            "\"nr_Employees\":{\"__deferred\":{\"uri\":\"http://host:80/service/Rooms('4711')/nr_Employees\"}}," +
+            "\"nr_Building\":{\"__deferred\":{\"uri\":\"http://host:80/service/Rooms('4711')/nr_Building\"}}}}",
+        json);
+  }
+
 
   @Test(expected = EntityProviderException.class)
   public void entryWithNullData() throws Exception {

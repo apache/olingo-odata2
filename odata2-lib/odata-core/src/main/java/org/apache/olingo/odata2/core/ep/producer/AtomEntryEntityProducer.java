@@ -107,7 +107,7 @@ public class AtomEntryEntityProducer {
       if (eia.getEntityType().hasStream()) {
         // write all links
         if (!properties.isContentOnly()) {
-          appendAtomEditLink(writer, eia, data, selfLink);
+          appendAtomEditLink(writer, eia, selfLink);
           appendAtomContentLink(writer, eia, data, selfLink);
           appendAtomNavigationLinks(writer, eia, data);
         } else {
@@ -122,7 +122,7 @@ public class AtomEntryEntityProducer {
       } else {
         // write all links
         if (!properties.isContentOnly()) {
-          appendAtomEditLink(writer, eia, data, selfLink);
+          appendAtomEditLink(writer, eia, selfLink);
           appendAtomNavigationLinks(writer, eia, data);
         } else {
           appendAdditinalLinks(writer, eia, data);
@@ -173,7 +173,7 @@ public class AtomEntryEntityProducer {
     for (String tpName : noneSyndicationTargetPaths) {
       EntityPropertyInfo info = eia.getTargetPathInfo(tpName);
       final String name = info.getName();
-      XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties.isIncludeSimplePropertyType());
+      XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties);
       aps.appendCustomProperty(writer, name, info, data.get(name));
     }
   }
@@ -336,7 +336,7 @@ public class AtomEntryEntityProducer {
   }
 
   private void appendAtomEditLink(final XMLStreamWriter writer, final EntityInfoAggregator eia,
-      final Map<String, Object> data, final String selfLink) throws EntityProviderException {
+      final String selfLink) throws EntityProviderException {
     try {
       writer.writeStartElement(FormatXml.ATOM_LINK);
       writer.writeAttribute(FormatXml.ATOM_HREF, selfLink);
@@ -593,7 +593,7 @@ public class AtomEntryEntityProducer {
 
           if (isNotMappedViaCustomMapping(propertyInfo)) {
             Object value = data.get(propertyName);
-            XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties.isIncludeSimplePropertyType());
+            XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties);
             aps.append(writer, propertyInfo.getName(), propertyInfo, value);
           }
         }

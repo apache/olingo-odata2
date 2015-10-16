@@ -186,14 +186,17 @@ public class JsonEntryEntityProducer {
     }
     for (final String propertyName : type.getPropertyNames()) {
       if (entityInfo.getSelectedPropertyNames().contains(propertyName)) {
-        if (omitComma == true) {
+        if (omitComma) {
           omitComma = false;
         } else {
           jsonStreamWriter.separator();
         }
         jsonStreamWriter.name(propertyName);
-        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, entityInfo.getPropertyInfo(propertyName),
-            data.get(propertyName));
+
+        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter,
+            entityInfo.getPropertyInfo(propertyName),
+            data.get(propertyName),
+            properties.isValidatingFacets());
       }
     }
   }

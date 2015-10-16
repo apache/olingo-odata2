@@ -42,7 +42,7 @@ public class XmlCollectionEntityProducer {
       if (propertyInfo.isComplex()) {
         writer.writeNamespace(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08);
       }
-      XmlPropertyEntityProducer provider = new XmlPropertyEntityProducer(false);
+      XmlPropertyEntityProducer provider = new XmlPropertyEntityProducer(false, true);
       for (final Object propertyData : data) {
         provider.append(writer, FormatXml.D_ELEMENT, propertyInfo, propertyData);
       }

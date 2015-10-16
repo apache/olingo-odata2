@@ -40,6 +40,7 @@ import java.util.TimeZone;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import junit.framework.Assert;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmCustomizableFeedMappings;
@@ -277,8 +278,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
 
     AtomEntityProvider ser = createAtomEntityProvider();
     ODataResponse response =
-        ser.writeEntry(entitySet, localEmployeeData,
-            properties);
+        ser.writeEntry(entitySet, localEmployeeData, properties);
     String xmlString = verifyResponse(response);
     assertXpathExists("/a:entry", xmlString);
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
@@ -1010,6 +1010,45 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     assertXpathExists("/a:entry", xmlString);
     assertXpathExists("/a:entry/@m:etag", xmlString);
     assertXpathEvaluatesTo("W/\"<\">.3\"", "/a:entry/@m:etag", xmlString);
+  }
+
+  @Test(expected = EntityProviderException.class)
+  public void serializeWithFacetsValidation() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmTyped roomNameProperty = edm.getEntityType("RefScenario", "Room").getProperty("Name");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(3);
+    when(((EdmProperty) roomNameProperty).getFacets()).thenReturn(facets);
+
+    roomData.put("Name", "1234567");
+    AtomEntityProvider ser = createAtomEntityProvider();
+    ODataResponse response =
+      ser.writeEntry(edm.getDefaultEntityContainer().getEntitySet("Rooms"), roomData, DEFAULT_PROPERTIES);
+    Assert.assertNotNull(response);
+  }
+
+  @Test
+  public void serializeWithoutFacetsValidation() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmTyped roomNameProperty = edm.getEntityType("RefScenario", "Room").getProperty("Name");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(3);
+    when(((EdmProperty) roomNameProperty).getFacets()).thenReturn(facets);
+
+    String name = "1234567";
+    roomData.put("Name", name);
+    AtomEntityProvider ser = createAtomEntityProvider();
+    EntityProviderWriteProperties properties = EntityProviderWriteProperties
+        .fromProperties(DEFAULT_PROPERTIES).validatingFacets(false).build();
+    ODataResponse response =
+        ser.writeEntry(edm.getDefaultEntityContainer().getEntitySet("Rooms"), roomData, properties);
+    assertNotNull(response);
+
+
+    assertNotNull(response.getEntity());
+    String xmlString = StringHelper.inputStreamToString((InputStream) response.getEntity());
+
+    assertXpathEvaluatesTo(name, "/a:entry/a:content/m:properties/d:Name/text()", xmlString);
   }
 
   @Test

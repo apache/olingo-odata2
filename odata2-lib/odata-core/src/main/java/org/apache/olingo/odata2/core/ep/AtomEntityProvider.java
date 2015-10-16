@@ -81,10 +81,6 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
     this(ODataFormat.ATOM);
   }
 
-  public AtomEntityProvider(final ContentType contentType) throws EntityProviderException {
-    this(contentType.getODataFormat());
-  }
-
   public AtomEntityProvider(final ODataFormat odataFormat) throws EntityProviderException {
     if (odataFormat != ODataFormat.ATOM && odataFormat != ODataFormat.XML) {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
@@ -205,7 +201,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
-      XmlPropertyEntityProducer ps = new XmlPropertyEntityProducer(false);
+      XmlPropertyEntityProducer ps = new XmlPropertyEntityProducer(false, true);
       ps.append(writer, propertyInfo, value);
 
       writer.flush();
