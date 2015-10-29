@@ -42,6 +42,7 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataHttpException;
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
+import org.apache.olingo.odata2.api.exception.ODataRuntimeApplicationException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataErrorCallback;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
@@ -97,6 +98,8 @@ public class ODataExceptionWrapper {
       fillErrorContext(toHandleException);
       if (toHandleException instanceof ODataApplicationException) {
         enhanceContextWithApplicationException((ODataApplicationException) toHandleException);
+      } else if (toHandleException instanceof ODataRuntimeApplicationException) {
+        enhanceContextWithRuntimeApplicationException((ODataRuntimeApplicationException) toHandleException);
       } else if (toHandleException instanceof ODataMessageException) {
         enhanceContextWithMessageException((ODataMessageException) toHandleException);
       }
@@ -117,6 +120,11 @@ public class ODataExceptionWrapper {
           .status(HttpStatusCodes.INTERNAL_SERVER_ERROR).build();
       return response;
     }
+  }
+
+  private void enhanceContextWithRuntimeApplicationException(ODataRuntimeApplicationException toHandleException) {
+    errorContext.setHttpStatus(toHandleException.getHttpStatus());
+    errorContext.setErrorCode(toHandleException.getCode());
   }
 
   private ODataResponse handleErrorCallback(final ODataErrorCallback callback) throws EntityProviderException {

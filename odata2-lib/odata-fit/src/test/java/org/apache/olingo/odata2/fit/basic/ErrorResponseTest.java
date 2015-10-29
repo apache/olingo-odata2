@@ -24,13 +24,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataRuntimeApplicationException;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
+import org.apache.olingo.odata2.api.processor.part.MetadataProcessor;
 import org.apache.olingo.odata2.api.processor.part.ServiceDocumentProcessor;
+import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.apache.olingo.odata2.testutil.server.ServletType;
@@ -49,9 +53,11 @@ public class ErrorResponseTest extends AbstractBasicTest {
   protected ODataSingleProcessor createProcessor() throws ODataException {
     final ODataSingleProcessor processor = mock(ODataSingleProcessor.class);
 
-    when(
-        ((ServiceDocumentProcessor) processor).readServiceDocument(any(GetServiceDocumentUriInfo.class),
-            any(String.class))).thenThrow(new ODataRuntimeException("unit testing"));
+    when(((ServiceDocumentProcessor) processor).readServiceDocument(any(GetServiceDocumentUriInfo.class),
+        any(String.class))).thenThrow(new ODataRuntimeException("unit testing"));
+    when(((MetadataProcessor) processor).readMetadata(any(GetMetadataUriInfo.class),
+        any(String.class))).thenThrow(
+        new ODataRuntimeApplicationException("unit testing", Locale.ROOT, HttpStatusCodes.FORBIDDEN));
 
     return processor;
   }
@@ -62,5 +68,13 @@ public class ErrorResponseTest extends AbstractBasicTest {
 
     final HttpResponse response = executeGetRequest("");
     assertEquals(HttpStatusCodes.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusLine().getStatusCode());
+  }
+
+  @Test
+  public void testODataRuntimeApplicationException() throws ClientProtocolException, IOException, ODataException {
+    disableLogging();
+
+    final HttpResponse response = executeGetRequest("$metadata");
+    assertEquals(HttpStatusCodes.FORBIDDEN.getStatusCode(), response.getStatusLine().getStatusCode());
   }
 }
