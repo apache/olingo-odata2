@@ -18,8 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.api;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -96,11 +94,6 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
    * @return an instance of type {@link javax.persistence.Query}
    */
   public Query getQuery(DeleteUriInfo uriInfo, EntityManager em) {
-    return null;
-  }
-
-  @Override
-  public String generateDeltaToken(List<Object> deltas, Query query) {
     return null;
   }
 

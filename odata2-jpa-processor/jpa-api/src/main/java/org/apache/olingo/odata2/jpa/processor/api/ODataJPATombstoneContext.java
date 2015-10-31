@@ -29,9 +29,18 @@ import java.util.List;
 public final class ODataJPATombstoneContext {
 
   private static final ThreadLocal<String> deltaToken = new ThreadLocal<String>();
+  private static final ThreadLocal<String> deltaLink = new ThreadLocal<String>();
   private static final ThreadLocal<Long> deltaTokenUTCTimeStamp = new ThreadLocal<Long>();
   private static final ThreadLocal<HashMap<String, List<Object>>> deltas =
       new ThreadLocal<HashMap<String, List<Object>>>();
+
+  public static String getDeltaLink() {
+    return deltaLink.get();
+  }
+
+  public static void setDeltaLink(final String link) {
+    deltaLink.set(link);
+  }
 
   public static String getDeltaToken() {
     return deltaToken.get();

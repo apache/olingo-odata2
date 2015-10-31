@@ -40,9 +40,9 @@ public abstract class ODataJPATombstoneEntityListener {
 
   /**
    * Implement this method to create a {@link javax.persistence.Query} object. The Query object can be created from
-   * OData requests. The query instance thus created can be used for handling delta JPA entities. The delta token passed
-   * from OData request can
-   * be accessed from {@link com.sap.core.odata.processor.api.jpa.ODataJPATombstoneContext}.
+   * OData requests. The query instance thus created can be used for handling delta JPA entities.
+   * The delta token passed from OData request can
+   * be accessed from {@link org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneContext}.
    * @param resultsView is a reference to OData request
    * @param em is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
@@ -50,12 +50,26 @@ public abstract class ODataJPATombstoneEntityListener {
   public abstract Query getQuery(GetEntitySetUriInfo resultsView, EntityManager em);
 
   /**
-   * Implement this method to create a delta token.
+   * Implement this method to generate a delta token (which is added as
+   * <code>!deltatoken=<result of this method></code>).
    * @param deltas is list of delta JPA Entities
-   * @param query is an instance of type {@link javax.persistence.Query} that was used for handling delta entites
+   * @param query is an instance of type {@link javax.persistence.Query} that was used for handling delta entities
    * @return a delta token of type String
    */
-  public abstract String generateDeltaToken(List<Object> deltas, Query query);
+  public String generateDeltaToken(List<Object> deltas, Query query) {
+    return null;
+  }
+
+  /**
+   * Implement this method to return the whole delta link.
+   * This has to be encoded to given rules (e.g. HTTP URL encoding and/or XML content encoding).
+   * <code><link rel="delta" href="<result of this method>"/></code>
+   * @param entitySetUriInfo information about the related OData request
+   * @return the delta link
+   */
+  public String getDeltaLink(GetEntitySetUriInfo entitySetUriInfo) {
+    return null;
+  }
 
   /**
    * Implement this method to indicate whether the extended class can handle OData Tombstone feature as well

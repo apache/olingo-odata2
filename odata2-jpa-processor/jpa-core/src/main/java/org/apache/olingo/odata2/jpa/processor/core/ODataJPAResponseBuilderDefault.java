@@ -44,6 +44,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.ODataEntityProviderPropertiesBuilder;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
+import org.apache.olingo.odata2.api.ep.callback.TombstoneCallbackResult;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataHttpException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
@@ -519,10 +520,23 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       Map<String, ODataCallback> callBackMap = new HashMap<String, ODataCallback>();
       callBackMap.putAll(expandCallBack);
 
-      String deltaToken = ODataJPATombstoneContext.getDeltaToken();
-      if (deltaToken != null) {
-        callBackMap.put(TombstoneCallback.CALLBACK_KEY_TOMBSTONE, new JPATombstoneCallBack(serviceRoot.toString(),
-            resultsView, deltaToken));
+      final String deltaLink = ODataJPATombstoneContext.getDeltaLink();
+      if(deltaLink != null) {
+        callBackMap.put(TombstoneCallback.CALLBACK_KEY_TOMBSTONE,
+            new TombstoneCallback() {
+              @Override
+              public TombstoneCallbackResult getTombstoneCallbackResult() {
+                final TombstoneCallbackResult result = new TombstoneCallbackResult();
+                result.setDeltaLink(deltaLink);
+                return result;
+              }
+            });
+      } else {
+        String deltaToken = ODataJPATombstoneContext.getDeltaToken();
+        if (deltaToken != null) {
+          callBackMap.put(TombstoneCallback.CALLBACK_KEY_TOMBSTONE, new JPATombstoneCallBack(serviceRoot.toString(),
+              resultsView, deltaToken));
+        }
       }
 
       entityFeedPropertiesBuilder.callbacks(callBackMap);

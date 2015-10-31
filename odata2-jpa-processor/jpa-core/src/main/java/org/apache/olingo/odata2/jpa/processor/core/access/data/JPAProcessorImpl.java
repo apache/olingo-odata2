@@ -129,9 +129,9 @@ public class JPAProcessorImpl implements JPAProcessor {
   public List<Object> process(final GetEntitySetUriInfo uriParserResultView)
       throws ODataJPAModelException, ODataJPARuntimeException {
 
-    List<Object> result = null;
+    List<Object> result;
     if (uriParserResultView.getFunctionImport() != null) {
-      return (List<Object>) process((GetFunctionImportUriInfo) uriParserResultView);
+      return process((GetFunctionImportUriInfo) uriParserResultView);
     }
 
     InlineCount inlineCount = uriParserResultView.getInlineCount();
@@ -158,14 +158,15 @@ public class JPAProcessorImpl implements JPAProcessor {
       }
       if (listener != null && (!queryInfo.isTombstoneQuery() && listener.isTombstoneSupported())) {
         query.getResultList();
-        List<Object> deltaResult =
-            (List<Object>) ODataJPATombstoneContext.getDeltaResult(((EdmMapping) mapping).getInternalName());
+        List<Object> deltaResult = ODataJPATombstoneContext
+            .getDeltaResult(((EdmMapping) mapping).getInternalName());
         result = handlePaging(deltaResult, uriParserResultView);
       } else {
         result = handlePaging(query, uriParserResultView);
       }
       if (listener != null && listener.isTombstoneSupported()) {
-        ODataJPATombstoneContext.setDeltaToken(listener.generateDeltaToken((List<Object>) result, query));
+        ODataJPATombstoneContext.setDeltaLink(listener.getDeltaLink(uriParserResultView));
+        ODataJPATombstoneContext.setDeltaToken(listener.generateDeltaToken(result, query));
       }
       return result == null ? new ArrayList<Object>() : result;
     } catch (EdmException e) {
@@ -182,7 +183,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
   /* Process Get Entity Request (Read) */
   @Override
-  public <T> Object process(GetEntityUriInfo uriParserResultView)
+  public Object process(GetEntityUriInfo uriParserResultView)
       throws ODataJPAModelException, ODataJPARuntimeException {
     return readEntity(new JPAQueryBuilder(oDataJPAContext).build(uriParserResultView));
   }
