@@ -102,6 +102,13 @@ public class BatchTest extends AbstractRefTest {
   }
 
   @Test
+  public void testWrongContentId() throws Exception {
+    HttpResponse response = execute("/batchWithWrongContentId.batch", "batch_cf90-46e5-1246");
+    String responseBody = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
+    assertTrue(responseBody.contains("HTTP/1.1 404 Not Found"));
+  }
+  
+  @Test
   public void testGPPG() throws Exception {
     HttpResponse response = execute("/batchWithContentIdPart2.batch", "batch_cf90-46e5-1246");
     String responseBody = StringHelper.inputStreamToString(response.getEntity().getContent(), true);

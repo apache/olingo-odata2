@@ -116,6 +116,10 @@ public class BatchHandlerImpl implements BatchHandler {
   private ODataRequest modifyRequest(final ODataRequest request, final List<PathSegment> odataSegments)
       throws ODataException {
     String contentId = contentIdMap.get(odataSegments.get(0).getPath());
+    if (contentId == null) {
+      //invalid content ID. But throwing an exception here is wrong so we use the base request and fail later
+      return request;
+    }
     PathInfoImpl pathInfo = new PathInfoImpl();
     try {
       List<PathSegment> modifiedODataSegments = new ArrayList<PathSegment>();
