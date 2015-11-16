@@ -39,6 +39,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.ComplexProperty;
 import org.apache.olingo.odata2.api.edm.provider.ComplexType;
+import org.apache.olingo.odata2.api.edm.provider.Facets;
 import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;
@@ -192,13 +193,10 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
       String targetEntityName = null;
       String entityTypeName = null;
       if (isBuildModeComplexType) {
-        jpaAttributes = sortInAscendingOrder(complexTypeView.getJPAEmbeddableType()
-            .getAttributes());
-        entityTypeName = complexTypeView.getJPAEmbeddableType().getJavaType()
-            .getSimpleName();
+        jpaAttributes = sortInAscendingOrder(complexTypeView.getJPAEmbeddableType().getAttributes());
+        entityTypeName = complexTypeView.getJPAEmbeddableType().getJavaType().getSimpleName();
       } else {
-        jpaAttributes = sortInAscendingOrder(entityTypeView.getJPAEntityType()
-            .getAttributes());
+        jpaAttributes = sortInAscendingOrder(entityTypeView.getJPAEntityType().getAttributes());
         entityTypeName = entityTypeView.getJPAEntityType().getName();
       }
 
@@ -210,13 +208,12 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
           continue;
         }
 
-        PersistentAttributeType attributeType = currentAttribute
-            .getPersistentAttributeType();
+        PersistentAttributeType attributeType = currentAttribute.getPersistentAttributeType();
 
         switch (attributeType) {
         case BASIC:
           currentSimpleProperty = new SimpleProperty();
-          properties.add(buildSimpleProperty(currentAttribute, currentSimpleProperty, false));
+          properties.add(buildSimpleProperty(currentAttribute, currentSimpleProperty));
           if (((SingularAttribute<?, ?>) currentAttribute).isId()) {
             if (keyView == null) {
               keyView = new JPAEdmKey(JPAEdmProperty.this);
@@ -226,46 +223,37 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
           }
           break;
         case EMBEDDED:
-          ComplexType complexType = complexTypeView
-              .searchEdmComplexType(currentAttribute.getJavaType().getName());
+          ComplexType complexType = complexTypeView.searchEdmComplexType(currentAttribute.getJavaType().getName());
 
           if (complexType == null) {
-            JPAEdmComplexTypeView complexTypeViewLocal = new JPAEdmComplexType(
-                schemaView, currentAttribute);
+            JPAEdmComplexTypeView complexTypeViewLocal = new JPAEdmComplexType(schemaView, currentAttribute);
             complexTypeViewLocal.getBuilder().build();
             complexType = complexTypeViewLocal.getEdmComplexType();
             complexTypeView.addJPAEdmCompleTypeView(complexTypeViewLocal);
           }
 
-          if (isBuildModeComplexType == false
-              && entityTypeView.getJPAEntityType().getIdType()
-                  .getJavaType()
-                  .equals(currentAttribute.getJavaType())) {
+          if (isBuildModeComplexType == false && entityTypeView.getJPAEntityType().getIdType().getJavaType()
+              .equals(currentAttribute.getJavaType())) {
 
             if (keyView == null) {
-              keyView = new JPAEdmKey(complexTypeView,
-                  JPAEdmProperty.this);
+              keyView = new JPAEdmKey(complexTypeView, JPAEdmProperty.this);
             }
             keyView.getBuilder().build();
             complexTypeView.expandEdmComplexType(complexType, properties, currentAttribute.getName());
           } else {
             currentComplexProperty = new ComplexProperty();
             if (isBuildModeComplexType) {
-              JPAEdmNameBuilder
-                  .build((JPAEdmComplexPropertyView) JPAEdmProperty.this,
-                      complexTypeView.getJPAEmbeddableType().getJavaType().getSimpleName());
+              JPAEdmNameBuilder.build((JPAEdmComplexPropertyView) JPAEdmProperty.this,
+                  complexTypeView.getJPAEmbeddableType().getJavaType().getSimpleName());
             } else {
               JPAEdmNameBuilder
-                  .build((JPAEdmComplexPropertyView) JPAEdmProperty.this,
-                      JPAEdmProperty.this, skipDefaultNaming);
+                  .build((JPAEdmComplexPropertyView) JPAEdmProperty.this, JPAEdmProperty.this, skipDefaultNaming);
             }
-            currentComplexProperty.setType(new FullQualifiedName(
-                schemaView.getEdmSchema().getNamespace(),
-                complexType.getName()));
+            currentComplexProperty
+                .setType(new FullQualifiedName(schemaView.getEdmSchema().getNamespace(), complexType.getName()));
 
             properties.add(currentComplexProperty);
-            if (!complexTypeView.isReferencedInKey(currentComplexProperty.getType().getName()))
-            {
+            if (!complexTypeView.isReferencedInKey(currentComplexProperty.getType().getName())) {
               complexTypeView.setReferencedInKey(currentComplexProperty.getType().getName());
             }
           }
@@ -276,8 +264,8 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         case ONE_TO_ONE:
         case MANY_TO_ONE:
 
-          if (attributeType.equals(PersistentAttributeType.MANY_TO_ONE)
-              || attributeType.equals(PersistentAttributeType.ONE_TO_ONE)) {
+          if (attributeType.equals(PersistentAttributeType.MANY_TO_ONE) || attributeType
+              .equals(PersistentAttributeType.ONE_TO_ONE)) {
             addForeignKey(currentAttribute);
           }
 
@@ -292,11 +280,11 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
             associationView.addJPAEdmAssociationView(associationViewLocal, associationEndView);
           }
 
-          if (attributeType.equals(PersistentAttributeType.MANY_TO_ONE)
-              || attributeType.equals(PersistentAttributeType.ONE_TO_ONE)) {
+          if (attributeType.equals(PersistentAttributeType.MANY_TO_ONE) || attributeType
+              .equals(PersistentAttributeType.ONE_TO_ONE)) {
 
-            JPAEdmReferentialConstraintView refConstraintView = new JPAEdmReferentialConstraint(
-                associationView, entityTypeView, JPAEdmProperty.this);
+            JPAEdmReferentialConstraintView refConstraintView =
+                new JPAEdmReferentialConstraint(associationView, entityTypeView, JPAEdmProperty.this);
             refConstraintView.getBuilder().build();
 
             if (refConstraintView.isExists()) {
@@ -309,8 +297,8 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
           currentEntityName = entityTypeView.getJPAEntityType().getName();
 
           if (currentAttribute.isCollection()) {
-            targetEntityName = ((PluralAttribute<?, ?, ?>) currentAttribute).getElementType().getJavaType()
-                .getSimpleName();
+            targetEntityName =
+                ((PluralAttribute<?, ?, ?>) currentAttribute).getElementType().getJavaType().getSimpleName();
           } else {
             targetEntityName = currentAttribute.getJavaType().getSimpleName();
           }
@@ -333,18 +321,25 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
 
     }
 
-    private SimpleProperty buildSimpleProperty(final Attribute<?, ?> jpaAttribute, final SimpleProperty simpleProperty,
-        final boolean isFK)
-        throws ODataJPAModelException,
-        ODataJPARuntimeException {
+    private SimpleProperty buildSimpleProperty(final Attribute<?, ?> jpaAttribute, final SimpleProperty simpleProperty)
+        throws ODataJPAModelException, ODataJPARuntimeException {
+      return buildSimpleProperty(jpaAttribute, simpleProperty, null);
+    }
 
-      JPAEdmNameBuilder
-          .build((JPAEdmPropertyView) JPAEdmProperty.this, isBuildModeComplexType, skipDefaultNaming, isFK);
+    private SimpleProperty buildSimpleProperty(final Attribute<?, ?> jpaAttribute, final SimpleProperty simpleProperty,
+        final JoinColumn joinColumn)
+        throws ODataJPAModelException, ODataJPARuntimeException {
+
+      boolean isForeignKey = joinColumn != null;
+      JPAEdmNameBuilder.build(JPAEdmProperty.this, isBuildModeComplexType, skipDefaultNaming, isForeignKey);
       EdmSimpleTypeKind simpleTypeKind = JPATypeConvertor
           .convertToEdmSimpleType(jpaAttribute
               .getJavaType(), jpaAttribute);
       simpleProperty.setType(simpleTypeKind);
-      JPAEdmFacets.setFacets(jpaAttribute, simpleProperty);
+      Facets facets = JPAEdmFacets.createAndSet(jpaAttribute, simpleProperty);
+      if(isForeignKey) {
+        facets.setNullable(joinColumn.nullable());
+      }
 
       return simpleProperty;
 
@@ -426,7 +421,11 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
       }
       if (joinColumn.insertable() && joinColumn.updatable()) {
         currentSimpleProperty = new SimpleProperty();
-        properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty, true));
+        properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty, joinColumn));
+        if(joinColumn.nullable()) {
+          currentSimpleProperty.getFacets();
+
+        }
       }
 
     }

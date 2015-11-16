@@ -549,6 +549,7 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
           EasyMock.expect(joinColumn.referencedColumnName()).andReturn("SOLITID").anyTimes();
           EasyMock.expect(joinColumn.insertable()).andReturn(true).anyTimes();
           EasyMock.expect(joinColumn.updatable()).andReturn(true).anyTimes();
+          EasyMock.expect(joinColumn.nullable()).andReturn(false).anyTimes();
           EasyMock.replay(joinColumn);
           return (T) joinColumn;
         } else if (testCase.equals("NoJoinColumnNames")) {
@@ -557,6 +558,7 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
           EasyMock.expect(joinColumn.referencedColumnName()).andReturn("").anyTimes();
           EasyMock.expect(joinColumn.insertable()).andReturn(true).anyTimes();
           EasyMock.expect(joinColumn.updatable()).andReturn(true).anyTimes();
+          EasyMock.expect(joinColumn.nullable()).andReturn(true).anyTimes();
           EasyMock.replay(joinColumn);
           return (T) joinColumn;
         }
