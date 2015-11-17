@@ -39,12 +39,14 @@ public class JsonDeletedEntryEntityProducer {
   }
 
   public void append(final Writer writer, final EntityInfoAggregator entityInfo,
-      final List<Map<String, Object>> deletedEntries)
+      final List<Map<String, Object>> deletedEntries, boolean noPreviousEntries)
       throws EntityProviderException {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
     try {
       if (deletedEntries.size() > 0) {
-        jsonStreamWriter.separator();
+        if(!noPreviousEntries){
+          jsonStreamWriter.separator();
+        }
         int counter = 0;
         for (Map<String, Object> deletedEntry : deletedEntries) {
           jsonStreamWriter.beginObject();
