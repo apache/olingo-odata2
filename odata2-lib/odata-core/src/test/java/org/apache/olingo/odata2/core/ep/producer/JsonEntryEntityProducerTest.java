@@ -39,7 +39,14 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.olingo.odata2.api.ODataCallback;
-import org.apache.olingo.odata2.api.edm.*;
+import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.edm.EdmFacets;
+import org.apache.olingo.odata2.api.edm.EdmMapping;
+import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
+import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.OnWriteEntryContent;
@@ -59,7 +66,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.gson.Gson;
-import com.google.gson.internal.StringMap;
+import com.google.gson.internal.LinkedTreeMap;
 
 /**
  *  
@@ -331,11 +338,11 @@ public class JsonEntryEntityProducerTest extends BaseTest {
       final String json = verifyResponse(response);
       assertNotNull(response);
       assertEquals("{\"__metadata\":{\"id\":\"" + BASE_URI + "Teams('1')\","
-              + "\"uri\":\"" + BASE_URI + "Teams('1')\",\"type\":\"RefScenario.Team\"},"
-              + "\"Id\":\"1\",\"Name\":null,\"isScrumTeam\":true,"
-              + "\"nt_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Teams('1')/nt_Employees\"}}}",
+          + "\"uri\":\"" + BASE_URI + "Teams('1')\",\"type\":\"RefScenario.Team\"},"
+          + "\"Id\":\"1\",\"Name\":null,\"isScrumTeam\":true,"
+          + "\"nt_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Teams('1')/nt_Employees\"}}}",
           json);
-    } catch(EntityProviderException e) {
+    } catch (EntityProviderException e) {
       throw e.getCause();
     }
   }
@@ -359,13 +366,12 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     final String json = verifyResponse(response);
     assertNotNull(response);
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"http://host:80/service/Rooms('4711')\"," +
-            "\"uri\":\"http://host:80/service/Rooms('4711')\",\"type\":\"RefScenario.Room\"}," +
-            "\"Id\":\"4711\",\"Name\":\"1234567890\",\"Seats\":null,\"Version\":null," +
-            "\"nr_Employees\":{\"__deferred\":{\"uri\":\"http://host:80/service/Rooms('4711')/nr_Employees\"}}," +
-            "\"nr_Building\":{\"__deferred\":{\"uri\":\"http://host:80/service/Rooms('4711')/nr_Building\"}}}}",
+        "\"uri\":\"http://host:80/service/Rooms('4711')\",\"type\":\"RefScenario.Room\"}," +
+        "\"Id\":\"4711\",\"Name\":\"1234567890\",\"Seats\":null,\"Version\":null," +
+        "\"nr_Employees\":{\"__deferred\":{\"uri\":\"http://host:80/service/Rooms('4711')/nr_Employees\"}}," +
+        "\"nr_Building\":{\"__deferred\":{\"uri\":\"http://host:80/service/Rooms('4711')/nr_Building\"}}}}",
         json);
   }
-
 
   @Test(expected = EntityProviderException.class)
   public void entryWithNullData() throws Exception {
@@ -847,9 +853,9 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     ODataResponse response = new JsonEntityProvider().writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
     String jsonString = verifyResponse(response);
     Gson gson = new Gson();
-    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
-    jsonMap = (StringMap<Object>) jsonMap.get("d");
-    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
+    LinkedTreeMap<String, Object> jsonMap = gson.fromJson(jsonString, LinkedTreeMap.class);
+    jsonMap = (LinkedTreeMap<String, Object>) jsonMap.get("d");
+    jsonMap = (LinkedTreeMap<String, Object>) jsonMap.get("__metadata");
 
     assertEquals("http://localhost:8080/images/image1", jsonMap.get("media_src"));
     assertEquals("application/octet-stream", jsonMap.get("content_type"));
@@ -896,9 +902,9 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     String jsonString = verifyResponse(response);
 
     Gson gson = new Gson();
-    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
-    jsonMap = (StringMap<Object>) jsonMap.get("d");
-    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
+    LinkedTreeMap<String, Object> jsonMap = gson.fromJson(jsonString, LinkedTreeMap.class);
+    jsonMap = (LinkedTreeMap<String, Object>) jsonMap.get("d");
+    jsonMap = (LinkedTreeMap<String, Object>) jsonMap.get("__metadata");
 
     assertEquals("http://localhost:8080/images/image1", jsonMap.get("media_src"));
     assertEquals("image/jpeg", jsonMap.get("content_type"));
@@ -926,9 +932,9 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     ODataResponse response = new JsonEntityProvider().writeEntry(roomsSet, roomData, DEFAULT_PROPERTIES);
     String jsonString = verifyResponse(response);
     Gson gson = new Gson();
-    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
-    jsonMap = (StringMap<Object>) jsonMap.get("d");
-    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
+    LinkedTreeMap<String, Object> jsonMap = gson.fromJson(jsonString, LinkedTreeMap.class);
+    jsonMap = (LinkedTreeMap<String, Object>) jsonMap.get("d");
+    jsonMap = (LinkedTreeMap<String, Object>) jsonMap.get("__metadata");
 
     assertNull(jsonMap.get("media_src"));
     assertNull(jsonMap.get("content_type"));
@@ -959,9 +965,9 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     ODataResponse response = new JsonEntityProvider().writeEntry(roomsSet, roomData, DEFAULT_PROPERTIES);
     String jsonString = verifyResponse(response);
     Gson gson = new Gson();
-    StringMap<Object> jsonMap = gson.fromJson(jsonString, StringMap.class);
-    jsonMap = (StringMap<Object>) jsonMap.get("d");
-    jsonMap = (StringMap<Object>) jsonMap.get("__metadata");
+    LinkedTreeMap<String, Object> jsonMap = gson.fromJson(jsonString, LinkedTreeMap.class);
+    jsonMap = (LinkedTreeMap<String, Object>) jsonMap.get("d");
+    jsonMap = (LinkedTreeMap<String, Object>) jsonMap.get("__metadata");
 
     assertNull(jsonMap.get("media_src"));
     assertNull(jsonMap.get("content_type"));
