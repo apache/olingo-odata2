@@ -262,6 +262,7 @@ public class AtomEntryEntityProducer {
         context.setSourceEntitySet(eia.getEntitySet());
         context.setNavigationProperty(navProp);
         context.setEntryData(data);
+        context.setCurrentWriteProperties(properties);
         ExpandSelectTreeNode subNode = properties.getExpandSelectTree().getLinks().get(navigationPropertyName);
         context.setCurrentExpandSelectTreeNode(subNode);
         context.setSelfLink(new URI(self));
@@ -270,7 +271,7 @@ public class AtomEntryEntityProducer {
         if (callback == null) {
           throw new EntityProviderException(EntityProviderException.EXPANDNOTSUPPORTED);
         }
-        WriteFeedCallbackResult result = null;
+        WriteFeedCallbackResult result;
         try {
           result = ((OnWriteFeedContent) callback).retrieveFeedResult(context);
         } catch (ODataApplicationException e) {
@@ -304,6 +305,7 @@ public class AtomEntryEntityProducer {
         EdmNavigationProperty navProp = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
         WriteEntryCallbackContext context = new WriteEntryCallbackContext();
         context.setSourceEntitySet(eia.getEntitySet());
+        context.setCurrentWriteProperties(properties);
         context.setNavigationProperty(navProp);
         context.setEntryData(data);
         ExpandSelectTreeNode subNode = properties.getExpandSelectTree().getLinks().get(navigationPropertyName);
@@ -313,7 +315,7 @@ public class AtomEntryEntityProducer {
         if (callback == null) {
           throw new EntityProviderException(EntityProviderException.EXPANDNOTSUPPORTED);
         }
-        WriteEntryCallbackResult result = null;
+        WriteEntryCallbackResult result;
         try {
           result = ((OnWriteEntryContent) callback).retrieveEntryResult(context);
         } catch (ODataApplicationException e) {
@@ -461,9 +463,7 @@ public class AtomEntryEntityProducer {
     if (updateDate == null) {
       updateDate = new Date();
     }
-    String valueToString =
-        EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets);
-    return valueToString;
+    return EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets);
   }
 
   private String getTargetPathValue(final EntityInfoAggregator eia, final String targetPath,
@@ -608,7 +608,7 @@ public class AtomEntryEntityProducer {
   private boolean isNotMappedViaCustomMapping(final EntityPropertyInfo propertyInfo) {
     EdmCustomizableFeedMappings customMapping = propertyInfo.getCustomMapping();
     if (customMapping != null && customMapping.isFcKeepInContent() != null) {
-      return customMapping.isFcKeepInContent().booleanValue();
+      return customMapping.isFcKeepInContent();
     }
     return true;
   }

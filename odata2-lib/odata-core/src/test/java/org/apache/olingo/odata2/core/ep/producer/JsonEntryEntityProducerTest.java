@@ -30,13 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -588,6 +582,120 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         + "\"uri\":\"" + BASE_URI + "Buildings('1')\",\"type\":\"RefScenario.Building\"},"
         + "\"Id\":\"1\",\"Name\":null,\"Image\":null,"
         + "\"nb_Rooms\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Buildings('1')/nb_Rooms\"}}}}}",
+        json);
+  }
+
+  @Test(expected=EntityProviderException.class)
+  public void entryWithExpandedEntryWithFacets() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmTyped imageUrlProperty = edm.getEntityType("RefScenario", "Employee").getProperty("ImageUrl");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(1);
+    when(((EdmProperty) imageUrlProperty).getFacets()).thenReturn(facets);
+
+    Map<String, Object> roomData = new HashMap<String, Object>();
+    roomData.put("Id", "1");
+    roomData.put("Name", "Neu Schwanstein");
+    roomData.put("Seats", new Integer(20));
+    roomData.put("Version", new Integer(3));
+
+    ExpandSelectTreeNode node2 = Mockito.mock(ExpandSelectTreeNode.class);
+    Map<String, ExpandSelectTreeNode> links = new HashMap<String, ExpandSelectTreeNode>();
+    links.put("nr_Employees", node2);
+    ExpandSelectTreeNode node1 = Mockito.mock(ExpandSelectTreeNode.class);
+    Mockito.when(node1.getLinks()).thenReturn(links);
+
+    class EntryCallback implements OnWriteFeedContent {
+      @Override
+      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+          throws ODataApplicationException {
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("EmployeeId", "1");
+        data.put("ImageUrl", "hhtp://url");
+        WriteFeedCallbackResult result = new WriteFeedCallbackResult();
+        result.setFeedData(Collections.singletonList(data));
+        result.setInlineProperties(DEFAULT_PROPERTIES);
+        return result;
+      }
+    }
+
+    EntryCallback callback = new EntryCallback();
+    Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
+    callbacks.put("nr_Employees", callback);
+
+    EdmEntitySet entitySet = edm.getDefaultEntityContainer().getEntitySet("Rooms");
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, roomData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).build());
+    assertNotNull(response);
+  }
+
+  @Test
+  public void entryWithExpandedEntryIgnoreFacets() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmTyped imageUrlProperty = edm.getEntityType("RefScenario", "Employee").getProperty("ImageUrl");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(1);
+    when(((EdmProperty) imageUrlProperty).getFacets()).thenReturn(facets);
+
+    Map<String, Object> roomData = new HashMap<String, Object>();
+    roomData.put("Id", "1");
+    roomData.put("Name", "Neu Schwanstein");
+    roomData.put("Seats", new Integer(20));
+    roomData.put("Version", new Integer(3));
+
+    ExpandSelectTreeNode node2 = Mockito.mock(ExpandSelectTreeNode.class);
+    Map<String, ExpandSelectTreeNode> links = new HashMap<String, ExpandSelectTreeNode>();
+    links.put("nr_Employees", node2);
+    ExpandSelectTreeNode node1 = Mockito.mock(ExpandSelectTreeNode.class);
+    Mockito.when(node1.getLinks()).thenReturn(links);
+
+    class EntryCallback implements OnWriteFeedContent {
+      @Override
+      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+          throws ODataApplicationException {
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("EmployeeId", "1");
+        data.put("ImageUrl", "hhtp://url");
+        WriteFeedCallbackResult result = new WriteFeedCallbackResult();
+        result.setFeedData(Collections.singletonList(data));
+        result.setInlineProperties(DEFAULT_PROPERTIES);
+        EntityProviderWriteProperties properties =
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI))
+                .validatingFacets(context.getCurrentWriteProperties().isValidatingFacets()).build();
+        result.setInlineProperties(properties);
+        return result;
+      }
+    }
+
+    EntryCallback callback = new EntryCallback();
+    Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
+    callbacks.put("nr_Employees", callback);
+
+
+    EdmEntitySet entitySet = edm.getDefaultEntityContainer().getEntitySet("Rooms");
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, roomData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .validatingFacets(false)
+                .callbacks(callbacks).build());
+    final String json = verifyResponse(response);
+    assertEquals("{\"d\":{\"__metadata\":{\"id\":\"http://host:80/service/Rooms('1')\"," +
+        "\"uri\":\"http://host:80/service/Rooms('1')\",\"type\":\"RefScenario.Room\",\"etag\":\"W/\\\"3\\\"\"}," +
+        "\"nr_Employees\":{\"results\":[{\"__metadata\":{\"id\":\"http://host:80/service/Employees('1')\"," +
+        "\"uri\":\"http://host:80/service/Employees('1')\",\"type\":\"RefScenario.Employee\"," +
+        "\"content_type\":\"application/octet-stream\"," +
+        "\"media_src\":\"http://host:80/service/Employees('1')/$value\"," +
+        "\"edit_media\":\"http://host:80/service/Employees('1')/$value\"},\"EmployeeId\":\"1\",\"EmployeeName\":null," +
+        "\"ManagerId\":null,\"RoomId\":null,\"TeamId\":null," +
+        "\"Location\":{\"__metadata\":{\"type\":\"RefScenario.c_Location\"}," +
+        "\"City\":{\"__metadata\":{\"type\":\"RefScenario.c_City\"}," +
+        "\"PostalCode\":null,\"CityName\":null},\"Country\":null}," +
+        "\"Age\":null,\"EntryDate\":null,\"ImageUrl\":\"hhtp://url\"," +
+        "\"ne_Manager\":{\"__deferred\":{\"uri\":\"http://host:80/service/Employees('1')/ne_Manager\"}}," +
+        "\"ne_Team\":{\"__deferred\":{\"uri\":\"http://host:80/service/Employees('1')/ne_Team\"}}," +
+        "\"ne_Room\":{\"__deferred\":{\"uri\":\"http://host:80/service/Employees('1')/ne_Room\"}}}]}}}",
         json);
   }
 

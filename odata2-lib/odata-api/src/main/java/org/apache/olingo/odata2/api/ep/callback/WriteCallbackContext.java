@@ -25,6 +25,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 
 /**
@@ -37,6 +38,7 @@ public abstract class WriteCallbackContext {
   private EdmNavigationProperty navigationProperty;
   private Map<String, Object> entryData;
   private ExpandSelectTreeNode currentNode;
+  private EntityProviderWriteProperties currentWriteProperties;
 
   /**
    * Current means the node pointing to the target entity set
@@ -117,5 +119,24 @@ public abstract class WriteCallbackContext {
           .getSimpleName()), e);
     }
     return key;
+  }
+
+  /**
+   * EntityProviderWriteProperties of outer producer.
+   *
+   * @param currentWriteProperties of outer producer.
+   */
+  public void setCurrentWriteProperties(EntityProviderWriteProperties currentWriteProperties) {
+    this.currentWriteProperties = currentWriteProperties;
+  }
+
+  /**
+   * EntityProviderWriteProperties which were set by outer producer or <code>null</code>
+   * if not supported.
+   *
+   * @return set by outer producer or <code>null</code> if not supported.
+   */
+  public EntityProviderWriteProperties getCurrentWriteProperties() {
+    return currentWriteProperties;
   }
 }
