@@ -139,6 +139,7 @@ public class JsonEntryEntityProducer {
     context.setSourceEntitySet(entitySet);
     context.setNavigationProperty(navigationProperty);
     context.setEntryData(data);
+    context.setCurrentWriteProperties(properties);
     context.setCurrentExpandSelectTreeNode(properties.getExpandSelectTree().getLinks().get(
         navigationPropertyName));
 
