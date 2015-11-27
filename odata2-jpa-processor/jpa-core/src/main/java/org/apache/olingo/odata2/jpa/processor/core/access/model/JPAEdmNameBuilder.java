@@ -430,6 +430,8 @@ public class JPAEdmNameBuilder {
       final JPAEdmPropertyView propertyView,
       final JPAEdmNavigationPropertyView navPropertyView, final boolean skipDefaultNaming, final int count) {
 
+    boolean overrideSkipDefaultNaming = false;
+
     String toName = null;
     String fromName = null;
     String navPropName = null;
@@ -470,6 +472,9 @@ public class JPAEdmNameBuilder {
       toName = mappingModelAccess.mapJPAEntityType(targetEntityTypeName);
       fromName = mappingModelAccess
           .mapJPAEntityType(jpaEntityTypeName);
+      if (navPropName != null) {
+        overrideSkipDefaultNaming = true;
+      }
     }
     if (toName == null) {
       toName = targetEntityTypeName;
@@ -478,8 +483,10 @@ public class JPAEdmNameBuilder {
     if (fromName == null) {
       fromName = jpaEntityTypeName;
     }
-
-    if (skipDefaultNaming == false) {
+    /*
+     * Navigation Property name was provided in mapping then don't try to default the name
+     */
+    if (overrideSkipDefaultNaming == false && skipDefaultNaming == false) {
       if (navPropName == null) {
         navPropName = toName.concat(NAVIGATION_NAME);
       }
