@@ -93,6 +93,11 @@ public class ODataFilterExpressionParserTest {
       "(((E1.id = '123') AND (E1.id <> '123')) OR ((E1.id = '123') AND (E1.id <> '123')))" };
   private static final String[] EXPRESSION_DATETIME = { "date eq datetime'2000-01-01T00:00:00'",
       "(E1.date = {ts '2000-01-01 00:00:00.000'})" };
+  
+  private static final String[] EXPRESSION_NULL = { "date eq null", "(E1.date IS null)" };
+
+  private static final String[] EXPRESSION_NOT_NULL = { "date ne null", "(E1.date IS NOT null)" };
+
   private static Edm edm = null;
 
   @BeforeClass
@@ -205,6 +210,16 @@ public class ODataFilterExpressionParserTest {
     assertEquals(EXPRESSION_MEMBER_OR[OUTPUT], parseWhereExpression(EXPRESSION_MEMBER_OR[INPUT], false));
   }
 
+  @Test
+  public void testNull() {
+    assertEquals(EXPRESSION_NULL[OUTPUT], parseWhereExpression(EXPRESSION_NULL[INPUT], false));
+  }
+
+  @Test
+  public void testNotNull() {
+    assertEquals(EXPRESSION_NOT_NULL[OUTPUT], parseWhereExpression(EXPRESSION_NOT_NULL[INPUT], false));
+  }
+  
   private String parseWhereExpression(final String input, final boolean isExceptionExpected) {
     FilterExpression expression;
     try {
