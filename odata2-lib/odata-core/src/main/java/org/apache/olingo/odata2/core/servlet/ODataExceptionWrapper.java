@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.core.servlet;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -45,7 +46,6 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 import org.apache.olingo.odata2.core.exception.MessageService;
 import org.apache.olingo.odata2.core.exception.MessageService.Message;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  *  
@@ -58,18 +58,23 @@ public class ODataExceptionWrapper {
   private final ODataErrorContext errorContext = new ODataErrorContext();
   private final String contentType;
   private final Locale messageLocale;
-  private final URI requestUri;
   private final Map<String, List<String>> httpRequestHeaders;
   private final ODataErrorCallback callback;
+  private URI requestUri;
 
   public ODataExceptionWrapper(final HttpServletRequest req, ODataServiceFactory serviceFactory) {
     try {
       requestUri = new URI(req.getRequestURI());
     } catch (URISyntaxException e) {
-      throw new ODataRuntimeException(e);
+      requestUri = null;
     }
     httpRequestHeaders = RestUtil.extractHeaders(req);
-    Map<String, String> queryParameters = RestUtil.extractQueryParameters(req.getQueryString());
+    Map<String, String> queryParameters;
+    try {
+      queryParameters = RestUtil.extractQueryParameters(req.getQueryString());
+    } catch (Exception e) {
+      queryParameters = new HashMap<String, String>();
+    }
     List<Locale> acceptableLanguages = RestUtil.extractAcceptableLanguage(req.getHeader("Accept-Language"));
     List<String> acceptHeaders = RestUtil.extractAcceptHeaders(req.getHeader("Accept"));
     contentType = getContentType(queryParameters, acceptHeaders).toContentTypeString();

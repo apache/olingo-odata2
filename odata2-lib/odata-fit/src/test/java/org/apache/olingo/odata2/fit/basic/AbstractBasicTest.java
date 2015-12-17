@@ -77,7 +77,7 @@ public abstract class AbstractBasicTest extends AbstractFitTest {
     return new ODataSingleProcessorService(provider, processor) {};
   }
 
-  EdmProvider createEdmProvider() {
+  protected EdmProvider createEdmProvider() {
     return mock(EdmProvider.class);
   }
 

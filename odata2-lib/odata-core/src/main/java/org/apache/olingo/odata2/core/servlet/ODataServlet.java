@@ -181,15 +181,20 @@ public class ODataServlet extends HttpServlet {
         createNotAcceptableResponse(req, ODataNotAcceptableException.COMMON, resp, serviceFactory);
         return;
       }
-      ODataRequest odataRequest = ODataRequest.method(method)
-          .contentType(RestUtil.extractRequestContentType(req.getContentType()).toContentTypeString())
-          .acceptHeaders(RestUtil.extractAcceptHeaders(req.getHeader(HttpHeaders.ACCEPT)))
-          .acceptableLanguages(RestUtil.extractAcceptableLanguage(req.getHeader(HttpHeaders.ACCEPT_LANGUAGE)))
-          .pathInfo(RestUtil.buildODataPathInfo(req, pathSplit))
-          .allQueryParameters(RestUtil.extractAllQueryParameters(req.getQueryString()))
-          .requestHeaders(RestUtil.extractHeaders(req))
-          .body(req.getInputStream())
-          .build();
+      ODataRequest odataRequest = null;
+      try {
+        odataRequest = ODataRequest.method(method)
+        .contentType(RestUtil.extractRequestContentType(req.getContentType()).toContentTypeString())
+        .acceptHeaders(RestUtil.extractAcceptHeaders(req.getHeader(HttpHeaders.ACCEPT)))
+        .acceptableLanguages(RestUtil.extractAcceptableLanguage(req.getHeader(HttpHeaders.ACCEPT_LANGUAGE)))
+        .pathInfo(RestUtil.buildODataPathInfo(req, pathSplit))
+        .allQueryParameters(RestUtil.extractAllQueryParameters(req.getQueryString()))
+        .requestHeaders(RestUtil.extractHeaders(req))
+        .body(req.getInputStream())
+        .build();
+      } catch (IllegalArgumentException e) {
+        throw new ODataBadRequestException(ODataBadRequestException.INVALID_REQUEST, e);
+      }
 
       ODataContextImpl context = new ODataContextImpl(odataRequest, serviceFactory);
       context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, req);

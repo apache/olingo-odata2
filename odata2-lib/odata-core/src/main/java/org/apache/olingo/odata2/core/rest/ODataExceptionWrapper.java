@@ -62,12 +62,12 @@ public class ODataExceptionWrapper {
   private static final String DOLLAR_FORMAT_JSON = "json";
   private static final Locale DEFAULT_RESPONSE_LOCALE = Locale.ENGLISH;
 
-  private final String contentType;
+  private String contentType;
+  private URI requestUri;
   private final Locale messageLocale;
   private final Map<String, List<String>> httpRequestHeaders;
   private final ODataErrorCallback callback;
   private final ODataErrorContext errorContext = new ODataErrorContext();
-  private final URI requestUri;
 
   public ODataExceptionWrapper(final ODataContext context, final Map<String, String> queryParameters,
       final List<String> acceptHeaderContentTypes) {
@@ -85,10 +85,15 @@ public class ODataExceptionWrapper {
 
   public ODataExceptionWrapper(final UriInfo uriInfo, final HttpHeaders httpHeaders,
       final ODataErrorCallback errorCallback) {
-    contentType = getContentType(uriInfo, httpHeaders).toContentTypeString();
+    try {
+      contentType = getContentType(uriInfo, httpHeaders).toContentTypeString();
+      requestUri = uriInfo.getRequestUri();
+    } catch (IllegalArgumentException e) {
+      contentType = null;
+      requestUri = null;
+    }
     messageLocale = MessageService.getSupportedLocale(getLanguages(httpHeaders), DEFAULT_RESPONSE_LOCALE);
     httpRequestHeaders = httpHeaders.getRequestHeaders();
-    requestUri = uriInfo.getRequestUri();
     callback = errorCallback;
   }
 
@@ -168,13 +173,24 @@ public class ODataExceptionWrapper {
    * @param exception exception with values to be set on error context
    */
   private void fillErrorContext(final Exception exception) {
-    errorContext.setContentType(contentType);
+    if (contentType != null || requestUri != null) {
+      errorContext.setContentType(contentType);
+      errorContext.setRequestUri(requestUri);
+      errorContext.setHttpStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
+    } else {
+      /*
+       * We have to add this here in case CXF decides that the URL is invalid. In this case we have to give the correct
+       * response code nonetheless. Since we get called without context we have to try and guess here.
+       * This should be the case when either the content type or the request URI are null.
+       */
+      errorContext.setContentType(ContentType.APPLICATION_ATOM_XML.toContentTypeString());
+      errorContext.setRequestUri(null);
+      errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
+    }
     errorContext.setException(exception);
-    errorContext.setHttpStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
     errorContext.setErrorCode(null);
     errorContext.setMessage(exception.getMessage());
     errorContext.setLocale(DEFAULT_RESPONSE_LOCALE);
-    errorContext.setRequestUri(requestUri);
 
     if (httpRequestHeaders != null) {
       for (Entry<String, List<String>> entry : httpRequestHeaders.entrySet()) {

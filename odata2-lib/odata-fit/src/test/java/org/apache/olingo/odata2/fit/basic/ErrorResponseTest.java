@@ -61,7 +61,7 @@ public class ErrorResponseTest extends AbstractBasicTest {
 
     return processor;
   }
-
+  
   @Test
   public void test500RuntimeError() throws ClientProtocolException, IOException, ODataException {
     disableLogging();
