@@ -56,9 +56,16 @@ import org.apache.olingo.odata2.core.commons.Decoder;
  */
 public class RestUtil {
   public static Response convertResponse(final ODataResponse odataResponse) {
+    return convertResponse(odataResponse, false);
+  }
+
+  public static Response convertResponse(final ODataResponse odataResponse, final boolean omitResponseBody) {
     try {
       ResponseBuilder responseBuilder =
-          Response.noContent().status(odataResponse.getStatus().getStatusCode()).entity(odataResponse.getEntity());
+          Response.noContent().status(odataResponse.getStatus().getStatusCode());
+      if(!omitResponseBody) {
+        responseBuilder.entity(odataResponse.getEntity());
+      }
 
       for (final String name : odataResponse.getHeaderNames()) {
         responseBuilder = responseBuilder.header(name, odataResponse.getHeader(name));

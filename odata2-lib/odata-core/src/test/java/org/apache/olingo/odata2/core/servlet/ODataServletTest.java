@@ -142,6 +142,34 @@ public class ODataServletTest {
     Mockito.verify(respMock).setContentLength(content.getBytes("utf-8").length);
   }
 
+  @Test
+  public void testInputStreamResponse() throws Exception {
+    ODataServlet servlet = new ODataServlet();
+    prepareServlet(servlet);
+
+    final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    final ServletOutputStream out = new ServletOutputStream() {
+      @Override
+      public void write(int i) throws IOException {
+        bout.write(i);
+      }
+    };
+    Mockito.when(respMock.getOutputStream()).thenReturn(out);
+
+    HttpServletResponse servletResponse = Mockito.mock(HttpServletResponse.class);
+    Mockito.when(servletResponse.getOutputStream()).thenReturn(out);
+
+    ODataResponse odataResponse = Mockito.mock(ODataResponse.class);
+    Mockito.when(odataResponse.getStatus()).thenReturn(HttpStatusCodes.ACCEPTED);
+    Mockito.when(odataResponse.getHeaderNames()).thenReturn(new HashSet<String>());
+    InputStream input = new ByteArrayInputStream("SomeData".getBytes());
+    Mockito.when(odataResponse.getEntity()).thenReturn(input);
+    servlet.createResponse(servletResponse, odataResponse, true);
+
+    String outputContent = new String(bout.toByteArray());
+    Assert.assertEquals("", outputContent);
+  }
+
 
   @Test
   public void inputStreamResponse() throws Exception {

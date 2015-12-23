@@ -143,10 +143,7 @@ public final class ODataSubLocator {
 
   @HEAD
   public Response handleHead() throws ODataException {
-    // RFC 2616, 5.1.1: "An origin server SHOULD return the status code [...]
-    // 501 (Not Implemented) if the method is unrecognized or not implemented
-    // by the origin server."
-    return returnNotImplementedResponse(ODataNotImplementedException.COMMON);
+    return handleGet();
   }
 
   private Response handle(final ODataHttpMethod method) throws ODataException {
@@ -177,6 +174,7 @@ public final class ODataSubLocator {
 
     subLocator.serviceFactory = param.getServiceFactory();
     subLocator.request = ODataRequest.acceptableLanguages(param.getHttpHeaders().getAcceptableLanguages())
+        .httpMethod(param.getServletRequest().getMethod())
         .acceptHeaders(RestUtil.extractAcceptHeaders(param))
         .body(RestUtil.contentAsStream(RestUtil.extractRequestContent(param)))
         .pathInfo(RestUtil.buildODataPathInfo(param))

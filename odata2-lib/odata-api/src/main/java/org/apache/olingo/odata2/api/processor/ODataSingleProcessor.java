@@ -361,11 +361,13 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
     final Edm entityDataModel = getContext().getService().getEntityDataModel();
     final String serviceRoot = getContext().getPathInfo().getServiceRoot().toASCIIString();
 
-    final ODataResponse response = EntityProvider.writeServiceDocument(contentType, entityDataModel, serviceRoot);
-    final ODataResponseBuilder odataResponseBuilder = ODataResponse.fromResponse(response).header(
-        ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10);
-
-    return odataResponseBuilder.build();
+    if(getContext().getHttpMethod().equals("HEAD")) {
+      return ODataResponse.header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10).build();
+    } else {
+      final ODataResponse response = EntityProvider.writeServiceDocument(contentType, entityDataModel, serviceRoot);
+      return ODataResponse.fromResponse(response)
+          .header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10).build();
+    }
   }
 
   /**
