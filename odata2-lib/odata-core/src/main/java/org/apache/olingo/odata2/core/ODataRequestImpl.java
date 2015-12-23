@@ -38,6 +38,7 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 public class ODataRequestImpl extends ODataRequest {
 
   private ODataHttpMethod method;
+  private String httpMethod;
   private CaseInsensitiveMap requestHeaders = new CaseInsensitiveMap();
   private InputStream body;
   private PathInfo pathInfo;
@@ -89,6 +90,11 @@ public class ODataRequestImpl extends ODataRequest {
   }
 
   @Override
+  public String getHttpMethod() {
+    return httpMethod;
+  }
+
+  @Override
   public PathInfo getPathInfo() {
     return pathInfo;
   }
@@ -100,6 +106,7 @@ public class ODataRequestImpl extends ODataRequest {
 
   public class ODataRequestBuilderImpl extends ODataRequestBuilder {
     private ODataHttpMethod method;
+    private String httpMethod;
     private CaseInsensitiveMap requestHeaders = new CaseInsensitiveMap();
     private InputStream body;
     private PathInfo pathInfo;
@@ -111,6 +118,7 @@ public class ODataRequestImpl extends ODataRequest {
     @Override
     public ODataRequest build() {
       ODataRequestImpl.this.method = method;
+      ODataRequestImpl.this.httpMethod = httpMethod;
       ODataRequestImpl.this.requestHeaders = requestHeaders;
       ODataRequestImpl.this.body = body;
       ODataRequestImpl.this.pathInfo = pathInfo;
@@ -130,6 +138,12 @@ public class ODataRequestImpl extends ODataRequest {
         requestHeaders.put(set.getKey(), set.getValue());
       }
 
+      return this;
+    }
+
+    @Override
+    public ODataRequestBuilder httpMethod(String httpMethod) {
+      this.httpMethod = httpMethod;
       return this;
     }
 
@@ -190,6 +204,7 @@ public class ODataRequestImpl extends ODataRequest {
     public ODataRequestBuilder fromRequest(final ODataRequest request) {
       pathInfo = request.getPathInfo();
       method = request.getMethod();
+      httpMethod = request.getHttpMethod();
       body = request.getBody();
       if (request.getContentType() != null) {
         contentType = ContentType.create(request.getContentType());

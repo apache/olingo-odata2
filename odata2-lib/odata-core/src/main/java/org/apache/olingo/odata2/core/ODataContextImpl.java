@@ -56,9 +56,7 @@ public class ODataContextImpl implements ODataContext {
     setServiceFactory(factory);
     setRequest(request);
     setPathInfo(request.getPathInfo());
-    if (request.getMethod() != null) {
-      setHttpMethod(request.getMethod().name());
-    }
+    setHttpMethod(request.getHttpMethod());
     setAcceptableLanguages(request.getAcceptableLanguages());
     setDebugMode(checkDebugMode(request.getQueryParameters()));
   }
