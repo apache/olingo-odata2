@@ -41,7 +41,8 @@ public abstract class ODataJPAFactory {
 
   private static final String IMPLEMENTATION =
       "org.apache.olingo.odata2.jpa.processor.core.factory.ODataJPAFactoryImpl";
-  private static ODataJPAFactory factoryImpl;
+
+  private static volatile ODataJPAFactory factoryImpl;
 
   /**
    * Method creates a factory instance. The instance returned is singleton.
@@ -101,5 +102,15 @@ public abstract class ODataJPAFactory {
   public ODataJPAAccessFactory getODataJPAAccessFactory() {
     return null;
   };
+
+  /**
+   * Sets the ODataJPAFactory singleton instance to use. This can be used
+   * to override the default behaviour.
+   * @param factoryImpl
+   *            the factoryImpl to set
+   */
+  public static void setFactoryImpl(final ODataJPAFactory factoryImpl) {
+    ODataJPAFactory.factoryImpl = factoryImpl;
+  }
 
 }
