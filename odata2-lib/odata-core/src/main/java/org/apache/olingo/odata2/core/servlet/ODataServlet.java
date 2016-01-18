@@ -140,7 +140,7 @@ public class ODataServlet extends HttpServlet {
       handleRequest(req, ODataHttpMethod.MERGE, resp, serviceFactory);
     } else if (HTTP_METHOD_HEAD.equals(method)) {
       handleRequest(req, ODataHttpMethod.GET, resp, serviceFactory);
-    } else if (HTTP_METHOD_HEAD.equals(method) || HTTP_METHOD_OPTIONS.equals(method)) {
+    } else if (HTTP_METHOD_OPTIONS.equals(method)) {
       createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp, serviceFactory);
     } else {
       createNotImplementedResponse(req, ODataHttpException.COMMON, resp, serviceFactory);
