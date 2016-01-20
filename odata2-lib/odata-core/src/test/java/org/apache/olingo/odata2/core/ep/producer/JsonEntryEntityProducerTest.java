@@ -157,6 +157,78 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
   @SuppressWarnings("unchecked")
   @Test
+  public void includeMetadataWithoutContentOnlyMustMakeNoDifference() throws Exception {
+    HashMap<String, Object> employeeData = new HashMap<String, Object>();
+    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    date.clear();
+    date.set(1999, 0, 1);
+    employeeData.put("EmployeeId", "1");
+    employeeData.put("ImmageUrl", null);
+    employeeData.put("ManagerId", "1");
+    employeeData.put("Age", new Integer(52));
+    employeeData.put("RoomId", "1");
+    employeeData.put("EntryDate", date);
+    employeeData.put("TeamId", "42");
+    employeeData.put("EmployeeName", "Walter Winter");
+    Map<String, Object> locationData = new HashMap<String, Object>();
+    Map<String, Object> cityData = new HashMap<String, Object>();
+    cityData.put("PostalCode", "33470");
+    cityData.put("CityName", "Duckburg");
+    locationData.put("City", cityData);
+    locationData.put("Country", "Calisota");
+    employeeData.put("Location", locationData);
+
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).omitJsonWrapper(true)
+            .includeMetadataInContentOnly(true).build();
+    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, employeeData, properties);
+    Map<String, Object> employee =
+        (Map<String, Object>) new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+    assertNotNull(employee.get("__metadata"));
+    assertNotNull(employee.get("ne_Manager"));
+    assertNotNull(employee.get("ne_Team"));
+    assertNotNull(employee.get("ne_Room"));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void contentOnlyWithMetadata() throws Exception {
+    HashMap<String, Object> employeeData = new HashMap<String, Object>();
+    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    date.clear();
+    date.set(1999, 0, 1);
+    employeeData.put("EmployeeId", "1");
+    employeeData.put("ImmageUrl", null);
+    employeeData.put("ManagerId", "1");
+    employeeData.put("Age", new Integer(52));
+    employeeData.put("RoomId", "1");
+    employeeData.put("EntryDate", date);
+    employeeData.put("TeamId", "42");
+    employeeData.put("EmployeeName", "Walter Winter");
+    Map<String, Object> locationData = new HashMap<String, Object>();
+    Map<String, Object> cityData = new HashMap<String, Object>();
+    cityData.put("PostalCode", "33470");
+    cityData.put("CityName", "Duckburg");
+    locationData.put("City", cityData);
+    locationData.put("Country", "Calisota");
+    employeeData.put("Location", locationData);
+
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).omitJsonWrapper(true).contentOnly(true)
+            .includeMetadataInContentOnly(true).build();
+    final ODataResponse response = new JsonEntityProvider().writeEntry(entitySet, employeeData, properties);
+    Map<String, Object> employee =
+        (Map<String, Object>) new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+    assertNotNull(employee.get("__metadata"));
+    assertNull(employee.get("ne_Manager"));
+    assertNull(employee.get("ne_Team"));
+    assertNull(employee.get("ne_Room"));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
   public void contentOnly() throws Exception {
     HashMap<String, Object> employeeData = new HashMap<String, Object>();
     Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -585,7 +657,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         json);
   }
 
-  @Test(expected=EntityProviderException.class)
+  @Test(expected = EntityProviderException.class)
   public void entryWithExpandedEntryWithFacets() throws Exception {
     Edm edm = MockFacade.getMockEdm();
     EdmTyped imageUrlProperty = edm.getEntityType("RefScenario", "Employee").getProperty("ImageUrl");
@@ -672,7 +744,6 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     EntryCallback callback = new EntryCallback();
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
     callbacks.put("nr_Employees", callback);
-
 
     EdmEntitySet entitySet = edm.getDefaultEntityContainer().getEntitySet("Rooms");
     final ODataResponse response =
@@ -789,6 +860,52 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         json);
   }
 
+  @Test
+  public void entryWithExpandedFeedInClientUseCase() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings");
+    Map<String, Object> buildingData = new HashMap<String, Object>();
+    buildingData.put("Id", "1");
+
+    ExpandSelectTreeNode node2 = Mockito.mock(ExpandSelectTreeNode.class);
+    Map<String, ExpandSelectTreeNode> links = new HashMap<String, ExpandSelectTreeNode>();
+    links.put("nb_Rooms", node2);
+    ExpandSelectTreeNode node1 = Mockito.mock(ExpandSelectTreeNode.class);
+    Mockito.when(node1.getLinks()).thenReturn(links);
+
+    class FeedCallback implements OnWriteFeedContent {
+      @Override
+      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+          throws ODataApplicationException {
+        Map<String, Object> roomData = new HashMap<String, Object>();
+        roomData.put("Id", "1");
+        roomData.put("Version", 1);
+        List<Map<String, Object>> roomsData = new ArrayList<Map<String, Object>>();
+        roomsData.add(roomData);
+        WriteFeedCallbackResult result = new WriteFeedCallbackResult();
+        result.setFeedData(roomsData);
+        result.setInlineProperties(DEFAULT_PROPERTIES);
+        return result;
+      }
+    }
+    FeedCallback callback = new FeedCallback();
+    Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
+    callbacks.put("nb_Rooms", callback);
+
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, buildingData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).clientRequest(true).build());
+    final String json = verifyResponse(response);
+    assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Buildings('1')\","
+        + "\"uri\":\"" + BASE_URI + "Buildings('1')\",\"type\":\"RefScenario.Building\"},"
+        + "\"nb_Rooms\":[{\"__metadata\":{\"id\":\"" + BASE_URI + "Rooms('1')\","
+        + "\"uri\":\"" + BASE_URI + "Rooms('1')\",\"type\":\"RefScenario.Room\",\"etag\":\"W/\\\"1\\\"\"},"
+        + "\"Id\":\"1\",\"Name\":null,\"Seats\":null,\"Version\":1,"
+        + "\"nr_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Rooms('1')/nr_Employees\"}},"
+        + "\"nr_Building\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Rooms('1')/nr_Building\"}}}]}}",
+        json);
+  }
+
   @SuppressWarnings("unchecked")
   @Test
   public void entryWithExpandedFeedButNullData() throws Exception {
@@ -838,6 +955,53 @@ public class JsonEntryEntityProducerTest extends BaseTest {
 
   @SuppressWarnings("unchecked")
   @Test
+  public void entryWithExpandedFeedButNullDataClientUseCase() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings");
+    Map<String, Object> buildingData = new HashMap<String, Object>();
+    buildingData.put("Id", "1");
+
+    ExpandSelectTreeNode node2 = Mockito.mock(ExpandSelectTreeNode.class);
+    Map<String, ExpandSelectTreeNode> links = new HashMap<String, ExpandSelectTreeNode>();
+    links.put("nb_Rooms", node2);
+    ExpandSelectTreeNode node1 = Mockito.mock(ExpandSelectTreeNode.class);
+    Mockito.when(node1.getLinks()).thenReturn(links);
+
+    class FeedCallback implements OnWriteFeedContent {
+      @Override
+      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+          throws ODataApplicationException {
+        WriteFeedCallbackResult result = new WriteFeedCallbackResult();
+        result.setFeedData(null);
+        result.setInlineProperties(DEFAULT_PROPERTIES);
+        return result;
+      }
+    }
+    FeedCallback callback = new FeedCallback();
+    Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
+    callbacks.put("nb_Rooms", callback);
+
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, buildingData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).clientRequest(true).build());
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+
+    Map<String, Object> buildingEntry =
+        new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+    // remove d wrapper
+    buildingEntry = (Map<String, Object>) buildingEntry.get("d");
+    assertEquals(2, buildingEntry.size());
+
+    assertTrue(buildingEntry.containsKey("nb_Rooms"));
+    List<Object> roomsFeed = (List<Object>) buildingEntry.get("nb_Rooms");
+    assertNotNull(roomsFeed);
+    assertEquals(0, roomsFeed.size());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
   public void entryWithExpandedFeedButEmptyData() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings");
     Map<String, Object> buildingData = new HashMap<String, Object>();
@@ -881,6 +1045,53 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     assertNotNull(roomsFeed);
     List<Object> roomsFeedEntries = (List<Object>) roomsFeed.get("results");
     assertEquals(0, roomsFeedEntries.size());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void entryWithExpandedFeedButEmptyDataClientCase() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings");
+    Map<String, Object> buildingData = new HashMap<String, Object>();
+    buildingData.put("Id", "1");
+
+    ExpandSelectTreeNode node2 = Mockito.mock(ExpandSelectTreeNode.class);
+    Map<String, ExpandSelectTreeNode> links = new HashMap<String, ExpandSelectTreeNode>();
+    links.put("nb_Rooms", node2);
+    ExpandSelectTreeNode node1 = Mockito.mock(ExpandSelectTreeNode.class);
+    Mockito.when(node1.getLinks()).thenReturn(links);
+
+    class FeedCallback implements OnWriteFeedContent {
+      @Override
+      public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
+          throws ODataApplicationException {
+        WriteFeedCallbackResult result = new WriteFeedCallbackResult();
+        result.setFeedData(new ArrayList<Map<String, Object>>());
+        result.setInlineProperties(DEFAULT_PROPERTIES);
+        return result;
+      }
+    }
+    FeedCallback callback = new FeedCallback();
+    Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
+    callbacks.put("nb_Rooms", callback);
+
+    final ODataResponse response =
+        new JsonEntityProvider().writeEntry(entitySet, buildingData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).clientRequest(true).build());
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+
+    Map<String, Object> buildingEntry =
+        new Gson().fromJson(new InputStreamReader((InputStream) response.getEntity()), Map.class);
+    // remove d wrapper
+    buildingEntry = (Map<String, Object>) buildingEntry.get("d");
+    assertEquals(2, buildingEntry.size());
+
+    assertTrue(buildingEntry.containsKey("nb_Rooms"));
+    List<Object> roomsFeed = (List<Object>) buildingEntry.get("nb_Rooms");
+    assertNotNull(roomsFeed);
+    assertEquals(0, roomsFeed.size());
   }
 
   @Test

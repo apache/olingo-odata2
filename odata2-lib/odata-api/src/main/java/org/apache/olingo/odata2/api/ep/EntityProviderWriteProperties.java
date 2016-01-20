@@ -47,6 +47,9 @@ public class EntityProviderWriteProperties {
   private boolean omitETag;
   private boolean validatingFacets = true;
 
+  private boolean isClientRequest = false;
+  private boolean includeMetadataInContentOnly = false;
+
   private EntityProviderWriteProperties() {}
 
   public final boolean isOmitETag() {
@@ -138,6 +141,14 @@ public class EntityProviderWriteProperties {
 
   public boolean isValidatingFacets() {
     return validatingFacets;
+  }
+
+  public boolean isClientRequest() {
+    return isClientRequest;
+  }
+
+  public boolean isIncludeMetadataInContentOnly() {
+    return includeMetadataInContentOnly;
   }
 
   public static class ODataEntityProviderPropertiesBuilder {
@@ -234,7 +245,7 @@ public class EntityProviderWriteProperties {
       properties.contentOnly = contentOnly;
       return this;
     }
-    
+
     public ODataEntityProviderPropertiesBuilder omitETag(final boolean omitETag) {
       properties.omitETag = omitETag;
       return this;
@@ -242,6 +253,17 @@ public class EntityProviderWriteProperties {
 
     public ODataEntityProviderPropertiesBuilder validatingFacets(final boolean validatingFacets) {
       properties.validatingFacets = validatingFacets;
+      return this;
+    }
+
+    public ODataEntityProviderPropertiesBuilder clientRequest(final boolean isClientRequest) {
+      properties.isClientRequest = isClientRequest;
+      return this;
+    }
+
+    public ODataEntityProviderPropertiesBuilder
+        includeMetadataInContentOnly(final boolean includeMetadataInContentOnly) {
+      properties.includeMetadataInContentOnly = includeMetadataInContentOnly;
       return this;
     }
 
@@ -258,6 +280,8 @@ public class EntityProviderWriteProperties {
       this.properties.contentOnly = properties.contentOnly;
       this.properties.omitETag = properties.omitETag;
       this.properties.validatingFacets = properties.validatingFacets;
+      this.properties.isClientRequest = properties.isClientRequest;
+      this.properties.includeMetadataInContentOnly = properties.includeMetadataInContentOnly;
       return this;
     }
 

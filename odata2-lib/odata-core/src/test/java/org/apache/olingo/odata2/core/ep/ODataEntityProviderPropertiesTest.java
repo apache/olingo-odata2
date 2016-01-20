@@ -19,6 +19,9 @@
 package org.apache.olingo.odata2.core.ep;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
@@ -56,7 +59,28 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
   }
 
   @Test
-  public void buildPropertiesDefaults() throws Exception {
+  public void buildPropertiesDefault() throws Exception {
+    URI serviceRoot = new URI("http://localhost:80/");
+    final EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(serviceRoot).build();
+    assertNotNull(properties.getCallbacks());
+    assertTrue("Default callbacks should be empty", properties.getCallbacks().isEmpty());
+    assertNull(properties.getExpandSelectTree());
+    assertNull(properties.getSelfLink());
+    assertNull(properties.getInlineCount());
+    assertNull(properties.getInlineCountType());
+    assertNull(properties.getNextLink());
+    assertNull(properties.getAdditionalLinks());
+
+    assertFalse(properties.isIncludeSimplePropertyType());
+    assertFalse(properties.isOmitJsonWrapper());
+    assertFalse(properties.isContentOnly());
+    assertFalse(properties.isOmitETag());
+    assertFalse(properties.isIncludeMetadataInContentOnly());
+    assertFalse(properties.isClientRequest());
+  }
+
+  @Test
+  public void buildPropertiesAllSet() throws Exception {
     URI serviceRoot = new URI("http://localhost:80/");
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
     callbacks.put("aCallback", new MyCallback(null, null));
@@ -76,6 +100,8 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .omitJsonWrapper(true)
         .contentOnly(true)
         .omitETag(true)
+        .includeMetadataInContentOnly(true)
+        .clientRequest(true)
         .build();
 
     assertEquals("Wrong amount of callbacks.", 1, properties.getCallbacks().size());
@@ -91,6 +117,9 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertTrue("Json Wrapper should be omitted", properties.isOmitJsonWrapper());
     assertTrue("ContentOnlyFlag should be set", properties.isContentOnly());
     assertTrue("OmitETag should be set", properties.isOmitETag());
+
+    assertTrue("includeMetadataInContentOnly should be set", properties.isIncludeMetadataInContentOnly());
+    assertTrue("clientRequest flag should be set", properties.isClientRequest());
   }
 
   @Test
@@ -114,6 +143,8 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .omitJsonWrapper(true)
         .contentOnly(true)
         .omitETag(true)
+        .includeMetadataInContentOnly(true)
+        .clientRequest(true)
         .build();
 
     //
@@ -131,8 +162,10 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertEquals("Wrong nextLink", "http://localhost", fromProperties.getNextLink());
     assertTrue("Simple property types should be true", fromProperties.isIncludeSimplePropertyType());
     assertEquals(Collections.emptyMap(), fromProperties.getAdditionalLinks().get("aNavigationProperty"));
-    assertTrue("Json Wrapper should be omitted", properties.isOmitJsonWrapper());
-    assertTrue("ContentOnlyFlag should be set", properties.isContentOnly());
-    assertTrue("OmitETag should be set", properties.isOmitETag());
+    assertTrue("Json Wrapper should be omitted", fromProperties.isOmitJsonWrapper());
+    assertTrue("ContentOnlyFlag should be set", fromProperties.isContentOnly());
+    assertTrue("OmitETag should be set", fromProperties.isOmitETag());
+    assertTrue("includeMetadataInContentOnly should be set", fromProperties.isIncludeMetadataInContentOnly());
+    assertTrue("clientRequest flag should be set", fromProperties.isClientRequest());
   }
 }

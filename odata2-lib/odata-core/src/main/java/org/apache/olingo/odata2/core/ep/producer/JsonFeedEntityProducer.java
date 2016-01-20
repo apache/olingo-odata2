@@ -65,24 +65,11 @@ public class JsonFeedEntityProducer {
 
       jsonStreamWriter.name(FormatJson.RESULTS)
           .beginArray();
-      JsonEntryEntityProducer entryProducer = new JsonEntryEntityProducer(properties);
-      boolean first = true;
-      for (final Map<String, Object> entryData : data) {
-        if (first) {
-          first = false;
-        } else {
-          jsonStreamWriter.separator();
-        }
-        entryProducer.append(writer, entityInfo, entryData, false);
-      }
+
+      appendEntries(writer, entityInfo, data, jsonStreamWriter);
 
       if (callback != null) {
-        JsonDeletedEntryEntityProducer deletedEntryProducer = new JsonDeletedEntryEntityProducer(properties);
-        TombstoneCallbackResult callbackResult = callback.getTombstoneCallbackResult();
-        List<Map<String, Object>> deletedEntries = callbackResult.getDeletedEntriesData();
-        if (deletedEntries != null) {
-          deletedEntryProducer.append(writer, entityInfo, deletedEntries, data.isEmpty());
-        }
+        appendDeletedEntries(writer, entityInfo, data, callback);
       }
 
       jsonStreamWriter.endArray();
@@ -98,6 +85,44 @@ public class JsonFeedEntityProducer {
     } catch (final IOException e) {
       throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
+    }
+  }
+
+  public void appendAsPlainArray(final Writer writer, final EntityInfoAggregator entityInfo,
+      final List<Map<String, Object>> data) throws EntityProviderException {
+    JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
+    try {
+      jsonStreamWriter.beginArray();
+      appendEntries(writer, entityInfo, data, jsonStreamWriter);
+      jsonStreamWriter.endArray();
+    } catch (final IOException e) {
+      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
+    }
+  }
+
+  private void appendDeletedEntries(final Writer writer, final EntityInfoAggregator entityInfo,
+      final List<Map<String, Object>> data, TombstoneCallback callback) throws EntityProviderException {
+    JsonDeletedEntryEntityProducer deletedEntryProducer = new JsonDeletedEntryEntityProducer(properties);
+    TombstoneCallbackResult callbackResult = callback.getTombstoneCallbackResult();
+    List<Map<String, Object>> deletedEntries = callbackResult.getDeletedEntriesData();
+    if (deletedEntries != null) {
+      deletedEntryProducer.append(writer, entityInfo, deletedEntries, data.isEmpty());
+    }
+  }
+
+  private void appendEntries(final Writer writer, final EntityInfoAggregator entityInfo,
+      final List<Map<String, Object>> data, JsonStreamWriter jsonStreamWriter) throws EntityProviderException,
+      IOException {
+    JsonEntryEntityProducer entryProducer = new JsonEntryEntityProducer(properties);
+    boolean first = true;
+    for (final Map<String, Object> entryData : data) {
+      if (first) {
+        first = false;
+      } else {
+        jsonStreamWriter.separator();
+      }
+      entryProducer.append(writer, entityInfo, entryData, false);
     }
   }
 

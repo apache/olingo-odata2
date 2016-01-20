@@ -77,11 +77,13 @@ public class JsonEntryEntityProducer {
 
       jsonStreamWriter.beginObject();
 
-      if (!properties.isContentOnly()) {
+      boolean containsMetadata = false;
+      if (!properties.isContentOnly() || (properties.isContentOnly() && properties.isIncludeMetadataInContentOnly())) {
         writeMetadata(entityInfo, data, type);
+        containsMetadata = true;
       }
 
-      writeProperties(entityInfo, data, type);
+      writeProperties(entityInfo, data, type, containsMetadata);
 
       if (!properties.isContentOnly()) {
         writeNavigationProperties(writer, entityInfo, data, type);
@@ -158,7 +160,13 @@ public class JsonEntryEntityProducer {
         final EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
         final EntityInfoAggregator inlineEntityInfo =
             EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
-        new JsonFeedEntityProducer(inlineProperties).append(writer, inlineEntityInfo, inlineData, false);
+
+        JsonFeedEntityProducer jsonFeedEntityProducer = new JsonFeedEntityProducer(inlineProperties);
+        if (properties.isClientRequest()) {
+          jsonFeedEntityProducer.appendAsPlainArray(writer, inlineEntityInfo, inlineData);
+        } else {
+          jsonFeedEntityProducer.append(writer, inlineEntityInfo, inlineData, false);
+        }
 
       } else {
         final WriteEntryCallbackResult result =
@@ -180,11 +188,11 @@ public class JsonEntryEntityProducer {
   }
 
   private void writeProperties(final EntityInfoAggregator entityInfo, final Map<String, Object> data,
-      final EdmEntityType type) throws EdmException, EntityProviderException, IOException {
-    boolean omitComma = false;
-    if (properties.isContentOnly()) {
-      omitComma = true;
-    }
+      final EdmEntityType type, boolean containsMetadata) throws EdmException, EntityProviderException, IOException {
+    // if the payload contains metadata we must not omit the first comm as it separates the _metadata object form the
+    // properties
+    boolean omitComma = !containsMetadata;
+
     for (final String propertyName : type.getPropertyNames()) {
       if (entityInfo.getSelectedPropertyNames().contains(propertyName)) {
         if (omitComma) {
@@ -205,7 +213,7 @@ public class JsonEntryEntityProducer {
   private void writeMetadata(final EntityInfoAggregator entityInfo, final Map<String, Object> data,
       final EdmEntityType type) throws IOException, EntityProviderException, EdmException {
     if (properties.getServiceRoot() == null) {
-      location =  "";
+      location = "";
     } else {
       location = properties.getServiceRoot().toASCIIString() +
           AtomEntryEntityProducer.createSelfLink(entityInfo, data, null);

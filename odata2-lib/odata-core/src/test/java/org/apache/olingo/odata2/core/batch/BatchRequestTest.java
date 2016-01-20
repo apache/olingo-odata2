@@ -154,8 +154,6 @@ public class BatchRequestTest {
     checkMimeHeaders(requestBody);
     checkHeaders(headers, requestBody);
 
-    System.out.println(requestBody);
-
     assertTrue(requestBody.contains("--batch_"));
     assertTrue(requestBody.contains("--changeset_"));
     assertTrue(requestBody.contains("PUT Employees('2') HTTP/1.1"));
