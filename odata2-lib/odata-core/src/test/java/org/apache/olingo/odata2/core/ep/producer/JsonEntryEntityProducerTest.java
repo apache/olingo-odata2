@@ -894,7 +894,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     final ODataResponse response =
         new JsonEntityProvider().writeEntry(entitySet, buildingData,
             EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
-                .callbacks(callbacks).clientRequest(true).build());
+                .callbacks(callbacks).responsePayload(false).build());
     final String json = verifyResponse(response);
     assertEquals("{\"d\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Buildings('1')\","
         + "\"uri\":\"" + BASE_URI + "Buildings('1')\",\"type\":\"RefScenario.Building\"},"
@@ -983,7 +983,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     final ODataResponse response =
         new JsonEntityProvider().writeEntry(entitySet, buildingData,
             EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
-                .callbacks(callbacks).clientRequest(true).build());
+                .callbacks(callbacks).responsePayload(false).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());
@@ -1077,7 +1077,7 @@ public class JsonEntryEntityProducerTest extends BaseTest {
     final ODataResponse response =
         new JsonEntityProvider().writeEntry(entitySet, buildingData,
             EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
-                .callbacks(callbacks).clientRequest(true).build());
+                .callbacks(callbacks).responsePayload(false).build());
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("EntitypProvider must not set content header", response.getContentHeader());

@@ -125,7 +125,7 @@ public class JsonFeedEntityProducerTest extends BaseTest {
     teamsData.add(team2Data);
 
     EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).clientRequest(true).build();
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).responsePayload(true).build();
     final ODataResponse response = new JsonEntityProvider().writeFeed(entitySet, teamsData, properties);
     assertNotNull(response);
     assertNotNull(response.getEntity());

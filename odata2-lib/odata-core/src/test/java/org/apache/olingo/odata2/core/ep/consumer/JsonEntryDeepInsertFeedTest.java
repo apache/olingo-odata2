@@ -50,8 +50,10 @@ public class JsonEntryDeepInsertFeedTest extends AbstractConsumerTest {
   private static final String BUILDING_WITH_INLINE_ROOMS_NEXTLINK_AND_COUNT =
       "JsonBuildingWithInlineRoomsAndNextLinkAndCount.json";
 
+  @Test
   public void innerFeedWithoutResultsWrapperClientUseCase() throws Exception {
-    ODataEntry outerEntry = prepareAndExecuteEntry(BUILDING_WITH_INLINE_ROOMS_CLIENT_CASE, "Buildings", DEFAULT_PROPERTIES);
+    ODataEntry outerEntry = prepareAndExecuteEntry(
+        BUILDING_WITH_INLINE_ROOMS_CLIENT_CASE, "Buildings", DEFAULT_PROPERTIES);
 
     ODataFeed innerRoomFeed = (ODataFeed) outerEntry.getProperties().get("nb_Rooms");
     assertNotNull(innerRoomFeed);

@@ -193,7 +193,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET));
-      new JsonFeedEntityProducer(properties).append(writer, entityInfo, data, true);
+      new JsonFeedEntityProducer(properties).appendAsObject(writer, entityInfo, data, true);
       writer.flush();
       buffer.closeWrite();
 

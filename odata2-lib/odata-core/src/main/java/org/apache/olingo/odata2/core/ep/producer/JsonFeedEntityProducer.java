@@ -44,8 +44,9 @@ public class JsonFeedEntityProducer {
     this.properties = properties == null ? EntityProviderWriteProperties.serviceRoot(null).build() : properties;
   }
 
-  public void append(final Writer writer, final EntityInfoAggregator entityInfo, final List<Map<String, Object>> data,
-      final boolean isRootElement) throws EntityProviderException {
+  public void appendAsObject(final Writer writer, final EntityInfoAggregator entityInfo,
+                             final List<Map<String, Object>> data,
+                             final boolean isRootElement) throws EntityProviderException {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
 
     TombstoneCallback callback = getTombstoneCallback();
@@ -88,8 +89,8 @@ public class JsonFeedEntityProducer {
     }
   }
 
-  public void appendAsPlainArray(final Writer writer, final EntityInfoAggregator entityInfo,
-      final List<Map<String, Object>> data) throws EntityProviderException {
+  public void appendAsArray(final Writer writer, final EntityInfoAggregator entityInfo,
+                            final List<Map<String, Object>> data) throws EntityProviderException {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
     try {
       jsonStreamWriter.beginArray();

@@ -76,7 +76,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertFalse(properties.isContentOnly());
     assertFalse(properties.isOmitETag());
     assertFalse(properties.isIncludeMetadataInContentOnly());
-    assertFalse(properties.isClientRequest());
+    assertTrue(properties.isResponsePayload());
   }
 
   @Test
@@ -101,7 +101,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .contentOnly(true)
         .omitETag(true)
         .includeMetadataInContentOnly(true)
-        .clientRequest(true)
+        .responsePayload(true)
         .build();
 
     assertEquals("Wrong amount of callbacks.", 1, properties.getCallbacks().size());
@@ -119,7 +119,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertTrue("OmitETag should be set", properties.isOmitETag());
 
     assertTrue("includeMetadataInContentOnly should be set", properties.isIncludeMetadataInContentOnly());
-    assertTrue("clientRequest flag should be set", properties.isClientRequest());
+    assertTrue("responsePayload flag should be set", properties.isResponsePayload());
   }
 
   @Test
@@ -144,7 +144,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .contentOnly(true)
         .omitETag(true)
         .includeMetadataInContentOnly(true)
-        .clientRequest(true)
+        .responsePayload(true)
         .build();
 
     //
@@ -166,6 +166,6 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertTrue("ContentOnlyFlag should be set", fromProperties.isContentOnly());
     assertTrue("OmitETag should be set", fromProperties.isOmitETag());
     assertTrue("includeMetadataInContentOnly should be set", fromProperties.isIncludeMetadataInContentOnly());
-    assertTrue("clientRequest flag should be set", fromProperties.isClientRequest());
+    assertTrue("responsePayload flag should be set", fromProperties.isResponsePayload());
   }
 }

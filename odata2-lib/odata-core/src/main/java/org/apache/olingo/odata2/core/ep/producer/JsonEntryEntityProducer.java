@@ -162,10 +162,10 @@ public class JsonEntryEntityProducer {
             EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
 
         JsonFeedEntityProducer jsonFeedEntityProducer = new JsonFeedEntityProducer(inlineProperties);
-        if (properties.isClientRequest()) {
-          jsonFeedEntityProducer.appendAsPlainArray(writer, inlineEntityInfo, inlineData);
+        if (properties.isResponsePayload()) {
+          jsonFeedEntityProducer.appendAsObject(writer, inlineEntityInfo, inlineData, false);
         } else {
-          jsonFeedEntityProducer.append(writer, inlineEntityInfo, inlineData, false);
+          jsonFeedEntityProducer.appendAsArray(writer, inlineEntityInfo, inlineData);
         }
 
       } else {
