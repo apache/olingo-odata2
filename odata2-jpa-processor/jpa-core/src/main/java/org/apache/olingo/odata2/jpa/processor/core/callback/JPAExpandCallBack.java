@@ -19,8 +19,6 @@
 package org.apache.olingo.odata2.jpa.processor.core.callback;
 
 import java.net.URI;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -202,17 +200,18 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     return edmNavigationPropertyList;
   }
 
-  private static boolean testNavPropertySegment(
+  private boolean testNavPropertySegment(
 		  final EdmNavigationProperty navProperty,
 		  final EdmEntityType sourceEntityType,
 		  final EdmNavigationProperty navigationProperty) throws EdmException {
-	  if(navigationProperty.getFromRole().toLowerCase().startsWith(sourceEntityType.getName().toLowerCase())) {
+	  if(navigationProperty.getFromRole().toLowerCase(Locale.ENGLISH).startsWith(
+        sourceEntityType.getName().toLowerCase(Locale.ENGLISH))) {
 		  final String roleNum = 
 				  navigationProperty.getFromRole().substring(sourceEntityType.getName().length());
 		  if(roleNum.length() > 0) {
 			  try {
-				  NumberFormat.getInstance().parse(roleNum);
-			  } catch (ParseException e) {
+				  Integer.parseInt(roleNum);
+			  } catch (NumberFormatException e) {
 				  return false;
 			  }
 		  }
@@ -220,7 +219,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
 	  return navProperty.getName().equals(navigationProperty.getName());
   }
   
-  public static <T> Map<String, ODataCallback> getCallbacks(final URI baseUri,
+  public static Map<String, ODataCallback> getCallbacks(final URI baseUri,
       final ExpandSelectTreeNode expandSelectTreeNode, final List<ArrayList<NavigationPropertySegment>> expandList)
       throws EdmException {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();

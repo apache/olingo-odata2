@@ -204,12 +204,17 @@ public class EdmMockUtil {
     return entryData;
   }
 
-  private static NavigationPropertySegment mockNavigationPropertySegment() {
+  public static NavigationPropertySegment mockNavigationPropertySegment(String fromRoleAppendix) {
     NavigationPropertySegment navigationPropSegment = EasyMock.createMock(NavigationPropertySegment.class);
-    EasyMock.expect(navigationPropSegment.getNavigationProperty()).andStubReturn(mockNavigationProperty());
+    EasyMock.expect(navigationPropSegment.getNavigationProperty()).andStubReturn(
+        mockNavigationProperty(fromRoleAppendix));
     EasyMock.expect(navigationPropSegment.getTargetEntitySet()).andStubReturn(mockTargetEntitySet());
     EasyMock.replay(navigationPropSegment);
     return navigationPropSegment;
+  }
+
+  public static NavigationPropertySegment mockNavigationPropertySegment() {
+    return mockNavigationPropertySegment(null);
   }
 
   public static NavigationPropertySegment mockThirdNavigationPropertySegment() {
@@ -330,6 +335,10 @@ public class EdmMockUtil {
   }
 
   public static EdmNavigationProperty mockNavigationProperty() {
+    return mockNavigationProperty(null);
+  }
+
+  public static EdmNavigationProperty mockNavigationProperty(String fromRoleAppendix) {
     EdmNavigationProperty navigationProperty = EasyMock.createMock(EdmNavigationProperty.class);
     EdmMapping mapping = EasyMock.createMock(EdmMapping.class);
     EasyMock.expect(mapping.getInternalName()).andStubReturn("salesOrderLineItems");
@@ -338,7 +347,8 @@ public class EdmMockUtil {
       EasyMock.expect(navigationProperty.getMultiplicity()).andStubReturn(EdmMultiplicity.MANY);
       EasyMock.expect(navigationProperty.getMapping()).andStubReturn(mapping);
       EasyMock.expect(navigationProperty.getName()).andStubReturn("SalesOrderLineItemDetails");
-      EasyMock.expect(navigationProperty.getFromRole()).andStubReturn("SalesOrderHeader");
+      EasyMock.expect(navigationProperty.getFromRole()).andStubReturn("SalesOrderHeader"
+      + (fromRoleAppendix == null? "": fromRoleAppendix));
     } catch (EdmException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }

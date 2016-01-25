@@ -18,7 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.ref.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -77,10 +80,12 @@ public class DataGenerator {
         resourceBundleArr[i] = ResourceBundle.getBundle(resourceSQLPropFileNames[i]);// Get SQL statements as properties
 
         Set<String> keySet = resourceBundleArr[i].keySet();
+        List<String> queryNames = new ArrayList<String>(keySet);
+        Collections.sort(queryNames);
 
-        for (String string : keySet) {
-          String currentSQL = (String) string;
-          String sqlQuery = resourceBundleArr[i].getString(currentSQL);
+        for (String queryName : queryNames) {
+//        while(keySet.hasMoreElements()) {
+          String sqlQuery = resourceBundleArr[i].getString(queryName);
           System.out.println("Executing Query - " + sqlQuery);
           SQLCall sqlCall = new SQLCall(sqlQuery);
 
