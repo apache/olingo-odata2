@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -54,33 +56,17 @@ public class EdmTime extends AbstractSimpleType {
   @Override
   protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
       final Class<T> returnType) throws EdmSimpleTypeException {
-    Calendar valueCalendar;
-    if (literalKind == EdmLiteralKind.URI) {
-      if (value.length() > 6 && value.startsWith("time'") && value.endsWith("'")) {
-        valueCalendar = parseLiteral(value.substring(5, value.length() - 1), facets);
-      } else {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
-      }
-    } else {
-      valueCalendar = parseLiteral(value, facets);
+
+    if (literalKind == EdmLiteralKind.URI
+        && (value.length() <= 6 || !value.startsWith("time'") || !value.endsWith("'"))) {
+      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
     }
 
-    if (returnType.isAssignableFrom(Calendar.class)) {
-      return returnType.cast(valueCalendar);
-    } else if (returnType.isAssignableFrom(Long.class)) {
-      return returnType.cast(valueCalendar.getTimeInMillis());
-    } else if (returnType.isAssignableFrom(Date.class)) {
-      return returnType.cast(valueCalendar.getTime());
-    } else {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType));
-    }
-  }
-
-  private Calendar parseLiteral(final String literal, final EdmFacets facets) throws EdmSimpleTypeException {
-    final Matcher matcher = PATTERN.matcher(literal);
+    final Matcher matcher = PATTERN.matcher(
+        literalKind == EdmLiteralKind.URI ? value.substring(5, value.length() - 1) : value);
     if (!matcher.matches()
         || (matcher.group(1) == null && matcher.group(2) == null && matcher.group(3) == null)) {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(literal));
+      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
     }
 
     Calendar dateTimeValue = Calendar.getInstance();
@@ -93,23 +79,41 @@ public class EdmTime extends AbstractSimpleType {
     dateTimeValue.set(Calendar.SECOND,
         matcher.group(3) == null ? 0 : Integer.parseInt(matcher.group(3)));
 
+    int nanoSeconds = 0;
     if (matcher.group(4) != null) {
-      if (facets == null || facets.getPrecision() == null || facets.getPrecision() >= matcher.group(4).length()) {
-        if (matcher.group(4).length() <= 3) {
-          dateTimeValue.set(Calendar.MILLISECOND,
-              Short.parseShort(matcher.group(4) + "000".substring(0, 3 - matcher.group(4).length())));
-        } else {
-          throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(literal));
+      final String decimals = matcher.group(4);
+      if (facets == null || facets.getPrecision() == null || facets.getPrecision() >= decimals.length()) {
+        nanoSeconds = Integer.parseInt(decimals + "000000000".substring(decimals.length()));
+        if (!(returnType.isAssignableFrom(Timestamp.class))) {
+          if (nanoSeconds % (1000 * 1000) == 0) {
+            dateTimeValue.set(Calendar.MILLISECOND, nanoSeconds / (1000 * 1000));
+          } else {
+            throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
+          }
         }
       } else {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(literal, facets));
+        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets));
       }
     }
 
-    if (dateTimeValue.get(Calendar.DAY_OF_YEAR) == 1) {
-      return dateTimeValue;
+    if (dateTimeValue.get(Calendar.DAY_OF_YEAR) != 1) {
+      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
+    }
+
+    if (returnType.isAssignableFrom(Calendar.class)) {
+      return returnType.cast(dateTimeValue);
+    } else if (returnType.isAssignableFrom(Long.class)) {
+      return returnType.cast(dateTimeValue.getTimeInMillis());
+    } else if (returnType.isAssignableFrom(Date.class)) {
+      return returnType.cast(dateTimeValue.getTime());
+    } else if (returnType.isAssignableFrom(Time.class)) {
+      return returnType.cast(new Time(dateTimeValue.getTimeInMillis()));
+    } else if (returnType.isAssignableFrom(Timestamp.class)) {
+      Timestamp timestamp = new Timestamp(dateTimeValue.getTimeInMillis());
+      timestamp.setNanos(nanoSeconds);
+      return returnType.cast(timestamp);
     } else {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(literal));
+      throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType));
     }
   }
 
@@ -131,7 +135,7 @@ public class EdmTime extends AbstractSimpleType {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass()));
     }
 
-    StringBuilder result = new StringBuilder(15); // 15 characters are enough for millisecond precision.
+    StringBuilder result = new StringBuilder(21); // 21 characters are enough for nanosecond precision.
     result.append('P');
     result.append('T');
     result.append(dateTimeValue.get(Calendar.HOUR_OF_DAY));
@@ -140,8 +144,11 @@ public class EdmTime extends AbstractSimpleType {
     result.append('M');
     result.append(dateTimeValue.get(Calendar.SECOND));
 
+    final int fractionalSecs = value instanceof Timestamp ?
+        ((Timestamp) value).getNanos() :
+        dateTimeValue.get(Calendar.MILLISECOND);
     try {
-      EdmDateTime.appendMilliseconds(result, dateTimeValue.get(Calendar.MILLISECOND), facets);
+      EdmDateTime.appendFractionalSeconds(result, fractionalSecs, value instanceof Timestamp, facets);
     } catch (final IllegalArgumentException e) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets), e);
     }

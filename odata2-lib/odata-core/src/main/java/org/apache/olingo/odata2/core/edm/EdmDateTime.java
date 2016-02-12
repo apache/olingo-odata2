@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -36,7 +37,7 @@ public class EdmDateTime extends AbstractSimpleType {
 
   private static final Pattern PATTERN = Pattern.compile(
       "(\\p{Digit}{1,4})-(\\p{Digit}{1,2})-(\\p{Digit}{1,2})"
-          + "T(\\p{Digit}{1,2}):(\\p{Digit}{1,2})(?::(\\p{Digit}{1,2})(\\.(\\p{Digit}{0,3}?)0*)?)?");
+          + "T(\\p{Digit}{1,2}):(\\p{Digit}{1,2})(?::(\\p{Digit}{1,2})(\\.(\\p{Digit}{0,9}?)0*)?)?");
   private static final Pattern JSON_PATTERN = Pattern.compile("/Date\\((-?\\p{Digit}+)\\)/");
   private static final EdmDateTime instance = new EdmDateTime();
 
@@ -81,37 +82,18 @@ public class EdmDateTime extends AbstractSimpleType {
     Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     dateTimeValue.clear();
 
+    String valueString;
     if (literalKind == EdmLiteralKind.URI) {
       if (value.length() > 10 && value.startsWith("datetime'") && value.endsWith("'")) {
-        parseLiteral(value.substring(9, value.length() - 1), facets, dateTimeValue);
+        valueString = value.substring(9, value.length() - 1);
       } else {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
       }
     } else {
-      parseLiteral(value, facets, dateTimeValue);
+      valueString = value;
     }
 
-    if (returnType.isAssignableFrom(Calendar.class)) {
-      return returnType.cast(dateTimeValue);
-    } else if (returnType.isAssignableFrom(Long.class)) {
-      return returnType.cast(dateTimeValue.getTimeInMillis());
-    } else if (returnType.isAssignableFrom(Date.class)) {
-      return returnType.cast(dateTimeValue.getTime());
-    } else {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType));
-    }
-  }
-
-  /**
-   * Parses a formatted date/time value and sets the values of a {@link Calendar} object accordingly.
-   * @param value the formatted date/time value as String
-   * @param facets additional constraints for parsing (optional)
-   * @param dateTimeValue the Calendar object to be set to the parsed value
-   * @throws EdmSimpleTypeException
-   */
-  protected static void parseLiteral(final String value, final EdmFacets facets, final Calendar dateTimeValue)
-      throws EdmSimpleTypeException {
-    final Matcher matcher = PATTERN.matcher(value);
+    final Matcher matcher = PATTERN.matcher(valueString);
     if (!matcher.matches()) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
     }
@@ -124,16 +106,23 @@ public class EdmDateTime extends AbstractSimpleType {
         Byte.parseByte(matcher.group(5)),
         matcher.group(6) == null ? 0 : Byte.parseByte(matcher.group(6)));
 
+    int nanoSeconds = 0;
     if (matcher.group(7) != null) {
-      if (matcher.group(7).length() == 1 || matcher.group(7).length() > 8) {
+      if (matcher.group(7).length() == 1 || matcher.group(7).length() > 10) {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
       }
       final String decimals = matcher.group(8);
       if (facets != null && facets.getPrecision() != null && facets.getPrecision() < decimals.length()) {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets));
       }
-      final String milliSeconds = decimals + "000".substring(decimals.length());
-      dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
+      nanoSeconds = Integer.parseInt(decimals + "000000000".substring(decimals.length()));
+      if (!(returnType.isAssignableFrom(Timestamp.class))) {
+        if (nanoSeconds % (1000 * 1000) == 0) {
+          dateTimeValue.set(Calendar.MILLISECOND, nanoSeconds / (1000 * 1000));
+        } else {
+          throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
+        }
+      }
     }
 
     // The Calendar class does not check any values until a get method is called,
@@ -147,6 +136,20 @@ public class EdmDateTime extends AbstractSimpleType {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value), e);
     }
     dateTimeValue.setLenient(true);
+
+    if (returnType.isAssignableFrom(Calendar.class)) {
+      return returnType.cast(dateTimeValue);
+    } else if (returnType.isAssignableFrom(Long.class)) {
+      return returnType.cast(dateTimeValue.getTimeInMillis());
+    } else if (returnType.isAssignableFrom(Date.class)) {
+      return returnType.cast(dateTimeValue.getTime());
+    } else if (returnType.isAssignableFrom(Timestamp.class)) {
+        Timestamp timestamp = new Timestamp(dateTimeValue.getTimeInMillis());
+        timestamp.setNanos(nanoSeconds);
+        return returnType.cast(timestamp);
+    } else {
+      throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType));
+    }
   }
 
   @Override
@@ -164,13 +167,17 @@ public class EdmDateTime extends AbstractSimpleType {
     }
 
     if (literalKind == EdmLiteralKind.JSON) {
-      return "/Date(" + timeInMillis + ")/";
+      if (value instanceof Timestamp && ((Timestamp) value).getNanos() % (1000 * 1000) != 0) {
+        throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT.addContent(value));
+      } else {
+        return "/Date(" + timeInMillis + ")/";
+      }
     }
 
     Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
     dateTimeValue.setTimeInMillis(timeInMillis);
 
-    StringBuilder result = new StringBuilder(23); // 23 characters are enough for millisecond precision.
+    StringBuilder result = new StringBuilder(29); // 29 characters are enough for nanosecond precision.
     final int year = dateTimeValue.get(Calendar.YEAR);
     appendTwoDigits(result, year / 100);
     appendTwoDigits(result, year % 100);
@@ -185,8 +192,11 @@ public class EdmDateTime extends AbstractSimpleType {
     result.append(':');
     appendTwoDigits(result, dateTimeValue.get(Calendar.SECOND));
 
+    final int fractionalSecs = value instanceof Timestamp ?
+        ((Timestamp) value).getNanos() :
+        dateTimeValue.get(Calendar.MILLISECOND);
     try {
-      appendMilliseconds(result, dateTimeValue.get(Calendar.MILLISECOND), facets);
+      appendFractionalSeconds(result, fractionalSecs, value instanceof Timestamp, facets);
     } catch (final IllegalArgumentException e) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets), e);
     }
@@ -205,29 +215,48 @@ public class EdmDateTime extends AbstractSimpleType {
     result.append((char) ('0' + number % 10));
   }
 
-  protected static void appendMilliseconds(final StringBuilder result, final long milliseconds, final EdmFacets facets)
-      throws IllegalArgumentException {
-    final int digits = milliseconds % 1000 == 0 ? 0 : milliseconds % 100 == 0 ? 1 : milliseconds % 10 == 0 ? 2 : 3;
-    if (digits > 0) {
+  /**
+   * Appends the given milli- or nanoseconds to the given string builder, performance-optimized.
+   * @param result a {@link StringBuilder}
+   * @param fractionalSeconds fractional seconds (nonnegative and assumed to be in the valid range)
+   * @param isNano whether the value is to be interpreted as nanoseconds (milliseconds if false)
+   * @param facets the EDM facets containing an upper limit for decimal digits (optional, defaults to zero)
+   * @throws IllegalArgumentException if precision is not met
+   */
+  protected static void appendFractionalSeconds(StringBuilder result, final int fractionalSeconds,
+      final boolean isNano, final EdmFacets facets) throws IllegalArgumentException {
+    int significantDigits = 0;
+    if (fractionalSeconds > 0) {
+      // Determine the number of significant digits.
+      significantDigits = isNano ? 9 : 3;
+      int output = fractionalSeconds;
+      while (output % 10 == 0) {
+        output /= 10;
+        significantDigits--;
+      }
+
       result.append('.');
-      for (int d = 100; d > 0; d /= 10) {
-        final byte digit = (byte) (milliseconds % (d * 10) / d);
-        if (digit > 0 || milliseconds % d > 0) {
+      for (int d = 100 * (isNano ? 1000 * 1000 : 1); d > 0; d /= 10) {
+        final byte digit = (byte) (fractionalSeconds % (d * 10) / d);
+        if (digit > 0 || fractionalSeconds % d > 0) {
           result.append((char) ('0' + digit));
         }
       }
     }
 
-    if (facets != null && facets.getPrecision() != null) {
-      final int precision = facets.getPrecision();
-      if (digits > precision) {
+    // Check precision constraint.
+    final Integer precision = facets == null || facets.getPrecision() == null ? null : facets.getPrecision();
+    if (precision != null) {
+      if (precision < significantDigits) {
         throw new IllegalArgumentException();
-      }
-      if (digits == 0 && precision > 0) {
-        result.append('.');
-      }
-      for (int i = digits; i < precision; i++) {
-        result.append('0');
+      } else {
+        // Add additional zeroes if the precision is larger than the number of significant digits.
+        if (significantDigits == 0 && precision > 0) {
+          result.append('.');
+        }
+        for (int i = significantDigits; i < precision; i++) {
+          result.append('0');
+        }
       }
     }
   }
