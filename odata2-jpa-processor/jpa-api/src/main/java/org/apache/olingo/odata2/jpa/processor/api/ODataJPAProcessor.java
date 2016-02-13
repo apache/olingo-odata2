@@ -77,15 +77,20 @@ public abstract class ODataJPAProcessor extends ODataSingleProcessor {
   }
 
   /**
-   * The method closes ThreadContext. It is mandatory to call this method to
-   * avoid memory leaks.
+   * The method closes ThreadContext.
+   * It is mandatory to call this method to avoid memory leaks.
+   * <p/>
+   * <b>ATTENTION:</b> If <code>isContainerManaged</code> is set to <code>true</code> at
+   * the ODataJPAContext only the cleanup is run but the EntityManager is not closed.
    */
   public void close(boolean forceClose) {
     ODataJPATombstoneContext.cleanup();
-    EntityManager em = oDataJPAContext.getEntityManager();
-    if (!oDataJPAContext.getODataContext().isInBatchMode() || forceClose) {
-      if (em.isOpen()) {
-        em.close();
+    if(!oDataJPAContext.isContainerManaged()) {
+      EntityManager em = oDataJPAContext.getEntityManager();
+      if (!oDataJPAContext.getODataContext().isInBatchMode() || forceClose) {
+        if (em.isOpen()) {
+          em.close();
+        }
       }
     }
   }

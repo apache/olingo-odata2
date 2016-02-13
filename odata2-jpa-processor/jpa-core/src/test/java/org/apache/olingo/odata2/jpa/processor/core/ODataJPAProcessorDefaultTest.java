@@ -333,6 +333,8 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
     odataJPAContext.setODataContext((ODataContext) EasyMock.anyObject());
     EasyMock.expectLastCall().anyTimes();
     EasyMock.expect(odataJPAContext.getEntityManager()).andStubReturn(getLocalEntityManager());
+    EasyMock.expect(odataJPAContext.isContainerManaged()).andReturn(false);
+    EasyMock.expectLastCall().anyTimes();
     EasyMock.replay(odataJPAContext);
     return odataJPAContext;
   }

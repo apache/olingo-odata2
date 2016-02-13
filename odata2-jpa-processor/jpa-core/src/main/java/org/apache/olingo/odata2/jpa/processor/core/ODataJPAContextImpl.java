@@ -44,6 +44,7 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   private static final ThreadLocal<ODataContext> oDataContextThreadLocal = new ThreadLocal<ODataContext>();
   private boolean defaultNaming = true;
   private ODataJPATransaction transaction = null;
+  private boolean containerManaged = false;
 
   @Override
   public String getPersistenceUnitName() {
@@ -178,6 +179,16 @@ public class ODataJPAContextImpl implements ODataJPAContext {
       }
     }
     return transaction;
+  }
+
+  @Override
+  public boolean isContainerManaged() {
+    return this.containerManaged;
+  }
+
+  @Override
+  public void setContainerManaged(boolean containerManaged) {
+    this.containerManaged = containerManaged;
   }
 
   @Override
