@@ -57,8 +57,9 @@ public class EdmTime extends AbstractSimpleType {
   protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
       final Class<T> returnType) throws EdmSimpleTypeException {
 
+    //OLINGO-883 prefix is case insensitve so we need to check with lower case if we want to use startsWith()
     if (literalKind == EdmLiteralKind.URI
-        && (value.length() <= 6 || !value.startsWith("time'") || !value.endsWith("'"))) {
+        && (value.length() <= 6 || !value.toLowerCase().startsWith("time'") || !value.endsWith("'"))) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
     }
 

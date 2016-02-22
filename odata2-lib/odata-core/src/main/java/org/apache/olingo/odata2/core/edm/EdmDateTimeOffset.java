@@ -58,7 +58,8 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
   protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
       final Class<T> returnType) throws EdmSimpleTypeException {
     if (literalKind == EdmLiteralKind.URI) {
-      if (value.length() > 16 && value.startsWith("datetimeoffset'") && value.endsWith("'")) {
+      //OLINGO-883 prefix is case insensitve so we need to check with lower case if we want to use startsWith()
+      if (value.length() > 16 && value.toLowerCase().startsWith("datetimeoffset'") && value.endsWith("'")) {
         return internalValueOfString(value.substring(15, value.length() - 1), EdmLiteralKind.DEFAULT, facets,
             returnType);
       } else {

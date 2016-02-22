@@ -84,7 +84,8 @@ public class EdmDateTime extends AbstractSimpleType {
 
     String valueString;
     if (literalKind == EdmLiteralKind.URI) {
-      if (value.length() > 10 && value.startsWith("datetime'") && value.endsWith("'")) {
+      //OLINGO-883 prefix is case insensitve so we need to check with lower case if we want to use startsWith()
+      if (value.length() > 10 && value.toLowerCase().startsWith("datetime'") && value.endsWith("'")) {
         valueString = value.substring(9, value.length() - 1);
       } else {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
