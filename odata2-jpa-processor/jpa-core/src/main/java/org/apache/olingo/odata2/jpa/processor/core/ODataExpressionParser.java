@@ -210,9 +210,9 @@ public class ODataExpressionParser {
       case SUBSTRINGOF:
         if (methodFlag.get() != null && methodFlag.get() == 1) {
           methodFlag.set(null);
-          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',%s,'%%')) THEN TRUE ELSE FALSE END)", second, first);
+          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%'))) THEN TRUE ELSE FALSE END)", second, first);
         } else {
-          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',%s,'%%')) THEN TRUE ELSE FALSE END) = true", second,
+          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%'))) THEN TRUE ELSE FALSE END) = true", second,
               first);
         }
       case TOLOWER:
