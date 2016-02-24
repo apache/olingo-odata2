@@ -44,7 +44,6 @@ import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
 import org.apache.olingo.odata2.jpa.processor.core.callback.JPAExpandCallBack;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.EdmMockUtil;
-import org.easymock.EasyMock;
 import org.junit.Test;
 
 public class JPAExpandCallBackTest {
