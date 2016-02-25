@@ -62,6 +62,7 @@ import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmTestModelView;
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -384,9 +385,10 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     }
     EasyMock.replay(edmType);
     EdmProperty edmProperty = EasyMock.createMock(EdmProperty.class);
-    EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
+    JPAEdmMappingImpl edmMapping = EasyMock.createMock(JPAEdmMappingImpl.class);
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("soId");
     EasyMock.expect(edmMapping.getMediaResourceMimeTypeKey()).andReturn(null);
+    EasyMock.expect(((JPAEdmMappingImpl) edmMapping).isVirtualAccess()).andStubReturn(false);
     EasyMock.replay(edmMapping);
     try {
       EasyMock.expect(edmProperty.getName()).andStubReturn("ID");

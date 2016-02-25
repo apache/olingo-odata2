@@ -42,6 +42,7 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackContext;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.easymock.EasyMock;
 
 public class EdmMockUtil {
@@ -320,8 +321,9 @@ public class EdmMockUtil {
     EdmType type = EasyMock.createMock(EdmType.class);
     EasyMock.expect(type.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
     EasyMock.replay(type);
-    EdmMapping mapping = EasyMock.createMock(EdmMapping.class);
+    JPAEdmMappingImpl mapping = EasyMock.createMock(JPAEdmMappingImpl.class);
     EasyMock.expect(mapping.getInternalName()).andStubReturn("price");
+    EasyMock.expect(((JPAEdmMappingImpl) mapping).isVirtualAccess()).andStubReturn(false);
     EasyMock.replay(mapping);
     try {
       EasyMock.expect(edmProperty.getName()).andStubReturn("price");

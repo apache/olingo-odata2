@@ -175,7 +175,7 @@ public final class JPAEntityParser {
     					navigationProperty.getMapping(), ACCESS_MODIFIER_GET);
     			Method getterMethod = null;
     			if(((JPAEdmMapping)navigationProperty.getMapping()).isVirtualAccess()) {
-    				getterMethod = jpaEntity.getClass().getMethod("get", String.class);
+    				getterMethod = jpaEntity.getClass().getMethod(ACCESS_MODIFIER_GET, String.class);
     			}else{
     				getterMethod = jpaEntity.getClass()
     						.getMethod(methodName, (Class<?>[]) null);
@@ -556,7 +556,7 @@ public final class JPAEntityParser {
         	  if (accessModifier.equals(ACCESS_MODIFIER_SET)) {
         		  JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
         		  if(jpaEdmMapping.isVirtualAccess()) {
-        			  accessModifierMap.put(propertyName, jpaEntityType.getMethod("set",
+        			  accessModifierMap.put(propertyName, jpaEntityType.getMethod(ACCESS_MODIFIER_SET,
         					  new Class<?>[] { String.class,Object.class }));
         		  }else {
         			  accessModifierMap.put(propertyName, jpaEntityType.getMethod(methodName,
@@ -565,7 +565,7 @@ public final class JPAEntityParser {
         	  } else {
         		  JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
         		  if(jpaEdmMapping.isVirtualAccess()) {
-        			  method = jpaEntityType.getMethod("get", String.class);
+        			  method = jpaEntityType.getMethod(ACCESS_MODIFIER_GET, String.class);
         		  }else{
         			  method = jpaEntityType.getMethod(methodName, (Class<?>[]) null);
         		  }
