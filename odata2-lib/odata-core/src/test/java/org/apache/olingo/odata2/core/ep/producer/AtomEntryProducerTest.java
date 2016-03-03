@@ -41,6 +41,7 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
 import junit.framework.Assert;
+
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmCustomizableFeedMappings;
@@ -60,6 +61,7 @@ import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.helper.XMLUnitHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
@@ -465,7 +467,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     try {
       ser.writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
     } catch (EntityProviderException e) {
-      verifyRootCause(EntityProviderException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
+      verifyRootCause(EntityProviderProducerException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
       thrown = true;
     }
     if (!thrown) {
@@ -497,7 +499,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     try {
       ser.writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
     } catch (EntityProviderException e) {
-      verifyRootCause(EntityProviderException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
+      verifyRootCause(EntityProviderProducerException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
       thrown = true;
     }
     if (!thrown) {
@@ -528,7 +530,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     try {
       ser.writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
     } catch (EntityProviderException e) {
-      verifyRootCause(EntityProviderException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
+      verifyRootCause(EntityProviderProducerException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
       thrown = true;
     }
     if (!thrown) {

@@ -150,7 +150,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       csb.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -181,7 +181,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       csb.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -213,7 +213,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       csb.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -242,7 +242,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (XMLStreamException e) {
       csb.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -270,7 +270,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       csb.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
 
@@ -299,7 +299,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       csb.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -324,7 +324,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       csb.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -349,8 +349,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
         return writeSingleTypedElement(info, data);
       }
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -419,8 +418,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
           new XmlEntityConsumer().readProperty(info, content, properties).get(info.getName());
       }
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
-          .addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(e.getMessageReference(), e);
     }
   }
 }

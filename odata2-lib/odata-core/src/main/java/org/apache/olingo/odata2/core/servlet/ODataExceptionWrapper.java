@@ -43,6 +43,7 @@ import org.apache.olingo.odata2.api.processor.ODataErrorCallback;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.commons.ContentType;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 import org.apache.olingo.odata2.core.exception.MessageService;
 import org.apache.olingo.odata2.core.exception.MessageService.Message;
@@ -152,7 +153,15 @@ public class ODataExceptionWrapper {
     if (toHandleException instanceof ODataHttpException) {
       errorContext.setHttpStatus(((ODataHttpException) toHandleException).getHttpStatus());
     } else if (toHandleException instanceof EntityProviderException) {
-      errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
+      if(toHandleException instanceof EntityProviderProducerException){
+        /*
+         * As per OLINGO-763 serializer exceptions are produced by the server and must therefore result 
+         * in a 500 internal server error
+         */
+        errorContext.setHttpStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
+      }else{
+        errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
+      }
     } else if (toHandleException instanceof BatchException) {
       errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
     }

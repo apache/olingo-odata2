@@ -45,6 +45,7 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Encoder;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
@@ -100,11 +101,10 @@ public class JsonEntryEntityProducer {
       writer.flush();
 
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -147,7 +147,7 @@ public class JsonEntryEntityProducer {
 
     ODataCallback callback = properties.getCallbacks().get(navigationPropertyName);
     if (callback == null) {
-      throw new EntityProviderException(EntityProviderException.EXPANDNOTSUPPORTED);
+      throw new EntityProviderProducerException(EntityProviderException.EXPANDNOTSUPPORTED);
     }
     try {
       if (isFeed) {
@@ -182,7 +182,7 @@ public class JsonEntryEntityProducer {
         }
       }
     } catch (final ODataApplicationException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }

@@ -57,6 +57,7 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.api.edm.provider.Using;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.util.XmlMetadataConstants;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
@@ -420,9 +421,9 @@ public class XmlMetadataProducer {
 
       xmlStreamWriter.flush();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (FactoryConfigurationError e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
