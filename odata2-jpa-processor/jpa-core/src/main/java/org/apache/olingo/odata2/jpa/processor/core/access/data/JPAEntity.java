@@ -206,7 +206,7 @@ public class JPAEntity {
 
   @SuppressWarnings("unchecked")
   protected void setComplexProperty(Method accessModifier, final Object jpaEntity,
-      final EdmStructuralType edmComplexType, final HashMap<String, Object> propertyValue)
+      final EdmStructuralType edmComplexType, final HashMap<String, Object> propertyValue, String propertyName)
       throws EdmException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
       InstantiationException, ODataJPARuntimeException, NoSuchMethodException, SecurityException, SQLException {
 
@@ -223,19 +223,23 @@ public class JPAEntity {
       if (edmTyped.getType().getKind().toString().equals(EdmTypeKind.COMPLEX.toString())) {
         EdmStructuralType structualType = (EdmStructuralType) edmTyped.getType();
         setComplexProperty(accessModifier, embeddableObject, structualType, (HashMap<String, Object>) propertyValue
-            .get(edmPropertyName));
+            .get(edmPropertyName),propertyName);
       } else {
         setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName), (EdmSimpleType) edmTyped
-            .getType());
+            .getType(),propertyName);
       }
     }
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
   protected void setProperty(final Method method, final Object entity, final Object entityPropertyValue,
-      final EdmSimpleType type) throws
+      final EdmSimpleType type, String propertyName) throws
       IllegalAccessException, IllegalArgumentException, InvocationTargetException, ODataJPARuntimeException {
     if (entityPropertyValue != null) {
+    	if(method.getParameterTypes().length>1) {
+    		 method.invoke(entity, propertyName,entityPropertyValue);
+    		 return;
+    	}
       Class<?> parameterType = method.getParameterTypes()[0];
       if (type != null && type.getDefaultType().equals(String.class)) {
         if (parameterType.equals(String.class)) {
@@ -422,7 +426,7 @@ public class JPAEntity {
           }
           accessModifier = accessModifiersWrite.get(propertyName);
           setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
-              .getType());
+              .getType(),propertyName);
 
           break;
         case COMPLEX:
@@ -430,7 +434,7 @@ public class JPAEntity {
           accessModifier = accessModifiersWrite.get(propertyName);
           setComplexProperty(accessModifier, jpaEntity,
               structuralType,
-              (HashMap<String, Object>) oDataEntryProperties.get(propertyName));
+              (HashMap<String, Object>) oDataEntryProperties.get(propertyName),propertyName);
           break;
         case NAVIGATION:
         case ENTITY:

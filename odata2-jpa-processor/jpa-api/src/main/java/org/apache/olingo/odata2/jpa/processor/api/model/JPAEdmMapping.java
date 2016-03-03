@@ -75,5 +75,9 @@ public interface JPAEdmMapping {
    * @return JPA EntityListener type
    */
   public Class<? extends ODataJPATombstoneEntityListener> getODataJPATombstoneEntityListener();
+  
+  public boolean isVirtualAccess();
+  
+  public void setVirtualAccess(boolean virtualAccess);
 
 }
