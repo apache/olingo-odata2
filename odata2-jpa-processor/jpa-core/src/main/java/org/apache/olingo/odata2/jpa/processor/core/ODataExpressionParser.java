@@ -135,11 +135,14 @@ public class ODataExpressionParser {
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case EQ:
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
-            + JPQLStatement.Operator.EQ + JPQLStatement.DELIMITER.SPACE + right
+            + (!"null".equals(right) ? JPQLStatement.Operator.EQ : "IS") + JPQLStatement.DELIMITER.SPACE + right
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case NE:
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
-            + JPQLStatement.Operator.NE + JPQLStatement.DELIMITER.SPACE + right
+            + (!"null".equals(right) ? 
+            	  JPQLStatement.Operator.NE :
+            	  "IS" + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.NOT)
+            + JPQLStatement.DELIMITER.SPACE + right
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case LT:
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
@@ -210,10 +213,11 @@ public class ODataExpressionParser {
       case SUBSTRINGOF:
         if (methodFlag.get() != null && methodFlag.get() == 1) {
           methodFlag.set(null);
-          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',%s,'%%')) THEN TRUE ELSE FALSE END)", second, first);
+          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%'))) THEN TRUE ELSE FALSE END)",
+              second, first);
         } else {
-          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',%s,'%%')) THEN TRUE ELSE FALSE END) = true", second,
-              first);
+          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%'))) THEN TRUE ELSE FALSE END) = true",
+              second, first);
         }
       case TOLOWER:
         return String.format("LOWER(%s)", first);
@@ -427,7 +431,7 @@ public class ODataExpressionParser {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
 
-    } else if (edmSimpleType.getDefaultType().equals(Long.class)) {
+    } else if (Long.class.equals(edmSimpleType.getDefaultType())) {
       uriLiteral = uriLiteral + JPQLStatement.DELIMITER.LONG; //$NON-NLS-1$
     }
     return uriLiteral;

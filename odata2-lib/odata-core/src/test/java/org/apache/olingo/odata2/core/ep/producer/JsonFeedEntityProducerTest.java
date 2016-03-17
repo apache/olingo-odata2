@@ -110,6 +110,39 @@ public class JsonFeedEntityProducerTest extends BaseTest {
         + "\"nt_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Teams('2')/nt_Employees\"}}}]}}",
         json);
   }
+  
+  @Test
+  public void clientFlagMustNotHaveAnEffect() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Teams");
+    Map<String, Object> team1Data = new HashMap<String, Object>();
+    team1Data.put("Id", "1");
+    team1Data.put("isScrumTeam", true);
+    Map<String, Object> team2Data = new HashMap<String, Object>();
+    team2Data.put("Id", "2");
+    team2Data.put("isScrumTeam", false);
+    List<Map<String, Object>> teamsData = new ArrayList<Map<String, Object>>();
+    teamsData.add(team1Data);
+    teamsData.add(team2Data);
+
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).responsePayload(true).build();
+    final ODataResponse response = new JsonEntityProvider().writeFeed(entitySet, teamsData, properties);
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+
+    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
+    assertNotNull(json);
+    assertEquals("{\"d\":{\"results\":[{\"__metadata\":{\"id\":\"" + BASE_URI + "Teams('1')\","
+        + "\"uri\":\"" + BASE_URI + "Teams('1')\",\"type\":\"RefScenario.Team\"},"
+        + "\"Id\":\"1\",\"Name\":null,\"isScrumTeam\":true,"
+        + "\"nt_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Teams('1')/nt_Employees\"}}},"
+        + "{\"__metadata\":{\"id\":\"" + BASE_URI + "Teams('2')\","
+        + "\"uri\":\"" + BASE_URI + "Teams('2')\",\"type\":\"RefScenario.Team\"},"
+        + "\"Id\":\"2\",\"Name\":null,\"isScrumTeam\":false,"
+        + "\"nt_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Teams('2')/nt_Employees\"}}}]}}",
+        json);
+  }
 
   @Test
   public void inlineCount() throws Exception {

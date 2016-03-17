@@ -24,11 +24,13 @@ import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityComplexPropertyInfo;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
@@ -52,21 +54,21 @@ public class JsonPropertyEntityProducer {
 
       jsonStreamWriter.name(propertyInfo.getName());
       appendPropertyValue(jsonStreamWriter, propertyInfo.isComplex() ? (EntityComplexPropertyInfo) propertyInfo
-          : propertyInfo, value);
+          : propertyInfo, value, true);
 
       jsonStreamWriter.endObject()
           .endObject();
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
   protected static void appendPropertyValue(final JsonStreamWriter jsonStreamWriter,
-      final EntityPropertyInfo propertyInfo, final Object value) throws IOException, EdmException,
+                                            final EntityPropertyInfo propertyInfo, final Object value,
+                                            boolean validatingFacets) throws IOException, EdmException,
       EntityProviderException {
     if (propertyInfo.isComplex()) {
       if (value == null || value instanceof Map<?, ?>) {
@@ -78,17 +80,18 @@ public class JsonPropertyEntityProducer {
           final String name = childPropertyInfo.getName();
           jsonStreamWriter.name(name);
           appendPropertyValue(jsonStreamWriter, childPropertyInfo,
-              value == null ? null : ((Map<?, ?>) value).get(name));
+              value == null ? null : ((Map<?, ?>) value).get(name), validatingFacets);
         }
         jsonStreamWriter.endObject();
       } else {
-        throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+        throw new EntityProviderProducerException(EntityProviderException.ILLEGAL_ARGUMENT
             .addContent("A complex property must have a Map as data"));
       }
     } else {
       final EdmSimpleType type = (EdmSimpleType) propertyInfo.getType();
       final Object contentValue = value instanceof Map ? ((Map<?, ?>) value).get(propertyInfo.getName()) : value;
-      final String valueAsString = type.valueToString(contentValue, EdmLiteralKind.JSON, propertyInfo.getFacets());
+      final EdmFacets facets = validatingFacets ? propertyInfo.getFacets(): null;
+      final String valueAsString = type.valueToString(contentValue, EdmLiteralKind.JSON, facets);
       switch (EdmSimpleTypeKind.valueOf(type.getName())) {
       case String:
         jsonStreamWriter.stringValue(valueAsString);

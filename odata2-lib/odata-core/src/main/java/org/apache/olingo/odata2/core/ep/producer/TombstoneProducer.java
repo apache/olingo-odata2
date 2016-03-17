@@ -33,6 +33,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
 import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
@@ -66,9 +67,9 @@ public class TombstoneProducer {
         writer.writeEndElement();
       }
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 

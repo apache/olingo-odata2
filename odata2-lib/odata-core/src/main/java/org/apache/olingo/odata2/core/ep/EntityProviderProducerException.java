@@ -16,31 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.annotation.processor.ref;
+package org.apache.olingo.odata2.core.ep;
 
-import org.apache.olingo.odata2.testutil.server.ServletType;
-import org.junit.Ignore;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.exception.MessageReference;
 
-import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
-import com.google.gson.reflect.TypeToken;
+public class EntityProviderProducerException extends EntityProviderException {
 
-/**
- *  
- */
-@Ignore("no test methods")
-public class AbstractRefJsonTest extends AbstractRefTest {
-  public AbstractRefJsonTest(final ServletType servletType) {
-    super(servletType);
+  private static final long serialVersionUID = 1L;
+
+  public EntityProviderProducerException(final MessageReference messageReference) {
+    super(messageReference);
   }
 
-  public LinkedTreeMap<?,?> getStringMap(final String body) {
-    Gson gson = new Gson();
-    final LinkedTreeMap<?,?> map = gson.fromJson(body, new TypeToken<LinkedTreeMap<?,?>>() {}.getType());
-    if (map.get("d") instanceof LinkedTreeMap<?,?>) {
-      return (LinkedTreeMap<?,?>) map.get("d");
-    } else {
-      return map;
-    }
+  public EntityProviderProducerException(final MessageReference messageReference, final Throwable cause) {
+    super(messageReference, cause);
+  }
+
+  public EntityProviderProducerException(final MessageReference messageReference, final String errorCode) {
+    super(messageReference, errorCode);
+  }
+
+  public EntityProviderProducerException(final MessageReference messageReference, final Throwable cause,
+      final String errorCode) {
+    super(messageReference, cause, errorCode);
   }
 }

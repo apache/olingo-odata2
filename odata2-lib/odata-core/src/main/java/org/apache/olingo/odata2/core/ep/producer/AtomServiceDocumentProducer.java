@@ -28,10 +28,12 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySetInfo;
+import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmServiceMetadata;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.core.commons.ContentType;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 /**
@@ -88,11 +90,13 @@ public class AtomServiceDocumentProducer {
 
       xmlStreamWriter.flush();
     } catch (FactoryConfigurationError e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
+    } catch (EdmException e) {
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     } catch (ODataException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 }

@@ -81,6 +81,8 @@ public abstract class EdmImpl implements Edm {
           edmEntityContainers.put(name, edmEntityContainer);
         }
       }
+    } catch (EdmException e) {
+      throw e;
     } catch (ODataException e) {
       throw new EdmException(EdmException.COMMON, e);
     }
@@ -104,6 +106,8 @@ public abstract class EdmImpl implements Edm {
       if (edmEntityType != null) {
         edmEntityTypes.put(fqName, edmEntityType);
       }
+    } catch (EdmException e) {
+      throw e;
     } catch (ODataException e) {
       throw new EdmException(EdmException.COMMON, e);
     }
@@ -118,6 +122,8 @@ public abstract class EdmImpl implements Edm {
         if (aliasToNamespaceInfo == null) {
           aliasToNamespaceInfo = new HashMap<String, String>();
         }
+      } catch (EdmException e) {
+        throw e;
       } catch (ODataException e) {
         throw new EdmException(EdmException.COMMON, e);
       }
@@ -145,6 +151,8 @@ public abstract class EdmImpl implements Edm {
       if (edmComplexType != null) {
         edmComplexTypes.put(fqName, edmComplexType);
       }
+    } catch (EdmException e) {
+      throw e;
     } catch (ODataException e) {
       throw new EdmException(EdmException.COMMON, e);
     }
@@ -167,6 +175,8 @@ public abstract class EdmImpl implements Edm {
       if (edmAssociation != null) {
         edmAssociations.put(fqName, edmAssociation);
       }
+    } catch (EdmException e) {
+      throw e;
     } catch (ODataException e) {
       throw new EdmException(EdmException.COMMON, e);
     }
@@ -190,6 +200,8 @@ public abstract class EdmImpl implements Edm {
       if (edmEntitySets == null) {
         edmEntitySets = createEntitySets();
       }
+    } catch (EdmException e) {
+      throw e;
     } catch (ODataException e) {
       throw new EdmException(EdmException.COMMON, e);
     }
@@ -202,6 +214,8 @@ public abstract class EdmImpl implements Edm {
       if (edmFunctionImports == null) {
         edmFunctionImports = createFunctionImports();
       }
+    } catch (EdmException e) {
+      throw e;
     } catch (ODataException e) {
       throw new EdmException(EdmException.COMMON, e);
     }

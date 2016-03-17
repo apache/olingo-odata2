@@ -78,6 +78,23 @@ public class ClassHelperTest {
     Assert.assertEquals(SimpleEntity.class.getName(), loadedClasses.get(0).getName());
   }
 
+  @Test(expected = ClassFormatError.class)
+  public void loadFromDirWithUnsafeName() throws Exception {
+    URL currentPath = Thread.currentThread().getContextClassLoader().getResource(".");
+    File folder = new File(currentPath.toURI().getSchemeSpecificPart(), "space space/package (123)/");
+    folder.mkdirs();
+    File classFile = new File(folder, "Invalid.class");
+    classFile.createNewFile();
+    String packageToScan = "space space.package";
+
+    //
+    List<Class<?>> loadedClasses = ClassHelper.loadClasses(packageToScan, annotatedTestEntityInnerClasses);
+
+    //
+    Assert.assertEquals(1, loadedClasses.size());
+    Assert.assertEquals(SimpleEntity.class.getName(), loadedClasses.get(0).getName());
+  }
+
   @Test
   public void loadSingleEntityFromJar() throws ODataException {
     String packageToScan = AnnotatedEntity.class.getPackage().getName();

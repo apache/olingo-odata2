@@ -22,12 +22,15 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
@@ -60,6 +63,22 @@ public class XmlPropertyProducerTest extends AbstractProviderTest {
 
     assertXpathExists("/d:EmployeeId", xml);
     assertXpathEvaluatesTo("1", "/d:EmployeeId/text()", xml);
+  }
+
+  @Test
+  public void serializeRoomIdWithFacets() throws Exception {
+    AtomEntityProvider s = createAtomEntityProvider();
+    EdmTyped edmTyped = MockFacade.getMockEdm().getEntityType("RefScenario", "Room").getProperty("Id");
+    EdmProperty edmProperty = (EdmProperty) edmTyped;
+
+    String id = StringHelper.generateData(1000);
+    try {
+      ODataResponse response = s.writeProperty(edmProperty, id);
+      assertNotNull(response);
+    } catch(EntityProviderException e) {
+      assertNotNull(e.getCause());
+      assertTrue(e.getCause() instanceof EdmSimpleTypeException);
+    }
   }
 
   @Test

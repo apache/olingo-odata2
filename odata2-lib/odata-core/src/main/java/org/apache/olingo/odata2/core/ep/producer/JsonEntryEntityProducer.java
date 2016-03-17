@@ -45,6 +45,7 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Encoder;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
@@ -77,11 +78,13 @@ public class JsonEntryEntityProducer {
 
       jsonStreamWriter.beginObject();
 
-      if (!properties.isContentOnly()) {
+      boolean containsMetadata = false;
+      if (!properties.isContentOnly() || (properties.isContentOnly() && properties.isIncludeMetadataInContentOnly())) {
         writeMetadata(entityInfo, data, type);
+        containsMetadata = true;
       }
 
-      writeProperties(entityInfo, data, type);
+      writeProperties(entityInfo, data, type, containsMetadata);
 
       if (!properties.isContentOnly()) {
         writeNavigationProperties(writer, entityInfo, data, type);
@@ -98,11 +101,10 @@ public class JsonEntryEntityProducer {
       writer.flush();
 
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -139,12 +141,13 @@ public class JsonEntryEntityProducer {
     context.setSourceEntitySet(entitySet);
     context.setNavigationProperty(navigationProperty);
     context.setEntryData(data);
+    context.setCurrentWriteProperties(properties);
     context.setCurrentExpandSelectTreeNode(properties.getExpandSelectTree().getLinks().get(
         navigationPropertyName));
 
     ODataCallback callback = properties.getCallbacks().get(navigationPropertyName);
     if (callback == null) {
-      throw new EntityProviderException(EntityProviderException.EXPANDNOTSUPPORTED);
+      throw new EntityProviderProducerException(EntityProviderException.EXPANDNOTSUPPORTED);
     }
     try {
       if (isFeed) {
@@ -157,7 +160,13 @@ public class JsonEntryEntityProducer {
         final EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
         final EntityInfoAggregator inlineEntityInfo =
             EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
-        new JsonFeedEntityProducer(inlineProperties).append(writer, inlineEntityInfo, inlineData, false);
+
+        JsonFeedEntityProducer jsonFeedEntityProducer = new JsonFeedEntityProducer(inlineProperties);
+        if (properties.isResponsePayload()) {
+          jsonFeedEntityProducer.appendAsObject(writer, inlineEntityInfo, inlineData, false);
+        } else {
+          jsonFeedEntityProducer.appendAsArray(writer, inlineEntityInfo, inlineData);
+        }
 
       } else {
         final WriteEntryCallbackResult result =
@@ -173,27 +182,30 @@ public class JsonEntryEntityProducer {
         }
       }
     } catch (final ODataApplicationException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
 
   private void writeProperties(final EntityInfoAggregator entityInfo, final Map<String, Object> data,
-      final EdmEntityType type) throws EdmException, EntityProviderException, IOException {
-    boolean omitComma = false;
-    if (properties.isContentOnly()) {
-      omitComma = true;
-    }
+      final EdmEntityType type, boolean containsMetadata) throws EdmException, EntityProviderException, IOException {
+    // if the payload contains metadata we must not omit the first comm as it separates the _metadata object form the
+    // properties
+    boolean omitComma = !containsMetadata;
+
     for (final String propertyName : type.getPropertyNames()) {
       if (entityInfo.getSelectedPropertyNames().contains(propertyName)) {
-        if (omitComma == true) {
+        if (omitComma) {
           omitComma = false;
         } else {
           jsonStreamWriter.separator();
         }
         jsonStreamWriter.name(propertyName);
-        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, entityInfo.getPropertyInfo(propertyName),
-            data.get(propertyName));
+
+        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter,
+            entityInfo.getPropertyInfo(propertyName),
+            data.get(propertyName),
+            properties.isValidatingFacets());
       }
     }
   }
@@ -201,7 +213,7 @@ public class JsonEntryEntityProducer {
   private void writeMetadata(final EntityInfoAggregator entityInfo, final Map<String, Object> data,
       final EdmEntityType type) throws IOException, EntityProviderException, EdmException {
     if (properties.getServiceRoot() == null) {
-      location =  "";
+      location = "";
     } else {
       location = properties.getServiceRoot().toASCIIString() +
           AtomEntryEntityProducer.createSelfLink(entityInfo, data, null);

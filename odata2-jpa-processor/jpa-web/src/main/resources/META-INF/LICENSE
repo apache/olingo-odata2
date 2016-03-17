@@ -201,7 +201,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   
+
 =====================================================================
   - WSDL4J (http://sf.net/projects/wsdl4j) wsdl4j:wsdl4j:jar:1.6.3
     License: CPL  (http://www.opensource.org/licenses/cpl1.0.txt)
@@ -459,9 +459,9 @@
 	resulting litigation.
 
 =====================================================================
-  - Stax2 API (http://woodstox.codehaus.org/StAX2) 
+  - Stax2 API (http://woodstox.codehaus.org/StAX2)
     org.codehaus.woodstox:stax2-api:jar:3.1.1
-    License: The BSD License  
+    License: The BSD License
     (http://www.opensource.org/licenses/bsd-license.php)
 =====================================================================
 	Copyright (c) 2004-2010, Woodstox Project
@@ -497,11 +497,11 @@
 
 
 =====================================================================
-  - javax.ws.rs-api (http://jax-rs-spec.java.net) 
+  - javax.ws.rs-api (http://jax-rs-spec.java.net)
     javax.ws.rs:javax.ws.rs-api:jar:2.0-m10
-  - JAXB Reference Implementation (http://jaxb.java.net/) 
+  - JAXB Reference Implementation (http://jaxb.java.net/)
     com.sun.xml.bind:jaxb-impl:jar:2.2.6
-    License: CDDL 1.1  (https://glassfish.java.net/public/CDDL+GPL_1_1.html)    
+    License: CDDL 1.1  (https://glassfish.java.net/public/CDDL+GPL_1_1.html)
 =====================================================================
 
 	COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL)Version 1.1
@@ -906,17 +906,17 @@
 	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 	OTHER DEALINGS IN THE SOFTWARE.
-	
+
 =====================================================================
 
-  - SDO API (http://www.eclipse.org/eclipselink) 
+  - SDO API (http://www.eclipse.org/eclipselink)
     org.eclipse.persistence:commonj.sdo:jar:2.1.1
-  - EclipseLink (non-OSGi) (http://www.eclipse.org/eclipselink) 
+  - EclipseLink (non-OSGi) (http://www.eclipse.org/eclipselink)
     org.eclipse.persistence:eclipselink:jar:2.5.0
-  - Javax Persistence (http://www.eclipse.org/eclipselink) 
+  - Javax Persistence (http://www.eclipse.org/eclipselink)
     org.eclipse.persistence:javax.persistence:jar:2.0.5
-    License: Eclipse Public License v1.0  (http://www.eclipse.org/legal/epl-v10.html)    
-    License: Eclipse Distribution License v. 1.0  
+    License: Eclipse Public License v1.0  (http://www.eclipse.org/legal/epl-v10.html)
+    License: Eclipse Distribution License v. 1.0
     (http://www.eclipse.org/org/documents/edl-v10.php)
 =====================================================================
 
@@ -1169,7 +1169,7 @@
 
 =====================================================================
   - HSQLDB Database (http://hsqldb.org/) org.hsqldb:hsqldb:jar:1.8.0.10
-    License: HSQLDB License, a BSD open source license  
+    License: HSQLDB License, a BSD open source license
     (http://hsqldb.org/web/hsqlLicense.html)
 =====================================================================
 	COPYRIGHTS AND LICENSES (based on BSD License)

@@ -161,9 +161,11 @@ public class JPAProcessorImpl implements JPAProcessor {
         List<Object> deltaResult =
             (List<Object>) ODataJPATombstoneContext.getDeltaResult(((EdmMapping) mapping).getInternalName());
         result = handlePaging(deltaResult, uriParserResultView);
-        ODataJPATombstoneContext.setDeltaToken(listener.generateDeltaToken((List<Object>) result, query));
       } else {
         result = handlePaging(query, uriParserResultView);
+      }
+      if (listener != null && listener.isTombstoneSupported()) {
+        ODataJPATombstoneContext.setDeltaToken(listener.generateDeltaToken((List<Object>) result, query));
       }
       return result == null ? new ArrayList<Object>() : result;
     } catch (EdmException e) {

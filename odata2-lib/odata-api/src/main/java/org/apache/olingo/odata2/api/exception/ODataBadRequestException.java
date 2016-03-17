@@ -45,7 +45,10 @@ public class ODataBadRequestException extends ODataHttpException {
       "INVALID_HEADER");
   /** INVALID_SYNTAX requires NO content values */
   public static final MessageReference INVALID_SYNTAX = createMessageReference(ODataBadRequestException.class,
-      "INVALID_SYNTAX");;
+      "INVALID_SYNTAX");
+  /** INVALID_REQUEST requires NO content values */
+  public static final MessageReference INVALID_REQUEST = createMessageReference(ODataBadRequestException.class,
+      "INVALID_REQUEST");
 
   public ODataBadRequestException(final MessageReference messageReference) {
     super(messageReference, HttpStatusCodes.BAD_REQUEST);

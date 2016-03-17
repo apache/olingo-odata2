@@ -29,7 +29,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
-import com.google.gson.internal.StringMap;
+import com.google.gson.internal.LinkedTreeMap;
 
 /**
  *  
@@ -55,11 +55,11 @@ public class EntryJsonCreateTest extends AbstractRefJsonTest {
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
 
     String body = getBody(response);
-    StringMap<?> map = getStringMap(body);
+    LinkedTreeMap<?, ?> map = getLinkedTreeMap(body);
     assertEquals("104", map.get("Id"));
     assertEquals("Room 104", map.get("Name"));
     @SuppressWarnings("unchecked")
-    StringMap<String> metadataMap = (StringMap<String>) map.get("__metadata");
+    LinkedTreeMap<String, String> metadataMap = (LinkedTreeMap<String, String>) map.get("__metadata");
     assertNotNull(metadataMap);
     assertEquals(getEndpoint() + "Rooms('104')", metadataMap.get("id"));
     assertEquals("RefScenario.Room", metadataMap.get("type"));
@@ -85,14 +85,14 @@ public class EntryJsonCreateTest extends AbstractRefJsonTest {
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
 
     String body = getBody(response);
-    StringMap<?> map = getStringMap(body);
+    LinkedTreeMap<?, ?> map = getLinkedTreeMap(body);
     assertEquals("104", map.get("Id"));
     assertEquals("Room 104", map.get("Name"));
     @SuppressWarnings("unchecked")
-    StringMap<Object> employeesMap = (StringMap<Object>) map.get("nr_Employees");
+    LinkedTreeMap<String, Object> employeesMap = (LinkedTreeMap<String, Object>) map.get("nr_Employees");
     assertNotNull(employeesMap);
     @SuppressWarnings("unchecked")
-    StringMap<String> deferredMap = (StringMap<String>) employeesMap.get("__deferred");
+    LinkedTreeMap<String, String> deferredMap = (LinkedTreeMap<String, String>) employeesMap.get("__deferred");
     assertNotNull(deferredMap);
     assertEquals(getEndpoint() + "Rooms('104')/nr_Employees", deferredMap.get("uri"));
   }
@@ -108,7 +108,7 @@ public class EntryJsonCreateTest extends AbstractRefJsonTest {
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
 
     String body = getBody(response);
-    StringMap<?> map = getStringMap(body);
+    LinkedTreeMap<?, ?> map = getLinkedTreeMap(body);
     assertEquals("7", map.get("EmployeeId"));
     assertEquals("Employee 7", map.get("EmployeeName"));
     assertNull(map.get("EntryData"));

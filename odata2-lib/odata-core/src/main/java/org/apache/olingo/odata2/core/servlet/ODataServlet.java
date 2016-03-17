@@ -138,7 +138,9 @@ public class ODataServlet extends HttpServlet {
       handleRequest(req, ODataHttpMethod.PATCH, resp, serviceFactory);
     } else if (ODataHttpMethod.MERGE.name().equals(method)) {
       handleRequest(req, ODataHttpMethod.MERGE, resp, serviceFactory);
-    } else if (HTTP_METHOD_HEAD.equals(method) || HTTP_METHOD_OPTIONS.equals(method)) {
+    } else if (HTTP_METHOD_HEAD.equals(method)) {
+      handleRequest(req, ODataHttpMethod.GET, resp, serviceFactory);
+    } else if (HTTP_METHOD_OPTIONS.equals(method)) {
       createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp, serviceFactory);
     } else {
       createNotImplementedResponse(req, ODataHttpException.COMMON, resp, serviceFactory);
@@ -157,9 +159,11 @@ public class ODataServlet extends HttpServlet {
       handleRequest(req, ODataHttpMethod.PUT, resp, serviceFactory);
     } else if (ODataHttpMethod.GET.name().equals(xHttpMethod)) {
       handleRequest(req, ODataHttpMethod.GET, resp, serviceFactory);
+    } else if (HTTP_METHOD_HEAD.equals(xHttpMethod)) {
+      handleRequest(req, ODataHttpMethod.GET, resp, serviceFactory);
     } else if (ODataHttpMethod.POST.name().equals(xHttpMethod)) {
       handleRequest(req, ODataHttpMethod.POST, resp, serviceFactory);
-    } else if (HTTP_METHOD_HEAD.equals(xHttpMethod) || HTTP_METHOD_OPTIONS.equals(xHttpMethod)) {
+    } else if (HTTP_METHOD_OPTIONS.equals(xHttpMethod)) {
       createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp, serviceFactory);
     } else {
       createNotImplementedResponse(req, ODataNotImplementedException.COMMON, resp, serviceFactory);
@@ -181,7 +185,10 @@ public class ODataServlet extends HttpServlet {
         createNotAcceptableResponse(req, ODataNotAcceptableException.COMMON, resp, serviceFactory);
         return;
       }
-      ODataRequest odataRequest = ODataRequest.method(method)
+      ODataRequest odataRequest;
+      try {
+        odataRequest = ODataRequest.method(method)
+          .httpMethod(req.getMethod())
           .contentType(RestUtil.extractRequestContentType(req.getContentType()).toContentTypeString())
           .acceptHeaders(RestUtil.extractAcceptHeaders(req.getHeader(HttpHeaders.ACCEPT)))
           .acceptableLanguages(RestUtil.extractAcceptableLanguage(req.getHeader(HttpHeaders.ACCEPT_LANGUAGE)))
@@ -190,6 +197,9 @@ public class ODataServlet extends HttpServlet {
           .requestHeaders(RestUtil.extractHeaders(req))
           .body(req.getInputStream())
           .build();
+      } catch (IllegalArgumentException e) {
+        throw new ODataBadRequestException(ODataBadRequestException.INVALID_REQUEST, e);
+      }
 
       ODataContextImpl context = new ODataContextImpl(odataRequest, serviceFactory);
       context.setParameter(ODataContext.HTTP_SERVLET_REQUEST_OBJECT, req);
@@ -203,7 +213,9 @@ public class ODataServlet extends HttpServlet {
 
         ODataRequestHandler requestHandler = new ODataRequestHandler(serviceFactory, service, context);
         final ODataResponse odataResponse = requestHandler.handle(odataRequest);
-        createResponse(resp, odataResponse);
+        //
+        boolean omitResponseBody = HTTP_METHOD_HEAD.equals(req.getMethod());
+        createResponse(resp, odataResponse, omitResponseBody);
       }
     } catch (Exception e) {
       ODataExceptionWrapper wrapper = new ODataExceptionWrapper(req, serviceFactory);
@@ -247,10 +259,21 @@ public class ODataServlet extends HttpServlet {
   }
 
   protected void createResponse(final HttpServletResponse resp, final ODataResponse response) throws IOException {
+    createResponse(resp, response, false);
+  }
+
+  protected void createResponse(final HttpServletResponse resp, final ODataResponse response,
+                                final boolean omitResponseBody)
+      throws IOException {
+
     resp.setStatus(response.getStatus().getStatusCode());
     resp.setContentType(response.getContentHeader());
     for (String headerName : response.getHeaderNames()) {
       resp.setHeader(headerName, response.getHeader(headerName));
+    }
+
+    if(omitResponseBody) {
+      return;
     }
 
     Object entity = response.getEntity();

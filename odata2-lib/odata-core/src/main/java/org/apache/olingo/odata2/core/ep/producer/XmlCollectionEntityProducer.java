@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
@@ -42,14 +43,14 @@ public class XmlCollectionEntityProducer {
       if (propertyInfo.isComplex()) {
         writer.writeNamespace(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08);
       }
-      XmlPropertyEntityProducer provider = new XmlPropertyEntityProducer(false);
+      XmlPropertyEntityProducer provider = new XmlPropertyEntityProducer(false, true);
       for (final Object propertyData : data) {
         provider.append(writer, FormatXml.D_ELEMENT, propertyInfo, propertyData);
       }
       writer.writeEndElement();
       writer.flush();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 }

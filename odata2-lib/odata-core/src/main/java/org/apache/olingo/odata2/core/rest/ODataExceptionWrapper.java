@@ -42,11 +42,13 @@ import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataHttpException;
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
+import org.apache.olingo.odata2.api.exception.ODataRuntimeApplicationException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataErrorCallback;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.commons.ContentType;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 import org.apache.olingo.odata2.core.exception.MessageService;
 import org.apache.olingo.odata2.core.exception.MessageService.Message;
@@ -61,12 +63,12 @@ public class ODataExceptionWrapper {
   private static final String DOLLAR_FORMAT_JSON = "json";
   private static final Locale DEFAULT_RESPONSE_LOCALE = Locale.ENGLISH;
 
-  private final String contentType;
+  private String contentType;
+  private URI requestUri;
   private final Locale messageLocale;
   private final Map<String, List<String>> httpRequestHeaders;
   private final ODataErrorCallback callback;
   private final ODataErrorContext errorContext = new ODataErrorContext();
-  private final URI requestUri;
 
   public ODataExceptionWrapper(final ODataContext context, final Map<String, String> queryParameters,
       final List<String> acceptHeaderContentTypes) {
@@ -84,10 +86,15 @@ public class ODataExceptionWrapper {
 
   public ODataExceptionWrapper(final UriInfo uriInfo, final HttpHeaders httpHeaders,
       final ODataErrorCallback errorCallback) {
-    contentType = getContentType(uriInfo, httpHeaders).toContentTypeString();
+    try {
+      contentType = getContentType(uriInfo, httpHeaders).toContentTypeString();
+      requestUri = uriInfo.getRequestUri();
+    } catch (IllegalArgumentException e) {
+      contentType = null;
+      requestUri = null;
+    }
     messageLocale = MessageService.getSupportedLocale(getLanguages(httpHeaders), DEFAULT_RESPONSE_LOCALE);
     httpRequestHeaders = httpHeaders.getRequestHeaders();
-    requestUri = uriInfo.getRequestUri();
     callback = errorCallback;
   }
 
@@ -97,6 +104,8 @@ public class ODataExceptionWrapper {
       fillErrorContext(toHandleException);
       if (toHandleException instanceof ODataApplicationException) {
         enhanceContextWithApplicationException((ODataApplicationException) toHandleException);
+      } else if (toHandleException instanceof ODataRuntimeApplicationException) {
+        enhanceContextWithRuntimeApplicationException((ODataRuntimeApplicationException) toHandleException);
       } else if (toHandleException instanceof ODataMessageException) {
         enhanceContextWithMessageException((ODataMessageException) toHandleException);
       }
@@ -117,6 +126,11 @@ public class ODataExceptionWrapper {
           .status(HttpStatusCodes.INTERNAL_SERVER_ERROR).build();
       return response;
     }
+  }
+
+  private void enhanceContextWithRuntimeApplicationException(ODataRuntimeApplicationException toHandleException) {
+    errorContext.setHttpStatus(toHandleException.getHttpStatus());
+    errorContext.setErrorCode(toHandleException.getCode());
   }
 
   private ODataResponse handleErrorCallback(final ODataErrorCallback callback) throws EntityProviderException {
@@ -147,7 +161,15 @@ public class ODataExceptionWrapper {
     if (toHandleException instanceof ODataHttpException) {
       errorContext.setHttpStatus(((ODataHttpException) toHandleException).getHttpStatus());
     } else if (toHandleException instanceof EntityProviderException) {
-      errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
+      if(toHandleException instanceof EntityProviderProducerException){
+        /*
+         * As per OLINGO-763 serializer exceptions are produced by the server and must therefore result 
+         * in a 500 internal server error
+         */
+        errorContext.setHttpStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
+      }else{
+        errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
+      }
     } else if (toHandleException instanceof BatchException) {
       errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
     }
@@ -160,13 +182,24 @@ public class ODataExceptionWrapper {
    * @param exception exception with values to be set on error context
    */
   private void fillErrorContext(final Exception exception) {
-    errorContext.setContentType(contentType);
+    if (contentType != null || requestUri != null) {
+      errorContext.setContentType(contentType);
+      errorContext.setRequestUri(requestUri);
+      errorContext.setHttpStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
+    } else {
+      /*
+       * We have to add this here in case CXF decides that the URL is invalid. In this case we have to give the correct
+       * response code nonetheless. Since we get called without context we have to try and guess here.
+       * This should be the case when either the content type or the request URI are null.
+       */
+      errorContext.setContentType(ContentType.APPLICATION_ATOM_XML.toContentTypeString());
+      errorContext.setRequestUri(null);
+      errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
+    }
     errorContext.setException(exception);
-    errorContext.setHttpStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
     errorContext.setErrorCode(null);
     errorContext.setMessage(exception.getMessage());
     errorContext.setLocale(DEFAULT_RESPONSE_LOCALE);
-    errorContext.setRequestUri(requestUri);
 
     if (httpRequestHeaders != null) {
       for (Entry<String, List<String>> entry : httpRequestHeaders.entrySet()) {

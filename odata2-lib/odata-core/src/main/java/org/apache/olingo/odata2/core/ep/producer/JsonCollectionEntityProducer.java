@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
@@ -62,18 +63,17 @@ public class JsonCollectionEntityProducer {
         } else {
           jsonStreamWriter.separator();
         }
-        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, propertyInfo, item);
+        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, propertyInfo, item, true);
       }
       jsonStreamWriter.endArray();
 
       jsonStreamWriter.endObject()
           .endObject();
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 }

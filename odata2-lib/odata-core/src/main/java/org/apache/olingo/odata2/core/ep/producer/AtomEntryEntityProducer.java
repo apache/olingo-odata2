@@ -57,6 +57,7 @@ import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Encoder;
 import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
@@ -107,7 +108,7 @@ public class AtomEntryEntityProducer {
       if (eia.getEntityType().hasStream()) {
         // write all links
         if (!properties.isContentOnly()) {
-          appendAtomEditLink(writer, eia, data, selfLink);
+          appendAtomEditLink(writer, eia, selfLink);
           appendAtomContentLink(writer, eia, data, selfLink);
           appendAtomNavigationLinks(writer, eia, data);
         } else {
@@ -122,7 +123,7 @@ public class AtomEntryEntityProducer {
       } else {
         // write all links
         if (!properties.isContentOnly()) {
-          appendAtomEditLink(writer, eia, data, selfLink);
+          appendAtomEditLink(writer, eia, selfLink);
           appendAtomNavigationLinks(writer, eia, data);
         } else {
           appendAdditinalLinks(writer, eia, data);
@@ -139,11 +140,11 @@ public class AtomEntryEntityProducer {
 
       writer.flush();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     } catch (URISyntaxException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -173,7 +174,7 @@ public class AtomEntryEntityProducer {
     for (String tpName : noneSyndicationTargetPaths) {
       EntityPropertyInfo info = eia.getTargetPathInfo(tpName);
       final String name = info.getName();
-      XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties.isIncludeSimplePropertyType());
+      XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties);
       aps.appendCustomProperty(writer, name, info, data.get(name));
     }
   }
@@ -208,7 +209,7 @@ public class AtomEntryEntityProducer {
 
       return etag;
     } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -245,7 +246,7 @@ public class AtomEntryEntityProducer {
       }
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -262,19 +263,20 @@ public class AtomEntryEntityProducer {
         context.setSourceEntitySet(eia.getEntitySet());
         context.setNavigationProperty(navProp);
         context.setEntryData(data);
+        context.setCurrentWriteProperties(properties);
         ExpandSelectTreeNode subNode = properties.getExpandSelectTree().getLinks().get(navigationPropertyName);
         context.setCurrentExpandSelectTreeNode(subNode);
         context.setSelfLink(new URI(self));
 
         ODataCallback callback = properties.getCallbacks().get(navigationPropertyName);
         if (callback == null) {
-          throw new EntityProviderException(EntityProviderException.EXPANDNOTSUPPORTED);
+          throw new EntityProviderProducerException(EntityProviderException.EXPANDNOTSUPPORTED);
         }
-        WriteFeedCallbackResult result = null;
+        WriteFeedCallbackResult result;
         try {
           result = ((OnWriteFeedContent) callback).retrieveFeedResult(context);
         } catch (ODataApplicationException e) {
-          throw new EntityProviderException(EntityProviderException.COMMON, e);
+          throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
         }
         List<Map<String, Object>> inlineData = result.getFeedData();
         if (inlineData == null) {
@@ -304,6 +306,7 @@ public class AtomEntryEntityProducer {
         EdmNavigationProperty navProp = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
         WriteEntryCallbackContext context = new WriteEntryCallbackContext();
         context.setSourceEntitySet(eia.getEntitySet());
+        context.setCurrentWriteProperties(properties);
         context.setNavigationProperty(navProp);
         context.setEntryData(data);
         ExpandSelectTreeNode subNode = properties.getExpandSelectTree().getLinks().get(navigationPropertyName);
@@ -311,13 +314,13 @@ public class AtomEntryEntityProducer {
 
         ODataCallback callback = properties.getCallbacks().get(navigationPropertyName);
         if (callback == null) {
-          throw new EntityProviderException(EntityProviderException.EXPANDNOTSUPPORTED);
+          throw new EntityProviderProducerException(EntityProviderException.EXPANDNOTSUPPORTED);
         }
-        WriteEntryCallbackResult result = null;
+        WriteEntryCallbackResult result;
         try {
           result = ((OnWriteEntryContent) callback).retrieveEntryResult(context);
         } catch (ODataApplicationException e) {
-          throw new EntityProviderException(EntityProviderException.COMMON, e);
+          throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
         }
         Map<String, Object> inlineData = result.getEntryData();
         if (inlineData != null && !inlineData.isEmpty()) {
@@ -336,7 +339,7 @@ public class AtomEntryEntityProducer {
   }
 
   private void appendAtomEditLink(final XMLStreamWriter writer, final EntityInfoAggregator eia,
-      final Map<String, Object> data, final String selfLink) throws EntityProviderException {
+      final String selfLink) throws EntityProviderException {
     try {
       writer.writeStartElement(FormatXml.ATOM_LINK);
       writer.writeAttribute(FormatXml.ATOM_HREF, selfLink);
@@ -344,9 +347,9 @@ public class AtomEntryEntityProducer {
       writer.writeAttribute(FormatXml.ATOM_TITLE, eia.getEntityType().getName());
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -371,7 +374,7 @@ public class AtomEntryEntityProducer {
       writer.writeAttribute(FormatXml.ATOM_TYPE, mediaResourceMimeType);
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -408,7 +411,7 @@ public class AtomEntryEntityProducer {
       writer.writeAttribute(FormatXml.ATOM_SRC, self);
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -441,9 +444,9 @@ public class AtomEntryEntityProducer {
 
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -461,9 +464,7 @@ public class AtomEntryEntityProducer {
     if (updateDate == null) {
       updateDate = new Date();
     }
-    String valueToString =
-        EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets);
-    return valueToString;
+    return EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets);
   }
 
   private String getTargetPathValue(final EntityInfoAggregator eia, final String targetPath,
@@ -477,7 +478,7 @@ public class AtomEntryEntityProducer {
       }
       return null;
     } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -520,9 +521,9 @@ public class AtomEntryEntityProducer {
       writer.writeAttribute(FormatXml.ATOM_CATEGORY_SCHEME, Edm.NAMESPACE_SCHEME_2007_08);
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -538,7 +539,7 @@ public class AtomEntryEntityProducer {
         writer.writeEndElement();
       }
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -574,7 +575,7 @@ public class AtomEntryEntityProducer {
         keys.append(Encoder.encode(type.valueToString(data.get(name), EdmLiteralKind.URI,
             keyPropertyInfo.getFacets())));
       } catch (final EdmSimpleTypeException e) {
-        throw new EntityProviderException(EntityProviderException.COMMON, e);
+        throw new EntityProviderProducerException(e.getMessageReference(), e);
       }
     }
 
@@ -593,7 +594,7 @@ public class AtomEntryEntityProducer {
 
           if (isNotMappedViaCustomMapping(propertyInfo)) {
             Object value = data.get(propertyName);
-            XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties.isIncludeSimplePropertyType());
+            XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties);
             aps.append(writer, propertyInfo.getName(), propertyInfo, value);
           }
         }
@@ -601,14 +602,14 @@ public class AtomEntryEntityProducer {
         writer.writeEndElement();
       }
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
   private boolean isNotMappedViaCustomMapping(final EntityPropertyInfo propertyInfo) {
     EdmCustomizableFeedMappings customMapping = propertyInfo.getCustomMapping();
     if (customMapping != null && customMapping.isFcKeepInContent() != null) {
-      return customMapping.isFcKeepInContent().booleanValue();
+      return customMapping.isFcKeepInContent();
     }
     return true;
   }

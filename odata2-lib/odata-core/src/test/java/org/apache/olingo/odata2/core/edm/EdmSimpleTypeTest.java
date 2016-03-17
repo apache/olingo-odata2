@@ -29,6 +29,8 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -563,7 +565,39 @@ public class EdmSimpleTypeTest extends BaseTest {
     Calendar dateTime2 = Calendar.getInstance(TimeZone.getTimeZone("GMT-11:30"));
     dateTime2.clear();
     dateTime2.set(1969, 11, 31, 12, 29, 58);
-    assertEquals("/Date(-2000)/", instance.valueToString(dateTime2, EdmLiteralKind.JSON, null));
+    dateTime2.set(Calendar.MILLISECOND, 1);
+    assertEquals("/Date(-1999)/", instance.valueToString(dateTime2, EdmLiteralKind.JSON, null));
+
+    Calendar dateTime3 = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    dateTime3.clear();
+    dateTime3.set(1954, 7, 4);
+    dateTime3.set(Calendar.MILLISECOND, 42);
+    expectErrorInValueToString(instance, dateTime3, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(0, null),
+        EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
+    expectErrorInValueToString(instance, dateTime3, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(1, null),
+        EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
+    expectErrorInValueToString(instance, dateTime3, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(2, null),
+        EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
+    assertEquals("1954-08-04T00:00:00.042", instance.valueToString(dateTime3, EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(3, null)));
+    assertEquals("1954-08-04T00:00:00.0420", instance.valueToString(dateTime3, EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(4, null)));
+    assertEquals("1954-08-04T00:00:00.04200", instance.valueToString(dateTime3, EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(5, null)));
+
+    Timestamp timestamp = new Timestamp(0);
+    assertEquals("1970-01-01T00:00:00", instance.valueToString(timestamp, EdmLiteralKind.DEFAULT, null));
+    timestamp.setNanos(1000 * 1000);
+    assertEquals("/Date(1)/", instance.valueToString(timestamp, EdmLiteralKind.JSON, null));
+    timestamp.setNanos(1500 * 1000);
+    assertEquals("1970-01-01T00:00:00.0015", instance.valueToString(timestamp, EdmLiteralKind.DEFAULT, null));
+    timestamp.setNanos(42);
+    assertEquals("1970-01-01T00:00:00.000000042", instance.valueToString(timestamp, EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(9, null)));
+    expectErrorInValueToString(instance, timestamp, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(8, null),
+        EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
+    expectErrorInValueToString(instance, timestamp, EdmLiteralKind.JSON, null,
+        EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT);
 
     dateTime.add(Calendar.MILLISECOND, -100);
     expectErrorInValueToString(instance, dateTime, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(0, null),
@@ -572,64 +606,6 @@ public class EdmSimpleTypeTest extends BaseTest {
     expectErrorInValueToString(instance, 0, EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED);
     expectErrorInValueToString(instance, dateTime, null, null, EdmSimpleTypeException.LITERAL_KIND_MISSING);
-  }
-
-  /**
-   * Extended test for combination of precision with dates before 1970 (and for regression after 1970)
-   */
-  @Test
-  public void valueToStringDateTimeSpecial() throws Exception {
-
-    for (int precision = 0; precision < 3; precision++) {
-      final EdmSimpleType instance = EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance();
-      final EdmFacets facets = getPrecisionScaleFacets(precision, null);
-      final Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-      date.set(Calendar.MILLISECOND, 10 * precision + 1);
-
-      date.set(1954, 7, 4);
-      expectErrorInValueToString(instance, date, EdmLiteralKind.DEFAULT, facets,
-          EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
-
-      date.set(1999, 7, 4);
-      expectErrorInValueToString(instance, date, EdmLiteralKind.DEFAULT, facets,
-          EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
-    }
-
-    for (int precision = 3; precision < 6; precision++) {
-      assertValueToStringDateTimeSpecial(1954, 7, 4, precision);
-      assertValueToStringDateTimeSpecial(1999, 7, 4, precision);
-    }
-  }
-
-  private void assertValueToStringDateTimeSpecial(final int year, final int month, final int day, final int precision)
-      throws Exception {
-    final EdmSimpleType instance = EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance();
-    final StringBuilder regExToMatch = new StringBuilder();// = new StringBuilder("1954-08-04T\\d\\d:\\d\\d:\\d\\d");
-    regExToMatch.append(year).append("-");
-    if (month < 9) {
-      regExToMatch.append("0");
-    }
-    // add '1' to the month because java calendar month begin with '0'
-    regExToMatch.append(month + 1).append("-");
-    if (day < 10) {
-      regExToMatch.append("0");
-    }
-    regExToMatch.append(day).append("T\\d\\d:\\d\\d:\\d\\d");
-
-    if (precision > 0) {
-      regExToMatch.append("\\.");
-    }
-    for (int i = 0; i < precision; i++) {
-      regExToMatch.append("\\d");
-    }
-    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-    date.set(year, month, day);
-    date.set(Calendar.MILLISECOND, 10 * precision + 1);
-
-    //
-    String formated = instance.valueToString(date, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(precision, null));
-    assertTrue("Formated date '" + formated + "' is wrong for precision '" + precision +
-        "'. (used regex = [" + regExToMatch.toString() + "])", formated.matches(regExToMatch.toString()));
   }
 
   @Test
@@ -667,6 +643,14 @@ public class EdmSimpleTypeTest extends BaseTest {
     final Date date = new Date(millis);
     final String time = date.toString().substring(11, 19);
     assertTrue(instance.valueToString(date, EdmLiteralKind.DEFAULT, null).contains(time));
+
+    Timestamp timestamp = new Timestamp(millis);
+    assertTrue(instance.valueToString(timestamp, EdmLiteralKind.JSON, null).contains("007"));
+    timestamp.setNanos(42);
+    expectErrorInValueToString(instance, timestamp, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(8, null),
+        EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
+    expectErrorInValueToString(instance, timestamp, EdmLiteralKind.JSON, null,
+        EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT);
 
     expectErrorInValueToString(instance, 0, EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED);
@@ -958,6 +942,12 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertEquals("PT23H32M2.9S", instance.valueToString(dateTime, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(1,
         null)));
 
+    Timestamp timestamp = new Timestamp(millis);
+    timestamp.setNanos(123456789);
+    assertTrue(instance.valueToString(timestamp, EdmLiteralKind.DEFAULT, null).contains("M3.123456789S"));
+    expectErrorInValueToString(instance, timestamp, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(8, null),
+        EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
+
     expectErrorInValueToString(instance, dateTime, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(0, null),
         EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
     expectErrorInValueToString(instance, 0, EdmLiteralKind.DEFAULT, null,
@@ -1149,6 +1139,10 @@ public class EdmSimpleTypeTest extends BaseTest {
         Date.class));
     assertEquals(dateTime, instance.valueOfString("datetime'2012-02-29T23:32:03.001'", EdmLiteralKind.URI, null,
         Calendar.class));
+    
+    //OLINGO-883 prefix is case insensitive
+    assertEquals(dateTime, instance.valueOfString("DaTeTiMe'2012-02-29T23:32:03.001'", EdmLiteralKind.URI, null,
+        Calendar.class));
 
     dateTime.add(Calendar.MILLISECOND, 9);
     assertEquals(dateTime, instance.valueOfString("2012-02-29T23:32:03.01", EdmLiteralKind.DEFAULT,
@@ -1177,15 +1171,20 @@ public class EdmSimpleTypeTest extends BaseTest {
     dateTime.set(1969, 11, 31, 23, 59, 18);
     assertEquals(dateTime, instance.valueOfString("/Date(-42000)/", EdmLiteralKind.JSON, null, Calendar.class));
 
-    expectErrorInValueOfString(instance, "2012-02-29T23:32:02.9", EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(0,
-        null), EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
-    expectErrorInValueOfString(instance, "2012-02-29T23:32:02.98700", EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(
-        2, null), EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
+    Timestamp timestamp = new Timestamp(0);
+    timestamp.setNanos(987654321);
+    assertEquals(timestamp, instance.valueOfString("1970-01-01T00:00:00.987654321", EdmLiteralKind.DEFAULT, null,
+        Timestamp.class));
+
+    expectErrorInValueOfString(instance, "2012-02-29T23:32:02.9", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(0, null), EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
+    expectErrorInValueOfString(instance, "2012-02-29T23:32:02.98700", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(2, null), EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
     expectErrorInValueOfString(instance, "2012-02-29T23:32:02.9876", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
     expectErrorInValueOfString(instance, "2012-02-29T23:32:02.", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
-    expectErrorInValueOfString(instance, "2012-02-29T23:32:02.00000000", EdmLiteralKind.DEFAULT, null,
+    expectErrorInValueOfString(instance, "2012-02-29T23:32:02.0000000000", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
     expectErrorInValueOfString(instance, "20120229T233202", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
@@ -1240,7 +1239,12 @@ public class EdmSimpleTypeTest extends BaseTest {
         Calendar.class));
     assertEquals(dateTime, instance.valueOfString("datetimeoffset'2012-02-29T01:02:03-01:30'", EdmLiteralKind.URI,
         null, Calendar.class));
-
+    
+    //OLINGO-883 prefix is case insensitive
+    assertEquals(dateTime, instance.valueOfString("DaTeTiMeoFFset'2012-02-29T01:02:03-01:30'", EdmLiteralKind.URI,
+        null, Calendar.class));
+    
+    
     dateTime.clear();
     dateTime.setTimeZone(TimeZone.getTimeZone("GMT+11:00"));
     dateTime.set(2012, 1, 29, 1, 2, 3);
@@ -1264,8 +1268,18 @@ public class EdmSimpleTypeTest extends BaseTest {
     dateTime.set(1969, 11, 31, 23, 59, 18);
     assertEquals(dateTime, instance.valueOfString("/Date(-42000+0660)/", EdmLiteralKind.JSON, null, Calendar.class));
 
-    expectErrorInValueOfString(instance, "2012-02-29T23:32:02.9Z", EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(0,
-        null), EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
+    assertEquals(Long.valueOf(3601234L),
+        instance.valueOfString("1970-01-01T00:00:01.234-01:00", EdmLiteralKind.DEFAULT, null, Long.class));
+
+    Timestamp timestamp = new Timestamp(0);
+    timestamp.setNanos(987654300);
+    assertEquals(timestamp, instance.valueOfString("1970-01-01T00:00:00.9876543Z", EdmLiteralKind.DEFAULT, null,
+        Timestamp.class));
+
+    expectErrorInValueOfString(instance, "2012-02-29T23:32:02.9Z", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(0, null), EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
+    expectErrorInValueOfString(instance, "2012-02-29T23:32:02.9876Z", EdmLiteralKind.DEFAULT, null,
+        EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
     expectErrorInValueOfString(instance, "datetime'2012-02-29T23:32:02'", EdmLiteralKind.URI, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
     expectErrorInValueOfString(instance, "2012-02-29T23:32:02X", EdmLiteralKind.DEFAULT, null,
@@ -1433,7 +1447,11 @@ public class EdmSimpleTypeTest extends BaseTest {
         UUID.class));
     assertEquals(uuid, instance.valueOfString("guid'AABBCCDD-aabb-ccdd-eeff-AABBCCDDEEFF'", EdmLiteralKind.URI, null,
         UUID.class));
-
+    
+    //OLINGO-883 prefix is case insensitive
+    assertEquals(uuid, instance.valueOfString("GuId'AABBCCDD-aabb-ccdd-eeff-AABBCCDDEEFF'", EdmLiteralKind.URI, null,
+        UUID.class));
+    
     expectErrorInValueOfString(instance, "AABBCCDDAABBCCDDEEFFAABBCCDDEEFF", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
     expectErrorInValueOfString(instance, "uid'AABBCCDD-aabb-ccdd-eeff-AABBCCDDEEFF'", EdmLiteralKind.URI, null,
@@ -1647,21 +1665,24 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertEquals(dateTime, instance.valueOfString("PT23H32M3.001S", EdmLiteralKind.DEFAULT, null, Calendar.class));
     assertEquals(dateTime, instance.valueOfString("PT23H32M3.001S", EdmLiteralKind.JSON, null, Calendar.class));
     assertEquals(dateTime, instance.valueOfString("time'PT23H32M3.001S'", EdmLiteralKind.URI, null, Calendar.class));
-
+    
+    //OLINGO-883 prefix is case insensitive
+    assertEquals(dateTime, instance.valueOfString("TiMe'PT23H32M3.001S'", EdmLiteralKind.URI, null, Calendar.class));
+    
     dateTime.add(Calendar.MILLISECOND, -1);
     assertEquals(dateTime, instance.valueOfString("PT23H32M3S", EdmLiteralKind.DEFAULT,
         getPrecisionScaleFacets(0, null), Calendar.class));
     dateTime.add(Calendar.MILLISECOND, 10);
-    assertEquals(dateTime, instance.valueOfString("PT23H32M3.01S", EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(2,
-        null), Calendar.class));
+    assertEquals(dateTime, instance.valueOfString("PT23H32M3.01S", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(2, null), Calendar.class));
     dateTime.add(Calendar.MILLISECOND, -23);
-    assertEquals(dateTime, instance.valueOfString("PT23H32M2.987S", EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(
-        null, null), Calendar.class));
-    assertEquals(dateTime, instance.valueOfString("PT23H32M2.98700S", EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(
-        5, null), Calendar.class));
+    assertEquals(dateTime, instance.valueOfString("PT23H32M2.987S", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(null, null), Calendar.class));
+    assertEquals(dateTime, instance.valueOfString("PT23H32M2.98700S", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(5, null), Calendar.class));
     dateTime.add(Calendar.MILLISECOND, -87);
-    assertEquals(dateTime, instance.valueOfString("PT23H32M2.9S", EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(1,
-        null), Calendar.class));
+    assertEquals(dateTime, instance.valueOfString("PT23H32M2.9S", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(1, null), Calendar.class));
 
     dateTime.add(Calendar.HOUR, -23);
     assertEquals(dateTime, instance.valueOfString("PT32M2.9S", EdmLiteralKind.DEFAULT, null, Calendar.class));
@@ -1672,6 +1693,15 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertEquals(dateTime, instance.valueOfString("PT0S", EdmLiteralKind.DEFAULT, null, Calendar.class));
     dateTime.add(Calendar.MINUTE, 59);
     assertEquals(dateTime, instance.valueOfString("PT59M", EdmLiteralKind.DEFAULT, null, Calendar.class));
+
+    assertEquals(Long.valueOf(dateTime.getTimeInMillis()),
+        instance.valueOfString("PT59M", EdmLiteralKind.DEFAULT, null, Long.class));
+
+    assertEquals(dateTime.getTimeInMillis(),
+        instance.valueOfString("PT59M", EdmLiteralKind.DEFAULT, null, Time.class).getTime());
+
+    assertEquals(123456789,
+        instance.valueOfString("PT59M0.123456789S", EdmLiteralKind.DEFAULT, null, Timestamp.class).getNanos());
 
     expectErrorInValueOfString(instance, "PT1H2M3.1234S", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);

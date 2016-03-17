@@ -22,6 +22,8 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathNotExists;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,9 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.ODataCallback;
-import org.apache.olingo.odata2.api.edm.Edm;
-import org.apache.olingo.odata2.api.edm.EdmEntitySet;
-import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.OnWriteEntryContent;
@@ -103,6 +103,59 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
     assertXpathExists("/a:entry/a:link", xmlString);
     verifyEmployees(employeeXPathString, xmlString);
   }
+
+  @Test(expected = EntityProviderException.class)
+  public void expandSelectedEmployeesWithFacets() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmTyped imageUrlProperty = edm.getEntityType("RefScenario", "Employee").getProperty("ImageUrl");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(1);
+    when(((EdmProperty) imageUrlProperty).getFacets()).thenReturn(facets);
+
+    ExpandSelectTreeNode selectTree = getSelectExpandTree("Rooms('1')", "nr_Employees", "nr_Employees");
+
+    HashMap<String, ODataCallback> callbacksRoom = createCallbacks("Rooms");
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree)
+            .callbacks(callbacksRoom)
+            .build();
+    AtomEntityProvider provider = createAtomEntityProvider();
+    ODataResponse response =
+        provider.writeEntry(edm.getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
+
+    String xmlString = verifyResponse(response);
+    assertXpathNotExists("/a:entry/m:properties", xmlString);
+    assertXpathExists("/a:entry/a:link", xmlString);
+    verifyEmployees(employeeXPathString, xmlString);
+  }
+
+  @Test
+  public void expandSelectedEmployeesIgnoreFacets() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmTyped imageUrlProperty = edm.getEntityType("RefScenario", "Employee").getProperty("ImageUrl");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(1);
+    when(((EdmProperty) imageUrlProperty).getFacets()).thenReturn(facets);
+
+    ExpandSelectTreeNode selectTree = getSelectExpandTree("Rooms('1')", "nr_Employees", "nr_Employees");
+
+    HashMap<String, ODataCallback> callbacksRoom = createCallbacks("Rooms");
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksRoom)
+            .callbacks(callbacksRoom).validatingFacets(false)
+            .build();
+    AtomEntityProvider provider = createAtomEntityProvider();
+    ODataResponse response =
+        provider.writeEntry(edm.getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
+
+    String xmlString = verifyResponse(response);
+    assertXpathNotExists("/a:entry/m:properties", xmlString);
+    assertXpathExists("/a:entry/a:link", xmlString);
+    verifyEmployees(employeeXPathString, xmlString);
+  }
+
 
   @Test
   public void expandSelectedEmployeesWithBuilder() throws Exception {

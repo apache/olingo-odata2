@@ -45,6 +45,10 @@ public class EntityProviderWriteProperties {
   private boolean omitJsonWrapper;
   private boolean contentOnly;
   private boolean omitETag;
+  private boolean validatingFacets = true;
+
+  private boolean isResponsePayload = true;
+  private boolean includeMetadataInContentOnly = false;
 
   private EntityProviderWriteProperties() {}
 
@@ -133,6 +137,18 @@ public class EntityProviderWriteProperties {
 
   public static ODataEntityProviderPropertiesBuilder serviceRoot(final URI serviceRoot) {
     return new ODataEntityProviderPropertiesBuilder().serviceRoot(serviceRoot);
+  }
+
+  public boolean isValidatingFacets() {
+    return validatingFacets;
+  }
+
+  public boolean isResponsePayload() {
+    return isResponsePayload;
+  }
+
+  public boolean isIncludeMetadataInContentOnly() {
+    return includeMetadataInContentOnly;
   }
 
   public static class ODataEntityProviderPropertiesBuilder {
@@ -229,9 +245,36 @@ public class EntityProviderWriteProperties {
       properties.contentOnly = contentOnly;
       return this;
     }
-    
+
     public ODataEntityProviderPropertiesBuilder omitETag(final boolean omitETag) {
       properties.omitETag = omitETag;
+      return this;
+    }
+
+    public ODataEntityProviderPropertiesBuilder validatingFacets(final boolean validatingFacets) {
+      properties.validatingFacets = validatingFacets;
+      return this;
+    }
+
+    /**
+     * If set to true an entity set (or collection) is rendered as response payload in OData V2 format.
+     * Otherwise an entity set (or collection) is rendered as request payload in OData V2 format.
+     *
+     * See 2.2.6.3.2 Entity Set (as a JSON Array)
+     * The grammar rule "entitySetInJson2" defines the version 2.0 JSON
+     * representation of a collection of entities for response payloads only.
+     *
+     * @param responsePayload true for response payload handling, false for request payload handling
+     * @return the builder
+     */
+    public ODataEntityProviderPropertiesBuilder responsePayload(final boolean responsePayload) {
+      properties.isResponsePayload = responsePayload;
+      return this;
+    }
+
+    public ODataEntityProviderPropertiesBuilder
+        includeMetadataInContentOnly(final boolean includeMetadataInContentOnly) {
+      properties.includeMetadataInContentOnly = includeMetadataInContentOnly;
       return this;
     }
 
@@ -247,6 +290,9 @@ public class EntityProviderWriteProperties {
       this.properties.omitJsonWrapper = properties.omitJsonWrapper;
       this.properties.contentOnly = properties.contentOnly;
       this.properties.omitETag = properties.omitETag;
+      this.properties.validatingFacets = properties.validatingFacets;
+      this.properties.isResponsePayload = properties.isResponsePayload;
+      this.properties.includeMetadataInContentOnly = properties.includeMetadataInContentOnly;
       return this;
     }
 

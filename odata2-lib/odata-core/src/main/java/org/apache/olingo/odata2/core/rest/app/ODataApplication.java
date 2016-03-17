@@ -61,7 +61,7 @@ public class ODataApplication extends Application {
 
   @Provider
   @Produces({ "generic/value", "multipart/mixed" })
-  public static final class MyProvider implements MessageBodyWriter<String> {
+  public static class MyProvider implements MessageBodyWriter<String> {
 
     @Override
     public boolean isWriteable(final Class<?> type, final Type genericType, final Annotation[] annotations,

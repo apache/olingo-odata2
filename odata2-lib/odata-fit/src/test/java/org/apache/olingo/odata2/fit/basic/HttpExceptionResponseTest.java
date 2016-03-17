@@ -74,7 +74,7 @@ public class HttpExceptionResponseTest extends AbstractBasicTest {
   }
 
   @Override
-  EdmProvider createEdmProvider() {
+  protected EdmProvider createEdmProvider() {
     final EdmProvider provider = new ScenarioEdmProvider();
     return provider;
   }

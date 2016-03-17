@@ -125,7 +125,8 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
           .build();
     } catch (Exception e) {
       buffer.close();
-      throw new ODataRuntimeException(e);
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
     }
   }
 
@@ -151,7 +152,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -180,7 +181,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -193,7 +194,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET));
-      new JsonFeedEntityProducer(properties).append(writer, entityInfo, data, true);
+      new JsonFeedEntityProducer(properties).appendAsObject(writer, entityInfo, data, true);
       writer.flush();
       buffer.closeWrite();
 
@@ -203,7 +204,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -228,7 +229,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -255,7 +256,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -276,7 +277,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       buffer.close();
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
   }
@@ -298,8 +299,7 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
         return writeSingleTypedElement(info, data);
       }
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -330,12 +330,11 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       } else {
         final EntityPropertyInfo info = EntityInfoAggregator.create(functionImport);
         return functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY ?
-          new JsonEntityConsumer().readCollection(info, content, properties) :
-          new JsonEntityConsumer().readProperty(info, content, properties).get(info.getName());
+            new JsonEntityConsumer().readCollection(info, content, properties) :
+            new JsonEntityConsumer().readProperty(info, content, properties).get(info.getName());
       }
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED
-          .addContent(e.getClass().getSimpleName()), e);
+      throw new EntityProviderException(e.getMessageReference(), e);
     }
   }
 

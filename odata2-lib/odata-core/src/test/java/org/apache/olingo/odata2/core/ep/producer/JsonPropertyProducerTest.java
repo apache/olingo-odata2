@@ -18,10 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -32,12 +28,17 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.commons.ODataHttpHeaders;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
+import org.apache.olingo.odata2.api.edm.EdmTyped;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ep.JsonEntityProvider;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  *  
@@ -52,7 +53,7 @@ public class JsonPropertyProducerTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeProperty(property, "\"Игорь\tНиколаевич\tЛарионов\"");
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+    assertNull("EntityProvider must not set content header", response.getContentHeader());
     assertEquals(ODataServiceVersion.V10, response.getHeader(ODataHttpHeaders.DATASERVICEVERSION));
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
@@ -71,13 +72,29 @@ public class JsonPropertyProducerTest extends BaseTest {
     final ODataResponse response = new JsonEntityProvider().writeProperty(property, propertyValue);
     assertNotNull(response);
     assertNotNull(response.getEntity());
-    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+    assertNull("EntityProvider must not set content header", response.getContentHeader());
     assertEquals(ODataServiceVersion.V10, response.getHeader(ODataHttpHeaders.DATASERVICEVERSION));
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
     assertEquals("{\"d\":{\"EmployeeName\":\"" + propertyValue + "\"}}", json);
   }
+
+  @Test
+  public void serializeRoomIdWithFacets() throws Exception {
+    EdmTyped edmTyped = MockFacade.getMockEdm().getEntityType("RefScenario", "Room").getProperty("Id");
+    EdmProperty edmProperty = (EdmProperty) edmTyped;
+
+    String id = StringHelper.generateData(1000);
+    try {
+      final ODataResponse response = new JsonEntityProvider().writeProperty(edmProperty, id);
+      assertNotNull(response);
+    } catch(EntityProviderException e) {
+      assertNotNull(e.getCause());
+      assertTrue(e.getCause() instanceof EdmSimpleTypeException);
+    }
+  }
+
 
   @Test
   public void serializeNumber() throws Exception {

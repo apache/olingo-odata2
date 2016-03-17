@@ -443,9 +443,9 @@ public class JPAEntity {
               relatedJPAEntityMap = new HashMap<String, List<Object>>();
             }
             List<Object> relatedJPAEntities = new ArrayList<Object>();
-            JPAEntity relatedEntity =
-                new JPAEntity((EdmEntityType) structuralType, edmRelatedEntitySet, oDataJPAContext);
             for (ODataEntry oDataEntry : relatedEntries) {
+              JPAEntity relatedEntity =
+                  new JPAEntity((EdmEntityType) structuralType, edmRelatedEntitySet, oDataJPAContext);
               relatedEntity.setParentJPAEntity(this);
               relatedEntity.setViaNavigationProperty(navProperty);
               relatedEntity.create(oDataEntry);

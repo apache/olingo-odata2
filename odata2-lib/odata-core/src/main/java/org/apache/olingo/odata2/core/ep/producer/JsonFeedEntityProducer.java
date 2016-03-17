@@ -28,6 +28,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallbackResult;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
@@ -44,8 +45,9 @@ public class JsonFeedEntityProducer {
     this.properties = properties == null ? EntityProviderWriteProperties.serviceRoot(null).build() : properties;
   }
 
-  public void append(final Writer writer, final EntityInfoAggregator entityInfo, final List<Map<String, Object>> data,
-      final boolean isRootElement) throws EntityProviderException {
+  public void appendAsObject(final Writer writer, final EntityInfoAggregator entityInfo,
+                             final List<Map<String, Object>> data,
+                             final boolean isRootElement) throws EntityProviderException {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
 
     TombstoneCallback callback = getTombstoneCallback();
@@ -65,24 +67,11 @@ public class JsonFeedEntityProducer {
 
       jsonStreamWriter.name(FormatJson.RESULTS)
           .beginArray();
-      JsonEntryEntityProducer entryProducer = new JsonEntryEntityProducer(properties);
-      boolean first = true;
-      for (final Map<String, Object> entryData : data) {
-        if (first) {
-          first = false;
-        } else {
-          jsonStreamWriter.separator();
-        }
-        entryProducer.append(writer, entityInfo, entryData, false);
-      }
+
+      appendEntries(writer, entityInfo, data, jsonStreamWriter);
 
       if (callback != null) {
-        JsonDeletedEntryEntityProducer deletedEntryProducer = new JsonDeletedEntryEntityProducer(properties);
-        TombstoneCallbackResult callbackResult = callback.getTombstoneCallbackResult();
-        List<Map<String, Object>> deletedEntries = callbackResult.getDeletedEntriesData();
-        if (deletedEntries != null) {
-          deletedEntryProducer.append(writer, entityInfo, deletedEntries);
-        }
+        appendDeletedEntries(writer, entityInfo, data, callback);
       }
 
       jsonStreamWriter.endArray();
@@ -96,8 +85,46 @@ public class JsonFeedEntityProducer {
 
       jsonStreamWriter.endObject();
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
+    }
+  }
+
+  public void appendAsArray(final Writer writer, final EntityInfoAggregator entityInfo,
+                            final List<Map<String, Object>> data) throws EntityProviderException {
+    JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
+    try {
+      jsonStreamWriter.beginArray();
+      appendEntries(writer, entityInfo, data, jsonStreamWriter);
+      jsonStreamWriter.endArray();
+    } catch (final IOException e) {
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+          .getSimpleName()), e);
+    }
+  }
+
+  private void appendDeletedEntries(final Writer writer, final EntityInfoAggregator entityInfo,
+      final List<Map<String, Object>> data, TombstoneCallback callback) throws EntityProviderException {
+    JsonDeletedEntryEntityProducer deletedEntryProducer = new JsonDeletedEntryEntityProducer(properties);
+    TombstoneCallbackResult callbackResult = callback.getTombstoneCallbackResult();
+    List<Map<String, Object>> deletedEntries = callbackResult.getDeletedEntriesData();
+    if (deletedEntries != null) {
+      deletedEntryProducer.append(writer, entityInfo, deletedEntries, data.isEmpty());
+    }
+  }
+
+  private void appendEntries(final Writer writer, final EntityInfoAggregator entityInfo,
+      final List<Map<String, Object>> data, JsonStreamWriter jsonStreamWriter) throws EntityProviderException,
+      IOException {
+    JsonEntryEntityProducer entryProducer = new JsonEntryEntityProducer(properties);
+    boolean first = true;
+    for (final Map<String, Object> entryData : data) {
+      if (first) {
+        first = false;
+      } else {
+        jsonStreamWriter.separator();
+      }
+      entryProducer.append(writer, entityInfo, entryData, false);
     }
   }
 

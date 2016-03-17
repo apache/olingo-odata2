@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -127,6 +128,21 @@ public class JsonFeedWithDeltaLinkProducerTest extends BaseTest {
     final String json = writeRoomData(entitySet, tombstoneCallback);
 
     assertTrue("Something wrong with empty deletedRoomData list!", json.contains("nr_Building\"}}}]}}"));
+  }
+
+  @Test
+  public void deletedEntriesWithNoPreviousData() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+
+    TombstoneCallback tombstoneCallback =
+        new TombstoneCallbackImpl(deletedRoomData, null);
+
+    roomsData.clear();
+
+    final String json = writeRoomData(entitySet, tombstoneCallback);
+
+    assertFalse("Something wrong with empty RoomData list in combination with deleted entries!",
+        json.contains("[,"));
   }
 
   @Test

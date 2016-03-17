@@ -46,20 +46,35 @@ public class EdmGuid extends AbstractSimpleType {
   public boolean validate(final String value, final EdmLiteralKind literalKind, final EdmFacets facets) {
     return value == null ?
         facets == null || facets.isNullable() == null || facets.isNullable() :
-        validateLiteral(value, literalKind);
+        validateLiteralInternal(value, literalKind);
   }
 
-  private boolean validateLiteral(final String value, final EdmLiteralKind literalKind) {
-    return value.matches(literalKind == EdmLiteralKind.URI ? toUriLiteral(PATTERN) : PATTERN);
+  private boolean validateLiteralInternal(String value, EdmLiteralKind literalKind) {
+    String cleanValue = null;
+    if (literalKind == EdmLiteralKind.URI && value.toLowerCase().startsWith("guid'") && value.endsWith("'")) {
+      cleanValue = value.substring(5, value.length() - 1);
+    } else {
+      cleanValue = value;
+    }
+    return validateLiteral(cleanValue);
+  }
+
+  private boolean validateLiteral(final String value) {
+    return value.matches(PATTERN);
   }
 
   @Override
   protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
       final Class<T> returnType) throws EdmSimpleTypeException {
     UUID result;
-    if (validateLiteral(value, literalKind)) {
-      result = UUID.fromString(
-          literalKind == EdmLiteralKind.URI ? value.substring(5, value.length() - 1) : value);
+    String cleanValue = null;
+    if (literalKind == EdmLiteralKind.URI && value.toLowerCase().startsWith("guid'") && value.endsWith("'")) {
+      cleanValue = value.substring(5, value.length() - 1);
+    } else {
+      cleanValue = value;
+    }
+    if (validateLiteral(cleanValue)) {
+      result = UUID.fromString(cleanValue);
     } else {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
     }

@@ -37,6 +37,7 @@ import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallbackResult;
 import org.apache.olingo.odata2.core.commons.Encoder;
 import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
@@ -88,7 +89,7 @@ public class AtomFeedProducer {
 
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -120,7 +121,7 @@ public class AtomFeedProducer {
         writer.writeAttribute(FormatXml.ATOM_HREF, deltaLink);
         writer.writeEndElement();
       } catch (XMLStreamException e) {
-        throw new EntityProviderException(EntityProviderException.COMMON, e);
+        throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
       }
     }
   }
@@ -132,7 +133,7 @@ public class AtomFeedProducer {
       writer.writeAttribute(FormatXml.ATOM_REL, FormatXml.ATOM_NEXT_LINK);
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -147,14 +148,14 @@ public class AtomFeedProducer {
   private void appendInlineCount(final XMLStreamWriter writer, final Integer inlineCount)
       throws EntityProviderException {
     if (inlineCount == null || inlineCount < 0) {
-      throw new EntityProviderException(EntityProviderException.INLINECOUNT_INVALID);
+      throw new EntityProviderProducerException(EntityProviderException.INLINECOUNT_INVALID);
     }
     try {
       writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_COUNT);
       writer.writeCharacters(String.valueOf(inlineCount));
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -175,7 +176,7 @@ public class AtomFeedProducer {
       writer.writeAttribute(FormatXml.ATOM_TITLE, eia.getEntitySetName());
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -217,9 +218,9 @@ public class AtomFeedProducer {
       writer.writeEndElement();
 
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 

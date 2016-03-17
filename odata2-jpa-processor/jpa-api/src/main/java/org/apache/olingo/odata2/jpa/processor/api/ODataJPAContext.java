@@ -148,6 +148,12 @@ public interface ODataJPAContext {
   public String getJPAEdmMappingModel();
 
   /**
+   * The method sets the Entity Manager into the Context
+   * @param em
+   */
+  public void setEntityManager(EntityManager em);
+
+  /**
    * The method returns an instance of type entity manager. The entity manager
    * thus returns a single persistence context for the current OData request.
    * Hence all entities that are accessed within JPA processor are managed by
@@ -228,9 +234,9 @@ public interface ODataJPAContext {
    */
   public JPAPaging getPaging();
 
-   /**
-    * The method returns the ODataJPATransaction.
-    * @return ODataJPATransaction
-    */
-   public ODataJPATransaction getODataJPATransaction();
+  /**
+   * The method returns the ODataJPATransaction.
+   * @return ODataJPATransaction
+   */
+  public ODataJPATransaction getODataJPATransaction();
 }

@@ -122,8 +122,7 @@ public class BasicEntityProvider {
     try {
       type = (EdmSimpleType) edmProperty.getType();
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderException(e.getMessageReference(), e);
     }
 
     if (type == EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance()) {
@@ -137,8 +136,7 @@ public class BasicEntityProvider {
           return type.valueOfString(readText(content), EdmLiteralKind.DEFAULT, edmProperty.getFacets(), typeMapping);
         }
       } catch (EdmException e) {
-        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-            .getSimpleName()), e);
+        throw new EntityProviderException(e.getMessageReference(), e);
       }
     }
   }
@@ -179,8 +177,7 @@ public class BasicEntityProvider {
       }
 
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -197,7 +194,7 @@ public class BasicEntityProvider {
       try {
         stream = new ByteArrayInputStream(value.getBytes(DEFAULT_CHARSET));
       } catch (UnsupportedEncodingException e) {
-        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+        throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
             .getSimpleName()), e);
       }
       builder.entity(stream);
@@ -248,13 +245,13 @@ public class BasicEntityProvider {
       XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
       XmlMetadataProducer.writeMetadata(metadata, xmlStreamWriter, predefinedNamespaces);
     } catch (UnsupportedEncodingException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     } catch (FactoryConfigurationError e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
     builder.entity(csb.getInputStream());
