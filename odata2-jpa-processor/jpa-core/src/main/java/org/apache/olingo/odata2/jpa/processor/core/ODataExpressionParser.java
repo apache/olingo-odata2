@@ -27,10 +27,12 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmLiteral;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
+import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
@@ -139,9 +141,9 @@ public class ODataExpressionParser {
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case NE:
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
-            + (!"null".equals(right) ? 
-            	  JPQLStatement.Operator.NE :
-            	  "IS" + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.NOT)
+            + (!"null".equals(right) ?
+                JPQLStatement.Operator.NE :
+                "IS" + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.NOT)
             + JPQLStatement.DELIMITER.SPACE + right
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case LT:
@@ -437,8 +439,14 @@ public class ODataExpressionParser {
     return uriLiteral;
   }
 
-  private static String getPropertyName(final CommonExpression whereExpression) throws EdmException {
-    EdmProperty property = ((EdmProperty) ((PropertyExpression) whereExpression).getEdmProperty());
+  private static String getPropertyName(final CommonExpression whereExpression) throws EdmException,
+      ODataJPARuntimeException {
+    EdmTyped edmProperty  = ((PropertyExpression) whereExpression).getEdmProperty();
+    if (edmProperty instanceof EdmNavigationProperty) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.FILTER_ON_NAVIGATION_NOT_SUPPORTED, null);
+    }
+
+    EdmProperty property = ((EdmProperty) edmProperty);
     EdmMapping mapping = property.getMapping();
     String name = mapping != null ? mapping.getInternalName() : property.getName();
     return name;
