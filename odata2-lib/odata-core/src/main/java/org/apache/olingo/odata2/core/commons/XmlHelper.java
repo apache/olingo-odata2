@@ -21,8 +21,10 @@ package org.apache.olingo.odata2.core.commons;
 import java.io.InputStream;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.TransformerFactory;
 
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 
@@ -31,6 +33,28 @@ public class XmlHelper {
   /** Default used charset for reader */
   private static final String DEFAULT_CHARSET = "UTF-8";
 
+
+  private static class XmlInputFactoryHolder {
+    private static final XMLInputFactory INSTANCE = XMLInputFactory.newInstance();
+  }
+
+  private static class XmlOutputFactoryHolder {
+    private static final XMLOutputFactory INSTANCE = XMLOutputFactory.newInstance();
+  }
+  private static class TransformerFactoryHolder {
+    private static final TransformerFactory INSTANCE = TransformerFactory.newInstance();
+  }
+
+  public static XMLInputFactory getXMLInputFactory() {
+    return XmlInputFactoryHolder.INSTANCE;
+  }
+  public static XMLOutputFactory getXMLOutputFactory() {
+    return XmlOutputFactoryHolder.INSTANCE;
+  }
+  public static TransformerFactory getTransformerFactory() {
+    return TransformerFactoryHolder.INSTANCE;
+  }
+
   public static XMLStreamReader createStreamReader(final Object content) throws EntityProviderException {
     if (content == null) {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
@@ -38,7 +62,7 @@ public class XmlHelper {
     }
     XMLStreamReader streamReader;
     try {
-      XMLInputFactory factory = XMLInputFactory.newInstance();
+      XMLInputFactory factory = getXMLInputFactory();
       factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
       factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
       factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);

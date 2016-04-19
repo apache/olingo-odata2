@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.producer.AtomEntryEntityProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
@@ -79,7 +80,7 @@ public class PerformanceTest extends AbstractProviderTest {
       outStream = new ByteArrayOutputStream();
     }
 
-    writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, "utf-8");
+    writer = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(outStream, "utf-8");
 
     writer.writeStartElement("junit");
     writer.writeDefaultNamespace(Edm.NAMESPACE_ATOM_2005);

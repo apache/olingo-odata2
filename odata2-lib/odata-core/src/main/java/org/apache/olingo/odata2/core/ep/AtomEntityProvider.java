@@ -52,6 +52,7 @@ import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.ContentType.ODataFormat;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.consumer.AtomServiceDocumentConsumer;
@@ -107,7 +108,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
 
       XmlErrorDocumentProducer producer = new XmlErrorDocumentProducer();
       producer.writeErrorDocument(writer, errorCode, message, locale, innerError);
@@ -162,7 +163,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       AtomEntryEntityProducer as = new AtomEntryEntityProducer(properties);
@@ -198,7 +199,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       XmlPropertyEntityProducer ps = new XmlPropertyEntityProducer(false, true);
@@ -225,7 +226,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       AtomFeedProducer atomFeedProvider = new AtomFeedProducer(properties);
@@ -254,7 +255,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       XmlLinkEntityProducer entity = new XmlLinkEntityProducer(properties);
@@ -283,7 +284,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       XmlLinksEntityProducer entity = new XmlLinksEntityProducer(properties);
@@ -310,7 +311,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
 
     try {
       OutputStream outStream = csb.getOutputStream();
-      XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+      XMLStreamWriter writer = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
       writer.writeStartDocument(DEFAULT_CHARSET, XML_VERSION);
 
       XmlCollectionEntityProducer.append(writer, propertyInfo, data);

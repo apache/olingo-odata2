@@ -40,6 +40,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
 import org.apache.olingo.odata2.core.commons.ContentType;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
@@ -65,7 +66,7 @@ public class TombstoneProducerTest extends AbstractProviderTest {
   public void initialize() throws Exception {
     csb = new CircleStreamBuffer();
     OutputStream outStream = csb.getOutputStream();
-    writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
+    writer = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
     defaultProperties = EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
     defaultEia =
         EntityInfoAggregator.create(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"),

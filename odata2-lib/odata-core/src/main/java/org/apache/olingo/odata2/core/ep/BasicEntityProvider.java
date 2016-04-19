@@ -51,6 +51,7 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.producer.XmlMetadataProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 
@@ -242,7 +243,7 @@ public class BasicEntityProvider {
     CircleStreamBuffer csb = new CircleStreamBuffer();
     try {
       writer = new OutputStreamWriter(csb.getOutputStream(), DEFAULT_CHARSET);
-      XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
+      XMLStreamWriter xmlStreamWriter = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(writer);
       XmlMetadataProducer.writeMetadata(metadata, xmlStreamWriter, predefinedNamespaces);
     } catch (UnsupportedEncodingException e) {
       throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
