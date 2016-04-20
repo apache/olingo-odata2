@@ -33,15 +33,13 @@ public class XmlHelper {
   /** Default used charset for reader */
   private static final String DEFAULT_CHARSET = "UTF-8";
 
-
-  private static class XmlInputFactoryHolder {
+  static class XmlInputFactoryHolder {
     private static final XMLInputFactory INSTANCE = XMLInputFactory.newInstance();
   }
-
-  private static class XmlOutputFactoryHolder {
+  static class XmlOutputFactoryHolder {
     private static final XMLOutputFactory INSTANCE = XMLOutputFactory.newInstance();
   }
-  private static class TransformerFactoryHolder {
+  static class TransformerFactoryHolder {
     private static final TransformerFactory INSTANCE = TransformerFactory.newInstance();
   }
 
