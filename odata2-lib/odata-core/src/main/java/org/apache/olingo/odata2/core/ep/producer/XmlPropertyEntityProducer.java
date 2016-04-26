@@ -32,6 +32,7 @@ import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityComplexPropertyInfo;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
@@ -77,9 +78,9 @@ public class XmlPropertyEntityProducer {
 
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -92,9 +93,9 @@ public class XmlPropertyEntityProducer {
         writer.writeEndElement();
       }
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -123,9 +124,9 @@ public class XmlPropertyEntityProducer {
 
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -229,7 +230,7 @@ public class XmlPropertyEntityProducer {
     String nsPrefix = mapping.getFcNsPrefix();
     String nsUri = mapping.getFcNsUri();
     if (nsUri == null || nsPrefix == null) {
-      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(name));
+      throw new EntityProviderProducerException(EntityProviderException.INVALID_NAMESPACE.addContent(name));
     }
     writer.writeStartElement(nsPrefix, name, nsUri);
     writer.writeNamespace(nsPrefix, nsUri);

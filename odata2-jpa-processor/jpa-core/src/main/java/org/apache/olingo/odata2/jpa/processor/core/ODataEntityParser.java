@@ -115,9 +115,9 @@ public final class ODataEntityParser {
       final String serviceRoot = odataContext.getPathInfo().getServiceRoot().toString();
       final String path =
           uriString.startsWith(serviceRoot.toString()) ? uriString.substring(serviceRoot.length()) : uriString;
-      final PathSegment pathSegment = getPathSegment(path);
+      final List<PathSegment> pathSegment = getPathSegment(path);
       edm = getEdm();
-      uri = UriParser.parse(edm, Arrays.asList(pathSegment), Collections.<String, String> emptyMap());
+      uri = UriParser.parse(edm, pathSegment, Collections.<String, String> emptyMap());
     } catch (ODataException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
@@ -128,8 +128,8 @@ public final class ODataEntityParser {
       throws ODataJPARuntimeException {
     List<PathSegment> pathSegments = new ArrayList<PathSegment>();
     for (String link : linkSegments) {
-      PathSegment pathSegment = getPathSegment(link);
-      pathSegments.add(pathSegment);
+      List<PathSegment> pathSegment = getPathSegment(link);
+      pathSegments.addAll(pathSegment);
     }
     UriInfo uriInfo = null;
     try {
@@ -143,11 +143,11 @@ public final class ODataEntityParser {
 
   public UriInfo parseBindingLink(final String link, final Map<String, String> options)
       throws ODataJPARuntimeException {
-    final PathSegment pathSegment = getPathSegment(link);
+    final List<PathSegment> pathSegment = getPathSegment(link);
     UriInfo uriInfo = null;
     try {
       edm = getEdm();
-      uriInfo = UriParser.parse(edm, Arrays.asList(pathSegment), options);
+      uriInfo = UriParser.parse(edm, pathSegment, options);
     } catch (ODataException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
@@ -161,19 +161,26 @@ public final class ODataEntityParser {
     return edm;
   }
 
-  private PathSegment getPathSegment(final String path) {
-    final PathSegment pathSegment = new PathSegment() {
+  private List<PathSegment> getPathSegment(final String path) {
+    String trimmedPath = path.replace(serviceRoot, "");
 
-      @Override
-      public String getPath() {
-        return path.replace(serviceRoot, "");
-      }
+    final String[] splittedPath = trimmedPath.split("/");
+    final List<PathSegment> pathSegments = new ArrayList<PathSegment>();
 
-      @Override
-      public Map<String, List<String>> getMatrixParameters() {
-        return null;
-      }
-    };
-    return pathSegment;
+    for (final String pathSegmentString : splittedPath) {
+      final PathSegment pathSegment = new PathSegment() {
+        @Override
+        public String getPath() {
+          return pathSegmentString;
+        }
+        @Override
+        public Map<String, List<String>> getMatrixParameters() {
+          return null;
+        }
+      };
+      pathSegments.add(pathSegment);
+    }
+
+    return pathSegments;
   }
 }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,32 +18,27 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.exception.MessageReference;
 
-import javax.xml.stream.XMLOutputFactory;
+public class EntityProviderProducerException extends EntityProviderException {
 
-import org.junit.Test;
+  private static final long serialVersionUID = 1L;
 
-/**
- *
- */
-public class LoadXMLFactoryTest {
-  // CHECKSTYLE:OFF
-  @Test
-  public void loadWoodstockFactory() throws Exception {
-    System.setProperty("javax.xml.stream.XMLOutputFactory", "com.ctc.wstx.stax.WstxOutputFactory"); // NOSONAR
-    XMLOutputFactory factory = XMLOutputFactory.newInstance();
-    assertNotNull(factory);
-    assertEquals("com.ctc.wstx.stax.WstxOutputFactory", factory.getClass().getName());
+  public EntityProviderProducerException(final MessageReference messageReference) {
+    super(messageReference);
   }
 
-  @Test
-  public void loadSunFactory() throws Exception {
-    System.setProperty("javax.xml.stream.XMLOutputFactory", "com.sun.xml.internal.stream.XMLOutputFactoryImpl"); // NOSONAR
-    XMLOutputFactory factory = XMLOutputFactory.newInstance();
-    assertNotNull(factory);
-    assertEquals("com.sun.xml.internal.stream.XMLOutputFactoryImpl", factory.getClass().getName());
+  public EntityProviderProducerException(final MessageReference messageReference, final Throwable cause) {
+    super(messageReference, cause);
   }
-  // CHECKSTYLE:ON
+
+  public EntityProviderProducerException(final MessageReference messageReference, final String errorCode) {
+    super(messageReference, errorCode);
+  }
+
+  public EntityProviderProducerException(final MessageReference messageReference, final Throwable cause,
+      final String errorCode) {
+    super(messageReference, cause, errorCode);
+  }
 }

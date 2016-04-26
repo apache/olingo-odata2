@@ -20,6 +20,8 @@ package org.apache.olingo.odata2.jpa.processor.ref.web;
 
 import java.util.ResourceBundle;
 
+import org.apache.olingo.odata2.api.ODataCallback;
+import org.apache.olingo.odata2.api.ODataDebugCallback;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAServiceFactory;
 import org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent;
@@ -56,5 +58,19 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
     ResourceBundle config = ResourceBundle.getBundle(CONFIG);
     boolean error = Boolean.parseBoolean(config.getString(SHOW_DETAIL_ERROR));
     setDetailErrors(error);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T extends ODataCallback> T getCallback(final Class<T> callbackInterface) {
+    return (T) (callbackInterface.isAssignableFrom(ODataDebugCallback.class) ?
+        new ScenarioDebugCallback() : super.getCallback(callbackInterface));
+  }
+
+  private final class ScenarioDebugCallback implements ODataDebugCallback {
+    @Override
+    public boolean isDebugEnabled() {
+      return true;
+    }
   }
 }

@@ -22,8 +22,15 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-import org.apache.olingo.odata2.api.edm.*;
+import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmFacets;
+import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
+import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityComplexPropertyInfo;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
@@ -52,11 +59,10 @@ public class JsonPropertyEntityProducer {
       jsonStreamWriter.endObject()
           .endObject();
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     } catch (final EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -78,7 +84,7 @@ public class JsonPropertyEntityProducer {
         }
         jsonStreamWriter.endObject();
       } else {
-        throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
+        throw new EntityProviderProducerException(EntityProviderException.ILLEGAL_ARGUMENT
             .addContent("A complex property must have a Map as data"));
       }
     } else {

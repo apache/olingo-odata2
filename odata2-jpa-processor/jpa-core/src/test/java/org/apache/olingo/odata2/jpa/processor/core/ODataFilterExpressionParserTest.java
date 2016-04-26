@@ -49,7 +49,7 @@ public class ODataFilterExpressionParserTest {
   private static final String[] EXPRESSION_BINARY_AND =
   {
       "id le '123' and soId eq 123L and not (substringof(id,'123') eq false) eq true",
-      "(((E1.id <= '123') AND (E1.soId = 123L)) AND (NOT(((CASE WHEN ('123' LIKE CONCAT('%',E1.id,'%')) "
+      "(((E1.id <= '123') AND (E1.soId = 123L)) AND (NOT(((CASE WHEN ('123' LIKE CONCAT('%',CONCAT(E1.id,'%'))) "
           + "THEN TRUE ELSE FALSE END) = false)) = true))" };
   private static final String[] EXPRESSION_BINARY_OR = { "id ge '123' or soId gt 123L",
       "((E1.id >= '123') OR (E1.soId > 123L))" };
@@ -68,22 +68,23 @@ public class ODataFilterExpressionParserTest {
       "(SUBSTRING(E1.oValue.Currency, 2 + 1 ) NOT LIKE CONCAT('%','INR') )" };
   private static final String[] EXPRESSION_SUBSTRING_OF = {
       "substringof(id,'123') ne true",
-      "((CASE WHEN ('123' LIKE CONCAT('%',E1.id,'%')) THEN TRUE ELSE FALSE END) <> true)" };
+      "((CASE WHEN ('123' LIKE CONCAT('%',CONCAT(E1.id,'%'))) THEN TRUE ELSE FALSE END) <> true)" };
   private static final String[] EXPRESSION_STARTS_WITH_WRONG_OP = { "startswith(oValue/Currency,'INR') lt true", "" };
   private static final String[] EXPRESSION_SUBSTRING_ALL_OP = { "substring(oValue/Currency,1,3) eq 'INR'",
       "(SUBSTRING(E1.oValue.Currency, 1 + 1 , 3) = 'INR')" };
   private static final String[] EXPRESSION_SUBSTRINGOF_INJECTION1 = {
       "substringof('a'' OR 1=1 OR E1.id LIKE ''b',id) eq true",
-      "((CASE WHEN (E1.id LIKE CONCAT('%','a'' OR 1=1 OR E1.id LIKE ''b','%')) THEN TRUE ELSE FALSE END) = true)" };
+      "((CASE WHEN (E1.id LIKE CONCAT('%',CONCAT('a'' OR 1=1 OR E1.id LIKE ''b','%'))) "
+          + "THEN TRUE ELSE FALSE END) = true)" };
   private static final String[] EXPRESSION_SUBSTRINGOF_INJECTION2 =
   {
       "substringof('substringof(''a'' OR 1=1 OR E1.id LIKE ''b'',id)',id) eq true",
-      "((CASE WHEN (E1.id LIKE CONCAT('%','substringof(''a'' OR 1=1 OR E1.id LIKE ''b'',id)','%')) "
+      "((CASE WHEN (E1.id LIKE CONCAT('%',CONCAT('substringof(''a'' OR 1=1 OR E1.id LIKE ''b'',id)','%'))) "
           + "THEN TRUE ELSE FALSE END) = true)" };
   private static final String[] EXPRESSION_SUBSTRINGOF_INJECTION3 =
   {
       "substringof( substring(' ) OR execute_my_sql OR '' LIKE ',3),'de''') eq true",
-      "((CASE WHEN ('de''' LIKE CONCAT('%',SUBSTRING(' ) OR execute_my_sql OR '' LIKE ', 3 + 1 ),'%')) "
+      "((CASE WHEN ('de''' LIKE CONCAT('%',CONCAT(SUBSTRING(' ) OR execute_my_sql OR '' LIKE ', 3 + 1 ),'%'))) "
           + "THEN TRUE ELSE FALSE END) = true)" };
   private static final String[] EXPRESSION_ENDSWITH_INJECTION1 = { "endswith(id,'Str''eet') eq true",
       "(E1.id LIKE CONCAT('%','Str''eet') )" };
@@ -92,6 +93,11 @@ public class ODataFilterExpressionParserTest {
       "(((E1.id = '123') AND (E1.id <> '123')) OR ((E1.id = '123') AND (E1.id <> '123')))" };
   private static final String[] EXPRESSION_DATETIME = { "date eq datetime'2000-01-01T00:00:00'",
       "(E1.date = {ts '2000-01-01 00:00:00.000'})" };
+  
+  private static final String[] EXPRESSION_NULL = { "date eq null", "(E1.date IS null)" };
+
+  private static final String[] EXPRESSION_NOT_NULL = { "date ne null", "(E1.date IS NOT null)" };
+
   private static Edm edm = null;
 
   @BeforeClass
@@ -204,6 +210,16 @@ public class ODataFilterExpressionParserTest {
     assertEquals(EXPRESSION_MEMBER_OR[OUTPUT], parseWhereExpression(EXPRESSION_MEMBER_OR[INPUT], false));
   }
 
+  @Test
+  public void testNull() {
+    assertEquals(EXPRESSION_NULL[OUTPUT], parseWhereExpression(EXPRESSION_NULL[INPUT], false));
+  }
+
+  @Test
+  public void testNotNull() {
+    assertEquals(EXPRESSION_NOT_NULL[OUTPUT], parseWhereExpression(EXPRESSION_NOT_NULL[INPUT], false));
+  }
+  
   private String parseWhereExpression(final String input, final boolean isExceptionExpected) {
     FilterExpression expression;
     try {

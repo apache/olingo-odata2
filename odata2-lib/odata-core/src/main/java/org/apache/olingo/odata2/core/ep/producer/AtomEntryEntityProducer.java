@@ -57,6 +57,7 @@ import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Encoder;
 import org.apache.olingo.odata2.core.edm.EdmDateTimeOffset;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
@@ -139,11 +140,11 @@ public class AtomEntryEntityProducer {
 
       writer.flush();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     } catch (URISyntaxException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -208,7 +209,7 @@ public class AtomEntryEntityProducer {
 
       return etag;
     } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -245,7 +246,7 @@ public class AtomEntryEntityProducer {
       }
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -269,13 +270,13 @@ public class AtomEntryEntityProducer {
 
         ODataCallback callback = properties.getCallbacks().get(navigationPropertyName);
         if (callback == null) {
-          throw new EntityProviderException(EntityProviderException.EXPANDNOTSUPPORTED);
+          throw new EntityProviderProducerException(EntityProviderException.EXPANDNOTSUPPORTED);
         }
         WriteFeedCallbackResult result;
         try {
           result = ((OnWriteFeedContent) callback).retrieveFeedResult(context);
         } catch (ODataApplicationException e) {
-          throw new EntityProviderException(EntityProviderException.COMMON, e);
+          throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
         }
         List<Map<String, Object>> inlineData = result.getFeedData();
         if (inlineData == null) {
@@ -313,13 +314,13 @@ public class AtomEntryEntityProducer {
 
         ODataCallback callback = properties.getCallbacks().get(navigationPropertyName);
         if (callback == null) {
-          throw new EntityProviderException(EntityProviderException.EXPANDNOTSUPPORTED);
+          throw new EntityProviderProducerException(EntityProviderException.EXPANDNOTSUPPORTED);
         }
         WriteEntryCallbackResult result;
         try {
           result = ((OnWriteEntryContent) callback).retrieveEntryResult(context);
         } catch (ODataApplicationException e) {
-          throw new EntityProviderException(EntityProviderException.COMMON, e);
+          throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
         }
         Map<String, Object> inlineData = result.getEntryData();
         if (inlineData != null && !inlineData.isEmpty()) {
@@ -346,9 +347,9 @@ public class AtomEntryEntityProducer {
       writer.writeAttribute(FormatXml.ATOM_TITLE, eia.getEntityType().getName());
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -373,7 +374,7 @@ public class AtomEntryEntityProducer {
       writer.writeAttribute(FormatXml.ATOM_TYPE, mediaResourceMimeType);
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -410,7 +411,7 @@ public class AtomEntryEntityProducer {
       writer.writeAttribute(FormatXml.ATOM_SRC, self);
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -443,9 +444,9 @@ public class AtomEntryEntityProducer {
 
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -477,7 +478,7 @@ public class AtomEntryEntityProducer {
       }
       return null;
     } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -520,9 +521,9 @@ public class AtomEntryEntityProducer {
       writer.writeAttribute(FormatXml.ATOM_CATEGORY_SCHEME, Edm.NAMESPACE_SCHEME_2007_08);
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -538,7 +539,7 @@ public class AtomEntryEntityProducer {
         writer.writeEndElement();
       }
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
@@ -574,7 +575,7 @@ public class AtomEntryEntityProducer {
         keys.append(Encoder.encode(type.valueToString(data.get(name), EdmLiteralKind.URI,
             keyPropertyInfo.getFacets())));
       } catch (final EdmSimpleTypeException e) {
-        throw new EntityProviderException(EntityProviderException.COMMON, e);
+        throw new EntityProviderProducerException(e.getMessageReference(), e);
       }
     }
 
@@ -601,7 +602,7 @@ public class AtomEntryEntityProducer {
         writer.writeEndElement();
       }
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
