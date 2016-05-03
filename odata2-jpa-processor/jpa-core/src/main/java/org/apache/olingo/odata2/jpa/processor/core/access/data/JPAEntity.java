@@ -432,7 +432,11 @@ public class JPAEntity {
 
     JPAEdmMapping mapping = (JPAEdmMapping) edmComplexType.getMapping();
     Object embeddableObject = mapping.getJPAType().newInstance();
-    accessModifier.invoke(jpaEntity, embeddableObject);
+    if (propertyName != null) {
+    	accessModifier.invoke(jpaEntity, propertyName, embeddableObject);
+    } else {
+    	accessModifier.invoke(jpaEntity, embeddableObject);
+    }
 
     HashMap<String, Method> accessModifiers =
         jpaEntityParser.getAccessModifiers(embeddableObject, edmComplexType,
@@ -453,7 +457,7 @@ public class JPAEntity {
       } else {
         if (propertyName != null) {
           setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName),
-              (EdmSimpleType) edmTyped.getType(), propertyName);
+              (EdmSimpleType) edmTyped.getType(), edmPropertyName);
         } else {
           setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName),
               (EdmSimpleType) edmTyped.getType());

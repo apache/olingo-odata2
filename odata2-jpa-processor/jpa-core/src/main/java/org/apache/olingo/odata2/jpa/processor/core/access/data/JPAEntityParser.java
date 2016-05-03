@@ -564,7 +564,7 @@ public final class JPAEntityParser {
         		  }
         	  } else {
         		  JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
-        		  if(jpaEdmMapping.isVirtualAccess()) {
+        		  if(jpaEdmMapping != null && jpaEdmMapping.isVirtualAccess()) {
         			  method = jpaEntityType.getMethod(ACCESS_MODIFIER_GET, String.class);
         		  }else{
         			  method = jpaEntityType.getMethod(methodName, (Class<?>[]) null);
