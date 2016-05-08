@@ -109,8 +109,7 @@ public class BatchRequestTransformator implements BatchTransformator {
   private void validateBody(final HttpRequestStatusLine httpStatusLine, final BatchQueryOperation operation)
       throws BatchException {
     if (httpStatusLine.getMethod().equals(ODataHttpMethod.GET) && isUnvalidGetRequestBody(operation)) {
-      throw new BatchException(BatchException.INVALID_REQUEST_LINE
-          .addContent(httpStatusLine.getMethod())
+      throw new BatchException(BatchException.INVALID_BODY_FOR_REQUEST
           .addContent(httpStatusLine.getLineNumber()));
     }
   }

@@ -113,6 +113,10 @@ public class BatchException extends ODataMessageException {
   public static final MessageReference INVALID_REQUEST_LINE = createMessageReference(BatchException.class,
       "INVALID_REQUEST_LINE");
 
+  /** INVALID_BODY_FOR_REQUEST requires 1 content value ('line number') */
+  public static final MessageReference INVALID_BODY_FOR_REQUEST = createMessageReference(BatchException.class,
+      "INVALID_BODY_FOR_REQUEST");
+
   /** INVALID_STATUS_LINE requires 2 content value ('status line', 'line number') */
   public static final MessageReference INVALID_STATUS_LINE = createMessageReference(BatchException.class,
       "INVALID_STATUS_LINE");
