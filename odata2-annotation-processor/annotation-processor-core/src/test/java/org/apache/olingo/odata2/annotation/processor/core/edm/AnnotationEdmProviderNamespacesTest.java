@@ -39,6 +39,7 @@ public class AnnotationEdmProviderNamespacesTest {
   /**
    * Test with namespace in path segment
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void testTwoWayNavigationAB() throws Exception {
     UriParserImpl uriParser = createUriParser(A.class, B.class, C.class, D.class);
@@ -53,6 +54,7 @@ public class AnnotationEdmProviderNamespacesTest {
    * (160211_mibo): This can actual not work because the option to manually set the default namespace is missing.
    *                However this test could be used to test the option to manually set the default namespace.
    */
+  @SuppressWarnings("unchecked")
   @Test
   @Ignore("Currently not implemented")
   public void testTwoWayNavigationABWithDefaultNamespaceSetManual() throws Exception {
@@ -66,6 +68,7 @@ public class AnnotationEdmProviderNamespacesTest {
   /**
    * Test with namespace in path segment
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void testTwoWayNavigationCD() throws Exception {
     UriParserImpl uriParser = createUriParser(C.class, D.class, A.class, B.class);
@@ -78,6 +81,7 @@ public class AnnotationEdmProviderNamespacesTest {
   /**
    * Test with namespace in path segment
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void testTwoWayNavigationBug_DefaultEntityContainerGeneratedOnWrongEntities1() throws Exception {
     UriParserImpl uriParser = createUriParser(A.class, B.class, C.class, D.class);
@@ -90,6 +94,7 @@ public class AnnotationEdmProviderNamespacesTest {
   /**
    * Test with namespace in path segment
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void testTwoWayNavigationBug_DefaultEntityContainerGeneratedOnWrongEntities2() throws Exception {
     UriParserImpl uriParser = createUriParser(C.class, D.class, A.class, B.class);
