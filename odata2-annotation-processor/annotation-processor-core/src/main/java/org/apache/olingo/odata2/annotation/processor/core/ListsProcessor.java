@@ -1431,9 +1431,9 @@ public class ListsProcessor extends DataSourceProcessor {
       final MethodExpression methodExpression = (MethodExpression) expression;
       final String first = evaluateExpression(data, methodExpression.getParameters().get(0));
       final String second = methodExpression.getParameterCount() > 1 ?
-          evaluateExpression(data, methodExpression.getParameters().get(1)) : null;
+          evaluateExpression(data, methodExpression.getParameters().get(1)) : "";
       final String third = methodExpression.getParameterCount() > 2 ?
-          evaluateExpression(data, methodExpression.getParameters().get(2)) : null;
+          evaluateExpression(data, methodExpression.getParameters().get(2)) : "";
 
       switch (methodExpression.getMethod()) {
       case ENDSWITH:
@@ -1449,8 +1449,9 @@ public class ListsProcessor extends DataSourceProcessor {
       case TRIM:
         return first.trim();
       case SUBSTRING:
-        final int offset = Integer.parseInt(second);
-        return first.substring(offset, offset + Integer.parseInt(third));
+        final int offset = second.length() == 0 ? 0 : Integer.parseInt(second);
+        final int length = third.length() == 0 ? 0 : Integer.parseInt(second);
+        return first.substring(offset, offset + length);
       case SUBSTRINGOF:
         return Boolean.toString(second.contains(first));
       case CONCAT:
