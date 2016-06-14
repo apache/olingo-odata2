@@ -443,24 +443,27 @@ public class JPAEntity {
             JPAEntityParser.ACCESS_MODIFIER_SET);
 
     for (String edmPropertyName : edmComplexType.getPropertyNames()) {
-      EdmTyped edmTyped = (EdmTyped) edmComplexType.getProperty(edmPropertyName);
-      accessModifier = accessModifiers.get(edmPropertyName);
-      if (edmTyped.getType().getKind().toString().equals(EdmTypeKind.COMPLEX.toString())) {
-        EdmStructuralType structualType = (EdmStructuralType) edmTyped.getType();
-        if (propertyName != null) {
-          setComplexProperty(accessModifier, embeddableObject, structualType,
-              (HashMap<String, Object>) propertyValue.get(edmPropertyName), propertyName);
+      if (propertyValue != null) {
+        EdmTyped edmTyped = (EdmTyped) edmComplexType.getProperty(edmPropertyName);
+        accessModifier = accessModifiers.get(edmPropertyName);
+        if (edmTyped.getType().getKind().toString().equals(EdmTypeKind.COMPLEX.toString())) {
+          EdmStructuralType structualType = (EdmStructuralType) edmTyped.getType();
+          if (propertyName != null) {
+            setComplexProperty(accessModifier, embeddableObject, structualType,
+                (HashMap<String, Object>) propertyValue.get(edmPropertyName), propertyName);
+          } else {
+            setComplexProperty(accessModifier, embeddableObject, structualType,
+                (HashMap<String, Object>) propertyValue.get(edmPropertyName));
+          }
         } else {
-          setComplexProperty(accessModifier, embeddableObject, structualType,
-              (HashMap<String, Object>) propertyValue.get(edmPropertyName));
-        }
-      } else {
-        if (propertyName != null) {
-          setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName),
-              (EdmSimpleType) edmTyped.getType(), edmPropertyName);
-        } else {
-          setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName),
-              (EdmSimpleType) edmTyped.getType());
+          EdmSimpleType simpleType = (EdmSimpleType) edmTyped.getType();
+		  if (propertyName != null) {
+            setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName),
+                simpleType, edmPropertyName);
+          } else {
+            setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName),
+                simpleType);
+          }
         }
       }
     }
