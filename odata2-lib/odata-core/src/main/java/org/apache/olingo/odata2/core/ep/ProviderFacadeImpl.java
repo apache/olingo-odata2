@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.provider.DataServices;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.EntityProvider.EntityProviderInterface;
@@ -217,6 +218,12 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   public ODataResponse writeMetadata(final List<Schema> schemas, final Map<String, String> predefinedNamespaces)
       throws EntityProviderException {
     return create().writeMetadata(schemas, predefinedNamespaces);
+  }
+
+  @Override
+  public ODataResponse writeMetadata(final DataServices seriviceMetadata,
+      final Map<String, String> predefinedNamespaces) throws EntityProviderException {
+    return create().writeMetadata(seriviceMetadata, predefinedNamespaces);
   }
 
   @Override

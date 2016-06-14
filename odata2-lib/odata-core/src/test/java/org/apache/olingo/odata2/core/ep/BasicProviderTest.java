@@ -26,14 +26,21 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
+import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
+import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
+import org.apache.olingo.odata2.api.edm.provider.DataServices;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
+import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.commons.ContentType;
@@ -63,7 +70,8 @@ public class BasicProviderTest extends AbstractProviderTest {
     predefinedNamespaces.put("annoPrefix2", "http://annoNamespace");
     predefinedNamespaces.put("annoPrefix", "http://annoNamespace");
 
-    ODataResponse response = provider.writeMetadata(null, predefinedNamespaces);
+    List<Schema> schemas = null;
+    ODataResponse response = provider.writeMetadata(schemas, predefinedNamespaces);
     assertNotNull(response);
     assertNotNull(response.getEntity());
     assertNull("BasicProvider should not set content header", response.getContentHeader());
@@ -128,6 +136,69 @@ public class BasicProviderTest extends AbstractProviderTest {
         "/edmx:Edmx/edmx:DataServices/a:Schema/a:schemaElementTest1/a:schemaElementTest4[@rel=\"self\" and " +
             "@pre:href=\"http://foo\"]",
         metadata);
+  }
+
+  @Test
+  public void metadataWithReferences() throws Exception {
+    DataServices serviceMetadata = new DataServices();
+    List<AnnotationElement> annoElements = new ArrayList<AnnotationElement>();
+    annoElements.add(createElementWithoutInclude());
+    annoElements.add(createElementWithInclude());
+    serviceMetadata.setAnnotationElements(annoElements);
+    serviceMetadata.setDataServiceVersion(ODataServiceVersion.V20);
+    ODataResponse response = provider.writeMetadata(serviceMetadata, null);
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+    assertNull("BasicProvider should not set content header", response.getContentHeader());
+    String metadata = StringHelper.inputStreamToString((InputStream) response.getEntity());
+    assertTrue(metadata.contains(
+        "edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\" Uri=\"http://someurl.com\""));
+    assertTrue(metadata.contains("edmx:Include xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\""));
+  }
+  
+  @Test
+  public void metadataWithReferencesAndPredefinedNamespaces() throws Exception {
+    DataServices serviceMetadata = new DataServices();
+    serviceMetadata.setCustomEdmxVersion("4.0");
+    List<AnnotationElement> annoElements = new ArrayList<AnnotationElement>();
+    annoElements.add(createElementWithoutInclude());
+    annoElements.add(createElementWithInclude());
+    serviceMetadata.setAnnotationElements(annoElements);
+    serviceMetadata.setDataServiceVersion("4.0");
+    
+    Map<String, String> predefinedNamespaces = new HashMap<String, String>();
+    predefinedNamespaces.put("edmx", "http://docs.oasis-open.org/odata/ns/edmx");
+    predefinedNamespaces.put(null, "http://docs.oasis-open.org/odata/ns/edmx");
+    
+    ODataResponse response = provider.writeMetadata(serviceMetadata, predefinedNamespaces);
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+    assertNull("BasicProvider should not set content header", response.getContentHeader());
+    String metadata = StringHelper.inputStreamToString((InputStream) response.getEntity());
+    assertTrue(metadata.contains(
+        "edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\" Uri=\"http://someurl.com\""));
+    assertTrue(metadata.contains("edmx:Include xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\""));
+    assertTrue(metadata.contains("edmx:Edmx xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\" Version=\"4.0\""));
+  }
+
+  private AnnotationElement createElementWithInclude() {
+    List<AnnotationAttribute> childAttributes = new ArrayList<AnnotationAttribute>();
+    childAttributes.add(new AnnotationAttribute().setName("Namespace").setText("Org.OData.Core.V1"));
+    childAttributes.add(new AnnotationAttribute().setName("Alias").setText("UI"));
+    List<AnnotationElement> childElements = new ArrayList<AnnotationElement>();
+    childElements.add(new AnnotationElement().setName("Include").setNamespace(
+        "http://docs.oasis-open.org/odata/ns/edmx").setPrefix("edmx").setAttributes(childAttributes));
+    List<AnnotationAttribute> referenceAttributes = new ArrayList<AnnotationAttribute>();
+    referenceAttributes.add(new AnnotationAttribute().setName("Uri").setText("http://someurl2.com"));
+    return new AnnotationElement().setName("Reference").setPrefix("edmx").setNamespace(
+        "http://docs.oasis-open.org/odata/ns/edmx").setAttributes(referenceAttributes).setChildElements(childElements);
+  }
+
+  private AnnotationElement createElementWithoutInclude() {
+    List<AnnotationAttribute> referenceAttributes = new ArrayList<AnnotationAttribute>();
+    referenceAttributes.add(new AnnotationAttribute().setName("Uri").setText("http://someurl.com"));
+    return new AnnotationElement().setName("Reference").setPrefix("edmx").setNamespace(
+        "http://docs.oasis-open.org/odata/ns/edmx").setAttributes(referenceAttributes);
   }
 
   @Test
