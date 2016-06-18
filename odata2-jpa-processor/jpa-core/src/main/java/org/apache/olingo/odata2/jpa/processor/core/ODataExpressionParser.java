@@ -18,40 +18,18 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core;
 
+import org.apache.olingo.odata2.api.edm.*;
+import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
+import org.apache.olingo.odata2.api.uri.KeyPredicate;
+import org.apache.olingo.odata2.api.uri.expression.*;
+import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
+import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.olingo.odata2.api.edm.EdmException;
-import org.apache.olingo.odata2.api.edm.EdmLiteral;
-import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
-import org.apache.olingo.odata2.api.edm.EdmMapping;
-import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
-import org.apache.olingo.odata2.api.edm.EdmProperty;
-import org.apache.olingo.odata2.api.edm.EdmSimpleType;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
-import org.apache.olingo.odata2.api.edm.EdmTyped;
-import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
-import org.apache.olingo.odata2.api.uri.KeyPredicate;
-import org.apache.olingo.odata2.api.uri.expression.BinaryExpression;
-import org.apache.olingo.odata2.api.uri.expression.BinaryOperator;
-import org.apache.olingo.odata2.api.uri.expression.CommonExpression;
-import org.apache.olingo.odata2.api.uri.expression.ExpressionKind;
-import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
-import org.apache.olingo.odata2.api.uri.expression.LiteralExpression;
-import org.apache.olingo.odata2.api.uri.expression.MemberExpression;
-import org.apache.olingo.odata2.api.uri.expression.MethodExpression;
-import org.apache.olingo.odata2.api.uri.expression.MethodOperator;
-import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
-import org.apache.olingo.odata2.api.uri.expression.OrderExpression;
-import org.apache.olingo.odata2.api.uri.expression.PropertyExpression;
-import org.apache.olingo.odata2.api.uri.expression.SortOrder;
-import org.apache.olingo.odata2.api.uri.expression.UnaryExpression;
-import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 
 /**
  * This class contains utility methods for parsing the filter expressions built by core library from user OData Query.
@@ -441,14 +419,18 @@ public class ODataExpressionParser {
 
   private static String getPropertyName(final CommonExpression whereExpression) throws EdmException,
       ODataJPARuntimeException {
-    EdmTyped edmProperty  = ((PropertyExpression) whereExpression).getEdmProperty();
+    EdmTyped edmProperty = ((PropertyExpression) whereExpression).getEdmProperty();
+    EdmMapping mapping;
     if (edmProperty instanceof EdmNavigationProperty) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.FILTER_ON_NAVIGATION_NOT_SUPPORTED, null);
+      EdmNavigationProperty edmNavigationProperty = (EdmNavigationProperty) edmProperty;
+      mapping = edmNavigationProperty.getMapping();
+    } else if(edmProperty instanceof EdmProperty) {
+      EdmProperty property = (EdmProperty) edmProperty;
+      mapping = property.getMapping();
+    } else {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL, null);
     }
 
-    EdmProperty property = ((EdmProperty) edmProperty);
-    EdmMapping mapping = property.getMapping();
-    String name = mapping != null ? mapping.getInternalName() : property.getName();
-    return name;
+    return mapping != null ? mapping.getInternalName() : edmProperty.getName();
   }
 }
