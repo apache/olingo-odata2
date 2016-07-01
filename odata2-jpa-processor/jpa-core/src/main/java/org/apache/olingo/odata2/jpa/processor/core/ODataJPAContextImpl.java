@@ -173,9 +173,14 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   public ODataJPATransaction getODataJPATransaction() {
     if (transaction == null) {
       transaction = odataContext.getServiceFactory().getCallback(ODataJPATransaction.class);
-      // Fallback to RESOURCE_LOCAL based transaction
+      // fallback to default implementations
       if (transaction == null) {
-        transaction = new ODataJPATransactionLocalDefault(getEntityManager());
+        if(isContainerManaged()) {
+          transaction = new ODataJPATransactionContainerManaged();
+        } else {
+          // Fallback to RESOURCE_LOCAL based transaction
+          transaction = new ODataJPATransactionLocalDefault(getEntityManager());
+        }
       }
     }
     return transaction;
