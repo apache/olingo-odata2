@@ -70,7 +70,8 @@ public class BatchResponseParser {
   }
 
   public List<BatchSingleResponse> parse(final InputStream in) throws BatchException {
-    Scanner scanner = new Scanner(in, BatchHelper.DEFAULT_ENCODING).useDelimiter(LF);
+    Scanner scanner = new Scanner(in, BatchHelper.DEFAULT_ENCODING);
+    scanner.useDelimiter(LF);
     List<BatchSingleResponse> responseList;
     try {
       responseList = Collections.unmodifiableList(parseBatchResponse(scanner));
@@ -320,7 +321,8 @@ public class BatchResponseParser {
   }
 
   private String getBoundary(final String contentType) throws BatchException {
-    Scanner contentTypeScanner = new Scanner(contentType).useDelimiter(";\\s?");
+    Scanner contentTypeScanner = new Scanner(contentType);
+    contentTypeScanner.useDelimiter(";\\s?");
     if (contentTypeScanner.hasNext(REG_EX_CONTENT_TYPE)) {
       contentTypeScanner.next(REG_EX_CONTENT_TYPE);
     } else {
@@ -359,13 +361,13 @@ public class BatchResponseParser {
   }
 
   private void parseOptionalEmptyLine(final Scanner scanner) {
-      if (scanner.hasNext() && scanner.hasNext(REG_EX_BLANK_LINE)) {
-        scanner.next();
-        currentLineNumber++;
-      }
+    if (scanner.hasNext() && scanner.hasNext(REG_EX_BLANK_LINE)) {
+      scanner.next();
+      currentLineNumber++;
     }
+  }
 
-      private String trimQuota(String boundary) {
+  private String trimQuota(String boundary) {
     if (boundary.matches("\".*\"")) {
       boundary = boundary.replace("\"", "");
     }

@@ -27,6 +27,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmMappingModelAccess;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
 import org.apache.olingo.odata2.jpa.processor.api.model.mapping.JPAAttributeMapType.JPAAttribute;
 import org.apache.olingo.odata2.jpa.processor.api.model.mapping.JPAEdmMappingModel;
 import org.apache.olingo.odata2.jpa.processor.api.model.mapping.JPAEmbeddableTypeMapType;
@@ -38,13 +39,20 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
 
   boolean mappingModelExists = true;
   private JPAEdmMappingModel mappingModel;
+  private InputStream mappingModelStream = null;
   private String mappingModelName;
 
   public JPAEdmMappingModelService(final ODataJPAContext ctx) {
+    JPAEdmExtension ext = null;
     mappingModelName = ctx.getJPAEdmMappingModel();
     if (mappingModelName == null) {
-      mappingModelExists = false;
+      ext = ctx.getJPAEdmExtension();
+      if (ext != null) {
+        mappingModelStream = ext.getJPAEdmMappingModelStream();
+      }
     }
+
+    mappingModelExists = mappingModelName != null || mappingModelStream != null ? true : false;
   }
 
   @Override
@@ -194,8 +202,10 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   protected InputStream loadMappingModelInputStream() {
+    if (mappingModelStream != null) {
+      return mappingModelStream;
+    }
     InputStream is = JPAEdmMappingModelService.class.getClassLoader().getResourceAsStream("../../" + mappingModelName);
-
     return is;
 
   }

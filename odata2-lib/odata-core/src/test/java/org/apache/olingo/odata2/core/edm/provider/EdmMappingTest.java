@@ -47,8 +47,7 @@ public class EdmMappingTest extends BaseTest {
 
     mappedObject = new EdmMappingTest();
 
-    Mapping propertySimpleMapping =
-        new Mapping().setMimeType("mimeType").setInternalName("value").setObject(mappedObject);
+    Mapping propertySimpleMapping = new Mapping().setInternalName("value").setObject(mappedObject);
     CustomizableFeedMappings propertySimpleFeedMappings = new CustomizableFeedMappings().setFcKeepInContent(true);
     SimpleProperty propertySimple =
         new SimpleProperty().setName("PropertyName").setType(EdmSimpleTypeKind.String)
@@ -67,7 +66,6 @@ public class EdmMappingTest extends BaseTest {
     EdmMapping mapping = propertySimpleProvider.getMapping();
     assertNotNull(mapping);
     assertEquals("value", mapping.getInternalName());
-    assertEquals("mimeType", mapping.getMimeType());
     assertEquals(mappedObject, mapping.getObject());
   }
 
@@ -76,7 +74,6 @@ public class EdmMappingTest extends BaseTest {
     EdmMapping mapping = navPropertyProvider.getMapping();
     assertNotNull(mapping);
     assertEquals("value", mapping.getInternalName());
-    assertEquals("mimeType", mapping.getMimeType());
     assertEquals(mappedObject, mapping.getObject());
   }
 

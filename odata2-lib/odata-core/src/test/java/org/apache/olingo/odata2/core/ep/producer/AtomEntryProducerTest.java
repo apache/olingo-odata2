@@ -31,9 +31,11 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
@@ -51,6 +53,7 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.xml.XMLStreamException;
+import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
@@ -70,6 +73,250 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
 
   public AtomEntryProducerTest(final StreamWriterImplType type) {
     super(type);
+  }
+
+  @Test
+  public void contentOnly() throws Exception {
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).contentOnly(true).build();
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    ODataResponse response =
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData,
+            properties);
+    String xmlString = verifyResponse(response);
+    assertXpathExists("/a:entry", xmlString);
+    assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
+
+    assertXpathNotExists("/a:entry/a:id", xmlString);
+    assertXpathNotExists("/a:entry/a:title", xmlString);
+    assertXpathNotExists("/a:entry/a:updated", xmlString);
+    assertXpathNotExists("/a:entry/a:category", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Team\"and @href=\"Employees('1')/ne_Team\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Room\"and @href=\"Employees('1')/ne_Room\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Manager\" and @href=\"Employees('1')/ne_Manager\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:content", xmlString);
+
+    assertXpathExists("/a:entry/m:properties", xmlString);
+  }
+
+  @Test
+  public void contentOnlyRoom() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("Name");
+    ExpandSelectTreeNode expandSelectTree =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).build();
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).contentOnly(true).expandSelectTree(expandSelectTree)
+            .build();
+
+    Map<String, Object> localRoomData = new HashMap<String, Object>();
+    localRoomData.put("Name", "Neu Schwanstein");
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    ODataResponse response = ser.writeEntry(entitySet, localRoomData, properties);
+    String xmlString = verifyResponse(response);
+    assertXpathExists("/a:entry", xmlString);
+    assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
+
+    assertXpathNotExists("/a:entry/a:id", xmlString);
+    assertXpathNotExists("/a:entry/a:title", xmlString);
+    assertXpathNotExists("/a:entry/a:updated", xmlString);
+    assertXpathNotExists("/a:entry/a:category", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"nr_Employees\"and @href=\"Rooms('1')/nr_Employees\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"nr_Building\"and @href=\"Rooms('1')/nr_Building\"]", xmlString);
+
+    assertXpathExists("/a:entry/a:content/m:properties/d:Name", xmlString);
+  }
+
+  @Test
+  public void contentOnlyRoomSelectedOrExpandedLinksMustBeIgnored() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("Name");
+    List<String> navigationPropertyNames = new ArrayList<String>();
+    navigationPropertyNames.add("nr_Employees");
+    navigationPropertyNames.add("nr_Building");
+    ExpandSelectTreeNode expandSelectTree =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).expandedLinks(
+            navigationPropertyNames).build();
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).contentOnly(true).expandSelectTree(expandSelectTree)
+            .build();
+
+    Map<String, Object> localRoomData = new HashMap<String, Object>();
+    localRoomData.put("Name", "Neu Schwanstein");
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    ODataResponse response = ser.writeEntry(entitySet, localRoomData, properties);
+    String xmlString = verifyResponse(response);
+    assertXpathExists("/a:entry", xmlString);
+    assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
+
+    assertXpathNotExists("/a:entry/a:id", xmlString);
+    assertXpathNotExists("/a:entry/a:title", xmlString);
+    assertXpathNotExists("/a:entry/a:updated", xmlString);
+    assertXpathNotExists("/a:entry/a:category", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"nr_Employees\"and @href=\"Rooms('1')/nr_Employees\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"nr_Building\"and @href=\"Rooms('1')/nr_Building\"]", xmlString);
+
+    assertXpathExists("/a:entry/a:content/m:properties/d:Name", xmlString);
+  }
+
+  @Test
+  public void contentOnlyRoomWithAdditionalLink() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("Name");
+    ExpandSelectTreeNode expandSelectTree =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).build();
+    Map<String, Map<String, Object>> additinalLinks = new HashMap<String, Map<String, Object>>();
+    Map<String, Object> buildingLink = new HashMap<String, Object>();
+    buildingLink.put("Id", "1");
+    additinalLinks.put("nr_Building", buildingLink);
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).contentOnly(true).expandSelectTree(expandSelectTree)
+            .additionalLinks(additinalLinks).build();
+
+    Map<String, Object> localRoomData = new HashMap<String, Object>();
+    localRoomData.put("Name", "Neu Schwanstein");
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    ODataResponse response = ser.writeEntry(entitySet, localRoomData, properties);
+    String xmlString = verifyResponse(response);
+    assertXpathExists("/a:entry", xmlString);
+    assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
+
+    assertXpathNotExists("/a:entry/a:id", xmlString);
+    assertXpathNotExists("/a:entry/a:title", xmlString);
+    assertXpathNotExists("/a:entry/a:updated", xmlString);
+    assertXpathNotExists("/a:entry/a:category", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"nr_Employees\"and @href=\"Rooms('1')/nr_Employees\"]", xmlString);
+
+    assertXpathExists("/a:entry/a:content/m:properties/d:Name", xmlString);
+    assertXpathExists("/a:entry/a:link[@title=\"nr_Building\"and @href=\"Buildings('1')\"]", xmlString);
+  }
+
+  @Test
+  public void contentOnlyWithoutKey() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("ManagerId");
+    ExpandSelectTreeNode select =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).build();
+
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).contentOnly(true).expandSelectTree(select).build();
+
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>();
+    localEmployeeData.put("ManagerId", "1");
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    ODataResponse response =
+        ser.writeEntry(entitySet, localEmployeeData,
+            properties);
+    String xmlString = verifyResponse(response);
+    assertXpathExists("/a:entry", xmlString);
+    assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
+
+    assertXpathNotExists("/a:entry/a:id", xmlString);
+    assertXpathNotExists("/a:entry/a:title", xmlString);
+    assertXpathNotExists("/a:entry/a:updated", xmlString);
+    assertXpathNotExists("/a:entry/a:category", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Manager\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Team\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Room\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:content", xmlString);
+
+    assertXpathExists("/a:entry/m:properties", xmlString);
+    assertXpathNotExists("/a:entry/m:properties/d:EmployeeId", xmlString);
+    assertXpathExists("/a:entry/m:properties/d:ManagerId", xmlString);
+  }
+
+  @Test
+  public void contentOnlySelectedOrExpandedLinksMustBeIgnored() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("ManagerId");
+
+    List<String> expandedNavigationNames = new ArrayList<String>();
+    expandedNavigationNames.add("ne_Manager");
+    expandedNavigationNames.add("ne_Team");
+    expandedNavigationNames.add("ne_Room");
+
+    ExpandSelectTreeNode select =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).expandedLinks(
+            expandedNavigationNames).build();
+
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).contentOnly(true).expandSelectTree(select).build();
+
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>();
+    localEmployeeData.put("ManagerId", "1");
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    ODataResponse response =
+        ser.writeEntry(entitySet, localEmployeeData,
+            properties);
+    String xmlString = verifyResponse(response);
+    assertXpathExists("/a:entry", xmlString);
+    assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
+
+    assertXpathNotExists("/a:entry/a:id", xmlString);
+    assertXpathNotExists("/a:entry/a:title", xmlString);
+    assertXpathNotExists("/a:entry/a:updated", xmlString);
+    assertXpathNotExists("/a:entry/a:category", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Manager\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Team\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Room\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:content", xmlString);
+
+    assertXpathExists("/a:entry/m:properties", xmlString);
+    assertXpathNotExists("/a:entry/m:properties/d:EmployeeId", xmlString);
+    assertXpathExists("/a:entry/m:properties/d:ManagerId", xmlString);
+  }
+
+  @Test
+  public void contentOnlyWithAdditinalLink() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("ManagerId");
+    ExpandSelectTreeNode select =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).build();
+
+    Map<String, Map<String, Object>> additinalLinks = new HashMap<String, Map<String, Object>>();
+    Map<String, Object> managerLink = new HashMap<String, Object>();
+    managerLink.put("EmployeeId", "1");
+    additinalLinks.put("ne_Manager", managerLink);
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).contentOnly(true).expandSelectTree(select).additionalLinks(
+            additinalLinks).build();
+
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>();
+    localEmployeeData.put("ManagerId", "1");
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    ODataResponse response =
+        ser.writeEntry(entitySet, localEmployeeData,
+            properties);
+    String xmlString = verifyResponse(response);
+    assertXpathExists("/a:entry", xmlString);
+    assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
+
+    assertXpathNotExists("/a:entry/a:id", xmlString);
+    assertXpathNotExists("/a:entry/a:title", xmlString);
+    assertXpathNotExists("/a:entry/a:updated", xmlString);
+    assertXpathNotExists("/a:entry/a:category", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Team\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:link[@title=\"ne_Room\"]", xmlString);
+    assertXpathNotExists("/a:entry/a:content", xmlString);
+
+    assertXpathExists("/a:entry/m:properties", xmlString);
+    assertXpathNotExists("/a:entry/m:properties/d:EmployeeId", xmlString);
+    assertXpathExists("/a:entry/m:properties/d:ManagerId", xmlString);
+
+    assertXpathExists("/a:entry/a:link[@href=\"Managers('1')\" and @title=\"ne_Manager\"]", xmlString);
   }
 
   @Test
@@ -320,10 +567,34 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
   public void serializeAtomMediaResourceWithMimeType() throws IOException, XpathException, SAXException,
       XMLStreamException, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
-    EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>();
+
+    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    date.clear();
+    date.set(1999, 0, 1);
+
+    localEmployeeData.put("EmployeeId", "1");
+    localEmployeeData.put("ImmageUrl", null);
+    localEmployeeData.put("ManagerId", "1");
+    localEmployeeData.put("Age", new Integer(52));
+    localEmployeeData.put("RoomId", "1");
+    localEmployeeData.put("EntryDate", date);
+    localEmployeeData.put("TeamId", "42");
+    localEmployeeData.put("EmployeeName", "Walter Winter");
+    localEmployeeData.put("getImageType", "abc");
+
+    Map<String, Object> locationData = new HashMap<String, Object>();
+    Map<String, Object> cityData = new HashMap<String, Object>();
+    cityData.put("PostalCode", "33470");
+    cityData.put("CityName", "Duckburg");
+    locationData.put("City", cityData);
+    locationData.put("Country", "Calisota");
+
+    localEmployeeData.put("Location", locationData);
     ODataResponse response =
-        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData,
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            localEmployeeData,
             properties);
     String xmlString = verifyResponse(response);
 
@@ -367,10 +638,34 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
   public void serializeEmployeeAndCheckOrderOfTags() throws IOException, XpathException, SAXException,
       XMLStreamException, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
-    EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+    EntityProviderWriteProperties properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>();
+
+    Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    date.clear();
+    date.set(1999, 0, 1);
+
+    localEmployeeData.put("EmployeeId", "1");
+    localEmployeeData.put("ImmageUrl", null);
+    localEmployeeData.put("ManagerId", "1");
+    localEmployeeData.put("Age", new Integer(52));
+    localEmployeeData.put("RoomId", "1");
+    localEmployeeData.put("EntryDate", date);
+    localEmployeeData.put("TeamId", "42");
+    localEmployeeData.put("EmployeeName", "Walter Winter");
+    localEmployeeData.put("getImageType", "abc");
+
+    Map<String, Object> locationData = new HashMap<String, Object>();
+    Map<String, Object> cityData = new HashMap<String, Object>();
+    cityData.put("PostalCode", "33470");
+    cityData.put("CityName", "Duckburg");
+    locationData.put("City", cityData);
+    locationData.put("Country", "Calisota");
+
+    localEmployeeData.put("Location", locationData);
     ODataResponse response =
-        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData,
+        ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            localEmployeeData,
             properties);
     String xmlString = verifyResponse(response);
 
@@ -402,7 +697,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
       XMLStreamException, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
     EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
     EdmEntitySet employeeEntitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     ODataResponse response = ser.writeEntry(employeeEntitySet, employeeData, properties);
     String xmlString = verifyResponse(response);
@@ -425,7 +720,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
       XMLStreamException, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
     EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
     EdmEntitySet employeeEntitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
 
     // set "keepInContent" to false for EntryDate
@@ -779,7 +1074,6 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     EdmMapping mapping = employeesSet.getEntityType().getMapping();
     when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
     when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
-    when(mapping.getMimeType()).thenReturn(null);
     ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
     String xmlString = verifyResponse(response);
 
@@ -837,25 +1131,25 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     assertXpathNotExists("/a:entry/a:content[@src=\"http://localhost:8080/images/image1\"]", xmlString);
   }
 
-  @Test
-  public void assureGetMimeTypeWinsOverGetMediaResourceMimeTypeKey() throws Exception {
-    // Keep this test till version 1.2
-    AtomEntityProvider ser = createAtomEntityProvider();
-    Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);
-    String mediaResourceMimeTypeKey = "~type";
-    localEmployeeData.put(mediaResourceMimeTypeKey, "wrong");
-    String originalMimeTypeKey = "~originalType";
-    localEmployeeData.put(originalMimeTypeKey, "right");
-    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
-    EdmMapping mapping = employeesSet.getEntityType().getMapping();
-    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
-    when(mapping.getMimeType()).thenReturn(originalMimeTypeKey);
-    ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
-    String xmlString = verifyResponse(response);
-
-    assertXpathExists("/a:entry/a:content[@type=\"right\"]", xmlString);
-    assertXpathNotExists("/a:entry/a:content[@type=\"wrong\"]", xmlString);
-  }
+//  @Test
+//  public void assureGetMimeTypeWinsOverGetMediaResourceMimeTypeKey() throws Exception {
+//    // Keep this test till version 1.2
+//    AtomEntityProvider ser = createAtomEntityProvider();
+//    Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);
+//    String mediaResourceMimeTypeKey = "~type";
+//    localEmployeeData.put(mediaResourceMimeTypeKey, "wrong");
+//    String originalMimeTypeKey = "~originalType";
+//    localEmployeeData.put(originalMimeTypeKey, "right");
+//    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+//    EdmMapping mapping = employeesSet.getEntityType().getMapping();
+//    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
+//    when(mapping.getMimeType()).thenReturn(originalMimeTypeKey);
+//    ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
+//    String xmlString = verifyResponse(response);
+//
+//    assertXpathExists("/a:entry/a:content[@type=\"right\"]", xmlString);
+//    assertXpathNotExists("/a:entry/a:content[@type=\"wrong\"]", xmlString);
+//  }
 
   private void verifyTagOrdering(final String xmlString, final String... toCheckTags) {
     XMLUnitHelper.verifyTagOrdering(xmlString, toCheckTags);

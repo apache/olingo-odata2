@@ -86,7 +86,7 @@ public class BatchRequestWriter {
     writer.append(HttpHeaders.CONTENT_TYPE).append(COLON).append(SP).append(HttpContentType.APPLICATION_HTTP)
         .append(LF);
     writer.append(BatchHelper.HTTP_CONTENT_TRANSFER_ENCODING).append(COLON).append(SP)
-            .append(BatchHelper.BINARY_ENCODING).append(LF);
+        .append(BatchHelper.BINARY_ENCODING).append(LF);
     if (contentId != null) {
       writer.append(BatchHelper.HTTP_CONTENT_ID).append(COLON).append(SP).append(contentId).append(LF);
     }

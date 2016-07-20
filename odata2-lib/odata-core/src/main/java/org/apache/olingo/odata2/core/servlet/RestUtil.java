@@ -269,6 +269,7 @@ public class RestUtil {
       if (index < 0) {
         odataSegments.add(new ODataPathSegmentImpl(segment, null));
       } else {
+        // post condition: we do not allow matrix parameters in OData path segments
         String path = segment.substring(0, index);
         Map<String, List<String>> parameterMap = extractMatrixParameter(segment, index);
         throw new ODataNotFoundException(ODataNotFoundException.MATRIX.addContent(parameterMap.keySet(), path));

@@ -25,6 +25,8 @@ import static org.junit.Assert.fail;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Member;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.metamodel.Attribute;
@@ -48,6 +50,7 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
 
   private static JPAEdmReferentialConstraint objJPAEdmReferentialConstraint = null;
   private static JPAEdmReferentialConstraintTest objJPAEdmReferentialConstraintTest = null;
+  private List<String[]> joinColumnNames = null;
 
   @Before
   public void setUp() {
@@ -123,6 +126,17 @@ public class JPAEdmReferentialConstraintTest extends JPAEdmTestModelView {
   @Override
   public Attribute<?, ?> getJPAAttribute() {
     return getJPAAttributeLocal();
+  }
+
+  @Override
+  public List<String[]> getJPAJoinColumns() {
+    if (joinColumnNames == null) {
+
+      joinColumnNames = new ArrayList<String[]>();
+      String[] names = { "SOID", "SOID" };
+      joinColumnNames.add(names);
+    }
+    return joinColumnNames;
   }
 
   @SuppressWarnings("hiding")

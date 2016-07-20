@@ -18,11 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -41,6 +43,7 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.ODataEntityProviderPropertiesBuilder;
+import org.apache.olingo.odata2.api.ep.callback.TombstoneCallback;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataHttpException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
@@ -61,10 +64,12 @@ import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneContext;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser;
-import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAExpandCallBack;
+import org.apache.olingo.odata2.jpa.processor.core.callback.JPAExpandCallBack;
+import org.apache.olingo.odata2.jpa.processor.core.callback.JPATombstoneCallBack;
 
 public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBuilder {
 
@@ -487,12 +492,14 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
     try {
       PathInfo pathInfo = context.getPathInfo();
+      URI serviceRoot = pathInfo.getServiceRoot();
+
       entityFeedPropertiesBuilder =
           EntityProviderWriteProperties.serviceRoot(pathInfo.getServiceRoot());
       JPAPaging paging = odataJPAContext.getPaging();
       if (odataJPAContext.getPageSize() > 0 && paging != null && paging.getNextPage() > 0) {
         String nextLink =
-            pathInfo.getServiceRoot().relativize(context.getPathInfo().getRequestUri()).toString();
+            serviceRoot.relativize(pathInfo.getRequestUri()).toString();
         nextLink = percentEncodeNextLink(nextLink);
         nextLink += (nextLink.contains("?") ? "&" : "?")
             + "$skiptoken=" + odataJPAContext.getPaging().getNextPage();
@@ -502,8 +509,20 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       entityFeedPropertiesBuilder.inlineCountType(resultsView.getInlineCount());
       ExpandSelectTreeNode expandSelectTree =
           UriParser.createExpandSelectTree(resultsView.getSelect(), resultsView.getExpand());
-      entityFeedPropertiesBuilder.callbacks(JPAExpandCallBack.getCallbacks(context
-          .getPathInfo().getServiceRoot(), expandSelectTree, resultsView.getExpand()));
+
+      Map<String, ODataCallback> expandCallBack =
+          JPAExpandCallBack.getCallbacks(serviceRoot, expandSelectTree, resultsView.getExpand());
+
+      Map<String, ODataCallback> callBackMap = new HashMap<String, ODataCallback>();
+      callBackMap.putAll(expandCallBack);
+
+      String deltaToken = ODataJPATombstoneContext.getDeltaToken();
+      if (deltaToken != null) {
+        callBackMap.put(TombstoneCallback.CALLBACK_KEY_TOMBSTONE, new JPATombstoneCallBack(serviceRoot.toString(),
+            resultsView, deltaToken));
+      }
+
+      entityFeedPropertiesBuilder.callbacks(callBackMap);
       entityFeedPropertiesBuilder.expandSelectTree(expandSelectTree);
 
     } catch (ODataException e) {

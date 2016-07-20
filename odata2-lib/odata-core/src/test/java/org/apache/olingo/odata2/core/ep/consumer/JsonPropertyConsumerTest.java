@@ -130,6 +130,12 @@ public class JsonPropertyConsumerTest extends BaseTest {
     when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Double.getEdmSimpleTypeInstance());
     resultMap = execute(edmProperty, reader);
     assertEquals(Double.valueOf("123456789"), resultMap.get("Name"));
+    // Double without "
+    simplePropertyJson = "{\"d\":{\"Name\":123456789}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Double.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(Double.valueOf("123456789"), resultMap.get("Name"));
     // Int64
     simplePropertyJson = "{\"d\":{\"Name\":\"123456789\"}}";
     reader = prepareReader(simplePropertyJson);
@@ -138,6 +144,12 @@ public class JsonPropertyConsumerTest extends BaseTest {
     assertEquals(Long.valueOf("123456789"), resultMap.get("Name"));
     // Single
     simplePropertyJson = "{\"d\":{\"Name\":\"123456\"}}";
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Single.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(Float.valueOf("123456"), resultMap.get("Name"));
+    // Single without "
+    simplePropertyJson = "{\"d\":{\"Name\":123456}}";
     reader = prepareReader(simplePropertyJson);
     when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Single.getEdmSimpleTypeInstance());
     resultMap = execute(edmProperty, reader);

@@ -86,7 +86,7 @@ public class XmlEntityConsumer {
       reader = XmlStreamFactory.createStreamReader(content);
       EntityInfoAggregator eia = EntityInfoAggregator.create(entitySet);
 
-      return new XmlEntryConsumer().readEntry(reader, eia, properties);
+      return new XmlEntryConsumer().readEntry(reader, eia, properties, false);
     } catch (EntityProviderException e) {
       cachedException = e;
       throw cachedException;

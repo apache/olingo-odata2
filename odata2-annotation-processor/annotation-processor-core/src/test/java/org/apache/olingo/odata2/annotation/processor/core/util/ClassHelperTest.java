@@ -64,7 +64,7 @@ public class ClassHelperTest {
   @Test(expected = ClassFormatError.class)
   public void loadFromSpaceDir() throws Exception {
     URL currentPath = Thread.currentThread().getContextClassLoader().getResource(".");
-    File folder = new File(currentPath.getFile(), "space space/package");
+    File folder = new File(currentPath.toURI().getSchemeSpecificPart(), "space space/package");
     folder.mkdirs();
     File classFile = new File(folder, "Invalid.class");
     classFile.createNewFile();

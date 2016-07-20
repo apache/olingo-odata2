@@ -567,7 +567,7 @@ public class ListsProcessor extends DataSourceProcessor {
     final List<EdmProperty> propertyPath = uriInfo.getPropertyPath();
     final EdmProperty property = propertyPath.get(propertyPath.size() - 1);
     final Object value = property.isSimple() ?
-        property.getMapping() == null || property.getMapping().getMimeType() == null ?
+        property.getMapping() == null || property.getMapping().getMediaResourceMimeTypeKey() == null ?
             getPropertyValue(data, propertyPath) : getSimpleTypeValueMap(data, propertyPath) :
         getStructuralTypeValueMap(getPropertyValue(data, propertyPath), (EdmStructuralType) property.getType());
 
@@ -604,7 +604,7 @@ public class ListsProcessor extends DataSourceProcessor {
 
     final List<EdmProperty> propertyPath = uriInfo.getPropertyPath();
     final EdmProperty property = propertyPath.get(propertyPath.size() - 1);
-    final Object value = property.getMapping() == null || property.getMapping().getMimeType() == null ?
+    final Object value = property.getMapping() == null || property.getMapping().getMediaResourceMimeTypeKey() == null ?
         getPropertyValue(data, propertyPath) : getSimpleTypeValueMap(data, propertyPath);
 
     return ODataResponse.fromResponse(EntityProvider.writePropertyValue(property, value)).eTag(
@@ -1506,13 +1506,10 @@ public class ListsProcessor extends DataSourceProcessor {
 
   private void handleMimeType(final Object data, final EdmMapping mapping, final Map<String, Object> valueMap)
       throws ODataException {
-    final String mimeTypeName = mapping.getMimeType();
+    final String mimeTypeName = mapping.getMediaResourceMimeTypeKey();
     if (mimeTypeName != null) {
       Object value = valueAccess.getMappingValue(data, mapping);
       valueMap.put(mimeTypeName, value);
-      if (mapping.getMediaResourceMimeTypeKey() != null) {
-        valueMap.put(mapping.getMediaResourceMimeTypeKey(), value);
-      }
     }
   }
 
@@ -1543,7 +1540,7 @@ public class ListsProcessor extends DataSourceProcessor {
       final Object value = valueAccess.getPropertyValue(data, property);
 
       if (property.isSimple()) {
-        if (property.getMapping() == null || property.getMapping().getMimeType() == null) {
+        if (property.getMapping() == null || property.getMapping().getMediaResourceMimeTypeKey() == null) {
           valueMap.put(propertyName, value);
         } else {
           // TODO: enable MIME type mapping outside the current subtree

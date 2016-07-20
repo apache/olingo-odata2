@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.jpa.processor.core.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -94,11 +95,13 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
         if (association != null) {
           if (view.compare(association.getEnd1(), association.getEnd2())) {
             JPAEdmAssociationEndView associationEnd = associationEndMap.get(association.getName());
-            if (associationEnd.getJoinColumnName() != null && associationEnd.getJoinColumnReferenceColumnName() != null
-                && view.getJoinColumnName() != null && view.getJoinColumnReferenceColumnName() != null) {
-              if (view.getJoinColumnName().equals(associationEnd.getJoinColumnName())
-                  && view.getJoinColumnReferenceColumnName()
-                      .equals(associationEnd.getJoinColumnReferenceColumnName())) {
+            if (associationEnd.getJoinColumnNames() != null
+                && associationEnd.getJoinColumnReferenceColumnNames() != null
+                && view.getJoinColumnNames() != null && view.getJoinColumnReferenceColumnNames() != null) {
+              if (Arrays.equals(view.getJoinColumnNames(), associationEnd.getJoinColumnNames())
+                  &&
+                  Arrays.equals(view.getJoinColumnReferenceColumnNames(), associationEnd
+                      .getJoinColumnReferenceColumnNames())) {
                 currentAssociation = association;
                 return association;
               }

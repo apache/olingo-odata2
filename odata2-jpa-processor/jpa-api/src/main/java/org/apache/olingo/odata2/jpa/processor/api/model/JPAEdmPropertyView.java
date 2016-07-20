@@ -110,4 +110,12 @@ public interface JPAEdmPropertyView extends JPAEdmBaseView {
    * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmComplexTypeView}
    */
   JPAEdmComplexTypeView getJPAEdmComplexTypeView();
+
+  /**
+   * The method returns a list of JPA Join Column Annotations for the given JPA Attribute
+   * @return
+   * a list of Array of Strings. First element in the Array represents the join column name and the second element in
+   * the array represents the referencedColumn name
+   */
+  List<String[]> getJPAJoinColumns();
 }

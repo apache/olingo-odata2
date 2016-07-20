@@ -20,15 +20,18 @@ package org.apache.olingo.odata2.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.Test;
@@ -49,6 +52,20 @@ public class ODataResponseTest extends BaseTest {
     ODataResponse response = ODataResponse.entity("abc").build();
     assertNull(response.getStatus());
     assertEquals("abc", response.getEntity());
+  }
+
+  @Test
+  public void buildEntityAsStreamResponseTest() throws ODataException {
+    ODataResponse response = ODataResponse.entity(new ByteArrayInputStream("abc".getBytes())).build();
+    assertNull(response.getStatus());
+    assertNotNull(response.getEntityAsStream());
+  }
+
+  @Test(expected = ODataException.class)
+  public void buildEntityAsStreamResponseFailTest() throws ODataException {
+    ODataResponse response = ODataResponse.entity("abc").build();
+    assertNull(response.getStatus());
+    assertNotNull(response.getEntityAsStream());
   }
 
   @Test

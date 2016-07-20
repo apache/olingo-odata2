@@ -31,6 +31,7 @@ import javax.persistence.Query;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.uri.UriInfo;
@@ -45,6 +46,8 @@ import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAFunction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAMethodContext;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAProcessor;
@@ -53,6 +56,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.core.ODataEntityParser;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAPage.JPAPageBuilder;
 
@@ -134,31 +138,86 @@ public class JPAProcessorImpl implements JPAProcessor {
         contextType = JPQLContextType.SELECT;
       }
 
-    } catch (EdmException e) {
-      ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.GENERAL, e);
-    }
+      JPQLContext jpqlContext = null;
 
-    JPQLContext jpqlContext = null;
-    if (oDataJPAContext.getPageSize() > 0) {
-      jpqlContext = JPQLContext.createBuilder(contextType,
-          uriParserResultView, true).build();
-    } else {
-      jpqlContext = JPQLContext.createBuilder(contextType,
-          uriParserResultView).build();
-    }
+      if (oDataJPAContext.getPageSize() > 0) {
+        jpqlContext = JPQLContext.createBuilder(contextType,
+            uriParserResultView, true).build();
+      } else {
+        jpqlContext = JPQLContext.createBuilder(contextType,
+            uriParserResultView).build();
+      }
 
-    JPQLStatement jpqlStatement = JPQLStatement.createBuilder(jpqlContext)
-        .build();
-    Query query = null;
-    try {
-      query = em.createQuery(jpqlStatement.toString());
-      return handlePaging(query, uriParserResultView);
+      JPQLStatement jpqlStatement = JPQLStatement.createBuilder(jpqlContext)
+          .build();
+      Map<String, String> customQueryOptions = uriParserResultView.getCustomQueryOptions();
+      String deltaToken = null;
+      if (customQueryOptions != null) {
+        deltaToken = uriParserResultView.getCustomQueryOptions().get("!deltatoken");
+      }
+      if (deltaToken != null) {
+        ODataJPATombstoneContext.setDeltaToken(deltaToken);
+      }
+
+      Query query = null;
+      List<Object> result = null;
+
+      JPAEdmMapping mapping = (JPAEdmMapping) uriParserResultView.getTargetEntitySet().getEntityType().getMapping();
+      ODataJPATombstoneEntityListener listener = null;
+      if (mapping.getODataJPATombstoneEntityListener() != null) {
+        listener = (ODataJPATombstoneEntityListener) mapping.getODataJPATombstoneEntityListener().newInstance();
+        query = listener.getQuery(uriParserResultView, em);
+      }
+      if (query == null) {
+        query = em.createQuery(jpqlStatement.toString());
+        if (listener != null) {
+          query.getResultList();
+          List<Object> deltaResult =
+              (List<Object>) ODataJPATombstoneContext.getDeltaResult(((EdmMapping) mapping).getInternalName());
+          result = handlePaging(deltaResult, uriParserResultView);
+        } else {
+          result = handlePaging(query, uriParserResultView);
+        }
+      } else {
+        result = handlePaging(query, uriParserResultView);
+      }
+
+      // Set New Token
+      if (listener != null) {
+        ODataJPATombstoneContext.setDeltaToken(listener.generateDeltaToken((List<Object>) result, query));
+      }
+
+      return result == null ? new ArrayList<Object>() : result;
+
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
 
     }
+  }
+
+  private List<Object> handlePaging(final List<Object> result, final GetEntitySetUriInfo uriParserResultView) {
+    if (result == null) {
+      return null;
+    }
+    JPAPageBuilder pageBuilder = new JPAPageBuilder();
+    pageBuilder.pageSize(oDataJPAContext.getPageSize())
+        .entities(result)
+        .skipToken(uriParserResultView.getSkipToken());
+
+    // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
+    if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
+      pageBuilder.skip(uriParserResultView.getSkip().intValue());
+    }
+
+    if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
+      pageBuilder.top(uriParserResultView.getTop().intValue());
+    }
+
+    JPAPage page = pageBuilder.build();
+    oDataJPAContext.setPaging(page);
+
+    return page.getPagedEntities();
   }
 
   private List<Object> handlePaging(final Query query, final GetEntitySetUriInfo uriParserResultView) {
@@ -179,6 +238,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
     JPAPage page = pageBuilder.build();
     oDataJPAContext.setPaging(page);
+
     return page.getPagedEntities();
 
   }

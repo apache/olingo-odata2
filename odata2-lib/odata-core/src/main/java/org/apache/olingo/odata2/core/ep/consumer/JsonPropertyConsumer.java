@@ -138,6 +138,18 @@ public class JsonPropertyConsumer {
               .addContent(entityPropertyInfo.getName()));
         }
         break;
+      case Single:
+      case Double:
+        if (tokenType == JsonToken.STRING) {
+          value = reader.nextString();
+        } else if (tokenType == JsonToken.NUMBER) {
+          value = reader.nextDouble();
+          value = value.toString();
+        } else {
+          throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE
+              .addContent(entityPropertyInfo.getName()));
+        }
+        break;
       default:
         if (tokenType == JsonToken.STRING) {
           value = reader.nextString();

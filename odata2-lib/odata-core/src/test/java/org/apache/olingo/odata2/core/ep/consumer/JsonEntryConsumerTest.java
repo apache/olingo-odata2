@@ -33,6 +33,7 @@ import java.util.TimeZone;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.MediaMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
@@ -44,6 +45,7 @@ import org.junit.Test;
 public class JsonEntryConsumerTest extends AbstractConsumerTest {
 
   private static final String SIMPLE_ENTRY_BUILDING = "JsonBuilding.json";
+  private static final String SIMPLE_ENTRY_ROOM = "JsonRoom.json";
   private static final String SIMPLE_ENTRY_EMPLOYEE = "JsonEmployee.json";
   private static final String SIMPLE_ENTRY_TEAM = "JsonTeam.json";
   private static final String INVALID_ENTRY_TEAM_DOUBLE_NAME_PROPERTY = "JsonInvalidTeamDoubleNameProperty.json";
@@ -52,6 +54,76 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
   // Negative Test jsonStart
   private static final String negativeJsonStart_1 = "{ \"abc\": {";
   private static final String negativeJsonStart_2 = "{ \"d\": [a: 1, b: 2] }";
+
+  @Test
+  public void readContentOnlyEmployee() throws Exception {
+    // prepare
+    String content = readFile("JsonEmployeeContentOnly.json");
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+
+    // verify
+    assertEquals(9, result.getProperties().size());
+  }
+
+  @Test
+  public void readContentOnlyRoom() throws Exception {
+    // prepare
+    String content = readFile("JsonRoomContentOnly.json");
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+
+    // verify
+    assertEquals(4, result.getProperties().size());
+  }
+
+  @Test
+  public void readContentOnlyEmployeeWithAdditionalLink() throws Exception {
+    // prepare
+    String content = readFile("JsonEmployeeContentOnlyWithAdditionalLink.json");
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+
+    // verify
+    assertEquals(9, result.getProperties().size());
+    List<String> associationUris = result.getMetadata().getAssociationUris("ne_Manager");
+    assertEquals(1, associationUris.size());
+    assertEquals("http://host:8080/ReferenceScenario.svc/Managers('1')", associationUris.get(0));
+  }
+
+  @Test
+  public void readContentOnlyRoomWithAdditionalLink() throws Exception {
+    // prepare
+    String content = readFile("JsonRoomContentOnlyWithAdditionalLink.json");
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    InputStream contentBody = createContentAsStream(content);
+
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(true).build());
+
+    // verify
+    assertEquals(4, result.getProperties().size());
+    List<String> associationUris = result.getMetadata().getAssociationUris("nr_Building");
+    assertEquals(1, associationUris.size());
+    assertEquals("http://host:8080/ReferenceScenario.svc/Buildings('1')", associationUris.get(0));
+  }
 
   @Test(expected = EntityProviderException.class)
   public void doubleClosingBracketsAtTheEnd() throws Exception {
@@ -62,6 +134,31 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
     // execute
     JsonEntityConsumer xec = new JsonEntityConsumer();
     xec.readEntry(entitySet, contentBody, DEFAULT_PROPERTIES);
+  }
+
+  @Test
+  public void readSimpleRoomEntry() throws Exception {
+    ODataEntry roomEntry = prepareAndExecuteEntry(SIMPLE_ENTRY_ROOM, "Rooms", DEFAULT_PROPERTIES);
+
+    // verify
+    Map<String, Object> properties = roomEntry.getProperties();
+    assertEquals(4, properties.size());
+
+    assertEquals("1", properties.get("Id"));
+    assertEquals("Room 1", properties.get("Name"));
+    assertEquals((short) 1, properties.get("Seats"));
+    assertEquals((short) 1, properties.get("Version"));
+
+    List<String> associationUris = roomEntry.getMetadata().getAssociationUris("nr_Employees");
+    assertEquals(1, associationUris.size());
+    assertEquals("http://localhost:8080/ReferenceScenario.svc/Rooms('1')/nr_Employees", associationUris.get(0));
+
+    associationUris = roomEntry.getMetadata().getAssociationUris("nr_Building");
+    assertEquals(1, associationUris.size());
+    assertEquals("http://localhost:8080/ReferenceScenario.svc/Rooms('1')/nr_Building", associationUris.get(0));
+
+    EntryMetadata metadata = roomEntry.getMetadata();
+    assertEquals("W/\"1\"", metadata.getEtag());
   }
 
   @SuppressWarnings("unchecked")

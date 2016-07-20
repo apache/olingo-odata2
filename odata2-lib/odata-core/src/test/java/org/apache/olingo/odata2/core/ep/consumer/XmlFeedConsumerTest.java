@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -29,6 +30,8 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
+import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
+import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
@@ -39,6 +42,30 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
 
   public XmlFeedConsumerTest(final StreamWriterImplType type) {
     super(type);
+  }
+
+  @Test
+  public void roomsFeedWithEtagEntries() throws Exception {
+    InputStream stream = getFileAsStream("feed_rooms_small.xml");
+    assertNotNull(stream);
+
+    ODataFeed feed =
+        EntityProvider.readFeed("application/atom+xml", MockFacade.getMockEdm().getDefaultEntityContainer()
+            .getEntitySet(
+                "Rooms"), stream, DEFAULT_PROPERTIES);
+    assertNotNull(feed);
+
+    FeedMetadata feedMetadata = feed.getFeedMetadata();
+    assertNotNull(feedMetadata);
+    assertNotNull(feedMetadata.getNextLink());
+
+    List<ODataEntry> entries = feed.getEntries();
+    assertEquals(3, entries.size());
+    ODataEntry singleRoom = entries.get(0);
+    EntryMetadata roomMetadata = singleRoom.getMetadata();
+    assertNotNull(roomMetadata);
+
+    assertEquals("W/\"1\"", roomMetadata.getEtag());
   }
 
   @Test

@@ -18,7 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.testutil.helper;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Random;
 
@@ -30,15 +36,14 @@ import org.apache.olingo.odata2.testutil.TestUtilRuntimeException;
  */
 public class StringHelper {
 
-
   public static class Stream {
     private final byte[] data;
 
-    private Stream(byte[] data) {
+    private Stream(final byte[] data) {
       this.data = data;
     }
 
-    public Stream(String content, String charset) throws UnsupportedEncodingException {
+    public Stream(final String content, final String charset) throws UnsupportedEncodingException {
       this(content.getBytes(charset));
     }
 
@@ -54,11 +59,11 @@ public class StringHelper {
       return asString("UTF-8");
     }
 
-    public String asString(String charsetName) {
+    public String asString(final String charsetName) {
       return new String(data, Charset.forName(charsetName));
     }
 
-    public Stream print(OutputStream out) throws IOException {
+    public Stream print(final OutputStream out) throws IOException {
       out.write(data);
       return this;
     }
@@ -71,7 +76,7 @@ public class StringHelper {
      * Number of lines separated by line breaks (<code>CRLF</code>).
      * A content string like <code>text\r\nmoreText</code> will result in
      * a line count of <code>2</code>.
-     *
+     * 
      * @return lines count
      */
     public int linesCount() {
@@ -89,7 +94,7 @@ public class StringHelper {
     }
   }
 
-  public static Stream toStream(InputStream stream) throws IOException {
+  public static Stream toStream(final InputStream stream) throws IOException {
     byte[] result = new byte[0];
     byte[] tmp = new byte[8192];
     int readCount = stream.read(tmp);
@@ -104,14 +109,13 @@ public class StringHelper {
     return new Stream(result);
   }
 
-  public static Stream toStream(String content) {
+  public static Stream toStream(final String content) {
     try {
       return new Stream(content, "UTF-8");
     } catch (UnsupportedEncodingException e) {
       throw new RuntimeException("UTF-8 should be supported on each system.");
     }
   }
-
 
   public static String inputStreamToString(final InputStream in, final boolean preserveLineBreaks) throws IOException {
     final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
@@ -132,12 +136,12 @@ public class StringHelper {
     return result;
   }
 
-  public static int countLines(String content) {
+  public static int countLines(final String content) {
     return countLines(content, "\r\n");
   }
 
-  public static int countLines(String content, String lineBreak) {
-    if(content == null) {
+  public static int countLines(final String content, final String lineBreak) {
+    if (content == null) {
       return -1;
     }
 
@@ -145,7 +149,7 @@ public class StringHelper {
     int count = 1;
 
     while (lastPos >= 0) {
-      lastPos = content.indexOf(lineBreak, lastPos+1);
+      lastPos = content.indexOf(lineBreak, lastPos + 1);
       count++;
     }
     return count;

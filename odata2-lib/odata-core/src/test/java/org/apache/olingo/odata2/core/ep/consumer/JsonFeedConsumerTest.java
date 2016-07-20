@@ -507,6 +507,8 @@ public class JsonFeedConsumerTest extends AbstractConsumerTest {
     assertNotNull(feedMetadata);
     assertEquals("http://localhost:8080/ReferenceScenario.svc/Rooms?!deltatoken=4711", feedMetadata.getDeltaLink());
 
+    assertEquals("W/\"2\"", entries.get(0).getMetadata().getEtag());
+
     List<DeletedEntryMetadata> deletedEntries = feed.getDeletedEntries();
     assertEquals(2, deletedEntries.size());
     for (DeletedEntryMetadata deletedEntry : deletedEntries) {

@@ -32,7 +32,7 @@ public class ODataJPAErrorCallback implements ODataErrorCallback {
     final String SEPARATOR = " : ";
 
     Throwable t = context.getException();
-    if (t instanceof ODataJPAException) {
+    if (t instanceof ODataJPAException && t.getCause() != null) {
       StringBuilder errorBuilder = new StringBuilder();
       errorBuilder.append(t.getCause().getClass().toString());
       errorBuilder.append(SEPARATOR);

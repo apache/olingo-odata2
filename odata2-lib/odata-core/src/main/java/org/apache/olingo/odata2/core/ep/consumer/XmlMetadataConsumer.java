@@ -255,9 +255,10 @@ public class XmlMetadataConsumer {
     function.setHttpMethod(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08,
         XmlMetadataConstants.EDM_FUNCTION_IMPORT_HTTP_METHOD));
     function.setEntitySet(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ENTITY_SET));
-    ReturnType returnType = new ReturnType();
+
     String returnTypeString = reader.getAttributeValue(null, XmlMetadataConstants.EDM_FUNCTION_IMPORT_RETURN);
     if (returnTypeString != null) {
+      ReturnType returnType = new ReturnType();
       if (returnTypeString.startsWith("Collection") || returnTypeString.startsWith("collection")) {
         returnType.setMultiplicity(EdmMultiplicity.MANY);
         returnTypeString = returnTypeString.substring(returnTypeString.indexOf("(") + 1, returnTypeString.length() - 1);
@@ -305,7 +306,7 @@ public class XmlMetadataConsumer {
     functionParameter.setAnnotationAttributes(readAnnotationAttribute(reader));
     while (reader.hasNext()
         && !(reader.isEndElement() && edmNamespace.equals(reader.getNamespaceURI())
-        && XmlMetadataConstants.EDM_FUNCTION_IMPORT.equals(reader.getLocalName()))) {
+        && XmlMetadataConstants.EDM_FUNCTION_PARAMETER.equals(reader.getLocalName()))) {
       reader.next();
       if (reader.isStartElement()) {
         extractNamespaces(reader);

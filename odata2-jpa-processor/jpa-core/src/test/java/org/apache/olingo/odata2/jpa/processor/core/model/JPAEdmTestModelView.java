@@ -356,13 +356,13 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView, JPAEdmAsso
   }
 
   @Override
-  public String getJoinColumnName() {
+  public String[] getJoinColumnNames() {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public String getJoinColumnReferenceColumnName() {
+  public String[] getJoinColumnReferenceColumnNames() {
     // TODO Auto-generated method stub
     return null;
   }
@@ -399,6 +399,12 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView, JPAEdmAsso
 
   @Override
   public Attribute<?, ?> getJPAReferencedAttribute() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<String[]> getJPAJoinColumns() {
     // TODO Auto-generated method stub
     return null;
   }
