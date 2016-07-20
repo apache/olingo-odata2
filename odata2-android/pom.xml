@@ -34,7 +34,7 @@
 
 <properties>
   <version.android>4.1.1.4</version.android>
-  <version.robolectric>2.3-SNAPSHOT</version.robolectric>
+  <version.robolectric>2.4</version.robolectric>
 </properties>
 
   <build>
