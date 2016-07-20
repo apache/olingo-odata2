@@ -212,7 +212,7 @@ public class XmlEntryConsumer {
     setETag(reader);
   }
 
-  private void setETag(final XMLStreamReader reader) {
+  private void setETag(final XMLStreamReader reader) throws XMLStreamException {
     final String etag = reader.getAttributeValue(Edm.NAMESPACE_M_2007_08, FormatXml.M_ETAG);
     entryMetadata.setEtag(etag);
   }

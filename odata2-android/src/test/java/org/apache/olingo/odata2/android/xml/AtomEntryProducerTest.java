@@ -307,7 +307,7 @@ public class AtomEntryProducerTest extends AndroidTestBase {
       XMLStreamException, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
     EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
     ODataResponse response =
         ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData,
             properties);
@@ -317,7 +317,7 @@ public class AtomEntryProducerTest extends AndroidTestBase {
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
 
     assertXpathExists("/a:entry/a:content", xmlString);
-    assertXpathEvaluatesTo("abc", "/a:entry/a:content/@type", xmlString);
+    assertXpathEvaluatesTo("application/octet-stream", "/a:entry/a:content/@type", xmlString);
     assertXpathEvaluatesTo("Employees('1')/$value", "/a:entry/a:content/@src", xmlString);
     assertXpathExists("/a:entry/m:properties", xmlString);
   }
@@ -354,7 +354,7 @@ public class AtomEntryProducerTest extends AndroidTestBase {
       XMLStreamException, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
     EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
     ODataResponse response =
         ser.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"), employeeData,
             properties);
@@ -369,8 +369,6 @@ public class AtomEntryProducerTest extends AndroidTestBase {
     // verify one navigation link
     assertXpathExists("/a:entry/a:link[@title='ne_Manager']", xmlString);
 
-    // verify content
-    assertXpathExists("/a:entry/a:content[@type='abc']", xmlString);
     // verify properties
     assertXpathExists("/a:entry/m:properties", xmlString);
     assertXpathEvaluatesTo("9", "count(/a:entry/m:properties/*)", xmlString);
@@ -388,7 +386,7 @@ public class AtomEntryProducerTest extends AndroidTestBase {
       XMLStreamException, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
     EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
     EdmEntitySet employeeEntitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
     ODataResponse response = ser.writeEntry(employeeEntitySet, employeeData, properties);
     String xmlString = verifyResponse(response);
@@ -411,7 +409,7 @@ public class AtomEntryProducerTest extends AndroidTestBase {
       XMLStreamException, ODataException {
     AtomEntityProvider ser = createAtomEntityProvider();
     EntityProviderWriteProperties properties =
-        EntityProviderWriteProperties.serviceRoot(BASE_URI).mediaResourceMimeType("abc").build();
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
     EdmEntitySet employeeEntitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
 
     // set "keepInContent" to false for EntryDate
@@ -765,7 +763,6 @@ public class AtomEntryProducerTest extends AndroidTestBase {
     EdmMapping mapping = employeesSet.getEntityType().getMapping();
     when(mapping.getMediaResourceSourceKey()).thenReturn(mediaResourceSourceKey);
     when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
-    when(mapping.getMimeType()).thenReturn(null);
     ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
     String xmlString = verifyResponse(response);
 
@@ -821,26 +818,6 @@ public class AtomEntryProducerTest extends AndroidTestBase {
             " @rel=\"edit-media\" and @type=\"image/jpeg\"]", xmlString);
     assertXpathNotExists("/a:entry/a:content[@type=\"image/jpeg\"]", xmlString);
     assertXpathNotExists("/a:entry/a:content[@src=\"http://localhost:8080/images/image1\"]", xmlString);
-  }
-
-  @Test
-  public void assureGetMimeTypeWinsOverGetMediaResourceMimeTypeKey() throws Exception {
-    // Keep this test till version 1.2
-    AtomEntityProvider ser = createAtomEntityProvider();
-    Map<String, Object> localEmployeeData = new HashMap<String, Object>(employeeData);
-    String mediaResourceMimeTypeKey = "~type";
-    localEmployeeData.put(mediaResourceMimeTypeKey, "wrong");
-    String originalMimeTypeKey = "~originalType";
-    localEmployeeData.put(originalMimeTypeKey, "right");
-    EdmEntitySet employeesSet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
-    EdmMapping mapping = employeesSet.getEntityType().getMapping();
-    when(mapping.getMediaResourceMimeTypeKey()).thenReturn(mediaResourceMimeTypeKey);
-    when(mapping.getMimeType()).thenReturn(originalMimeTypeKey);
-    ODataResponse response = ser.writeEntry(employeesSet, localEmployeeData, DEFAULT_PROPERTIES);
-    String xmlString = verifyResponse(response);
-
-    assertXpathExists("/a:entry/a:content[@type=\"right\"]", xmlString);
-    assertXpathNotExists("/a:entry/a:content[@type=\"wrong\"]", xmlString);
   }
 
   private void verifyTagOrdering(final String xmlString, final String... toCheckTags) {
