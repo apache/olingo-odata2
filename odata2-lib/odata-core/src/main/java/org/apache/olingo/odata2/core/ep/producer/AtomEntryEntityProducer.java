@@ -406,10 +406,9 @@ public class AtomEntryEntityProducer {
         mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
       }
 
-      writer.writeStartElement(FormatXml.ATOM_CONTENT);
+      writer.writeEmptyElement(FormatXml.ATOM_CONTENT);
       writer.writeAttribute(FormatXml.ATOM_TYPE, mediaResourceMimeType);
       writer.writeAttribute(FormatXml.ATOM_SRC, self);
-      writer.writeEndElement();
     } catch (XMLStreamException e) {
       throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
