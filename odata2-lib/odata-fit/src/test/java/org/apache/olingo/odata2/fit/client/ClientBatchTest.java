@@ -45,10 +45,8 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.fit.ref.AbstractRefTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.server.ServletType;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class ClientBatchTest extends AbstractRefTest {
   public ClientBatchTest(final ServletType servletType) {
     super(servletType);
@@ -66,7 +64,7 @@ public class ClientBatchTest extends AbstractRefTest {
     batch.add(request);
 
     InputStream body = EntityProvider.writeBatchRequest(batch, BOUNDARY);
-    String batchRequestBody = StringHelper.inputStreamToString(body, true);
+    String batchRequestBody = StringHelper.inputStreamToStringCRLFLineBreaks(body);
     checkMimeHeaders(batchRequestBody);
     checkBoundaryDelimiters(batchRequestBody);
     assertTrue(batchRequestBody.contains("GET $metadata HTTP/1.1"));
@@ -78,7 +76,7 @@ public class ClientBatchTest extends AbstractRefTest {
     for (BatchSingleResponse response : responses) {
       assertEquals("200", response.getStatusCode());
       assertEquals("OK", response.getStatusInfo());
-      assertTrue(response.getBody().contains("<edmx:Edmx Version=\"1.0\""));
+      assertTrue(response.getBody().contains("<edmx:Edmx"));
       assertEquals("application/xml;charset=utf-8", response.getHeader(HttpHeaders.CONTENT_TYPE));
       assertNotNull(response.getHeader(HttpHeaders.CONTENT_LENGTH));
     }
@@ -106,7 +104,7 @@ public class ClientBatchTest extends AbstractRefTest {
     batch.add(request);
 
     InputStream body = EntityProvider.writeBatchRequest(batch, BOUNDARY);
-    String bodyAsString = StringHelper.inputStreamToString(body, true);
+    String bodyAsString = StringHelper.inputStreamToStringCRLFLineBreaks(body);
     checkMimeHeaders(bodyAsString);
     checkBoundaryDelimiters(bodyAsString);
 
@@ -214,7 +212,7 @@ public class ClientBatchTest extends AbstractRefTest {
     batch.add(request);
 
     InputStream body = EntityProvider.writeBatchRequest(batch, BOUNDARY);
-    String bodyAsString = StringHelper.inputStreamToString(body, true);
+    String bodyAsString = StringHelper.inputStreamToStringCRLFLineBreaks(body);
     checkMimeHeaders(bodyAsString);
     checkBoundaryDelimiters(bodyAsString);
     assertTrue(bodyAsString.contains("POST Employees HTTP/1.1"));
@@ -250,7 +248,7 @@ public class ClientBatchTest extends AbstractRefTest {
     batch.add(request);
 
     InputStream body = EntityProvider.writeBatchRequest(batch, BOUNDARY);
-    String bodyAsString = StringHelper.inputStreamToString(body, true);
+    String bodyAsString = StringHelper.inputStreamToStringCRLFLineBreaks(body);
     checkMimeHeaders(bodyAsString);
     checkBoundaryDelimiters(bodyAsString);
 

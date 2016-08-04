@@ -41,7 +41,7 @@ public interface PathInfo {
   List<PathSegment> getODataSegments();
 
   /**
-   * Gets the root URI of this service.
+   * Gets the root URI of this service. This includes any segments which can be found in the preceding segments list.
    * @return absolute base URI of the request
    */
   URI getServiceRoot();
