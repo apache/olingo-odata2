@@ -74,6 +74,9 @@
 		<version.javax.persistence>2.0.5</version.javax.persistence>
 
 		<spring.version>3.2.12.RELEASE</spring.version>
+
+    <!-- Setting needed for Java 8 release builds -->
+    <additionalparam>-Xdoclint:none</additionalparam>
 	</properties>
 
 	<modules>
