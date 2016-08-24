@@ -602,6 +602,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
 
     assertXpathExists("/a:entry/a:content", xmlString);
+    assertXpathEvaluatesTo("", "/a:entry/a:content", xmlString);
     assertXpathEvaluatesTo(ContentType.APPLICATION_OCTET_STREAM.toString(), "/a:entry/a:content/@type", xmlString);
     assertXpathEvaluatesTo("Employees('1')/$value", "/a:entry/a:content/@src", xmlString);
     assertXpathExists("/a:entry/m:properties", xmlString);
