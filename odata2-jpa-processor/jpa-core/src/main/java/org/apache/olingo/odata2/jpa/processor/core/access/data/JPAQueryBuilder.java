@@ -18,6 +18,11 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -41,14 +46,14 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 
 public class JPAQueryBuilder {
 
-  public enum UriInfoType {
+  enum UriInfoType {
     GetEntitySet,
     GetEntity,
     GetEntitySetCount,
     GetEntityCount,
     PutMergePatch,
     Delete
-  };
+  }
 
   private EntityManager em = null;
   private int pageSize = 0;
@@ -82,7 +87,7 @@ public class JPAQueryBuilder {
   public Query build(GetEntityUriInfo uriInfo) throws ODataJPARuntimeException {
     Query query = null;
     try {
-      ODataJPAQueryExtensionEntityListener listener = getODataJPAQuertEntityListener((UriInfo) uriInfo);
+      ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
       }
@@ -99,7 +104,7 @@ public class JPAQueryBuilder {
   public Query build(GetEntitySetCountUriInfo uriInfo) throws ODataJPARuntimeException {
     Query query = null;
     try {
-      ODataJPAQueryExtensionEntityListener listener = getODataJPAQuertEntityListener((UriInfo) uriInfo);
+      ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
       }
@@ -116,7 +121,7 @@ public class JPAQueryBuilder {
   public Query build(GetEntityCountUriInfo uriInfo) throws ODataJPARuntimeException {
     Query query = null;
     try {
-      ODataJPAQueryExtensionEntityListener listener = getODataJPAQuertEntityListener((UriInfo) uriInfo);
+      ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
       }
@@ -133,7 +138,7 @@ public class JPAQueryBuilder {
   public Query build(DeleteUriInfo uriInfo) throws ODataJPARuntimeException {
     Query query = null;
     try {
-      ODataJPAQueryExtensionEntityListener listener = getODataJPAQuertEntityListener((UriInfo) uriInfo);
+      ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
       }
@@ -150,7 +155,7 @@ public class JPAQueryBuilder {
   public Query build(PutMergePatchUriInfo uriInfo) throws ODataJPARuntimeException {
     Query query = null;
     try {
-      ODataJPAQueryExtensionEntityListener listener = getODataJPAQuertEntityListener((UriInfo) uriInfo);
+      ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
       }
@@ -168,17 +173,16 @@ public class JPAQueryBuilder {
       throws EdmException,
       ODataJPAModelException, ODataJPARuntimeException {
 
-    Query query = null;
     JPQLContextType contextType = determineJPQLContextType(uriParserResultView, type);
     JPQLContext jpqlContext = buildJPQLContext(contextType, uriParserResultView);
-    JPQLStatement jpqlStatement = JPQLStatement.createBuilder(jpqlContext)
-        .build();
-    query = em.createQuery(jpqlStatement.toString());
+    JPQLStatement jpqlStatement = JPQLStatement.createBuilder(jpqlContext).build();
 
-    return query;
+    return em.createQuery(normalizeMembers(jpqlStatement.toString()));
   }
 
-  public ODataJPAQueryExtensionEntityListener getODataJPAQuertEntityListener(UriInfo uriInfo) throws EdmException,
+  
+
+  public ODataJPAQueryExtensionEntityListener getODataJPAQueryEntityListener(UriInfo uriInfo) throws EdmException,
       InstantiationException, IllegalAccessException {
     ODataJPAQueryExtensionEntityListener queryListener = null;
     ODataJPATombstoneEntityListener listener = getODataJPATombstoneEntityListener(uriInfo);
@@ -236,7 +240,81 @@ public class JPAQueryBuilder {
     return contextType;
   }
 
-  public final class JPAQueryInfo {
+  private static final Pattern NORMALIZATION_NEEDED_PATTERN = Pattern.compile(".*[\\s\\(](\\S+\\.\\S+\\.\\S+).*");
+  private static final Pattern JOIN_ALIAS_PATTERN = Pattern.compile(".*\\sJOIN\\s(\\S*\\s\\S*).*");
+
+  private static String normalizeMembers(String jpqlQuery) {
+    // check if normalization is needed (if query contains "x.y.z" elements
+    // starting with space or parenthesis)
+    Matcher normalizationNeededMatcher = NORMALIZATION_NEEDED_PATTERN.matcher(jpqlQuery);
+    if (!normalizationNeededMatcher.find()) {
+      return jpqlQuery;
+    }
+
+    String normalizedJpqlQuery = jpqlQuery;
+    Map<String, String> joinAliases = new HashMap<String, String>();
+
+    // collect information about existing joins/aliases
+    Matcher joinAliasMatcher = JOIN_ALIAS_PATTERN.matcher(normalizedJpqlQuery);
+    if (joinAliasMatcher.find()) {
+      for (int i = 1; i <= joinAliasMatcher.groupCount(); i++) {
+        String[] joinAlias = joinAliasMatcher.group(i).split(String.valueOf(JPQLStatement.DELIMITER.SPACE));
+        joinAliases.put(joinAlias[0], joinAlias[1]);
+      }
+    }
+
+    // normalize query
+    boolean normalizationNeeded = true;
+    while (normalizationNeeded) {
+      String membershipToNormalize = normalizationNeededMatcher.group(1);
+
+      // get member info
+      String memberInfo = membershipToNormalize.substring(0,
+          ordinalIndexOf(membershipToNormalize, JPQLStatement.DELIMITER.PERIOD, 1));
+
+      String alias;
+      if (joinAliases.containsKey(memberInfo)) {
+        // use existing alias
+        alias = joinAliases.get(memberInfo);
+      } else {
+        // create new join/alias
+        alias = "R" + (joinAliases.size() + 1);
+
+        int joinInsertPosition = normalizedJpqlQuery.indexOf(JPQLStatement.KEYWORD.WHERE);
+        if (joinInsertPosition == -1) {
+          joinInsertPosition = normalizedJpqlQuery.indexOf(JPQLStatement.KEYWORD.ORDERBY);
+        }
+        normalizedJpqlQuery = normalizedJpqlQuery.substring(0, joinInsertPosition) + JPQLStatement.KEYWORD.JOIN
+            + JPQLStatement.DELIMITER.SPACE + memberInfo + JPQLStatement.DELIMITER.SPACE + alias
+            + JPQLStatement.DELIMITER.SPACE + normalizedJpqlQuery.substring(joinInsertPosition);
+
+        joinAliases.put(memberInfo, alias);
+      }
+
+      // use alias
+      normalizedJpqlQuery = normalizedJpqlQuery.replaceAll(memberInfo + "\\" + JPQLStatement.DELIMITER.PERIOD,
+          alias + JPQLStatement.DELIMITER.PERIOD);
+
+      // check if further normalization is needed
+      normalizationNeededMatcher = NORMALIZATION_NEEDED_PATTERN.matcher(normalizedJpqlQuery);
+      normalizationNeeded = normalizationNeededMatcher.find();
+    }
+
+    // add distinct to avoid duplicates in result set
+    return normalizedJpqlQuery.replaceFirst(
+        JPQLStatement.KEYWORD.SELECT + JPQLStatement.DELIMITER.SPACE,
+        JPQLStatement.KEYWORD.SELECT_DISTINCT + JPQLStatement.DELIMITER.SPACE);
+  }
+
+  private static int ordinalIndexOf(String str, char s, int n) {
+    int pos = str.indexOf(s, 0);
+    while (n-- > 0 && pos != -1) {
+      pos = str.indexOf(s, pos + 1);
+    }
+    return pos;
+  }
+
+  final class JPAQueryInfo {
     private Query query = null;
     private boolean isTombstoneQuery = false;
 
