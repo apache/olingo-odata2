@@ -232,12 +232,18 @@ public class BasicEntityProvider {
    */
   public ODataResponse writeMetadata(final List<Schema> schemas, final Map<String, String> predefinedNamespaces)
       throws EntityProviderException {
-    ODataResponseBuilder builder = ODataResponse.newBuilder();
     String dataServiceVersion = ODataServiceVersion.V10;
     if (schemas != null) {
       dataServiceVersion = calculateDataServiceVersion(schemas);
     }
     DataServices metadata = new DataServices().setSchemas(schemas).setDataServiceVersion(dataServiceVersion);
+    return writeMetadataInternal(predefinedNamespaces, dataServiceVersion, metadata);
+  }
+
+  private ODataResponse writeMetadataInternal(final Map<String, String> predefinedNamespaces, String dataServiceVersion,
+      DataServices metadata) throws EntityProviderException,
+      EntityProviderProducerException {
+    ODataResponseBuilder builder = ODataResponse.newBuilder();
     OutputStreamWriter writer = null;
     CircleStreamBuffer csb = new CircleStreamBuffer();
     try {
@@ -257,6 +263,21 @@ public class BasicEntityProvider {
     builder.entity(csb.getInputStream());
     builder.header(ODataHttpHeaders.DATASERVICEVERSION, dataServiceVersion);
     return builder.build();
+  }
+
+  /**
+   * Writes the metadata in XML format. Predefined namespaces is of type Map{@literal <}prefix,namespace{@literal >} and
+   * may be null or an empty Map.
+   * @param serviceMetadata
+   * @param predefinedNamespaces
+   * @return resulting {@link ODataResponse} with written metadata content
+   * @throws EntityProviderException
+   */
+  public ODataResponse writeMetadata(final DataServices serviceMetadata,
+      final Map<String, String> predefinedNamespaces) throws EntityProviderException {
+    String dataServiceVersion = serviceMetadata.getDataServiceVersion() == null ? ODataServiceVersion.V20
+        : serviceMetadata.getDataServiceVersion();
+    return writeMetadataInternal(predefinedNamespaces, dataServiceVersion, serviceMetadata);
   }
 
   /**

@@ -67,27 +67,47 @@ public class XmlMetadataProducer {
       Map<String, String> predefinedNamespaces) throws EntityProviderException {
 
     try {
+      String edmxNamespace = Edm.NAMESPACE_EDMX_2007_06;
+      String defaultNamespace = Edm.NAMESPACE_EDM_2008_09;
+
+      if (predefinedNamespaces == null) {
+        predefinedNamespaces = new HashMap<String, String>();
+      } else {
+        String predefinedEdmxNamespace = predefinedNamespaces.get(Edm.PREFIX_EDMX);
+        if (predefinedEdmxNamespace != null) {
+          edmxNamespace = predefinedEdmxNamespace;
+          predefinedNamespaces.remove(Edm.PREFIX_EDMX);
+        }
+        String predefinedDefaultNamespace = predefinedNamespaces.get(null);
+        if (predefinedDefaultNamespace != null) {
+          defaultNamespace = predefinedDefaultNamespace;
+          predefinedNamespaces.remove(null);
+        }
+      }
+
       xmlStreamWriter.writeStartDocument();
-      xmlStreamWriter.setPrefix(Edm.PREFIX_EDMX, Edm.NAMESPACE_EDMX_2007_06);
+      xmlStreamWriter.setPrefix(Edm.PREFIX_EDMX, edmxNamespace);
       xmlStreamWriter.setPrefix(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08);
-      xmlStreamWriter.setDefaultNamespace(Edm.NAMESPACE_EDM_2008_09);
 
-      xmlStreamWriter.writeStartElement(Edm.NAMESPACE_EDMX_2007_06, "Edmx");
-      xmlStreamWriter.writeAttribute("Version", "1.0");
-      xmlStreamWriter.writeNamespace(Edm.PREFIX_EDMX, Edm.NAMESPACE_EDMX_2007_06);
+      xmlStreamWriter.writeStartElement(edmxNamespace, "Edmx");
+      xmlStreamWriter.writeNamespace(Edm.PREFIX_EDMX, edmxNamespace);
+      if(metadata.getCustomEdmxVersion() == null){
+        xmlStreamWriter.writeAttribute("Version", "1.0");
+      }else {
+        xmlStreamWriter.writeAttribute("Version", metadata.getCustomEdmxVersion());
+      }
 
-      xmlStreamWriter.writeStartElement(Edm.NAMESPACE_EDMX_2007_06, XmlMetadataConstants.EDM_DATA_SERVICES);
+      for (Map.Entry<String, String> entry : predefinedNamespaces.entrySet()) {
+        xmlStreamWriter.writeNamespace(entry.getKey(), entry.getValue());
+      }
+
+      writeAnnotationElements(metadata.getAnnotationElements(), predefinedNamespaces, xmlStreamWriter);
+
+      xmlStreamWriter.writeStartElement(edmxNamespace, XmlMetadataConstants.EDM_DATA_SERVICES);
+      xmlStreamWriter.setDefaultNamespace(defaultNamespace);
       xmlStreamWriter.writeAttribute(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08,
           XmlMetadataConstants.EDM_DATA_SERVICE_VERSION, metadata.getDataServiceVersion());
       xmlStreamWriter.writeNamespace(Edm.PREFIX_M, Edm.NAMESPACE_M_2007_08);
-
-      if (predefinedNamespaces != null) {
-        for (Map.Entry<String, String> entry : predefinedNamespaces.entrySet()) {
-          xmlStreamWriter.writeNamespace(entry.getKey(), entry.getValue());
-        }
-      } else {
-        predefinedNamespaces = new HashMap<String, String>();
-      }
 
       Collection<Schema> schemas = metadata.getSchemas();
       if (schemas != null) {
@@ -97,7 +117,7 @@ public class XmlMetadataProducer {
             xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_SCHEMA_ALIAS, schema.getAlias());
           }
           xmlStreamWriter.writeAttribute(XmlMetadataConstants.EDM_SCHEMA_NAMESPACE, schema.getNamespace());
-          xmlStreamWriter.writeDefaultNamespace(Edm.NAMESPACE_EDM_2008_09);
+          xmlStreamWriter.writeDefaultNamespace(defaultNamespace);
 
           writeAnnotationAttributes(schema.getAnnotationAttributes(), predefinedNamespaces, null, xmlStreamWriter);
 
