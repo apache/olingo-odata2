@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
@@ -263,6 +264,8 @@ public class DataStore<T> {
         return Integer.valueOf(idCounter.getAndIncrement());
       } else if (type == Long.class || type == long.class) {
         return Long.valueOf(idCounter.getAndIncrement());
+      } else if (type == UUID.class) {
+        return UUID.randomUUID();
       }
 
       throw new UnsupportedOperationException("Automated key generation for type '" + type

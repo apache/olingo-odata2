@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +33,7 @@ import org.apache.olingo.odata2.annotation.processor.core.edm.AnnotationEdmProvi
 import org.apache.olingo.odata2.annotation.processor.core.model.Building;
 import org.apache.olingo.odata2.annotation.processor.core.model.City;
 import org.apache.olingo.odata2.annotation.processor.core.model.Employee;
+import org.apache.olingo.odata2.annotation.processor.core.model.GuidKeyEntity;
 import org.apache.olingo.odata2.annotation.processor.core.model.Location;
 import org.apache.olingo.odata2.annotation.processor.core.model.Manager;
 import org.apache.olingo.odata2.annotation.processor.core.model.ModelSharedConstants;
@@ -683,6 +685,39 @@ public class AnnotationsInMemoryDsTest {
     Assert.assertEquals("PNG", readUpdated.getType());
     Assert.assertEquals("image/jpg", readUpdated.getImageType());
     Assert.assertEquals("https://localhost/image.jpg", readUpdated.getImageUri());
+  }
+
+  @Test
+  public void createGuidKeyEntity() throws Exception {
+    EdmEntitySet edmEntitySet = createMockedEdmEntitySet(GuidKeyEntity.GUID_KEY_ENTITIES);
+
+    final String entityName = "Entity name";
+    GuidKeyEntity testEntity = new GuidKeyEntity();
+    testEntity.setName(entityName);
+    datasource.createData(edmEntitySet, testEntity);
+
+    List entities = datasource.readData(edmEntitySet);
+    GuidKeyEntity readEntity = (GuidKeyEntity) entities.get(0);
+    Assert.assertEquals(entityName, readEntity.getName());
+  }
+
+  @Test
+  public void createGuidKeyEntityWithOwnKey() throws Exception {
+    EdmEntitySet edmEntitySet = createMockedEdmEntitySet(GuidKeyEntity.GUID_KEY_ENTITIES);
+
+    final UUID entityId = UUID.randomUUID();
+    final String entityName = "Entity name";
+    GuidKeyEntity testEntity = new GuidKeyEntity();
+    testEntity.setId(entityId);
+    testEntity.setName(entityName);
+    datasource.createData(edmEntitySet, testEntity);
+
+    Map<String, Object> keys = new HashMap<String, Object>();
+    keys.put("Id", entityId);
+
+    GuidKeyEntity readEntity = (GuidKeyEntity) datasource.readData(edmEntitySet, keys);
+    Assert.assertEquals(entityId, readEntity.getId());
+    Assert.assertEquals(entityName, readEntity.getName());
   }
 
   @Test
