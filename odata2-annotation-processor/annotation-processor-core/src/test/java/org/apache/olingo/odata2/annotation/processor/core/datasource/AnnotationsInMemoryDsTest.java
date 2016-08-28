@@ -688,6 +688,58 @@ public class AnnotationsInMemoryDsTest {
   }
 
   @Test
+  public void createTwoKeyEntityWithOneKeyAlreadySet() throws Exception {
+    EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Photos");
+
+    final String typeKeyValue = "PNG";
+    final String automaticNameKeyValue = "1";
+
+    Photo photo = new Photo();
+    photo.setType(typeKeyValue);
+    photo.setImageUri("https://localhost/big_picture.png");
+    photo.setImageType("image/png");
+    datasource.createData(edmEntitySet, photo);
+
+    List photos = datasource.readData(edmEntitySet);
+    Photo readPhoto = (Photo) photos.get(0);
+    Assert.assertEquals(automaticNameKeyValue + ":" + typeKeyValue,
+            readPhoto.getName() + ":" + readPhoto.getType());
+  }
+
+  @Test
+  public void ensureTwoKeyEntityKeysAreUnique() throws Exception {
+    EdmEntitySet edmEntitySet = createMockedEdmEntitySet("Photos");
+
+    final String nameKeyValue = "Big Picture";
+    final String typeKeyValue = "PNG";
+
+    Photo photo1 = new Photo();
+    photo1.setName(nameKeyValue);
+    photo1.setType(typeKeyValue);
+    photo1.setImageUri("https://localhost/big_picture.png");
+    photo1.setImageType("image/png");
+    datasource.createData(edmEntitySet, photo1);
+
+    Photo photo2 = new Photo();
+    photo2.setName(nameKeyValue);
+    photo2.setType(typeKeyValue);
+    photo2.setImageUri("https://localhost/bigger_picture.png");
+    photo2.setImageType("image/png");
+    datasource.createData(edmEntitySet, photo2);
+
+    List photos = datasource.readData(edmEntitySet);
+
+    Assert.assertEquals(2, photos.size());
+    Photo readPhoto = (Photo) photos.get(0);
+    Assert.assertEquals(nameKeyValue + ":" + typeKeyValue,
+            readPhoto.getName() + ":" + readPhoto.getType());
+
+    readPhoto = (Photo) photos.get(1);
+    Assert.assertEquals("1:2",
+            readPhoto.getName() + ":" + readPhoto.getType());
+  }
+
+  @Test
   public void createGuidKeyEntity() throws Exception {
     EdmEntitySet edmEntitySet = createMockedEdmEntitySet(GuidKeyEntity.GUID_KEY_ENTITIES);
 
