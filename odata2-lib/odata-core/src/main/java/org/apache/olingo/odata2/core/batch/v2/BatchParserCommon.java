@@ -42,15 +42,32 @@ public class BatchParserCommon {
 
   private static final Pattern PATTERN_LAST_CRLF = Pattern.compile("(.*)(\r\n){1}( *)", Pattern.DOTALL);
 
-  private static final String REG_EX_BOUNDARY =
-      "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\" +
-          "(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\""; // See RFC 2046
+  // Multipart boundaries are defined in RFC 2046:
+  //     boundary      := 0*69<bchars> bcharsnospace
+  //     bchars        := bcharsnospace / " "
+  //     bcharsnospace := DIGIT / ALPHA / "'" / "(" / ")" / "+" / "_" / "," / "-" / "." / "/" / ":" / "=" / "?"
+  // The first alternative is for the case that only characters are used that don't need quoting.
+  private static final Pattern PATTERN_BOUNDARY = Pattern.compile(
+      "((?:\\w|[-.'+]){1,70})|"
+          + "\"((?:\\w|[-.'+(),/:=?]|\\s){0,69}(?:\\w|[-.'+(),/:=?]))\"");
 
-  public static final Pattern PATTERN_MULTIPART_MIXED = Pattern
-      .compile("multipart/mixed(.*)", Pattern.CASE_INSENSITIVE);
-  final static String REG_EX_APPLICATION_HTTP = "application/http";
-  public static final Pattern PATTERN_HEADER_LINE = Pattern.compile("([a-zA-Z\\-]+):\\s?(.*)\\s*");
-  public static final Pattern PATTERN_CONTENT_TYPE_APPLICATION_HTTP = Pattern.compile(REG_EX_APPLICATION_HTTP,
+  // HTTP header fields are defined in RFC 7230:
+  //     header-field   = field-name ":" OWS field-value OWS
+  //     field-name     = token
+  //     field-value    = *( field-content / obs-fold )
+  //     field-content  = field-vchar [ 1*( SP / HTAB ) field-vchar ]
+  //     field-vchar    = VCHAR / obs-text
+  //     obs-fold       = CRLF 1*( SP / HTAB )
+  //     token          = 1*tchar
+  //     tchar          = "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
+  //                      / DIGIT / ALPHA
+  // For the field-name the specification is followed strictly,
+  // but for the field-value the pattern currently accepts more than specified.
+  protected static final Pattern PATTERN_HEADER_LINE = Pattern.compile("((?:\\w|[!#$%\\&'*+\\-.^`|~])+):\\s?(.*)\\s*");
+
+  public static final Pattern PATTERN_MULTIPART_MIXED = Pattern.compile("multipart/mixed(.*)",
+      Pattern.CASE_INSENSITIVE);
+  public static final Pattern PATTERN_CONTENT_TYPE_APPLICATION_HTTP = Pattern.compile("application/http",
       Pattern.CASE_INSENSITIVE);
   public static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(\\?.*)?");
 
@@ -226,7 +243,7 @@ public class BatchParserCommon {
 
         final String[] attrValue = pair.split("=");
         if (attrValue.length == 2 && "boundary".equals(attrValue[0].trim().toLowerCase(Locale.ENGLISH))) {
-          if (attrValue[1].matches(REG_EX_BOUNDARY)) {
+          if (PATTERN_BOUNDARY.matcher(attrValue[1]).matches()) {
             return trimQuota(attrValue[1].trim());
           } else {
             throw new BatchException(BatchException.INVALID_BOUNDARY.addContent(line));
