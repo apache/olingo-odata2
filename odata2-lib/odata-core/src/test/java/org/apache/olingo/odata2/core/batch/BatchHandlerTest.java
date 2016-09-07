@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.ODataService;
@@ -35,6 +35,7 @@ import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.batch.BatchHandler;
 import org.apache.olingo.odata2.api.batch.BatchRequestPart;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
+import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
@@ -66,7 +67,7 @@ import org.junit.Test;
 public class BatchHandlerTest {
 
   private BatchHandler handler;
-  private static final String CONTENT_TYPE = "multipart/mixed; boundary=batch_123";
+  private static final String CONTENT_TYPE = HttpContentType.MULTIPART_MIXED + "; boundary=batch_123";
   private static final String CRLF = "\r\n";
   private static String SERVICE_BASE = "http://localhost/odata/";
   private static String SERVICE_ROOT = null;
@@ -81,7 +82,8 @@ public class BatchHandlerTest {
     when(serviceMock.getProcessor()).thenReturn(processor);
     Edm mockEdm = MockFacade.getMockEdm();
     when(serviceMock.getEntityDataModel()).thenReturn(mockEdm);
-    List<String> supportedContentTypes = Arrays.asList("application/json;charset=utf-8", "application/json");
+    List<String> supportedContentTypes = Arrays.asList(
+        HttpContentType.APPLICATION_JSON_UTF8, HttpContentType.APPLICATION_JSON);
     when(serviceMock.getSupportedContentTypes(EntityMediaProcessor.class)).thenReturn(supportedContentTypes);
     when(serviceMock.getSupportedContentTypes(EntityProcessor.class)).thenReturn(supportedContentTypes);
     when(serviceMock.getSupportedContentTypes(EntitySimplePropertyProcessor.class)).thenReturn(supportedContentTypes);
@@ -93,9 +95,8 @@ public class BatchHandlerTest {
     SERVICE_ROOT = SERVICE_BASE;
     PathInfoImpl pathInfo = new PathInfoImpl();
     pathInfo.setServiceRoot(new URI(SERVICE_ROOT));
-    List<PathSegment> odataPathSegements = new ArrayList<PathSegment>();
-    odataPathSegements.add(new ODataPathSegmentImpl("$batch", null));
-    pathInfo.setODataPathSegment(odataPathSegements);
+    pathInfo.setODataPathSegment(Collections.<PathSegment> singletonList(
+        new ODataPathSegmentImpl("$batch", null)));
     EntityProviderBatchProperties properties = EntityProviderBatchProperties.init().pathInfo(pathInfo).build();
     InputStream content = readFile("/batchContentIdReferencing.batch");
     List<BatchRequestPart> parsedRequest = EntityProvider.parseBatchRequest(CONTENT_TYPE, content, properties);
@@ -110,14 +111,12 @@ public class BatchHandlerTest {
   public void contentIdReferencingWithAdditionalSegments() throws Exception {
     SERVICE_ROOT = SERVICE_BASE + "seg1/seg2/";
     PathInfoImpl pathInfo = new PathInfoImpl();
-    List<PathSegment> precedingPathSegements = new ArrayList<PathSegment>();
-    precedingPathSegements.add(new ODataPathSegmentImpl("seg1", null));
-    precedingPathSegements.add(new ODataPathSegmentImpl("seg2", null));
-    pathInfo.setPrecedingPathSegment(precedingPathSegements);
+    pathInfo.setPrecedingPathSegment(Arrays.asList(
+        (PathSegment) new ODataPathSegmentImpl("seg1", null),
+        (PathSegment) new ODataPathSegmentImpl("seg2", null)));
     pathInfo.setServiceRoot(new URI(SERVICE_ROOT));
-    List<PathSegment> odataPathSegements = new ArrayList<PathSegment>();
-    odataPathSegements.add(new ODataPathSegmentImpl("$batch", null));
-    pathInfo.setODataPathSegment(odataPathSegements);
+    pathInfo.setODataPathSegment(Collections.<PathSegment> singletonList(
+        new ODataPathSegmentImpl("$batch", null)));
     EntityProviderBatchProperties properties = EntityProviderBatchProperties.init().pathInfo(pathInfo).build();
     InputStream content = readFile("/batchContentIdReferencing.batch");
     List<BatchRequestPart> parsedRequest = EntityProvider.parseBatchRequest(CONTENT_TYPE, content, properties);
@@ -127,23 +126,19 @@ public class BatchHandlerTest {
 
     handler.handleBatchPart(parsedRequest.get(0));
   }
-  
+
   @Test
   public void contentIdReferencingWithAdditionalSegmentsAndMatrixParameter() throws Exception {
     SERVICE_ROOT = SERVICE_BASE + "seg1;v=1/seg2;v=2/";
     PathInfoImpl pathInfo = new PathInfoImpl();
-    List<PathSegment> precedingPathSegements = new ArrayList<PathSegment>();
-    HashMap<String, List<String>> matrixParameters1 = new HashMap<String, List<String>>();
-    matrixParameters1.put("v", Arrays.asList("1"));
-    HashMap<String, List<String>> matrixParameters2 = new HashMap<String, List<String>>();
-    matrixParameters1.put("v", Arrays.asList("2"));
-    precedingPathSegements.add(new ODataPathSegmentImpl("seg1", matrixParameters1));
-    precedingPathSegements.add(new ODataPathSegmentImpl("seg2", matrixParameters2));
-    pathInfo.setPrecedingPathSegment(precedingPathSegements);
+    pathInfo.setPrecedingPathSegment(Arrays.asList(
+        (PathSegment) new ODataPathSegmentImpl("seg1",
+            Collections.singletonMap("v", Collections.singletonList("1"))),
+        (PathSegment) new ODataPathSegmentImpl("seg2",
+            Collections.singletonMap("v", Collections.singletonList("2")))));
     pathInfo.setServiceRoot(new URI(SERVICE_ROOT));
-    List<PathSegment> odataPathSegements = new ArrayList<PathSegment>();
-    odataPathSegements.add(new ODataPathSegmentImpl("$batch", null));
-    pathInfo.setODataPathSegment(odataPathSegements);
+    pathInfo.setODataPathSegment(Collections.<PathSegment> singletonList(
+        new ODataPathSegmentImpl("$batch", null)));
     EntityProviderBatchProperties properties = EntityProviderBatchProperties.init().pathInfo(pathInfo).build();
     InputStream content = readFile("/batchContentIdReferencing.batch");
     List<BatchRequestPart> parsedRequest = EntityProvider.parseBatchRequest(CONTENT_TYPE, content, properties);

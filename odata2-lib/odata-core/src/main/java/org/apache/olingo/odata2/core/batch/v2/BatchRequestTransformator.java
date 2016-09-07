@@ -86,6 +86,7 @@ public class BatchRequestTransformator implements BatchTransformator {
                                                                         baseUri, 
                                                                         pathInfo);
     statusLine.validateHttpMethod(isChangeSet);
+    BatchTransformatorCommon.validateHost(headers, baseUri);
 
     validateBody(statusLine, operation);
     InputStream bodyStream = getBodyStream(operation, headers, statusLine);

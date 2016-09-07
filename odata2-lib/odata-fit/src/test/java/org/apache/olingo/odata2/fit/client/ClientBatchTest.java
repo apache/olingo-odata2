@@ -23,9 +23,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +42,10 @@ import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
 import org.apache.olingo.odata2.api.client.batch.BatchPart;
 import org.apache.olingo.odata2.api.client.batch.BatchQueryPart;
 import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
+import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.fit.ref.AbstractRefTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
@@ -52,15 +57,12 @@ public class ClientBatchTest extends AbstractRefTest {
     super(servletType);
   }
 
-  private static final String PUT = "PUT";
-  private static final String POST = "POST";
-  private static final String GET = "GET";
   private static final String BOUNDARY = "batch_123";
 
   @Test
-  public void testSimpleBatch() throws Exception {
+  public void simpleBatch() throws Exception {
     List<BatchPart> batch = new ArrayList<BatchPart>();
-    BatchPart request = BatchQueryPart.method(GET).uri("$metadata").build();
+    BatchPart request = BatchQueryPart.method(ODataHttpMethod.GET.name()).uri("$metadata").build();
     batch.add(request);
 
     InputStream body = EntityProvider.writeBatchRequest(batch, BOUNDARY);
@@ -83,14 +85,37 @@ public class ClientBatchTest extends AbstractRefTest {
   }
 
   @Test
-  public void testChangeSetBatch() throws Exception {
+  public void simpleBatchWithAbsoluteUri() throws Exception {
+    final String batchRequestBody = StringHelper.inputStreamToStringCRLFLineBreaks(
+        EntityProvider.writeBatchRequest(
+            Collections.<BatchPart> singletonList(
+                BatchQueryPart
+                    .method(ODataHttpMethod.GET.name())
+                    .uri(getEndpoint().getPath() + "Employees('2')/EmployeeName/$value")
+                    .build()),
+            BOUNDARY));
+    final HttpResponse batchResponse = execute(batchRequestBody);
+    final List<BatchSingleResponse> responses = EntityProvider.parseBatchResponse(
+        batchResponse.getEntity().getContent(),
+        batchResponse.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+    assertEquals(1, responses.size());
+    final BatchSingleResponse response = responses.get(0);
+    assertEquals(Integer.toString(HttpStatusCodes.OK.getStatusCode()), response.getStatusCode());
+    assertEquals(HttpStatusCodes.OK.getInfo(), response.getStatusInfo());
+    assertEquals(EMPLOYEE_2_NAME, response.getBody());
+    assertEquals(HttpContentType.TEXT_PLAIN_UTF8, response.getHeader(HttpHeaders.CONTENT_TYPE));
+    assertNotNull(response.getHeader(HttpHeaders.CONTENT_LENGTH));
+  }
+
+  @Test
+  public void changeSetBatch() throws Exception {
     List<BatchPart> batch = new ArrayList<BatchPart>();
 
     BatchChangeSet changeSet = BatchChangeSet.newBuilder().build();
     Map<String, String> changeSetHeaders = new HashMap<String, String>();
-    changeSetHeaders.put("content-type", "application/json;odata=verbose");
+    changeSetHeaders.put(HttpHeaders.CONTENT_TYPE, HttpContentType.APPLICATION_JSON_VERBOSE);
 
-    BatchChangeSetPart changeRequest = BatchChangeSetPart.method(PUT)
+    BatchChangeSetPart changeRequest = BatchChangeSetPart.method(ODataHttpMethod.PUT.name())
         .uri("Employees('2')/EmployeeName")
         .body("{\"EmployeeName\":\"Frederic Fall MODIFIED\"}")
         .headers(changeSetHeaders)
@@ -98,7 +123,7 @@ public class ClientBatchTest extends AbstractRefTest {
     changeSet.add(changeRequest);
     batch.add(changeSet);
 
-    BatchPart request = BatchQueryPart.method(GET)
+    BatchPart request = BatchQueryPart.method(ODataHttpMethod.GET.name())
         .uri("Employees('2')/EmployeeName/$value")
         .build();
     batch.add(request);
@@ -110,7 +135,7 @@ public class ClientBatchTest extends AbstractRefTest {
 
     assertTrue(bodyAsString.contains("PUT Employees('2')/EmployeeName HTTP/1.1"));
     assertTrue(bodyAsString.contains("GET Employees('2')/EmployeeName/$value HTTP/1.1"));
-    assertTrue(bodyAsString.contains("content-type: application/json;odata=verbose"));
+    assertTrue(bodyAsString.contains("Content-Type: application/json;odata=verbose"));
 
     HttpResponse batchResponse = execute(bodyAsString);
     InputStream responseBody = batchResponse.getEntity().getContent();
@@ -129,14 +154,14 @@ public class ClientBatchTest extends AbstractRefTest {
   }
 
   @Test
-  public void testChangeSetBatchUmlauts() throws Exception {
+  public void changeSetBatchUmlauts() throws Exception {
     List<BatchPart> batch = new ArrayList<BatchPart>();
 
     BatchChangeSet changeSet = BatchChangeSet.newBuilder().build();
     Map<String, String> changeSetHeaders = new HashMap<String, String>();
-    changeSetHeaders.put("content-type", "application/json;odata=verbose");
+    changeSetHeaders.put(HttpHeaders.CONTENT_TYPE, HttpContentType.APPLICATION_JSON_VERBOSE);
 
-    BatchChangeSetPart changeRequest = BatchChangeSetPart.method(PUT)
+    BatchChangeSetPart changeRequest = BatchChangeSetPart.method(ODataHttpMethod.PUT.name())
         .uri("Employees('2')/EmployeeName")
         .body("{\"EmployeeName\":\"Frederic üäö Fall\"}")
         .headers(changeSetHeaders)
@@ -144,7 +169,7 @@ public class ClientBatchTest extends AbstractRefTest {
     changeSet.add(changeRequest);
     batch.add(changeSet);
 
-    BatchPart request = BatchQueryPart.method(GET)
+    BatchPart request = BatchQueryPart.method(ODataHttpMethod.GET.name())
         .uri("Employees('2')/EmployeeName/$value")
         .build();
     batch.add(request);
@@ -157,7 +182,7 @@ public class ClientBatchTest extends AbstractRefTest {
 
     assertTrue(bodyAsString.contains("PUT Employees('2')/EmployeeName HTTP/1.1"));
     assertTrue(bodyAsString.contains("GET Employees('2')/EmployeeName/$value HTTP/1.1"));
-    assertTrue(bodyAsString.contains("content-type: application/json;odata=verbose"));
+    assertTrue(bodyAsString.contains("Content-Type: application/json;odata=verbose"));
 
     HttpResponse batchResponse = execute(bodyStream.asStreamWithLineSeparation("\r\n"));
     InputStream responseBody = batchResponse.getEntity().getContent();
@@ -178,13 +203,14 @@ public class ClientBatchTest extends AbstractRefTest {
 
 
   @Test
-  public void testContentIdReferencing() throws Exception {
+  public void contentIdReferencing() throws Exception {
     List<BatchPart> batch = new ArrayList<BatchPart>();
     BatchChangeSet changeSet = BatchChangeSet.newBuilder().build();
     Map<String, String> changeSetHeaders = new HashMap<String, String>();
-    changeSetHeaders.put("content-type", "application/octet-stream");
-    changeSetHeaders.put("Accept", "application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1");
-    BatchChangeSetPart changeRequest = BatchChangeSetPart.method(POST)
+    changeSetHeaders.put(HttpHeaders.CONTENT_TYPE, "application/octet-stream");
+    changeSetHeaders.put(HttpHeaders.ACCEPT,
+        "application/atom+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1");
+    BatchChangeSetPart changeRequest = BatchChangeSetPart.method(ODataHttpMethod.POST.name())
         .uri("Employees")
         .contentId("1")
         .body("gAAAAgABwESAAMAAAABAAEA")
@@ -193,8 +219,8 @@ public class ClientBatchTest extends AbstractRefTest {
     changeSet.add(changeRequest);
 
     changeSetHeaders = new HashMap<String, String>();
-    changeSetHeaders.put("content-type", "application/json;odata=verbose");
-    BatchChangeSetPart changeRequest2 = BatchChangeSetPart.method(PUT)
+    changeSetHeaders.put(HttpHeaders.CONTENT_TYPE, HttpContentType.APPLICATION_JSON_VERBOSE);
+    BatchChangeSetPart changeRequest2 = BatchChangeSetPart.method(ODataHttpMethod.PUT.name())
         .uri("$1/EmployeeName")
         .contentId("2")
         .body("{\"EmployeeName\":\"Frederic Fall MODIFIED\"}")
@@ -205,7 +231,7 @@ public class ClientBatchTest extends AbstractRefTest {
 
     Map<String, String> getRequestHeaders = new HashMap<String, String>();
     getRequestHeaders.put("content-id", "3");
-    BatchPart request = BatchQueryPart.method(GET)
+    BatchPart request = BatchQueryPart.method(ODataHttpMethod.GET.name())
         .uri("Employees('7')/EmployeeName")
         .contentId("3")
         .headers(getRequestHeaders).build();
@@ -240,9 +266,9 @@ public class ClientBatchTest extends AbstractRefTest {
   }
 
   @Test
-  public void testErrorBatch() throws Exception {
+  public void errorBatch() throws Exception {
     List<BatchPart> batch = new ArrayList<BatchPart>();
-    BatchPart request = BatchQueryPart.method(GET)
+    BatchPart request = BatchQueryPart.method(ODataHttpMethod.GET.name())
         .uri("nonsense")
         .build();
     batch.add(request);
@@ -263,32 +289,25 @@ public class ClientBatchTest extends AbstractRefTest {
     }
   }
 
-  private HttpResponse execute(final String body) throws Exception {
+  private HttpResponse execute(final HttpEntity entity) throws IOException {
     final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
 
-    post.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
-    HttpEntity entity = new StringEntity(body);
+    post.setHeader(HttpHeaders.CONTENT_TYPE, "multipart/mixed;boundary=" + BOUNDARY);
     post.setEntity(entity);
     HttpResponse response = getHttpClient().execute(post);
 
     assertNotNull(response);
-    assertEquals(202, response.getStatusLine().getStatusCode());
+    assertEquals(HttpStatusCodes.ACCEPTED.getStatusCode(), response.getStatusLine().getStatusCode());
 
     return response;
   }
 
-  private HttpResponse execute(final InputStream body) throws Exception {
-    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+  private HttpResponse execute(final String body) throws IOException {
+    return execute(new StringEntity(body));
+  }
 
-    post.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
-    HttpEntity entity = new InputStreamEntity(body, -1);
-    post.setEntity(entity);
-    HttpResponse response = getHttpClient().execute(post);
-
-    assertNotNull(response);
-    assertEquals(202, response.getStatusLine().getStatusCode());
-
-    return response;
+  private HttpResponse execute(final InputStream body) throws IOException {
+    return execute(new InputStreamEntity(body, -1));
   }
 
   private void checkMimeHeaders(final String requestBody) {
