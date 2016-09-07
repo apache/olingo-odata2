@@ -31,6 +31,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EmbeddableType;
@@ -563,7 +564,12 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
     @Override
     public <T extends Annotation> T getAnnotation(final Class<T> annotationClass) {
 
-      if (annotationClass.equals(JoinColumn.class)) {
+      if(annotationClass.equals(ManyToOne.class)) {
+        ManyToOne manyToOne = EasyMock.createMock(ManyToOne.class);
+        EasyMock.expect(manyToOne.optional()).andReturn(true).anyTimes();
+        return (T) manyToOne;
+
+      } else if (annotationClass.equals(JoinColumn.class)) {
 
         JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
         EasyMock.expect(joinColumn.insertable()).andReturn(true).anyTimes();
