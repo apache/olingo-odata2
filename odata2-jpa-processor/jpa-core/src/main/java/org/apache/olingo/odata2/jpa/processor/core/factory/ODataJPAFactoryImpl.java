@@ -23,6 +23,7 @@ import java.util.Locale;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPADefaultProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmMappingModelAccess;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAMethodContext.JPAMethodContextBuilder;
@@ -39,7 +40,6 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement.JPQLStateme
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmModelView;
 import org.apache.olingo.odata2.jpa.processor.core.ODataJPAContextImpl;
-import org.apache.olingo.odata2.jpa.processor.core.ODataJPAProcessorDefault;
 import org.apache.olingo.odata2.jpa.processor.core.ODataJPAResponseBuilderDefault;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAFunctionContext;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAProcessorImpl;
@@ -173,7 +173,7 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
 
     @Override
     public ODataSingleProcessor createODataProcessor(final ODataJPAContext oDataJPAContext) {
-      return new ODataJPAProcessorDefault(oDataJPAContext);
+      return new ODataJPADefaultProcessor(oDataJPAContext) { };
     }
 
     @Override

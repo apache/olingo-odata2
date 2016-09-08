@@ -29,19 +29,15 @@ import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.info.*;
-import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAException;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ODataJPADefaultProcessor extends ODataJPAProcessor {
+public abstract class ODataJPADefaultProcessor extends ODataJPAProcessor {
 
   public ODataJPADefaultProcessor(final ODataJPAContext oDataJPAContext) {
     super(oDataJPAContext);
-    if (oDataJPAContext == null) {
-      throw new IllegalArgumentException(ODataJPAException.ODATA_JPACTX_NULL);
-    }
   }
 
   @Override
