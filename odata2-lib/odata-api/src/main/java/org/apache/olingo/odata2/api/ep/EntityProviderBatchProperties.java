@@ -31,12 +31,21 @@ public class EntityProviderBatchProperties {
    */
   private PathInfo pathInfo;
 
+  /**
+   * Defines whether to use strict batch parsing.
+   */
+  private boolean isStrict;
+
   public static EntityProviderBatchPropertiesBuilder init() {
     return new EntityProviderBatchPropertiesBuilder();
   }
 
   public PathInfo getPathInfo() {
     return pathInfo;
+  }
+
+  public boolean isStrict() {
+    return isStrict;
   }
 
   public static class EntityProviderBatchPropertiesBuilder {
@@ -50,6 +59,11 @@ public class EntityProviderBatchProperties {
 
     public EntityProviderBatchPropertiesBuilder pathInfo(final PathInfo pathInfo) {
       properties.pathInfo = pathInfo;
+      return this;
+    }
+
+    public EntityProviderBatchPropertiesBuilder setStrict(final boolean isStrict) {
+      properties.isStrict = isStrict;
       return this;
     }
 

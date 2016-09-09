@@ -241,7 +241,8 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   @Override
   public List<BatchRequestPart> parseBatchRequest(final String contentType, final InputStream content,
       final EntityProviderBatchProperties properties) throws BatchException {
-    List<BatchRequestPart> batchParts = new BatchParser(contentType, properties, true).parseBatchRequest(content);
+    BatchParser batchParser = new BatchParser(contentType, properties, properties.isStrict());
+    List<BatchRequestPart> batchParts = batchParser.parseBatchRequest(content);
     return batchParts;
   }
 
