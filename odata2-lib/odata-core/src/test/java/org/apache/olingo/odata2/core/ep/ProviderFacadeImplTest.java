@@ -35,8 +35,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -59,6 +57,8 @@ import org.apache.olingo.odata2.core.ep.consumer.AbstractConsumerTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  *  
@@ -224,6 +224,68 @@ public class ProviderFacadeImplTest extends AbstractConsumerTest {
     final Object result = new ProviderFacadeImpl().readFunctionImport(HttpContentType.APPLICATION_JSON,
         functionImport, content, EntityProviderReadProperties.init().build());
     assertEquals((short) 42, result);
+  }
+
+  @Test
+  public void readMultipleEntityFunctionImport() throws Exception {
+    final EdmFunctionImport functionImport = MockFacade.getMockEdm().getDefaultEntityContainer()
+        .getFunctionImport("EmployeeSearch");
+    InputStream content = new ByteArrayInputStream(
+        ("{\"d\": {"
+            + "\"results\": [{"
+            + "\"__metadata\": {"
+            + "\"type\": \"RefScenario.Employee\","
+            + "\"content_type\": \"image/jpeg\","
+            + "\"media_src\":\"http://localhost:19000/abc/FunctionImportJsonTest/Employees('3')/$value\","
+            + "\"edit_media\":\"http://localhost:19000/abc/FunctionImportJsonTest/Employees('3')/$value\""
+            + "},"
+            + "\"EmployeeId\": \"3\","
+            + "\"EmployeeName\": \"Jonathan Smith\","
+            + "\"ManagerId\": \"1\","
+            + "\"RoomId\": \"2\","
+            + "\"TeamId\": \"1\","
+            + "\"Location\": {"
+            + "\"__metadata\": {"
+            + "\"type\": \"RefScenario.c_Location\""
+            + "},"
+            + "\"City\": {"
+            + "\"__metadata\": {"
+            + "\"type\": \"RefScenario.c_City\""
+            + "},"
+            + "\"PostalCode\": \"69190\","
+            + "\"CityName\": \"Walldorf\""
+            + "},"
+            + "\"Country\": \"Germany\""
+            + "},"
+            + "\"Age\": 56,"
+            + "\"EntryDate\": null,"
+            + "\"ImageUrl\": \"Employees('3')/$value\","
+            + "\"ne_Manager\": {"
+            + "\"__deferred\": {"
+            + "\"uri\": \"http://localhost:19000/abc/FunctionImportJsonTest/Employees('3')/ne_Manager\""
+            + "}"
+            + "},"
+            + "\"ne_Team\": {"
+            + "\"__deferred\": {"
+            + "\"uri\": \"http://localhost:19000/abc/FunctionImportJsonTest/Employees('3')/ne_Team\""
+            + "}"
+            + "},"
+            + "\"ne_Room\": {"
+            + "\"__deferred\": {"
+            + "\"uri\": \"http://localhost:19000/abc/FunctionImportJsonTest/Employees('3')/ne_Room\""
+            + "}"
+            + "}"
+            + "}]"
+            + "}"
+            + "}").getBytes("UTF-8"));
+    final Object result = new ProviderFacadeImpl().readFunctionImport(HttpContentType.APPLICATION_JSON,
+        functionImport, content, EntityProviderReadProperties.init().build());
+    ODataDeltaFeed feed = (ODataDeltaFeed) result;
+    List<ODataEntry> entries = feed.getEntries();
+    int size = entries.size();
+    assertEquals(1, size);
+    String id = (String) entries.get(0).getProperties().get("EmployeeId");
+    assertEquals("3", id);
   }
 
   @Test
