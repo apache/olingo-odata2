@@ -164,6 +164,13 @@ public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements JPAEdmAs
     FullQualifiedName end2Type = end2.getType();
     FullQualifiedName currentAssociationEnd2Type = currentAssociationEnd2.getType();
 
+    if(end1.getMultiplicity() == null || currentAssociationEnd1.getMultiplicity() == null) {
+      return false;
+    }
+    if(end2.getMultiplicity() == null || currentAssociationEnd2.getMultiplicity() == null) {
+      return false;
+    }
+
     boolean end1eqCurEnd1 = end1.getMultiplicity().equals(currentAssociationEnd1.getMultiplicity());
     boolean end2eqCurEnd2 = end2.getMultiplicity().equals(currentAssociationEnd2.getMultiplicity());
     if(end1Type.equals(currentAssociationEnd1Type) && end2Type.equals(currentAssociationEnd2Type)

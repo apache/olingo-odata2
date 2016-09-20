@@ -530,6 +530,10 @@ public class JPAEdmNameBuilder {
   }
 
   private static String multiplicityToString(EdmMultiplicity multiplicity) {
+    if(multiplicity == null) {
+      return "";
+    }
+
     switch (multiplicity) {
     case MANY:
       return "Many";
@@ -538,9 +542,8 @@ public class JPAEdmNameBuilder {
     case ZERO_TO_ONE:
       return "ZeroToOne";
     default:
-      break;
+      return "";
     }
-    return "";
   }
 
   private static String buildNamespace(final JPAEdmBaseView view) {
