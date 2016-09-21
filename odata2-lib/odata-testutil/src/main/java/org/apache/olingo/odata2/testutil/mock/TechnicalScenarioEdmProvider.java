@@ -223,17 +223,18 @@ public class TechnicalScenarioEdmProvider extends EdmProvider {
   }
 
   @Override
-  public Association getAssociation(final FullQualifiedName edmFQName) throws ODataMessageException {
-    if (NAMESPACE_1.equals(edmFQName.getNamespace())) {
-      if (ASSOCIATION_ET1_ET2.getName().equals(edmFQName.getName())) {
-        final AssociationEnd end1 =
-            new AssociationEnd().setMultiplicity(EdmMultiplicity.ONE).setRole(ROLE_1).setType(ET_KEY_IS_STRING);
-        final AssociationEnd end2 =
-            new AssociationEnd().setMultiplicity(EdmMultiplicity.ONE).setRole(ROLE_2).setType(ET_KEY_IS_INTEGER);
-        return new Association().setName("Association").setEnd1(end1).setEnd2(end2);
-      }
+  public Association getAssociation(final FullQualifiedName association) throws ODataMessageException {
+    if (ASSOCIATION_ET1_ET2.equals(association)) {
+      return new Association().setName(ASSOCIATION_ET1_ET2.getName())
+          .setEnd1(new AssociationEnd()
+              .setMultiplicity(EdmMultiplicity.ZERO_TO_ONE)
+              .setRole(ROLE_1)
+              .setType(ET_KEY_IS_STRING))
+          .setEnd2(new AssociationEnd()
+              .setMultiplicity(EdmMultiplicity.MANY)
+              .setRole(ROLE_2)
+              .setType(ET_KEY_IS_INTEGER));
     }
-
     return null;
   }
 

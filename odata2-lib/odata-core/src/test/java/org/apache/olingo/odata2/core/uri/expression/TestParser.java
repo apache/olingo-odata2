@@ -18,15 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri.expression;
 
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.olingo.odata2.api.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.uri.expression.ExpressionKind;
@@ -44,6 +37,7 @@ import org.apache.olingo.odata2.core.edm.EdmGuid;
 import org.apache.olingo.odata2.core.edm.EdmInt16;
 import org.apache.olingo.odata2.core.edm.EdmInt32;
 import org.apache.olingo.odata2.core.edm.EdmInt64;
+import org.apache.olingo.odata2.core.edm.EdmNull;
 import org.apache.olingo.odata2.core.edm.EdmSByte;
 import org.apache.olingo.odata2.core.edm.EdmSingle;
 import org.apache.olingo.odata2.core.edm.EdmString;
@@ -58,39 +52,39 @@ import org.junit.Test;
 public class TestParser extends TestBase {
 
   @Test
-  public void testQuick() {
+  public void quick() {
     GetPTF("substring('Test', 1 add 2)").aSerialized("{substring('Test',{1 add 2})}");
   }
 
   @Test
-  public void testOrderBy() {
+  public void orderBy() {
 
-    GetPTO("sven").aSerialized("{oc({o(sven, asc)})}");
-    GetPTO("sven asc").aSerialized("{oc({o(sven, asc)})}");
-    GetPTO("sven desc").aSerialized("{oc({o(sven, desc)})}");
-    GetPTO("sven     asc").aSerialized("{oc({o(sven, asc)})}");
-    GetPTO("sven     desc").aSerialized("{oc({o(sven, desc)})}");
+    GetPTO("name").aSerialized("{oc({o(name, asc)})}");
+    GetPTO("name asc").aSerialized("{oc({o(name, asc)})}");
+    GetPTO("name desc").aSerialized("{oc({o(name, desc)})}");
+    GetPTO("name     asc").aSerialized("{oc({o(name, asc)})}");
+    GetPTO("name     desc").aSerialized("{oc({o(name, desc)})}");
 
-    GetPTO("sven, test").aSerialized("{oc({o(sven, asc)},{o(test, asc)})}");
-    GetPTO("sven   ,    test").aSerialized("{oc({o(sven, asc)},{o(test, asc)})}");
+    GetPTO("name, test").aSerialized("{oc({o(name, asc)},{o(test, asc)})}");
+    GetPTO("name   ,    test").aSerialized("{oc({o(name, asc)},{o(test, asc)})}");
 
-    GetPTO("sven, test asc").aSerialized("{oc({o(sven, asc)},{o(test, asc)})}");
+    GetPTO("name, test asc").aSerialized("{oc({o(name, asc)},{o(test, asc)})}");
 
-    GetPTO("sven asc, test").aSerialized("{oc({o(sven, asc)},{o(test, asc)})}");
+    GetPTO("name asc, test").aSerialized("{oc({o(name, asc)},{o(test, asc)})}");
 
-    GetPTO("sven asc, test asc").aSerialized("{oc({o(sven, asc)},{o(test, asc)})}");
-    GetPTO("sven, test desc").aSerialized("{oc({o(sven, asc)},{o(test, desc)})}");
-    GetPTO("sven desc, test").aSerialized("{oc({o(sven, desc)},{o(test, asc)})}");
-    GetPTO("sven desc, test desc").aSerialized("{oc({o(sven, desc)},{o(test, desc)})}");
+    GetPTO("name asc, test asc").aSerialized("{oc({o(name, asc)},{o(test, asc)})}");
+    GetPTO("name, test desc").aSerialized("{oc({o(name, asc)},{o(test, desc)})}");
+    GetPTO("name desc, test").aSerialized("{oc({o(name, desc)},{o(test, asc)})}");
+    GetPTO("name desc, test desc").aSerialized("{oc({o(name, desc)},{o(test, desc)})}");
 
-    GetPTO("'sven', 77").order(1).aSortOrder(SortOrder.asc);
-    GetPTO("'sven', 77 desc").root().order(0).aSortOrder(SortOrder.asc).aExpr().aEdmType(EdmString.getInstance())
+    GetPTO("'name', 77").order(1).aSortOrder(SortOrder.asc);
+    GetPTO("'name', 77 desc").root().order(0).aSortOrder(SortOrder.asc).aExpr().aEdmType(EdmString.getInstance())
         .root().order(1).aSortOrder(SortOrder.desc).aExpr().aEdmType(Uint7.getInstance());
 
   }
 
   @Test
-  public void testPromotion() {
+  public void promotion() {
     // SByte <--> SByte
     GetPTF("-10").aEdmType(EdmSByte.getInstance());
     GetPTF("-10 add -10").aEdmType(EdmSByte.getInstance());
@@ -126,17 +120,16 @@ public class TestParser extends TestBase {
     GetPTF("concat('a','b')").aEdmType(EdmString.getInstance());
     GetPTF("concat('a','b','c')").aEdmType(EdmString.getInstance());
   }
-  
-   @Test
-  public void testProperties() {
-    // GetPTF("sven").aSerialized("sven").aKind(ExpressionKind.PROPERTY);
-    GetPTF("sven1 add sven2").aSerialized("{sven1 add sven2}").aKind(ExpressionKind.BINARY).root().left().aKind(
-        ExpressionKind.PROPERTY).aUriLiteral("sven1").root().right().aKind(ExpressionKind.PROPERTY)
-        .aUriLiteral("sven2");
+
+  @Test
+  public void properties() {
+    GetPTF("name1 add name2").aSerialized("{name1 add name2}").aKind(ExpressionKind.BINARY).root().left().aKind(
+        ExpressionKind.PROPERTY).aUriLiteral("name1").root().right().aKind(ExpressionKind.PROPERTY)
+        .aUriLiteral("name2");
   }
 
   @Test
-  public void testDeepProperties() {
+  public void deepProperties() {
     GetPTF("a/b").aSerialized("{a/b}").aKind(ExpressionKind.MEMBER);
     GetPTF("a/b/c").aSerialized("{{a/b}/c}").root().aKind(ExpressionKind.MEMBER).root().left().aKind(
         ExpressionKind.MEMBER).root().left().left().aKind(ExpressionKind.PROPERTY).aUriLiteral("a").root().left()
@@ -145,88 +138,79 @@ public class TestParser extends TestBase {
   }
 
   @Test
-  public void testPropertiesWithEdm() {
-    try {
-      EdmEntityType edmEtAllTypes = edmInfo.getTypeEtAllTypes();
-      EdmProperty string = (EdmProperty) edmEtAllTypes.getProperty("String");
-      EdmSimpleType stringType = (EdmSimpleType) string.getType();
-      EdmComplexPropertyImplProv complex = (EdmComplexPropertyImplProv) edmEtAllTypes.getProperty("Complex");
-      EdmComplexType complexType = (EdmComplexType) complex.getType();
-      EdmProperty complexString = (EdmProperty) complexType.getProperty("String");
-      EdmSimpleType complexStringType = (EdmSimpleType) complexString.getType();
-      EdmComplexPropertyImplProv complexAddress = (EdmComplexPropertyImplProv) complexType.getProperty("Address");
-      EdmComplexType complexAddressType = (EdmComplexType) complexAddress.getType();
-      EdmProperty complexAddressCity = (EdmProperty) complexAddressType.getProperty("City");
-      EdmSimpleType complexAddressCityType = (EdmSimpleType) complexAddressCity.getType();
+  public void propertiesWithEdm() throws Exception {
+    EdmEntityType edmEtAllTypes = edmInfo.getTypeEtAllTypes();
+    EdmProperty string = (EdmProperty) edmEtAllTypes.getProperty("String");
+    EdmSimpleType stringType = (EdmSimpleType) string.getType();
+    EdmComplexPropertyImplProv complex = (EdmComplexPropertyImplProv) edmEtAllTypes.getProperty("Complex");
+    EdmComplexType complexType = (EdmComplexType) complex.getType();
+    EdmProperty complexString = (EdmProperty) complexType.getProperty("String");
+    EdmSimpleType complexStringType = (EdmSimpleType) complexString.getType();
+    EdmComplexPropertyImplProv complexAddress = (EdmComplexPropertyImplProv) complexType.getProperty("Address");
+    EdmComplexType complexAddressType = (EdmComplexType) complexAddress.getType();
+    EdmProperty complexAddressCity = (EdmProperty) complexAddressType.getProperty("City");
+    EdmSimpleType complexAddressCityType = (EdmSimpleType) complexAddressCity.getType();
 
-      GetPTF(edmEtAllTypes, "String").aEdmProperty(string).aEdmType(stringType);
+    GetPTF(edmEtAllTypes, "String").aEdmProperty(string).aEdmType(stringType);
 
-      GetPTF(edmEtAllTypes, "'text' eq String").root().aKind(ExpressionKind.BINARY);
+    GetPTF(edmEtAllTypes, "'text' eq String").root().aKind(ExpressionKind.BINARY);
 
-      GetPTF(edmEtAllTypes, "Complex/String").root().left().aEdmProperty(complex).aEdmType(complexType).root().right()
-          .aEdmProperty(complexString).aEdmType(complexStringType).root().aKind(ExpressionKind.MEMBER).aEdmType(
-              complexStringType);
+    GetPTF(edmEtAllTypes, "Complex/String").root().left().aEdmProperty(complex).aEdmType(complexType).root().right()
+        .aEdmProperty(complexString).aEdmType(complexStringType).root().aKind(ExpressionKind.MEMBER).aEdmType(
+            complexStringType);
 
-      GetPTF(edmEtAllTypes, "Complex/Address/City").root().aKind(ExpressionKind.MEMBER).root().left().aKind(
-          ExpressionKind.MEMBER).root().left().left().aKind(ExpressionKind.PROPERTY).aEdmProperty(complex).aEdmType(
-          complexType).root().left().right().aKind(ExpressionKind.PROPERTY).aEdmProperty(complexAddress).aEdmType(
-          complexAddressType).root().left().aEdmType(complexAddressType).root().right().aKind(ExpressionKind.PROPERTY)
-          .aEdmProperty(complexAddressCity).aEdmType(complexAddressCityType).root().aEdmType(complexAddressCityType);
+    GetPTF(edmEtAllTypes, "Complex/Address/City").root().aKind(ExpressionKind.MEMBER).root().left().aKind(
+        ExpressionKind.MEMBER).root().left().left().aKind(ExpressionKind.PROPERTY).aEdmProperty(complex).aEdmType(
+            complexType)
+        .root().left().right().aKind(ExpressionKind.PROPERTY).aEdmProperty(complexAddress).aEdmType(
+            complexAddressType)
+        .root().left().aEdmType(complexAddressType).root().right().aKind(ExpressionKind.PROPERTY)
+        .aEdmProperty(complexAddressCity).aEdmType(complexAddressCityType).root().aEdmType(complexAddressCityType);
 
-      EdmProperty boolean_ = (EdmProperty) edmEtAllTypes.getProperty("Boolean");
-      EdmSimpleType boolean_Type = (EdmSimpleType) boolean_.getType();
+    EdmProperty boolean_ = (EdmProperty) edmEtAllTypes.getProperty("Boolean");
+    EdmSimpleType boolean_Type = (EdmSimpleType) boolean_.getType();
 
-      GetPTF(edmEtAllTypes, "not Boolean").aKind(ExpressionKind.UNARY).aEdmType(boolean_Type).right().aEdmProperty(
-          boolean_).aEdmType(boolean_Type);
-
-    } catch (EdmException e) {
-      fail("Error in testPropertiesWithEdm:" + e.getLocalizedMessage());
-      e.printStackTrace();
-    }
+    GetPTF(edmEtAllTypes, "not Boolean").aKind(ExpressionKind.UNARY).aEdmType(boolean_Type).right().aEdmProperty(
+        boolean_).aEdmType(boolean_Type);
   }
 
   @Test
-  public void testSimpleMethod() {
+  public void simpleMethod() {
     GetPTF("startswith('Test','Te')").aSerialized("{startswith('Test','Te')}");
-
-    GetPTF("startswith('Test','Te')").aSerialized("{startswith('Test','Te')}");
-
     GetPTF("startswith('Test', concat('A','B'))").aSerialized("{startswith('Test',{concat('A','B')})}");
-
     GetPTF("substring('Test', 1 add 2)").aSerialized("{substring('Test',{1 add 2})}");
   }
 
   @Test
-  public void testMethodVariableParameters() {
+  public void methodVariableParameters() {
     GetPTF("concat('Test', 'A' )").aSerialized("{concat('Test','A')}");
     GetPTF("concat('Test', 'A', 'B' )").aSerialized("{concat('Test','A','B')}");
     GetPTF("concat('Test', 'A', 'B', 'C' )").aSerialized("{concat('Test','A','B','C')}");
   }
 
   @Test
-  public void testSimpleSameBinary() {
+  public void simpleSameBinary() {
     GetPTF("1d add 2d").aSerialized("{1d add 2d}");
     GetPTF("1d div 2d").aSerialized("{1d div 2d}");
 
     GetPTF("1d add 2d").aSerialized("{1d add 2d}").aKind(ExpressionKind.BINARY).root().left().aKind(
         ExpressionKind.LITERAL).root().right().aKind(ExpressionKind.LITERAL);
-
   }
 
   @Test
-  public void testSimpleSameBinaryBinary() {
+  public void simpleSameBinaryBinary() {
     GetPTF("1d add 2d add 3d").aSerialized("{{1d add 2d} add 3d}");
     GetPTF("1d div 2d div 3d").aSerialized("{{1d div 2d} div 3d}");
   }
 
   @Test
-  public void testSimpleSameBinaryBinaryPriority() {
+  public void simpleSameBinaryBinaryPriority() {
     GetPTF("1d add 2d div 3d").aSerialized("{1d add {2d div 3d}}");
     GetPTF("1d div 2d add 3d").aSerialized("{{1d div 2d} add 3d}");
   }
 
   @Test
-  public void testSimpleSameBinaryBinaryBinaryPriority() {
+  public void simpleSameBinaryBinaryBinaryPriority() {
     GetPTF("1d add 2d add 3d add 4d").aSerialized("{{{1d add 2d} add 3d} add 4d}");
     GetPTF("1d add 2d add 3d div 4d").aSerialized("{{1d add 2d} add {3d div 4d}}");
     GetPTF("1d add 2d div 3d add 4d").aSerialized("{{1d add {2d div 3d}} add 4d}");
@@ -238,7 +222,7 @@ public class TestParser extends TestBase {
   }
 
   @Test
-  public void testComplexMixedPriority() {
+  public void complexMixedPriority() {
     GetPTF("a      or c      and e     ").aSerializedCompr("{ a       or { c       and  e      }}");
     GetPTF("a      or c      and e eq f").aSerializedCompr("{ a       or { c       and {e eq f}}}");
     GetPTF("a      or c eq d and e     ").aSerializedCompr("{ a       or {{c eq d} and  e      }}");
@@ -253,7 +237,7 @@ public class TestParser extends TestBase {
   }
 
   @Test
-  public void testDeepParenthesis() {
+  public void deepParenthesis() {
     GetPTF("2d").aSerialized("2d");
     GetPTF("(2d)").aSerialized("2d");
     GetPTF("((2d))").aSerialized("2d");
@@ -261,7 +245,7 @@ public class TestParser extends TestBase {
   }
 
   @Test
-  public void testParenthesisWithBinaryBinary() {
+  public void parenthesisWithBinaryBinary() {
     GetPTF("1d add 2d add 3d").aSerialized("{{1d add 2d} add 3d}");
     GetPTF("1d add (2d add 3d)").aSerialized("{1d add {2d add 3d}}");
     GetPTF("(1d add 2d) add 3d").aSerialized("{{1d add 2d} add 3d}");
@@ -279,7 +263,7 @@ public class TestParser extends TestBase {
   }
 
   @Test
-  public void testSimpleUnaryOperator() {
+  public void simpleUnaryOperator() {
     GetPTF("not true").aSerialized("{not true}");
     GetPTF("- 2d").aSerialized("{- 2d}");
 
@@ -291,7 +275,7 @@ public class TestParser extends TestBase {
   }
 
   @Test
-  public void testDeepUnaryOperator() {
+  public void deepUnaryOperator() {
     GetPTF("not not true").aSerialized("{not {not true}}");
     GetPTF("not not not true").aSerialized("{not {not {not true}}}");
     GetPTF("-- 2d").aSerialized("{- {- 2d}}");
@@ -304,19 +288,19 @@ public class TestParser extends TestBase {
   }
 
   @Test
-  public void testMixedUnaryOperators() {
+  public void mixedUnaryOperators() {
     GetPTF("not - true").aSerialized("{not {- true}}");
     GetPTF("- not true").aSerialized("{- {not true}}");
   }
 
   @Test
-  public void testDeepMixedUnaryOperators() {
+  public void deepMixedUnaryOperators() {
     GetPTF("- not - true").aSerialized("{- {not {- true}}}");
     GetPTF("not - not true").aSerialized("{not {- {not true}}}");
   }
 
   @Test
-  public void testString() {
+  public void strings() {
     GetPTF("'TEST'").aSerialized("'TEST'");
     //old GetPTF("'TE''ST'").aSerialized("'TE'ST'");
     GetPTF("'TE''ST'").aSerialized("'TE''ST'");
@@ -325,7 +309,7 @@ public class TestParser extends TestBase {
   }
 
   @Test
-  public void testSinglePlainLiterals() {
+  public void singlePlainLiterals() {
     // assertEquals("Hier", 44, 33);
     // ---
     // Checks from EdmSimpleType test
@@ -398,53 +382,28 @@ public class TestParser extends TestBase {
 
     GetPTF("'abc'").aUriLiteral("'abc'").aKind(ExpressionKind.LITERAL).aEdmType(stringInst);
     GetPTF("time'PT120S'").aUriLiteral("time'PT120S'").aKind(ExpressionKind.LITERAL).aEdmType(timeInst);
-
-    // The EdmSimpleTypeSamples contains a well formatted list of all
-    // possible
-    // UriLiterals for SimpleTypes, instances for their Type classes and
-    // their Values in java notation
-    /*
-     * for ( EdmSimpleTypeSamples.UriTypeValueSet [] utvSetSet :
-     * EdmSimpleTypeSamples.someAll ) { for(
-     * EdmSimpleTypeSamples.UriTypeValueSet utvSet : utvSetSet) {
-     * GetPTF(utvSet
-     * .uri).aKind(ExpressionKind.LITERAL).aEdmType(utvSet.type)
-     * .aUriLiteral(utvSet.uri); } }
-     */
-
   }
 
-  ExpressionParserException GetException() {
-    ExpressionParserException ex = new ExpressionParserException(ExpressionParserException.COMMON_ERROR);
-    List<StackTraceElement> stack = new ArrayList<StackTraceElement>(Arrays.asList(ex.getStackTrace()));
-    stack.remove(0);
-    ex.setStackTrace(stack.toArray(new StackTraceElement[stack.size()]));
-    return ex;
+  @Test
+  public void navigationProperties() {
+    final EdmEntityType entityType = edmInfo.getTypeEtKeyTypeInteger();
+    final EdmEntityType entityType2 = edmInfo.getTypeEtKeyTypeString();
+    GetPTF_noTEST(entityType, "navProperty").aExKey(ExpressionParserException.TYPE_EXPECTED_AT);
+    GetPTF_noTEST(entityType, "navProperty/navProperty").aExKey(ExpressionParserException.INVALID_MULTIPLICITY);
+    GetPTF_noTEST(entityType, "navProperty/KeyString eq 'a'")
+        .root().left().left().aEdmType(entityType2)
+        .root().left().right().aEdmType(EdmString.getInstance());
+    GetPTF_noTEST(entityType2, "navProperty/KeyInteger eq 1").aExKey(ExpressionParserException.INVALID_MULTIPLICITY);
+    GetPTF_noTEST(entityType, "navProperty ne null").root().left().aEdmType(entityType2);
+    GetPTF_noTEST(entityType, "navProperty ne null and not (navProperty eq null)")
+        .root().aKind(ExpressionKind.BINARY)
+        .left().aKind(ExpressionKind.BINARY).left().aEdmType(entityType2)
+        .root().left().right().aEdmType(EdmNull.getInstance())
+        .root().right().aKind(ExpressionKind.UNARY).left().aKind(ExpressionKind.BINARY)
+        .left().aEdmType(entityType2)
+        .root().right().left().right().aEdmType(EdmNull.getInstance());
+    GetPTF_noTEST(entityType2, "navProperty eq null").aExKey(ExpressionParserException.INVALID_MULTIPLICITY);
+    GetPTF_noTEST(entityType, "navProperty lt null")
+        .aExKey(ExpressionParserException.INVALID_TYPES_FOR_BINARY_OPERATOR);
   }
-
-  void LevelB() throws ExpressionParserException {
-    ExpressionParserException ex = GetException();
-    throw ex;
-  }
-
-  void LevelA() throws ExpressionParserException {
-    try {
-      LevelB();
-    } catch (ExpressionParserException e) {
-      e.printStackTrace();
-      throw e;
-      // throw new
-      // ExceptionParseExpression(ExceptionParseExpression.COMMON);
-    }
-  }
-
-  // @Test
-  public void testExceptionStack() {
-    try {
-      LevelA();
-    } catch (ExpressionParserException e) {
-      e.printStackTrace();
-    }
-  }
-
 }

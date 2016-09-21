@@ -317,17 +317,16 @@ public class ListsProcessor extends ODataSingleProcessor {
         mapFunctionParameters(uriInfo.getFunctionImportParameters()),
         uriInfo.getNavigationSegments());
 
-    if (!appliesFilter(data, uriInfo.getFilter())) {
+    final EdmEntitySet entitySet = uriInfo.getTargetEntitySet();
+    if (!appliesFilter(entitySet, data, uriInfo.getFilter())) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
 
     final ExpandSelectTreeNode expandSelectTreeNode =
         UriParser.createExpandSelectTree(uriInfo.getSelect(), uriInfo.getExpand());
-    ODataResponse odr =
-        ODataResponse.fromResponse(writeEntry(uriInfo.getTargetEntitySet(), expandSelectTreeNode, data, contentType))
-            .build();
 
-    return odr;
+    return ODataResponse.fromResponse(writeEntry(entitySet, expandSelectTreeNode, data, contentType))
+        .build();
   }
 
   @Override
@@ -340,7 +339,8 @@ public class ListsProcessor extends ODataSingleProcessor {
         mapFunctionParameters(uriInfo.getFunctionImportParameters()),
         uriInfo.getNavigationSegments());
 
-    return ODataResponse.fromResponse(EntityProvider.writeText(appliesFilter(data, uriInfo.getFilter()) ? "1" : "0"))
+    return ODataResponse.fromResponse(EntityProvider.writeText(
+        appliesFilter(uriInfo.getTargetEntitySet(), data, uriInfo.getFilter()) ? "1" : "0"))
         .build();
   }
 
@@ -411,11 +411,11 @@ public class ListsProcessor extends ODataSingleProcessor {
         mapFunctionParameters(uriInfo.getFunctionImportParameters()),
         uriInfo.getNavigationSegments());
 
-    if (!appliesFilter(data, uriInfo.getFilter())) {
+    final EdmEntitySet entitySet = uriInfo.getTargetEntitySet();
+    if (!appliesFilter(entitySet, data, uriInfo.getFilter())) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
 
-    final EdmEntitySet entitySet = uriInfo.getTargetEntitySet();
     final EdmEntityType entityType = entitySet.getEntityType();
     final EntityProviderReadProperties properties = EntityProviderReadProperties.init()
         .mergeSemantic(merge)
@@ -543,7 +543,7 @@ public class ListsProcessor extends ODataSingleProcessor {
 
     final Object targetData = dataSource.readRelatedData(entitySet, sourceData, targetEntitySet, keys);
 
-    if (!appliesFilter(targetData, uriInfo.getFilter())) {
+    if (!appliesFilter(targetEntitySet, targetData, uriInfo.getFilter())) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
 
@@ -652,7 +652,7 @@ public class ListsProcessor extends ODataSingleProcessor {
         mapFunctionParameters(uriInfo.getFunctionImportParameters()),
         uriInfo.getNavigationSegments());
 
-    if (!appliesFilter(data, uriInfo.getFilter())) {
+    if (!appliesFilter(uriInfo.getTargetEntitySet(), data, uriInfo.getFilter())) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
 
@@ -704,7 +704,7 @@ public class ListsProcessor extends ODataSingleProcessor {
         mapFunctionParameters(uriInfo.getFunctionImportParameters()),
         uriInfo.getNavigationSegments());
 
-    if (!appliesFilter(data, uriInfo.getFilter())) {
+    if (!appliesFilter(uriInfo.getTargetEntitySet(), data, uriInfo.getFilter())) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
 
@@ -741,11 +741,11 @@ public class ListsProcessor extends ODataSingleProcessor {
         mapFunctionParameters(uriInfo.getFunctionImportParameters()),
         uriInfo.getNavigationSegments());
 
-    if (!appliesFilter(data, uriInfo.getFilter())) {
+    final EdmEntitySet entitySet = uriInfo.getTargetEntitySet();
+    if (!appliesFilter(entitySet, data, uriInfo.getFilter())) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
 
-    final EdmEntitySet entitySet = uriInfo.getTargetEntitySet();
     final BinaryData binaryData = dataSource.readBinaryData(entitySet, data);
     if (binaryData == null) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
@@ -786,7 +786,8 @@ public class ListsProcessor extends ODataSingleProcessor {
         mapFunctionParameters(uriInfo.getFunctionImportParameters()),
         uriInfo.getNavigationSegments());
 
-    if (!appliesFilter(data, uriInfo.getFilter())) {
+    final EdmEntitySet entitySet = uriInfo.getTargetEntitySet();
+    if (!appliesFilter(entitySet, data, uriInfo.getFilter())) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
 
@@ -797,7 +798,6 @@ public class ListsProcessor extends ODataSingleProcessor {
 
     context.stopRuntimeMeasurement(timingHandle);
 
-    final EdmEntitySet entitySet = uriInfo.getTargetEntitySet();
     dataSource.writeBinaryData(entitySet, data, new BinaryData(value, requestContentType));
 
     return ODataResponse.newBuilder().eTag(constructETag(entitySet, data)).build();
@@ -1184,7 +1184,7 @@ public class ListsProcessor extends ODataSingleProcessor {
       // Remove all elements the filter does not apply for.
       // A for-each loop would not work with "remove", see Java documentation.
       for (Iterator<T> iterator = data.iterator(); iterator.hasNext();) {
-        if (!appliesFilter(iterator.next(), filter)) {
+        if (!appliesFilter(entitySet, iterator.next(), filter)) {
           iterator.remove();
         }
       }
@@ -1193,7 +1193,7 @@ public class ListsProcessor extends ODataSingleProcessor {
     final Integer count = inlineCount == InlineCount.ALLPAGES ? data.size() : null;
 
     if (orderBy != null) {
-      sort(data, orderBy);
+      sort(entitySet, data, orderBy);
     } else if (skipToken != null || skip != null || top != null) {
       sortInDefaultOrder(entitySet, data);
     }
@@ -1225,15 +1225,15 @@ public class ListsProcessor extends ODataSingleProcessor {
     return count;
   }
 
-  private <T> void sort(final List<T> data, final OrderByExpression orderBy) {
+  private <T> void sort(final EdmEntitySet entitySet, final List<T> data, final OrderByExpression orderBy) {
     Collections.sort(data, new Comparator<T>() {
       @Override
       public int compare(final T entity1, final T entity2) {
         try {
           int result = 0;
           for (final OrderExpression expression : orderBy.getOrders()) {
-            String first = evaluateExpression(entity1, expression.getExpression());
-            String second = evaluateExpression(entity2, expression.getExpression());
+            String first = evaluateExpression(entitySet, entity1, expression.getExpression());
+            String second = evaluateExpression(entitySet, entity2, expression.getExpression());
 
             if (first != null && second != null) {
               result = first.compareTo(second);
@@ -1272,12 +1272,14 @@ public class ListsProcessor extends ODataSingleProcessor {
     });
   }
 
-  private <T> boolean appliesFilter(final T data, final FilterExpression filter) throws ODataException {
+  private <T> boolean appliesFilter(final EdmEntitySet entitySet, final T data, final FilterExpression filter)
+      throws ODataException {
     ODataContext context = getContext();
     final int timingHandle = context.startRuntimeMeasurement(getClass().getSimpleName(), "appliesFilter");
 
     try {
-      return data != null && (filter == null || evaluateExpression(data, filter.getExpression()).equals("true"));
+      return data != null
+          && (filter == null || evaluateExpression(entitySet, data, filter.getExpression()).equals("true"));
     } catch (final RuntimeException e) {
       return false;
     } finally {
@@ -1285,11 +1287,12 @@ public class ListsProcessor extends ODataSingleProcessor {
     }
   }
 
-  private <T> String evaluateExpression(final T data, final CommonExpression expression) throws ODataException {
+  private <T> String evaluateExpression(final EdmEntitySet entitySet, final T data, final CommonExpression expression)
+      throws ODataException {
     switch (expression.getKind()) {
     case UNARY:
       final UnaryExpression unaryExpression = (UnaryExpression) expression;
-      final String operand = evaluateExpression(data, unaryExpression.getOperand());
+      final String operand = evaluateExpression(entitySet, data, unaryExpression.getOperand());
 
       switch (unaryExpression.getOperator()) {
       case NOT:
@@ -1302,9 +1305,9 @@ public class ListsProcessor extends ODataSingleProcessor {
 
     case BINARY:
       final BinaryExpression binaryExpression = (BinaryExpression) expression;
-      final EdmSimpleType type = (EdmSimpleType) binaryExpression.getLeftOperand().getEdmType();
-      final String left = evaluateExpression(data, binaryExpression.getLeftOperand());
-      final String right = evaluateExpression(data, binaryExpression.getRightOperand());
+      final EdmType type = binaryExpression.getLeftOperand().getEdmType();
+      final String left = evaluateExpression(entitySet, data, binaryExpression.getLeftOperand());
+      final String right = evaluateExpression(entitySet, data, binaryExpression.getRightOperand());
 
       switch (binaryExpression.getOperator()) {
       case ADD:
@@ -1347,9 +1350,9 @@ public class ListsProcessor extends ODataSingleProcessor {
       case OR:
         return Boolean.toString(left.equals("true") || right.equals("true"));
       case EQ:
-        return Boolean.toString(left.equals(right));
+        return Boolean.toString(left == null && right == null || left.equals(right));
       case NE:
-        return Boolean.toString(!left.equals(right));
+        return Boolean.toString(!(left == null && right == null || left.equals(right)));
       case LT:
         if (type == EdmSimpleTypeKind.String.getEdmSimpleTypeInstance()
             || type == EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance()
@@ -1397,10 +1400,19 @@ public class ListsProcessor extends ODataSingleProcessor {
       }
 
     case PROPERTY:
-      final EdmProperty property = (EdmProperty) ((PropertyExpression) expression).getEdmProperty();
-      final EdmSimpleType propertyType = (EdmSimpleType) property.getType();
-      return propertyType.valueToString(valueAccess.getPropertyValue(data, property), EdmLiteralKind.DEFAULT,
-          property.getFacets());
+      final EdmTyped property = ((PropertyExpression) expression).getEdmProperty();
+      final EdmType propertyType = property.getType();
+      if (propertyType.getKind() == EdmTypeKind.ENTITY) {
+        try {
+          dataSource.readRelatedData(entitySet, data,
+              entitySet.getRelatedEntitySet((EdmNavigationProperty) property), null);
+        } catch (final ODataNotFoundException e) {
+          return null;
+        }
+        return property.getName();
+      }
+      return ((EdmSimpleType) propertyType).valueToString(valueAccess.getPropertyValue(data, (EdmProperty) property),
+          EdmLiteralKind.DEFAULT, ((EdmProperty) property).getFacets());
 
     case MEMBER:
       final MemberExpression memberExpression = (MemberExpression) expression;
@@ -1436,11 +1448,11 @@ public class ListsProcessor extends ODataSingleProcessor {
 
     case METHOD:
       final MethodExpression methodExpression = (MethodExpression) expression;
-      final String first = evaluateExpression(data, methodExpression.getParameters().get(0));
+      final String first = evaluateExpression(entitySet, data, methodExpression.getParameters().get(0));
       final String second = methodExpression.getParameterCount() > 1 ?
-          evaluateExpression(data, methodExpression.getParameters().get(1)) : "";
+          evaluateExpression(entitySet, data, methodExpression.getParameters().get(1)) : "";
       final String third = methodExpression.getParameterCount() > 2 ?
-          evaluateExpression(data, methodExpression.getParameters().get(2)) : "";
+          evaluateExpression(entitySet, data, methodExpression.getParameters().get(2)) : "";
 
       switch (methodExpression.getMethod()) {
         case ENDSWITH:

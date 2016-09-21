@@ -37,15 +37,15 @@ public class TestBase {
   }
 
   static public ParserTool GetPTF(final String expression) {
-    return new ParserTool(expression, false, true, false);
+    return new ParserTool(expression, false, true, false, null);
   }
 
   static public ParserTool GetPTF_onlyBinary(final String expression) {
-    return new ParserTool(expression, false, true, true);
+    return new ParserTool(expression, false, true, true, null);
   }
 
   static public ParserTool GetPTFE(final String expression) {
-    return new ParserTool(expression, false, true, false);
+    return new ParserTool(expression, false, true, false, null);
   }
 
   static public ParserTool GetPTF(final EdmEntityType resourceEntityType, final String expression) {
@@ -53,7 +53,7 @@ public class TestBase {
   }
 
   static public ParserTool GetPTO(final String expression) {
-    return new ParserTool(expression, true, true, false);
+    return new ParserTool(expression, true, true, false, null);
   }
 
   static public ParserTool GetPTO(final EdmEntityType resourceEntityType, final String expression) {
@@ -61,7 +61,7 @@ public class TestBase {
   }
 
   static public ParserTool GetPTF_noTEST(final String expression) {
-    return new ParserTool(expression, false, false, false);
+    return new ParserTool(expression, false, false, false, null);
   }
 
   static public ParserTool GetPTF_noTEST(final EdmEntityType resourceEntityType, final String expression) {
@@ -69,7 +69,7 @@ public class TestBase {
   }
 
   static public ParserTool GetPTO_noTEST(final String expression) {
-    return new ParserTool(expression, true, false, true);
+    return new ParserTool(expression, true, false, true, null);
   }
 
   static public ParserTool GetPTO_noTEST(final EdmEntityType resourceEntityType, final String expression) {
