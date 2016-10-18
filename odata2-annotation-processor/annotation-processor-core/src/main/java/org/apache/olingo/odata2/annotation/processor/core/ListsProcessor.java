@@ -1153,12 +1153,20 @@ public class ListsProcessor extends DataSourceProcessor {
           }
         } else if (relatedValue instanceof ODataEntry) {
           final ODataEntry relatedValueEntry = (ODataEntry) relatedValue;
-          Object relatedData = dataSource.newDataObject(relatedEntitySet);
-          setStructuralTypeValuesFromMap(relatedData, relatedEntityType, relatedValueEntry.getProperties(), false);
-          dataSource.createData(relatedEntitySet, relatedData);
-          dataSource.writeRelation(entitySet, data, relatedEntitySet, getStructuralTypeValueMap(relatedData,
-              relatedEntityType));
-          createInlinedEntities(relatedEntitySet, relatedData, relatedValueEntry);
+          final Map<String, Object> relatedProperties = relatedValueEntry.getProperties();
+          if (relatedProperties.isEmpty()) {
+            final Map<String, Object> key = parseLinkUri(relatedEntitySet, relatedValueEntry.getMetadata().getUri());
+            if (key != null) {
+              dataSource.writeRelation(entitySet, data, relatedEntitySet, key);
+            }
+          } else {
+            Object relatedData = dataSource.newDataObject(relatedEntitySet);
+            setStructuralTypeValuesFromMap(relatedData, relatedEntityType, relatedProperties, false);
+            dataSource.createData(relatedEntitySet, relatedData);
+            dataSource.writeRelation(entitySet, data, relatedEntitySet, getStructuralTypeValueMap(relatedData,
+                    relatedEntityType));
+            createInlinedEntities(relatedEntitySet, relatedData, relatedValueEntry);
+          }
         } else {
           throw new ODataException("Unexpected class for a related value: " + relatedValue.getClass().getSimpleName());
         }
