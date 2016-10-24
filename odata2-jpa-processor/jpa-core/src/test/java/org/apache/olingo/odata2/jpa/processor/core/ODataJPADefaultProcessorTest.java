@@ -67,6 +67,7 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPADefaultProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
@@ -82,9 +83,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
+public class ODataJPADefaultProcessorTest extends JPAEdmTestModelView {
 
-  ODataJPAProcessorDefault objODataJPAProcessorDefault;
+  private ODataJPADefaultProcessor objODataJPAProcessorDefault;
 
   private static final String STR_LOCAL_URI = "http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/";
   private static final String SALESORDERPROCESSING_CONTAINER = "salesorderprocessingContainer";
@@ -95,7 +96,7 @@ public class ODataJPAProcessorDefaultTest extends JPAEdmTestModelView {
 
   @Before
   public void setUp() {
-    objODataJPAProcessorDefault = new ODataJPAProcessorDefault(getLocalmockODataJPAContext());
+    objODataJPAProcessorDefault = new ODataJPADefaultProcessor(getLocalmockODataJPAContext()) { };
   }
 
   @Test

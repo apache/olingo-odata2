@@ -134,12 +134,18 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
       oDataJPAContext.setODataContext(ctx);
     }
 
-    ODataSingleProcessor odataJPAProcessor = accessFactory.createODataProcessor(oDataJPAContext);
-
+    ODataSingleProcessor odataJPAProcessor = createCustomODataProcessor(oDataJPAContext);
+    if(odataJPAProcessor == null) {
+      odataJPAProcessor = accessFactory.createODataProcessor(oDataJPAContext);
+    }
     // OData Entity Data Model Provider based on JPA
     EdmProvider edmProvider = accessFactory.createJPAEdmProvider(oDataJPAContext);
 
     return createODataSingleProcessorService(edmProvider, odataJPAProcessor);
+  }
+
+  public ODataSingleProcessor createCustomODataProcessor(ODataJPAContext oDataJPAContext) {
+    return null;
   }
 
   /**

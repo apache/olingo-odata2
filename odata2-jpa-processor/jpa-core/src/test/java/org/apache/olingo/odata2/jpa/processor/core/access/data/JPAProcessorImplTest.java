@@ -80,7 +80,7 @@ import org.junit.Test;
 public class JPAProcessorImplTest {
 
   // -------------------------------- Common Start ------------------------------------common in
-  // ODataJPAProcessorDefaultTest as well
+  // ODataJPADefaultProcessorTest as well
   private static final String STR_LOCAL_URI = "http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/";
   private static final String SALESORDERPROCESSING_CONTAINER = "salesorderprocessingContainer";
   private static final String SO_ID = "SoId";
@@ -152,7 +152,7 @@ public class JPAProcessorImplTest {
     }
   }
 
-  // ---------------------------- Common Code Start ---------------- TODO - common in ODataJPAProcessorDefaultTest as
+  // ---------------------------- Common Code Start ---------------- TODO - common in ODataJPADefaultProcessorTest as
   // well
 
   private DeleteUriInfo getDeletetUriInfo() {
