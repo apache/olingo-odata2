@@ -219,7 +219,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
 
   private void validatePreConditions() throws ODataJPARuntimeException {
 
-    if (oDataJPAContext.getEntityManagerFactory() == null) {
+    if (oDataJPAContext.getEntityManager() == null) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ENTITY_MANAGER_NOT_INITIALIZED, null);
     }
 
