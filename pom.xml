@@ -360,6 +360,7 @@
 										<exclude>**/goal.txt</exclude>
 										<exclude>**/target/**</exclude>
 										<exclude>**/*.iml</exclude>
+                    <exclude>.repository/**</exclude>
 									</excludes>
 								</configuration>
 							</execution>
