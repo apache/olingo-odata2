@@ -293,6 +293,126 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
 
     assertEquals(" value1", childElements.get(0).getText());
   }
+  
+
+  @Test
+  public void ODATAJAVA_77_testMetadataDokumentWithMultiLevelEntityType() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "         <EntityType Name= \"Parameter\">"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Id\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "           <EntityType Name= \"ConfigParameter\" BaseType= \"RefScenario2.Parameter\" />"
+        + "           <EntityType Name= \"DataConfigParameter\" BaseType= \"RefScenario2.ConfigParameter\" />"
+        + "           <EntityType Name= \"StringDataConfigParameter\" BaseType= \"RefScenario2.DataConfigParameter\" />"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    DataServices result = parser.readMetadata(reader, true);
+
+    assertEquals(1, result.getSchemas().size());
+    List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
+    assertEquals(4, entityTypes.size());
+
+  }
+  
+  @Test
+  public void ODATAJAVA_77_testBaseTypeKey() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "         <EntityType Name= \"Parameter\">"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Id\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "           <EntityType Name= \"ConfigParameter\" BaseType= \"RefScenario2.Parameter\" />"
+        + "           <EntityType Name= \"DataConfigParameter\" BaseType= \"RefScenario2.ConfigParameter\" >"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Name\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Name\" Type=\"Edm.String\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "           <EntityType Name= \"StringDataConfigParameter\" BaseType= \"RefScenario2.DataConfigParameter\" />"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    DataServices result = parser.readMetadata(reader, true);
+
+    assertEquals(1, result.getSchemas().size());
+    List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
+    assertEquals(4, entityTypes.size());
+
+  }
+  
+  @Test
+  public void ODATAJAVA_77_testEntityTypeKey() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "         <EntityType Name= \"Parameter\">"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Id\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "           <EntityType Name= \"ConfigParameter\" BaseType= \"RefScenario2.Parameter\" />"
+        + "           <EntityType Name= \"DataConfigParameter\" BaseType= \"RefScenario2.ConfigParameter\" />"
+        + "           <EntityType Name= \"StringDataConfigParameter\" BaseType= \"RefScenario2.DataConfigParameter\" >"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Name\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Name\" Type=\"Edm.String\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    DataServices result = parser.readMetadata(reader, true);
+
+    assertEquals(1, result.getSchemas().size());
+    List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
+    assertEquals(4, entityTypes.size());
+
+  }
+  @Test(expected=EntityProviderException.class)
+  public void ODATAJAVA_77_ExceptionScenario() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "           <EntityType Name= \"ConfigParameter\" BaseType= \"RefScenario2.Parameter\" />"
+        + "           <EntityType Name= \"DataConfigParameter\" BaseType= \"RefScenario2.ConfigParameter\" />"
+        + "           <EntityType Name= \"StringDataConfigParameter\" BaseType= \"RefScenario2.DataConfigParameter\" />"
+        + "         <EntityType Name= \"Parameter\">"
+        + "            <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    parser.readMetadata(reader, true);
+  }
+
+
 
   @Test
   public void stringValueForMaxLegthFacet() throws Exception {
