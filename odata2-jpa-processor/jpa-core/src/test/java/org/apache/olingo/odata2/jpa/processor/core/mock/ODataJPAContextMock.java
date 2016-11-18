@@ -62,6 +62,8 @@ public abstract class ODataJPAContextMock {
 
   private static EntityManager mockEntityManager() {
     EntityManager em = EasyMock.createMock(EntityManager.class);
+    EasyMock.expect(em.getMetamodel()).andReturn(null);
+    EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
     EasyMock.replay(em);
     return em;
 
