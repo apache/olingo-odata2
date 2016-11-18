@@ -24,6 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
+import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 
 /**
  * Extend this class and implement a JPA Entity Listener as specified in JSR 317 Java Persistence 2.0.
@@ -47,7 +48,7 @@ public abstract class ODataJPATombstoneEntityListener {
    * @param em is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
-  public abstract Query getQuery(GetEntitySetUriInfo resultsView, EntityManager em);
+  public abstract Query getQuery(GetEntitySetUriInfo resultsView, EntityManager em) throws ODataJPARuntimeException;
 
   /**
    * Implement this method to create a delta token.
