@@ -45,9 +45,11 @@ public class XmlPropertyEntityProducer {
 
   private final boolean includeSimplePropertyType;
   private final boolean validateFacets;
+  private boolean isDataBasedPropertySerialization = false;
 
   public XmlPropertyEntityProducer(final EntityProviderWriteProperties writeProperties) {
     this(writeProperties.isIncludeSimplePropertyType(), writeProperties.isValidatingFacets());
+    isDataBasedPropertySerialization = writeProperties.isDataBasedPropertySerialization();
   }
 
   public XmlPropertyEntityProducer(final boolean includeSimplePropertyType, final boolean validateFacets) {
@@ -148,6 +150,9 @@ public class XmlPropertyEntityProducer {
       writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.ATOM_TYPE, getFqnTypeName(propertyInfo));
       List<EntityPropertyInfo> propertyInfos = propertyInfo.getPropertyInfos();
       for (EntityPropertyInfo childPropertyInfo : propertyInfos) {
+        if (isDataBasedPropertySerialization && !((Map<?,?>)value).containsKey(childPropertyInfo.getName())) {
+          continue;
+        }
         Object childValue = extractChildValue(value, childPropertyInfo.getName());
         append(writer, childPropertyInfo.getName(), childPropertyInfo, childValue);
       }

@@ -42,6 +42,7 @@ import javax.xml.stream.XMLStreamException;
 
 import junit.framework.Assert;
 
+import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmCustomizableFeedMappings;
@@ -54,16 +55,27 @@ import org.apache.olingo.odata2.api.edm.EdmTargetPath;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.api.ep.callback.OnWriteEntryContent;
+import org.apache.olingo.odata2.api.ep.callback.WriteEntryCallbackContext;
+import org.apache.olingo.odata2.api.ep.callback.WriteEntryCallbackResult;
+import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
+import org.apache.olingo.odata2.api.uri.PathSegment;
+import org.apache.olingo.odata2.api.uri.UriInfo;
+import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
 import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
+import org.apache.olingo.odata2.core.uri.ExpandSelectTreeCreator;
+import org.apache.olingo.odata2.core.uri.UriParserImpl;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.helper.XMLUnitHelper;
+import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -73,6 +85,8 @@ import org.xml.sax.SAXException;
 
 public class AtomEntryProducerTest extends AbstractProviderTest {
 
+  private String buildingXPathString = "/a:entry/a:link[@href=\"Rooms('1')/nr_Building\" and @title='nr_Building']";
+  
   public AtomEntryProducerTest(final StreamWriterImplType type) {
     super(type);
   }
@@ -1261,5 +1275,99 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
 
   private void verifyTagOrdering(final String xmlString, final String... toCheckTags) {
     XMLUnitHelper.verifyTagOrdering(xmlString, toCheckTags);
+  }
+  
+  @Test
+  public void unbalancedPropertyEntryWithInlineEntry() throws Exception {
+    ExpandSelectTreeNode selectTree = getSelectExpandTree("Rooms('1')", "nr_Building", "nr_Building");
+
+    Map<String, Object> roomData = new HashMap<String, Object>();
+    roomData.put("Id", "1");
+    roomData.put("Name", "Neu Schwanstein");
+    roomData.put("Seats", new Integer(20));
+    
+    class EntryCallback implements OnWriteEntryContent {
+      @Override
+      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context)
+          throws ODataApplicationException {
+        Map<String, Object> buildingData = new HashMap<String, Object>();
+        buildingData.put("Id", "1");
+        buildingData.put("Name", "Building1");
+        
+        WriteEntryCallbackResult result = new WriteEntryCallbackResult();
+        result.setEntryData(buildingData);
+        EntityProviderWriteProperties inlineProperties =
+            EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(
+                context.getCurrentExpandSelectTreeNode()).build();
+        result.setInlineProperties(inlineProperties);
+        return result;
+      }
+    }
+    EntryCallback callback = new EntryCallback();
+    Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
+    callbacks.put("nr_Building", callback);
+    
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacks).
+        isDataBasedPropertySerialization(true).build();
+    AtomEntityProvider provider = createAtomEntityProvider();
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
+
+    String xmlString = verifyResponse(response);
+    assertXpathNotExists("/a:entry/m:properties", xmlString);
+    assertXpathExists("/a:entry/a:link", xmlString);
+    verifyBuilding(buildingXPathString, xmlString);
+  }
+  
+  private ExpandSelectTreeNode getSelectExpandTree(final String pathSegment, final String selectString,
+      final String expandString) throws Exception {
+
+    Edm edm = RuntimeDelegate.createEdm(new EdmTestProvider());
+    UriParserImpl uriParser = new UriParserImpl(edm);
+
+    List<PathSegment> pathSegments = new ArrayList<PathSegment>();
+    pathSegments.add(new ODataPathSegmentImpl(pathSegment, null));
+
+    Map<String, String> queryParameters = new HashMap<String, String>();
+    if (selectString != null) {
+      queryParameters.put("$select", selectString);
+    }
+    if (expandString != null) {
+      queryParameters.put("$expand", expandString);
+    }
+    UriInfo uriInfo = uriParser.parse(pathSegments, queryParameters);
+
+    ExpandSelectTreeCreator expandSelectTreeCreator =
+        new ExpandSelectTreeCreator(uriInfo.getSelect(), uriInfo.getExpand());
+    ExpandSelectTreeNode expandSelectTree = expandSelectTreeCreator.create();
+    assertNotNull(expandSelectTree);
+    return expandSelectTree;
+  }
+  
+  private void verifyBuilding(final String path, final String xmlString) throws XpathException, IOException,
+  SAXException {
+  assertXpathExists(path, xmlString);
+  assertXpathExists(path + "/m:inline", xmlString);
+  
+  assertXpathExists(path + "/m:inline/a:entry[@xml:base='" + BASE_URI + "']", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:id", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:title", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:updated", xmlString);
+  
+  assertXpathExists(path + "/m:inline/a:entry/a:category", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:link", xmlString);
+  
+  assertXpathExists(path + "/m:inline/a:entry/a:content", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:content/m:properties", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:content/m:properties/d:Id", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:content/m:properties/d:Name", xmlString);
+  
+  assertXpathExists("/a:entry/a:content/m:properties/d:Id", xmlString);
+  assertXpathExists("/a:entry/a:content/m:properties/d:Name", xmlString);
+  assertXpathExists("/a:entry/a:content/m:properties/d:Seats", xmlString);
+  
   }
 }

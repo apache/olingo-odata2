@@ -68,6 +68,8 @@ class EdmMock {
         createEntitySetMock(defaultContainer, "Managers", EdmSimpleTypeKind.String, "EmployeeId");
     final EdmEntitySet buildingEntitySet =
         createEntitySetMock(defaultContainer, "Buildings", EdmSimpleTypeKind.String, "Id");
+    final EdmEntitySet companiesEntitySet =
+        createEntitySetMock(defaultContainer, "Companys", EdmSimpleTypeKind.String, "Id");
 
     EdmEntityType employeeType = employeeEntitySet.getEntityType();
     when(employeeType.hasStream()).thenReturn(true);
@@ -168,6 +170,13 @@ class EdmMock {
     when(buildingType.getNavigationPropertyNames()).thenReturn(Arrays.asList("nb_Rooms"));
     createNavigationProperty("nb_Rooms", EdmMultiplicity.MANY, buildingEntitySet, roomEntitySet);
 
+    EdmEntityType companyType = companiesEntitySet.getEntityType();
+    when(companyType.getPropertyNames()).thenReturn(Arrays.asList("Id", "Name", "Kind", "NGO", "Location"));
+    when(companyType.getProperty("Location")).thenReturn(locationComplexProperty);
+    createProperty("Name", EdmSimpleTypeKind.String, companyType);
+    createProperty("Kind", EdmSimpleTypeKind.String, companyType);
+    createProperty("NGO", EdmSimpleTypeKind.Boolean, companyType);
+    
     EdmFunctionImport employeeSearchFunctionImport =
         createFunctionImportMock(defaultContainer, "EmployeeSearch", employeeType, EdmMultiplicity.MANY);
     when(employeeSearchFunctionImport.getEntitySet()).thenReturn(employeeEntitySet);
@@ -283,6 +292,7 @@ class EdmMock {
     when(edm.getEntityType("RefScenario", "Building")).thenReturn(buildingType);
     when(edm.getComplexType("RefScenario", "c_Location")).thenReturn(locationComplexType);
     when(edm.getEntityType("RefScenario2", "Photo")).thenReturn(photoEntityType);
+    when(edm.getEntityType("RefScenario", "Company")).thenReturn(companyType);
 
     return edm;
   }

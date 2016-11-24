@@ -54,7 +54,7 @@ public class JsonPropertyEntityProducer {
 
       jsonStreamWriter.name(propertyInfo.getName());
       appendPropertyValue(jsonStreamWriter, propertyInfo.isComplex() ? (EntityComplexPropertyInfo) propertyInfo
-          : propertyInfo, value, true);
+          : propertyInfo, value, true, false);
 
       jsonStreamWriter.endObject()
           .endObject();
@@ -68,19 +68,27 @@ public class JsonPropertyEntityProducer {
 
   protected static void appendPropertyValue(final JsonStreamWriter jsonStreamWriter,
                                             final EntityPropertyInfo propertyInfo, final Object value,
-                                            boolean validatingFacets) throws IOException, EdmException,
+                                            boolean validatingFacets,
+                                            boolean isDataBasedPropertySerialization) throws IOException, EdmException,
       EntityProviderException {
     if (propertyInfo.isComplex()) {
       if (value == null || value instanceof Map<?, ?>) {
         jsonStreamWriter.beginObject();
         appendPropertyMetadata(jsonStreamWriter, propertyInfo.getType());
-        for (final EntityPropertyInfo childPropertyInfo : ((EntityComplexPropertyInfo) propertyInfo).getPropertyInfos())
-        {
-          jsonStreamWriter.separator();
+        if (value == null && isDataBasedPropertySerialization) {
+          jsonStreamWriter.endObject();
+          return;
+        }
+        for (final EntityPropertyInfo childPropertyInfo : ((EntityComplexPropertyInfo) propertyInfo)
+            .getPropertyInfos()) {
           final String name = childPropertyInfo.getName();
+          if (isDataBasedPropertySerialization && !((Map<?,?>)value).containsKey(name)) {
+            continue;
+          } 
+          jsonStreamWriter.separator();
           jsonStreamWriter.name(name);
           appendPropertyValue(jsonStreamWriter, childPropertyInfo,
-              value == null ? null : ((Map<?, ?>) value).get(name), validatingFacets);
+              value == null ? null : ((Map<?, ?>) value).get(name), validatingFacets, isDataBasedPropertySerialization);
         }
         jsonStreamWriter.endObject();
       } else {

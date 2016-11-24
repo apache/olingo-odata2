@@ -193,23 +193,43 @@ public class JsonEntryEntityProducer {
     // properties
     boolean omitComma = !containsMetadata;
 
-    for (final String propertyName : type.getPropertyNames()) {
-      if (entityInfo.getSelectedPropertyNames().contains(propertyName)) {
-        if (omitComma) {
-          omitComma = false;
-        } else {
-          jsonStreamWriter.separator();
-        }
-        jsonStreamWriter.name(propertyName);
-
-        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter,
-            entityInfo.getPropertyInfo(propertyName),
-            data.get(propertyName),
-            properties.isValidatingFacets());
+    List<String> propertyNames = type.getPropertyNames();
+    for (final String propertyName : propertyNames) {
+      if (properties.isDataBasedPropertySerialization() && ((Map<?,?>)data).containsKey(propertyName)) {
+        omitComma = appendPropertyNameValue(entityInfo, data, omitComma, propertyName);
+      } else if (!properties.isDataBasedPropertySerialization() && entityInfo.getSelectedPropertyNames()
+          .contains(propertyName)) {
+        omitComma = appendPropertyNameValue(entityInfo, data, omitComma, propertyName);
       }
     }
   }
 
+  /**
+   * @param entityInfo
+   * @param data
+   * @param omitComma
+   * @param propertyName
+   * @return
+   * @throws IOException
+   * @throws EdmException
+   * @throws EntityProviderException
+   */
+  private boolean appendPropertyNameValue(final EntityInfoAggregator entityInfo, final Map<String, Object> data,
+      boolean omitComma, String propertyName) throws IOException, EdmException, EntityProviderException {
+    if (omitComma) {
+      omitComma = false;
+    } else {
+      jsonStreamWriter.separator();
+    }
+    jsonStreamWriter.name(propertyName);
+ 
+    JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter,
+        entityInfo.getPropertyInfo(propertyName),
+        data.get(propertyName),
+        properties.isValidatingFacets(), properties.isDataBasedPropertySerialization());
+    return omitComma;
+  }
+  
   private void writeMetadata(final EntityInfoAggregator entityInfo, final Map<String, Object> data,
       final EdmEntityType type) throws IOException, EntityProviderException, EdmException {
     if (properties.getServiceRoot() == null) {

@@ -584,27 +584,49 @@ public class AtomEntryEntityProducer {
   private void appendProperties(final XMLStreamWriter writer, final EntityInfoAggregator eia,
       final Map<String, Object> data) throws EntityProviderException {
     try {
-      List<String> propertyNames = eia.getSelectedPropertyNames();
-      if (!propertyNames.isEmpty()) {
-        writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_PROPERTIES);
-
-        for (String propertyName : propertyNames) {
-          EntityPropertyInfo propertyInfo = eia.getPropertyInfo(propertyName);
-
-          if (isNotMappedViaCustomMapping(propertyInfo)) {
-            Object value = data.get(propertyName);
-            XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties);
-            aps.append(writer, propertyInfo.getName(), propertyInfo, value);
+      if (properties.isDataBasedPropertySerialization()) {
+        if (!data.isEmpty()) {
+          writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_PROPERTIES);
+          for (String propertyName : eia.getPropertyNames()) {
+            if (data.containsKey(propertyName)) {
+              appendPropertyNameValue(writer, eia, data, propertyName);
+            }
           }
+          writer.writeEndElement();
         }
+      } else {
+        List<String> propertyNames = eia.getSelectedPropertyNames();
+        if (!propertyNames.isEmpty()) {
+          writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_PROPERTIES);
 
-        writer.writeEndElement();
+          for (String propertyName : propertyNames) {
+            appendPropertyNameValue(writer, eia, data, propertyName);
+          }
+          writer.writeEndElement();
+        }
       }
     } catch (XMLStreamException e) {
       throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
+  /**
+   * @param writer
+   * @param eia
+   * @param data
+   * @param propertyName
+   * @throws EntityProviderException
+   */
+  private void appendPropertyNameValue(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data, String propertyName) throws EntityProviderException {
+    EntityPropertyInfo propertyInfo = eia.getPropertyInfo(propertyName);
+    if (isNotMappedViaCustomMapping(propertyInfo)) {
+      Object value = data.get(propertyName);
+      XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties);
+      aps.append(writer, propertyInfo.getName(), propertyInfo, value);
+    }
+  }
+  
   private boolean isNotMappedViaCustomMapping(final EntityPropertyInfo propertyInfo) {
     EdmCustomizableFeedMappings customMapping = propertyInfo.getCustomMapping();
     if (customMapping != null && customMapping.isFcKeepInContent() != null) {

@@ -49,9 +49,18 @@ public class EntityProviderWriteProperties {
 
   private boolean isResponsePayload = true;
   private boolean includeMetadataInContentOnly = false;
+  private boolean isDataBasedPropertySerialization = false;
 
   private EntityProviderWriteProperties() {}
 
+  /**
+   * Returns true if the payload has dynamic properties i.e. every entry has different property list
+   * @return
+   */
+  public final boolean isDataBasedPropertySerialization() {
+    return isDataBasedPropertySerialization;
+  }
+  
   public final boolean isOmitETag() {
     return omitETag;
   }
@@ -154,6 +163,15 @@ public class EntityProviderWriteProperties {
   public static class ODataEntityProviderPropertiesBuilder {
     private final EntityProviderWriteProperties properties = new EntityProviderWriteProperties();
 
+    /**
+     * @param setting if payload has dynamic property
+     */
+    public final ODataEntityProviderPropertiesBuilder isDataBasedPropertySerialization
+    (boolean isDataBasedPropertySerialization) {
+      properties.isDataBasedPropertySerialization = isDataBasedPropertySerialization;
+      return this;
+    }
+    
     /**
      * @param includeSimplePropertyType true to include simple property type information in the payload
      */
@@ -293,6 +311,7 @@ public class EntityProviderWriteProperties {
       this.properties.validatingFacets = properties.validatingFacets;
       this.properties.isResponsePayload = properties.isResponsePayload;
       this.properties.includeMetadataInContentOnly = properties.includeMetadataInContentOnly;
+      this.properties.isDataBasedPropertySerialization = properties.isDataBasedPropertySerialization;
       return this;
     }
 

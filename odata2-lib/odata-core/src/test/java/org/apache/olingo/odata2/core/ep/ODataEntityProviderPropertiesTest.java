@@ -77,6 +77,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertFalse(properties.isOmitETag());
     assertFalse(properties.isIncludeMetadataInContentOnly());
     assertTrue(properties.isResponsePayload());
+    assertFalse(properties.isDataBasedPropertySerialization());
   }
 
   @Test
@@ -102,6 +103,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .omitETag(true)
         .includeMetadataInContentOnly(true)
         .responsePayload(true)
+        .isDataBasedPropertySerialization(true)
         .build();
 
     assertEquals("Wrong amount of callbacks.", 1, properties.getCallbacks().size());
@@ -120,6 +122,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
 
     assertTrue("includeMetadataInContentOnly should be set", properties.isIncludeMetadataInContentOnly());
     assertTrue("responsePayload flag should be set", properties.isResponsePayload());
+    assertTrue(properties.isDataBasedPropertySerialization());
   }
 
   @Test
