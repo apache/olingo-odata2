@@ -19,16 +19,19 @@
 package org.apache.olingo.odata2.jpa.processor.api;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 
 /**
  * Extend this class to build JPA Query object for a given OData request. The extended class can be registered as JPA
@@ -41,7 +44,7 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
    * @param em is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
-  public Query getQuery(GetEntitySetUriInfo uriInfo, EntityManager em) {
+  public Query getQuery(GetEntitySetUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
     return null;
   }
 
@@ -52,7 +55,7 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
    * @param em is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
-  public Query getQuery(GetEntityUriInfo uriInfo, EntityManager em) {
+  public Query getQuery(GetEntityUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
     return null;
   }
 
@@ -63,7 +66,7 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
    * @param em is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
-  public Query getQuery(GetEntityCountUriInfo uriInfo, EntityManager em) {
+  public Query getQuery(GetEntityCountUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
     return null;
   }
 
@@ -73,7 +76,7 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
    * @param em is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
-  public Query getQuery(GetEntitySetCountUriInfo uriInfo, EntityManager em) {
+  public Query getQuery(GetEntitySetCountUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
     return null;
   }
 
@@ -84,7 +87,7 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
    * @param em is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
-  public Query getQuery(PutMergePatchUriInfo uriInfo, EntityManager em) {
+  public Query getQuery(PutMergePatchUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
     return null;
   }
 
@@ -95,7 +98,7 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
    * @param em is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
-  public Query getQuery(DeleteUriInfo uriInfo, EntityManager em) {
+  public Query getQuery(DeleteUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
     return null;
   }
 
@@ -113,4 +116,8 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
     return false;
   }
 
+  protected ODataJPARuntimeException createApplicationError(String message, Locale locale) {
+    return ODataJPARuntimeException.throwException(
+        ODataJPARuntimeException.GENERAL, new ODataApplicationException(message, locale));
+  }
 }
