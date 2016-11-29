@@ -37,7 +37,9 @@ public class SalesOrderTombstoneListener extends ODataJPATombstoneEntityListener
   public void handleDelta(final Object entity) {
     SalesOrderHeader so = (SalesOrderHeader) entity;
 
-    if (so.getCreationDate().getTime().getTime() < ODataJPATombstoneContext.getDeltaTokenUTCTimeStamp()) {
+    if(so == null || so.getCreationDate() == null) {
+      return;
+    } else if (so.getCreationDate().getTime().getTime() < ODataJPATombstoneContext.getDeltaTokenUTCTimeStamp()) {
       return;
     } else {
       addToDelta(entity, ENTITY_NAME);

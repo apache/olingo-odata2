@@ -535,6 +535,7 @@ public final class JPAEntityParser {
 	          params = new Class<?>[] { navPropMapping.getJPAType() };
 	          break;
 	        case ONE:
+          case ZERO_TO_ONE:
 	          params = new Class<?>[] { ((JPAEdmMapping) end.getEntityType().getMapping()).getJPAType() };
 	        default:
 	          break;
