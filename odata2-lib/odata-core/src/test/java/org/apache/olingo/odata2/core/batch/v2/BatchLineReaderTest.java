@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.olingo.odata2.core.batch.v2.BatchLineReader;
 import org.apache.olingo.odata2.core.batch.v2.Line;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
 public class BatchLineReaderTest {
@@ -101,6 +102,23 @@ public class BatchLineReaderTest {
     assertEquals("Test2", reader.readLine());
     assertNull(reader.readLine());
     assertNull(reader.readLine());
+    reader.close();
+  }
+
+  /**
+   * Test for special case (described in https://issues.apache.org/jira/browse/OLINGO-1053 )
+   */
+  @Test
+  public void testSpecialCRLF() throws IOException {
+    String line1 = StringHelper.generateData(8191);
+    String line2 = StringHelper.generateData(8192);
+    final String content = line1 + "\r\n" + line2 + "\n" + "test";
+
+    BatchLineReader reader = create(content);
+
+    assertEquals(line1 + "\r\n", reader.readLine());
+    assertEquals(line2 + "\n", reader.readLine());
+    assertEquals("test", reader.readLine());
     reader.close();
   }
 
