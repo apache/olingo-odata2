@@ -1,0 +1,236 @@
+{
+  "d": {
+    "results": [
+      {
+        "__metadata": {
+          "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Rooms('1')",
+          "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Rooms('1')",
+          "type": "RefScenario.Room",
+          "etag": "W/\"1\""
+        },
+        "Id": "1",
+        "Name": "Room 1",
+        "Seats": 1,
+        "Version": 1,
+        "nr_Employees": {
+          "results": [
+            {
+              "__metadata": {
+                "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('1')",
+                "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('1')",
+                "type": "RefScenario.Employee",
+                "content_type": "image/jpeg",
+                "media_src": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('1')/$value",
+                "edit_media": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('1')/$value"
+              },
+              "EmployeeId": "1",
+              "EmployeeName": "Walter Winter",
+              "ManagerId": "1",
+              "RoomId": "1",
+              "TeamId": "1",
+              "Location": {
+                "__metadata": {
+                  "type": "RefScenario.c_Location"
+                },
+                "City": {
+                  "__metadata": {
+                    "type": "RefScenario.c_City"
+                  },
+                  "PostalCode": "69124",
+                  "CityName": "Heidelberg"
+                },
+                "Country": "Germany"
+              },
+              "Age": 52,
+              "EntryDate": "/Date(915148800000)/",
+              "ImageUrl": "Employees('1')/$value",
+              "ne_Manager": {
+                "__deferred": {
+                  "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('1')/ne_Manager"
+                }
+              },
+              "ne_Team": {
+                "__metadata": {
+                  "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Teams('1')",
+                  "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Teams('1')",
+                  "type": "RefScenario.Team"
+                },
+                "Id": "1",
+                "Name": "Team 1",
+                "isScrumTeam": false,
+                "nt_Employees": {
+                  "__deferred": {
+                    "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Teams('1')/nt_Employees"
+                  }
+                }
+              },
+              "ne_Room": {
+                "__deferred": {
+                  "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('1')/ne_Room"
+                }
+              }
+            }
+          ]
+        },
+        "nr_Building": {
+          "__deferred": {
+            "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Rooms('1')/nr_Building"
+          }
+        }
+      },
+      {
+        "__metadata": {
+          "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Rooms('10')",
+          "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Rooms('10')",
+          "type": "RefScenario.Room",
+          "etag": "W/\"1\""
+        },
+        "Id": "10",
+        "Name": "Room 10",
+        "Seats": 6,
+        "Version": 1,
+        "nr_Employees": {
+          "results": []
+        },
+        "nr_Building": {
+          "__deferred": {
+            "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Rooms('10')/nr_Building"
+          }
+        }
+      },
+      {
+        "__metadata": {
+          "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Rooms('2')",
+          "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Rooms('2')",
+          "type": "RefScenario.Room",
+          "etag": "W/\"2\""
+        },
+        "Id": "2",
+        "Name": "Room 2",
+        "Seats": 5,
+        "Version": 2,
+        "nr_Employees": {
+          "results": [
+            {
+              "__metadata": {
+                "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('2')",
+                "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('2')",
+                "type": "RefScenario.Employee",
+                "content_type": "image/jpeg",
+                "media_src": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('2')/$value",
+                "edit_media": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('2')/$value"
+              },
+              "EmployeeId": "2",
+              "EmployeeName": "Frederic Fall",
+              "ManagerId": "1",
+              "RoomId": "2",
+              "TeamId": "1",
+              "Location": {
+                "__metadata": {
+                  "type": "RefScenario.c_Location"
+                },
+                "City": {
+                  "__metadata": {
+                    "type": "RefScenario.c_City"
+                  },
+                  "PostalCode": "69190",
+                  "CityName": "Walldorf"
+                },
+                "Country": "Germany"
+              },
+              "Age": 32,
+              "EntryDate": "/Date(1057017600000)/",
+              "ImageUrl": "Employees('2')/$value",
+              "ne_Manager": {
+                "__deferred": {
+                  "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('2')/ne_Manager"
+                }
+              },
+              "ne_Team": {
+                "__metadata": {
+                  "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Teams('1')",
+                  "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Teams('1')",
+                  "type": "RefScenario.Team"
+                },
+                "Id": "1",
+                "Name": "Team 1",
+                "isScrumTeam": false,
+                "nt_Employees": {
+                  "__deferred": {
+                    "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Teams('1')/nt_Employees"
+                  }
+                }
+              },
+              "ne_Room": {
+                "__deferred": {
+                  "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('2')/ne_Room"
+                }
+              }
+            },
+            {
+              "__metadata": {
+                "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('3')",
+                "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('3')",
+                "type": "RefScenario.Employee",
+                "content_type": "image/jpeg",
+                "media_src": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('3')/$value",
+                "edit_media": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('3')/$value"
+              },
+              "EmployeeId": "3",
+              "EmployeeName": "Jonathan Smith",
+              "ManagerId": "1",
+              "RoomId": "2",
+              "TeamId": "1",
+              "Location": {
+                "__metadata": {
+                  "type": "RefScenario.c_Location"
+                },
+                "City": {
+                  "__metadata": {
+                    "type": "RefScenario.c_City"
+                  },
+                  "PostalCode": "69190",
+                  "CityName": "Walldorf"
+                },
+                "Country": "Germany"
+              },
+              "Age": 56,
+              "EntryDate": null,
+              "ImageUrl": "Employees('3')/$value",
+              "ne_Manager": {
+                "__deferred": {
+                  "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('3')/ne_Manager"
+                }
+              },
+              "ne_Team": {
+                "__metadata": {
+                  "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Teams('1')",
+                  "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Teams('1')",
+                  "type": "RefScenario.Team"
+                },
+                "Id": "1",
+                "Name": "Team 1",
+                "isScrumTeam": false,
+                "nt_Employees": {
+                  "__deferred": {
+                    "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Teams('1')/nt_Employees"
+                  }
+                }
+              },
+              "ne_Room": {
+                "__deferred": {
+                  "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Employees('3')/ne_Room"
+                }
+              }
+            }
+          ]
+        },
+        "nr_Building": {
+          "__deferred": {
+            "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenario.svc/Rooms('2')/nr_Building"
+          }
+        }
+      }
+    ]
+  }
+}

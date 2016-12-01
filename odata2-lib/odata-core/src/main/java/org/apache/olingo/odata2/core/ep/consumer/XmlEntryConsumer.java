@@ -405,10 +405,12 @@ public class XmlEntryConsumer {
 
     try {
       if (isFeed) {
-        ReadFeedResult callbackInfo = new ReadFeedResult(readProperties, navigationProperty, (ODataFeed) content);
+        ReadFeedResult callbackInfo = new ReadFeedResult(readProperties, navigationProperty, 
+            (ODataFeed) content, entryMetadata.getId());
         callback.handleReadFeed(callbackInfo);
       } else {
-        ReadEntryResult callbackInfo = new ReadEntryResult(readProperties, navigationProperty, (ODataEntry) content);
+        ReadEntryResult callbackInfo = new ReadEntryResult(readProperties, navigationProperty, 
+            (ODataEntry) content, entryMetadata.getId());
         callback.handleReadEntry(callbackInfo);
       }
     } catch (ODataApplicationException e) {
