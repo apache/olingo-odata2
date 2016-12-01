@@ -256,7 +256,6 @@ public class AtomEntryEntityProducer {
 
     if (eia.getExpandedNavigationPropertyNames().contains(navigationPropertyName)) {
       if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
-        writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_INLINE);
 
         EdmNavigationProperty navProp = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
         WriteFeedCallbackContext context = new WriteFeedCallbackContext();
@@ -282,6 +281,12 @@ public class AtomEntryEntityProducer {
         if (inlineData == null) {
           inlineData = new ArrayList<Map<String, Object>>();
         }
+        
+        // This statement is used for the client use case. Flag should never be set on server side
+        if (properties.isOmitInlineForNullData() && inlineData.isEmpty()) {
+          return;
+        }
+        writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_INLINE);
 
         EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
         EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navProp);
@@ -301,7 +306,6 @@ public class AtomEntryEntityProducer {
 
     if (eia.getExpandedNavigationPropertyNames().contains(navigationPropertyName)) {
       if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
-        writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_INLINE);
 
         EdmNavigationProperty navProp = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
         WriteEntryCallbackContext context = new WriteEntryCallbackContext();
@@ -323,6 +327,13 @@ public class AtomEntryEntityProducer {
           throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
         }
         Map<String, Object> inlineData = result.getEntryData();
+        
+        // This statement is used for the client use case. Flag should never be set on server side
+        if (properties.isOmitInlineForNullData() && (inlineData == null || inlineData.isEmpty())) {
+          return;
+        }
+
+        writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_INLINE);
         if (inlineData != null && !inlineData.isEmpty()) {
           EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
           EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navProp);

@@ -73,7 +73,7 @@ public class InvalidDataInScenarioTest extends AbstractRefTest {
   @Test
   public void nullKeyInEntryData() throws Exception {
     HttpResponse response = callUri("Employees('1')", HttpStatusCodes.INTERNAL_SERVER_ERROR);
-    System.out.println(getBody(response));
+    assertTrue(getBody(response).contains("null value"));
     response = callUri("Employees('1')?$format=json", HttpStatusCodes.INTERNAL_SERVER_ERROR);
     assertTrue(getBody(response).contains("null value"));
   }

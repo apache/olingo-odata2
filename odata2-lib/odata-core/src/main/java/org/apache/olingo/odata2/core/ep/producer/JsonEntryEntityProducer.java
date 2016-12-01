@@ -157,6 +157,13 @@ public class JsonEntryEntityProducer {
         if (inlineData == null) {
           inlineData = new ArrayList<Map<String, Object>>();
         }
+        
+        //This statement is used for the client use case. Flag should never be set on server side
+        if(properties.isOmitInlineForNullData() && inlineData.isEmpty()){
+          writeDeferredUri(entityInfo, navigationPropertyName);
+          return;
+        }
+        
         final EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
         final EntityInfoAggregator inlineEntityInfo =
             EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
@@ -172,6 +179,13 @@ public class JsonEntryEntityProducer {
         final WriteEntryCallbackResult result =
             ((OnWriteEntryContent) callback).retrieveEntryResult((WriteEntryCallbackContext) context);
         Map<String, Object> inlineData = result.getEntryData();
+        
+        //This statement is used for the client use case. Flag should never be set on server side
+        if(properties.isOmitInlineForNullData() && (inlineData == null || inlineData.isEmpty())){
+          writeDeferredUri(entityInfo, navigationPropertyName);
+          return;
+        }
+        
         if (inlineData != null && !inlineData.isEmpty()) {
           final EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
           final EntityInfoAggregator inlineEntityInfo =

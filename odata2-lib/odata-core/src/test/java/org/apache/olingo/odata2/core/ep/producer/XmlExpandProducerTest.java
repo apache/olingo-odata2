@@ -86,6 +86,54 @@ public class XmlExpandProducerTest extends AbstractProviderTest {
   }
 
   @Test
+  public void expandSelectedTeamNullOmitInline() throws Exception {
+    ExpandSelectTreeNode selectTree = getSelectExpandTree("Employees('1')", "ne_Team", "ne_Team");
+
+    HashMap<String, ODataCallback> callbacksEmployee = createCallbacks("Employees");
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee)
+        .omitInlineForNullData(true).build();
+    AtomEntityProvider provider = createAtomEntityProvider();
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees"),
+            employeeData, properties);
+
+    String xmlString = verifyResponse(response);
+    verifyNavigationProperties(xmlString, F, F, T);
+    assertXpathExists(teamXPathString, xmlString);
+    assertXpathNotExists("/a:entry/m:properties", xmlString);
+    assertXpathNotExists(teamXPathString +  "/m:inline", xmlString);
+    assertXpathNotExists(teamXPathString +  "/m:inline/a:entry", xmlString);
+  }
+  
+  @Test
+  public void expandSelectedRoomsNullOmitInline() throws Exception {
+    ExpandSelectTreeNode selectTree = getSelectExpandTree("Buildings('1')", "nb_Rooms", "nb_Rooms");
+
+    HashMap<String, ODataCallback> callbacksEmployee = createCallbacks("Buildings");
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacksEmployee)
+            .omitInlineForNullData(true).build();
+    AtomEntityProvider provider = createAtomEntityProvider();
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings"),
+            buildingData, properties);
+
+    String xmlString = verifyResponse(response);
+    assertXpathNotExists("/a:entry/m:properties", xmlString);
+    assertXpathExists(buildingXPathString, xmlString);
+    assertXpathNotExists(buildingXPathString + "/m:inline", xmlString);
+
+    assertXpathNotExists(buildingXPathString + "/m:inline/a:feed", xmlString);
+    assertXpathNotExists(buildingXPathString + "/m:inline/a:feed/a:id", xmlString);
+    assertXpathNotExists(buildingXPathString + "/m:inline/a:feed/a:title", xmlString);
+    assertXpathNotExists(buildingXPathString + "/m:inline/a:feed/a:updated", xmlString);
+    assertXpathNotExists(buildingXPathString + "/m:inline/a:feed/a:author", xmlString);
+    assertXpathNotExists(buildingXPathString + "/m:inline/a:feed/a:author/a:name", xmlString);
+    assertXpathNotExists(buildingXPathString + "/m:inline/a:feed/a:link[@href=\"Buildings('1')/nb_Rooms\"]", xmlString);
+    assertXpathNotExists(buildingXPathString + "/m:inline/a:feed/a:entry", xmlString);
+  }
+  @Test
   public void expandSelectedEmployees() throws Exception {
     ExpandSelectTreeNode selectTree = getSelectExpandTree("Rooms('1')", "nr_Employees", "nr_Employees");
 

@@ -78,6 +78,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertFalse(properties.isIncludeMetadataInContentOnly());
     assertTrue(properties.isResponsePayload());
     assertFalse(properties.isDataBasedPropertySerialization());
+    assertFalse(properties.isOmitInlineForNullData());
   }
 
   @Test
@@ -104,6 +105,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .includeMetadataInContentOnly(true)
         .responsePayload(true)
         .isDataBasedPropertySerialization(true)
+        .omitInlineForNullData(true)
         .build();
 
     assertEquals("Wrong amount of callbacks.", 1, properties.getCallbacks().size());
@@ -122,7 +124,8 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
 
     assertTrue("includeMetadataInContentOnly should be set", properties.isIncludeMetadataInContentOnly());
     assertTrue("responsePayload flag should be set", properties.isResponsePayload());
-    assertTrue(properties.isDataBasedPropertySerialization());
+    assertTrue("isDataBasedPropertySerialization should be set", properties.isDataBasedPropertySerialization());
+    assertTrue("omitInlineForNullData should be set", properties.isOmitInlineForNullData());
   }
 
   @Test
@@ -148,6 +151,8 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
         .omitETag(true)
         .includeMetadataInContentOnly(true)
         .responsePayload(true)
+        .isDataBasedPropertySerialization(true)
+        .omitInlineForNullData(true)
         .build();
 
     //
@@ -170,5 +175,7 @@ public class ODataEntityProviderPropertiesTest extends BaseTest {
     assertTrue("OmitETag should be set", fromProperties.isOmitETag());
     assertTrue("includeMetadataInContentOnly should be set", fromProperties.isIncludeMetadataInContentOnly());
     assertTrue("responsePayload flag should be set", fromProperties.isResponsePayload());
+    assertTrue("isDataBasedPropertySerialization should be set", properties.isDataBasedPropertySerialization());
+    assertTrue("omitInlineForNullData should be set", properties.isOmitInlineForNullData());
   }
 }
