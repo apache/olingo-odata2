@@ -41,6 +41,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmStructuralType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
+import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
@@ -444,20 +445,15 @@ public class JPAEntity {
 
     for (String edmPropertyName : edmComplexType.getPropertyNames()) {
       if (propertyValue != null) {
-        EdmTyped edmTyped = (EdmTyped) edmComplexType.getProperty(edmPropertyName);
+        EdmTyped edmTyped = edmComplexType.getProperty(edmPropertyName);
         accessModifier = accessModifiers.get(edmPropertyName);
-        if (edmTyped.getType().getKind().toString().equals(EdmTypeKind.COMPLEX.toString())) {
-          EdmStructuralType structualType = (EdmStructuralType) edmTyped.getType();
-          if (propertyName != null) {
-            setComplexProperty(accessModifier, embeddableObject, structualType,
-                (HashMap<String, Object>) propertyValue.get(edmPropertyName), propertyName);
-          } else {
-            setComplexProperty(accessModifier, embeddableObject, structualType,
-                (HashMap<String, Object>) propertyValue.get(edmPropertyName));
-          }
+        EdmType type = edmTyped.getType();
+        if (type.getKind().toString().equals(EdmTypeKind.COMPLEX.toString())) {
+          setComplexProperty(accessModifier, embeddableObject, (EdmStructuralType) type,
+              (HashMap<String, Object>) propertyValue.get(edmPropertyName), propertyName);
         } else {
-          EdmSimpleType simpleType = (EdmSimpleType) edmTyped.getType();
-		  if (propertyName != null) {
+          EdmSimpleType simpleType = (EdmSimpleType) type;
+    		  if (propertyName != null) {
             setProperty(accessModifier, embeddableObject, propertyValue.get(edmPropertyName),
                 simpleType, edmPropertyName);
           } else {
