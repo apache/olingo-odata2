@@ -700,7 +700,7 @@ public class AnnotationsInMemoryDsTest {
     photo.setImageType("image/png");
     datasource.createData(edmEntitySet, photo);
 
-    List photos = datasource.readData(edmEntitySet);
+    List<?> photos = datasource.readData(edmEntitySet);
     Photo readPhoto = (Photo) photos.get(0);
     Assert.assertEquals(automaticNameKeyValue + ":" + typeKeyValue,
             readPhoto.getName() + ":" + readPhoto.getType());
@@ -737,7 +737,7 @@ public class AnnotationsInMemoryDsTest {
     photo2.setImageType("image/png");
     datasource.createData(edmEntitySet, photo2);
 
-    List photos = datasource.readData(edmEntitySet);
+    List<?> photos = datasource.readData(edmEntitySet);
     Assert.assertEquals(2, photos.size());
 
     // Check photo 1 has specified key values.
@@ -764,7 +764,7 @@ public class AnnotationsInMemoryDsTest {
     testEntity.setName(entityName);
     datasource.createData(edmEntitySet, testEntity);
 
-    List entities = datasource.readData(edmEntitySet);
+    List<?> entities = datasource.readData(edmEntitySet);
     GuidKeyEntity readEntity = (GuidKeyEntity) entities.get(0);
     Assert.assertEquals(entityName, readEntity.getName());
   }

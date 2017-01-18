@@ -15,15 +15,14 @@
  */
 package org.apache.olingo.odata2.annotation.processor.core.model;
 
+import java.util.UUID;
+
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmFacets;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmType;
-
-import java.util.AbstractMap;
-import java.util.UUID;
 
 @EdmEntityType(name = "GuidKeyEntity", namespace = ModelSharedConstants.NAMESPACE_1)
 @EdmEntitySet(name = GuidKeyEntity.GUID_KEY_ENTITIES)

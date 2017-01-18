@@ -18,6 +18,11 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.ref.listeners;
 
+import java.util.Locale;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
@@ -27,10 +32,6 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.Locale;
 
 public class CustomerQueryExtension extends ODataJPAQueryExtensionEntityListener {
 
