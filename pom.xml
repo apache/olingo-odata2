@@ -12,7 +12,7 @@
 
 	<groupId>org.apache.olingo</groupId>
 	<artifactId>olingo-odata2-parent</artifactId>
-	<version>2.0.8</version>
+	<version>2.0.9-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>${project.artifactId}</name>
