@@ -954,7 +954,10 @@ public class XmlMetadataConsumer {
       if (namespacePrefix == null || isDefaultNamespace(namespacePrefix)) {
         namespacePrefix = Edm.PREFIX_EDM;
       }
-      xmlNamespaceMap.put(namespacePrefix, namespaceUri);
+      //Ignoring the duplicate tags, parent tag namespace takes precedence
+      if (!xmlNamespaceMap.containsKey(namespacePrefix)) {
+        xmlNamespaceMap.put(namespacePrefix, namespaceUri);
+      }
     }
   }
 

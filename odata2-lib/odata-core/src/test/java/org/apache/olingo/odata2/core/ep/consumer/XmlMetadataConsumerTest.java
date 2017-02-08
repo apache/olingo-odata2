@@ -180,6 +180,35 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
       "Nullable=\"false\" MaxLength=\"Max\"/><Property Name=\"Name\" Type=\"Edm.Int32\" MaxLength=\"max\"/>"
       + "</EntityType></Schema></edmx:DataServices></edmx:Edmx>";
 
+  private final String edmxRefFor1680364709 = 
+      "<edmx:Edmx xmlns:edmx=\"http://schemas.microsoft.com/ado/2007/06/edmx\" " +
+      "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:sap=\"" +
+      "http://www.sap.com/Protocols/SAPData\" Version=\"1.0\">" +
+      "<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\" " +
+      "Uri=\"https://host:port/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies"+
+      "(TechnicalName='%2FIWBEP%2FVOC_COMMON'"+
+      ",Version='0001',SAP__Origin='')/$value\">" +
+      "<edmx:Include Alias=\"Common\" Namespace=\"com.sap.vocabularies.Common.v1\"/>" +
+      "</edmx:Reference>" + 
+      "</edmx:Edmx>";
+  
+  @Test
+  public void twoEdmxWithValidation() throws Exception {
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(edmxRefFor1680364709);
+    DataServices result = parser.readMetadata(reader, true);   
+    assertNotNull(result);
+
+  }
+  
+  @Test
+  public void twoEdmxWithoutValidation() throws Exception {
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(edmxRefFor1680364709);
+    DataServices result = parser.readMetadata(reader, false);   
+    assertNotNull(result);
+
+  }
   @Test
   public void testMetadataDokumentWithWhitepaces() throws Exception {
     final String metadata = ""
