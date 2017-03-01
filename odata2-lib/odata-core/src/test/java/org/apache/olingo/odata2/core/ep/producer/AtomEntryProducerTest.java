@@ -24,6 +24,7 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathNotExists;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -1369,5 +1370,167 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
   assertXpathExists("/a:entry/a:content/m:properties/d:Name", xmlString);
   assertXpathExists("/a:entry/a:content/m:properties/d:Seats", xmlString);
   
+  }
+  
+  @Test
+  public void contentOnlyWithoutKeyWithoutSelectedProperties() throws Exception {
+    HashMap<String, Object> employeeData = new HashMap<String, Object>();
+    employeeData.put("ManagerId", "1");
+    employeeData.put("Age", new Integer(52));
+    employeeData.put("RoomId", "1");
+    employeeData.put("TeamId", "42");
+
+    List<String> selectedProperties = new ArrayList<String>();
+    selectedProperties.add("ManagerId");
+    selectedProperties.add("Age");
+    selectedProperties.add("RoomId");
+    selectedProperties.add("TeamId");
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).contentOnly(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+    try {
+      ser.writeEntry(entitySet, employeeData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'EmployeeId'"));
+    }
+  }
+  
+  @Test
+  public void testWithoutKey() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("ManagerId");
+    ExpandSelectTreeNode select =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).build();
+
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(select).build();
+
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>();
+    localEmployeeData.put("ManagerId", "1");
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    try {
+    ser.writeEntry(entitySet, localEmployeeData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'EmployeeId'"));
+    }
+  }
+  
+  @Test
+  public void testWithoutCompositeKey() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getEntityContainer("Container2").getEntitySet("Photos");
+    
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
+
+    Map<String, Object> photoData = new HashMap<String, Object>();
+    photoData.put("Name", "Mona Lisa");
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    try {
+    ser.writeEntry(entitySet, photoData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Id'"));
+    }
+  }
+  
+  @Test
+  public void testWithoutCompositeKeyWithOneKeyNull() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmEntitySet entitySet = edm.getEntityContainer("Container2").getEntitySet("Photos");
+    
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
+
+    Map<String, Object> photoData = new HashMap<String, Object>();
+    photoData.put("Name", "Mona Lisa");
+    photoData.put("Id", Integer.valueOf(1));
+    
+    EdmTyped typeProperty = edm.getEntityContainer("Container2").getEntitySet("Photos").
+        getEntityType().getProperty("Type");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getConcurrencyMode()).thenReturn(EdmConcurrencyMode.Fixed);
+    when(facets.getMaxLength()).thenReturn(3);
+    when(((EdmProperty) typeProperty).getFacets()).thenReturn(facets);
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    try {
+    ser.writeEntry(entitySet, photoData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Type'"));
+    }
+  }
+
+  
+  @Test
+  public void testExceptionWithNonNullablePropertyIsNull() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Organizations");
+    EdmProperty nameProperty = (EdmProperty) entitySet.getEntityType().getProperty("Name");
+    EdmFacets facets = nameProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).omitETag(true).
+        isDataBasedPropertySerialization(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+
+    Map<String, Object> orgData = new HashMap<String, Object>();
+    orgData.put("Id", "1");
+    try {
+    ser.writeEntry(entitySet, orgData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Name'"));
+    }
+  }
+  
+  @Test
+  public void testExceptionWithNonNullablePropertyIsNull1() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Organizations");
+    EdmProperty kindProperty = (EdmProperty) entitySet.getEntityType().getProperty("Kind");
+    EdmFacets facets = kindProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    
+    EdmProperty nameProperty = (EdmProperty) entitySet.getEntityType().getProperty("Name");
+    when(nameProperty.getFacets()).thenReturn(null);
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).omitETag(true).
+        isDataBasedPropertySerialization(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+
+    Map<String, Object> orgData = new HashMap<String, Object>();
+    orgData.put("Id", "1");
+    orgData.put("Name", "Org1");
+    try {
+    ser.writeEntry(entitySet, orgData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Kind'"));
+    }
+  }
+  
+  @Test
+  public void testExceptionWithNonNullablePropertyIsNull2() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Organizations");
+    EdmProperty kindProperty = (EdmProperty) entitySet.getEntityType().getProperty("Kind");
+    EdmFacets facets = kindProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    
+    EdmProperty nameProperty = (EdmProperty) entitySet.getEntityType().getProperty("Name");
+    EdmFacets facets1 = nameProperty.getFacets();
+    when(facets1.isNullable()).thenReturn(new Boolean(false));
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).omitETag(true).
+        isDataBasedPropertySerialization(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+
+    Map<String, Object> orgData = new HashMap<String, Object>();
+    orgData.put("Id", "1");
+    orgData.put("Name", "Org1");
+    try {
+    ser.writeEntry(entitySet, orgData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("do not allow to format the value 'Org1' for property 'Name'."));
+    }
   }
 }

@@ -70,6 +70,8 @@ class EdmMock {
         createEntitySetMock(defaultContainer, "Buildings", EdmSimpleTypeKind.String, "Id");
     final EdmEntitySet companiesEntitySet =
         createEntitySetMock(defaultContainer, "Companys", EdmSimpleTypeKind.String, "Id");
+    final EdmEntitySet organizationsEntitySet =
+        createEntitySetMock(defaultContainer, "Organizations", EdmSimpleTypeKind.String, "Id");
 
     EdmEntityType employeeType = employeeEntitySet.getEntityType();
     when(employeeType.hasStream()).thenReturn(true);
@@ -176,6 +178,29 @@ class EdmMock {
     createProperty("Name", EdmSimpleTypeKind.String, companyType);
     createProperty("Kind", EdmSimpleTypeKind.String, companyType);
     createProperty("NGO", EdmSimpleTypeKind.Boolean, companyType);
+
+    EdmEntityType organizationType = organizationsEntitySet.getEntityType();
+    when(organizationType.getPropertyNames()).thenReturn(Arrays.asList("Id", "Name", "Kind", "Location", "NoOfTeam"));
+    when(organizationType.getProperty("Location")).thenReturn(locationComplexProperty);
+    EdmProperty orgName = createProperty("Name", EdmSimpleTypeKind.String, organizationType);
+    EdmProperty orgKind = createProperty("Kind", EdmSimpleTypeKind.String, organizationType);
+    createProperty("NoOfTeam", EdmSimpleTypeKind.Int16, organizationType);
+    
+    EdmFacets orgNameFacets = mock(EdmFacets.class);
+    when(orgNameFacets.isNullable()).thenReturn(null);
+    when(orgName.getFacets()).thenReturn(orgNameFacets);
+    EdmCustomizableFeedMappings orgTitleMappings = mock(EdmCustomizableFeedMappings.class);
+    when(orgTitleMappings.getFcTargetPath()).thenReturn(EdmTargetPath.SYNDICATION_TITLE);
+    when(orgTitleMappings.isFcKeepInContent()).thenReturn(false);
+    when(orgName.getCustomizableFeedMappings()).thenReturn(orgTitleMappings);
+    
+    EdmFacets orgKindFacets = mock(EdmFacets.class);
+    when(orgKindFacets.isNullable()).thenReturn(null);
+    when(orgKind.getFacets()).thenReturn(orgKindFacets);
+    EdmCustomizableFeedMappings orgKindMappings = mock(EdmCustomizableFeedMappings.class);
+    when(orgKindMappings.getFcTargetPath()).thenReturn(EdmTargetPath.SYNDICATION_SUMMARY);
+    when(orgKindMappings.isFcKeepInContent()).thenReturn(true);
+    when(orgKind.getCustomizableFeedMappings()).thenReturn(orgKindMappings);
     
     EdmFunctionImport employeeSearchFunctionImport =
         createFunctionImportMock(defaultContainer, "EmployeeSearch", employeeType, EdmMultiplicity.MANY);
@@ -293,7 +318,8 @@ class EdmMock {
     when(edm.getComplexType("RefScenario", "c_Location")).thenReturn(locationComplexType);
     when(edm.getEntityType("RefScenario2", "Photo")).thenReturn(photoEntityType);
     when(edm.getEntityType("RefScenario", "Company")).thenReturn(companyType);
-
+    when(edm.getEntityType("RefScenario", "Organization")).thenReturn(organizationType);
+    
     return edm;
   }
 

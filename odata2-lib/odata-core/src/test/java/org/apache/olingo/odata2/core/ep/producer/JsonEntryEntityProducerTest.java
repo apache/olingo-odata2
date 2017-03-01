@@ -41,6 +41,7 @@ import java.util.TimeZone;
 
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
@@ -59,6 +60,7 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.JsonEntityProvider;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
@@ -1502,5 +1504,164 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         + "\"nr_Building\":{\"__metadata\":{\"id\":\"" + BASE_URI + "Buildings('1')\","
         + "\"uri\":\"" + BASE_URI + "Buildings('1')\",\"type\":\"RefScenario.Building\"},"
         + "\"Id\":\"1\",\"Name\":\"Building1\"}}}", json);
+  }
+  
+  @Test
+  public void contentOnlyWithoutKeyWithoutSelectedProperties() throws Exception {
+    HashMap<String, Object> employeeData = new HashMap<String, Object>();
+    employeeData.put("ManagerId", "1");
+    employeeData.put("Age", new Integer(52));
+    employeeData.put("RoomId", "1");
+    employeeData.put("TeamId", "42");
+
+    List<String> selectedProperties = new ArrayList<String>();
+    selectedProperties.add("ManagerId");
+    selectedProperties.add("Age");
+    selectedProperties.add("RoomId");
+    selectedProperties.add("TeamId");
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).omitJsonWrapper(true).contentOnly(true)
+            .build();
+    try {
+      new JsonEntityProvider().writeEntry(entitySet, employeeData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'EmployeeId'"));
+    }
+  }
+  
+  @Test
+  public void testWithoutKey() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("ManagerId");
+    ExpandSelectTreeNode select =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).build();
+
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(select).build();
+
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>();
+    localEmployeeData.put("ManagerId", "1");
+
+    JsonEntityProvider ser = new JsonEntityProvider();
+    try {
+    ser.writeEntry(entitySet, localEmployeeData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'EmployeeId'"));
+    }
+  }
+  
+  @Test
+  public void testWithoutCompositeKey() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getEntityContainer("Container2").getEntitySet("Photos");
+    
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).build();
+
+    Map<String, Object> photoData = new HashMap<String, Object>();
+    photoData.put("Name", "Mona Lisa");
+
+    JsonEntityProvider ser = new JsonEntityProvider();
+    try {
+    ser.writeEntry(entitySet, photoData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Id'"));
+    }
+  }
+  
+  @Test
+  public void testWithoutCompositeKeyWithOneKeyNull() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmEntitySet entitySet = edm.getEntityContainer("Container2").getEntitySet("Photos");
+    
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).build();
+
+    Map<String, Object> photoData = new HashMap<String, Object>();
+    photoData.put("Name", "Mona Lisa");
+    photoData.put("Id", Integer.valueOf(1));
+    
+    EdmTyped typeProperty = edm.getEntityContainer("Container2").getEntitySet("Photos").
+        getEntityType().getProperty("Type");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getConcurrencyMode()).thenReturn(EdmConcurrencyMode.Fixed);
+    when(facets.getMaxLength()).thenReturn(3);
+    when(((EdmProperty) typeProperty).getFacets()).thenReturn(facets);
+
+    JsonEntityProvider ser = new JsonEntityProvider();
+    try {
+    ser.writeEntry(entitySet, photoData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Type'"));
+    }
+  }
+  
+  
+  @Test
+  public void testExceptionWithNonNullablePropertyIsNull() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Organizations");
+    EdmProperty nameProperty = (EdmProperty) entitySet.getEntityType().getProperty("Name");
+    EdmFacets facets = nameProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).omitETag(true).
+        isDataBasedPropertySerialization(true).build();
+    
+    Map<String, Object> orgData = new HashMap<String, Object>();
+    orgData.put("Id", "1");
+    try {
+      new JsonEntityProvider().writeEntry(entitySet, orgData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Name'"));
+    }
+  }
+  
+  @Test
+  public void testExceptionWithNonNullablePropertyIsNull1() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Organizations");
+    EdmProperty kindProperty = (EdmProperty) entitySet.getEntityType().getProperty("Kind");
+    EdmFacets facets = kindProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    
+    EdmProperty nameProperty = (EdmProperty) entitySet.getEntityType().getProperty("Name");
+    when(nameProperty.getFacets()).thenReturn(null);
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).omitETag(true).
+        isDataBasedPropertySerialization(true).build();
+    
+    Map<String, Object> orgData = new HashMap<String, Object>();
+    orgData.put("Id", "1");
+    orgData.put("Name", "Org1");
+    try {
+      new JsonEntityProvider().writeEntry(entitySet, orgData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Kind'"));
+    }
+  }
+  
+  @Test
+  public void testExceptionWithNonNullablePropertyIsNull2() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Organizations");
+    EdmProperty kindProperty = (EdmProperty) entitySet.getEntityType().getProperty("Kind");
+    EdmFacets facets = kindProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    
+    EdmProperty nameProperty = (EdmProperty) entitySet.getEntityType().getProperty("Name");
+    EdmFacets facets1 = nameProperty.getFacets();
+    when(facets1.isNullable()).thenReturn(new Boolean(false));
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).omitETag(true).
+        isDataBasedPropertySerialization(true).build();
+    
+    Map<String, Object> orgData = new HashMap<String, Object>();
+    orgData.put("Id", "1");
+    orgData.put("Name", "Org1");
+    try {
+      new JsonEntityProvider().writeEntry(entitySet, orgData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("do not allow to format the value 'Org1' for property 'Name'."));
+    }
   }
 }

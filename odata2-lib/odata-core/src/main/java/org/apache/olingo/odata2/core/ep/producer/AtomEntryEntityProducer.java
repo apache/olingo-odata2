@@ -181,11 +181,13 @@ public class AtomEntryEntityProducer {
 
   protected static String createETag(final EntityInfoAggregator eia, final Map<String, Object> data)
       throws EntityProviderException {
+    String propertyName = "";
     try {
       String etag = null;
 
       Collection<EntityPropertyInfo> propertyInfos = eia.getETagPropertyInfos();
       for (EntityPropertyInfo propertyInfo : propertyInfos) {
+        propertyName = propertyInfo.getName();
         EdmType edmType = propertyInfo.getType();
         if (edmType instanceof EdmSimpleType) {
           EdmSimpleType edmSimpleType = (EdmSimpleType) edmType;
@@ -209,7 +211,8 @@ public class AtomEntryEntityProducer {
 
       return etag;
     } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderProducerException(e.getMessageReference(), e);
+      throw new EntityProviderProducerException(EdmSimpleTypeException.getMessageReference(
+          e.getMessageReference()).updateContent(e.getMessageReference().getContent(), propertyName), e);
     }
   }
 
@@ -439,7 +442,14 @@ public class AtomEntryEntityProducer {
       if (titleInfo != null) {
         EdmSimpleType st = (EdmSimpleType) titleInfo.getType();
         Object object = data.get(titleInfo.getName());
-        String title = st.valueToString(object, EdmLiteralKind.DEFAULT, titleInfo.getFacets());
+        String title = null;
+        try {
+          title = st.valueToString(object, EdmLiteralKind.DEFAULT, titleInfo.getFacets());
+        } catch (final EdmSimpleTypeException e) {
+          throw new EntityProviderProducerException(
+              EdmSimpleTypeException.getMessageReference(e.getMessageReference()).
+              updateContent(e.getMessageReference().getContent(), titleInfo.getName()), e);
+        }
         if (title != null) {
           writer.writeCharacters(title);
         }
@@ -461,7 +471,7 @@ public class AtomEntryEntityProducer {
   }
 
   String getUpdatedString(final EntityInfoAggregator eia, final Map<String, Object> data)
-      throws EdmSimpleTypeException {
+      throws EdmSimpleTypeException, EntityProviderProducerException {
     Object updateDate = null;
     EdmFacets updateFacets = null;
     EntityPropertyInfo updatedInfo = eia.getTargetPathInfo(EdmTargetPath.SYNDICATION_UPDATED);
@@ -474,21 +484,30 @@ public class AtomEntryEntityProducer {
     if (updateDate == null) {
       updateDate = new Date();
     }
-    return EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets);
+    try {
+      return EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets);
+    } catch (final EdmSimpleTypeException e) {
+      throw new EntityProviderProducerException(
+          EdmSimpleTypeException.getMessageReference(e.getMessageReference()).
+          updateContent(e.getMessageReference().getContent(), updatedInfo.getName()), e);
+    }
   }
 
   private String getTargetPathValue(final EntityInfoAggregator eia, final String targetPath,
       final Map<String, Object> data) throws EntityProviderException {
+    EntityPropertyInfo info = null;
     try {
-      EntityPropertyInfo info = eia.getTargetPathInfo(targetPath);
+      info = eia.getTargetPathInfo(targetPath);
       if (info != null) {
         EdmSimpleType type = (EdmSimpleType) info.getType();
         Object value = data.get(info.getName());
         return type.valueToString(value, EdmLiteralKind.DEFAULT, info.getFacets());
       }
       return null;
-    } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderProducerException(e.getMessageReference(), e);
+    } catch (final EdmSimpleTypeException e) {
+      throw new EntityProviderProducerException(
+          EdmSimpleTypeException.getMessageReference(e.getMessageReference()).
+          updateContent(e.getMessageReference().getContent(), info.getName()), e);
     }
   }
 
@@ -585,7 +604,9 @@ public class AtomEntryEntityProducer {
         keys.append(Encoder.encode(type.valueToString(data.get(name), EdmLiteralKind.URI,
             keyPropertyInfo.getFacets())));
       } catch (final EdmSimpleTypeException e) {
-        throw new EntityProviderProducerException(e.getMessageReference(), e);
+        throw new EntityProviderProducerException(
+            EdmSimpleTypeException.getMessageReference(e.getMessageReference()).
+            updateContent(e.getMessageReference().getContent(), name), e);
       }
     }
 

@@ -42,6 +42,7 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.DataServices;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
@@ -173,7 +174,13 @@ public class BasicEntityProvider {
         return writeBinary(contentType, (byte[]) binary);
 
       } else {
-        return writeText(type.valueToString(value, EdmLiteralKind.DEFAULT, edmProperty.getFacets()));
+        try {
+          return writeText(type.valueToString(value, EdmLiteralKind.DEFAULT, edmProperty.getFacets()));
+        } catch (EdmSimpleTypeException e) {
+          throw new EntityProviderProducerException(EdmSimpleTypeException.getMessageReference(
+              e.getMessageReference()).updateContent(e.getMessageReference().getContent(), 
+                  edmProperty.getName()), e);
+        }
       }
 
     } catch (EdmException e) {
