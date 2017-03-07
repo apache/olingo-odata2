@@ -185,4 +185,16 @@ public class AcceptParserTest {
     parser.addAcceptLanguageHeaderValue("en_US");
     parser.parseAcceptableLanguages();
   }
+  
+  @Test
+  public void testAcceptLanguagesWithAlphaNumericValues() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("es-419,en-US");
+    List<String> acceptLanguageHeaders = parser.parseAcceptableLanguages();
+
+    assertNotNull(acceptLanguageHeaders);
+    assertEquals(2, acceptLanguageHeaders.size());
+    assertEquals("es-419", acceptLanguageHeaders.get(0));
+    assertEquals("en-US", acceptLanguageHeaders.get(1));
+  }
 }
