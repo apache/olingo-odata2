@@ -319,4 +319,36 @@ public class ClientBatchTest extends AbstractRefTest {
     assertTrue(requestBody.contains("--" + BOUNDARY));
     assertTrue(requestBody.contains("--" + BOUNDARY + "--"));
   }
+  
+  @Test
+  public void testContentFormatErrorBatch() throws Exception {
+    List<BatchPart> batch = new ArrayList<BatchPart>();
+    Map<String, String> headers = new HashMap<String, String>();
+    headers.put("DataServiceVersion", "2.0");
+    headers.put("MaxDataServiceVersion", "3.0");
+    headers.put("Accept", "application/json;odata=verbose");
+    BatchPart request = BatchQueryPart.method(ODataHttpMethod.GET.name())
+        .uri("nonsense")
+        .headers(headers)
+        .build();
+    batch.add(request);
+
+    InputStream body = EntityProvider.writeBatchRequest(batch, BOUNDARY);
+    String bodyAsString = StringHelper.inputStreamToStringCRLFLineBreaks(body);
+    checkMimeHeaders(bodyAsString);
+    checkBoundaryDelimiters(bodyAsString);
+
+    assertTrue(bodyAsString.contains("GET nonsense HTTP/1.1"));
+    HttpResponse batchResponse = execute(bodyAsString);
+    InputStream responseBody = batchResponse.getEntity().getContent();
+    String contentType = batchResponse.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
+    List<BatchSingleResponse> responses = EntityProvider.parseBatchResponse(responseBody, contentType);
+    for (BatchSingleResponse response : responses) {
+      assertEquals("404", response.getStatusCode());
+      assertEquals("Not Found", response.getStatusInfo());
+      assertEquals("application/json", response.getHeaders().get("Content-Type"));
+      assertEquals("{\"error\":{\"code\":null,\"message\":{\"lang\":\"en\",\"value\":"
+          + "\"Could not find an entity set or function import for 'nonsense'.\"}}}", response.getBody());
+    }
+  }
 }
