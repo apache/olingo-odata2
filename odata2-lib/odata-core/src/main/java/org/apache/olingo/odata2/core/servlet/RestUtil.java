@@ -230,7 +230,9 @@ public class RestUtil {
       StringBuilder stringBuilder = new StringBuilder();
       stringBuilder.append(req.getContextPath()).append(req.getServletPath());
       for (final PathSegment ps : precedingPathSegments) {
-        stringBuilder.append("/").append(ps.getPath());
+        if (!ps.getPath().equals("") && ps.getPath().length() > 0) {
+          stringBuilder.append("/").append(ps.getPath());
+        }
         for (final String key : ps.getMatrixParameters().keySet()) {
           List<String> matrixParameters = ps.getMatrixParameters().get(key);
           String matrixParameterString = ";" + key + "=";
