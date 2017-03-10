@@ -1213,9 +1213,27 @@ public class BatchRequestParserTest {
     parser.parseBatchRequest(in);
   }
 
+  @Test
+  public void testNonStrictGetRequestWithMissingCRLF() throws BatchException {
+    String batch = "--" + BOUNDARY + CRLF
+            + MIME_HEADERS
+            + "Content-ID: 1" + CRLF
+            + CRLF
+            + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
+            // + CRLF // Belongs to the GET request
+            + CRLF // Belongs to the
+            + "--" + BOUNDARY + "--";
+
+    parse(batch, false);
+  }
+
   private List<BatchRequestPart> parse(final String batch) throws BatchException {
+    return parse(batch, true);
+  }
+
+  private List<BatchRequestPart> parse(final String batch, final boolean isStrict) throws BatchException {
     InputStream in = new ByteArrayInputStream(batch.getBytes());
-    BatchParser parser = new BatchParser(contentType, batchProperties, true);
+    BatchParser parser = new BatchParser(contentType, batchProperties, isStrict);
     List<BatchRequestPart> batchRequestParts = parser.parseBatchRequest(in);
     assertNotNull(batchRequestParts);
     assertEquals(false, batchRequestParts.isEmpty());
