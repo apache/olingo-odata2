@@ -48,7 +48,9 @@ import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Decoder;
 
 public class RestUtil {
-  private static final String REG_EX_OPTIONAL_WHITESPACE = "\\s?";
+  // RFC 2616, 4.2: linear white space
+  private static final String REG_EX_OPTIONAL_WHITESPACE = "\\s*";
+  private static final String REG_EX_FIELD_VALUE_SEPARATOR = "," + REG_EX_OPTIONAL_WHITESPACE;
 
   // RFC 2616, 3.9: qvalue = ("0"["." 0*3DIGIT]) | ("1"["." 0*3("0")])
   private static final String REG_EX_QVALUE = "q=((?:1(?:\\.0{0,3})?)|(?:0(?:\\.[0-9]{0,3})?))";
@@ -145,7 +147,7 @@ public class RestUtil {
     List<Locale> acceptLanguages = new ArrayList<Locale>();
     TreeSet<Accept> acceptTree = getAcceptTree();
     if (acceptableLanguageHeader != null && !acceptableLanguageHeader.isEmpty()) {
-      List<String> list = Arrays.asList(acceptableLanguageHeader.split(",\\s?"));
+      List<String> list = Arrays.asList(acceptableLanguageHeader.split(REG_EX_FIELD_VALUE_SEPARATOR));
       for (String acceptLanguage : list) {
         Matcher matcher = REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR.matcher(acceptLanguage);
         if (matcher.find()) {
@@ -180,7 +182,7 @@ public class RestUtil {
     TreeSet<Accept> acceptTree = getAcceptTree();
     List<String> acceptHeaders = new ArrayList<String>();
     if (acceptHeader != null && !acceptHeader.isEmpty()) {
-      List<String> list = Arrays.asList(acceptHeader.split(",\\s?"));
+      List<String> list = Arrays.asList(acceptHeader.split(REG_EX_FIELD_VALUE_SEPARATOR));
       for (String accept : list) {
         Matcher matcher = REG_EX_ACCEPT_WITH_Q_FACTOR.matcher(accept);
         if (matcher.find()) {

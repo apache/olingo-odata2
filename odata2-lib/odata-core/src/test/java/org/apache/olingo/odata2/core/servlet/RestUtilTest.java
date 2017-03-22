@@ -56,4 +56,29 @@ public class RestUtilTest {
     Assert.assertEquals("v2", result.get("some").get(1));
     Assert.assertEquals("v", result.get("another").get(0));
   }
+
+  @Test
+  public void testExtractAcceptHeaders() throws Exception {
+    // NuGet 4.0 client under .NET
+    List<String> result = RestUtil.extractAcceptHeaders("application/atom+xml, application/xml");
+    Assert.assertEquals(2, result.size());
+    Assert.assertEquals("application/atom+xml", result.get(0));
+    Assert.assertEquals("application/xml", result.get(1));
+
+    // NuGet 4.0 client under Mono
+    result = RestUtil.extractAcceptHeaders("application/atom+xml,  application/xml");
+    Assert.assertEquals(2, result.size());
+    Assert.assertEquals("application/atom+xml", result.get(0));
+    Assert.assertEquals("application/xml", result.get(1));
+
+    // Chrome 56
+    result = RestUtil.extractAcceptHeaders(
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+    Assert.assertEquals(5, result.size());
+    Assert.assertEquals("text/html", result.get(0));
+    Assert.assertEquals("application/xhtml+xml", result.get(1));
+    Assert.assertEquals("application/xml", result.get(2));
+    Assert.assertEquals("image/webp", result.get(3));
+    Assert.assertEquals("*/*", result.get(4));
+  }
 }
