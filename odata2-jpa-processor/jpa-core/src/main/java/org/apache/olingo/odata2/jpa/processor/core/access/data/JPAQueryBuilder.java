@@ -18,14 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
@@ -43,6 +35,16 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.EntityType;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JPAQueryBuilder {
 
@@ -177,7 +179,7 @@ public class JPAQueryBuilder {
     JPQLContext jpqlContext = buildJPQLContext(contextType, uriParserResultView);
     JPQLStatement jpqlStatement = JPQLStatement.createBuilder(jpqlContext).build();
 
-    return em.createQuery(normalizeMembers(jpqlStatement.toString()));
+    return em.createQuery(normalizeMembers(em, jpqlStatement.toString()));
   }
 
   
@@ -195,24 +197,19 @@ public class JPAQueryBuilder {
   public ODataJPATombstoneEntityListener getODataJPATombstoneEntityListener(UriInfo uriParserResultView)
       throws InstantiationException, IllegalAccessException, EdmException {
     JPAEdmMapping mapping = (JPAEdmMapping) uriParserResultView.getTargetEntitySet().getEntityType().getMapping();
-    ODataJPATombstoneEntityListener listener = null;
     if (mapping.getODataJPATombstoneEntityListener() != null) {
-      listener = (ODataJPATombstoneEntityListener) mapping.getODataJPATombstoneEntityListener().newInstance();
+      return  (ODataJPATombstoneEntityListener) mapping.getODataJPATombstoneEntityListener().newInstance();
     }
-    return listener;
+    return null;
   }
 
   public JPQLContext buildJPQLContext(JPQLContextType contextType, UriInfo uriParserResultView)
       throws ODataJPAModelException, ODataJPARuntimeException {
-    JPQLContext jpqlContext = null;
     if (pageSize > 0 && (contextType == JPQLContextType.SELECT || contextType == JPQLContextType.JOIN)) {
-      jpqlContext = JPQLContext.createBuilder(contextType,
-          uriParserResultView, true).build();
+      return JPQLContext.createBuilder(contextType, uriParserResultView, true).build();
     } else {
-      jpqlContext = JPQLContext.createBuilder(contextType,
-          uriParserResultView).build();
+      return JPQLContext.createBuilder(contextType, uriParserResultView).build();
     }
-    return jpqlContext;
   }
 
   public JPQLContextType determineJPQLContextType(UriInfo uriParserResultView, UriInfoType type) {
@@ -240,14 +237,18 @@ public class JPAQueryBuilder {
     return contextType;
   }
 
-  private static final Pattern NORMALIZATION_NEEDED_PATTERN = Pattern.compile(".*[\\s\\(](\\S+\\.\\S+\\.\\S+).*");
+  private static final Pattern NORMALIZATION_NEEDED_PATTERN = Pattern.compile(".*[\\s(](\\S+\\.\\S+\\.\\S+).*");
   private static final Pattern JOIN_ALIAS_PATTERN = Pattern.compile(".*\\sJOIN\\s(\\S*\\s\\S*).*");
 
-  private static String normalizeMembers(String jpqlQuery) {
+  private static String normalizeMembers(EntityManager em, String jpqlQuery) {
     // check if normalization is needed (if query contains "x.y.z" elements
     // starting with space or parenthesis)
     Matcher normalizationNeededMatcher = NORMALIZATION_NEEDED_PATTERN.matcher(jpqlQuery);
     if (!normalizationNeededMatcher.find()) {
+      return jpqlQuery;
+    }
+
+    if (containsEmbeddedAttributes(em, jpqlQuery)) {
       return jpqlQuery;
     }
 
@@ -304,6 +305,36 @@ public class JPAQueryBuilder {
     return normalizedJpqlQuery.replaceFirst(
         JPQLStatement.KEYWORD.SELECT + JPQLStatement.DELIMITER.SPACE,
         JPQLStatement.KEYWORD.SELECT_DISTINCT + JPQLStatement.DELIMITER.SPACE);
+  }
+
+  /**
+   * Verify via {@link EntityManager} if one of the attributes of the selected entity
+   * contains a embedded attribute.
+   * Return true if at least one embedded attribute is found or false if non embedded
+   * attribute is found.
+   *
+   * @param em according entity manager
+   * @param jpqlQuery query to verify
+   * @return true if at least one embedded attribute is found or false if non embedded
+   * attribute is found.
+   */
+  private static boolean containsEmbeddedAttributes(EntityManager em, String jpqlQuery) {
+    Set<EntityType<?>> types = em.getMetamodel().getEntities();
+    int pos = jpqlQuery.indexOf("FROM ") + 5;
+    int lastpos = jpqlQuery.indexOf(" ", pos);
+    final String queriedEntity = jpqlQuery.substring(pos, lastpos);
+    for (EntityType<?> type : types) {
+      if(queriedEntity.equals(type.getName())) {
+        Set<Attribute<?, ?>> attributes = (Set<Attribute<?, ?>>) type.getAttributes();
+        for (Attribute<?, ?> attribute : attributes) {
+          if(jpqlQuery.contains(attribute.getName()) &&
+            attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.EMBEDDED) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   private static int ordinalIndexOf(String str, char s, int n) {
