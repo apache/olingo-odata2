@@ -193,20 +193,26 @@ public class ODataExpressionParser {
       case SUBSTRINGOF:
         if (methodFlag.get() != null && methodFlag.get() == 1) {
           methodFlag.set(null);
-          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%'))) THEN TRUE ELSE FALSE END)",
+          updateValueIfWildcards(first);
+          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%')) ESCAPE '\\') "
+              + "THEN TRUE ELSE FALSE END)",
               second, first);
         } else {
-          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%'))) THEN TRUE ELSE FALSE END) = true",
+          first = updateValueIfWildcards(first);
+          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%')) ESCAPE '\\') "
+              + "THEN TRUE ELSE FALSE END) = true",
               second, first);
         }
       case TOLOWER:
         return String.format("LOWER(%s)", first);
       case STARTSWITH:
         // second = second.substring(1, second.length() - 1);
-        return String.format("%s LIKE CONCAT(%s,'%%')", first, second);
+        second = updateValueIfWildcards(second);
+        return String.format("%s LIKE CONCAT(%s,'%%') ESCAPE '\\'", first, second);
       case ENDSWITH:
         // second = second.substring(1, second.length() - 1);
-        return String.format("%s LIKE CONCAT('%%',%s)", first, second);
+        second = updateValueIfWildcards(second);
+        return String.format("%s LIKE CONCAT('%%',%s) ESCAPE '\\'", first, second);
       default:
         throw new ODataNotImplementedException();
       }
@@ -216,6 +222,16 @@ public class ODataExpressionParser {
     }
   }
 
+  /**
+   * This method escapes the wildcards
+   * @param first
+   */
+  private static String updateValueIfWildcards(String value) {
+    value = value.replace("\\", "\\\\");
+    value = value.replace("%", "\\%");
+    value = value.replace("_", "\\_");
+    return value;
+  }
   /**
    * This method parses the select clause
    *
