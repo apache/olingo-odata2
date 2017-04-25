@@ -58,14 +58,17 @@ public class BatchResponseWriter {
     String boundary = BatchHelper.generateBoundary("batch");
     appendResponsePart(batchResponseParts, boundary);
     final Object batchResponseBody;
+    int length = 0;
     if(writeEntityAsInputStream) {
       batchResponseBody = writer.getContentAsStream();
+      length = writer.calculateLength(batchResponseBody);
     } else {
       batchResponseBody = writer.getContentAsString(BatchHelper.DEFAULT_CHARSET);
+      length = writer.calculateLength(batchResponseBody);
     }
     return ODataResponse.entity(batchResponseBody).status(HttpStatusCodes.ACCEPTED)
         .header(HttpHeaders.CONTENT_TYPE, HttpContentType.MULTIPART_MIXED + "; boundary=" + boundary)
-        .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(writer.getLength()))
+        .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(length))
         .build();
   }
 

@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.core.batch.AcceptParser;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
+import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Decoder;
 
 public class BatchParserCommon {
@@ -97,21 +98,22 @@ public class BatchParserCommon {
    * Otherwise the whole content is written into the InputStream.
    *
    * @param contentType content type value
-   * @param body content which is written into the InputStream
+   * @param operation which is written into the InputStream
    * @param contentLength if it is a positive value the content is trimmed to according length.
    *                      Otherwise the whole content is written into the InputStream.
    * @return Content of BatchQueryOperation as InputStream in according charset and length
    * @throws BatchException if something goes wrong
    */
-  public static InputStream convertToInputStream(final String contentType, final List<Line> body,
+  public static InputStream convertToInputStream(final String contentType, final BatchQueryOperation operation,
                                                  final int contentLength)
       throws BatchException {
-    Charset charset = BatchHelper.extractCharset(contentType);
+    Charset charset = BatchHelper.extractCharset(ContentType.parse(
+        contentType));
     final String message;
     if(contentLength <= -1) {
-      message = lineListToString(body);
+      message = lineListToString(operation.getBody());
     } else {
-      message = trimLineListToLength(body, contentLength);
+      message = trimLineListToLength(operation.getBody(), contentLength);
     }
     return new ByteArrayInputStream(message.getBytes(charset));
   }

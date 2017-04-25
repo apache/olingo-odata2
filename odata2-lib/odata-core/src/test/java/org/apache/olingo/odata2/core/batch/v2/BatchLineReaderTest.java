@@ -19,10 +19,16 @@
 package org.apache.olingo.odata2.core.batch.v2;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.apache.olingo.odata2.core.batch.v2.BatchLineReader;
@@ -269,5 +275,52 @@ public class BatchLineReaderTest {
   private BatchLineReader create(final String inputString, int bufferSize)
       throws UnsupportedEncodingException {
     return new BatchLineReader(new ByteArrayInputStream(inputString.getBytes("UTF-8")), bufferSize);
+  }
+  
+  @Test
+  public void rawBytes() throws Exception {
+    byte[] content = new byte[Byte.MAX_VALUE - Byte.MIN_VALUE + 1];
+    // binary content, not a valid UTF-8 representation of a string
+    for (int i = Byte.MIN_VALUE; i <= Byte.MAX_VALUE; i++) {
+      content[i - Byte.MIN_VALUE] = (byte) i;
+    }
+    BatchLineReader reader = new BatchLineReader(new ByteArrayInputStream(content));
+    final String contentString = reader.readLine()  // initial part up to '\n'
+        + reader.readLine()  // second part from '\n' to '\r'
+        + reader.readLine();  // the rest
+    assertArrayEquals(content, contentString.getBytes(Charset.forName("ISO-8859-1")));
+    assertNull(reader.readLine());
+    reader.close();
+  }
+  
+  @Test
+  public void imageTest() throws Exception {
+    byte[] data = getImageData("/Employee_1.png");
+    BatchLineReader reader = new BatchLineReader(new ByteArrayInputStream(data));
+    final List<Line> contentString = reader.toLineList();
+    String finalContent = "";
+    for (Line content : contentString) {
+      finalContent += content.toString();
+    }
+    
+    assertArrayEquals(data, finalContent.getBytes(Charset.forName("ISO-8859-1")));
+    reader.close();
+  }
+
+  private byte[] getImageData(String imageUrl) throws IOException {
+    byte[] data = null;
+    try {
+      InputStream in = this.getClass().getResourceAsStream(imageUrl);
+      ByteArrayOutputStream stream = new ByteArrayOutputStream();
+      int b = 0;
+      while ((b = in.read()) != -1) {
+        stream.write(b);
+      }
+
+      data = stream.toByteArray();
+    } catch (IOException e) {
+      throw e;
+    }
+    return data;
   }
 }

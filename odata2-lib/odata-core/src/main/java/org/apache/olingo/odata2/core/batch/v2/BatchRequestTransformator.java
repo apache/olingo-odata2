@@ -128,7 +128,7 @@ public class BatchRequestTransformator implements BatchTransformator {
     } else {
       int contentLength = BatchTransformatorCommon.getContentLength(headers);
       String contentType = headers.getHeader(HttpHeaders.CONTENT_TYPE);
-      return BatchParserCommon.convertToInputStream(contentType, operation.getBody(), contentLength);
+      return BatchParserCommon.convertToInputStream(contentType, operation, contentLength);
     }
   }
 
