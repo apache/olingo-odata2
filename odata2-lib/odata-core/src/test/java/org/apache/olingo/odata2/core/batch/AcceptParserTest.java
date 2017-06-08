@@ -78,7 +78,52 @@ public class AcceptParserTest {
     assertEquals("application/json;" + TAB + "odata=verbose", acceptHeaders.get(0));
     assertEquals("*/*", acceptHeaders.get(1));
   }
-
+  
+  @Test
+  public void testSpecialAcceptLanguage() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("en-US-x-XXXXXX");
+    List<String> acceptLanguageHeaders = parser.parseAcceptableLanguages();
+    assertNotNull(acceptLanguageHeaders);
+    assertEquals(1, acceptLanguageHeaders.size());
+    assertEquals("en-US-x-XXXXXX", acceptLanguageHeaders.get(0)); 
+  }
+  
+  @Test(expected = BatchException.class)
+  public void testInvalidAcceptLanguage1() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptHeaderValue("en-US-x-xxxx-");
+    parser.parseAcceptHeaders();
+  }
+  
+  @Test(expected = BatchException.class)
+  public void testInvalidAcceptLanguage2() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("en-US-");
+    parser.parseAcceptableLanguages();
+  }
+  
+  @Test(expected = BatchException.class)
+  public void testInvalidAcceptLanguage3() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("en-US-x-XXX-XXXX");
+    parser.parseAcceptableLanguages();
+  }
+  
+  @Test(expected = BatchException.class)
+  public void testInvalidAcceptLanguage4() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("en-US-x-$%");
+    parser.parseAcceptableLanguages();
+  }
+  
+  @Test(expected = BatchException.class)
+  public void testInvalidAcceptLanguage5() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("en-");
+    parser.parseAcceptableLanguages();
+  }
+  
   @Test
   public void testAcceptHeaderWithTwoParameters() throws BatchException {
     AcceptParser parser = new AcceptParser();
