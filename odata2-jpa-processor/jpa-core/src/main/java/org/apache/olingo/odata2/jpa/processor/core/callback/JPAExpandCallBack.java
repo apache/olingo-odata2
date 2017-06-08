@@ -144,8 +144,23 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     ExpandSelectTreeNode currentExpandTreeNode = context.getCurrentExpandSelectTreeNode();
 
     try {
+
+      // https://issues.apache.org/jira/browse/OLINGO-714
+      // ClassCastException on expand when multiple times the same entity is
+      // referenced
+      Object collection = inlinedEntry.get(context.getNavigationProperty()
+          .getName());
+      // if the current collection is not a collection
+      if (!(collection instanceof Collection)) {
+        // make a collection out of it
+        Collection<Object> myCollection = new ArrayList<Object>();
+        if(collection != null) {
+          myCollection.add(collection);
+        }
+        collection = myCollection;
+      }
       @SuppressWarnings({ "unchecked" })
-      Collection<Object> listOfItems = (Collection<Object>) inlinedEntry.get(context.getNavigationProperty().getName());
+      Collection<Object> listOfItems = (Collection<Object>) collection;
       if (nextEntitySet == null) {
         nextEntitySet = context.getSourceEntitySet().getRelatedEntitySet(currentNavigationProperty);
       }
