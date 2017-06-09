@@ -96,27 +96,27 @@ public class JPAFunctionContext extends JPAMethodContext {
       Class<?>[] parameterTypes = getParameterTypes();
       Method method = getMethod(parameterTypes);
       Type returnType = getReturnType();
-      Object[] args = getAruguments();
+      Object[] args = getArguments();
 
       JPAFunction jpafunction = new JPAFunction(method, parameterTypes, returnType, args);
 
       return jpafunction;
     }
 
-    private Object[] getAruguments() throws EdmException {
-      Map<String, EdmLiteral> edmArguements = functiontView.getFunctionImportParameters();
+    private Object[] getArguments() throws EdmException {
+      Map<String, EdmLiteral> edmArguments = functiontView.getFunctionImportParameters();
 
-      if (edmArguements == null) {
+      if (edmArguments == null) {
         return null;
       } else {
         Collection<String> paramNames = functionImport.getParameterNames();
         Object[] args = new Object[paramNames.size()];
         int i = 0;
         for (String paramName : functionImport.getParameterNames()) {
-          EdmLiteral literal = edmArguements.get(paramName);
+          EdmLiteral literal = edmArguments.get(paramName);
           EdmParameter parameter = functionImport.getParameter(paramName);
           JPAEdmMapping mapping = (JPAEdmMapping) parameter.getMapping();
-          args[i] = convertArguement(literal, parameter.getFacets(), mapping.getJPAType());
+          args[i] = convertArgument(literal, parameter.getFacets(), mapping.getJPAType());
           i++;
         }
         return args;
@@ -124,7 +124,7 @@ public class JPAFunctionContext extends JPAMethodContext {
 
     }
 
-    private Object convertArguement(final EdmLiteral edmLiteral, final EdmFacets facets, final Class<?> targetType)
+    private Object convertArgument(final EdmLiteral edmLiteral, final EdmFacets facets, final Class<?> targetType)
         throws EdmSimpleTypeException {
       Object value = null;
       if (edmLiteral != null) {
