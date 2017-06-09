@@ -48,6 +48,7 @@ public class BatchHandlerImpl implements BatchHandler {
   private ODataServiceFactory factory;
   private ODataService service;
   private Map<String, String> contentIdMap;
+  private static final String BATCH_ODATA_REQUEST_HEADERS = "batchODataRequestHeaders";
 
   public BatchHandlerImpl(final ODataServiceFactory factory, final ODataService service) {
     this.factory = factory;
@@ -184,6 +185,11 @@ public class BatchHandlerImpl implements BatchHandler {
     ODataContext parentContext = service.getProcessor().getContext();
     context.setBatchParentContext(parentContext);
     context.setService(service);
+    if (parentContext != null && parentContext.getParameter(BATCH_ODATA_REQUEST_HEADERS) != null) {
+      context.setParameter(BATCH_ODATA_REQUEST_HEADERS, parentContext.getParameter(BATCH_ODATA_REQUEST_HEADERS));
+    } else if (parentContext != null && parentContext.getRequestHeaders() != null) {
+      context.setParameter(BATCH_ODATA_REQUEST_HEADERS, parentContext.getRequestHeaders());
+    }
     service.getProcessor().setContext(context);
     return new ODataRequestHandler(factory, service, context);
   }
