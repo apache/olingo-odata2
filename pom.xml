@@ -12,7 +12,7 @@
 
 	<groupId>org.apache.olingo</groupId>
 	<artifactId>olingo-odata2-parent</artifactId>
-	<version>2.0.9-SNAPSHOT</version>
+	<version>2.0.9-RC01</version>
 	<packaging>pom</packaging>
 
 	<name>${project.artifactId}</name>
@@ -302,6 +302,12 @@
 	</build>
 
 	<profiles>
+    <profile>
+			<id>spring</id>
+      <modules>
+        <module>odata2-spring</module>
+      </modules>
+		</profile>
 		<profile>
 			<id>build.fast</id>
 			<properties>

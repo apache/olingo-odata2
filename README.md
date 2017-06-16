@@ -1,12 +1,11 @@
-==========================
 Apache Olingo
-==========================
+=============
 
 Apache Olingo is a Java library and extensions around
 the OData specification.
 
 Apache Olingo supports the specification versions
- - OData 2.0 <http://www.odata.org/documentation/odata-v2-documentation/>
+  - OData 2.0 <http://www.odata.org/documentation/odata-v2-documentation/>
 
 Building Apache Olingo
 ======================
@@ -16,8 +15,7 @@ You can build Apache Olingo like this:
     mvn clean install
 
 You need Maven 3 with Java 6 (or higher) for the build.
-Set the environment variable MAVEN_OPTS to 
-'-Xmx1024m -XX:MaxPermSize=256m' to give Maven more memory.
+Set the environment variable MAVEN_OPTS to `-Xmx1024m -XX:MaxPermSize=256m` to give Maven more memory.
 
 Documentation
 =============
@@ -58,7 +56,5 @@ Some libraries used by Apache Olingo are dual-licensed under different open sour
 licenses. These libraries are redistributed under the license whose terms
 are compatible with the Apache License.
 
-See LICENSE file included in all Apache Olingo packages for 
+See LICENSE file included in all Apache Olingo packages for
 full licensing details.
-
-
