@@ -20,12 +20,7 @@ package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.uri.UriInfo;
-import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
-import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.api.uri.info.*;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
@@ -241,6 +236,35 @@ public class JPAQueryBuilder {
   private static final Pattern JOIN_ALIAS_PATTERN = Pattern.compile(".*\\sJOIN\\s(\\S*\\s\\S*).*");
 
   private static String normalizeMembers(EntityManager em, String jpqlQuery) {
+    StringBuilder cq = new StringBuilder();
+    Map<String, String> paraValues = new HashMap<String, String>();
+    int len = jpqlQuery.length();
+    boolean start = false;
+    int startPos = 0;
+    for (int i = 0; i < len; i++) {
+      char c = jpqlQuery.charAt(i);
+      if (c == '\'') {
+        if (start) {
+          if (!(i+1 < len && jpqlQuery.charAt(i+1) == '\'')) {
+            //
+            String paraValue = jpqlQuery.substring(startPos, i);
+            String key = String.valueOf(paraValue.hashCode());
+            paraValues.put(key, paraValue);
+            cq.append(key);
+            //
+            start = false;
+          }
+        } else {
+          startPos = i;
+          start = true;
+        }
+      } else if(!start) {
+        cq.append(c);
+      }
+    }
+
+    jpqlQuery = cq.toString();
+    
     // check if normalization is needed (if query contains "x.y.z" elements
     // starting with space or parenthesis)
     Matcher normalizationNeededMatcher = NORMALIZATION_NEEDED_PATTERN.matcher(jpqlQuery);
@@ -250,6 +274,10 @@ public class JPAQueryBuilder {
 
     if (containsEmbeddedAttributes(em, jpqlQuery)) {
       return jpqlQuery;
+    }
+
+    for (Map.Entry<String, String> entry: paraValues.entrySet()) {
+      jpqlQuery = jpqlQuery.replace(entry.getKey(), entry.getValue());
     }
 
     String normalizedJpqlQuery = jpqlQuery;
