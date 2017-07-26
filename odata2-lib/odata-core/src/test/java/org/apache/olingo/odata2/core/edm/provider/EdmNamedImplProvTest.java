@@ -26,10 +26,15 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class EdmNamedImplProvTest extends BaseTest {
 
+  @Rule
+  public ExpectedException expectedEx = ExpectedException.none();
+  
   @Test(expected = EdmException.class)
   public void testPropertySimple() throws Exception {
 
@@ -48,6 +53,8 @@ public class EdmNamedImplProvTest extends BaseTest {
 
     SimpleProperty propertySimple = new SimpleProperty().setName("1_PropertyName").setType(EdmSimpleTypeKind.String);
     new EdmSimplePropertyImplProv(edmImplProv, propertySimple);
+    expectedEx.expect(RuntimeException.class);
+    expectedEx.expectMessage("'Prop;ertyName' name pattern not valid.");
   }
 
   @Test

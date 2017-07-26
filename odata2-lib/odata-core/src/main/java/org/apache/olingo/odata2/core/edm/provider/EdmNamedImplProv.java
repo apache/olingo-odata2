@@ -70,6 +70,6 @@ public abstract class EdmNamedImplProv implements EdmNamed {
     if (matcher.matches()) {
       return name;
     }
-    throw new EdmException(EdmException.COMMON);
+    throw new EdmException(EdmException.NAMINGERROR.addContent(name));
   }
 }
