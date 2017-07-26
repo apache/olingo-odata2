@@ -18,6 +18,17 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.EntityType;
+
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
@@ -35,16 +46,6 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EntityType;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class JPAQueryBuilder {
 
@@ -238,12 +239,17 @@ public class JPAQueryBuilder {
   }
 
   private static final Pattern NORMALIZATION_NEEDED_PATTERN = Pattern.compile(".*[\\s(](\\S+\\.\\S+\\.\\S+).*");
+  private static final Pattern VALUE_NORM_PATTERN = Pattern.compile("(?:^|\\s)'([^'](\\S+\\.\\S+\\.\\S+)')");
   private static final Pattern JOIN_ALIAS_PATTERN = Pattern.compile(".*\\sJOIN\\s(\\S*\\s\\S*).*");
 
-  private static String normalizeMembers(EntityManager em, String jpqlQuery) {
+  private static String normalizeMembers(EntityManager em, String jpqlQuery) {  
+    
+    //check if clause values are string with x.y.z format
+    //starting with quotes;
+    String query = checkConditionValues(jpqlQuery);
     // check if normalization is needed (if query contains "x.y.z" elements
     // starting with space or parenthesis)
-    Matcher normalizationNeededMatcher = NORMALIZATION_NEEDED_PATTERN.matcher(jpqlQuery);
+    Matcher normalizationNeededMatcher = NORMALIZATION_NEEDED_PATTERN.matcher(query);
     if (!normalizationNeededMatcher.find()) {
       return jpqlQuery;
     }
@@ -251,7 +257,7 @@ public class JPAQueryBuilder {
     if (containsEmbeddedAttributes(em, jpqlQuery)) {
       return jpqlQuery;
     }
-
+    
     String normalizedJpqlQuery = jpqlQuery;
     Map<String, String> joinAliases = new HashMap<String, String>();
 
@@ -263,7 +269,6 @@ public class JPAQueryBuilder {
         joinAliases.put(joinAlias[0], joinAlias[1]);
       }
     }
-
     // normalize query
     boolean normalizationNeeded = true;
     while (normalizationNeeded) {
@@ -295,16 +300,37 @@ public class JPAQueryBuilder {
       // use alias
       normalizedJpqlQuery = normalizedJpqlQuery.replaceAll(memberInfo + "\\" + JPQLStatement.DELIMITER.PERIOD,
           alias + JPQLStatement.DELIMITER.PERIOD);
-
+      //check for values like "x.y.z"
+      query = checkConditionValues(normalizedJpqlQuery);
       // check if further normalization is needed
-      normalizationNeededMatcher = NORMALIZATION_NEEDED_PATTERN.matcher(normalizedJpqlQuery);
+      normalizationNeededMatcher = NORMALIZATION_NEEDED_PATTERN.matcher(query);
       normalizationNeeded = normalizationNeededMatcher.find();
     }
-
+    
     // add distinct to avoid duplicates in result set
     return normalizedJpqlQuery.replaceFirst(
         JPQLStatement.KEYWORD.SELECT + JPQLStatement.DELIMITER.SPACE,
         JPQLStatement.KEYWORD.SELECT_DISTINCT + JPQLStatement.DELIMITER.SPACE);
+  }
+
+  /**
+   * Check if the statement contains string values having x.y.z kind of format
+   * It will replace those values with parameters before checking for normalization 
+   * and later added back
+   * */
+  private static String checkConditionValues(String jpqlQuery) {
+    int i=0;
+    StringBuffer query= new StringBuffer();
+    query.append(jpqlQuery);
+    Matcher valueMatcher = VALUE_NORM_PATTERN.matcher(query);
+    while (valueMatcher.find()) {
+      String val = valueMatcher.group();
+      int index = query.indexOf(val);
+      String var = "["+ ++i +"] ";
+      query.replace(index, index + val.length(), var);
+      valueMatcher = VALUE_NORM_PATTERN.matcher(query);
+    }
+    return query.toString();
   }
 
   /**
