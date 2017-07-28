@@ -265,7 +265,7 @@ public class AnnotationEdmProviderTest {
 
   private void validateAssociation(final Association association) {
     String name = association.getName();
-    if (name.equals("r_Employees-r_Room")) {
+    if (name.equals("r_Employees_2_r_Room")) {
       validateAssociation(association,
           "r_Room", EdmMultiplicity.ONE, defaultFqn("Room"),
           "r_Employees", EdmMultiplicity.MANY, defaultFqn("Employee"));
@@ -281,7 +281,7 @@ public class AnnotationEdmProviderTest {
       validateAssociation(association,
           "r_Team", EdmMultiplicity.ONE, defaultFqn("Team"),
           "r_Employees", EdmMultiplicity.MANY, defaultFqn("Employee"));
-    } else if (name.equals("Team-r_SubTeam")) {
+    } else if (name.equals("Team_2_r_SubTeam")) {
       validateAssociation(association,
           "Team", EdmMultiplicity.ONE, defaultFqn("Team"),
           "r_SubTeam", EdmMultiplicity.ONE, defaultFqn("Team"));
@@ -341,7 +341,7 @@ public class AnnotationEdmProviderTest {
       } else if (navigationProperty.getName().equals("ne_Team")) {
         validateNavProperty(navigationProperty, "TeamEmployees", "r_Employees", "r_Team");
       } else if (navigationProperty.getName().equals("ne_Room")) {
-        validateNavProperty(navigationProperty, "r_Employees-r_Room", "r_Employees", "r_Room");
+        validateNavProperty(navigationProperty, "r_Employees_2_r_Room", "r_Employees", "r_Room");
       } else {
         fail("Got unexpected navigation property with name '" + navigationProperty.getName() + "'.");
       }
@@ -384,7 +384,7 @@ public class AnnotationEdmProviderTest {
     NavigationProperty navPropTeamEmployess = team.getNavigationProperties().get(0);
     validateNavProperty(navPropTeamEmployess, "TeamEmployees", "r_Team", "r_Employees");
     NavigationProperty navPropTeamTeam = team.getNavigationProperties().get(1);
-    validateNavProperty(navPropTeamTeam, "Team-r_SubTeam", "Team", "r_SubTeam");
+    validateNavProperty(navPropTeamTeam, "Team_2_r_SubTeam", "Team", "r_SubTeam");
   }
 
   @Test
@@ -401,6 +401,8 @@ public class AnnotationEdmProviderTest {
     assertTrue(containsProperty(properties, "Image"));
     assertFalse(photo.isAbstract());
     assertTrue(photo.isHasStream());
+    assertEquals("MimeType",photo.getMapping().getMediaResourceMimeTypeKey());
+    assertEquals("ImageUrl",photo.getMapping().getMediaResourceSourceKey());
 
     Key photoKey = photo.getKey();
     List<PropertyRef> keyReferences = photoKey.getKeys();
@@ -465,7 +467,7 @@ public class AnnotationEdmProviderTest {
 
     for (NavigationProperty navigationProperty : navigationProperties) {
       if (navigationProperty.getName().equals("nr_Employees")) {
-        validateNavProperty(navigationProperty, "r_Employees-r_Room", "r_Room", "r_Employees");
+        validateNavProperty(navigationProperty, "r_Employees_2_r_Room", "r_Room", "r_Employees");
       } else if (navigationProperty.getName().equals("nr_Building")) {
         validateNavProperty(navigationProperty, "BuildingRooms", "r_Rooms", "r_Building");
       } else {

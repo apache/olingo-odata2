@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,8 +33,11 @@ import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.batch.v2.BatchLineReader;
 import org.apache.olingo.odata2.core.batch.v2.BatchParser;
+import org.apache.olingo.odata2.core.batch.v2.Line;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
@@ -141,5 +145,78 @@ public class BatchResponseTest {
     List<BatchSingleResponse> result = parser.parseBatchResponse(content.asStream());
     assertEquals(2, result.size());
     assertEquals("Failing content:\n" + content.asString(), 19, content.linesCount());
+  }
+  
+  @Test
+  public void testBatchResponseRawBytes() throws BatchException, IOException {
+    List<BatchResponsePart> parts = new ArrayList<BatchResponsePart>();
+    byte[] data = getRawBytes();
+    ODataResponse response = ODataResponse.entity(data)
+        .status(HttpStatusCodes.OK)
+        .contentHeader("application/octect-stream;charset=iso-8859-1")
+        .build();
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(BatchResponsePart.responses(responses).changeSet(false).build());
+
+    BatchResponseWriter writer = new BatchResponseWriter();
+    ODataResponse batchResponse = writer.writeResponse(parts);
+
+    assertEquals(202, batchResponse.getStatus().getStatusCode());
+    assertNotNull(batchResponse.getEntity());
+    String body = (String) batchResponse.getEntity();
+
+    assertTrue(body.contains("--batch"));
+    assertTrue(body.contains("HTTP/1.1 200 OK"));
+    assertTrue(body.contains("Content-Type: application/http"));
+    assertTrue(body.contains("Content-Transfer-Encoding: binary"));
+
+    String contentHeader = batchResponse.getContentHeader();
+    BatchParser parser = new BatchParser(contentHeader, true);
+    List<BatchSingleResponse> result = parser.parseBatchResponse(new ByteArrayInputStream(body.getBytes("iso-8859-1")));
+    assertEquals(1, result.size());
+    assertArrayEquals(data, result.get(0).getBody().getBytes("ISO-8859-1"));
+  }
+  
+  @Test
+  public void testBatchResponseRawBytesAsStream() throws IOException, ODataException {
+    List<BatchResponsePart> parts = new ArrayList<BatchResponsePart>();
+    byte[] data = getRawBytes();
+    ODataResponse response = ODataResponse.entity(data)
+        .status(HttpStatusCodes.OK)
+        .contentHeader("application/octect-stream;charset=iso-8859-1")
+        .build();
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(BatchResponsePart.responses(responses).changeSet(false).build());
+
+    BatchResponseWriter writer = new BatchResponseWriter(true);
+    ODataResponse batchResponse = writer.writeResponse(parts);
+
+    assertEquals(202, batchResponse.getStatus().getStatusCode());
+    assertNotNull(batchResponse.getEntity());
+    BatchLineReader reader =
+        new BatchLineReader(batchResponse.getEntityAsStream());
+    List<Line> lines = reader.toLineList();
+    reader.close();
+    StringBuilder builder = new StringBuilder();
+    for (Line line : lines) {
+      builder.append(line);
+    }
+    String contentHeader = batchResponse.getContentHeader();
+    BatchParser parser = new BatchParser(contentHeader, true);
+    List<BatchSingleResponse> result = parser.parseBatchResponse(
+        new ByteArrayInputStream(builder.toString().getBytes("iso-8859-1")));
+    assertEquals(1, result.size());
+    assertArrayEquals(data, result.get(0).getBody().getBytes("ISO-8859-1"));
+  }
+
+  private byte[] getRawBytes() {
+    byte[] data = new byte[Byte.MAX_VALUE - Byte.MIN_VALUE + 1];
+    // binary content, not a valid UTF-8 representation of a string
+    for (int i = Byte.MIN_VALUE; i <= Byte.MAX_VALUE; i++) {
+      data[i - Byte.MIN_VALUE] = (byte) i;
+    }
+    return data;
   }
 }

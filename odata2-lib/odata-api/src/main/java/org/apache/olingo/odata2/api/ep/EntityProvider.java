@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.provider.DataServices;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
@@ -76,6 +77,22 @@ public final class EntityProvider {
      */
     ODataResponse writeMetadata(List<Schema> schemas, Map<String, String> predefinedNamespaces)
         throws EntityProviderException;
+
+    /**
+     * Write metadata document in XML format for the given schemas and the provided predefined
+     * namespaces at the EDMX element. PredefinedNamespaces is of type
+     * Map{@literal <}prefix,namespace{@literal >} and may be null or an empty Map.
+     * <b>Important<b>
+     * This method takes edmx references into account
+     * This method will not calculate the DataServiceVersion but will instead take the version provided via the
+     * signature if no version is set the default version 2.0 is used.
+     * @param serviceMetadata
+     * @param predefinedNamespaces type of Map{@literal <}prefix,namespace{@literal >} and may be null or an empty Map
+     * @return resulting {@link ODataResponse} with written metadata content.
+     * @throws EntityProviderException if writing of data (serialization) fails
+     */
+    ODataResponse writeMetadata(final DataServices serviceMetadata,
+        final Map<String, String> predefinedNamespaces) throws EntityProviderException;
 
     /**
      * Write service document based on given {@link Edm} and <code>service root</code> as
@@ -481,6 +498,21 @@ public final class EntityProvider {
   public static ODataResponse writeMetadata(final List<Schema> schemas, final Map<String, String> predefinedNamespaces)
       throws EntityProviderException {
     return createEntityProvider().writeMetadata(schemas, predefinedNamespaces);
+  }
+
+  /**
+   * Write metadata document in XML format for the given schemas and the provided predefined
+   * namespaces at the EDMX element. PredefinedNamespaces is of type
+   * Map{@literal <}prefix,namespace{@literal >} and may be null or an empty Map.
+   * 
+   * @param serviceMetadata
+   * @param predefinedNamespaces type of Map{@literal <}prefix,namespace{@literal >} and may be null or an empty Map
+   * @return resulting {@link ODataResponse} with written metadata content.
+   * @throws EntityProviderException if writing of data (serialization) fails
+   */
+  public static ODataResponse writeMetadata(final DataServices serviceMetadata,
+      final Map<String, String> predefinedNamespaces) throws EntityProviderException {
+    return createEntityProvider().writeMetadata(serviceMetadata, predefinedNamespaces);
   }
 
   /**

@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.jpa.processor.core.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -47,7 +48,7 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements JPAEdmSchemaView
   private JPAEdmComplexTypeView complexTypeView;
   private JPAEdmEntityContainerView entityContainerView;
   private JPAEdmAssociationView associationView = null;
-  private HashMap<Class<?>, String[]> customOperations = null;
+  private LinkedHashMap<Class<?>, String[]> customOperations = null;
 
   public JPAEdmSchema(final JPAEdmModelView modelView) {
     super(modelView);
@@ -200,7 +201,7 @@ public class JPAEdmSchema extends JPAEdmBaseViewImpl implements JPAEdmSchemaView
   @Override
   public void registerOperations(final Class<?> customClass, final String[] methodNames) {
     if (customOperations == null) {
-      customOperations = new HashMap<Class<?>, String[]>();
+      customOperations = new LinkedHashMap<Class<?>, String[]>();
     }
 
     customOperations.put(customClass, methodNames);

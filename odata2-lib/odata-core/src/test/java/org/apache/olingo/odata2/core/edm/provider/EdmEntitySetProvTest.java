@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.olingo.odata2.api.edm.EdmAnnotatable;
 import org.apache.olingo.odata2.api.edm.EdmAnnotations;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
@@ -135,26 +136,48 @@ public class EdmEntitySetProvTest extends BaseTest {
     assertEquals(edmEntitySetFoo.getEntityType().getName(), edmProvider.getEntityType(
         new FullQualifiedName("namespace", "fooEntityType")).getName());
   }
-  
-  @Test
-  public void checkValidColonName() throws Exception {
-    EntitySet provES = new EntitySet().setName("::Name");
-    EdmEntitySet entitySet = new EdmEntitySetImplProv(null, provES , null);
-    assertEquals("::Name", entitySet.getName());
-    
-    provES = new EntitySet().setName(":Name");
-    entitySet = new EdmEntitySetImplProv(null, provES , null);
-    assertEquals(":Name", entitySet.getName());
+
+  @Test(expected=EdmException.class)
+  public void checkInvalidStartColonName() throws Exception {
+    EntitySet provES = new EntitySet().setName(":Name");
+    new EdmEntitySetImplProv(null, provES, null);
   }
-  
+
+  @Test(expected=EdmException.class)
+  public void checkInvalidColonName() throws Exception {
+    EntitySet provES = new EntitySet().setName("B:Name");
+    new EdmEntitySetImplProv(null, provES , null);
+  }
+
+  @Test(expected=EdmException.class)
+  public void checkInvalidMinusName() throws Exception {
+    EntitySet provES = new EntitySet().setName("My-Name");
+    new EdmEntitySetImplProv(null, provES, null);
+  }
+
+  @Test(expected=EdmException.class)
+  public void checkInvalidStartMinusName() throws Exception {
+    EntitySet provES = new EntitySet().setName("-Name");
+    new EdmEntitySetImplProv(null, provES , null);
+  }
+
   @Test
   public void checkValidName() throws Exception {
     EntitySet provES = new EntitySet().setName("Содержание");
     EdmEntitySet entitySet = new EdmEntitySetImplProv(null, provES , null);
     assertEquals("Содержание", entitySet.getName());
   }
-  
-  
+
+  @Test
+  public void checkValidNameWithUnderscore() throws Exception {
+    EntitySet provES = new EntitySet().setName("_Name");
+    EdmEntitySet entitySet = new EdmEntitySetImplProv(null, provES , null);
+    assertEquals("_Name", entitySet.getName());
+
+    provES = new EntitySet().setName("N_ame_");
+    entitySet = new EdmEntitySetImplProv(null, provES , null);
+    assertEquals("N_ame_", entitySet.getName());
+  }
 
   @Test
   public void getAnnotations() throws Exception {

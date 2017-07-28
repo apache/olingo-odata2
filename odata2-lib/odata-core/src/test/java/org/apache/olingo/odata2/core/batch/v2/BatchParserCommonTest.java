@@ -16,18 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.batch;
+package org.apache.olingo.odata2.core.batch.v2;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
-import org.apache.olingo.odata2.core.batch.v2.BatchParserCommon;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
-import org.apache.olingo.odata2.core.batch.v2.Header;
+import org.apache.olingo.odata2.core.batch.BatchHelper;
 import org.junit.Test;
 
 public class BatchParserCommonTest {
@@ -168,7 +168,27 @@ public class BatchParserCommonTest {
     assertNotNull(acceptLanguageHeader);
     assertEquals(3, acceptLanguageHeader.size());
   }
-  
+
+  @Test
+  public void headersWithSpecialNames() throws Exception {
+    final Header header = BatchParserCommon.consumeHeaders(toLineList(new String[] {
+        "Test0123456789: 42" + CRLF,
+        "a_b: c/d" + CRLF,
+        "!#$%&'*+-.^_`|~: weird" + CRLF }));
+    assertNotNull(header);
+    assertEquals("42", header.getHeader("Test0123456789"));
+    assertEquals("c/d", header.getHeader("a_b"));
+    assertEquals("weird", header.getHeader("!#$%&'*+-.^_`|~"));
+  }
+
+  @Test
+  public void headerWithWrongName() throws Exception {
+    final Header header = BatchParserCommon.consumeHeaders(toLineList(new String[] {
+        "a,b: c/d" + CRLF }));
+    assertNotNull(header);
+    assertNull(header.getHeader("a,b"));
+  }
+
   @Test
   public void testRemoveEndingCRLF() {
     String line = "Test\r\n";

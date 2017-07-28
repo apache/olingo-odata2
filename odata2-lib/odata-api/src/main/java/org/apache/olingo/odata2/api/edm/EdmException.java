@@ -39,7 +39,9 @@ public class EdmException extends ODataMessageException {
   public static final MessageReference MUSTBENAVIGATIONPROPERTY =
       createMessageReference(EdmException.class, "MUSTBENAVIGATIONPROPERTY");
   public static final MessageReference MUSTBEPROPERTY = createMessageReference(EdmException.class, "MUSTBEPROPERTY");
-
+  public static final MessageReference NAMINGERROR =
+      createMessageReference(EdmException.class, "NAMINGERROR");
+  
   public EdmException(final MessageReference messageReference) {
     super(messageReference);
   }

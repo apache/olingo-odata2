@@ -120,6 +120,7 @@ public class JPQLStatement {
 
   public static final class KEYWORD {
     public static final String SELECT = "SELECT";
+    public static final String SELECT_DISTINCT = "SELECT DISTINCT";
     public static final String FROM = "FROM";
     public static final String WHERE = "WHERE";
     public static final String LEFT_OUTER_JOIN = "LEFT OUTER JOIN";

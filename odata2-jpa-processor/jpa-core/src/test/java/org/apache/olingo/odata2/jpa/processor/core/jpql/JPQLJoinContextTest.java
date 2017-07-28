@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -36,6 +36,7 @@ import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.NavigationSegment;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
@@ -185,11 +186,11 @@ public class JPQLJoinContextTest {
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("soid");
     EasyMock.expect(edmProperty.getMapping()).andStubReturn(edmMapping);
     EasyMock.expect(edmProperty.getName()).andStubReturn("soid");
-    EdmSimpleType edmType = EasyMock.createMock(EdmSimpleType.class);
+    EdmSimpleType edmType = EdmSimpleTypeKind.Int32.getEdmSimpleTypeInstance();
     EasyMock.expect(edmProperty.getType()).andStubReturn(edmType);
     EasyMock.expect(keyPredicate.getProperty()).andStubReturn(edmProperty);
 
-    EasyMock.replay(edmType, edmMapping, edmProperty, keyPredicate);
+    EasyMock.replay(edmMapping, edmProperty, keyPredicate);
     List<KeyPredicate> keyPredicates = new ArrayList<KeyPredicate>();
     keyPredicates.add(keyPredicate);
     return keyPredicates;

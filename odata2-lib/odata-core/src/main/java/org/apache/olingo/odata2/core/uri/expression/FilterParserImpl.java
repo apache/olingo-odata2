@@ -27,10 +27,12 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.edm.EdmComplexType;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmStructuralType;
 import org.apache.olingo.odata2.api.edm.EdmType;
+import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.uri.expression.BinaryExpression;
 import org.apache.olingo.odata2.api.uri.expression.BinaryOperator;
@@ -209,7 +211,7 @@ public class FilterParserImpl implements FilterParser {
     } catch (TokenizerExpectError e) {
       // Internal parsing error, even if there are no more token (then there should be a different exception).
       // Tested with TestParserExceptions.TestPMreadParenthesis
-      throw FilterParserExceptionImpl.createMISSING_CLOSING_PHARENTHESIS(openParenthesis.getPosition(), curExpression,
+      throw FilterParserExceptionImpl.createMISSING_CLOSING_PARENTHESIS(openParenthesis.getPosition(), curExpression,
           e);
     }
     return parenthesisExpression;
@@ -246,7 +248,7 @@ public class FilterParserImpl implements FilterParser {
     while (token.getKind() != TokenKind.CLOSEPAREN) {
       if (readComma == false) {
         // Tested with TestParserExceptions.TestPMreadParameters CASE 12 e.g. "$filter=concat('a' 'b')"
-        throw FilterParserExceptionImpl.createCOMMA_OR_CLOSING_PHARENTHESIS_EXPECTED_AFTER_POS(tokenList
+        throw FilterParserExceptionImpl.createCOMMA_OR_CLOSING_PARENTHESIS_EXPECTED_AFTER_POS(tokenList
             .lookPrevToken(), curExpression);
       }
       expression = readElement(null);
@@ -264,7 +266,7 @@ public class FilterParserImpl implements FilterParser {
       token = tokenList.lookToken();
       if (token == null) {
         // Tested with TestParserExceptions.TestPMreadParameters CASE 2 e.g. "$filter=concat(123"
-        throw FilterParserExceptionImpl.createCOMMA_OR_CLOSING_PHARENTHESIS_EXPECTED_AFTER_POS(tokenList
+        throw FilterParserExceptionImpl.createCOMMA_OR_CLOSING_PARENTHESIS_EXPECTED_AFTER_POS(tokenList
             .lookPrevToken(), curExpression);
       }
 
@@ -444,7 +446,7 @@ public class FilterParserImpl implements FilterParser {
       final Token propertyToken, final ActualBinaryOperator actBinOp) throws ExpressionParserException,
       ExpressionParserInternalError {
 
-    // Exist if no edm provided
+    // Exit if no edm provided
     if (resourceEntityType == null) {
       return;
     }
@@ -504,6 +506,12 @@ public class FilterParserImpl implements FilterParser {
       if (edmProperty != null) {
         property.setEdmProperty(edmProperty);
         property.setEdmType(edmProperty.getType());
+        if (edmProperty.getMultiplicity() == EdmMultiplicity.MANY) {
+          throw new ExpressionParserException(
+              ExpressionParserException.INVALID_MULTIPLICITY.create()
+                  .addContent(propertyName)
+                  .addContent(propertyToken.getPosition() + 1));
+        }
       } else {
         // Tested with TestParserExceptions.TestPMvalidateEdmProperty CASE 3
         throw FilterParserExceptionImpl.createPROPERTY_NAME_NOT_FOUND_IN_TYPE(parentType, property, propertyToken,
@@ -515,58 +523,6 @@ public class FilterParserImpl implements FilterParser {
       throw ExpressionParserInternalError.createERROR_ACCESSING_EDM(e);
     }
   }
-
-  /*
-   * protected void validateEdmPropertyOfComplexType1(EdmComplexType parentType, PropertyExpressionImpl property, Token
-   * propertyToken) throws FilterParserException, FilterParserInternalError
-   * {
-   * try {
-   * String propertyName = property.getUriLiteral();
-   * EdmTyped edmProperty = parentType.getProperty(propertyName);
-   * 
-   * if (edmProperty != null)
-   * {
-   * property.setEdmProperty(edmProperty);
-   * property.setEdmType(edmProperty.getType());
-   * }
-   * else
-   * {
-   * //Tested with TestParserExceptions.TestPMvalidateEdmProperty CASE 3
-   * throw FilterParserExceptionImpl.createPROPERTY_NAME_NOT_FOUND_IN_TYPE(parentType, property, propertyToken,
-   * curExpression);
-   * }
-   * 
-   * } catch (EdmException e) {
-   * // not Tested, should not occur
-   * throw FilterParserInternalError.createERROR_ACCESSING_EDM(e);
-   * }
-   * }
-   * 
-   * protected void validateEdmPropertyOfEntityType1(EdmEntityType parentType, PropertyExpressionImpl property, Token
-   * propertyToken) throws FilterParserException, FilterParserInternalError
-   * {
-   * try {
-   * String propertyName = property.getUriLiteral();
-   * EdmTyped edmProperty = parentType.getProperty(propertyName);
-   * 
-   * if (edmProperty != null)
-   * {
-   * property.setEdmProperty(edmProperty);
-   * property.setEdmType(edmProperty.getType());
-   * }
-   * else
-   * {
-   * //Tested with TestParserExceptions.TestPMvalidateEdmProperty CASE 1
-   * throw FilterParserExceptionImpl.createPROPERTY_NAME_NOT_FOUND_IN_TYPE(parentType, property, propertyToken,
-   * curExpression);
-   * }
-   * 
-   * } catch (EdmException e) {
-   * // not Tested, should not occur
-   * throw FilterParserInternalError.createERROR_ACCESSING_EDM(e);
-   * }
-   * }
-   */
 
   protected void validateUnaryOperatorTypes(final UnaryExpression unaryExpression)
       throws ExpressionParserInternalError {
@@ -591,21 +547,29 @@ public class FilterParserImpl implements FilterParser {
     InfoBinaryOperator binOpt = availableBinaryOperators.get(binaryExpression.getOperator().toUriLiteral());
 
     List<EdmType> actualParameterTypes = new ArrayList<EdmType>();
-    EdmType operand = binaryExpression.getLeftOperand().getEdmType();
-
-    if ((operand == null) && (resourceEntityType == null)) {
+    final EdmType leftType = binaryExpression.getLeftOperand().getEdmType();
+    if (leftType == null && resourceEntityType == null) {
       return;
     }
-    actualParameterTypes.add(operand);
+    actualParameterTypes.add(leftType);
 
-    operand = binaryExpression.getRightOperand().getEdmType();
-
-    if ((operand == null) && (resourceEntityType == null)) {
+    final EdmType rightType = binaryExpression.getRightOperand().getEdmType();
+    if (rightType == null && resourceEntityType == null) {
       return;
     }
-    actualParameterTypes.add(operand);
+    actualParameterTypes.add(rightType);
 
-    ParameterSet parameterSet = binOpt.validateParameterSet(actualParameterTypes);
+    // special case for navigation property (non-)equality comparison with null
+    if (binOpt.getCategory().equals("Equality")
+        && (leftType.getKind() == EdmTypeKind.ENTITY
+            && rightType == EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Null)
+            || leftType == EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Null)
+            && rightType.getKind() == EdmTypeKind.ENTITY)) {
+      binaryExpression.setEdmType(EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Boolean));
+      return;
+    }
+
+    final ParameterSet parameterSet = binOpt.validateParameterSet(actualParameterTypes);
     if (parameterSet == null) {
       BinaryExpressionImpl binaryExpressionImpl = (BinaryExpressionImpl) binaryExpression;
 
@@ -624,7 +588,7 @@ public class FilterParserImpl implements FilterParser {
     List<EdmType> actualParameterTypes = new ArrayList<EdmType>();
 
     // If there are no parameter then don't perform a type check
-    if (methodExpression.getParameters().size() == 0) {
+    if (methodExpression.getParameters().isEmpty()) {
       return;
     }
 
@@ -632,7 +596,7 @@ public class FilterParserImpl implements FilterParser {
       // If there is not at parsing time its not possible to determine the type of eg myPropertyName.
       // Since this should not cause validation errors null type node arguments are leading to bypass
       // the validation
-      if ((parameter.getEdmType() == null) && (resourceEntityType == null)) {
+      if (parameter.getEdmType() == null && resourceEntityType == null) {
         return;
       }
       actualParameterTypes.add(parameter.getEdmType());
@@ -674,7 +638,7 @@ public class FilterParserImpl implements FilterParser {
     EdmSimpleType binary = EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Binary);
     EdmSimpleType null_ = EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Null);
 
-    // ---Memeber member access---
+    // ---Member member access---
     lAvailableBinaryOperators.put("/", new InfoBinaryOperator(BinaryOperator.PROPERTY_ACCESS, "Primary", 100,
         new ParameterSetCombination.PSCReturnTypeEqLastParameter()));// todo fix this
 
@@ -766,7 +730,7 @@ public class FilterParserImpl implements FilterParser {
     combination.add(new ParameterSet(boolean_, double_, double_));
     combination.add(new ParameterSet(boolean_, decimal, decimal));
     combination.add(new ParameterSet(boolean_, binary, binary));
-    
+
     combination.add(new ParameterSet(boolean_, string, null_));
     combination.add(new ParameterSet(boolean_, null_, string));
     
@@ -842,23 +806,23 @@ public class FilterParserImpl implements FilterParser {
     lAvailableBinaryOperators.put(BinaryOperator.NE.toUriLiteral(), new InfoBinaryOperator(BinaryOperator.NE,
         "Equality", 30, combination));
 
-    // "---Conditinal AND---
+    // "---Conditional AND---
     combination = new ParameterSetCombination.PSCflex();
     combination.add(new ParameterSet(boolean_, boolean_, boolean_));
     combination.add(new ParameterSet(boolean_, boolean_, null_));
     combination.add(new ParameterSet(boolean_, null_, boolean_));
 
     lAvailableBinaryOperators.put(BinaryOperator.AND.toUriLiteral(), new InfoBinaryOperator(BinaryOperator.AND,
-        "Conditinal", 20, combination));
+        "Conditional", 20, combination));
 
-    // ---Conditinal OR---
+    // ---Conditional OR---
     combination = new ParameterSetCombination.PSCflex();
     combination.add(new ParameterSet(boolean_, boolean_, boolean_));
     combination.add(new ParameterSet(boolean_, boolean_, null_));
     combination.add(new ParameterSet(boolean_, null_, boolean_));
 
     lAvailableBinaryOperators.put(BinaryOperator.OR.toUriLiteral(), new InfoBinaryOperator(BinaryOperator.OR,
-        "Conditinal", 10, combination));
+        "Conditional", 10, combination));
 
     // endswith
     combination = new ParameterSetCombination.PSCflex();

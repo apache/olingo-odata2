@@ -33,7 +33,6 @@ import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.uri.PathInfo;
-import org.apache.olingo.odata2.core.debug.ODataDebugResponseWrapper;
 
 /**
  * Context.
@@ -57,9 +56,7 @@ public class ODataContextImpl implements ODataContext {
     setServiceFactory(factory);
     setRequest(request);
     setPathInfo(request.getPathInfo());
-    if (request.getMethod() != null) {
-      setHttpMethod(request.getMethod().name());
-    }
+    setHttpMethod(request.getHttpMethod());
     setAcceptableLanguages(request.getAcceptableLanguages());
     setDebugMode(checkDebugMode(request.getQueryParameters()));
   }
@@ -285,14 +282,10 @@ public class ODataContextImpl implements ODataContext {
 
   private boolean checkDebugMode(final Map<String, String> queryParameters) {
     final ODataDebugCallback callback = getServiceFactory().getCallback(ODataDebugCallback.class);
-    return callback == null ? getQueryDebugValue(queryParameters) != null : callback.isDebugEnabled();
-  }
-
-  private static String getQueryDebugValue(final Map<String, String> queryParameters) {
-    final String debugValue = queryParameters.get(ODataDebugResponseWrapper.ODATA_DEBUG_QUERY_PARAMETER);
-    return ODataDebugResponseWrapper.ODATA_DEBUG_JSON.equals(debugValue)
-        || ODataDebugResponseWrapper.ODATA_DEBUG_HTML.equals(debugValue)
-        || ODataDebugResponseWrapper.ODATA_DEBUG_DOWNLOAD.equals(debugValue) ? debugValue : null;
+    if(callback != null){
+      return callback.isDebugEnabled();
+    }
+    return false;
   }
 
   public void setBatchParentContext(final ODataContext ctx) {

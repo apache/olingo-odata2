@@ -24,6 +24,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -109,12 +110,14 @@ public class ClassHelper {
       throw new IllegalArgumentException("No folder to scan found for package '" + packageToScan + "'.");
     }
     try {
-      URI uri = url.toURI();
-      if (uri == null) {
-        throw new IllegalArgumentException("No folder to scan found for package '" + packageToScan + "'.");
+      if(url.getPath().contains(" ")) {
+        url = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getPath().replace(" ", "%20"));
       }
-      return uri;
+      return url.toURI();
     } catch (URISyntaxException e) {
+      throw new IllegalArgumentException("Invalid folder path for path URL '" + url +
+          "' from thread context class loader.");
+    } catch (MalformedURLException e) {
       throw new IllegalArgumentException("Invalid folder path for path URL '" + url +
           "' from thread context class loader.");
     }

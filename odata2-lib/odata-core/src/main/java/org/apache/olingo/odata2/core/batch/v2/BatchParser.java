@@ -20,7 +20,6 @@ package org.apache.olingo.odata2.core.batch.v2;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,8 +29,6 @@ import org.apache.olingo.odata2.api.batch.BatchRequestPart;
 import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
 import org.apache.olingo.odata2.api.ep.EntityProviderBatchProperties;
 import org.apache.olingo.odata2.api.uri.PathInfo;
-import org.apache.olingo.odata2.api.uri.PathSegment;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 public class BatchParser {
@@ -94,8 +91,8 @@ public class BatchParser {
   private List<List<Line>> splitBodyParts(final InputStream in, final String boundary)
       throws IOException, BatchException {
 
-    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
-    final List<Line> message = reader.toList();
+    final BatchLineReader reader = new BatchLineReader(in);
+    final List<Line> message = reader.toLineList();
     reader.close();
 
     return BatchParserCommon.splitMessageByBoundary(message, boundary);
@@ -105,18 +102,10 @@ public class BatchParser {
   private String getBaseUri() throws BatchException {
     String baseUri = "";
 
+    //The service root already contains any additional path parameters
     if (batchRequestPathInfo != null && batchRequestPathInfo.getServiceRoot() != null) {
       final String uri = batchRequestPathInfo.getServiceRoot().toASCIIString();
-
-      baseUri = addPathSegements(removeLastSlash(uri));
-    }
-
-    return baseUri;
-  }
-
-  private String addPathSegements(String baseUri) {
-    for (PathSegment precedingPS : batchRequestPathInfo.getPrecedingSegments()) {
-      baseUri = baseUri + "/" + precedingPS.getPath();
+      baseUri = removeLastSlash(uri);
     }
 
     return baseUri;

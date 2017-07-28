@@ -34,11 +34,12 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
  */
 public class EdmDecimal extends AbstractSimpleType {
 
-  // value-range limitation according to the CSDL document
-  private static final int MAX_DIGITS = 29;
-
-  private static final Pattern PATTERN = Pattern
-      .compile("(?:\\+|-)?(?:0*(\\p{Digit}{1,29}?))(?:\\.(\\p{Digit}{1,29}?)0*)?(M|m)?");
+  // value-range limitation which is increased compared to general OData V2 specification
+  // (according to the CSDL document the limit is 29 digits)
+  // This is to support services which allows a higher precision for EdmDecimal without
+  // breaking the backward capability of Olingo V2
+  private static final Pattern PATTERN =
+      Pattern.compile("(?:\\+|-)?(?:0*(\\p{Digit}+?))(?:\\.(\\p{Digit}+?)0*)?(M|m)?");
   private static final EdmDecimal instance = new EdmDecimal();
 
   public static EdmDecimal getInstance() {
@@ -83,7 +84,7 @@ public class EdmDecimal extends AbstractSimpleType {
         && (literalKind == EdmLiteralKind.URI) != (matcher.group(3) == null);
   }
 
-  private static final boolean validatePrecisionAndScale(final String value, final EdmFacets facets) {
+  private static boolean validatePrecisionAndScale(final String value, final EdmFacets facets) {
     if (facets == null || facets.getPrecision() == null && facets.getScale() == null) {
       return true;
     }
@@ -155,9 +156,6 @@ public class EdmDecimal extends AbstractSimpleType {
         || value instanceof BigInteger) {
       result = value.toString();
       final int digits = result.startsWith("-") ? result.length() - 1 : result.length();
-      if (digits > MAX_DIGITS) {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT.addContent(value));
-      }
       if (facets != null && facets.getPrecision() != null && facets.getPrecision() < digits) {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets));
       }
@@ -174,11 +172,6 @@ public class EdmDecimal extends AbstractSimpleType {
         }
       } catch (final NumberFormatException e) {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT.addContent(value), e);
-      }
-
-      if (bigDecimalValue.precision() - bigDecimalValue.scale() > MAX_DIGITS
-          || bigDecimalValue.scale() > MAX_DIGITS) {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT.addContent(value));
       }
 
       final int digits = bigDecimalValue.scale() >= 0 ?

@@ -109,15 +109,16 @@ public abstract class EdmStructuralTypeImplProv extends EdmNamedImplProv impleme
   @Override
   public List<String> getPropertyNames() throws EdmException {
     if (edmPropertyNames == null) {
-      edmPropertyNames = new ArrayList<String>();
+      final List<String> temp = new ArrayList<String>();
       if (edmBaseType != null) {
-        edmPropertyNames.addAll(edmBaseType.getPropertyNames());
+        temp.addAll(edmBaseType.getPropertyNames());
       }
       if (structuralType.getProperties() != null) {
         for (final Property property : structuralType.getProperties()) {
-          edmPropertyNames.add(property.getName());
+          temp.add(property.getName());
         }
       }
+      edmPropertyNames = temp;
     }
 
     return edmPropertyNames;

@@ -41,6 +41,8 @@ import org.apache.olingo.odata2.api.annotation.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.annotation.edm.EdmFacets;
 import org.apache.olingo.odata2.api.annotation.edm.EdmKey;
 import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceContent;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceMimeType;
+import org.apache.olingo.odata2.api.annotation.edm.EdmMediaResourceSource;
 import org.apache.olingo.odata2.api.annotation.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmProperty;
 import org.apache.olingo.odata2.api.annotation.edm.EdmType;
@@ -63,6 +65,7 @@ import org.apache.olingo.odata2.api.edm.provider.EntityType;
 import org.apache.olingo.odata2.api.edm.provider.Facets;
 import org.apache.olingo.odata2.api.edm.provider.FunctionImport;
 import org.apache.olingo.odata2.api.edm.provider.Key;
+import org.apache.olingo.odata2.api.edm.provider.Mapping;
 import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
@@ -336,6 +339,8 @@ public class AnnotationEdmProvider extends EdmProvider {
     final private String name;
     private boolean isAbstract = false;
     private boolean isMediaResource = false;
+    private String mediaResourceMimeTypeKey;
+    private String mediaResourceSourceKey;
     private FullQualifiedName baseEntityType = null;
     private final List<PropertyRef> keyProperties = new ArrayList<PropertyRef>();
     private final List<Property> properties = new ArrayList<Property>();
@@ -366,10 +371,19 @@ public class AnnotationEdmProvider extends EdmProvider {
       for (Field field : fields) {
         EdmProperty ep = field.getAnnotation(EdmProperty.class);
         if (ep != null) {
-          properties.add(createProperty(ep, field));
+          Property property = createProperty(ep, field);
+          properties.add(property);
           EdmKey eti = field.getAnnotation(EdmKey.class);
           if (eti != null) {
             keyProperties.add(createKeyProperty(ep, field));
+          }
+          EdmMediaResourceMimeType emrmt = field.getAnnotation(EdmMediaResourceMimeType.class);
+          if (emrmt !=null) {
+            mediaResourceMimeTypeKey = property.getName();
+          }
+          EdmMediaResourceSource emrs = field.getAnnotation(EdmMediaResourceSource.class);
+          if (emrs !=null) {
+            mediaResourceSourceKey =  property.getName();
           }
         }
         EdmNavigationProperty enp = field.getAnnotation(EdmNavigationProperty.class);
@@ -434,7 +448,9 @@ public class AnnotationEdmProvider extends EdmProvider {
       return entityType.setName(name)
           .setAbstract(isAbstract)
           .setHasStream(isMediaResource)
-          .setProperties(properties);
+          .setProperties(properties)
+          .setMapping(new Mapping().setMediaResourceMimeTypeKey(mediaResourceMimeTypeKey)
+                                    .setMediaResourceSourceKey(mediaResourceSourceKey));
     }
 
     public Collection<Association> buildAssociations() {

@@ -152,8 +152,11 @@ public class JPAEdmNameBuilder {
     } else if (propertyName == null) {
       propertyName = jpaAttributeName;
       if (isForeignKey) {
-        propertyName = mappingModelAccess.mapJPAAttribute(view.getJPAEdmEntityTypeView().getJPAEntityType().getName(),
-            joinColumnNames[0]);
+        if (mappingModelAccess != null) {
+          propertyName =
+              mappingModelAccess.mapJPAAttribute(view.getJPAEdmEntityTypeView().getJPAEntityType().getName(),
+                  joinColumnNames[0]);
+        }
         if (propertyName == null) {
           propertyName = FK_PREFIX + UNDERSCORE + joinColumnNames[0];
         }
@@ -399,22 +402,10 @@ public class JPAEdmNameBuilder {
     String end1Name = association.getEnd1().getType().getName();
     String end2Name = association.getEnd2().getType().getName();
 
-    if (end1Name.equals(end2Name)) {
-      associationName = end1Name + UNDERSCORE + end2Name;
-      associationName =
-          associationName + UNDERSCORE + multiplicityToString(association.getEnd1().getMultiplicity()) + UNDERSCORE
-              + multiplicityToString(association.getEnd2().getMultiplicity()) + Integer.toString(count);
-    } else {
-      if (end1Name.compareToIgnoreCase(end2Name) > 0) {
-        associationName = end2Name + UNDERSCORE + end1Name;
-      } else {
-        associationName = end1Name + UNDERSCORE + end2Name;
-      }
-      if (count >= 1) {
-        associationName = associationName + Integer.toString(count - 1);
-      }
-    }
-
+    associationName = end1Name + UNDERSCORE + end2Name;
+    associationName =
+        associationName + UNDERSCORE + multiplicityToString(association.getEnd1().getMultiplicity()) + UNDERSCORE
+            + multiplicityToString(association.getEnd2().getMultiplicity()) + Integer.toString(count);
     association.setName(associationName);
   }
 
@@ -438,6 +429,8 @@ public class JPAEdmNameBuilder {
   public static void build(final JPAEdmAssociationView associationView,
       final JPAEdmPropertyView propertyView,
       final JPAEdmNavigationPropertyView navPropertyView, final boolean skipDefaultNaming, final int count) {
+
+    boolean overrideSkipDefaultNaming = false;
 
     String toName = null;
     String fromName = null;
@@ -479,6 +472,9 @@ public class JPAEdmNameBuilder {
       toName = mappingModelAccess.mapJPAEntityType(targetEntityTypeName);
       fromName = mappingModelAccess
           .mapJPAEntityType(jpaEntityTypeName);
+      if (navPropName != null) {
+        overrideSkipDefaultNaming = true;
+      }
     }
     if (toName == null) {
       toName = targetEntityTypeName;
@@ -487,8 +483,10 @@ public class JPAEdmNameBuilder {
     if (fromName == null) {
       fromName = jpaEntityTypeName;
     }
-
-    if (skipDefaultNaming == false) {
+    /*
+     * Navigation Property name was provided in mapping then don't try to default the name
+     */
+    if (overrideSkipDefaultNaming == false && skipDefaultNaming == false) {
       if (navPropName == null) {
         navPropName = toName.concat(NAVIGATION_NAME);
       }
@@ -512,7 +510,8 @@ public class JPAEdmNameBuilder {
           navProp.setFromRole(association.getEnd2().getRole());
         }
       } else {
-        if (association.getEnd2().getMultiplicity().equals(EdmMultiplicity.ONE)) {
+        if (association.getEnd2().getMultiplicity().equals(EdmMultiplicity.ONE)
+            || association.getEnd2().getMultiplicity().equals(EdmMultiplicity.ZERO_TO_ONE)) {
           navProp.setToRole(association.getEnd2().getRole());
           navProp.setFromRole(association.getEnd1().getRole());
         } else {
@@ -531,6 +530,10 @@ public class JPAEdmNameBuilder {
   }
 
   private static String multiplicityToString(EdmMultiplicity multiplicity) {
+    if(multiplicity == null) {
+      return "";
+    }
+
     switch (multiplicity) {
     case MANY:
       return "Many";
@@ -539,9 +542,8 @@ public class JPAEdmNameBuilder {
     case ZERO_TO_ONE:
       return "ZeroToOne";
     default:
-      break;
+      return "";
     }
-    return "";
   }
 
   private static String buildNamespace(final JPAEdmBaseView view) {

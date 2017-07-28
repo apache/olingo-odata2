@@ -91,6 +91,18 @@ public class ContentNegotiationDollarFormatTest extends AbstractBasicTest {
   }
 
   @Test
+  public void atomFormatForServiceDocumentEncoded() throws Exception {
+    final HttpResponse response = executeGetRequest("?%24format=atom");
+
+    final String responseEntity = StringHelper.httpEntityToString(response.getEntity());
+    assertEquals("Test passed.", responseEntity);
+    assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
+
+    final Header header = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
+    assertEquals(HttpContentType.APPLICATION_ATOM_SVC_UTF8, header.getValue());
+  }
+  
+  @Test
   public void formatCustom() throws Exception {
     final HttpResponse response = executeGetRequest("?$format=csv");
 
@@ -101,6 +113,17 @@ public class ContentNegotiationDollarFormatTest extends AbstractBasicTest {
     assertEquals(CUSTOM_CONTENT_TYPE, header.getValue());
   }
 
+  @Test
+  public void formatCustomEncoded() throws Exception {
+    final HttpResponse response = executeGetRequest("?%24format=csv");
+
+    assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
+
+    final Header header = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
+    assertNotNull(header);
+    assertEquals(CUSTOM_CONTENT_TYPE, header.getValue());
+  }
+  
   @Test
   public void formatNotAccepted() throws Exception {
     final HttpResponse response = executeGetRequest("?$format=csvOrSomethingElse");

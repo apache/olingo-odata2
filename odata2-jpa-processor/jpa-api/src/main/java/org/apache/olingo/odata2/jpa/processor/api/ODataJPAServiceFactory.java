@@ -134,12 +134,18 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
       oDataJPAContext.setODataContext(ctx);
     }
 
-    ODataSingleProcessor odataJPAProcessor = accessFactory.createODataProcessor(oDataJPAContext);
-
+    ODataSingleProcessor odataJPAProcessor = createCustomODataProcessor(oDataJPAContext);
+    if(odataJPAProcessor == null) {
+      odataJPAProcessor = accessFactory.createODataProcessor(oDataJPAContext);
+    }
     // OData Entity Data Model Provider based on JPA
     EdmProvider edmProvider = accessFactory.createJPAEdmProvider(oDataJPAContext);
 
     return createODataSingleProcessorService(edmProvider, odataJPAProcessor);
+  }
+
+  public ODataSingleProcessor createCustomODataProcessor(ODataJPAContext oDataJPAContext) {
+    return null;
   }
 
   /**
@@ -159,7 +165,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
 
   @SuppressWarnings("unchecked")
   @Override
-  public <T extends ODataCallback> T getCallback(final Class<? extends ODataCallback> callbackInterface) {
+  public <T extends ODataCallback> T getCallback(final Class<T> callbackInterface) {
     if (setDetailErrors == true) {
       if (callbackInterface.isAssignableFrom(ODataErrorCallback.class)) {
         return (T) new ODataJPAErrorCallback();
@@ -213,7 +219,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
 
   private void validatePreConditions() throws ODataJPARuntimeException {
 
-    if (oDataJPAContext.getEntityManagerFactory() == null) {
+    if (oDataJPAContext.getEntityManager() == null) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ENTITY_MANAGER_NOT_INITIALIZED, null);
     }
 

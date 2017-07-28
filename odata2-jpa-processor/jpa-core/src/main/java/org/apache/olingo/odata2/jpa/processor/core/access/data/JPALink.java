@@ -49,6 +49,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelExcepti
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.factory.ODataJPAFactory;
 import org.apache.olingo.odata2.jpa.processor.core.ODataEntityParser;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 
 public class JPALink {
 
@@ -123,7 +124,9 @@ public class JPALink {
           condition.append(ODATA_OPERATOR_OR).append(SPACE);
         }
       }
-      options.put(ODATA_COMMAND_FILTER, condition.toString());
+      if (condition.length() > 0) {
+        options.put(ODATA_COMMAND_FILTER, condition.toString());
+      }
 
       UriInfo parsedUriInfo = parser.parseLinkSegments(linkSegments, options);
       List<Object> relatedEntities = jpaProcessor.process((GetEntitySetUriInfo) parsedUriInfo);
@@ -161,7 +164,9 @@ public class JPALink {
     if (targetJPAEntity != null) {
       em.persist(targetJPAEntity);
     }
-    if (isLocalTransaction && (em.contains(sourceJPAEntity) || em.contains(targetJPAEntity))) {
+    if (isLocalTransaction
+        && ((sourceJPAEntity != null && em.contains(sourceJPAEntity)) || (targetJPAEntity != null && em
+            .contains(targetJPAEntity)))) {
       tx.commit();
     }
   }
@@ -209,26 +214,39 @@ public class JPALink {
     if (targetJPAEntities == null || sourceJPAEntity == null || navigationProperty == null) {
       return;
     }
+
     try {
+
       JPAEntityParser entityParser = new JPAEntityParser();
-      Method setMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
-          navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
-      switch (navigationProperty.getMultiplicity()) {
-      case MANY:
-        Method getMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
-            navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
-        Collection<Object> relatedEntities = (Collection<Object>) getMethod.invoke(sourceJPAEntity);
-        if (relatedEntities == null) {
-          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.ERROR_JPQL_CREATE_REQUEST, null);
-        }
-        relatedEntities.addAll(targetJPAEntities);
-        setMethod.invoke(sourceJPAEntity, relatedEntities);
-        break;
-      case ONE:
-      case ZERO_TO_ONE:
-        setMethod.invoke(sourceJPAEntity, targetJPAEntities.iterator().next());
-        break;
-      }
+	  Method setMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
+			navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
+
+	  JPAEdmMappingImpl jpaEdmMappingImpl = null;
+	  if (navigationProperty.getMapping() instanceof JPAEdmMappingImpl) {
+	      jpaEdmMappingImpl = (JPAEdmMappingImpl) navigationProperty.getMapping();	
+	  }
+	  if (jpaEdmMappingImpl != null && jpaEdmMappingImpl.isVirtualAccess()) {
+		  setMethod.invoke(sourceJPAEntity, jpaEdmMappingImpl.getInternalName(), 
+				targetJPAEntities.iterator().next());
+	  } else {
+	      switch (navigationProperty.getMultiplicity()) {
+	      case MANY:
+	        Method getMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
+	            navigationProperty, JPAEntityParser.ACCESS_MODIFIER_GET);
+	        Collection<Object> relatedEntities = (Collection<Object>) getMethod.invoke(sourceJPAEntity);
+	        if (relatedEntities == null) {
+	          throw ODataJPARuntimeException.throwException(
+	              ODataJPARuntimeException.ERROR_JPQL_CREATE_REQUEST, null);
+	        }
+	        relatedEntities.addAll(targetJPAEntities);
+	        setMethod.invoke(sourceJPAEntity, relatedEntities);
+	        break;
+	      case ONE:
+	      case ZERO_TO_ONE:
+	        setMethod.invoke(sourceJPAEntity, targetJPAEntities.iterator().next());
+	        break;
+	      }
+	  }
     } catch (EdmException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     } catch (IllegalArgumentException e) {

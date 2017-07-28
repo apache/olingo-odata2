@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -43,6 +42,7 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.DataServices;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
@@ -51,6 +51,7 @@ import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.producer.XmlMetadataProducer;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 
@@ -122,8 +123,7 @@ public class BasicEntityProvider {
     try {
       type = (EdmSimpleType) edmProperty.getType();
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderException(e.getMessageReference(), e);
     }
 
     if (type == EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance()) {
@@ -137,8 +137,7 @@ public class BasicEntityProvider {
           return type.valueOfString(readText(content), EdmLiteralKind.DEFAULT, edmProperty.getFacets(), typeMapping);
         }
       } catch (EdmException e) {
-        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-            .getSimpleName()), e);
+        throw new EntityProviderException(e.getMessageReference(), e);
       }
     }
   }
@@ -175,12 +174,17 @@ public class BasicEntityProvider {
         return writeBinary(contentType, (byte[]) binary);
 
       } else {
-        return writeText(type.valueToString(value, EdmLiteralKind.DEFAULT, edmProperty.getFacets()));
+        try {
+          return writeText(type.valueToString(value, EdmLiteralKind.DEFAULT, edmProperty.getFacets()));
+        } catch (EdmSimpleTypeException e) {
+          throw new EntityProviderProducerException(EdmSimpleTypeException.getMessageReference(
+              e.getMessageReference()).updateContent(e.getMessageReference().getContent(), 
+                  edmProperty.getName()), e);
+        }
       }
 
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -197,7 +201,7 @@ public class BasicEntityProvider {
       try {
         stream = new ByteArrayInputStream(value.getBytes(DEFAULT_CHARSET));
       } catch (UnsupportedEncodingException e) {
-        throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+        throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
             .getSimpleName()), e);
       }
       builder.entity(stream);
@@ -235,31 +239,52 @@ public class BasicEntityProvider {
    */
   public ODataResponse writeMetadata(final List<Schema> schemas, final Map<String, String> predefinedNamespaces)
       throws EntityProviderException {
-    ODataResponseBuilder builder = ODataResponse.newBuilder();
     String dataServiceVersion = ODataServiceVersion.V10;
     if (schemas != null) {
       dataServiceVersion = calculateDataServiceVersion(schemas);
     }
     DataServices metadata = new DataServices().setSchemas(schemas).setDataServiceVersion(dataServiceVersion);
+    return writeMetadataInternal(predefinedNamespaces, dataServiceVersion, metadata);
+  }
+
+  private ODataResponse writeMetadataInternal(final Map<String, String> predefinedNamespaces, String dataServiceVersion,
+      DataServices metadata) throws EntityProviderException,
+      EntityProviderProducerException {
+    ODataResponseBuilder builder = ODataResponse.newBuilder();
     OutputStreamWriter writer = null;
     CircleStreamBuffer csb = new CircleStreamBuffer();
     try {
       writer = new OutputStreamWriter(csb.getOutputStream(), DEFAULT_CHARSET);
-      XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
+      XMLStreamWriter xmlStreamWriter = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(writer);
       XmlMetadataProducer.writeMetadata(metadata, xmlStreamWriter, predefinedNamespaces);
     } catch (UnsupportedEncodingException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     } catch (FactoryConfigurationError e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
     builder.entity(csb.getInputStream());
     builder.header(ODataHttpHeaders.DATASERVICEVERSION, dataServiceVersion);
     return builder.build();
+  }
+
+  /**
+   * Writes the metadata in XML format. Predefined namespaces is of type Map{@literal <}prefix,namespace{@literal >} and
+   * may be null or an empty Map.
+   * @param serviceMetadata
+   * @param predefinedNamespaces
+   * @return resulting {@link ODataResponse} with written metadata content
+   * @throws EntityProviderException
+   */
+  public ODataResponse writeMetadata(final DataServices serviceMetadata,
+      final Map<String, String> predefinedNamespaces) throws EntityProviderException {
+    String dataServiceVersion = serviceMetadata.getDataServiceVersion() == null ? ODataServiceVersion.V20
+        : serviceMetadata.getDataServiceVersion();
+    return writeMetadataInternal(predefinedNamespaces, dataServiceVersion, serviceMetadata);
   }
 
   /**

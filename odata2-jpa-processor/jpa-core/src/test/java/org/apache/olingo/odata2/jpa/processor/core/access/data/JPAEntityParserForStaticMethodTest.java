@@ -24,11 +24,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
@@ -85,7 +84,7 @@ public class JPAEntityParserForStaticMethodTest {
   public void testGetPropertyCharacter() {
     try {
       Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharacter", (Class<?>[]) null);
-      String output = (String) JPAEntityParser.getPropertyValue(method, this);
+      String output = (String) JPAEntityParser.getPropertyValue(method, this, "");
       assertEquals("A", output);
 
     } catch (NoSuchMethodException e) {
@@ -101,7 +100,7 @@ public class JPAEntityParserForStaticMethodTest {
   public void testGetPropertyCharacterNull() {
     try {
       Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharacterNull", (Class<?>[]) null);
-      String output = (String) JPAEntityParser.getPropertyValue(method, this);
+      String output = (String) JPAEntityParser.getPropertyValue(method, this, "");
       assertNull(output);
 
     } catch (NoSuchMethodException e) {
@@ -117,7 +116,7 @@ public class JPAEntityParserForStaticMethodTest {
   public void testGetPropertyCharacterArray() {
     try {
       Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharacterArray", (Class<?>[]) null);
-      String output = (String) JPAEntityParser.getPropertyValue(method, this);
+      String output = (String) JPAEntityParser.getPropertyValue(method, this, "");
       assertEquals("AB", output);
 
     } catch (NoSuchMethodException e) {
@@ -133,7 +132,7 @@ public class JPAEntityParserForStaticMethodTest {
   public void testGetPropertyCharacterArrayNull() {
     try {
       Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharacterArrayNull", (Class<?>[]) null);
-      String output = (String) JPAEntityParser.getPropertyValue(method, this);
+      String output = (String) JPAEntityParser.getPropertyValue(method, this, "");
       assertNull(output);
 
     } catch (NoSuchMethodException e) {
@@ -149,7 +148,7 @@ public class JPAEntityParserForStaticMethodTest {
   public void testGetPropertyChar() {
     try {
       Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getChar", (Class<?>[]) null);
-      String output = (String) JPAEntityParser.getPropertyValue(method, this);
+      String output = (String) JPAEntityParser.getPropertyValue(method, this, "");
       assertEquals("A", output);
 
     } catch (NoSuchMethodException e) {
@@ -165,7 +164,7 @@ public class JPAEntityParserForStaticMethodTest {
   public void testGetPropertyCharNull() {
     try {
       Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharNull", (Class<?>[]) null);
-      String output = (String) JPAEntityParser.getPropertyValue(method, this);
+      String output = (String) JPAEntityParser.getPropertyValue(method, this, "");
       assertNull(output);
 
     } catch (NoSuchMethodException e) {
@@ -181,7 +180,7 @@ public class JPAEntityParserForStaticMethodTest {
   public void testGetPropertyCharArray() {
     try {
       Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharArray", (Class<?>[]) null);
-      String output = (String) JPAEntityParser.getPropertyValue(method, this);
+      String output = (String) JPAEntityParser.getPropertyValue(method, this, "");
       assertEquals("AB", output);
 
     } catch (NoSuchMethodException e) {
@@ -197,7 +196,7 @@ public class JPAEntityParserForStaticMethodTest {
   public void testGetPropertyCharArrayNull() {
     try {
       Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharArrayNull", (Class<?>[]) null);
-      String output = (String) JPAEntityParser.getPropertyValue(method, this);
+      String output = (String) JPAEntityParser.getPropertyValue(method, this, "");
       assertNull(output);
 
     } catch (NoSuchMethodException e) {
@@ -213,7 +212,7 @@ public class JPAEntityParserForStaticMethodTest {
   public void testGetPropertyCharArrayValueNull() {
     try {
       Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getCharArrayValueNull", (Class<?>[]) null);
-      String output = (String) JPAEntityParser.getPropertyValue(method, this);
+      String output = (String) JPAEntityParser.getPropertyValue(method, this, "");
       assertEquals("A\u0000", output);
 
     } catch (NoSuchMethodException e) {
@@ -226,6 +225,41 @@ public class JPAEntityParserForStaticMethodTest {
   }
 
   @Test
+  public void testGetPropertyObject() {
+  
+  try {
+      Method method = JPAEntityParserForStaticMethodTest.class.getMethod("getObject", (Class<?>[]) null);
+      Object output = (Object) JPAEntityParser.getPropertyValue(method, this, "");
+      assertTrue(output != null);
+
+      } catch (NoSuchMethodException e) {
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      } catch (SecurityException e) {
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      } catch (ODataJPARuntimeException e) {
+        fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+      }
+  }
+
+@Test
+  public void testGetPropertyObjectWithParameters() {
+
+    try {
+      Method method = JPAEntityParserForStaticMethodTest.class.
+            getMethod("getObjectWithParameters", getParameterTypeForMethod("getObjectWithParameters"));
+      Object output = (Object) JPAEntityParser.getPropertyValue(method, this, "obj1");
+      assertTrue(output != null);
+
+    } catch (NoSuchMethodException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (SecurityException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+  }
+
+@Test
   public void testGetString() {
     char[] expectedChar = new char[] { 'a', 'b', 'c' };
     try {
@@ -248,7 +282,7 @@ public class JPAEntityParserForStaticMethodTest {
     final String fileName = "SalesOrderProcessingMappingModels.xml";
 
     try {
-      FileInputStream fis = getFileStream(fileName);
+      InputStream fis = JPAEntityParserForStaticMethodTest.class.getClassLoader().getResourceAsStream(fileName);
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       int content = fis.read();
@@ -279,17 +313,6 @@ public class JPAEntityParserForStaticMethodTest {
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
-  }
-
-  private FileInputStream getFileStream(final String name) throws SerialException, FileNotFoundException {
-    final String fileName = "SalesOrderProcessingMappingModels.xml";
-    FileInputStream fis;
-
-    URL fileURL = JPAEntityParserForStaticMethodTest.class.getClassLoader().getResource(fileName);
-    fis = new FileInputStream(fileURL.getPath());
-
-    return fis;
-
   }
 
   public Character getCharacter() {
@@ -326,5 +349,24 @@ public class JPAEntityParserForStaticMethodTest {
 
   public char[] getCharArrayValueNull() {
     return new char[] { 'A', '\u0000' };
+  }
+
+  public Object getObject() {
+    return new Object();
+  }
+
+  public Object getObjectWithParameters(Object ob1) {
+    return new Object();
+  }
+
+  private Class<?>[] getParameterTypeForMethod(String methodName) {
+
+    Method[] methods = JPAEntityParserForStaticMethodTest.class.getMethods();
+      for (Method method: methods) {
+        if (method.getName().equals(methodName)) {
+          return method.getParameterTypes();
+        }
+     }
+    return null;
   }
 }

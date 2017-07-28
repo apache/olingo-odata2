@@ -366,6 +366,8 @@ public class ScenarioDataSource {
       final Employee employee = (Employee) mediaLinkEntryData;
       employee.setImage(binaryData.getData());
       employee.setImageType(binaryData.getMimeType());
+    //Storing the binary data to be used for comparison in the tests
+      Util.getInstance().setBinaryContent(employee.getImage());
     } else if (ENTITYSET_2_1.equals(entitySet.getName())) {
       final Photo photo = (Photo) mediaLinkEntryData;
       photo.setImage(binaryData.getData());

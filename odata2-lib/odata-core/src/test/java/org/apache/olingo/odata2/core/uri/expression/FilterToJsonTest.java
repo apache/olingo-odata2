@@ -33,7 +33,7 @@ import org.apache.olingo.odata2.api.uri.expression.UnaryOperator;
 import org.junit.Test;
 
 import com.google.gson.Gson;
-import com.google.gson.internal.StringMap;
+import com.google.gson.internal.LinkedTreeMap;
 
 /**
  *  
@@ -59,13 +59,13 @@ public class FilterToJsonTest {
     String jsonString = toJson(expression);
     Gson gsonConverter = new Gson();
 
-    StringMap<Object> jsonMap = gsonConverter.fromJson(jsonString, StringMap.class);
+    LinkedTreeMap<String, Object> jsonMap = gsonConverter.fromJson(jsonString, LinkedTreeMap.class);
     checkBinary(jsonMap, "eq", null);
 
-    StringMap<Object> left = (StringMap<Object>) jsonMap.get(LEFT);
+    LinkedTreeMap<String, Object> left = (LinkedTreeMap<String, Object>) jsonMap.get(LEFT);
     checkProperty(left, null, "a");
 
-    StringMap<Object> right = (StringMap<Object>) jsonMap.get(RIGHT);
+    LinkedTreeMap<String, Object> right = (LinkedTreeMap<String, Object>) jsonMap.get(RIGHT);
     checkProperty(right, null, "b");
   }
 
@@ -76,13 +76,13 @@ public class FilterToJsonTest {
     String jsonString = toJson(expression);
     Gson gsonConverter = new Gson();
 
-    StringMap<Object> jsonMap = gsonConverter.fromJson(jsonString, StringMap.class);
+    LinkedTreeMap<String, Object> jsonMap = gsonConverter.fromJson(jsonString, LinkedTreeMap.class);
     checkBinary(jsonMap, "eq", "Edm.Boolean");
 
-    StringMap<Object> left = (StringMap<Object>) jsonMap.get(LEFT);
+    LinkedTreeMap<String, Object> left = (LinkedTreeMap<String, Object>) jsonMap.get(LEFT);
     checkLiteral(left, "Edm.String", "a");
 
-    StringMap<Object> right = (StringMap<Object>) jsonMap.get(RIGHT);
+    LinkedTreeMap<String, Object> right = (LinkedTreeMap<String, Object>) jsonMap.get(RIGHT);
     checkLiteral(right, "Edm.String", "b");
   }
 
@@ -93,25 +93,25 @@ public class FilterToJsonTest {
     String jsonString = toJson(expression);
     Gson gsonConverter = new Gson();
 
-    StringMap<Object> jsonMap = gsonConverter.fromJson(jsonString, StringMap.class);
+    LinkedTreeMap<String, Object> jsonMap = gsonConverter.fromJson(jsonString, LinkedTreeMap.class);
     checkBinary(jsonMap, "add", "Edm.Double");
 
-    StringMap<Object> left1 = (StringMap<Object>) jsonMap.get(LEFT);
+    LinkedTreeMap<String, Object> left1 = (LinkedTreeMap<String, Object>) jsonMap.get(LEFT);
     checkBinary(left1, "add", "Edm.Double");
 
-    StringMap<Object> left2 = (StringMap<Object>) left1.get(LEFT);
+    LinkedTreeMap<String, Object> left2 = (LinkedTreeMap<String, Object>) left1.get(LEFT);
     checkBinary(left2, "add", "Edm.Double");
 
-    StringMap<Object> literal1 = (StringMap<Object>) left2.get(LEFT);
+    LinkedTreeMap<String, Object> literal1 = (LinkedTreeMap<String, Object>) left2.get(LEFT);
     checkLiteral(literal1, "Edm.Double", "1");
 
-    StringMap<Object> literal2 = (StringMap<Object>) left2.get(RIGHT);
+    LinkedTreeMap<String, Object> literal2 = (LinkedTreeMap<String, Object>) left2.get(RIGHT);
     checkLiteral(literal2, "Edm.Double", "2");
 
-    StringMap<Object> literal3 = (StringMap<Object>) left1.get(RIGHT);
+    LinkedTreeMap<String, Object> literal3 = (LinkedTreeMap<String, Object>) left1.get(RIGHT);
     checkLiteral(literal3, "Edm.Double", "3");
 
-    StringMap<Object> right1 = (StringMap<Object>) jsonMap.get(RIGHT);
+    LinkedTreeMap<String, Object> right1 = (LinkedTreeMap<String, Object>) jsonMap.get(RIGHT);
     checkLiteral(right1, "Edm.Double", "4");
   }
 
@@ -122,12 +122,12 @@ public class FilterToJsonTest {
     String jsonString = toJson(expression);
     Gson gsonConverter = new Gson();
 
-    StringMap<Object> jsonMap = gsonConverter.fromJson(jsonString, StringMap.class);
+    LinkedTreeMap<String, Object> jsonMap = gsonConverter.fromJson(jsonString, LinkedTreeMap.class);
     checkMethod(jsonMap, MethodOperator.CONCAT, "Edm.String");
 
     List<Object> parameter = (List<Object>) jsonMap.get(PARAMETERS);
-    checkLiteral((StringMap<Object>) parameter.get(0), "Edm.String", "aa");
-    checkLiteral((StringMap<Object>) parameter.get(1), "Edm.String", "b");
+    checkLiteral((LinkedTreeMap<String, Object>) parameter.get(0), "Edm.String", "aa");
+    checkLiteral((LinkedTreeMap<String, Object>) parameter.get(1), "Edm.String", "b");
   }
 
   @SuppressWarnings("unchecked")
@@ -136,10 +136,10 @@ public class FilterToJsonTest {
     FilterExpression expression = UriParser.parseFilter(null, null, "not 'a'");
     String jsonString = toJson(expression);
 
-    StringMap<Object> jsonMap = new Gson().fromJson(jsonString, StringMap.class);
+    LinkedTreeMap<String, Object> jsonMap = new Gson().fromJson(jsonString, LinkedTreeMap.class);
     checkUnary(jsonMap, UnaryOperator.NOT, null);
 
-    StringMap<Object> operand = (StringMap<Object>) jsonMap.get(OPERAND);
+    LinkedTreeMap<String, Object> operand = (LinkedTreeMap<String, Object>) jsonMap.get(OPERAND);
     checkLiteral(operand, "Edm.String", "a");
   }
 
@@ -150,13 +150,13 @@ public class FilterToJsonTest {
     String jsonString = toJson(expression);
     Gson gsonConverter = new Gson();
 
-    StringMap<Object> jsonMap = gsonConverter.fromJson(jsonString, StringMap.class);
+    LinkedTreeMap<String, Object> jsonMap = gsonConverter.fromJson(jsonString, LinkedTreeMap.class);
     checkMember(jsonMap, null);
 
-    StringMap<Object> source = (StringMap<Object>) jsonMap.get(SOURCE);
+    LinkedTreeMap<String, Object> source = (LinkedTreeMap<String, Object>) jsonMap.get(SOURCE);
     checkProperty(source, null, "Location");
 
-    StringMap<Object> path = (StringMap<Object>) jsonMap.get(PATH);
+    LinkedTreeMap<String, Object> path = (LinkedTreeMap<String, Object>) jsonMap.get(PATH);
     checkProperty(path, null, "Country");
   }
 
@@ -167,38 +167,39 @@ public class FilterToJsonTest {
     String jsonString = toJson(expression);
     Gson gsonConverter = new Gson();
 
-    StringMap<Object> jsonMap = gsonConverter.fromJson(jsonString, StringMap.class);
+    LinkedTreeMap<String, Object> jsonMap = gsonConverter.fromJson(jsonString, LinkedTreeMap.class);
     checkMember(jsonMap, null);
 
-    StringMap<Object> source1 = (StringMap<Object>) jsonMap.get(SOURCE);
+    LinkedTreeMap<String, Object> source1 = (LinkedTreeMap<String, Object>) jsonMap.get(SOURCE);
     checkMember(source1, null);
 
-    StringMap<Object> source2 = (StringMap<Object>) source1.get(SOURCE);
+    LinkedTreeMap<String, Object> source2 = (LinkedTreeMap<String, Object>) source1.get(SOURCE);
     checkProperty(source2, null, "Location");
 
-    StringMap<Object> path1 = (StringMap<Object>) source1.get(PATH);
+    LinkedTreeMap<String, Object> path1 = (LinkedTreeMap<String, Object>) source1.get(PATH);
     checkProperty(path1, null, "Country");
 
-    StringMap<Object> path = (StringMap<Object>) jsonMap.get(PATH);
+    LinkedTreeMap<String, Object> path = (LinkedTreeMap<String, Object>) jsonMap.get(PATH);
     checkProperty(path, null, "PostalCode");
   }
 
   private void
-      checkUnary(final StringMap<Object> unary, final UnaryOperator expectedOperator, final String expectedType) {
+      checkUnary(final LinkedTreeMap<String, Object> unary, final UnaryOperator expectedOperator,
+          final String expectedType) {
     assertEquals(ExpressionKind.UNARY.toString(), unary.get(NODETYPE));
     assertEquals(expectedOperator.toString(), unary.get(OPERATOR));
     assertEquals(expectedType, unary.get(TYPE));
     assertNotNull(unary.get(OPERAND));
   }
 
-  private void checkMember(final StringMap<Object> member, final String expectedType) {
+  private void checkMember(final LinkedTreeMap<String, Object> member, final String expectedType) {
     assertEquals(ExpressionKind.MEMBER.toString(), member.get(NODETYPE));
     assertEquals(expectedType, member.get(TYPE));
     assertNotNull(member.get(SOURCE));
     assertNotNull(member.get(PATH));
   }
 
-  private void checkMethod(final StringMap<Object> method, final MethodOperator expectedOperator,
+  private void checkMethod(final LinkedTreeMap<String, Object> method, final MethodOperator expectedOperator,
       final String expectedType) {
     assertEquals(ExpressionKind.METHOD.toString(), method.get(NODETYPE));
     assertEquals(expectedOperator.toString(), method.get(OPERATOR));
@@ -206,19 +207,22 @@ public class FilterToJsonTest {
     assertNotNull(method.get(PARAMETERS));
   }
 
-  private void checkProperty(final StringMap<Object> property, final String expectedType, final Object expectedValue) {
+  private void checkProperty(final LinkedTreeMap<String, Object> property, final String expectedType,
+      final Object expectedValue) {
     assertEquals(ExpressionKind.PROPERTY.toString(), property.get(NODETYPE));
     assertEquals(expectedValue, property.get(NAME));
     assertEquals(expectedType, property.get(TYPE));
   }
 
-  private void checkLiteral(final StringMap<Object> literal, final String expectedType, final Object expectedValue) {
+  private void
+      checkLiteral(final LinkedTreeMap<String, Object> literal, final String expectedType, final Object expectedValue) {
     assertEquals(ExpressionKind.LITERAL.toString(), literal.get(NODETYPE));
     assertEquals(expectedType, literal.get(TYPE));
     assertEquals(expectedValue, literal.get(VALUE));
   }
 
-  private void checkBinary(final StringMap<Object> binary, final String expectedOperator, final String expectedType)
+  private void checkBinary(final LinkedTreeMap<String, Object> binary, final String expectedOperator,
+      final String expectedType)
       throws Exception {
     assertEquals(ExpressionKind.BINARY.toString(), binary.get(NODETYPE));
     assertEquals(expectedOperator, binary.get(OPERATOR));

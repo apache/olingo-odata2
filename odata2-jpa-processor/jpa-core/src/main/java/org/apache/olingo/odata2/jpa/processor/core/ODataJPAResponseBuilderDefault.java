@@ -295,7 +295,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
     ODataResponse odataResponse = null;
 
-    if (resultList != null && !resultList.isEmpty()) {
+    if (resultList != null) {
       JPAEntityParser jpaResultParser = new JPAEntityParser();
       EdmType edmType = null;
       EdmFunctionImport functionImport = null;
@@ -303,9 +303,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       List<Map<String, Object>> edmEntityList = null;
       Object result = null;
       try {
-        EntityProviderWriteProperties feedProperties = null;
-
-        feedProperties =
+        EntityProviderWriteProperties feedProperties =
             EntityProviderWriteProperties.serviceRoot(oDataJPAContext.getODataContext().getPathInfo().getServiceRoot())
                 .build();
 
@@ -624,12 +622,12 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       for (EdmProperty keyProperty : entity.getKeyProperties()) {
         flag = true;
         for (SelectItem selectedItem : selectItems) {
-          if (selectedItem.isStar() == false && selectedItem.getProperty().equals(keyProperty)) {
+          if (!selectedItem.isStar() && keyProperty.equals(selectedItem.getProperty())) {
             flag = false;
             break;
           }
         }
-        if (flag == true) {
+        if (flag) {
           selectPropertyList.add(keyProperty);
         }
       }

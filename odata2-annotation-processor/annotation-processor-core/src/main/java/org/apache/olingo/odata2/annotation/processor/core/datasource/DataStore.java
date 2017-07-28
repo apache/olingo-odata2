@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.olingo.odata2.annotation.processor.core.util.AnnotationHelper;
@@ -112,10 +113,15 @@ public class DataStore<T> {
     return create(object, keyElement);
   }
 
+  /**
+   * Store an entity, preserving any existing keys if possible. If the combination of
+   * existing and generated keys would produce a duplicate entry, replace all keys.
+   */
   private T create(final T object, final KeyElement keyElement) throws DataStoreException {
     synchronized (dataStore) {
-      if (keyElement.keyValuesMissing() || dataStore.containsKey(keyElement)) {
-        KeyElement newKey = createSetAndGetKeys(object);
+      final boolean replaceKeys = dataStore.containsKey(keyElement);
+      if (keyElement.keyValuesMissing() || replaceKeys) {
+        KeyElement newKey = createSetAndGetKeys(object, replaceKeys);
         return this.create(object, newKey);
       }
       dataStore.put(keyElement, object);
@@ -243,11 +249,14 @@ public class DataStore<T> {
       return keyElement;
     }
 
-    KeyElement createSetAndGetKeys(final T object) throws DataStoreException {
+    KeyElement createSetAndGetKeys(final T object, boolean replaceKeys) throws DataStoreException {
       KeyElement keyElement = new KeyElement(keyFields.size());
       for (Field field : keyFields) {
-        Object key = createKey(field);
-        ClassHelper.setFieldValue(object, field, key);
+        Object key = ClassHelper.getFieldValue(object, field);
+        if (key == null || replaceKeys) {
+          key = createKey(field);
+          ClassHelper.setFieldValue(object, field, key);
+        }
         keyElement.addValue(key);
       }
 
@@ -263,6 +272,8 @@ public class DataStore<T> {
         return Integer.valueOf(idCounter.getAndIncrement());
       } else if (type == Long.class || type == long.class) {
         return Long.valueOf(idCounter.getAndIncrement());
+      } else if (type == UUID.class) {
+        return UUID.randomUUID();
       }
 
       throw new UnsupportedOperationException("Automated key generation for type '" + type
@@ -274,8 +285,8 @@ public class DataStore<T> {
     return keyAccess.getKeyValues(object);
   }
 
-  private KeyElement createSetAndGetKeys(final T object) throws DataStoreException {
-    return keyAccess.createSetAndGetKeys(object);
+  private KeyElement createSetAndGetKeys(final T object, boolean replaceKeys) throws DataStoreException {
+    return keyAccess.createSetAndGetKeys(object, replaceKeys);
   }
 
   public static class DataStoreException extends ODataApplicationException {

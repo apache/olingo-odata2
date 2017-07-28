@@ -61,16 +61,21 @@ public class MyCallback implements OnWriteEntryContent, OnWriteFeedContent {
             callbacks.put(navPropName, this);
           }
           EntityProviderWriteProperties inlineProperties =
-              EntityProviderWriteProperties.serviceRoot(baseUri).callbacks(callbacks).expandSelectTree(
-                  context.getCurrentExpandSelectTreeNode()).selfLink(context.getSelfLink()).build();
+              EntityProviderWriteProperties.serviceRoot(baseUri).callbacks(callbacks)
+                  .expandSelectTree(context.getCurrentExpandSelectTreeNode())
+                  .selfLink(context.getSelfLink())
+                  .validatingFacets(context.getCurrentWriteProperties().isValidatingFacets())
+                  .build();
 
           result.setFeedData(dataProvider.getEmployeesData());
           result.setInlineProperties(inlineProperties);
         }
       } else if ("Buildings".equals(context.getSourceEntitySet().getName())) {
         EntityProviderWriteProperties inlineProperties =
-            EntityProviderWriteProperties.serviceRoot(baseUri).expandSelectTree(
-                context.getCurrentExpandSelectTreeNode()).selfLink(context.getSelfLink()).build();
+            EntityProviderWriteProperties.serviceRoot(baseUri)
+                .expandSelectTree(context.getCurrentExpandSelectTreeNode())
+                .validatingFacets(context.getCurrentWriteProperties().isValidatingFacets())
+                .selfLink(context.getSelfLink()).build();
         List<Map<String, Object>> emptyData = new ArrayList<Map<String, Object>>();
         result.setFeedData(emptyData);
         result.setInlineProperties(inlineProperties);

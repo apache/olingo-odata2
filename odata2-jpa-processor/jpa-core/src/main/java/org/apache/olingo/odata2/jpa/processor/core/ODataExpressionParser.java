@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,46 +18,24 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import org.apache.olingo.odata2.api.edm.EdmException;
-import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
-import org.apache.olingo.odata2.api.edm.EdmMappable;
-import org.apache.olingo.odata2.api.edm.EdmMapping;
-import org.apache.olingo.odata2.api.edm.EdmProperty;
-import org.apache.olingo.odata2.api.edm.EdmSimpleType;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
-import org.apache.olingo.odata2.api.uri.expression.BinaryExpression;
-import org.apache.olingo.odata2.api.uri.expression.BinaryOperator;
-import org.apache.olingo.odata2.api.uri.expression.CommonExpression;
-import org.apache.olingo.odata2.api.uri.expression.ExpressionKind;
-import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
-import org.apache.olingo.odata2.api.uri.expression.LiteralExpression;
-import org.apache.olingo.odata2.api.uri.expression.MemberExpression;
-import org.apache.olingo.odata2.api.uri.expression.MethodExpression;
-import org.apache.olingo.odata2.api.uri.expression.MethodOperator;
-import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
-import org.apache.olingo.odata2.api.uri.expression.OrderExpression;
-import org.apache.olingo.odata2.api.uri.expression.PropertyExpression;
-import org.apache.olingo.odata2.api.uri.expression.SortOrder;
-import org.apache.olingo.odata2.api.uri.expression.UnaryExpression;
+import org.apache.olingo.odata2.api.uri.expression.*;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * This class contains utility methods for parsing the filter expressions built by core library from user OData Query.
- * 
- * 
- * 
+ *
+ *
+ *
  */
 public class ODataExpressionParser {
 
@@ -66,9 +44,9 @@ public class ODataExpressionParser {
 
   /**
    * This method returns the parsed where condition corresponding to the filter input in the user query.
-   * 
+   *
    * @param whereExpression
-   * 
+   *
    * @return Parsed where condition String
    * @throws ODataException
    */
@@ -137,11 +115,14 @@ public class ODataExpressionParser {
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case EQ:
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
-            + JPQLStatement.Operator.EQ + JPQLStatement.DELIMITER.SPACE + right
+            + (!"null".equals(right) ? JPQLStatement.Operator.EQ : "IS") + JPQLStatement.DELIMITER.SPACE + right
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case NE:
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
-            + JPQLStatement.Operator.NE + JPQLStatement.DELIMITER.SPACE + right
+            + (!"null".equals(right) ?
+                JPQLStatement.Operator.NE :
+                "IS" + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.NOT)
+            + JPQLStatement.DELIMITER.SPACE + right
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case LT:
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
@@ -167,9 +148,8 @@ public class ODataExpressionParser {
       }
 
     case PROPERTY:
-      String returnStr =
-          tableAlias + JPQLStatement.DELIMITER.PERIOD
-              + ((EdmProperty) ((PropertyExpression) whereExpression).getEdmProperty()).getMapping().getInternalName();
+      String returnStr = tableAlias + JPQLStatement.DELIMITER.PERIOD
+          + getPropertyName(whereExpression);
       return returnStr;
 
     case MEMBER:
@@ -183,23 +163,18 @@ public class ODataExpressionParser {
           memberExpStr = JPQLStatement.DELIMITER.PERIOD + memberExpStr;
         }
         i++;
-        memberExpStr =
-            ((EdmProperty) ((PropertyExpression) member.getProperty()).getEdmProperty()).getMapping().getInternalName()
-                + memberExpStr;
+        memberExpStr = getPropertyName(member.getProperty()) + memberExpStr;
         tempExp = member.getPath();
       }
       memberExpStr =
-          ((EdmMappable) ((PropertyExpression) tempExp).getEdmProperty()).getMapping().getInternalName()
-              + JPQLStatement.DELIMITER.PERIOD + memberExpStr;
+          getPropertyName(tempExp) + JPQLStatement.DELIMITER.PERIOD + memberExpStr;
       return tableAlias + JPQLStatement.DELIMITER.PERIOD + memberExpStr;
 
     case LITERAL:
       final LiteralExpression literal = (LiteralExpression) whereExpression;
       final EdmSimpleType literalType = (EdmSimpleType) literal.getEdmType();
-      String value =
-          literalType.valueToString(literalType.valueOfString(literal.getUriLiteral(), EdmLiteralKind.URI, null,
-              literalType.getDefaultType()), EdmLiteralKind.DEFAULT, null);
-      return evaluateComparingExpression(value, literalType);
+      EdmLiteral uriLiteral = EdmSimpleTypeKind.parseUriLiteral(literal.getUriLiteral());
+      return evaluateComparingExpression(uriLiteral.getLiteral(), literalType);
 
     case METHOD:
       final MethodExpression methodExpression = (MethodExpression) whereExpression;
@@ -216,21 +191,28 @@ public class ODataExpressionParser {
         third = third != null ? ", " + third : "";
         return String.format("SUBSTRING(%s, %s + 1 %s)", first, second, third);
       case SUBSTRINGOF:
-        first = first.substring(1, first.length() - 1);
         if (methodFlag.get() != null && methodFlag.get() == 1) {
           methodFlag.set(null);
-          return String.format("(CASE WHEN (%s LIKE '%%%s%%') THEN TRUE ELSE FALSE END)", second, first);
+          updateValueIfWildcards(first);
+          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%')) ESCAPE '\\') "
+              + "THEN TRUE ELSE FALSE END)",
+              second, first);
         } else {
-          return String.format("(CASE WHEN (%s LIKE '%%%s%%') THEN TRUE ELSE FALSE END) = true", second, first);
+          first = updateValueIfWildcards(first);
+          return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%')) ESCAPE '\\') "
+              + "THEN TRUE ELSE FALSE END) = true",
+              second, first);
         }
       case TOLOWER:
         return String.format("LOWER(%s)", first);
       case STARTSWITH:
-        second = second.substring(1, second.length() - 1);
-        return String.format("%s LIKE '%s%%'", first, second);
+        // second = second.substring(1, second.length() - 1);
+        second = updateValueIfWildcards(second);
+        return String.format("%s LIKE CONCAT(%s,'%%') ESCAPE '\\'", first, second);
       case ENDSWITH:
-        second = second.substring(1, second.length() - 1);
-        return String.format("%s LIKE '%%%s'", first, second);
+        // second = second.substring(1, second.length() - 1);
+        second = updateValueIfWildcards(second);
+        return String.format("%s LIKE CONCAT('%%',%s) ESCAPE '\\'", first, second);
       default:
         throw new ODataNotImplementedException();
       }
@@ -241,8 +223,18 @@ public class ODataExpressionParser {
   }
 
   /**
+   * This method escapes the wildcards
+   * @param first
+   */
+  private static String updateValueIfWildcards(String value) {
+    value = value.replace("\\", "\\\\");
+    value = value.replace("%", "\\%");
+    value = value.replace("_", "\\_");
+    return value;
+  }
+  /**
    * This method parses the select clause
-   * 
+   *
    * @param tableAlias
    * @param selectedFields
    * @return a select expression
@@ -270,14 +262,14 @@ public class ODataExpressionParser {
 
   /**
    * This method parses the order by condition in the query.
-   * 
+   *
    * @param orderByExpression
    * @return a map of JPA attributes and their sort order
    * @throws ODataJPARuntimeException
    */
-  public static HashMap<String, String> parseToJPAOrderByExpression(final OrderByExpression orderByExpression,
+  public static String parseToJPAOrderByExpression(final OrderByExpression orderByExpression,
       final String tableAlias) throws ODataJPARuntimeException {
-    HashMap<String, String> orderByMap = new HashMap<String, String>();
+    String jpqlOrderByExpression = "";
     if (orderByExpression != null && orderByExpression.getOrders() != null) {
       List<OrderExpression> orderBys = orderByExpression.getOrders();
       String orderByField = null;
@@ -285,22 +277,35 @@ public class ODataExpressionParser {
       for (OrderExpression orderBy : orderBys) {
 
         try {
-          orderByField =
-              ((EdmProperty) ((PropertyExpression) orderBy.getExpression()).getEdmProperty()).getMapping()
-                  .getInternalName();
-          orderByDirection = (orderBy.getSortOrder() == SortOrder.asc) ? EMPTY : "DESC"; //$NON-NLS-1$
-          orderByMap.put(tableAlias + JPQLStatement.DELIMITER.PERIOD + orderByField, orderByDirection);
+          if (orderBy.getExpression().getKind() == ExpressionKind.MEMBER) {
+            orderByField = parseToJPAWhereExpression(orderBy.getExpression(), tableAlias);
+          } else {
+            orderByField = tableAlias + JPQLStatement.DELIMITER.PERIOD + getPropertyName(orderBy.getExpression());
+          }
+          orderByDirection = (orderBy.getSortOrder() == SortOrder.asc) ? EMPTY :
+              JPQLStatement.DELIMITER.SPACE + "DESC"; //$NON-NLS-1$
+          jpqlOrderByExpression += orderByField + orderByDirection + " , ";
         } catch (EdmException e) {
+          throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
+        } catch (ODataException e) {
           throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         }
       }
     }
-    return orderByMap;
+    return normalizeOrderByExpression(jpqlOrderByExpression);
+  }
+
+  private static String normalizeOrderByExpression(final String jpqlOrderByExpression) {
+    if (jpqlOrderByExpression != "") {
+      return jpqlOrderByExpression.substring(0, jpqlOrderByExpression.length() - 3);
+    } else {
+      return jpqlOrderByExpression;
+    }
   }
 
   /**
    * This method evaluated the where expression for read of an entity based on the keys specified in the query.
-   * 
+   *
    * @param keyPredicates
    * @return the evaluated where expression
    */
@@ -342,10 +347,13 @@ public class ODataExpressionParser {
     }
   }
 
-  public static HashMap<String, String> parseKeyPropertiesToJPAOrderByExpression(
+  public static String parseKeyPropertiesToJPAOrderByExpression(
       final List<EdmProperty> edmPropertylist, final String tableAlias) throws ODataJPARuntimeException {
-    LinkedHashMap<String, String> orderByMap = new LinkedHashMap<String, String>();
     String propertyName = null;
+    String orderExpression = "";
+    if (edmPropertylist == null) {
+      return orderExpression;
+    }
     for (EdmProperty edmProperty : edmPropertylist) {
       try {
         EdmMapping mapping = edmProperty.getMapping();
@@ -357,31 +365,32 @@ public class ODataExpressionParser {
       } catch (EdmException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
-      orderByMap.put(tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName, EMPTY);
+      orderExpression += tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName + " , ";
     }
-    return orderByMap;
+    return normalizeOrderByExpression(orderExpression);
   }
 
   /**
    * This method evaluates the expression based on the type instance. Used for adding escape characters where necessary.
-   * 
-   * @param value
+   *
+   * @param uriLiteral
    * @param edmSimpleType
    * @return the evaluated expression
    * @throws ODataJPARuntimeException
    */
-  private static String evaluateComparingExpression(String value, final EdmSimpleType edmSimpleType)
+  private static String evaluateComparingExpression(String uriLiteral, final EdmSimpleType edmSimpleType)
       throws ODataJPARuntimeException {
 
-    if (edmSimpleType == EdmSimpleTypeKind.String.getEdmSimpleTypeInstance()
-        || edmSimpleType == EdmSimpleTypeKind.Guid.getEdmSimpleTypeInstance()) {
-      value = value.replaceAll("'", "''");
-      value = "\'" + value + "\'"; //$NON-NLS-1$	//$NON-NLS-2$
-    } else if (edmSimpleType == EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance()
-        || edmSimpleType == EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance()) {
+    if (EdmSimpleTypeKind.String.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)
+        || EdmSimpleTypeKind.Guid.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)) {
+      uriLiteral = uriLiteral.replaceAll("'", "''");
+      uriLiteral = "'" + uriLiteral + "'"; //$NON-NLS-1$	//$NON-NLS-2$
+    } else if (EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)
+        || EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)) {
       try {
         Calendar datetime =
-            (Calendar) edmSimpleType.valueOfString(value, EdmLiteralKind.DEFAULT, null, edmSimpleType.getDefaultType());
+            (Calendar) edmSimpleType.valueOfString(uriLiteral, EdmLiteralKind.DEFAULT, null, edmSimpleType
+                .getDefaultType());
 
         String year = String.format("%04d", datetime.get(Calendar.YEAR));
         String month = String.format("%02d", datetime.get(Calendar.MONTH) + 1);
@@ -390,7 +399,7 @@ public class ODataExpressionParser {
         String min = String.format("%02d", datetime.get(Calendar.MINUTE));
         String sec = String.format("%02d", datetime.get(Calendar.SECOND));
 
-        value =
+        uriLiteral =
             JPQLStatement.DELIMITER.LEFT_BRACE + JPQLStatement.KEYWORD.TIMESTAMP + JPQLStatement.DELIMITER.SPACE + "\'"
                 + year + JPQLStatement.DELIMITER.HYPHEN + month + JPQLStatement.DELIMITER.HYPHEN + day
                 + JPQLStatement.DELIMITER.SPACE + hour + JPQLStatement.DELIMITER.COLON + min
@@ -401,26 +410,43 @@ public class ODataExpressionParser {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
 
-    } else if (edmSimpleType == EdmSimpleTypeKind.Time.getEdmSimpleTypeInstance()) {
+    } else if (EdmSimpleTypeKind.Time.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)) {
       try {
         Calendar time =
-            (Calendar) edmSimpleType.valueOfString(value, EdmLiteralKind.DEFAULT, null, edmSimpleType.getDefaultType());
+            (Calendar) edmSimpleType.valueOfString(uriLiteral, EdmLiteralKind.DEFAULT, null, edmSimpleType
+                .getDefaultType());
 
         String hourValue = String.format("%02d", time.get(Calendar.HOUR_OF_DAY));
         String minValue = String.format("%02d", time.get(Calendar.MINUTE));
         String secValue = String.format("%02d", time.get(Calendar.SECOND));
 
-        value =
+        uriLiteral =
             "\'" + hourValue + JPQLStatement.DELIMITER.COLON + minValue + JPQLStatement.DELIMITER.COLON + secValue
                 + "\'";
       } catch (EdmSimpleTypeException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
 
-    } else if (edmSimpleType == EdmSimpleTypeKind.Int64.getEdmSimpleTypeInstance()) {
-      value = value + JPQLStatement.DELIMITER.LONG; //$NON-NLS-1$
+    } else if (Long.class.equals(edmSimpleType.getDefaultType())) {
+      uriLiteral = uriLiteral + JPQLStatement.DELIMITER.LONG; //$NON-NLS-1$
     }
-    return value;
+    return uriLiteral;
   }
 
+  private static String getPropertyName(final CommonExpression whereExpression) throws EdmException,
+      ODataJPARuntimeException {
+    EdmTyped edmProperty = ((PropertyExpression) whereExpression).getEdmProperty();
+    EdmMapping mapping;
+    if (edmProperty instanceof EdmNavigationProperty) {
+      EdmNavigationProperty edmNavigationProperty = (EdmNavigationProperty) edmProperty;
+      mapping = edmNavigationProperty.getMapping();
+    } else if(edmProperty instanceof EdmProperty) {
+      EdmProperty property = (EdmProperty) edmProperty;
+      mapping = property.getMapping();
+    } else {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL, null);
+    }
+
+    return mapping != null ? mapping.getInternalName() : edmProperty.getName();
+  }
 }

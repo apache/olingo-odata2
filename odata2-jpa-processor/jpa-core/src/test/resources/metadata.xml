@@ -1,62 +1,71 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--
-  Licensed to the Apache Software Foundation (ASF) under one
-         or more contributor license agreements.  See the NOTICE file
-         distributed with this work for additional information
-         regarding copyright ownership.  The ASF licenses this file
-         to you under the Apache License, Version 2.0 (the
-         "License"); you may not use this file except in compliance
-         with the License.  You may obtain a copy of the License at
-  
-           http://www.apache.org/licenses/LICENSE-2.0
-  
-         Unless required by applicable law or agreed to in writing,
-         software distributed under the License is distributed on an
-         "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-         KIND, either express or implied.  See the License for the
-         specific language governing permissions and limitations
-         under the License.
--->
-<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
-	<edmx:DataServices m:DataServiceVersion="1.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
-		<Schema Namespace="SalesOrderProcessing" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	you under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+	<edmx:DataServices m:DataServiceVersion="1.0"
+		xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+		<Schema Namespace="SalesOrderProcessing"
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
 			<EntityType Name="Note">
 				<Key>
-					<PropertyRef Name="id"/>
+					<PropertyRef Name="id" />
 				</Key>
-				<Property Name="id" Type="Edm.String" Nullable="false"/>
-				<Property Name="soId" Type="Edm.Int64" Nullable="true"/>
-				<Property Name="text" Type="Edm.String" Nullable="true" MaxLength="255"/>
-				<NavigationProperty Name="salesOrderHeader" Relationship="SalesOrderProcessing.Note_SalesOrder" FromRole="Note" ToRole="SalesOrder"/>
+				<Property Name="id" Type="Edm.String" Nullable="false" />
+				<Property Name="soId" Type="Edm.Int64" Nullable="true" />
+				<Property Name="oValue" Type="SalesOrderProcessing.OrderValue" />
+				<Property Name="date" Type="Edm.DateTime" Nullable="false" />
+				<Property Name="time" Type="Edm.Time" Nullable="false" />
+				<Property Name="text" Type="Edm.String" Nullable="true"
+					MaxLength="255" />
+				<NavigationProperty Name="salesOrderHeader"
+					Relationship="SalesOrderProcessing.Note_SalesOrder" FromRole="Note"
+					ToRole="SalesOrder" />
 			</EntityType>
 			<EntityType Name="SalesOrder">
 				<Key>
-					<PropertyRef Name="ID"/>
+					<PropertyRef Name="ID" />
 				</Key>
-				<Property Name="ID" Type="Edm.Int64" Nullable="false"/>
-				<NavigationProperty Name="NotesDetails" Relationship="SalesOrderProcessing.Note_SalesOrder" FromRole="SalesOrder" ToRole="Note"/>
+				<Property Name="ID" Type="Edm.Int64" Nullable="false" />
+				<NavigationProperty Name="NotesDetails"
+					Relationship="SalesOrderProcessing.Note_SalesOrder" FromRole="SalesOrder"
+					ToRole="Note" />
 			</EntityType>
-
+			<ComplexType Name="OrderValue">
+				<Property Name="Amount" Type="Edm.Double" />
+				<Property Name="Currency" Type="Edm.String" />
+			</ComplexType>
 			<Association Name="Note_SalesOrder">
-				<End Type="SalesOrderProcessing.Note" Multiplicity="*" Role="Note"/>
-				<End Type="SalesOrderProcessing.SalesOrder" Multiplicity="1" Role="SalesOrder"/>
+				<End Type="SalesOrderProcessing.Note" Multiplicity="*" Role="Note" />
+				<End Type="SalesOrderProcessing.SalesOrder" Multiplicity="1"
+					Role="SalesOrder" />
 				<ReferentialConstraint>
 					<Principal Role="SalesOrder">
-						<PropertyRef Name="ID"/>
+						<PropertyRef Name="ID" />
 					</Principal>
 					<Dependent Role="Note">
-						<PropertyRef Name="soId"/>
+						<PropertyRef Name="soId" />
 					</Dependent>
 				</ReferentialConstraint>
 			</Association>
 
-			<EntityContainer Name="SalesOrderProcessingContainer" m:IsDefaultEntityContainer="true">
-				<EntitySet Name="Notes" EntityType="SalesOrderProcessing.Note"/>
-				<EntitySet Name="SalesOrders" EntityType="SalesOrderProcessing.SalesOrder"/>
+			<EntityContainer Name="SalesOrderProcessingContainer"
+				m:IsDefaultEntityContainer="true">
+				<EntitySet Name="Notes" EntityType="SalesOrderProcessing.Note" />
+				<EntitySet Name="SalesOrders" EntityType="SalesOrderProcessing.SalesOrder" />
 
-				<AssociationSet Name="Note_SalesOrderSet" Association="SalesOrderProcessing.Note_SalesOrder">
-					<End EntitySet="Notes" Role="Note"/>
-					<End EntitySet="SalesOrders" Role="SalesOrder"/>
+				<AssociationSet Name="Note_SalesOrderSet"
+					Association="SalesOrderProcessing.Note_SalesOrder">
+					<End EntitySet="Notes" Role="Note" />
+					<End EntitySet="SalesOrders" Role="SalesOrder" />
 				</AssociationSet>
 
 			</EntityContainer>

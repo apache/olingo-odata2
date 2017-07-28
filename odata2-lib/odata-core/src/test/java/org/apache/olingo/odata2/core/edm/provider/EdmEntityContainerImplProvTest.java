@@ -102,12 +102,12 @@ public class EdmEntityContainerImplProvTest extends BaseTest {
     entitySets.add(entitySetBar);
     when(edmProvider.getEntitySet(containerName, "bar")).thenReturn(entitySetBar);
 
-    AssociationSet associationSet = new AssociationSet().setName("4711");
+    AssociationSet associationSet = new AssociationSet().setName("Name4711");
     FullQualifiedName assocFQName = new FullQualifiedName("AssocNs", "AssocName");
     associationSets.add(associationSet);
     when(edmProvider.getAssociationSet(containerName, assocFQName, "foo", "fromRole")).thenReturn(associationSet);
 
-    AssociationSet parentAssociationSet = new AssociationSet().setName("42");
+    AssociationSet parentAssociationSet = new AssociationSet().setName("Name42");
     FullQualifiedName parentAssocFQName = new FullQualifiedName("AssocNs", "AssocNameParent");
     when(edmProvider.getAssociationSet(containerParentName,
         parentAssocFQName, "fooFromParent", "fromParentRole")).thenReturn(parentAssociationSet);
@@ -214,8 +214,8 @@ public class EdmEntityContainerImplProvTest extends BaseTest {
 
     for (EdmAssociationSet assoSet : associationSets) {
       String name = assoSet.getName();
-      boolean expectedName = "4711".equals(name)
-          || "42".equals(name);
+      boolean expectedName = "Name4711".equals(name)
+          || "Name42".equals(name);
       assertTrue("Found not expected name: " + name, expectedName);
     }
   }

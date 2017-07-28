@@ -72,6 +72,8 @@ public class ODataJPARuntimeException extends ODataJPAException {
       "ERROR_JPA_CLOB_NULL");
   public static final MessageReference OPERATOR_EQ_NE_MISSING = createMessageReference(ODataJPARuntimeException.class,
       "OPERATOR_EQ_NE_MISSING");
+  public static final MessageReference FILTER_ON_NAVIGATION_NOT_SUPPORTED =
+      createMessageReference(ODataJPARuntimeException.class, "FILTER_ON_NAVIGATION_NOT_SUPPORTED");
 
   private ODataJPARuntimeException(final String localizedMessage, final Throwable e, final MessageReference msgRef) {
     super(localizedMessage, e, msgRef);

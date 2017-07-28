@@ -19,9 +19,15 @@
 package org.apache.olingo.odata2.core.servlet;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Random;
 
 import javax.servlet.GenericServlet;
 import javax.servlet.ServletConfig;
@@ -29,9 +35,13 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import junit.framework.Assert;
+import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.api.processor.ODataProcessor;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ODataResponseImpl;
 import org.apache.olingo.odata2.core.rest.ODataServiceFactoryImpl;
@@ -133,38 +143,133 @@ public class ODataServletTest {
   }
 
   @Test
-  public void contentLengthHeader() throws Exception {
-    final Method createResponse =
-        ODataServlet.class.getDeclaredMethod("createResponse", HttpServletResponse.class, ODataResponse.class);
-    createResponse.setAccessible(true);
-    final ODataServlet servlet = new ODataServlet();
-    final ODataResponse response =
-        ODataResponseImpl.status(HttpStatusCodes.OK).header(HttpHeaders.CONTENT_LENGTH, "15").entity("").build();
-    prepareResponseMockToWrite(respMock);
+  public void testInputStreamResponse() throws Exception {
+    ODataServlet servlet = new ODataServlet();
     prepareServlet(servlet);
 
-    createResponse.invoke(servlet, respMock, response);
+    final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    final ServletOutputStream out = new ServletOutputStream() {
+      @Override
+      public void write(int i) throws IOException {
+        bout.write(i);
+      }
+    };
+    Mockito.when(respMock.getOutputStream()).thenReturn(out);
 
-    Mockito.verify(respMock).setHeader(HttpHeaders.CONTENT_LENGTH, "15");
-    Mockito.verify(respMock).setContentLength(15);
+    HttpServletResponse servletResponse = Mockito.mock(HttpServletResponse.class);
+    Mockito.when(servletResponse.getOutputStream()).thenReturn(out);
+
+    ODataResponse odataResponse = Mockito.mock(ODataResponse.class);
+    Mockito.when(odataResponse.getStatus()).thenReturn(HttpStatusCodes.ACCEPTED);
+    Mockito.when(odataResponse.getHeaderNames()).thenReturn(new HashSet<String>());
+    InputStream input = new ByteArrayInputStream("SomeData".getBytes());
+    Mockito.when(odataResponse.getEntity()).thenReturn(input);
+    servlet.createResponse(servletResponse, odataResponse, true);
+
+    String outputContent = new String(bout.toByteArray());
+    Assert.assertEquals("", outputContent);
+  }
+
+
+  @Test
+  public void inputStreamResponse() throws Exception {
+    testInputStreamResponse("123", "utf-8", null);
+    testInputStreamResponse("1234567890", "utf-8", "5");
+    testInputStreamResponse(testData(200000), "utf-8", null);
+    testInputStreamResponse(testData(200000), "utf-8", "8192");
+    testInputStreamResponse(testData(200000), "utf-8", "32768");
+    //
+    testInputStreamResponse("üäö", "iso-8859-1", "8192");
+    testInputStreamResponse(testData(200000), "iso-8859-1", "32768");
+    testInputStreamResponse(testData(200000), "iso-8859-1", "8192");
+    testInputStreamResponse(testData(200000), "iso-8859-1", "32768");
+    //
+    testInputStreamResponse("1234567890", "utf-8", "5");
+    testInputStreamResponse("1234567890", "utf-8", "ABD");
+    testInputStreamResponse("1234567890", "utf-8", "");
+    testInputStreamResponse("1234567890", "utf-8", "-29");
+  }
+
+
+  private void testInputStreamResponse(String content, String encoding, String bufferSize) throws Exception {
+    ODataServlet servlet = new ODataServlet();
+    Mockito.when(configMock.getInitParameter(
+        "org.apache.olingo.odata2.core.servlet.buffer.size")).thenReturn(bufferSize);
+    prepareServlet(servlet);
+
+    final Charset charset = Charset.forName(encoding);
+    final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    final ServletOutputStream out = new ServletOutputStream() {
+      @Override
+      public void write(int i) throws IOException {
+        bout.write(i);
+      }
+    };
+    Mockito.when(respMock.getOutputStream()).thenReturn(out);
+
+    HttpServletResponse servletResponse = Mockito.mock(HttpServletResponse.class);
+    Mockito.when(servletResponse.getOutputStream()).thenReturn(out);
+
+    ODataResponse odataResponse = Mockito.mock(ODataResponse.class);
+    Mockito.when(odataResponse.getStatus()).thenReturn(HttpStatusCodes.ACCEPTED);
+    Mockito.when(odataResponse.getHeaderNames()).thenReturn(new HashSet<String>());
+    InputStream input = new ByteArrayInputStream(content.getBytes(charset));
+    Mockito.when(odataResponse.getEntity()).thenReturn(input);
+    servlet.createResponse(servletResponse, odataResponse);
+
+    String outputContent = new String(bout.toByteArray(), charset);
+    Assert.assertEquals(content, outputContent);
+  }
+
+
+  private String testData(int amount) {
+    StringBuilder result = new StringBuilder();
+    Random r = new Random();
+    for (int i = 0; i < amount; i++) {
+      result.append((char)(r.nextInt(26) + 'a'));
+    }
+
+    return result.toString();
+  }
+
+
+  @Test
+  public void serviceInstance() throws Exception {
+    ODataServlet servlet = new ODataServlet();
+    prepareServlet(servlet);
+    prepareRequest(reqMock, "", "/servlet-path");
+    Mockito.when(reqMock.getPathInfo()).thenReturn("/request-path-info");
+    Mockito.when(reqMock.getRequestURI()).thenReturn("http://localhost:8080/servlet-path/request-path-info");
+    ODataServiceFactory factory = Mockito.mock(ODataServiceFactory.class);
+    ODataService service = Mockito.mock(ODataService.class);
+    Mockito.when(factory.createService(Mockito.any(ODataContext.class))).thenReturn(service);
+    ODataProcessor processor = Mockito.mock(ODataProcessor.class);
+    Mockito.when(service.getProcessor()).thenReturn(processor);
+    Mockito.when(reqMock.getAttribute(ODataServiceFactory.FACTORY_INSTANCE_LABEL)).thenReturn(factory);
+    Mockito.when(respMock.getOutputStream()).thenReturn(Mockito.mock(ServletOutputStream.class));
+
+    servlet.service(reqMock, respMock);
+
+    Mockito.verify(factory).createService(Mockito.any(ODataContext.class));
   }
 
   @Test
-  public void contentLengthHeaderInvalid() throws Exception {
-    final Method createResponse =
-        ODataServlet.class.getDeclaredMethod("createResponse", HttpServletResponse.class, ODataResponse.class);
-    createResponse.setAccessible(true);
-    final ODataServlet servlet = new ODataServlet();
-    final ODataResponse response =
-        ODataResponseImpl.status(HttpStatusCodes.OK).header(HttpHeaders.CONTENT_LENGTH, "ab").entity("Test").build();
-    prepareResponseMockToWrite(respMock);
+  public void serviceClassloader() throws Exception {
+    ODataServlet servlet = new ODataServlet();
     prepareServlet(servlet);
+    prepareRequest(reqMock, "", "/servlet-path");
+    Mockito.when(reqMock.getPathInfo()).thenReturn("/request-path-info");
+    Mockito.when(reqMock.getRequestURI()).thenReturn("http://localhost:8080/servlet-path/request-path-info");
+    Mockito.when(respMock.getOutputStream()).thenReturn(Mockito.mock(ServletOutputStream.class));
 
-    createResponse.invoke(servlet, respMock, response);
+    servlet.service(reqMock, respMock);
 
-    Mockito.verify(respMock).setHeader(HttpHeaders.CONTENT_LENGTH, "ab");
-    Mockito.verify(respMock).setContentLength(4); // ||"Test"|| = 4
+    Mockito.verify(configMock).getInitParameter(ODataServiceFactory.FACTORY_LABEL);
+    Mockito.verify(reqMock).getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
+
+    Assert.assertEquals(ODataServiceFactoryImpl.class, servlet.getServiceFactory(reqMock).getClass());
   }
+
 
   private void prepareResponseMockToWrite(final HttpServletResponse response) throws IOException {
     Mockito.when(response.getOutputStream()).thenReturn(new ServletOutputStream() {
@@ -177,6 +282,7 @@ public class ODataServletTest {
     Mockito.when(req.getMethod()).thenReturn("GET");
     Mockito.when(req.getContextPath()).thenReturn(contextPath);
     Mockito.when(req.getServletPath()).thenReturn(servletPath);
+    Mockito.when(req.getHeaderNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
   }
 
   private void prepareRequest(final HttpServletRequest req) {
@@ -191,5 +297,32 @@ public class ODataServletTest {
 
     String factoryClassName = ODataServiceFactoryImpl.class.getName();
     Mockito.when(configMock.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(factoryClassName);
+  }
+  
+  @Test
+  public void testWithNoPathAfterServletPath() throws Exception {
+    ODataServlet servlet = new ODataServlet();
+    prepareServlet(servlet);
+    prepareRequestWithNoPathAfterServletPath(reqMock, "", "/servlet-path");
+    Mockito.when(reqMock.getPathInfo()).thenReturn("/Collection");
+    Mockito.when(reqMock.getRequestURI()).thenReturn("http://localhost:8080/servlet-path;v=1/Collection");
+    Mockito.when(servlet.getInitParameter("org.apache.olingo.odata2.path.split")).thenReturn("1");
+    Mockito.when(respMock.getOutputStream()).thenReturn(Mockito.mock(ServletOutputStream.class));
+
+    servlet.service(reqMock, respMock);
+
+    Mockito.verify(configMock).getInitParameter(ODataServiceFactory.FACTORY_LABEL);
+    Mockito.verify(reqMock).getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
+
+    Assert.assertEquals(ODataServiceFactoryImpl.class, servlet.getServiceFactory(reqMock).getClass());
+  }
+  
+  private void prepareRequestWithNoPathAfterServletPath(final HttpServletRequest req, 
+      final String contextPath, final String servletPath) {
+    Mockito.when(req.getMethod()).thenReturn("GET");
+    Mockito.when(req.getContextPath()).thenReturn(contextPath);
+    Mockito.when(req.getServletPath()).thenReturn(servletPath);
+    Mockito.when(req.getRequestURI()).thenReturn(servletPath + ";v=1" + "/Collection");
+    Mockito.when(req.getHeaderNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
   }
 }

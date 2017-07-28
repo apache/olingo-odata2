@@ -148,6 +148,45 @@ public class JPAExpandCallBackTest {
     }
   }
 
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testGetNextNavigationPropertyWithNumber() {
+    JPAExpandCallBack callBack = getJPAExpandCallBackObject();
+    List<ArrayList<NavigationPropertySegment>> expandList = EdmMockUtil.getExpandList();
+    ArrayList<NavigationPropertySegment> expands = new ArrayList<NavigationPropertySegment>();
+    expands.add(EdmMockUtil.mockNavigationPropertySegment("2"));
+    expandList.add(expands);
+    expands.add(EdmMockUtil.mockThirdNavigationPropertySegment());
+    List<EdmNavigationProperty> result = null;
+
+    try {
+      Field field = callBack.getClass().getDeclaredField("expandList");
+      field.setAccessible(true);
+      field.set(callBack, expandList);
+      Class<?>[] formalParams = { EdmEntityType.class, EdmNavigationProperty.class };
+      Object[] actualParams = { EdmMockUtil.mockSourceEdmEntityType(), EdmMockUtil.mockNavigationProperty() };
+      Method method = callBack.getClass().getDeclaredMethod("getNextNavigationProperty", formalParams);
+      method.setAccessible(true);
+      result = (List<EdmNavigationProperty>) method.invoke(callBack, actualParams);
+      assertEquals("MaterialDetails", result.get(0).getName());
+
+    } catch (SecurityException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (NoSuchFieldException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (IllegalArgumentException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (IllegalAccessException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (NoSuchMethodException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (InvocationTargetException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (EdmException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+  }
+
   private JPAExpandCallBack getJPAExpandCallBackObject() {
     Map<String, ODataCallback> callBacks = null;
     try {

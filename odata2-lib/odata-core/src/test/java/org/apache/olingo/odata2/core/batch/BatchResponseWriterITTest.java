@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.batch.v2.BatchParser;
 import org.apache.olingo.odata2.core.commons.ContentType;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 
 public class BatchResponseWriterITTest {
@@ -149,6 +150,176 @@ public class BatchResponseWriterITTest {
     assertEquals("application/json", parserResponse.getHeaders().get(HttpHeaders.CONTENT_TYPE));
     assertEquals("13", parserResponse.getHeaders().get(HttpHeaders.CONTENT_LENGTH));
     assertEquals("Walter Winter", parserResponse.getBody());
+
+    parserResponse = parserResponses.get(1);
+    assertEquals("204", parserResponse.getStatusCode());
+    assertEquals("1", parserResponse.getContentId());
+    assertEquals("No Content", parserResponse.getStatusInfo());
+
+    parserResponse = parserResponses.get(2);
+    assertEquals("200", parserResponse.getStatusCode());
+    assertEquals("OK", parserResponse.getStatusInfo());
+    assertEquals("application/json", parserResponse.getHeaders().get(HttpHeaders.CONTENT_TYPE));
+    assertEquals("6", parserResponse.getHeaders().get(HttpHeaders.CONTENT_LENGTH));
+    assertEquals("Test\r\n", parserResponse.getBody());
+
+    parserResponse = parserResponses.get(3);
+    assertEquals("200", parserResponse.getStatusCode());
+    assertEquals("OK", parserResponse.getStatusInfo());
+    assertEquals("application/json", parserResponse.getHeaders().get(HttpHeaders.CONTENT_TYPE));
+    assertEquals("5", parserResponse.getHeaders().get(HttpHeaders.CONTENT_LENGTH));
+    assertEquals("Test\n", parserResponse.getBody());
+
+    parserResponse = parserResponses.get(4);
+    assertEquals("200", parserResponse.getStatusCode());
+    assertEquals("OK", parserResponse.getStatusInfo());
+    assertEquals("application/json", parserResponse.getHeaders().get(HttpHeaders.CONTENT_TYPE));
+    assertEquals("4", parserResponse.getHeaders().get(HttpHeaders.CONTENT_LENGTH));
+    assertEquals("Test", parserResponse.getBody());
+  }
+
+  @Test
+  public void testChangeSetUtf() throws Exception {
+    List<BatchResponsePart> parts = new ArrayList<BatchResponsePart>();
+    String charset= "utf-8";
+    StringHelper.Stream stream = StringHelper.toStream("Wälter Wünter", charset);
+    ODataResponse response = ODataResponse.entity(stream.asStream())
+        .status(HttpStatusCodes.OK)
+        .contentHeader("application/json; charset=" + charset)
+        .build();
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(BatchResponsePart.responses(responses).changeSet(false).build());
+
+    ODataResponse changeSetResponse =
+        ODataResponse.status(HttpStatusCodes.NO_CONTENT).header(BatchHelper.MIME_HEADER_CONTENT_ID, "1").build();
+    responses = new ArrayList<ODataResponse>(2);
+    ODataResponse changeSetResponseEntity =
+        ODataResponse.status(HttpStatusCodes.OK).contentHeader(ContentType.APPLICATION_JSON.toContentTypeString())
+            .header(BatchHelper.MIME_HEADER_CONTENT_ID, "2")
+            .entity("Test\r\n").build();
+    ODataResponse changeSetResponseEntity2 =
+        ODataResponse.status(HttpStatusCodes.OK).contentHeader(ContentType.APPLICATION_JSON.toContentTypeString())
+            .header(BatchHelper.MIME_HEADER_CONTENT_ID, "2")
+            .entity("Test\n").build();
+    ODataResponse changeSetResponseEntity3 =
+        ODataResponse.status(HttpStatusCodes.OK).contentHeader(ContentType.APPLICATION_JSON.toContentTypeString())
+            .header(BatchHelper.MIME_HEADER_CONTENT_ID, "2")
+            .entity("Test").build();
+    responses.add(changeSetResponse);
+    responses.add(changeSetResponseEntity);
+    responses.add(changeSetResponseEntity2);
+    responses.add(changeSetResponseEntity3);
+
+    parts.add(BatchResponsePart.responses(responses).changeSet(true).build());
+
+    BatchResponseWriter writer = new BatchResponseWriter(true);
+    ODataResponse batchResponse = writer.writeResponse(parts);
+
+    assertEquals(202, batchResponse.getStatus().getStatusCode());
+    StringHelper.Stream responseStream = StringHelper.toStream(batchResponse.getEntityAsStream());
+    String body = responseStream.asString(charset);
+
+    // Get boundary
+    int lineEndingIndex = body.indexOf("\r\n");
+    String boundary = body.substring(2, lineEndingIndex);
+
+    // Parse response and test outputs
+    final BatchParser parser = new BatchParser("multipart/mixed;boundary=" + boundary, true);
+    List<BatchSingleResponse> parserResponses = parser.parseBatchResponse(responseStream.asStream());
+    assertEquals(5, parserResponses.size());
+
+    BatchSingleResponse parserResponse = parserResponses.get(0);
+    assertEquals("200", parserResponse.getStatusCode());
+    assertEquals("OK", parserResponse.getStatusInfo());
+    assertEquals("application/json; charset=" + charset, parserResponse.getHeaders().get(HttpHeaders.CONTENT_TYPE));
+    assertEquals("15", parserResponse.getHeaders().get(HttpHeaders.CONTENT_LENGTH));
+    assertEquals("Wälter Wünter", parserResponse.getBody());
+
+    parserResponse = parserResponses.get(1);
+    assertEquals("204", parserResponse.getStatusCode());
+    assertEquals("1", parserResponse.getContentId());
+    assertEquals("No Content", parserResponse.getStatusInfo());
+
+    parserResponse = parserResponses.get(2);
+    assertEquals("200", parserResponse.getStatusCode());
+    assertEquals("OK", parserResponse.getStatusInfo());
+    assertEquals("application/json", parserResponse.getHeaders().get(HttpHeaders.CONTENT_TYPE));
+    assertEquals("6", parserResponse.getHeaders().get(HttpHeaders.CONTENT_LENGTH));
+    assertEquals("Test\r\n", parserResponse.getBody());
+
+    parserResponse = parserResponses.get(3);
+    assertEquals("200", parserResponse.getStatusCode());
+    assertEquals("OK", parserResponse.getStatusInfo());
+    assertEquals("application/json", parserResponse.getHeaders().get(HttpHeaders.CONTENT_TYPE));
+    assertEquals("5", parserResponse.getHeaders().get(HttpHeaders.CONTENT_LENGTH));
+    assertEquals("Test\n", parserResponse.getBody());
+
+    parserResponse = parserResponses.get(4);
+    assertEquals("200", parserResponse.getStatusCode());
+    assertEquals("OK", parserResponse.getStatusInfo());
+    assertEquals("application/json", parserResponse.getHeaders().get(HttpHeaders.CONTENT_TYPE));
+    assertEquals("4", parserResponse.getHeaders().get(HttpHeaders.CONTENT_LENGTH));
+    assertEquals("Test", parserResponse.getBody());
+  }
+
+  @Test
+  public void testChangeSetIso() throws Exception {
+    List<BatchResponsePart> parts = new ArrayList<BatchResponsePart>();
+    String charset= "iso-8859-1";
+    StringHelper.Stream stream = StringHelper.toStream("Wälter Wünter", charset);
+    ODataResponse response = ODataResponse.entity(stream.asStream())
+        .status(HttpStatusCodes.OK)
+        .contentHeader("application/json; charset=" + charset)
+        .build();
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(BatchResponsePart.responses(responses).changeSet(false).build());
+
+    ODataResponse changeSetResponse =
+        ODataResponse.status(HttpStatusCodes.NO_CONTENT).header(BatchHelper.MIME_HEADER_CONTENT_ID, "1").build();
+    responses = new ArrayList<ODataResponse>(2);
+    ODataResponse changeSetResponseEntity =
+        ODataResponse.status(HttpStatusCodes.OK).contentHeader(ContentType.APPLICATION_JSON.toContentTypeString())
+            .header(BatchHelper.MIME_HEADER_CONTENT_ID, "2")
+            .entity("Test\r\n").build();
+    ODataResponse changeSetResponseEntity2 =
+        ODataResponse.status(HttpStatusCodes.OK).contentHeader(ContentType.APPLICATION_JSON.toContentTypeString())
+            .header(BatchHelper.MIME_HEADER_CONTENT_ID, "2")
+            .entity("Test\n").build();
+    ODataResponse changeSetResponseEntity3 =
+        ODataResponse.status(HttpStatusCodes.OK).contentHeader(ContentType.APPLICATION_JSON.toContentTypeString())
+            .header(BatchHelper.MIME_HEADER_CONTENT_ID, "2")
+            .entity("Test").build();
+    responses.add(changeSetResponse);
+    responses.add(changeSetResponseEntity);
+    responses.add(changeSetResponseEntity2);
+    responses.add(changeSetResponseEntity3);
+
+    parts.add(BatchResponsePart.responses(responses).changeSet(true).build());
+
+    BatchResponseWriter writer = new BatchResponseWriter(true);
+    ODataResponse batchResponse = writer.writeResponse(parts);
+
+    assertEquals(202, batchResponse.getStatus().getStatusCode());
+    StringHelper.Stream responseStream = StringHelper.toStream(batchResponse.getEntityAsStream());
+    String body = responseStream.asString(charset);
+
+    // Get boundary
+    int lineEndingIndex = body.indexOf("\r\n");
+    String boundary = body.substring(2, lineEndingIndex);
+
+    // Parse response and test outputs
+    final BatchParser parser = new BatchParser("multipart/mixed;boundary=" + boundary, true);
+    List<BatchSingleResponse> parserResponses = parser.parseBatchResponse(responseStream.asStream());
+    assertEquals(5, parserResponses.size());
+
+    BatchSingleResponse parserResponse = parserResponses.get(0);
+    assertEquals("200", parserResponse.getStatusCode());
+    assertEquals("OK", parserResponse.getStatusInfo());
+    assertEquals("application/json; charset=" + charset, parserResponse.getHeaders().get(HttpHeaders.CONTENT_TYPE));
+    assertEquals("13", parserResponse.getHeaders().get(HttpHeaders.CONTENT_LENGTH));
+    assertEquals("Wälter Wünter", parserResponse.getBody());
 
     parserResponse = parserResponses.get(1);
     assertEquals("204", parserResponse.getStatusCode());

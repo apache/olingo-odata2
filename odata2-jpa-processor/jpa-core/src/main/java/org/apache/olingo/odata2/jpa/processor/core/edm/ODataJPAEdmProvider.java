@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.jpa.processor.core.edm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
@@ -54,22 +55,22 @@ public class ODataJPAEdmProvider extends EdmProvider {
   private HashMap<String, FunctionImport> functionImports;
 
   public ODataJPAEdmProvider() {
-    entityTypes = new HashMap<String, EntityType>();
-    entityContainerInfos = new HashMap<String, EntityContainerInfo>();
-    complexTypes = new HashMap<String, ComplexType>();
-    associations = new HashMap<String, Association>();
-    functionImports = new HashMap<String, FunctionImport>();
+    entityTypes = new LinkedHashMap<String, EntityType>();
+    entityContainerInfos = new LinkedHashMap<String, EntityContainerInfo>();
+    complexTypes = new LinkedHashMap<String, ComplexType>();
+    associations = new LinkedHashMap<String, Association>();
+    functionImports = new LinkedHashMap<String, FunctionImport>();
   }
 
   public ODataJPAEdmProvider(final ODataJPAContext oDataJPAContext) {
     if (oDataJPAContext == null) {
       throw new IllegalArgumentException(ODataJPAException.ODATA_JPACTX_NULL);
     }
-    entityTypes = new HashMap<String, EntityType>();
-    entityContainerInfos = new HashMap<String, EntityContainerInfo>();
-    complexTypes = new HashMap<String, ComplexType>();
-    associations = new HashMap<String, Association>();
-    functionImports = new HashMap<String, FunctionImport>();
+    entityTypes = new LinkedHashMap<String, EntityType>();
+    entityContainerInfos = new LinkedHashMap<String, EntityContainerInfo>();
+    complexTypes = new LinkedHashMap<String, ComplexType>();
+    associations = new LinkedHashMap<String, Association>();
+    functionImports = new LinkedHashMap<String, FunctionImport>();
     jpaEdmModel = ODataJPAFactory.createFactory().getJPAAccessFactory().getJPAEdmModelView(oDataJPAContext);
   }
 
@@ -110,9 +111,10 @@ public class ODataJPAEdmProvider extends EdmProvider {
   @Override
   public EntityType getEntityType(final FullQualifiedName edmFQName) throws ODataException {
 
-    String strEdmFQName = edmFQName.toString();
+    String strEdmFQName = null;
 
     if (edmFQName != null) {
+      strEdmFQName = edmFQName.toString();
       if (entityTypes.containsKey(strEdmFQName)) {
         return entityTypes.get(strEdmFQName);
       } else if (schemas == null) {

@@ -42,6 +42,7 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackContext;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.easymock.EasyMock;
 
 public class EdmMockUtil {
@@ -204,12 +205,17 @@ public class EdmMockUtil {
     return entryData;
   }
 
-  private static NavigationPropertySegment mockNavigationPropertySegment() {
+  public static NavigationPropertySegment mockNavigationPropertySegment(String fromRoleAppendix) {
     NavigationPropertySegment navigationPropSegment = EasyMock.createMock(NavigationPropertySegment.class);
-    EasyMock.expect(navigationPropSegment.getNavigationProperty()).andStubReturn(mockNavigationProperty());
+    EasyMock.expect(navigationPropSegment.getNavigationProperty()).andStubReturn(
+        mockNavigationProperty(fromRoleAppendix));
     EasyMock.expect(navigationPropSegment.getTargetEntitySet()).andStubReturn(mockTargetEntitySet());
     EasyMock.replay(navigationPropSegment);
     return navigationPropSegment;
+  }
+
+  public static NavigationPropertySegment mockNavigationPropertySegment() {
+    return mockNavigationPropertySegment(null);
   }
 
   public static NavigationPropertySegment mockThirdNavigationPropertySegment() {
@@ -315,8 +321,9 @@ public class EdmMockUtil {
     EdmType type = EasyMock.createMock(EdmType.class);
     EasyMock.expect(type.getKind()).andStubReturn(EdmTypeKind.SIMPLE);
     EasyMock.replay(type);
-    EdmMapping mapping = EasyMock.createMock(EdmMapping.class);
+    JPAEdmMappingImpl mapping = EasyMock.createMock(JPAEdmMappingImpl.class);
     EasyMock.expect(mapping.getInternalName()).andStubReturn("price");
+    EasyMock.expect(((JPAEdmMappingImpl) mapping).isVirtualAccess()).andStubReturn(false);
     EasyMock.replay(mapping);
     try {
       EasyMock.expect(edmProperty.getName()).andStubReturn("price");
@@ -330,6 +337,10 @@ public class EdmMockUtil {
   }
 
   public static EdmNavigationProperty mockNavigationProperty() {
+    return mockNavigationProperty(null);
+  }
+
+  public static EdmNavigationProperty mockNavigationProperty(String fromRoleAppendix) {
     EdmNavigationProperty navigationProperty = EasyMock.createMock(EdmNavigationProperty.class);
     EdmMapping mapping = EasyMock.createMock(EdmMapping.class);
     EasyMock.expect(mapping.getInternalName()).andStubReturn("salesOrderLineItems");
@@ -338,7 +349,8 @@ public class EdmMockUtil {
       EasyMock.expect(navigationProperty.getMultiplicity()).andStubReturn(EdmMultiplicity.MANY);
       EasyMock.expect(navigationProperty.getMapping()).andStubReturn(mapping);
       EasyMock.expect(navigationProperty.getName()).andStubReturn("SalesOrderLineItemDetails");
-      EasyMock.expect(navigationProperty.getFromRole()).andStubReturn("SalesOrderHeader");
+      EasyMock.expect(navigationProperty.getFromRole()).andStubReturn("SalesOrderHeader"
+      + (fromRoleAppendix == null? "": fromRoleAppendix));
     } catch (EdmException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }

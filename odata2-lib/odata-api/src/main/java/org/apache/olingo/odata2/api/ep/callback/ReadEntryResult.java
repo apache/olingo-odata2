@@ -35,7 +35,7 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 public class ReadEntryResult extends ReadResult {
 
   private final ODataEntry entry;
-
+  private final String parentEntryId;
   /**
    * Constructor.
    * Parameters <b>MUST NOT BE NULL</b>.
@@ -45,9 +45,10 @@ public class ReadEntryResult extends ReadResult {
    * @param entry read entity as {@link ODataEntry}
    */
   public ReadEntryResult(final EntityProviderReadProperties properties, final EdmNavigationProperty navigationProperty,
-      final ODataEntry entry) {
+      final ODataEntry entry, final String entryMetadataId) {
     super(properties, navigationProperty);
     this.entry = entry;
+    this.parentEntryId = entryMetadataId;
   }
 
   @Override
@@ -63,5 +64,11 @@ public class ReadEntryResult extends ReadResult {
   @Override
   public String toString() {
     return super.toString() + "\n\t" + entry.toString();
+  }
+  /**
+   * @return the rootEntryId
+   */
+  public String getParentEntryId() {
+    return parentEntryId;
   }
 }

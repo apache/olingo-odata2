@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.core.batch.v2;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,22 +35,40 @@ import org.apache.olingo.odata2.api.batch.BatchException;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.core.batch.AcceptParser;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
+import org.apache.olingo.odata2.core.batch.BatchHelper;
+import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.commons.Decoder;
 
 public class BatchParserCommon {
 
   private static final Pattern PATTERN_LAST_CRLF = Pattern.compile("(.*)(\r\n){1}( *)", Pattern.DOTALL);
 
-  private static final String REG_EX_BOUNDARY =
-      "([a-zA-Z0-9_\\-\\.'\\+]{1,70})|\"([a-zA-Z0-9_\\-\\.'\\+\\s\\" +
-          "(\\),/:=\\?]{1,69}[a-zA-Z0-9_\\-\\.'\\+\\(\\),/:=\\?])\""; // See RFC 2046
+  // Multipart boundaries are defined in RFC 2046:
+  //     boundary      := 0*69<bchars> bcharsnospace
+  //     bchars        := bcharsnospace / " "
+  //     bcharsnospace := DIGIT / ALPHA / "'" / "(" / ")" / "+" / "_" / "," / "-" / "." / "/" / ":" / "=" / "?"
+  // The first alternative is for the case that only characters are used that don't need quoting.
+  private static final Pattern PATTERN_BOUNDARY = Pattern.compile(
+      "((?:\\w|[-.'+]){1,70})|"
+          + "\"((?:\\w|[-.'+(),/:=?]|\\s){0,69}(?:\\w|[-.'+(),/:=?]))\"");
 
-  public static final Pattern PATTERN_MULTIPART_MIXED = Pattern
-      .compile("multipart/mixed(.*)", Pattern.CASE_INSENSITIVE);
-  final static String REG_EX_APPLICATION_HTTP = "application/http";
-  public static final Pattern PATTERN_HEADER_LINE = Pattern.compile("([a-zA-Z\\-]+):\\s?(.*)\\s*");
-  public static final Pattern PATTERN_CONTENT_TYPE_APPLICATION_HTTP = Pattern.compile(REG_EX_APPLICATION_HTTP,
+  // HTTP header fields are defined in RFC 7230:
+  //     header-field   = field-name ":" OWS field-value OWS
+  //     field-name     = token
+  //     field-value    = *( field-content / obs-fold )
+  //     field-content  = field-vchar [ 1*( SP / HTAB ) field-vchar ]
+  //     field-vchar    = VCHAR / obs-text
+  //     obs-fold       = CRLF 1*( SP / HTAB )
+  //     token          = 1*tchar
+  //     tchar          = "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
+  //                      / DIGIT / ALPHA
+  // For the field-name the specification is followed strictly,
+  // but for the field-value the pattern currently accepts more than specified.
+  protected static final Pattern PATTERN_HEADER_LINE = Pattern.compile("((?:\\w|[!#$%\\&'*+\\-.^`|~])+):\\s?(.*)\\s*");
+
+  public static final Pattern PATTERN_MULTIPART_MIXED = Pattern.compile("multipart/mixed(.*)",
+      Pattern.CASE_INSENSITIVE);
+  public static final Pattern PATTERN_CONTENT_TYPE_APPLICATION_HTTP = Pattern.compile("application/http",
       Pattern.CASE_INSENSITIVE);
   public static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(\\?.*)?");
 
@@ -70,18 +89,33 @@ public class BatchParserCommon {
     return builder.toString();
   }
 
-  public static InputStream convertLineListToInputStream(final List<Line> messageList, final int contentLength)
+  /**
+   * Convert body in form of List of Line items into a InputStream.
+   * The body is transformed with the charset set in ContentType and
+   * if no charset is set with Olingo default charset (see <code>BatchHelper.DEFAULT_CHARSET</code>).
+   *
+   * If content length is a positive value the content is trimmed to according length.
+   * Otherwise the whole content is written into the InputStream.
+   *
+   * @param contentType content type value
+   * @param operation which is written into the InputStream
+   * @param contentLength if it is a positive value the content is trimmed to according length.
+   *                      Otherwise the whole content is written into the InputStream.
+   * @return Content of BatchQueryOperation as InputStream in according charset and length
+   * @throws BatchException if something goes wrong
+   */
+  public static InputStream convertToInputStream(final String contentType, final BatchQueryOperation operation,
+                                                 final int contentLength)
       throws BatchException {
-    final String message = trimLineListToLength(messageList, contentLength);
-
-    return new ByteArrayInputStream(message.getBytes());
-  }
-
-  public static InputStream convertLineListToInputStream(final List<Line> messageList)
-      throws BatchException {
-    final String message = lineListToString(messageList);
-
-    return new ByteArrayInputStream(message.getBytes());
+    Charset charset = BatchHelper.extractCharset(ContentType.parse(
+        contentType));
+    final String message;
+    if(contentLength <= -1) {
+      message = lineListToString(operation.getBody());
+    } else {
+      message = trimLineListToLength(operation.getBody(), contentLength);
+    }
+    return new ByteArrayInputStream(message.getBytes(charset));
   }
 
   static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)
@@ -112,21 +146,22 @@ public class BatchParserCommon {
       }
     }
 
-    final int lineNumer = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
+    final int lineNumber = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
     // Remove preamble
     if (messageParts.size() > 0) {
       messageParts.remove(0);
     } else {
 
-      throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER.addContent(lineNumer));
+      throw new BatchException(BatchException.MISSING_BOUNDARY_DELIMITER.addContent(lineNumber));
     }
 
     if (!isEndReached) {
-      throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER.addContent(lineNumer));
+      throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER.addContent(lineNumber));
     }
 
     if (messageParts.size() == 0) {
-      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING.addContent(boundary).addContent(lineNumer));
+      throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING
+          .addContent(boundary).addContent(lineNumber));
     }
 
     return messageParts;
@@ -210,7 +245,7 @@ public class BatchParserCommon {
 
         final String[] attrValue = pair.split("=");
         if (attrValue.length == 2 && "boundary".equals(attrValue[0].trim().toLowerCase(Locale.ENGLISH))) {
-          if (attrValue[1].matches(REG_EX_BOUNDARY)) {
+          if (PATTERN_BOUNDARY.matcher(attrValue[1]).matches()) {
             return trimQuota(attrValue[1].trim());
           } else {
             throw new BatchException(BatchException.INVALID_BOUNDARY.addContent(line));
@@ -242,17 +277,13 @@ public class BatchParserCommon {
 
         for (String parameter : parameters) {
           String[] parameterParts = parameter.split("=");
-          String parameterName = parameterParts[0].toLowerCase(Locale.ENGLISH);
+          String parameterName = parameterParts[0];
 
           if (parameterParts.length == 2) {
             List<String> valueList = queryParameter.get(parameterName);
             valueList = valueList == null ? new LinkedList<String>() : valueList;
             queryParameter.put(parameterName, valueList);
-
-            String[] valueParts = parameterParts[1].split(",");
-            for (String value : valueParts) {
-              valueList.add(Decoder.decode(value));
-            }
+            valueList.add(Decoder.decode(parameterParts[1]));
           }
         }
       }

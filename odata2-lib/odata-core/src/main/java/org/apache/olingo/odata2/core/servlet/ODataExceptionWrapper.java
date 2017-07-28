@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.core.servlet;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -42,10 +43,10 @@ import org.apache.olingo.odata2.api.processor.ODataErrorCallback;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.commons.ContentType;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.ProviderFacadeImpl;
 import org.apache.olingo.odata2.core.exception.MessageService;
 import org.apache.olingo.odata2.core.exception.MessageService.Message;
-import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
 /**
  *  
@@ -58,18 +59,23 @@ public class ODataExceptionWrapper {
   private final ODataErrorContext errorContext = new ODataErrorContext();
   private final String contentType;
   private final Locale messageLocale;
-  private final URI requestUri;
   private final Map<String, List<String>> httpRequestHeaders;
   private final ODataErrorCallback callback;
+  private URI requestUri;
 
   public ODataExceptionWrapper(final HttpServletRequest req, ODataServiceFactory serviceFactory) {
     try {
       requestUri = new URI(req.getRequestURI());
     } catch (URISyntaxException e) {
-      throw new ODataRuntimeException(e);
+      requestUri = null;
     }
     httpRequestHeaders = RestUtil.extractHeaders(req);
-    Map<String, String> queryParameters = RestUtil.extractQueryParameters(req.getQueryString());
+    Map<String, String> queryParameters;
+    try {
+      queryParameters = RestUtil.extractQueryParameters(req.getQueryString());
+    } catch (Exception e) {
+      queryParameters = new HashMap<String, String>();
+    }
     List<Locale> acceptableLanguages = RestUtil.extractAcceptableLanguage(req.getHeader("Accept-Language"));
     List<String> acceptHeaders = RestUtil.extractAcceptHeaders(req.getHeader("Accept"));
     contentType = getContentType(queryParameters, acceptHeaders).toContentTypeString();
@@ -147,7 +153,15 @@ public class ODataExceptionWrapper {
     if (toHandleException instanceof ODataHttpException) {
       errorContext.setHttpStatus(((ODataHttpException) toHandleException).getHttpStatus());
     } else if (toHandleException instanceof EntityProviderException) {
-      errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
+      if(toHandleException instanceof EntityProviderProducerException){
+        /*
+         * As per OLINGO-763 serializer exceptions are produced by the server and must therefore result 
+         * in a 500 internal server error
+         */
+        errorContext.setHttpStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
+      }else{
+        errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
+      }
     } else if (toHandleException instanceof BatchException) {
       errorContext.setHttpStatus(HttpStatusCodes.BAD_REQUEST);
     }

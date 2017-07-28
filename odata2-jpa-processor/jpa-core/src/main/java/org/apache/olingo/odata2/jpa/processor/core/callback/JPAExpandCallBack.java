@@ -190,8 +190,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       int size = navPropSegments.size();
       for (int i = 0; i < size; i++) {
         EdmNavigationProperty navProperty = navPropSegments.get(i).getNavigationProperty();
-        if (navProperty.getFromRole().equalsIgnoreCase(sourceEntityType.getName())
-            && navProperty.getName().equals(navigationProperty.getName())) {
+        if (testNavPropertySegment(navProperty, sourceEntityType, navigationProperty)) {
           if (i < size - 1) {
             edmNavigationPropertyList.add(navPropSegments.get(i + 1).getNavigationProperty());
           }
@@ -201,7 +200,26 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     return edmNavigationPropertyList;
   }
 
-  public static <T> Map<String, ODataCallback> getCallbacks(final URI baseUri,
+  private boolean testNavPropertySegment(
+		  final EdmNavigationProperty navProperty,
+		  final EdmEntityType sourceEntityType,
+		  final EdmNavigationProperty navigationProperty) throws EdmException {
+	  if(navigationProperty.getFromRole().toLowerCase(Locale.ENGLISH).startsWith(
+        sourceEntityType.getName().toLowerCase(Locale.ENGLISH))) {
+		  final String roleNum = 
+				  navigationProperty.getFromRole().substring(sourceEntityType.getName().length());
+		  if(roleNum.length() > 0) {
+			  try {
+				  Integer.parseInt(roleNum);
+			  } catch (NumberFormatException e) {
+				  return false;
+			  }
+		  }
+	  }
+	  return navProperty.getName().equals(navigationProperty.getName());
+  }
+  
+  public static Map<String, ODataCallback> getCallbacks(final URI baseUri,
       final ExpandSelectTreeNode expandSelectTreeNode, final List<ArrayList<NavigationPropertySegment>> expandList)
       throws EdmException {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();

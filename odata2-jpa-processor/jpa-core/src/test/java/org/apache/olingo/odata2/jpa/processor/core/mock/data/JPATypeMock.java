@@ -20,8 +20,11 @@ package org.apache.olingo.odata2.jpa.processor.core.mock.data;
 
 import java.sql.Blob;
 import java.sql.Clob;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -104,7 +107,7 @@ public class JPATypeMock {
   public void setMCharArray(final Character[] mCharArray) {
     this.mCharArray = mCharArray;
   }
-
+  
   private JPARelatedTypeMock mRelatedEntity;
   private List<JPARelatedTypeMock> mRelatedEntities = new ArrayList<JPATypeMock.JPARelatedTypeMock>();
 
@@ -195,15 +198,23 @@ public class JPATypeMock {
     public static final String ENTITY_NAME = "JPATypeEmbeddableMock";
     public static final String PROPERTY_NAME_MSHORT = "mShort";
     public static final String PROPERTY_NAME_MEMBEDDABLE = "mEmbeddable";
+    public static final String PROPERTY_NAME_MDATE = "mDate";
+    public static final String PROPERTY_NAME_MDATE1 = "mDate1";
+    public static final String PROPERTY_NAME_MTIMESTAMP = "mTimestamp";
+    public static final String PROPERTY_NAME_MTIME = "mTime";
 
-    private short mShort;
+    private Short mShort;
     private JPATypeEmbeddableMock2 mEmbeddable;
+    private Date mDate;
+    private java.sql.Date mDate1;
+    private Timestamp mTimestamp;
+    private Time mTime;
 
-    public short getMShort() {
+    public Short getMShort() {
       return mShort;
     }
 
-    public void setMShort(final short mShort) {
+    public void setMShort(final Short mShort) {
       this.mShort = mShort;
     }
 
@@ -213,6 +224,38 @@ public class JPATypeMock {
 
     public void setMEmbeddable(final JPATypeEmbeddableMock2 mEmbeddable) {
       this.mEmbeddable = mEmbeddable;
+    }
+    
+    public Timestamp getMTimestamp() {
+      return mTimestamp;
+    }
+
+    public void setMTimestamp(final Timestamp mTimestamp) {
+      this.mTimestamp = mTimestamp;
+    }
+
+    public Time getMTime() {
+      return mTime;
+    }
+    
+    public void setMTime(final Time mTime) {
+      this.mTime = mTime;
+    }
+
+    public void setMDate(final Date mDate) {
+      this.mDate = mDate;
+    }
+    
+    public Date getMDate() {
+      return mDate;
+    }
+
+    public void setMDate1(final java.sql.Date mDate1) {
+      this.mDate1 = mDate1;
+    }
+    
+    public java.sql.Date getMDate1() {
+      return mDate1;
     }
 
   }
@@ -225,7 +268,7 @@ public class JPATypeMock {
     public static final String PROPERTY_NAME_MFLOAT = "mFloat";
 
     private UUID mUUID;
-    private float mFloat;
+    private Float mFloat;
 
     public UUID getMUUID() {
       return mUUID;
@@ -235,11 +278,11 @@ public class JPATypeMock {
       this.mUUID = mUUID;
     }
 
-    public float getMFloat() {
+    public Float getMFloat() {
       return mFloat;
     }
 
-    public void setMFloat(final float mFloat) {
+    public void setMFloat(final Float mFloat) {
       this.mFloat = mFloat;
     }
 

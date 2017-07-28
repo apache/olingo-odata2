@@ -22,7 +22,6 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderBatchProperties;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.v2.BatchParser;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings;
+import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -125,6 +124,65 @@ public class BatchRequestWriterITTest {
     assertEquals("111", oDataRequestPost.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID));
     assertEquals(body, streamToString(oDataRequestPost.getBody()));
     assertEquals("application/json", oDataRequestPost.getRequestHeaderValue(HttpHeaders.CONTENT_TYPE));
+  }
+
+  @Test
+  public void testChangeSetIso() throws Exception {
+    testChangeSetWithCharset("iso-8859-1");
+  }
+
+  @Test
+  public void testChangeSetUtf8() throws Exception {
+    testChangeSetWithCharset("utf-8");
+  }
+
+  private void testChangeSetWithCharset(final String charset) throws Exception {
+    List<BatchPart> batch = new ArrayList<BatchPart>();
+    Map<String, String> headers = new HashMap<String, String>();
+    headers.put("Accept", "application/json");
+    headers.put("CustomHeader", "HeäderVälüe");
+    BatchPart request = BatchQueryPart.method(GET).uri("Employees").headers(headers).contentId("000").build();
+    batch.add(request);
+
+    Map<String, String> changeSetHeaders = new HashMap<String, String>();
+    changeSetHeaders.put("content-type", "application/json; charset=" + charset);
+    String body = "äöü/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEA";
+    StringHelper.Stream stBody = StringHelper.toStream(body, charset);
+    BatchChangeSetPart changeRequest = BatchChangeSetPart.method(POST)
+        .uri("Employees")
+        .body(stBody.asString(charset))
+        .headers(changeSetHeaders)
+        .contentId("111")
+        .build();
+    BatchChangeSet changeSet = BatchChangeSet.newBuilder().build();
+    changeSet.add(changeRequest);
+    batch.add(changeSet);
+    BatchRequestWriter writer = new BatchRequestWriter();
+    InputStream stream = writer.writeBatchRequest(batch, BOUNDARY);
+
+    final List<BatchRequestPart> parsedRequestParts = parseBatchRequest(stream);
+    assertEquals(2, parsedRequestParts.size());
+
+    // Get Request
+    final BatchRequestPart partGet = parsedRequestParts.get(0);
+    assertFalse(partGet.isChangeSet());
+    assertEquals(1, partGet.getRequests().size());
+    final ODataRequest oDataRequestGet = partGet.getRequests().get(0);
+    assertEquals("Employees", oDataRequestGet.getPathInfo().getODataSegments().get(0).getPath());
+    validateHeader(oDataRequestGet, "Accept", "application/json");
+    validateHeader(oDataRequestGet, "CustomHeader", "HeäderVälüe");
+
+    // Change set
+    final BatchRequestPart partChangeSet = parsedRequestParts.get(1);
+    assertTrue(partChangeSet.isChangeSet());
+    assertEquals(1, partChangeSet.getRequests().size());
+    final ODataRequest oDataRequestPost = partChangeSet.getRequests().get(0);
+    assertEquals("Employees", oDataRequestGet.getPathInfo().getODataSegments().get(0).getPath());
+    assertEquals("111", oDataRequestPost.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID));
+    StringHelper.Stream st = StringHelper.toStream(oDataRequestPost.getBody());
+    assertEquals(body, st.asString(charset));
+    assertEquals("application/json; charset=" + charset,
+        oDataRequestPost.getRequestHeaderValue(HttpHeaders.CONTENT_TYPE));
   }
 
   @Test
@@ -229,15 +287,13 @@ public class BatchRequestWriterITTest {
   }
 
   private String streamToString(final InputStream in) throws IOException {
-    final BufferedReaderIncludingLineEndings reader = new BufferedReaderIncludingLineEndings(new InputStreamReader(in));
-    final StringBuilder builder = new StringBuilder();
-    String line;
+    return StringHelper.toStream(in).asString();
+  }
 
-    while ((line = reader.readLine()) != null) {
-      builder.append(line);
-    }
-
-    reader.close();
-    return builder.toString();
+  private void validateHeader(ODataRequest request, String headerName, String expectedValue) {
+    String actualValue = request.getRequestHeaderValue(headerName);
+    assertNotNull("Expected header '" + headerName + "' is not available.", actualValue);
+    assertEquals("Header '" + headerName + "' has value '" + actualValue
+        + "' instead of expected '" + expectedValue + "'.", expectedValue, actualValue);
   }
 }

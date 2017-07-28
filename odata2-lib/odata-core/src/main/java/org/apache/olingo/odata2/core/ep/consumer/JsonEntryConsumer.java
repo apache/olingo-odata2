@@ -320,7 +320,8 @@ public class JsonEntryConsumer {
               properties.put(navigationPropertyName, feed);
               resultEntry.setContainsInlineEntry(true);
             } else {
-              ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty, feed);
+              ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty, 
+                  feed, entryMetadata.getId());
               callback.handleReadFeed(result);
             }
           } else {
@@ -331,7 +332,8 @@ public class JsonEntryConsumer {
               properties.put(navigationPropertyName, entry);
               resultEntry.setContainsInlineEntry(true);
             } else {
-              ReadEntryResult result = new ReadEntryResult(inlineReadProperties, navigationProperty, entry);
+              ReadEntryResult result = new ReadEntryResult(inlineReadProperties, navigationProperty, 
+                  entry, entryMetadata.getId());
               callback.handleReadEntry(result);
             }
           }
@@ -371,7 +373,8 @@ public class JsonEntryConsumer {
         properties.put(navigationPropertyName, feed);
         resultEntry.setContainsInlineEntry(true);
       } else {
-        ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty, feed);
+        ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty,
+            feed, entryMetadata.getId());
         try {
           callback.handleReadFeed(result);
         } catch (final ODataApplicationException e) {

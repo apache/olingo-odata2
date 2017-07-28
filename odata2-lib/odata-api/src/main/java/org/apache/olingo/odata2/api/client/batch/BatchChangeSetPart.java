@@ -30,7 +30,9 @@ public abstract class BatchChangeSetPart {
 
   public abstract Map<String, String> getHeaders();
 
-  public abstract String getBody();
+  public abstract Object getBody();
+
+  public abstract byte[] getBodyAsBytes();
 
   public abstract String getUri();
 
@@ -51,6 +53,14 @@ public abstract class BatchChangeSetPart {
    * @return a new builder object
    */
   public static BatchChangeSetPartBuilder body(final String body) {
+    return newBuilder().body(body);
+  }
+  
+  /**
+   * @param body a change request body
+   * @return a new builder object
+   */
+  public static BatchChangeSetPartBuilder body(final byte[] body) {
     return newBuilder().body(body);
   }
 
@@ -98,6 +108,8 @@ public abstract class BatchChangeSetPart {
     public abstract BatchChangeSetPartBuilder headers(Map<String, String> headers);
 
     public abstract BatchChangeSetPartBuilder body(String body);
+    
+    public abstract BatchChangeSetPartBuilder body(byte[] body);
 
     public abstract BatchChangeSetPartBuilder uri(String uri);
 

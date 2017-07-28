@@ -18,16 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.model;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Array;
-import java.util.List;
-
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.metamodel.Attribute.PersistentAttributeType;
-
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
+import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
@@ -35,6 +27,15 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmAssociationEndView
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.jpa.processor.core.access.model.JPAEdmNameBuilder;
+
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.metamodel.Attribute.PersistentAttributeType;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Array;
+import java.util.List;
 
 public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements JPAEdmAssociationEndView {
 
@@ -130,6 +131,12 @@ public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements JPAEdmAs
       case MANY_TO_ONE:
         currentAssociationEnd1.setMultiplicity(EdmMultiplicity.MANY);
         currentAssociationEnd2.setMultiplicity(EdmMultiplicity.ONE);
+        if (annotatedElement != null) {
+          ManyToOne reln = annotatedElement.getAnnotation(ManyToOne.class);
+          if (reln != null && reln.optional()) {
+            currentAssociationEnd2.setMultiplicity(EdmMultiplicity.ZERO_TO_ONE);
+          }
+        }
         break;
       case ONE_TO_ONE:
         currentAssociationEnd1.setMultiplicity(EdmMultiplicity.ONE);
@@ -138,6 +145,9 @@ public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements JPAEdmAs
           OneToOne reln = annotatedElement.getAnnotation(OneToOne.class);
           if (reln != null) {
             mappedBy = reln.mappedBy();
+            if(reln.optional()) {
+              currentAssociationEnd2.setMultiplicity(EdmMultiplicity.ZERO_TO_ONE);
+            }
           }
         }
         break;
@@ -149,15 +159,61 @@ public class JPAEdmAssociationEnd extends JPAEdmBaseViewImpl implements JPAEdmAs
 
   @Override
   public boolean compare(final AssociationEnd end1, final AssociationEnd end2) {
-    if ((end1.getType().equals(currentAssociationEnd1.getType())
-        && end2.getType().equals(currentAssociationEnd2.getType())
-        && end1.getMultiplicity().equals(currentAssociationEnd1.getMultiplicity()) && end2.getMultiplicity().equals(
-        currentAssociationEnd2.getMultiplicity()))
-        || (end1.getType().equals(currentAssociationEnd2.getType())
-            && end2.getType().equals(currentAssociationEnd1.getType())
-            && end1.getMultiplicity().equals(currentAssociationEnd2.getMultiplicity()) && end2.getMultiplicity()
-            .equals(currentAssociationEnd1.getMultiplicity()))) {
+    FullQualifiedName end1Type = end1.getType();
+    FullQualifiedName currentAssociationEnd1Type = currentAssociationEnd1.getType();
+    FullQualifiedName end2Type = end2.getType();
+    FullQualifiedName currentAssociationEnd2Type = currentAssociationEnd2.getType();
+
+    if(end1.getMultiplicity() == null || currentAssociationEnd1.getMultiplicity() == null) {
+      return false;
+    }
+    if(end2.getMultiplicity() == null || currentAssociationEnd2.getMultiplicity() == null) {
+      return false;
+    }
+
+    boolean end1eqCurEnd1 = end1.getMultiplicity().equals(currentAssociationEnd1.getMultiplicity());
+    boolean end2eqCurEnd2 = end2.getMultiplicity().equals(currentAssociationEnd2.getMultiplicity());
+    if(end1Type.equals(currentAssociationEnd1Type) && end2Type.equals(currentAssociationEnd2Type)
+        && end1eqCurEnd1 && end2eqCurEnd2) {
       return true;
+    }
+
+    boolean end1EqCurEnd2 = end1.getMultiplicity().equals(currentAssociationEnd2.getMultiplicity());
+    boolean end2EqCurEnd1 = end2.getMultiplicity().equals(currentAssociationEnd1.getMultiplicity());
+    if(end1Type.equals(currentAssociationEnd2Type) && end2Type.equals(currentAssociationEnd1Type)
+        && end1EqCurEnd2 && end2EqCurEnd1) {
+      return true;
+    }
+
+    boolean end1IsZeroToOne = end1.getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE;
+    boolean end1IsOne = end1.getMultiplicity() == EdmMultiplicity.ONE;
+    boolean end2IsZeroToOne = end2.getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE;
+    boolean end2IsOne = end2.getMultiplicity() == EdmMultiplicity.ONE;
+
+    if (end1Type.equals(currentAssociationEnd1Type) && end2Type.equals(currentAssociationEnd2Type)) {
+        if ((end1IsZeroToOne && currentAssociationEnd1.getMultiplicity() == EdmMultiplicity.ONE
+            || end1IsOne && currentAssociationEnd1.getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE)
+            && end2eqCurEnd2) {
+          return true;
+        }
+        if ((end2IsZeroToOne && currentAssociationEnd2.getMultiplicity() == EdmMultiplicity.ONE
+            || end2IsOne && currentAssociationEnd2.getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE)
+            && end1eqCurEnd1) {
+          return true;
+        }
+    }
+
+    if (end2Type.equals(currentAssociationEnd1Type) && end1Type.equals(currentAssociationEnd2Type)) {
+      if ((end1IsZeroToOne && currentAssociationEnd2.getMultiplicity() == EdmMultiplicity.ONE
+          || end1IsOne && currentAssociationEnd2.getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE)
+          && end2EqCurEnd1) {
+        return true;
+      }
+      if ((end2IsZeroToOne && currentAssociationEnd1.getMultiplicity() == EdmMultiplicity.ONE
+          || end2IsOne && currentAssociationEnd1.getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE)
+          && end1EqCurEnd2) {
+        return true;
+      }
     }
 
     return false;

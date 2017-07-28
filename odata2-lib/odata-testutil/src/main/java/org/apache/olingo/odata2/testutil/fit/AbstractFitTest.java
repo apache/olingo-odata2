@@ -77,6 +77,23 @@ public abstract class AbstractFitTest extends BaseTest {
     return service;
   }
 
+  protected void startCustomServer(Class<? extends FitStaticServiceFactory> factoryClass){
+    try {
+      service = createService();
+      server.startServer(service, factoryClass);
+    } catch (final ODataException e) {
+      throw new TestUtilRuntimeException(e);
+    }
+  }
+  
+  protected void stopCustomServer(){
+    try {
+      server.stopServer();
+    } catch (final ServerRuntimeException e) {
+      throw new TestUtilRuntimeException(e);
+    }
+  }
+  
   protected abstract ODataService createService() throws ODataException;
 
   @Before

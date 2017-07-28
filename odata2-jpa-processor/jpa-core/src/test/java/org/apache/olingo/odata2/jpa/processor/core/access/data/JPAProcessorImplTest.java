@@ -80,7 +80,7 @@ import org.junit.Test;
 public class JPAProcessorImplTest {
 
   // -------------------------------- Common Start ------------------------------------common in
-  // ODataJPAProcessorDefaultTest as well
+  // ODataJPADefaultProcessorTest as well
   private static final String STR_LOCAL_URI = "http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/";
   private static final String SALESORDERPROCESSING_CONTAINER = "salesorderprocessingContainer";
   private static final String SO_ID = "SoId";
@@ -152,7 +152,7 @@ public class JPAProcessorImplTest {
     }
   }
 
-  // ---------------------------- Common Code Start ---------------- TODO - common in ODataJPAProcessorDefaultTest as
+  // ---------------------------- Common Code Start ---------------- TODO - common in ODataJPADefaultProcessorTest as
   // well
 
   private DeleteUriInfo getDeletetUriInfo() {
@@ -167,6 +167,7 @@ public class JPAProcessorImplTest {
     EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
     EasyMock.expect(objUriInfo.getKeyPredicates()).andStubReturn(getKeyPredicates());
     EasyMock.expect(objUriInfo.isLinks()).andStubReturn(false);
+    EasyMock.expect(objUriInfo.getNavigationSegments()).andReturn(new ArrayList<NavigationSegment>());
     EasyMock.replay(objUriInfo);
     return objUriInfo;
   }
@@ -209,6 +210,7 @@ public class JPAProcessorImplTest {
   private UriInfo getLocalUriInfo() {
     UriInfo objUriInfo = EasyMock.createMock(UriInfo.class);
     EasyMock.expect(objUriInfo.getStartEntitySet()).andStubReturn(getLocalEdmEntitySet());
+    EasyMock.expect(objUriInfo.getNavigationSegments()).andStubReturn(new ArrayList<NavigationSegment>());
     EasyMock.expect(objUriInfo.getTargetEntitySet()).andStubReturn(getLocalEdmEntitySet());
     EasyMock.expect(objUriInfo.getSelect()).andStubReturn(null);
     EasyMock.expect(objUriInfo.getOrderBy()).andStubReturn(getOrderByExpression());
@@ -308,7 +310,6 @@ public class JPAProcessorImplTest {
     return tx;
   }
 
-
   private EntityManagerFactory mockEntityManagerFactory() {
     EntityManagerFactory emf = EasyMock.createMock(EntityManagerFactory.class);
     EasyMock.expect(emf.getMetamodel()).andStubReturn(mockMetaModel());
@@ -323,6 +324,7 @@ public class JPAProcessorImplTest {
     EasyMock.expect(em.createQuery("SELECT COUNT ( E1 ) FROM SalesOrderHeaders E1")).andStubReturn(
         getQueryForSelectCount());
     EasyMock.expect(em.getTransaction()).andStubReturn(getLocalTransaction()); // For Delete
+    EasyMock.expect(em.isOpen()).andReturn(false);
     em.flush();
     em.flush();
     Address obj = new Address();

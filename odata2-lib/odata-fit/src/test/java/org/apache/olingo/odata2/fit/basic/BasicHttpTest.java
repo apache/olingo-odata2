@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.fit.basic;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -31,12 +32,7 @@ import javax.ws.rs.HttpMethod;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
@@ -105,6 +101,27 @@ public class BasicHttpTest extends AbstractBasicTest {
     response = executeGetRequest("$metadata/./");
     assertEquals(HttpStatusCodes.BAD_REQUEST.getStatusCode(), response.getStatusLine().getStatusCode());
   }
+
+  @Test
+  public void head() throws Exception {
+    HttpResponse response = executeHeadRequest("/");
+    assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
+    assertNull(response.getEntity());
+
+    response = executeHeadRequest("$metadata");
+    assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
+    assertNull(response.getEntity());
+
+    response = executeHeadRequest("//////$metadata");
+    assertEquals(HttpStatusCodes.OK.getStatusCode(), response.getStatusLine().getStatusCode());
+    assertNull(response.getEntity());
+    response = executeHeadRequest("/./$metadata");
+    assertEquals(HttpStatusCodes.NOT_FOUND.getStatusCode(), response.getStatusLine().getStatusCode());
+    assertNull(response.getEntity());
+    response = executeHeadRequest("$metadata/./");
+    assertEquals(HttpStatusCodes.BAD_REQUEST.getStatusCode(), response.getStatusLine().getStatusCode());
+  }
+
 
   @Test
   public void put() throws Exception {
@@ -196,10 +213,7 @@ public class BasicHttpTest extends AbstractBasicTest {
 
   @Test
   public void unsupportedMethod() throws Exception {
-    HttpResponse response = getHttpClient().execute(new HttpHead(getEndpoint()));
-    assertEquals(HttpStatusCodes.NOT_IMPLEMENTED.getStatusCode(), response.getStatusLine().getStatusCode());
-
-    response = getHttpClient().execute(new HttpOptions(getEndpoint()));
+    HttpResponse response = getHttpClient().execute(new HttpOptions(getEndpoint()));
     assertEquals(HttpStatusCodes.NOT_IMPLEMENTED.getStatusCode(), response.getStatusLine().getStatusCode());
   }
 
@@ -218,6 +232,7 @@ public class BasicHttpTest extends AbstractBasicTest {
     tunnelPost("X-HTTP-Method", ODataHttpMethod.PUT);
     tunnelPost("X-HTTP-Method", ODataHttpMethod.GET);
     tunnelPost("X-HTTP-Method", ODataHttpMethod.POST);
+    tunnelPost("X-HTTP-Method", "HEAD", HttpStatusCodes.NOT_FOUND);
 
     tunnelPost("X-HTTP-Method-Override", ODataHttpMethod.MERGE);
     tunnelPost("X-HTTP-Method-Override", ODataHttpMethod.PATCH);
@@ -225,6 +240,7 @@ public class BasicHttpTest extends AbstractBasicTest {
     tunnelPost("X-HTTP-Method-Override", ODataHttpMethod.PUT);
     tunnelPost("X-HTTP-Method-Override", ODataHttpMethod.GET);
     tunnelPost("X-HTTP-Method-Override", ODataHttpMethod.POST);
+    tunnelPost("X-HTTP-Method-Override", "HEAD", HttpStatusCodes.NOT_FOUND);
   }
 
   private void tunnelPost(final String header, final ODataHttpMethod method) throws IOException {
@@ -256,8 +272,6 @@ public class BasicHttpTest extends AbstractBasicTest {
 
   @Test
   public void tunneledUnsupportedMethod() throws Exception {
-    tunnelPost("X-HTTP-Method", HttpMethod.HEAD, HttpStatusCodes.NOT_IMPLEMENTED);
-    tunnelPost("X-HTTP-Method-Override", HttpMethod.HEAD, HttpStatusCodes.NOT_IMPLEMENTED);
     tunnelPost("X-HTTP-Method", HttpMethod.OPTIONS, HttpStatusCodes.NOT_IMPLEMENTED);
     tunnelPost("X-HTTP-Method-Override", HttpMethod.OPTIONS, HttpStatusCodes.NOT_IMPLEMENTED);
   }
@@ -270,5 +284,10 @@ public class BasicHttpTest extends AbstractBasicTest {
   @Test
   public void tunneledUnknownMethodOverride() throws Exception {
     tunnelPost("X-HTTP-Method-Override", "xxx", HttpStatusCodes.NOT_IMPLEMENTED);
+  }
+
+  protected HttpResponse executeHeadRequest(final String request) throws IOException {
+    final HttpHead head = new HttpHead(URI.create(getEndpoint().toString() + request));
+    return getHttpClient().execute(head);
   }
 }

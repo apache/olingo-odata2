@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.core.batch;
+package org.apache.olingo.odata2.core.batch.v2;
 
 import static org.junit.Assert.*;
 

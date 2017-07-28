@@ -1153,12 +1153,20 @@ public class ListsProcessor extends DataSourceProcessor {
           }
         } else if (relatedValue instanceof ODataEntry) {
           final ODataEntry relatedValueEntry = (ODataEntry) relatedValue;
-          Object relatedData = dataSource.newDataObject(relatedEntitySet);
-          setStructuralTypeValuesFromMap(relatedData, relatedEntityType, relatedValueEntry.getProperties(), false);
-          dataSource.createData(relatedEntitySet, relatedData);
-          dataSource.writeRelation(entitySet, data, relatedEntitySet, getStructuralTypeValueMap(relatedData,
-              relatedEntityType));
-          createInlinedEntities(relatedEntitySet, relatedData, relatedValueEntry);
+          final Map<String, Object> relatedProperties = relatedValueEntry.getProperties();
+          if (relatedProperties.isEmpty()) {
+            final Map<String, Object> key = parseLinkUri(relatedEntitySet, relatedValueEntry.getMetadata().getUri());
+            if (key != null) {
+              dataSource.writeRelation(entitySet, data, relatedEntitySet, key);
+            }
+          } else {
+            Object relatedData = dataSource.newDataObject(relatedEntitySet);
+            setStructuralTypeValuesFromMap(relatedData, relatedEntityType, relatedProperties, false);
+            dataSource.createData(relatedEntitySet, relatedData);
+            dataSource.writeRelation(entitySet, data, relatedEntitySet, getStructuralTypeValueMap(relatedData,
+                    relatedEntityType));
+            createInlinedEntities(relatedEntitySet, relatedData, relatedValueEntry);
+          }
         } else {
           throw new ODataException("Unexpected class for a related value: " + relatedValue.getClass().getSimpleName());
         }
@@ -1431,9 +1439,9 @@ public class ListsProcessor extends DataSourceProcessor {
       final MethodExpression methodExpression = (MethodExpression) expression;
       final String first = evaluateExpression(data, methodExpression.getParameters().get(0));
       final String second = methodExpression.getParameterCount() > 1 ?
-          evaluateExpression(data, methodExpression.getParameters().get(1)) : null;
+          evaluateExpression(data, methodExpression.getParameters().get(1)) : "";
       final String third = methodExpression.getParameterCount() > 2 ?
-          evaluateExpression(data, methodExpression.getParameters().get(2)) : null;
+          evaluateExpression(data, methodExpression.getParameters().get(2)) : "";
 
       switch (methodExpression.getMethod()) {
       case ENDSWITH:
@@ -1449,8 +1457,9 @@ public class ListsProcessor extends DataSourceProcessor {
       case TRIM:
         return first.trim();
       case SUBSTRING:
-        final int offset = Integer.parseInt(second);
-        return first.substring(offset, offset + Integer.parseInt(third));
+        final int offset = second.length() == 0 ? 0 : Integer.parseInt(second);
+        final int length = third.length() == 0 ? 0 : Integer.parseInt(second);
+        return first.substring(offset, offset + length);
       case SUBSTRINGOF:
         return Boolean.toString(second.contains(first));
       case CONCAT:

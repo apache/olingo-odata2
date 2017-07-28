@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityInfoAggregator;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
@@ -39,12 +40,14 @@ public class JsonDeletedEntryEntityProducer {
   }
 
   public void append(final Writer writer, final EntityInfoAggregator entityInfo,
-      final List<Map<String, Object>> deletedEntries)
+      final List<Map<String, Object>> deletedEntries, boolean noPreviousEntries)
       throws EntityProviderException {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
     try {
       if (deletedEntries.size() > 0) {
-        jsonStreamWriter.separator();
+        if(!noPreviousEntries){
+          jsonStreamWriter.separator();
+        }
         int counter = 0;
         for (Map<String, Object> deletedEntry : deletedEntries) {
           jsonStreamWriter.beginObject();
@@ -66,7 +69,7 @@ public class JsonDeletedEntryEntityProducer {
         }
       }
     } catch (final IOException e) {
-      throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
     }
 

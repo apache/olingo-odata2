@@ -24,6 +24,7 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathNotExists;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -40,6 +41,9 @@ import java.util.TimeZone;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import junit.framework.Assert;
+
+import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmCustomizableFeedMappings;
@@ -52,15 +56,27 @@ import org.apache.olingo.odata2.api.edm.EdmTargetPath;
 import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.api.ep.callback.OnWriteEntryContent;
+import org.apache.olingo.odata2.api.ep.callback.WriteEntryCallbackContext;
+import org.apache.olingo.odata2.api.ep.callback.WriteEntryCallbackResult;
+import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
+import org.apache.olingo.odata2.api.uri.PathSegment;
+import org.apache.olingo.odata2.api.uri.UriInfo;
+import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
 import org.apache.olingo.odata2.core.ep.AtomEntityProvider;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
+import org.apache.olingo.odata2.core.uri.ExpandSelectTreeCreator;
+import org.apache.olingo.odata2.core.uri.UriParserImpl;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.helper.XMLUnitHelper;
+import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -70,6 +86,8 @@ import org.xml.sax.SAXException;
 
 public class AtomEntryProducerTest extends AbstractProviderTest {
 
+  private String buildingXPathString = "/a:entry/a:link[@href=\"Rooms('1')/nr_Building\" and @title='nr_Building']";
+  
   public AtomEntryProducerTest(final StreamWriterImplType type) {
     super(type);
   }
@@ -277,8 +295,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
 
     AtomEntityProvider ser = createAtomEntityProvider();
     ODataResponse response =
-        ser.writeEntry(entitySet, localEmployeeData,
-            properties);
+        ser.writeEntry(entitySet, localEmployeeData, properties);
     String xmlString = verifyResponse(response);
     assertXpathExists("/a:entry", xmlString);
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
@@ -465,7 +482,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     try {
       ser.writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
     } catch (EntityProviderException e) {
-      verifyRootCause(EntityProviderException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
+      verifyRootCause(EntityProviderProducerException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
       thrown = true;
     }
     if (!thrown) {
@@ -497,7 +514,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     try {
       ser.writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
     } catch (EntityProviderException e) {
-      verifyRootCause(EntityProviderException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
+      verifyRootCause(EntityProviderProducerException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
       thrown = true;
     }
     if (!thrown) {
@@ -528,7 +545,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     try {
       ser.writeEntry(employeesSet, employeeData, DEFAULT_PROPERTIES);
     } catch (EntityProviderException e) {
-      verifyRootCause(EntityProviderException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
+      verifyRootCause(EntityProviderProducerException.class, EntityProviderException.INVALID_NAMESPACE.getKey(), e);
       thrown = true;
     }
     if (!thrown) {
@@ -600,6 +617,7 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     assertXpathEvaluatesTo(BASE_URI.toASCIIString(), "/a:entry/@xml:base", xmlString);
 
     assertXpathExists("/a:entry/a:content", xmlString);
+    assertXpathEvaluatesTo("", "/a:entry/a:content", xmlString);
     assertXpathEvaluatesTo(ContentType.APPLICATION_OCTET_STREAM.toString(), "/a:entry/a:content/@type", xmlString);
     assertXpathEvaluatesTo("Employees('1')/$value", "/a:entry/a:content/@src", xmlString);
     assertXpathExists("/a:entry/m:properties", xmlString);
@@ -1012,6 +1030,45 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
     assertXpathEvaluatesTo("W/\"<\">.3\"", "/a:entry/@m:etag", xmlString);
   }
 
+  @Test(expected = EntityProviderException.class)
+  public void serializeWithFacetsValidation() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmTyped roomNameProperty = edm.getEntityType("RefScenario", "Room").getProperty("Name");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(3);
+    when(((EdmProperty) roomNameProperty).getFacets()).thenReturn(facets);
+
+    roomData.put("Name", "1234567");
+    AtomEntityProvider ser = createAtomEntityProvider();
+    ODataResponse response =
+      ser.writeEntry(edm.getDefaultEntityContainer().getEntitySet("Rooms"), roomData, DEFAULT_PROPERTIES);
+    Assert.assertNotNull(response);
+  }
+
+  @Test
+  public void serializeWithoutFacetsValidation() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmTyped roomNameProperty = edm.getEntityType("RefScenario", "Room").getProperty("Name");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getMaxLength()).thenReturn(3);
+    when(((EdmProperty) roomNameProperty).getFacets()).thenReturn(facets);
+
+    String name = "1234567";
+    roomData.put("Name", name);
+    AtomEntityProvider ser = createAtomEntityProvider();
+    EntityProviderWriteProperties properties = EntityProviderWriteProperties
+        .fromProperties(DEFAULT_PROPERTIES).validatingFacets(false).build();
+    ODataResponse response =
+        ser.writeEntry(edm.getDefaultEntityContainer().getEntitySet("Rooms"), roomData, properties);
+    assertNotNull(response);
+
+
+    assertNotNull(response.getEntity());
+    String xmlString = StringHelper.inputStreamToString((InputStream) response.getEntity());
+
+    assertXpathEvaluatesTo(name, "/a:entry/a:content/m:properties/d:Name/text()", xmlString);
+  }
+
   @Test
   public void serializeCustomMapping() throws IOException, XpathException, SAXException, XMLStreamException,
       FactoryConfigurationError, ODataException {
@@ -1219,5 +1276,261 @@ public class AtomEntryProducerTest extends AbstractProviderTest {
 
   private void verifyTagOrdering(final String xmlString, final String... toCheckTags) {
     XMLUnitHelper.verifyTagOrdering(xmlString, toCheckTags);
+  }
+  
+  @Test
+  public void unbalancedPropertyEntryWithInlineEntry() throws Exception {
+    ExpandSelectTreeNode selectTree = getSelectExpandTree("Rooms('1')", "nr_Building", "nr_Building");
+
+    Map<String, Object> roomData = new HashMap<String, Object>();
+    roomData.put("Id", "1");
+    roomData.put("Name", "Neu Schwanstein");
+    roomData.put("Seats", new Integer(20));
+    
+    class EntryCallback implements OnWriteEntryContent {
+      @Override
+      public WriteEntryCallbackResult retrieveEntryResult(final WriteEntryCallbackContext context)
+          throws ODataApplicationException {
+        Map<String, Object> buildingData = new HashMap<String, Object>();
+        buildingData.put("Id", "1");
+        buildingData.put("Name", "Building1");
+        
+        WriteEntryCallbackResult result = new WriteEntryCallbackResult();
+        result.setEntryData(buildingData);
+        EntityProviderWriteProperties inlineProperties =
+            EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(
+                context.getCurrentExpandSelectTreeNode()).build();
+        result.setInlineProperties(inlineProperties);
+        return result;
+      }
+    }
+    EntryCallback callback = new EntryCallback();
+    Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
+    callbacks.put("nr_Building", callback);
+    
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).callbacks(callbacks).
+        isDataBasedPropertySerialization(true).build();
+    AtomEntityProvider provider = createAtomEntityProvider();
+    ODataResponse response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
+
+    String xmlString = verifyResponse(response);
+    assertXpathNotExists("/a:entry/m:properties", xmlString);
+    assertXpathExists("/a:entry/a:link", xmlString);
+    verifyBuilding(buildingXPathString, xmlString);
+  }
+  
+  private ExpandSelectTreeNode getSelectExpandTree(final String pathSegment, final String selectString,
+      final String expandString) throws Exception {
+
+    Edm edm = RuntimeDelegate.createEdm(new EdmTestProvider());
+    UriParserImpl uriParser = new UriParserImpl(edm);
+
+    List<PathSegment> pathSegments = new ArrayList<PathSegment>();
+    pathSegments.add(new ODataPathSegmentImpl(pathSegment, null));
+
+    Map<String, String> queryParameters = new HashMap<String, String>();
+    if (selectString != null) {
+      queryParameters.put("$select", selectString);
+    }
+    if (expandString != null) {
+      queryParameters.put("$expand", expandString);
+    }
+    UriInfo uriInfo = uriParser.parse(pathSegments, queryParameters);
+
+    ExpandSelectTreeCreator expandSelectTreeCreator =
+        new ExpandSelectTreeCreator(uriInfo.getSelect(), uriInfo.getExpand());
+    ExpandSelectTreeNode expandSelectTree = expandSelectTreeCreator.create();
+    assertNotNull(expandSelectTree);
+    return expandSelectTree;
+  }
+  
+  private void verifyBuilding(final String path, final String xmlString) throws XpathException, IOException,
+  SAXException {
+  assertXpathExists(path, xmlString);
+  assertXpathExists(path + "/m:inline", xmlString);
+  
+  assertXpathExists(path + "/m:inline/a:entry[@xml:base='" + BASE_URI + "']", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:id", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:title", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:updated", xmlString);
+  
+  assertXpathExists(path + "/m:inline/a:entry/a:category", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:link", xmlString);
+  
+  assertXpathExists(path + "/m:inline/a:entry/a:content", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:content/m:properties", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:content/m:properties/d:Id", xmlString);
+  assertXpathExists(path + "/m:inline/a:entry/a:content/m:properties/d:Name", xmlString);
+  
+  assertXpathExists("/a:entry/a:content/m:properties/d:Id", xmlString);
+  assertXpathExists("/a:entry/a:content/m:properties/d:Name", xmlString);
+  assertXpathExists("/a:entry/a:content/m:properties/d:Seats", xmlString);
+  
+  }
+  
+  @Test
+  public void contentOnlyWithoutKeyWithoutSelectedProperties() throws Exception {
+    HashMap<String, Object> employeeData = new HashMap<String, Object>();
+    employeeData.put("ManagerId", "1");
+    employeeData.put("Age", new Integer(52));
+    employeeData.put("RoomId", "1");
+    employeeData.put("TeamId", "42");
+
+    List<String> selectedProperties = new ArrayList<String>();
+    selectedProperties.add("ManagerId");
+    selectedProperties.add("Age");
+    selectedProperties.add("RoomId");
+    selectedProperties.add("TeamId");
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+
+    EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.fromProperties(DEFAULT_PROPERTIES).contentOnly(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+    try {
+      ser.writeEntry(entitySet, employeeData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'EmployeeId'"));
+    }
+  }
+  
+  @Test
+  public void testWithoutKey() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    List<String> selectedPropertyNames = new ArrayList<String>();
+    selectedPropertyNames.add("ManagerId");
+    ExpandSelectTreeNode select =
+        ExpandSelectTreeNode.entitySet(entitySet).selectedProperties(selectedPropertyNames).build();
+
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(select).build();
+
+    Map<String, Object> localEmployeeData = new HashMap<String, Object>();
+    localEmployeeData.put("ManagerId", "1");
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    try {
+    ser.writeEntry(entitySet, localEmployeeData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'EmployeeId'"));
+    }
+  }
+  
+  @Test
+  public void testWithoutCompositeKey() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getEntityContainer("Container2").getEntitySet("Photos");
+    
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
+
+    Map<String, Object> photoData = new HashMap<String, Object>();
+    photoData.put("Name", "Mona Lisa");
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    try {
+    ser.writeEntry(entitySet, photoData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Id'"));
+    }
+  }
+  
+  @Test
+  public void testWithoutCompositeKeyWithOneKeyNull() throws Exception {
+    Edm edm = MockFacade.getMockEdm();
+    EdmEntitySet entitySet = edm.getEntityContainer("Container2").getEntitySet("Photos");
+    
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).build();
+
+    Map<String, Object> photoData = new HashMap<String, Object>();
+    photoData.put("Name", "Mona Lisa");
+    photoData.put("Id", Integer.valueOf(1));
+    
+    EdmTyped typeProperty = edm.getEntityContainer("Container2").getEntitySet("Photos").
+        getEntityType().getProperty("Type");
+    EdmFacets facets = mock(EdmFacets.class);
+    when(facets.getConcurrencyMode()).thenReturn(EdmConcurrencyMode.Fixed);
+    when(facets.getMaxLength()).thenReturn(3);
+    when(((EdmProperty) typeProperty).getFacets()).thenReturn(facets);
+
+    AtomEntityProvider ser = createAtomEntityProvider();
+    try {
+    ser.writeEntry(entitySet, photoData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Type'"));
+    }
+  }
+
+  
+  @Test
+  public void testExceptionWithNonNullablePropertyIsNull() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Organizations");
+    EdmProperty nameProperty = (EdmProperty) entitySet.getEntityType().getProperty("Name");
+    EdmFacets facets = nameProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).omitETag(true).
+        isDataBasedPropertySerialization(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+
+    Map<String, Object> orgData = new HashMap<String, Object>();
+    orgData.put("Id", "1");
+    try {
+    ser.writeEntry(entitySet, orgData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Name'"));
+    }
+  }
+  
+  @Test
+  public void testExceptionWithNonNullablePropertyIsNull1() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Organizations");
+    EdmProperty kindProperty = (EdmProperty) entitySet.getEntityType().getProperty("Kind");
+    EdmFacets facets = kindProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    
+    EdmProperty nameProperty = (EdmProperty) entitySet.getEntityType().getProperty("Name");
+    when(nameProperty.getFacets()).thenReturn(null);
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).omitETag(true).
+        isDataBasedPropertySerialization(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+
+    Map<String, Object> orgData = new HashMap<String, Object>();
+    orgData.put("Id", "1");
+    orgData.put("Name", "Org1");
+    try {
+    ser.writeEntry(entitySet, orgData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("The metadata do not allow a null value for property 'Kind'"));
+    }
+  }
+  
+  @Test
+  public void testExceptionWithNonNullablePropertyIsNull2() throws Exception {
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Organizations");
+    EdmProperty kindProperty = (EdmProperty) entitySet.getEntityType().getProperty("Kind");
+    EdmFacets facets = kindProperty.getFacets();
+    when(facets.isNullable()).thenReturn(new Boolean(false));
+    
+    EdmProperty nameProperty = (EdmProperty) entitySet.getEntityType().getProperty("Name");
+    EdmFacets facets1 = nameProperty.getFacets();
+    when(facets1.isNullable()).thenReturn(new Boolean(false));
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(BASE_URI).omitETag(true).
+        isDataBasedPropertySerialization(true).build();
+    AtomEntityProvider ser = createAtomEntityProvider();
+
+    Map<String, Object> orgData = new HashMap<String, Object>();
+    orgData.put("Id", "1");
+    orgData.put("Name", "Org1");
+    try {
+    ser.writeEntry(entitySet, orgData, properties);
+    } catch (EntityProviderProducerException e) {
+      assertTrue(e.getMessage().contains("do not allow to format the value 'Org1' for property 'Name'."));
+    }
   }
 }

@@ -41,6 +41,7 @@ import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.AbstractXmlProducerTestHelper;
 import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
@@ -60,7 +61,7 @@ public class XmlMetadataProducerTest extends AbstractXmlProducerTestHelper {
 
   @Before
   public void before() {
-    xmlStreamWriterFactory = XMLOutputFactory.newInstance();
+    xmlStreamWriterFactory = XmlHelper.getXMLOutputFactory();
   }
 
   @Test

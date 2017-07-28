@@ -20,6 +20,9 @@ package org.apache.olingo.odata2.jpa.processor.ref.web;
 
 import java.util.ResourceBundle;
 
+import org.apache.olingo.odata2.api.ODataCallback;
+import org.apache.olingo.odata2.api.ODataDebugCallback;
+import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAServiceFactory;
 import org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent;
@@ -27,6 +30,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.jpa.processor.ref.extension.OnDBWriteContent;
 import org.apache.olingo.odata2.jpa.processor.ref.extension.SalesOrderProcessingExtension;
 import org.apache.olingo.odata2.jpa.processor.ref.factory.JPAEntityManagerFactory;
+import org.apache.olingo.odata2.jpa.processor.ref.util.CustomODataJPAProcessor;
 
 public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
   private static final String PUNIT_NAME = "salesorderprocessing";
@@ -46,14 +50,34 @@ public class JPAReferenceServiceFactory extends ODataJPAServiceFactory {
     oDataJPAContext.setJPAEdmExtension(new SalesOrderProcessingExtension());
     oDataJPAContext.setPageSize(PAGE_SIZE);
     oDataJPAContext.setDefaultNaming(false);
+    oDataJPAContext.getODataContext().setDebugMode(true);
     setErrorLevel();
     setOnWriteJPAContent(onDBWriteContent);
     return oDataJPAContext;
+  }
+
+  @Override
+  public ODataSingleProcessor createCustomODataProcessor(ODataJPAContext context) {
+    return new CustomODataJPAProcessor(context);
   }
 
   private void setErrorLevel() {
     ResourceBundle config = ResourceBundle.getBundle(CONFIG);
     boolean error = Boolean.parseBoolean(config.getString(SHOW_DETAIL_ERROR));
     setDetailErrors(error);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T extends ODataCallback> T getCallback(final Class<T> callbackInterface) {
+    return (T) (callbackInterface.isAssignableFrom(ODataDebugCallback.class) ?
+        new ScenarioDebugCallback() : super.getCallback(callbackInterface));
+  }
+
+  private final class ScenarioDebugCallback implements ODataDebugCallback {
+    @Override
+    public boolean isDebugEnabled() {
+      return true;
+    }
   }
 }

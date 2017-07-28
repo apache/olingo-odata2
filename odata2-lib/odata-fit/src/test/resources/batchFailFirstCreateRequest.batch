@@ -1,0 +1,33 @@
+--batch_cf90-46e5-1246
+Content-Type: multipart/mixed; boundary=changeset_824f-ce08-1e9d
+
+--changeset_824f-ce08-1e9d
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: employee
+
+POST Employeess HTTP/1.1
+Content-ID: employee
+Content-Type: application/octet-stream
+Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1
+MaxDataServiceVersion: 2.0
+
+
+--changeset_824f-ce08-1e9d
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-Id: AAA
+
+PUT Employee('2')/EmployeeName HTTP/1.1
+Content-Length: 100000
+Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1
+DataServiceVersion: 1.0
+Content-Id: AAA
+Content-Type: application/json;odata=verbose
+MaxDataServiceVersion: 2.0
+
+{"EmployeeName":"Robert Fall"}
+
+--changeset_824f-ce08-1e9d--
+
+--batch_cf90-46e5-1246--

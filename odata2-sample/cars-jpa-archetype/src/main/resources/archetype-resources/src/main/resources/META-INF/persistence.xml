@@ -15,25 +15,30 @@
 <persistence version="2.0"
 	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-	<persistence-unit name="MyFormula"
-		transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="MyFormulaHsqlDb" transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 		<class>${package}.model.Driver</class>
 		<class>${package}.model.Car</class>
 		<class>${package}.model.Manufacturer</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
-			<property name="javax.persistence.jdbc.url"
-				value="jdbc:hsqldb:mem:org.apache.olingo.jpa.sample" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:org.apache.olingo.jpa.sample" />
 			<property name="javax.persistence.jdbc.user" value="sa" />
 			<property name="javax.persistence.jdbc.password" value="" />
-			<property name="eclipselink.target-database"
-				value="org.eclipse.persistence.platform.database.HSQLPlatform" />
+			<property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
 			<property name="eclipselink.logging.level" value="ALL" />
 			<property name="eclipselink.orm.throw.exceptions" value="true" />
 			<property name="eclipselink.ddl-generation" value="create-tables" />
-			<property name="eclipselink.ddl-generation.output-mode"
-				value="database" />
+			<property name="eclipselink.ddl-generation.output-mode" value="database" />
+		</properties>
+	</persistence-unit>
+	<persistence-unit name="MyFormulaJeeDb" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>${package}.model.Driver</class>
+		<class>${package}.model.Car</class>
+		<class>${package}.model.Manufacturer</class>
+		<properties>
+			<property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
 		</properties>
 	</persistence-unit>
 </persistence>

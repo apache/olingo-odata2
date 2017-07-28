@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -104,6 +104,7 @@ public class JPQLSelectContextImplTest {
       }
 
       PropertyExpression commonExpression = EasyMock.createMock(PropertyExpression.class);
+      EasyMock.expect(commonExpression.getKind()).andReturn(ExpressionKind.PROPERTY).anyTimes();
       EasyMock.expect(commonExpression.getEdmType()).andStubReturn(edmType);
 
       EdmProperty edmTyped = EasyMock.createMock(EdmProperty.class);
@@ -269,11 +270,7 @@ public class JPQLSelectContextImplTest {
   @Test
   public void testGetOrderByCollection() {
     buildSelectContext(false, false, true, true, true);
-    assertEquals(true, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[0]));
-    assertEquals("", selectContext.getOrderByCollection().get("E1." + JPQLSelectContextImplTest.fields[0]));
-
-    assertEquals(true, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[1]));
-    assertEquals("DESC", selectContext.getOrderByCollection().get("E1." + JPQLSelectContextImplTest.fields[1]));
+    assertEquals("E1.Field1 , E1.Field2 DESC", selectContext.getOrderByCollection());
   }
 
   @Test
@@ -324,21 +321,14 @@ public class JPQLSelectContextImplTest {
   @Test
   public void testOrderingWithSkip() {
     buildSelectContext(true, false, true, true, false);
-    assertEquals(true, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[0]));
-    assertEquals("", selectContext.getOrderByCollection().get("E1." + JPQLSelectContextImplTest.fields[0]));
-
-    assertEquals(false, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[1]));
+    assertEquals("E1.Field1", selectContext.getOrderByCollection());
 
   }
 
   @Test
   public void testOrderingWithTop() {
     buildSelectContext(true, false, true, false, true);
-    assertEquals(true, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[0]));
-    assertEquals("", selectContext.getOrderByCollection().get("E1." + JPQLSelectContextImplTest.fields[0]));
-
-    assertEquals(false, selectContext.getOrderByCollection().containsKey("E1." + JPQLSelectContextImplTest.fields[1]));
-
+    assertEquals("E1.Field1", selectContext.getOrderByCollection());
   }
 
   @Test

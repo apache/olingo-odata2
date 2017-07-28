@@ -18,16 +18,17 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
+
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
-
 public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   private String method;
   private Map<String, String> headers = new HashMap<String, String>();
-  private String body;
+  private Object body;
   private String uri;
   public String contentId;
   private static final String CHANGE_METHODS = "(PUT|POST|DELETE|MERGE|PATCH)";
@@ -39,7 +40,24 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
 
   @Override
   public String getBody() {
-    return body;
+    return body.toString();
+  }
+
+  @Override
+  public byte[] getBodyAsBytes() {
+    if(body == null) {
+      return new byte[0];
+    }
+    Charset charset = getCharset();
+    if (body instanceof byte[]) {
+      return (byte[]) body; //NOSONAR
+    } else {
+      return body.toString().getBytes(charset);
+    }
+  }
+
+  private Charset getCharset() {
+    return BatchHelper.extractCharset(this.headers);
   }
 
   @Override
@@ -60,7 +78,7 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   public class BatchChangeSetRequestBuilderImpl extends BatchChangeSetPartBuilder {
     private String method;
     private Map<String, String> headers = new HashMap<String, String>();
-    private String body;
+    private Object body;
     private String uri;
     private String contentId;
 
@@ -85,6 +103,12 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
 
     @Override
     public BatchChangeSetPartBuilder body(final String body) {
+      this.body = body;
+      return this;
+    }
+    
+    @Override
+    public BatchChangeSetPartBuilder body(byte[] body) {
       this.body = body;
       return this;
     }

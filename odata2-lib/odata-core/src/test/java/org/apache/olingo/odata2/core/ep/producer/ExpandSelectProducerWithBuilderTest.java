@@ -179,6 +179,7 @@ public class ExpandSelectProducerWithBuilderTest extends AbstractProviderTest {
 
         Map<String, ODataCallback> innerCallbacks = new HashMap<String, ODataCallback>();
         innerCallbacks.put("nb_Rooms", new OnWriteFeedContent(){
+          @SuppressWarnings("unchecked")
           @Override
           public WriteFeedCallbackResult retrieveFeedResult(WriteFeedCallbackContext context) {
             WriteFeedCallbackResult writeEntryCallbackResult = new WriteFeedCallbackResult();

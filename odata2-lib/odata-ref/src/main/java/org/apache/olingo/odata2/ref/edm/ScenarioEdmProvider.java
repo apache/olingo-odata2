@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.olingo.odata2.api.edm.EdmAction;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
@@ -45,6 +46,7 @@ import org.apache.olingo.odata2.api.edm.provider.FunctionImportParameter;
 import org.apache.olingo.odata2.api.edm.provider.Key;
 import org.apache.olingo.odata2.api.edm.provider.Mapping;
 import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
+import org.apache.olingo.odata2.api.edm.provider.OnDelete;
 import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.PropertyRef;
 import org.apache.olingo.odata2.api.edm.provider.ReturnType;
@@ -364,7 +366,8 @@ public class ScenarioEdmProvider extends EdmProvider {
             .setEnd1(
                 new AssociationEnd().setType(ENTITY_TYPE_1_1).setRole(ROLE_1_1).setMultiplicity(EdmMultiplicity.MANY))
             .setEnd2(
-                new AssociationEnd().setType(ENTITY_TYPE_1_2).setRole(ROLE_1_2).setMultiplicity(EdmMultiplicity.ONE));
+                new AssociationEnd().setType(ENTITY_TYPE_1_2).setRole(ROLE_1_2).setMultiplicity(EdmMultiplicity.ONE)
+                    .setOnDelete(new OnDelete().setAction(EdmAction.None)));
       } else if (ASSOCIATION_1_3.getName().equals(edmFQName.getName())) {
         return new Association().setName(ASSOCIATION_1_3.getName())
             .setEnd1(

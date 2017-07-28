@@ -3,7 +3,7 @@ Content-Type: application/http
 Content-Transfer-Encoding: binary
 
 GET Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Accept: application/atom+xml
 MaxDataServiceVersion: 2.0
@@ -18,7 +18,7 @@ Content-Type: application/http
 Content-Transfer-Encoding: binary
 
 GET Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Accept: application/atom+xml
 MaxDataServiceVersion: 2.0
@@ -33,7 +33,7 @@ Content-Type: application/http
 Content-Transfer-Encoding: binary
 
 GET Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Accept: application/atom+xml
 MaxDataServiceVersion: 2.0
@@ -52,7 +52,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 POST Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -267,7 +267,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 POST Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -482,7 +482,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 PUT Employees('1') HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 
 Content-Type: application/atom+xml
@@ -528,7 +528,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 POST Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -743,7 +743,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 POST Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -958,7 +958,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 PUT Employees('1') HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -1003,7 +1003,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 POST Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -1218,7 +1218,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 POST Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -1433,7 +1433,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 PUT Employees('1') HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -1478,7 +1478,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 POST Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -1693,7 +1693,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 POST Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -1908,7 +1908,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 PUT Employees('1') HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -1953,7 +1953,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 POST Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -2168,7 +2168,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 POST Employees HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*
@@ -2383,7 +2383,7 @@ Content-Transfer-Encoding: binary
 Content-ID: 1
 
 PUT Employees('1') HTTP/1.1
-Host: http://localhost/odata
+Host: localhost
 Connection: keep-alive
 Content-Type: application/atom+xml
 Accept: */*

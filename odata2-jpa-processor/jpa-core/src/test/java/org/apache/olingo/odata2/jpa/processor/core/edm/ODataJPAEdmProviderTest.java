@@ -34,6 +34,7 @@ import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationSet;
 import org.apache.olingo.odata2.api.edm.provider.ComplexType;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainerInfo;
+import org.apache.olingo.odata2.api.edm.provider.EntityType;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
@@ -313,8 +314,7 @@ public class ODataJPAEdmProviderTest {
 
   @Test
   public void testGetEntityTypeWithBuffer() {
-    HashMap<String, org.apache.olingo.odata2.api.edm.provider.EntityType> entityTypes =
-        new HashMap<String, org.apache.olingo.odata2.api.edm.provider.EntityType>();
+    HashMap<String, EntityType> entityTypes = new HashMap<String, EntityType>();
     org.apache.olingo.odata2.api.edm.provider.EntityType entity =
         new org.apache.olingo.odata2.api.edm.provider.EntityType();
     entity.setName("SalesOrderHeader");

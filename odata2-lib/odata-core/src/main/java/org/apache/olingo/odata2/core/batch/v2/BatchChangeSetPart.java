@@ -21,7 +21,6 @@ package org.apache.olingo.odata2.core.batch.v2;
 import java.util.List;
 
 import org.apache.olingo.odata2.api.batch.BatchException;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 
 public class BatchChangeSetPart extends BatchQueryOperation {
   private BatchQueryOperation request;

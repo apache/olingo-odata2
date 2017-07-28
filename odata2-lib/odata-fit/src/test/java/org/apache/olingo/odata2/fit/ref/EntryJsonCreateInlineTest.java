@@ -31,7 +31,7 @@ import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
 
-import com.google.gson.internal.StringMap;
+import com.google.gson.internal.LinkedTreeMap;
 
 /**
  *  
@@ -58,13 +58,13 @@ public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
     String body = getBody(response);
 
     // Check inline building
-    StringMap<?> map = getStringMap(body);
-    map = (StringMap<?>) map.get("nr_Building");
+    LinkedTreeMap<?, ?> map = getLinkedTreeMap(body);
+    map = (LinkedTreeMap<?, ?>) map.get("nr_Building");
     assertNotNull(map);
     assertEquals("Building 2", map.get("Name"));
 
     // Check inline rooms of the inline building
-    map = (StringMap<?>) map.get("nb_Rooms");
+    map = (LinkedTreeMap<?, ?>) map.get("nb_Rooms");
     assertNotNull(map);
 
     ArrayList<?> results = (ArrayList<?>) map.get("results");
@@ -91,12 +91,12 @@ public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
     checkEtag(response, "W/\"2\"");
 
     String body = getBody(response);
-    StringMap<?> map = getStringMap(body);
+    LinkedTreeMap<?, ?> map = getLinkedTreeMap(body);
     assertEquals("104", map.get("Id"));
     assertEquals("Room 104", map.get("Name"));
 
     @SuppressWarnings("unchecked")
-    StringMap<String> metadataMap = (StringMap<String>) map.get("__metadata");
+    LinkedTreeMap<String, String> metadataMap = (LinkedTreeMap<String, String>) map.get("__metadata");
     assertNotNull(metadataMap);
     assertEquals(getEndpoint() + "Rooms('104')", metadataMap.get("id"));
     assertEquals("RefScenario.Room", metadataMap.get("type"));
@@ -104,12 +104,12 @@ public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
 
     response = callUri("Rooms('104')/nr_Building/", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_JSON);
     body = getBody(response);
-    map = getStringMap(body);
+    map = getLinkedTreeMap(body);
     assertEquals("4", map.get("Id"));
     assertEquals("Building 4", map.get("Name"));
 
     @SuppressWarnings("unchecked")
-    StringMap<String> metadataMap2 = (StringMap<String>) map.get("__metadata");
+    LinkedTreeMap<String, String> metadataMap2 = (LinkedTreeMap<String, String>) map.get("__metadata");
     assertNotNull(metadataMap2);
     assertEquals(getEndpoint() + "Buildings('4')", metadataMap2.get("id"));
     assertEquals("RefScenario.Building", metadataMap2.get("type"));
@@ -131,12 +131,12 @@ public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
     checkEtag(response, "W/\"2\"");
 
     String body = getBody(response);
-    StringMap<?> map = getStringMap(body);
+    LinkedTreeMap<?, ?> map = getLinkedTreeMap(body);
     assertEquals("104", map.get("Id"));
     assertEquals("Room 104", map.get("Name"));
 
     @SuppressWarnings("unchecked")
-    StringMap<String> metadataMap = (StringMap<String>) map.get("__metadata");
+    LinkedTreeMap<String, String> metadataMap = (LinkedTreeMap<String, String>) map.get("__metadata");
     assertNotNull(metadataMap);
     assertEquals(getEndpoint() + "Rooms('104')", metadataMap.get("id"));
     assertEquals("RefScenario.Room", metadataMap.get("type"));
@@ -158,12 +158,12 @@ public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
     checkEtag(response, "W/\"2\"");
 
     String body = getBody(response);
-    StringMap<?> map = getStringMap(body);
+    LinkedTreeMap<?, ?> map = getLinkedTreeMap(body);
     assertEquals("104", map.get("Id"));
     assertEquals("Room 104", map.get("Name"));
 
     @SuppressWarnings("unchecked")
-    StringMap<String> metadataMap = (StringMap<String>) map.get("__metadata");
+    LinkedTreeMap<String, String> metadataMap = (LinkedTreeMap<String, String>) map.get("__metadata");
     assertNotNull(metadataMap);
     assertEquals(getEndpoint() + "Rooms('104')", metadataMap.get("id"));
     assertEquals("RefScenario.Room", metadataMap.get("type"));
@@ -195,12 +195,12 @@ public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
     // checkEtag(response, "W/\"2\"");
 
     String body = getBody(response);
-    StringMap<?> map = getStringMap(body);
+    LinkedTreeMap<?, ?> map = getLinkedTreeMap(body);
     assertEquals("4", map.get("Id"));
     assertEquals("Building 2", map.get("Name"));
 
     @SuppressWarnings("unchecked")
-    StringMap<String> metadataMap = (StringMap<String>) map.get("__metadata");
+    LinkedTreeMap<String, String> metadataMap = (LinkedTreeMap<String, String>) map.get("__metadata");
     assertNotNull(metadataMap);
     assertEquals(getEndpoint() + "Buildings('4')", metadataMap.get("id"));
     assertEquals("RefScenario.Building", metadataMap.get("type"));
@@ -208,7 +208,7 @@ public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
 
     response = callUri("Buildings('4')/nb_Rooms('104')/", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_JSON);
     body = getBody(response);
-    map = getStringMap(body);
+    map = getLinkedTreeMap(body);
     assertEquals("104", map.get("Id"));
     assertEquals("Room 2", map.get("Name"));
     response =
@@ -218,7 +218,7 @@ public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
 
     response = callUri("Buildings('4')/nb_Rooms('105')/", HttpHeaders.ACCEPT, HttpContentType.APPLICATION_JSON);
     body = getBody(response);
-    map = getStringMap(body);
+    map = getLinkedTreeMap(body);
     assertEquals("105", map.get("Id"));
     assertEquals("Room 3", map.get("Name"));
     response =
@@ -261,22 +261,22 @@ public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
 
     String body = getBody(response);
-    StringMap<?> map = getStringMap(body);
+    LinkedTreeMap<?, ?> map = getLinkedTreeMap(body);
     assertEquals("4", map.get("Id"));
     assertEquals("Building 2", map.get("Name"));
 
-    StringMap<String> metadataMap = (StringMap<String>) map.get("__metadata");
+    LinkedTreeMap<String, String> metadataMap = (LinkedTreeMap<String, String>) map.get("__metadata");
     assertNotNull(metadataMap);
     assertEquals(getEndpoint() + "Buildings('4')", metadataMap.get("id"));
     assertEquals("RefScenario.Building", metadataMap.get("type"));
     assertEquals(getEndpoint() + "Buildings('4')", metadataMap.get("uri"));
 
-    StringMap<Object> navProperty = (StringMap<Object>) map.get("nb_Rooms");
+    LinkedTreeMap<String, Object> navProperty = (LinkedTreeMap<String, Object>) map.get("nb_Rooms");
     assertNotNull(navProperty);
-    List<StringMap<String>> results = (ArrayList<StringMap<String>>) navProperty.get("results");
+    List<LinkedTreeMap<String, String>> results = (ArrayList<LinkedTreeMap<String, String>>) navProperty.get("results");
     assertNotNull(results);
     for (int i = 0; i < results.size(); i++) {
-      StringMap<String> resultMap = results.get(i);
+      LinkedTreeMap<String, String> resultMap = results.get(i);
       switch (i) {
       case 0:
         assertEquals("Room 2", resultMap.get("Name"));
@@ -325,12 +325,12 @@ public class EntryJsonCreateInlineTest extends AbstractRefJsonTest {
     checkMediaType(response, HttpContentType.APPLICATION_JSON);
 
     String body = getBody(response);
-    StringMap<?> map = getStringMap(body);
+    LinkedTreeMap<?, ?> map = getLinkedTreeMap(body);
     assertEquals("104", map.get("Id"));
     assertEquals("Room 104", map.get("Name"));
 
     @SuppressWarnings("unchecked")
-    StringMap<String> metadataMap = (StringMap<String>) map.get("__metadata");
+    LinkedTreeMap<String, String> metadataMap = (LinkedTreeMap<String, String>) map.get("__metadata");
     assertNotNull(metadataMap);
     assertEquals(getEndpoint() + "Rooms('104')", metadataMap.get("id"));
     assertEquals("RefScenario.Room", metadataMap.get("type"));

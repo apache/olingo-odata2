@@ -33,7 +33,7 @@ public class ODataJPAContextImpl implements ODataJPAContext {
 
   private String pUnitName;
   private EntityManagerFactory emf;
-  private EntityManager em;
+  private EntityManager em = null;
   private ODataContext odataContext;
   private ODataProcessor processor;
   private EdmProvider edmProvider;
@@ -44,6 +44,7 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   private static final ThreadLocal<ODataContext> oDataContextThreadLocal = new ThreadLocal<ODataContext>();
   private boolean defaultNaming = true;
   private ODataJPATransaction transaction = null;
+  private boolean containerManaged = false;
 
   @Override
   public String getPersistenceUnitName() {
@@ -121,10 +122,9 @@ public class ODataJPAContextImpl implements ODataJPAContext {
 
   @Override
   public EntityManager getEntityManager() {
-    if (em == null) {
+    if (em == null || !em.isOpen()) {
       em = emf.createEntityManager();
     }
-
     return em;
   }
 
@@ -173,11 +173,31 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   public ODataJPATransaction getODataJPATransaction() {
     if (transaction == null) {
       transaction = odataContext.getServiceFactory().getCallback(ODataJPATransaction.class);
-      // Fallback to RESOURCE_LOCAL based transaction
+      // fallback to default implementations
       if (transaction == null) {
-        transaction = new ODataJPATransactionLocalDefault(getEntityManager());
+        if(isContainerManaged()) {
+          transaction = new ODataJPATransactionContainerManaged();
+        } else {
+          // Fallback to RESOURCE_LOCAL based transaction
+          transaction = new ODataJPATransactionLocalDefault(getEntityManager());
+        }
       }
     }
     return transaction;
+  }
+
+  @Override
+  public boolean isContainerManaged() {
+    return this.containerManaged;
+  }
+
+  @Override
+  public void setContainerManaged(boolean containerManaged) {
+    this.containerManaged = containerManaged;
+  }
+
+  @Override
+  public void setEntityManager(EntityManager em) {
+    this.em = em;
   }
 }

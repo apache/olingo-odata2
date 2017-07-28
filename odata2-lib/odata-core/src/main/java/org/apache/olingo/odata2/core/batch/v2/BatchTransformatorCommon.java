@@ -37,7 +37,6 @@ import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.core.PathInfoImpl;
 import org.apache.olingo.odata2.core.batch.BatchHelper;
-import org.apache.olingo.odata2.core.batch.v2.BufferedReaderIncludingLineEndings.Line;
 import org.apache.olingo.odata2.core.batch.v2.Header.HeaderField;
 
 public class BatchTransformatorCommon {
@@ -100,7 +99,19 @@ public class BatchTransformatorCommon {
 
     return -1;
   }
-  
+
+  public static void validateHost(final Header headers, final String baseUri) throws BatchException {
+    final HeaderField hostField = headers.getHeaderField(HttpHeaders.HOST);
+
+    if (hostField != null) {
+      if (hostField.getValues().size() > 1
+          || !URI.create(baseUri).getAuthority().equalsIgnoreCase(hostField.getValues().get(0).trim())) {
+        throw new BatchException(BatchException.INVALID_HEADER.addContent(hostField.getValues().get(0))
+            .addContent(hostField.getLineNumber()));
+      }
+    }
+  }
+
   public static class HttpResponsetStatusLine {
     private static final String REG_EX_STATUS_LINE = "(?:HTTP/[0-9]\\.[0-9])\\s([0-9]{3})\\s([\\S ]+)\\s*";
     private Line httpStatusLine;
@@ -182,30 +193,29 @@ public class BatchTransformatorCommon {
       }
     }
 
-    private PathInfo parseUri(final String uri)
-        throws BatchException {
-      final PathInfoImpl pathInfo = new PathInfoImpl();
-      final String odataPathSegmentsAsString;
-      final String queryParametersAsString;
-      Pattern regexRequestUri;
-
+    private PathInfo parseUri(final String uri) throws BatchException {
+      PathInfoImpl pathInfo = new PathInfoImpl();
       pathInfo.setServiceRoot(batchRequestPathInfo.getServiceRoot());
       pathInfo.setPrecedingPathSegment(batchRequestPathInfo.getPrecedingSegments());
 
       try {
-        URI uriObject = new URI(uri);
+        final URI uriObject = new URI(uri);
+        String relativeUri = "";
         if (uriObject.isAbsolute()) {
-          regexRequestUri = Pattern.compile(requestBaseUri + "/([^/][^?]*)(\\?.*)?");
+          if (uri.startsWith(requestBaseUri + '/')) {
+            relativeUri = uri.substring(requestBaseUri.length() + 1);
+          }
+        } else if (uri.startsWith(batchRequestPathInfo.getServiceRoot().getRawPath())) {
+          relativeUri = uri.substring(batchRequestPathInfo.getServiceRoot().getRawPath().length());
         } else {
-          regexRequestUri = BatchParserCommon.PATTERN_RELATIVE_URI;
-
+          relativeUri = uri;
         }
 
-        Matcher uriParts = regexRequestUri.matcher(uri);
+        Matcher uriParts = BatchParserCommon.PATTERN_RELATIVE_URI.matcher(relativeUri);
 
         if (uriParts.lookingAt() && uriParts.groupCount() == 2) {
-          odataPathSegmentsAsString = uriParts.group(1);
-          queryParametersAsString = uriParts.group(2) != null ? uriParts.group(2) : "";
+          final String odataPathSegmentsAsString = uriParts.group(1);
+          final String queryParametersAsString = uriParts.group(2) != null ? uriParts.group(2) : "";
 
           pathInfo.setODataPathSegment(parseODataPathSegments(odataPathSegmentsAsString));
           if (!odataPathSegmentsAsString.startsWith("$")) {

@@ -32,7 +32,6 @@ import org.apache.olingo.odata2.api.edm.EdmServiceMetadata;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
-import org.apache.olingo.odata2.api.processor.ODataResponse.ODataResponseBuilder;
 import org.apache.olingo.odata2.api.processor.feature.CustomContentType;
 import org.apache.olingo.odata2.api.processor.part.BatchProcessor;
 import org.apache.olingo.odata2.api.processor.part.EntityComplexPropertyProcessor;
@@ -358,14 +357,17 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
   @Override
   public ODataResponse readServiceDocument(final GetServiceDocumentUriInfo uriInfo, final String contentType)
       throws ODataException {
-    final Edm entityDataModel = getContext().getService().getEntityDataModel();
-    final String serviceRoot = getContext().getPathInfo().getServiceRoot().toASCIIString();
+    final Edm edm = getContext().getService().getEntityDataModel();
 
-    final ODataResponse response = EntityProvider.writeServiceDocument(contentType, entityDataModel, serviceRoot);
-    final ODataResponseBuilder odataResponseBuilder = ODataResponse.fromResponse(response).header(
-        ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10);
-
-    return odataResponseBuilder.build();
+    //Service Document has version 1.0 specifically
+    if (getContext().getHttpMethod().equals("HEAD")) {
+      return ODataResponse.header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10).build();
+    } else {
+      final String serviceRoot = getContext().getPathInfo().getServiceRoot().toASCIIString();
+      final ODataResponse response = EntityProvider.writeServiceDocument(contentType, edm, serviceRoot);
+      return ODataResponse.fromResponse(response)
+          .header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10).build();
+    }
   }
 
   /**

@@ -35,12 +35,12 @@ public class PathInfoImpl implements PathInfo {
   private URI serviceRoot;
   private URI requestUri;
 
-  public void setODataPathSegment(final List<PathSegment> odataPathSegement) {
-    odataPathSegment = odataPathSegement;
+  public void setODataPathSegment(final List<PathSegment> odataPathSegment) {
+    this.odataPathSegment = odataPathSegment;
   }
 
-  public void setPrecedingPathSegment(final List<PathSegment> precedingPathSegement) {
-    precedingPathSegment = precedingPathSegement;
+  public void setPrecedingPathSegment(final List<PathSegment> precedingPathSegment) {
+    this.precedingPathSegment = precedingPathSegment;
   }
 
   public void setServiceRoot(final URI uri) {

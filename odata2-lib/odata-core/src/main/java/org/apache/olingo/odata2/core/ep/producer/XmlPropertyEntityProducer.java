@@ -27,9 +27,13 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmCustomizableFeedMappings;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityComplexPropertyInfo;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
@@ -40,10 +44,18 @@ import org.apache.olingo.odata2.core.ep.util.FormatXml;
  */
 public class XmlPropertyEntityProducer {
 
-  private final boolean inculdeSimplePropertyType;
+  private final boolean includeSimplePropertyType;
+  private final boolean validateFacets;
+  private boolean isDataBasedPropertySerialization = false;
 
-  public XmlPropertyEntityProducer(final boolean inculdeSimplePropertyType) {
-    this.inculdeSimplePropertyType = inculdeSimplePropertyType;
+  public XmlPropertyEntityProducer(final EntityProviderWriteProperties writeProperties) {
+    this(writeProperties.isIncludeSimplePropertyType(), writeProperties.isValidatingFacets());
+    isDataBasedPropertySerialization = writeProperties.isDataBasedPropertySerialization();
+  }
+
+  public XmlPropertyEntityProducer(final boolean includeSimplePropertyType, final boolean validateFacets) {
+    this.includeSimplePropertyType = includeSimplePropertyType;
+    this.validateFacets = validateFacets;
   }
 
   /**
@@ -69,9 +81,9 @@ public class XmlPropertyEntityProducer {
 
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -84,9 +96,9 @@ public class XmlPropertyEntityProducer {
         writer.writeEndElement();
       }
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -115,9 +127,9 @@ public class XmlPropertyEntityProducer {
 
       writer.writeEndElement();
     } catch (XMLStreamException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     } catch (EdmException e) {
-      throw new EntityProviderException(EntityProviderException.COMMON, e);
+      throw new EntityProviderProducerException(e.getMessageReference(), e);
     }
   }
 
@@ -128,7 +140,7 @@ public class XmlPropertyEntityProducer {
    * @param value
    * @throws XMLStreamException
    * @throws EdmException
-   * @throws EntityProviderException
+   * @throws EntityProviderException 
    */
   private void appendProperty(final XMLStreamWriter writer, final EntityComplexPropertyInfo propertyInfo,
       final Object value) throws XMLStreamException, EdmException, EntityProviderException {
@@ -139,6 +151,9 @@ public class XmlPropertyEntityProducer {
       writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.ATOM_TYPE, getFqnTypeName(propertyInfo));
       List<EntityPropertyInfo> propertyInfos = propertyInfo.getPropertyInfos();
       for (EntityPropertyInfo childPropertyInfo : propertyInfos) {
+        if (isDataBasedPropertySerialization && !((Map<?,?>)value).containsKey(childPropertyInfo.getName())) {
+          continue;
+        }
         Object childValue = extractChildValue(value, childPropertyInfo.getName());
         append(writer, childPropertyInfo.getName(), childPropertyInfo, childValue);
       }
@@ -176,9 +191,10 @@ public class XmlPropertyEntityProducer {
    * @param value the value of the property
    * @throws XMLStreamException
    * @throws EdmException
+   * @throws EntityProviderProducerException 
    */
   private void appendProperty(final XMLStreamWriter writer, final EntityPropertyInfo prop, final Object value)
-      throws XMLStreamException, EdmException {
+      throws XMLStreamException, EdmException, EntityProviderProducerException {
     Object contentValue = value;
     String mimeType = null;
     if (prop.getMimeType() != null) {
@@ -193,12 +209,20 @@ public class XmlPropertyEntityProducer {
     }
 
     final EdmSimpleType type = (EdmSimpleType) prop.getType();
-    if (inculdeSimplePropertyType) {
+    if (includeSimplePropertyType) {
       String fqnTypeName = type.getNamespace() + Edm.DELIMITER + type.getName();
       writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.ATOM_TYPE, fqnTypeName);
     }
 
-    final String valueAsString = type.valueToString(contentValue, EdmLiteralKind.DEFAULT, prop.getFacets());
+    final EdmFacets facets = validateFacets ? prop.getFacets() : null;
+    String valueAsString = null;
+    try {
+      valueAsString = type.valueToString(contentValue, EdmLiteralKind.DEFAULT, facets);
+    } catch (EdmSimpleTypeException e) {
+        throw new EntityProviderProducerException(EdmSimpleTypeException.getMessageReference(
+            e.getMessageReference()).updateContent(
+                e.getMessageReference().getContent(), prop.getName()), e);
+    }
     if (valueAsString == null) {
       writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.ATOM_NULL, FormatXml.ATOM_VALUE_TRUE);
     } else {
@@ -220,7 +244,7 @@ public class XmlPropertyEntityProducer {
     String nsPrefix = mapping.getFcNsPrefix();
     String nsUri = mapping.getFcNsUri();
     if (nsUri == null || nsPrefix == null) {
-      throw new EntityProviderException(EntityProviderException.INVALID_NAMESPACE.addContent(name));
+      throw new EntityProviderProducerException(EntityProviderException.INVALID_NAMESPACE.addContent(name));
     }
     writer.writeStartElement(nsPrefix, name, nsUri);
     writer.writeNamespace(nsPrefix, nsUri);

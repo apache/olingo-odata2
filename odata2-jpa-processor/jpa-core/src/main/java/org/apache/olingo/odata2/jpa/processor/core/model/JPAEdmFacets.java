@@ -28,19 +28,26 @@ import org.apache.olingo.odata2.api.edm.provider.Facets;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
 
 public class JPAEdmFacets {
-  public static void setFacets(final Attribute<?, ?> jpaAttribute, final SimpleProperty edmProperty) {
+  /**
+   * Create and set new facets for SimpleProperty.
+   * The new created and set facets are returned for further modification.
+   *
+   * @param jpaAttribute
+   * @param edmProperty property at which facets are set
+   * @return set new facets for SimpleProperty
+   */
+  public static Facets createAndSet(final Attribute<?, ?> jpaAttribute, final SimpleProperty edmProperty) {
     EdmSimpleTypeKind edmTypeKind = edmProperty.getType();
     Facets facets = new Facets();
     edmProperty.setFacets(facets);
 
     Column column = null;
     if (jpaAttribute.getJavaMember() instanceof AnnotatedElement) {
-      column = ((AnnotatedElement) jpaAttribute
-          .getJavaMember()).getAnnotation(Column.class);
+      column = ((AnnotatedElement) jpaAttribute.getJavaMember()).getAnnotation(Column.class);
     }
 
     if (column == null) {
-      return;
+      return facets;
     }
 
     setNullable(column, edmProperty);
@@ -68,6 +75,7 @@ public class JPAEdmFacets {
     default:
       break;
     }
+    return facets;
   }
 
   private static void setNullable(final Column column, final SimpleProperty edmProperty) {

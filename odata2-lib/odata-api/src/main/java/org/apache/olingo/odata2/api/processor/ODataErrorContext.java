@@ -185,7 +185,7 @@ public class ODataErrorContext {
   }
 
   /**
-   * Get the request uri to be used in a error response.
+   * Get the request uri to be used in an error response. Might be null in case the URI was the cause of the exception.
    * @return a uri object
    */
   public URI getRequestUri() {

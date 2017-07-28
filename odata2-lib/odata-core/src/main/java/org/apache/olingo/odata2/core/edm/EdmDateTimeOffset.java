@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -31,10 +32,8 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 /**
  * Implementation of the EDM simple type DateTimeOffset.
  * 
- * Details about parsing of time strings to {@link EdmDateTimeOffset} objects can be found in
+ * Details about parsing of time strings to value objects can be found in the
  * {@link org.apache.olingo.odata2.api.edm.EdmSimpleType} documentation.
- * 
- * 
  */
 public class EdmDateTimeOffset extends AbstractSimpleType {
 
@@ -59,7 +58,8 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
   protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
       final Class<T> returnType) throws EdmSimpleTypeException {
     if (literalKind == EdmLiteralKind.URI) {
-      if (value.length() > 16 && value.startsWith("datetimeoffset'") && value.endsWith("'")) {
+      //OLINGO-883 prefix is case insensitve so we need to check with lower case if we want to use startsWith()
+      if (value.length() > 16 && value.toLowerCase().startsWith("datetimeoffset'") && value.endsWith("'")) {
         return internalValueOfString(value.substring(15, value.length() - 1), EdmLiteralKind.DEFAULT, facets,
             returnType);
       } else {
@@ -68,11 +68,11 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
     }
 
     Calendar dateTimeValue = null;
+    long millis = 0;
 
     if (literalKind == EdmLiteralKind.JSON) {
       final Matcher matcher = JSON_PATTERN.matcher(value);
       if (matcher.matches()) {
-        long millis;
         try {
           millis = Long.parseLong(matcher.group(1));
         } catch (final NumberFormatException e) {
@@ -92,11 +92,10 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
           }
         }
         dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone(timeZone));
-        dateTimeValue.clear();
-        dateTimeValue.setTimeInMillis(millis);
       }
     }
 
+    int nanoSeconds = 0;
     if (dateTimeValue == null) {
       final Matcher matcher = PATTERN.matcher(value);
       if (!matcher.matches()) {
@@ -111,16 +110,28 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
       }
       dateTimeValue.clear();
-      EdmDateTime.parseLiteral(value.substring(0, matcher.group(1) == null ? value.length() : matcher.start(1)),
-          facets, dateTimeValue);
+      final Timestamp timestamp = EdmDateTime.getInstance().internalValueOfString(
+          value.substring(0, matcher.group(1) == null ? value.length() : matcher.start(1)),
+          EdmLiteralKind.DEFAULT, facets, Timestamp.class);
+      millis = timestamp.getTime() - dateTimeValue.get(Calendar.ZONE_OFFSET);
+      nanoSeconds = timestamp.getNanos();
+      if (nanoSeconds % (1000 * 1000) != 0 && !returnType.isAssignableFrom(Timestamp.class)) {
+        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
+      }
     }
 
     if (returnType.isAssignableFrom(Calendar.class)) {
+      dateTimeValue.clear();
+      dateTimeValue.setTimeInMillis(millis);
       return returnType.cast(dateTimeValue);
     } else if (returnType.isAssignableFrom(Long.class)) {
-      return returnType.cast(dateTimeValue.getTimeInMillis());
+      return returnType.cast(millis);
     } else if (returnType.isAssignableFrom(Date.class)) {
-      return returnType.cast(dateTimeValue.getTime());
+      return returnType.cast(new Date(millis));
+    } else if (returnType.isAssignableFrom(Timestamp.class)) {
+        Timestamp timestamp = new Timestamp(millis);
+        timestamp.setNanos(nanoSeconds);
+        return returnType.cast(timestamp);
     } else {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType));
     }
@@ -154,11 +165,16 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
     final int offsetInMinutes = offset / 60 / 1000;
 
     if (literalKind == EdmLiteralKind.JSON) {
-      return "/Date(" + milliSeconds + (offset == 0 ? "" : String.format("%+05d", offsetInMinutes)) + ")/";
+      if (value instanceof Timestamp && ((Timestamp) value).getNanos() % (1000 * 1000) != 0) {
+        throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT.addContent(value));
+      } else {
+        return "/Date(" + milliSeconds + (offset == 0 ? "" : String.format("%+05d", offsetInMinutes)) + ")/";
+      }
 
     } else {
       final String localTimeString =
-          EdmDateTime.getInstance().valueToString(milliSeconds, EdmLiteralKind.DEFAULT, facets);
+          EdmDateTime.getInstance().valueToString(
+              value instanceof Timestamp ? value : milliSeconds, EdmLiteralKind.DEFAULT, facets);
       final int offsetHours = offsetInMinutes / 60;
       final int offsetMinutes = Math.abs(offsetInMinutes % 60);
       final String offsetString = offset == 0 ? "Z" : String.format("%+03d:%02d", offsetHours, offsetMinutes);

@@ -24,16 +24,34 @@ import java.util.regex.Pattern;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmNamed;
 
+/**
+ * See in ABNF
+ * <p>
+ * <code>
+ *   Note:this pattern is overly restrictive, the normative definition is type TSimpleIdentifier in OData EDM XML Schema
+ *   <br/>
+ *   odataIdentifier             = identifierLeadingCharacter *127identifierCharacter
+ *   <br/>
+ *   identifierLeadingCharacter  = ALPHA / "_"         ; plus Unicode characters from the categories L or Nl
+ *   <br/>
+ *   identifierCharacter         = ALPHA / "_" / DIGIT ; plus Unicode characters from the categories L, Nl, Nd, Mn,
+ *   Mc, Pc, or Cf
+ *   <br/>
+ * </code>
+ * </p>
+ * And in OData V2 MC-CSDL (Release v20110610)
+ * <p>
+ * Section 2.2.6 SimpleIdentifier<br/>
+ * SimpleIdentifier is a string-based representation. The maximum length of the identifier MUST be less than 480.
+ * The below pattern represents the allowed identifiers in ECMA specification:
+ * Pattern: <code>value="[\p{L}\p{Nl}][\p{L}\p{Nl}\p{Nd}\p{Mn}\p{Mc}\p{Pc}\p{Cf}]{0,}"</code>
+ * </p>
+ *
+ */
 public abstract class EdmNamedImplProv implements EdmNamed {
 
-  private static final Pattern PATTERN_VALID_NAME = Pattern
-      .compile("^[:A-Z_a-z\\u00C0\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02ff\\u0370-\\u037d"
-          + "\\u037f-\\u1fff\\u200c\\u200d\\u2070-\\u218f\\u2c00-\\u2fef\\u3001-\\ud7ff"
-          + "\\uf900-\\ufdcf\\ufdf0-\\ufffd\\x10000-\\xEFFFF]"
-          + "[:A-Z_a-z\\u00C0\\u00D6\\u00D8-\\u00F6"
-          + "\\u00F8-\\u02ff\\u0370-\\u037d\\u037f-\\u1fff\\u200c\\u200d\\u2070-\\u218f"
-          + "\\u2c00-\\u2fef\\u3001-\\udfff\\uf900-\\ufdcf\\ufdf0-\\ufffd\\-\\.0-9"
-          + "\\u00b7\\u0300-\\u036f\\u203f-\\u2040]*\\Z");
+  private static final Pattern PATTERN_VALID_NAME = Pattern.compile(
+      "\\A[_\\p{L}\\p{Nl}][_\\p{L}\\p{Nl}\\p{Nd}\\p{Mn}\\p{Mc}\\p{Pc}\\p{Cf}]{0,}\\Z");
   protected EdmImplProv edm;
   private String name;
 
@@ -52,6 +70,6 @@ public abstract class EdmNamedImplProv implements EdmNamed {
     if (matcher.matches()) {
       return name;
     }
-    throw new EdmException(EdmException.COMMON);
+    throw new EdmException(EdmException.NAMINGERROR.addContent(name));
   }
 }

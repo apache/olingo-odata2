@@ -26,12 +26,14 @@ import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.olingo.odata2.api.ODataServiceVersion;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmAction;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
@@ -39,6 +41,7 @@ import org.apache.olingo.odata2.api.edm.EdmContentKind;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationAttribute;
 import org.apache.olingo.odata2.api.edm.provider.AnnotationElement;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -176,7 +179,36 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
       + "<EntityType Name= \"Photo\"><Key><PropertyRef Name=\"Id\"/></Key><Property Name=\"Id\" Type=\"Edm.Int32\" " +
       "Nullable=\"false\" MaxLength=\"Max\"/><Property Name=\"Name\" Type=\"Edm.Int32\" MaxLength=\"max\"/>"
       + "</EntityType></Schema></edmx:DataServices></edmx:Edmx>";
+
+  private final String edmxRefFor1680364709 = 
+      "<edmx:Edmx xmlns:edmx=\"http://schemas.microsoft.com/ado/2007/06/edmx\" " +
+      "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:sap=\"" +
+      "http://www.sap.com/Protocols/SAPData\" Version=\"1.0\">" +
+      "<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\" " +
+      "Uri=\"https://host:port/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies"+
+      "(TechnicalName='%2FIWBEP%2FVOC_COMMON'"+
+      ",Version='0001',SAP__Origin='')/$value\">" +
+      "<edmx:Include Alias=\"Common\" Namespace=\"com.sap.vocabularies.Common.v1\"/>" +
+      "</edmx:Reference>" + 
+      "</edmx:Edmx>";
   
+  @Test
+  public void twoEdmxWithValidation() throws Exception {
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(edmxRefFor1680364709);
+    DataServices result = parser.readMetadata(reader, true);   
+    assertNotNull(result);
+
+  }
+  
+  @Test
+  public void twoEdmxWithoutValidation() throws Exception {
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(edmxRefFor1680364709);
+    DataServices result = parser.readMetadata(reader, false);   
+    assertNotNull(result);
+
+  }
   @Test
   public void testMetadataDokumentWithWhitepaces() throws Exception {
     final String metadata = ""
@@ -196,11 +228,11 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         + "       </Schema>"
         + "  </edmx:DataServices>"
         + "</edmx:Edmx>";
-    
+
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(metadata);
     DataServices result = parser.readMetadata(reader, true);
-    
+
     assertEquals(1, result.getSchemas().size());
     List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
     assertEquals(1, entityTypes.size());
@@ -210,11 +242,11 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
     AnnotationElement annotationElement = annotationElements.get(0);
     List<AnnotationElement> childElements = annotationElement.getChildElements();
     assertEquals(2, childElements.size());
-    
+
     assertEquals(" value1", childElements.get(0).getText());
     assertEquals("value2", childElements.get(1).getText());
   }
-  
+
   @Test
   public void testMetadataDokumentWithWhitepacesMultiline() throws Exception {
     final String metadata = ""
@@ -235,11 +267,11 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         + "       </Schema>"
         + "  </edmx:DataServices>"
         + "</edmx:Edmx>";
-    
+
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(metadata);
     DataServices result = parser.readMetadata(reader, true);
-    
+
     assertEquals(1, result.getSchemas().size());
     List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
     assertEquals(1, entityTypes.size());
@@ -249,12 +281,12 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
     AnnotationElement annotationElement = annotationElements.get(0);
     List<AnnotationElement> childElements = annotationElement.getChildElements();
     assertEquals(2, childElements.size());
-    
-    assertEquals(" value1\n" + 
+
+    assertEquals(" value1\n" +
         "                 long long long multiline attribute", childElements.get(0).getText());
     assertEquals("value2", childElements.get(1).getText());
   }
-  
+
   @Test
   public void testMetadataDokumentWithWhitepaces2() throws Exception {
     final String metadata = ""
@@ -273,11 +305,11 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         + "       </Schema>"
         + "  </edmx:DataServices>"
         + "</edmx:Edmx>";
-    
+
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(metadata);
     DataServices result = parser.readMetadata(reader, true);
-    
+
     assertEquals(1, result.getSchemas().size());
     List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
     assertEquals(1, entityTypes.size());
@@ -287,10 +319,130 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
     AnnotationElement annotationElement = annotationElements.get(0);
     List<AnnotationElement> childElements = annotationElement.getChildElements();
     assertEquals(1, childElements.size());
-    
+
     assertEquals(" value1", childElements.get(0).getText());
   }
   
+
+  @Test
+  public void ODATAJAVA_77_testMetadataDokumentWithMultiLevelEntityType() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "         <EntityType Name= \"Parameter\">"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Id\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "           <EntityType Name= \"ConfigParameter\" BaseType= \"RefScenario2.Parameter\" />"
+        + "           <EntityType Name= \"DataConfigParameter\" BaseType= \"RefScenario2.ConfigParameter\" />"
+        + "           <EntityType Name= \"StringDataConfigParameter\" BaseType= \"RefScenario2.DataConfigParameter\" />"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    DataServices result = parser.readMetadata(reader, true);
+
+    assertEquals(1, result.getSchemas().size());
+    List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
+    assertEquals(4, entityTypes.size());
+
+  }
+  
+  @Test
+  public void ODATAJAVA_77_testBaseTypeKey() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "         <EntityType Name= \"Parameter\">"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Id\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "           <EntityType Name= \"ConfigParameter\" BaseType= \"RefScenario2.Parameter\" />"
+        + "           <EntityType Name= \"DataConfigParameter\" BaseType= \"RefScenario2.ConfigParameter\" >"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Name\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Name\" Type=\"Edm.String\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "           <EntityType Name= \"StringDataConfigParameter\" BaseType= \"RefScenario2.DataConfigParameter\" />"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    DataServices result = parser.readMetadata(reader, true);
+
+    assertEquals(1, result.getSchemas().size());
+    List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
+    assertEquals(4, entityTypes.size());
+
+  }
+  
+  @Test
+  public void ODATAJAVA_77_testEntityTypeKey() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "         <EntityType Name= \"Parameter\">"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Id\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "           <EntityType Name= \"ConfigParameter\" BaseType= \"RefScenario2.Parameter\" />"
+        + "           <EntityType Name= \"DataConfigParameter\" BaseType= \"RefScenario2.ConfigParameter\" />"
+        + "           <EntityType Name= \"StringDataConfigParameter\" BaseType= \"RefScenario2.DataConfigParameter\" >"
+        + "               <Key> "
+        + "                 <PropertyRef Name=\"Name\" />"
+        + "               </Key>"
+        + "               <Property Name=\"Name\" Type=\"Edm.String\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    DataServices result = parser.readMetadata(reader, true);
+
+    assertEquals(1, result.getSchemas().size());
+    List<EntityType> entityTypes = result.getSchemas().get(0).getEntityTypes();
+    assertEquals(4, entityTypes.size());
+
+  }
+  @Test(expected=EntityProviderException.class)
+  public void ODATAJAVA_77_ExceptionScenario() throws Exception {
+    final String metadata = ""
+        + "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+        + "   <edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+        + "       <Schema Namespace=\"" + NAMESPACE2 + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+        + "           <EntityType Name= \"ConfigParameter\" BaseType= \"RefScenario2.Parameter\" />"
+        + "           <EntityType Name= \"DataConfigParameter\" BaseType= \"RefScenario2.ConfigParameter\" />"
+        + "           <EntityType Name= \"StringDataConfigParameter\" BaseType= \"RefScenario2.DataConfigParameter\" />"
+        + "         <EntityType Name= \"Parameter\">"
+        + "            <Property Name=\"Id\" Type=\"Edm.Int16\" Nullable=\"false\" />"
+        + "           </EntityType>"
+        + "       </Schema>"
+        + "  </edmx:DataServices>"
+        + "</edmx:Edmx>";
+
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(metadata);
+    parser.readMetadata(reader, true);
+  }
+
+
+
   @Test
   public void stringValueForMaxLegthFacet() throws Exception {
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
@@ -704,6 +856,9 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
             + "</FunctionImport>"
             + "<FunctionImport Name=\"NoReturn\" " +
             "EntitySet=\"Rooms\" m:HttpMethod=\"GET\"/>"
+            + "<FunctionImport Name=\"SingleRoomReturnType\" ReturnType=\"RefScenario.Room\" " +
+            "EntitySet=\"Rooms\" m:HttpMethod=\"GET\">"
+            + "</FunctionImport>"
             + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
     XmlMetadataConsumer parser = new XmlMetadataConsumer();
     XMLStreamReader reader = createStreamReader(xmWithEntityContainer);
@@ -713,7 +868,7 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertEquals("Container1", container.getName());
         assertEquals(Boolean.TRUE, container.isDefaultEntityContainer());
 
-        assertEquals(4, container.getFunctionImports().size());
+        assertEquals(5, container.getFunctionImports().size());
         FunctionImport functionImport1 = container.getFunctionImports().get(0);
 
         assertEquals("EmployeeSearch", functionImport1.getName());
@@ -733,7 +888,6 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertEquals(Boolean.FALSE, functionImport1.getParameters().get(1).getFacets().isNullable());
 
         FunctionImport functionImport2 = container.getFunctionImports().get(1);
-
         assertEquals("RoomSearch", functionImport2.getName());
         assertEquals("Rooms", functionImport2.getEntitySet());
         assertEquals(NAMESPACE, functionImport2.getReturnType().getTypeName().getNamespace());
@@ -741,20 +895,22 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertEquals(EdmMultiplicity.MANY, functionImport2.getReturnType().getMultiplicity());
         assertEquals("GET", functionImport2.getHttpMethod());
         assertEquals(2, functionImport2.getParameters().size());
+        assertEquals(new FullQualifiedName("RefScenario", "Room"),
+            functionImport2.getReturnType().getTypeName());
+        assertEquals(EdmMultiplicity.MANY, functionImport2.getReturnType().getMultiplicity());
 
         FunctionImportParameter functionImportParameter = functionImport2.getParameters().get(0);
-		assertEquals("q1", functionImportParameter.getName());
+        assertEquals("q1", functionImportParameter.getName());
         assertEquals(EdmSimpleTypeKind.String, functionImport2.getParameters().get(0).getType());
         assertEquals(Boolean.TRUE, functionImport2.getParameters().get(0).getFacets().isNullable());
-        assertEquals("In", functionImportParameter.getMode()); 
+        assertEquals("In", functionImportParameter.getMode());
 
         assertEquals("q2", functionImport2.getParameters().get(1).getName());
         assertEquals(EdmSimpleTypeKind.Int32, functionImport2.getParameters().get(1).getType());
         assertEquals(Boolean.FALSE, functionImport2.getParameters().get(1).getFacets().isNullable());
-        assertEquals(null, functionImport2.getParameters().get(1).getMode()); 
+        assertEquals(null, functionImport2.getParameters().get(1).getMode());
 
         FunctionImport functionImport3 = container.getFunctionImports().get(2);
-
         assertEquals("NoParamters", functionImport3.getName());
         List<FunctionImportParameter> parameters3 = functionImport3.getParameters();
         assertNotNull(parameters3);
@@ -766,6 +922,16 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         assertNotNull(parameters4);
         assertEquals(0, parameters4.size());
         assertNull(functionImport4.getReturnType());
+
+        FunctionImport functionImport5 = container.getFunctionImports().get(4);
+        assertEquals("SingleRoomReturnType", functionImport5.getName());
+        List<FunctionImportParameter> parameters5 = functionImport5.getParameters();
+        assertNotNull(parameters5);
+        assertEquals(0, parameters5.size());
+        assertEquals(new FullQualifiedName("RefScenario", "Room"),
+            functionImport5.getReturnType().getTypeName());
+        assertEquals(EdmMultiplicity.ONE, functionImport5.getReturnType().getMultiplicity());
+
       }
     }
   }
@@ -1446,6 +1612,39 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
         }
       }
     }
+  }
+
+  @Test
+  public void edmxReferences() throws Exception {
+    DataServices serviceMetadata = new DataServices();
+    List<AnnotationElement> annoElements = new ArrayList<AnnotationElement>();
+    annoElements.add(createElementWithoutInclude());
+    annoElements.add(createElementWithInclude());
+    serviceMetadata.setAnnotationElements(annoElements);
+    serviceMetadata.setDataServiceVersion(ODataServiceVersion.V20);
+    ODataResponse response = EntityProvider.writeMetadata(serviceMetadata, null);
+
+    EntityProvider.readMetadata(response.getEntityAsStream(), false);
+  }
+
+  private AnnotationElement createElementWithInclude() {
+    List<AnnotationAttribute> childAttributes = new ArrayList<AnnotationAttribute>();
+    childAttributes.add(new AnnotationAttribute().setName("Namespace").setText("Org.OData.Core.V1"));
+    childAttributes.add(new AnnotationAttribute().setName("Alias").setText("UI"));
+    List<AnnotationElement> childElements = new ArrayList<AnnotationElement>();
+    childElements.add(new AnnotationElement().setName("Include").setNamespace(
+        "http://docs.oasis-open.org/odata/ns/edmx").setPrefix("edmx").setAttributes(childAttributes));
+    List<AnnotationAttribute> referenceAttributes = new ArrayList<AnnotationAttribute>();
+    referenceAttributes.add(new AnnotationAttribute().setName("Uri").setText("http://someurl2.com"));
+    return new AnnotationElement().setName("Reference").setPrefix("edmx").setNamespace(
+        "http://docs.oasis-open.org/odata/ns/edmx").setAttributes(referenceAttributes).setChildElements(childElements);
+  }
+
+  private AnnotationElement createElementWithoutInclude() {
+    List<AnnotationAttribute> referenceAttributes = new ArrayList<AnnotationAttribute>();
+    referenceAttributes.add(new AnnotationAttribute().setName("Uri").setText("http://someurl.com"));
+    return new AnnotationElement().setName("Reference").setPrefix("edmx").setNamespace(
+        "http://docs.oasis-open.org/odata/ns/edmx").setAttributes(referenceAttributes);
   }
 
   private XMLStreamReader createStreamReader(final String xml) throws XMLStreamException {

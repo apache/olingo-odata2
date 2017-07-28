@@ -26,19 +26,27 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "T_CUSTOMER")
+@EntityListeners(org.apache.olingo.odata2.jpa.processor.ref.listeners.CustomerQueryExtension.class)
 public class Customer extends CustomerBase {
 
   @Id
-  @Column(name = "ID")
+  @Column(name = "ID", nullable = false, length = 20)
   private Long id;
+
+  @ManyToOne(optional = true)
+  @JoinColumn(name = "PARENT_ID", referencedColumnName = "ID" , nullable = true)
+  private Customer parent;
 
   @Column(name = "NAME")
   private String name;
@@ -70,6 +78,14 @@ public class Customer extends CustomerBase {
 
   public void setId(final Long id) {
     this.id = id;
+  }
+
+  public Customer getParent() {
+    return parent;
+  }
+
+  public void setParent(Customer parent) {
+    this.parent = parent;
   }
 
   public String getName() {

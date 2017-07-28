@@ -43,6 +43,8 @@ public abstract class ODataRequest {
 
   public abstract ODataHttpMethod getMethod();
 
+  public abstract String getHttpMethod();
+
   public abstract List<Locale> getAcceptableLanguages();
 
   public abstract String getContentType();
@@ -111,6 +113,8 @@ public abstract class ODataRequest {
     public abstract ODataRequest build();
 
     public abstract ODataRequestBuilder requestHeaders(Map<String, List<String>> headers);
+
+    public abstract ODataRequestBuilder httpMethod(String httpMethod);
 
     public abstract ODataRequestBuilder body(InputStream body);
 

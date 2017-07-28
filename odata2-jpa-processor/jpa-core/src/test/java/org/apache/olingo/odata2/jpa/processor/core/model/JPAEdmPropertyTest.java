@@ -31,6 +31,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EmbeddableType;
@@ -38,12 +39,10 @@ import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.Type;
 
+import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
-import org.apache.olingo.odata2.api.edm.provider.Association;
-import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
-import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
-import org.apache.olingo.odata2.api.edm.provider.Schema;
+import org.apache.olingo.odata2.api.edm.provider.*;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
@@ -198,12 +197,36 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
 
+    Property property = objJPAEdmProperty.getEdmPropertyList().get(0);
+    EdmFacets facets = property.getFacets();
+    assertTrue(facets.isNullable());
+
     NavigationProperty navigationProperty =
         objJPAEdmProperty.getJPAEdmNavigationPropertyView().getEdmNavigationProperty();
     assertNotNull(navigationProperty);
     assertEquals("String", navigationProperty.getFromRole());
     assertEquals("salesorderprocessing", navigationProperty.getToRole());
     assertEquals("StringDetails", navigationProperty.getName());
+  }
+
+  @Test
+  public void testBuildManyToOneJoinColumnWithFacets() {
+    ATTRIBUTE_TYPE = PersistentAttributeType.MANY_TO_ONE;
+    testCase = "JoinColumnWithFacets";
+    objJPAEdmPropertyTest = new JPAEdmPropertyTest();
+    objJPAEdmProperty = new JPAEdmProperty(objJPAEdmPropertyTest);
+
+    try {
+      objJPAEdmProperty.getBuilder().build();
+    } catch (ODataJPAModelException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+
+    Property property = objJPAEdmProperty.getEdmPropertyList().get(0);
+    EdmFacets facets = property.getFacets();
+    assertFalse(facets.isNullable());
   }
 
   @Override
@@ -541,25 +564,33 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
     @Override
     public <T extends Annotation> T getAnnotation(final Class<T> annotationClass) {
 
-      if (annotationClass.equals(JoinColumn.class)) {
+      if(annotationClass.equals(ManyToOne.class)) {
+        ManyToOne manyToOne = EasyMock.createMock(ManyToOne.class);
+        EasyMock.expect(manyToOne.optional()).andReturn(true).anyTimes();
+        return (T) manyToOne;
 
+      } else if (annotationClass.equals(JoinColumn.class)) {
+
+        JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
+        EasyMock.expect(joinColumn.insertable()).andReturn(true).anyTimes();
+        EasyMock.expect(joinColumn.updatable()).andReturn(true).anyTimes();
         if (testCase.equals("Default")) {
-          JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
           EasyMock.expect(joinColumn.name()).andReturn("FSOID").anyTimes();
           EasyMock.expect(joinColumn.referencedColumnName()).andReturn("SOLITID").anyTimes();
-          EasyMock.expect(joinColumn.insertable()).andReturn(true).anyTimes();
-          EasyMock.expect(joinColumn.updatable()).andReturn(true).anyTimes();
+          EasyMock.expect(joinColumn.nullable()).andReturn(false).anyTimes();
           EasyMock.replay(joinColumn);
-          return (T) joinColumn;
         } else if (testCase.equals("NoJoinColumnNames")) {
-          JoinColumn joinColumn = EasyMock.createMock(JoinColumn.class);
           EasyMock.expect(joinColumn.name()).andReturn("").anyTimes();
           EasyMock.expect(joinColumn.referencedColumnName()).andReturn("").anyTimes();
-          EasyMock.expect(joinColumn.insertable()).andReturn(true).anyTimes();
-          EasyMock.expect(joinColumn.updatable()).andReturn(true).anyTimes();
+          EasyMock.expect(joinColumn.nullable()).andReturn(true).anyTimes();
           EasyMock.replay(joinColumn);
-          return (T) joinColumn;
+        } else if (testCase.equals("JoinColumnWithFacets")) {
+          EasyMock.expect(joinColumn.name()).andReturn("ColumnWithFacets").anyTimes();
+          EasyMock.expect(joinColumn.referencedColumnName()).andReturn("").anyTimes();
+          EasyMock.expect(joinColumn.nullable()).andReturn(false).anyTimes();
+          EasyMock.replay(joinColumn);
         }
+        return (T) joinColumn;
 
       } else {
 
