@@ -401,6 +401,8 @@ public class AnnotationEdmProviderTest {
     assertTrue(containsProperty(properties, "Image"));
     assertFalse(photo.isAbstract());
     assertTrue(photo.isHasStream());
+    assertEquals("MimeType",photo.getMapping().getMediaResourceMimeTypeKey());
+    assertEquals("ImageUrl",photo.getMapping().getMediaResourceSourceKey());
 
     Key photoKey = photo.getKey();
     List<PropertyRef> keyReferences = photoKey.getKeys();

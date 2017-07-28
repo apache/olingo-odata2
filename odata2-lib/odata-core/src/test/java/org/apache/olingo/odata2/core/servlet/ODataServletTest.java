@@ -298,4 +298,31 @@ public class ODataServletTest {
     String factoryClassName = ODataServiceFactoryImpl.class.getName();
     Mockito.when(configMock.getInitParameter(ODataServiceFactory.FACTORY_LABEL)).thenReturn(factoryClassName);
   }
+  
+  @Test
+  public void testWithNoPathAfterServletPath() throws Exception {
+    ODataServlet servlet = new ODataServlet();
+    prepareServlet(servlet);
+    prepareRequestWithNoPathAfterServletPath(reqMock, "", "/servlet-path");
+    Mockito.when(reqMock.getPathInfo()).thenReturn("/Collection");
+    Mockito.when(reqMock.getRequestURI()).thenReturn("http://localhost:8080/servlet-path;v=1/Collection");
+    Mockito.when(servlet.getInitParameter("org.apache.olingo.odata2.path.split")).thenReturn("1");
+    Mockito.when(respMock.getOutputStream()).thenReturn(Mockito.mock(ServletOutputStream.class));
+
+    servlet.service(reqMock, respMock);
+
+    Mockito.verify(configMock).getInitParameter(ODataServiceFactory.FACTORY_LABEL);
+    Mockito.verify(reqMock).getAttribute(ODataServiceFactory.FACTORY_CLASSLOADER_LABEL);
+
+    Assert.assertEquals(ODataServiceFactoryImpl.class, servlet.getServiceFactory(reqMock).getClass());
+  }
+  
+  private void prepareRequestWithNoPathAfterServletPath(final HttpServletRequest req, 
+      final String contextPath, final String servletPath) {
+    Mockito.when(req.getMethod()).thenReturn("GET");
+    Mockito.when(req.getContextPath()).thenReturn(contextPath);
+    Mockito.when(req.getServletPath()).thenReturn(servletPath);
+    Mockito.when(req.getRequestURI()).thenReturn(servletPath + ";v=1" + "/Collection");
+    Mockito.when(req.getHeaderNames()).thenReturn(Collections.enumeration(Collections.emptyList()));
+  }
 }

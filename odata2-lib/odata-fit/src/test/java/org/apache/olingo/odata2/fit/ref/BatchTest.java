@@ -22,10 +22,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -33,7 +41,16 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
+import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
+import org.apache.olingo.odata2.api.client.batch.BatchPart;
+import org.apache.olingo.odata2.api.client.batch.BatchSingleResponse;
+import org.apache.olingo.odata2.api.commons.HttpHeaders;
+import org.apache.olingo.odata2.api.ep.EntityProvider;
+import org.apache.olingo.odata2.core.batch.BatchRequestWriter;
+import org.apache.olingo.odata2.ref.processor.Util;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Test;
@@ -44,6 +61,10 @@ import org.junit.Test;
  */
 public class BatchTest extends AbstractRefTest {
 
+  private static final String PUT = "PUT";
+  private static final String POST = "POST";
+  private static final String BOUNDARY = "batch_123";
+  
   public BatchTest(final ServletType servletType) {
     super(servletType);
   }
@@ -53,25 +74,26 @@ public class BatchTest extends AbstractRefTest {
     String responseBody = execute("/simple.batch");
     assertFalse(responseBody
         .contains("<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"));
-    assertTrue(responseBody.contains("<edmx:Edmx Version=\"1.0\""));
+    assertTrue(responseBody.contains(
+        "<edmx:Edmx xmlns:edmx=\"http://schemas.microsoft.com/ado/2007/06/edmx\" Version=\"1.0\""));
   }
-  
+
   @Test
   public void functionImportBatch() throws Exception {
-	    String responseBody = execute("/functionImport.batch");
-	    assertFalse(responseBody
-	        .contains("<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"));
-	    assertTrue(responseBody.contains("HTTP/1.1 200 OK"));
-	    assertTrue(responseBody.contains("<?xml version='1.0' encoding='utf-8'?><ManagerPhoto xmlns="));
+    String responseBody = execute("/functionImport.batch");
+    assertFalse(responseBody
+        .contains("<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"));
+    assertTrue(responseBody.contains("HTTP/1.1 200 OK"));
+    assertTrue(responseBody.contains("<?xml version='1.0' encoding='utf-8'?><ManagerPhoto xmlns="));
   }
-  
+
   @Test
   public void employeesWithFilterBatch() throws Exception {
-	    String responseBody = execute("/employeesWithFilter.batch");
-	    assertFalse(responseBody
-	        .contains("<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"));
-	    assertTrue(responseBody.contains("HTTP/1.1 200 OK"));
-	    assertTrue(responseBody.contains("<d:EmployeeName>Walter Winter</d:EmployeeName>"));
+    String responseBody = execute("/employeesWithFilter.batch");
+    assertFalse(responseBody
+        .contains("<error xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"));
+    assertTrue(responseBody.contains("HTTP/1.1 200 OK"));
+    assertTrue(responseBody.contains("<d:EmployeeName>Walter Winter</d:EmployeeName>"));
   }
 
   @Test
@@ -179,5 +201,188 @@ public class BatchTest extends AbstractRefTest {
     assertNotNull(response);
     assertEquals(202, response.getStatusLine().getStatusCode());
     return response;
+  }
+  
+  /**
+   * @param method
+   * @param data
+   * @param contentType 
+   * @return
+   */
+  private InputStream createBatchRequest(String method, byte[] data, String contentType) {
+    List<BatchPart> batch = new ArrayList<BatchPart>();
+    Map<String, String> headers = new HashMap<String, String>();
+    
+    BatchChangeSetPart request = null;
+    if (method.equalsIgnoreCase(PUT)) {
+      headers.put("content-type", contentType);
+      request = BatchChangeSetPart.method(PUT)
+          .uri("Employees('2')/$value")
+          .body(data)
+          .headers(headers)
+          .contentId("1")
+          .build();
+    } else if (method.equalsIgnoreCase(POST)) {
+      headers.put("content-type", contentType);
+      request = BatchChangeSetPart.method(POST)
+          .uri("Employees")
+          .body(data)
+          .headers(headers)
+          .contentId("1")
+          .build();
+    }
+    
+    BatchChangeSet changeSet = BatchChangeSet.newBuilder().build();
+    changeSet.add(request);
+    batch.add(changeSet);
+
+    BatchRequestWriter writer = new BatchRequestWriter();
+    InputStream batchRequest = writer.writeBatchRequest(batch, BOUNDARY);
+    
+    return batchRequest;
+  }
+  
+  @Test
+  public void testBatchWithChangesetWithRawBytesInPutOperation() throws Exception {
+    InputStream requestPayload = createBatchRequestWithRawBytes(PUT);
+    final HttpPost put = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+    put.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
+    HttpEntity entity = new InputStreamEntity(requestPayload, -1);
+    put.setEntity(entity);
+    HttpResponse response = getHttpClient().execute(put);
+    byte[] actualData = Util.getInstance().getBinaryContent();
+    byte[] expectedData = rawBytes();
+    // Comparing data stored in the data source and the data sent in the request
+    assertArrayEquals(actualData, expectedData);
+    
+    assertNotNull(response);
+    assertEquals(202, response.getStatusLine().getStatusCode());
+    String responseBody = StringHelper.inputStreamToStringCRLFLineBreaks(response.getEntity().getContent());
+    assertTrue(responseBody.contains("204 No Content"));
+    
+    HttpResponse resp = execute("/simpleGet.batch", BOUNDARY);
+    InputStream in = resp.getEntity().getContent();
+    StringHelper.Stream batchRequestStream = StringHelper.toStream(in);
+    String requestBody = batchRequestStream.asString();
+    
+    String contentType = resp.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
+    List<BatchSingleResponse> responses = EntityProvider.parseBatchResponse(
+        new ByteArrayInputStream(requestBody.getBytes("iso-8859-1")), contentType);
+    for (BatchSingleResponse batchResp : responses) {
+      assertEquals("200", batchResp.getStatusCode());
+      assertEquals("OK", batchResp.getStatusInfo());
+      assertArrayEquals(batchResp.getBody().getBytes("iso-8859-1"), actualData);
+    }
+  }
+  
+  @Test
+  public void testBatchWithChangesetWithRawBytesInPOSTOperation() throws Exception {
+    InputStream requestPayload = createBatchRequestWithRawBytes(POST);
+    final HttpPost put = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+    put.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
+    HttpEntity entity = new InputStreamEntity(requestPayload, -1);
+    put.setEntity(entity);
+    HttpResponse response = getHttpClient().execute(put);
+    byte[] actualData = Util.getInstance().getBinaryContent();
+    byte[] expectedData = rawBytes();
+    // Comparing data stored in the data source and the data sent in the request
+    assertArrayEquals(actualData, expectedData);
+    
+    assertNotNull(response);
+    assertEquals(202, response.getStatusLine().getStatusCode());
+    String responseBody = StringHelper.inputStreamToStringCRLFLineBreaks(response.getEntity().getContent());
+    assertTrue(responseBody.contains("201 Created"));
+    
+    HttpResponse resp = execute("/simpleGet1.batch", BOUNDARY);
+    InputStream in = resp.getEntity().getContent();
+    StringHelper.Stream batchRequestStream = StringHelper.toStream(in);
+    String requestBody = batchRequestStream.asString();
+    
+    String contentType = resp.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
+    List<BatchSingleResponse> responses = EntityProvider.parseBatchResponse(
+        new ByteArrayInputStream(requestBody.getBytes("iso-8859-1")), contentType);
+    for (BatchSingleResponse batchResp : responses) {
+      assertEquals("200", batchResp.getStatusCode());
+      assertEquals("OK", batchResp.getStatusInfo());
+      assertArrayEquals(batchResp.getBody().getBytes("iso-8859-1"), expectedData);
+    }
+  }
+  
+  @Test
+  public void testBatchWithChangesetWithImageObjectInPutOperation() throws Exception {
+    InputStream requestPayload = createBatchRequestWithImage("/Employee_1.png", PUT);
+    
+    final HttpPost put = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+    put.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
+    HttpEntity entity = new InputStreamEntity(requestPayload, -1);
+    put.setEntity(entity);
+    HttpResponse response = getHttpClient().execute(put);
+    byte[] actualData = Util.getInstance().getBinaryContent();
+    byte[] expectedData = getImageData("/Employee_1.png");
+    // Comparing data stored in the data source and the data sent in the request
+    assertArrayEquals(actualData, expectedData);
+    
+    assertNotNull(response);
+    assertEquals(202, response.getStatusLine().getStatusCode());
+    String responseBody = StringHelper.inputStreamToStringCRLFLineBreaks(response.getEntity().getContent());
+    assertTrue(responseBody.contains("204 No Content"));
+    
+    HttpResponse resp = execute("/simpleGet.batch", BOUNDARY);
+    InputStream in = resp.getEntity().getContent();
+    StringHelper.Stream batchRequestStream = StringHelper.toStream(in);
+    String requestBody = batchRequestStream.asString();
+    
+    String contentType = resp.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
+    List<BatchSingleResponse> responses = EntityProvider.parseBatchResponse(
+        new ByteArrayInputStream(requestBody.getBytes("iso-8859-1")), contentType);
+    for (BatchSingleResponse batchResp : responses) {
+      assertEquals("200", batchResp.getStatusCode());
+      assertEquals("OK", batchResp.getStatusInfo());
+      assertArrayEquals(batchResp.getBody().getBytes("iso-8859-1"), actualData);
+    }
+  }
+  
+  private InputStream createBatchRequestWithImage(String imageUrl, String method) throws IOException {
+    byte[] data = getImageData(imageUrl);
+    return createBatchRequest(method, data, "image/jpeg");
+  }
+  
+  private InputStream createBatchRequestWithRawBytes(String method) {
+    byte[] data = rawBytes();
+    return createBatchRequest(method, data, "application/octect-stream");
+  }
+
+  /**
+   * @return
+   */
+  private byte[] rawBytes() {
+    byte[] data = new byte[Byte.MAX_VALUE - Byte.MIN_VALUE + 1];
+    // binary content, not a valid UTF-8 representation of a string
+    for (int i = Byte.MIN_VALUE; i <= Byte.MAX_VALUE; i++) {
+      data[i - Byte.MIN_VALUE] = (byte) i;
+    }
+    return data;
+  }
+
+  /**
+   * @param imageUrl
+   * @return
+   * @throws IOException 
+   */
+  private byte[] getImageData(String imageUrl) throws IOException {
+    byte[] data = null;
+    try {
+      InputStream in = this.getClass().getResourceAsStream(imageUrl);
+      ByteArrayOutputStream stream = new ByteArrayOutputStream();
+      int b = 0;
+      while ((b = in.read()) != -1) {
+        stream.write(b);
+      }
+
+      data = stream.toByteArray();
+    } catch (IOException e) {
+      throw new IOException(e);
+    }
+    return data;
   }
 }

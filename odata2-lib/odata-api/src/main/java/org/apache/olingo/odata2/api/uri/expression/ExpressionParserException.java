@@ -45,10 +45,10 @@ public class ExpressionParserException extends ODataBadRequestException {
       ExpressionParserException.class, "COMMA_OR_END_EXPECTED_AT_POS");
   public static final MessageReference EXPRESSION_EXPECTED_AT_POS = createMessageReference(
       ExpressionParserException.class, "EXPRESSION_EXPECTED_AT_POS");
-  public static final MessageReference MISSING_CLOSING_PHARENTHESIS = createMessageReference(
-      ExpressionParserException.class, "MISSING_CLOSING_PHARENTHESIS");
-  public static final MessageReference COMMA_OR_CLOSING_PHARENTHESIS_EXPECTED_AFTER_POS = createMessageReference(
-      ExpressionParserException.class, "COMMA_OR_CLOSING_PHARENTHESIS_EXPECTED_AFTER_POS");
+  public static final MessageReference MISSING_CLOSING_PARENTHESIS = createMessageReference(
+      ExpressionParserException.class, "MISSING_CLOSING_PARENTHESIS");
+  public static final MessageReference COMMA_OR_CLOSING_PARENTHESIS_EXPECTED_AFTER_POS = createMessageReference(
+      ExpressionParserException.class, "COMMA_OR_CLOSING_PARENTHESIS_EXPECTED_AFTER_POS");
   public static final MessageReference INVALID_METHOD_CALL = createMessageReference(ExpressionParserException.class,
       "INVALID_METHOD_CALL");
   public static final MessageReference TYPE_EXPECTED_AT = createMessageReference(ExpressionParserException.class,
@@ -73,6 +73,8 @@ public class ExpressionParserException extends ODataBadRequestException {
       ExpressionParserException.class, "LEFT_SIDE_NOT_A_PROPERTY");
   public static final MessageReference PROPERTY_NAME_NOT_FOUND_IN_TYPE = createMessageReference(
       ExpressionParserException.class, "PROPERTY_NAME_NOT_FOUND_IN_TYPE");
+  public static final MessageReference INVALID_MULTIPLICITY = createMessageReference(
+      ExpressionParserException.class, "INVALID_MULTIPLICITY");
 
   // validation exceptions texts - binary
   public static final MessageReference INVALID_TYPES_FOR_BINARY_OPERATOR = createMessageReference(

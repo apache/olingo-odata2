@@ -40,13 +40,15 @@ import java.util.UUID;
 public class BatchHelper {
 
   public static final String BINARY_ENCODING = "binary";
-  public static final String DEFAULT_ENCODING = "utf-8";
+  public static final String UTF8_ENCODING = "UTF-8";
+  public static final String ISO_ENCODING = "ISO-8859-1";
+  public static String DEFAULT_ENCODING = "UTF-8";
   public static final String HTTP_CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
   public static final String HTTP_CONTENT_ID = "Content-Id";
   public static final String MIME_HEADER_CONTENT_ID = "MimeHeader-ContentId";
   public static final String REQUEST_HEADER_CONTENT_ID = "RequestHeader-ContentId";
 
-  public static final Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_ENCODING);
+  public static Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_ENCODING);
 
   protected static String generateBoundary(final String value) {
     return value + "_" + UUID.randomUUID().toString();
@@ -72,11 +74,21 @@ public class BatchHelper {
     return getCharset(contentType);
   }
 
-  public static Charset extractCharset(String contentType) {
-    if(contentType == null) {
-      return DEFAULT_CHARSET;
+  public static Charset extractCharset(ContentType contentType) {
+    if (contentType != null) {
+      final String charsetValue = contentType.getParameters().get(ContentType.PARAMETER_CHARSET);
+      if (charsetValue == null) {
+        if (contentType.isCompatible(ContentType.APPLICATION_JSON) || contentType.getSubtype().contains("xml")) {
+          setDefaultValues(UTF8_ENCODING);
+          return Charset.forName(UTF8_ENCODING);
+        }
+      } else {
+        setDefaultValues(charsetValue);
+        return Charset.forName(charsetValue);
+      }
     }
-    return getCharset(contentType);
+    setDefaultValues(ISO_ENCODING);
+    return Charset.forName(ISO_ENCODING);
   }
 
   private static Charset getCharset(String contentType) {
@@ -84,10 +96,23 @@ public class BatchHelper {
     if(ct != null) {
       String charsetString = ct.getParameters().get(ContentType.PARAMETER_CHARSET);
       if (charsetString != null && Charset.isSupported(charsetString)) {
+        setDefaultValues(charsetString);
         return Charset.forName(charsetString);
+      } else {
+        if (ct.isCompatible(ContentType.APPLICATION_JSON) || ct.getSubtype().contains("xml")) {
+          setDefaultValues(UTF8_ENCODING);
+          return Charset.forName(UTF8_ENCODING);
+        }
       }
     }
-    return DEFAULT_CHARSET;
+    setDefaultValues(ISO_ENCODING);
+    return Charset.forName(ISO_ENCODING);
+  }
+  
+  private static void setDefaultValues(String contentType) {
+    DEFAULT_CHARSET = Charset.forName(contentType);
+    DEFAULT_ENCODING = contentType;
+    
   }
 
   /**
@@ -151,6 +176,33 @@ public class BatchHelper {
     public String toString() {
       return new String(buffer.array(), 0, buffer.position());
     }
+    
+    /**
+     * Fetch the calibrated length in case of binary data. 
+     * Since after applying the charset the content length changes.
+     * If the previously generated length is sent back then the batch response 
+     * body is seen truncated
+     * @param batchResponseBody
+     * @return
+     */
+    public int calculateLength(Object batchResponseBody) {
+      if (batchResponseBody != null) {
+        if (batchResponseBody instanceof String) {
+          if (DEFAULT_ENCODING.equalsIgnoreCase(ISO_ENCODING)) {
+            try {
+              return ((String) batchResponseBody).getBytes(UTF8_ENCODING).length;
+            } catch (UnsupportedEncodingException e) {
+              throw new ODataRuntimeException(e);
+            }
+          } else {
+            return getLength();
+          }
+        } else {
+          return getLength();
+        }
+      }
+      return getLength();
+    }
   }
 
   /**
@@ -202,6 +254,7 @@ public class BatchHelper {
         return EMPTY_BYTES;
       } else if(entity instanceof InputStream) {
         try {
+          extractCharset(ContentType.parse(response.getHeader("Content-Type")));
           ByteArrayOutputStream output = new ByteArrayOutputStream();
           ByteBuffer inBuffer = ByteBuffer.allocate(BUFFER_SIZE);
           ReadableByteChannel ic = Channels.newChannel((InputStream) entity);
@@ -215,7 +268,11 @@ public class BatchHelper {
         } catch (IOException e) {
           throw new ODataRuntimeException("Error on reading request content");
         }
+      } else if (entity instanceof byte[]) {
+        setDefaultValues(ISO_ENCODING);
+        return (byte[]) entity;
       } else if(entity instanceof String) {
+        setDefaultValues(UTF8_ENCODING);
         return ((String) entity).getBytes(DEFAULT_CHARSET);
       } else {
         throw new ODataRuntimeException("Error on reading request content for entity type:" + entity.getClass());

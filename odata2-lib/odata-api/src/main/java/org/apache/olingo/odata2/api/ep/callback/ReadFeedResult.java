@@ -35,6 +35,7 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 public class ReadFeedResult extends ReadResult {
 
   private final ODataFeed feed;
+  private final String parentEntryId;
 
   /**
    * Constructor.
@@ -45,9 +46,10 @@ public class ReadFeedResult extends ReadResult {
    * @param entry read entities as list of {@link org.apache.olingo.odata2.api.ep.entry.ODataEntry ODataEntry}
    */
   public ReadFeedResult(final EntityProviderReadProperties properties, final EdmNavigationProperty navigationProperty,
-      final ODataFeed entry) {
+      final ODataFeed entry, final String entryMetadataId) {
     super(properties, navigationProperty);
     feed = entry;
+    parentEntryId = entryMetadataId;
   }
 
   @Override
@@ -63,5 +65,11 @@ public class ReadFeedResult extends ReadResult {
   @Override
   public String toString() {
     return super.toString() + "\n\t" + feed.toString();
+  }
+  /**
+   * @return the rootEntryId
+   */
+  public String getParentEntryId() {
+    return parentEntryId;
   }
 }

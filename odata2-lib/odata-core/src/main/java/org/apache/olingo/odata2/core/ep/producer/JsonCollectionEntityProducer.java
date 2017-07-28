@@ -63,7 +63,7 @@ public class JsonCollectionEntityProducer {
         } else {
           jsonStreamWriter.separator();
         }
-        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, propertyInfo, item, true);
+        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter, propertyInfo, item, true, false);
       }
       jsonStreamWriter.endArray();
 

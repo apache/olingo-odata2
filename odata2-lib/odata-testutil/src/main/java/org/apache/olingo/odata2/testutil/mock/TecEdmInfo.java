@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 
 /**
  * Helper for the entity data model used as technical reference scenario.
@@ -36,14 +37,23 @@ public class TecEdmInfo {
   }
 
   public EdmEntityType getTypeEtAllTypes() {
+    return getEntityType(TechnicalScenarioEdmProvider.ET_ALL_TYPES);
+  }
+
+  public EdmEntityType getTypeEtKeyTypeInteger() {
+    return getEntityType(TechnicalScenarioEdmProvider.ET_KEY_IS_INTEGER);
+  }
+
+  public EdmEntityType getTypeEtKeyTypeString() {
+    return getEntityType(TechnicalScenarioEdmProvider.ET_KEY_IS_STRING);
+  }
+
+  private EdmEntityType getEntityType(final FullQualifiedName name) {
     try {
-      return edm
-          .getEntityContainer(TechnicalScenarioEdmProvider.ENTITY_CONTAINER_1)
-          .getEntitySet(TechnicalScenarioEdmProvider.ES_ALL_TYPES)
-          .getEntityType();
+      return edm.getEntityType(name.getNamespace(), name.getName());
     } catch (final EdmException e) {
-      fail("Error in test setup" + e.getLocalizedMessage());
+      fail("Error in test setup: " + e.getLocalizedMessage());
+      return null;
     }
-    return null;
   }
 }

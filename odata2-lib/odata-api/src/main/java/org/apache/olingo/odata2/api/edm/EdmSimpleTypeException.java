@@ -53,6 +53,10 @@ public class EdmSimpleTypeException extends EdmException {
       "VALUE_ILLEGAL_CONTENT");
   public static final MessageReference VALUE_FACETS_NOT_MATCHED = createMessageReference(EdmSimpleTypeException.class,
       "VALUE_FACETS_NOT_MATCHED");
+  public static final MessageReference PROPERTY_VALUE_NULL_NOT_ALLOWED = createMessageReference(
+      EdmSimpleTypeException.class, "PROPERTY_VALUE_NULL_NOT_ALLOWED");
+  public static final MessageReference PROPERTY_VALUE_FACETS_NOT_MATCHED = createMessageReference(
+      EdmSimpleTypeException.class,"PROPERTY_VALUE_FACETS_NOT_MATCHED");
 
   public EdmSimpleTypeException(final MessageReference messageReference) {
     super(messageReference);
@@ -69,5 +73,14 @@ public class EdmSimpleTypeException extends EdmException {
   public EdmSimpleTypeException(final MessageReference messageReference, final Throwable cause,
       final String errorCode) {
     super(messageReference, cause, errorCode);
+  }
+  
+  public static MessageReference getMessageReference(final MessageReference messageReference) {
+    if (EdmSimpleTypeException.VALUE_NULL_NOT_ALLOWED.equals(messageReference)) {
+      return EdmSimpleTypeException.PROPERTY_VALUE_NULL_NOT_ALLOWED;
+    } else if (EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED.equals(messageReference)) {
+      return EdmSimpleTypeException.PROPERTY_VALUE_FACETS_NOT_MATCHED;
+    }
+    return messageReference;
   }
 }

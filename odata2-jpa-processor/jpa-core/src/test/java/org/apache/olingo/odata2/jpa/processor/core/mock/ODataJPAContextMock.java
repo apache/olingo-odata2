@@ -18,12 +18,18 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.mock;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.easymock.Capture;
 import org.easymock.EasyMock;
 
 public abstract class ODataJPAContextMock {
@@ -49,7 +55,7 @@ public abstract class ODataJPAContextMock {
     ODataJPAContext odataJPAContext = EasyMock.createMock(ODataJPAContext.class);
     EasyMock.expect(odataJPAContext.getPersistenceUnitName()).andStubReturn(NAMESPACE);
     EasyMock.expect(odataJPAContext.getEntityManagerFactory()).andReturn(mockEntityManagerFactory());
-    EasyMock.expect(odataJPAContext.getEntityManager()).andReturn(mockEntityManager());
+    EasyMock.expect(odataJPAContext.getEntityManager()).andStubReturn(mockEntityManager());
     EasyMock.expect(odataJPAContext.getJPAEdmMappingModel()).andReturn(MAPPING_MODEL);
     EasyMock.expect(odataJPAContext.getJPAEdmExtension()).andReturn(null);
     EasyMock.expect(odataJPAContext.getDefaultNaming()).andReturn(true);
@@ -62,7 +68,15 @@ public abstract class ODataJPAContextMock {
 
   private static EntityManager mockEntityManager() {
     EntityManager em = EasyMock.createMock(EntityManager.class);
-    EasyMock.replay(em);
+    Metamodel mm = EasyMock.createMock(Metamodel.class);
+    EasyMock.expect(em.getMetamodel()).andReturn(mm).anyTimes();
+    Set<EntityType<?>> et = new HashSet<EntityType<?>>();
+    EasyMock.expect(mm.getEntities()).andReturn(et).anyTimes();
+    EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
+    Query jpqlquery = EasyMock.createMock(Query.class);
+    Capture<String> capturedArgument = new Capture<String>();
+    EasyMock.expect(em.createQuery(EasyMock.capture(capturedArgument))).andReturn(jpqlquery);
+    EasyMock.replay(em,mm);
     return em;
 
   }

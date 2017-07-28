@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -147,30 +147,30 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
 
   private class JPAEdmPropertyBuilder implements JPAEdmBuilder {
     /*
-     * 
+     *
      * Each call to build method creates a new EDM Property List.
      * The Property List can be created either by an Entity type or
      * ComplexType. The flag isBuildModeComplexType tells if the
      * Properties are built for complex type or for Entity Type.
-     * 
+     *
      * While Building Properties Associations are built. However
      * the associations thus built does not contain Referential
      * constraint. Associations thus built only contains
      * information about Referential constraints. Adding of
      * referential constraints to Associations is the taken care
      * by Schema.
-     * 
+     *
      * Building Properties is divided into four parts
      * A) Building Simple Properties
      * B) Building Complex Properties
      * C) Building Associations
      * D) Building Navigation Properties
-     * 
+     *
      * ************************************************************
      * Build EDM Schema - STEPS
      * ************************************************************
      * A) Building Simple Properties:
-     * 
+     *
      * 1) Fetch JPA Attribute List from
      * A) Complex Type
      * B) Entity Type
@@ -178,7 +178,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
      * B) Building Complex Properties
      * C) Building Associations
      * D) Building Navigation Properties
-     * 
+     *
      * ************************************************************
      * Build EDM Schema - STEPS
      * ************************************************************
@@ -404,9 +404,9 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         for (Attribute<?, ?> referencedAttribute : referencedEntityType.getAttributes()) {
           AnnotatedElement annotatedElement2 = (AnnotatedElement) referencedAttribute.getJavaMember();
           if (annotatedElement2 != null) {
-            Column referencedColumn = annotatedElement2.getAnnotation(Column.class);
-            if (referencedColumn != null && referencedColumn.name().equals((joinColumn.referencedColumnName()))) {
-              name[1] = referencedColumn.name();
+            String refColName = getReferenceColumnName(annotatedElement2, referencedAttribute);
+            if(refColName.equals((joinColumn.referencedColumnName()))) {
+              name[1] = refColName;
               joinColumnNames.add(name);
               currentRefAttribute = referencedAttribute;
               break;
@@ -417,7 +417,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
 
       if (currentRefAttribute == null) {
         throw ODataJPAModelException.throwException(ODataJPAModelException.REF_ATTRIBUTE_NOT_FOUND
-            .addContent(referencedEntityType.getName()), null);
+            .addContent(joinColumn.referencedColumnName() + " -> " + referencedEntityType.getName()), null);
       }
       if (joinColumn.insertable() && joinColumn.updatable()) {
         currentSimpleProperty = new SimpleProperty();
@@ -433,11 +433,10 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
     @SuppressWarnings("rawtypes")
     private List<Attribute<?, ?>> sortInAscendingOrder(final Set<?> jpaAttributes) {
       List<Attribute<?, ?>> jpaAttributeList = new ArrayList<Attribute<?, ?>>();
-      Iterator itr = null;
       Attribute<?, ?> smallestJpaAttribute;
       Attribute<?, ?> currentJpaAttribute;
       while (!jpaAttributes.isEmpty()) {
-        itr = jpaAttributes.iterator();
+        Iterator itr = jpaAttributes.iterator();
         smallestJpaAttribute = (Attribute<?, ?>) itr.next();
         while (itr.hasNext()) {
           currentJpaAttribute = (Attribute<?, ?>) itr.next();
@@ -450,6 +449,17 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
       }
       return jpaAttributeList;
     }
+  }
+
+  private String getReferenceColumnName(AnnotatedElement annotatedElement2, Attribute<?, ?> referencedAttribute) {
+    String refColName = null;
+    Column c = annotatedElement2.getAnnotation(Column.class);
+    if(c != null) {
+      refColName = c.name();
+    }
+    return refColName == null || "".equals(refColName)
+        ? referencedAttribute.getName()
+        : refColName;
   }
 
   @Override

@@ -16,11 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  ******************************************************************************/
-package org.apache.olingo.odata2.jpa.processor.core;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+package org.apache.olingo.odata2.jpa.processor.api;
 
 import org.apache.olingo.odata2.api.batch.BatchHandler;
 import org.apache.olingo.odata2.api.batch.BatchRequestPart;
@@ -34,25 +30,22 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityLinkUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetLinksUriInfo;
+import org.apache.olingo.odata2.api.uri.info.GetEntityLinkUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
+import org.apache.olingo.odata2.api.uri.info.GetEntitySetLinksUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPAProcessor;
-import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ODataJPAProcessorDefault extends ODataJPAProcessor {
+public abstract class ODataJPADefaultProcessor extends ODataJPAProcessor {
 
-  public ODataJPAProcessorDefault(final ODataJPAContext oDataJPAContext) {
+  public ODataJPADefaultProcessor(final ODataJPAContext oDataJPAContext) {
     super(oDataJPAContext);
-    if (oDataJPAContext == null) {
-      throw new IllegalArgumentException(ODataJPAException.ODATA_JPACTX_NULL);
-    }
   }
 
   @Override

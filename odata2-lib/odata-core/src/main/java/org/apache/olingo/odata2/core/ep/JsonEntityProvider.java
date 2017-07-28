@@ -326,7 +326,9 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
       final EntityProviderReadProperties properties) throws EntityProviderException {
     try {
       if (functionImport.getReturnType().getType().getKind() == EdmTypeKind.ENTITY) {
-        return new JsonEntityConsumer().readEntry(functionImport.getEntitySet(), content, properties);
+        return functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY
+            ? new JsonEntityConsumer().readFeed(functionImport.getEntitySet(), content, properties)
+            : new JsonEntityConsumer().readEntry(functionImport.getEntitySet(), content, properties);
       } else {
         final EntityPropertyInfo info = EntityInfoAggregator.create(functionImport);
         return functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY ?

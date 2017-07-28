@@ -172,4 +172,14 @@ public abstract class MessageReference {
     }
     return true;
   }
+  
+  public MessageReference updateContent(List<?> oldContent, Object... newContent) {
+    
+    final List<Object> mergedContent = new ArrayList<Object>();
+    if (oldContent != null && oldContent.size() > 0) {
+      mergedContent.addAll(oldContent); 
+    }
+    mergedContent.addAll(Arrays.asList(newContent));
+    return new SimpleMessageReference(key, mergedContent);
+  }
 }

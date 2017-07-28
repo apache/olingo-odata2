@@ -49,9 +49,23 @@ public class EntityProviderWriteProperties {
 
   private boolean isResponsePayload = true;
   private boolean includeMetadataInContentOnly = false;
+  private boolean isDataBasedPropertySerialization = false;
+  private boolean omitInlineForNullData = false;
 
   private EntityProviderWriteProperties() {}
+  
+  public final boolean isOmitInlineForNullData() {
+    return omitInlineForNullData;
+  }
 
+  /**
+   * Returns true if the payload has dynamic properties i.e. every entry has different property list
+   * @return
+   */
+  public final boolean isDataBasedPropertySerialization() {
+    return isDataBasedPropertySerialization;
+  }
+  
   public final boolean isOmitETag() {
     return omitETag;
   }
@@ -154,6 +168,19 @@ public class EntityProviderWriteProperties {
   public static class ODataEntityProviderPropertiesBuilder {
     private final EntityProviderWriteProperties properties = new EntityProviderWriteProperties();
 
+    public final ODataEntityProviderPropertiesBuilder omitInlineForNullData(boolean omitInlineForNullData) {
+      properties.omitInlineForNullData = omitInlineForNullData;
+      return this;
+    }
+    /**
+     * @param setting if payload has dynamic property
+     */
+    public final ODataEntityProviderPropertiesBuilder isDataBasedPropertySerialization
+    (boolean isDataBasedPropertySerialization) {
+      properties.isDataBasedPropertySerialization = isDataBasedPropertySerialization;
+      return this;
+    }
+    
     /**
      * @param includeSimplePropertyType true to include simple property type information in the payload
      */
@@ -293,6 +320,8 @@ public class EntityProviderWriteProperties {
       this.properties.validatingFacets = properties.validatingFacets;
       this.properties.isResponsePayload = properties.isResponsePayload;
       this.properties.includeMetadataInContentOnly = properties.includeMetadataInContentOnly;
+      this.properties.isDataBasedPropertySerialization = properties.isDataBasedPropertySerialization;
+      this.properties.omitInlineForNullData = properties.omitInlineForNullData;
       return this;
     }
 

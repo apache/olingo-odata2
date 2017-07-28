@@ -86,6 +86,7 @@ public class BatchRequestTransformator implements BatchTransformator {
                                                                         baseUri, 
                                                                         pathInfo);
     statusLine.validateHttpMethod(isChangeSet);
+    BatchTransformatorCommon.validateHost(headers, baseUri);
 
     validateBody(statusLine, operation);
     InputStream bodyStream = getBodyStream(operation, headers, statusLine);
@@ -109,8 +110,7 @@ public class BatchRequestTransformator implements BatchTransformator {
   private void validateBody(final HttpRequestStatusLine httpStatusLine, final BatchQueryOperation operation)
       throws BatchException {
     if (httpStatusLine.getMethod().equals(ODataHttpMethod.GET) && isUnvalidGetRequestBody(operation)) {
-      throw new BatchException(BatchException.INVALID_REQUEST_LINE
-          .addContent(httpStatusLine.getMethod())
+      throw new BatchException(BatchException.INVALID_BODY_FOR_REQUEST
           .addContent(httpStatusLine.getLineNumber()));
     }
   }
@@ -128,7 +128,7 @@ public class BatchRequestTransformator implements BatchTransformator {
     } else {
       int contentLength = BatchTransformatorCommon.getContentLength(headers);
       String contentType = headers.getHeader(HttpHeaders.CONTENT_TYPE);
-      return BatchParserCommon.convertToInputStream(contentType, operation.getBody(), contentLength);
+      return BatchParserCommon.convertToInputStream(contentType, operation, contentLength);
     }
   }
 

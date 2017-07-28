@@ -181,11 +181,13 @@ public class AtomEntryEntityProducer {
 
   protected static String createETag(final EntityInfoAggregator eia, final Map<String, Object> data)
       throws EntityProviderException {
+    String propertyName = "";
     try {
       String etag = null;
 
       Collection<EntityPropertyInfo> propertyInfos = eia.getETagPropertyInfos();
       for (EntityPropertyInfo propertyInfo : propertyInfos) {
+        propertyName = propertyInfo.getName();
         EdmType edmType = propertyInfo.getType();
         if (edmType instanceof EdmSimpleType) {
           EdmSimpleType edmSimpleType = (EdmSimpleType) edmType;
@@ -209,7 +211,8 @@ public class AtomEntryEntityProducer {
 
       return etag;
     } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderProducerException(e.getMessageReference(), e);
+      throw new EntityProviderProducerException(EdmSimpleTypeException.getMessageReference(
+          e.getMessageReference()).updateContent(e.getMessageReference().getContent(), propertyName), e);
     }
   }
 
@@ -256,7 +259,6 @@ public class AtomEntryEntityProducer {
 
     if (eia.getExpandedNavigationPropertyNames().contains(navigationPropertyName)) {
       if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
-        writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_INLINE);
 
         EdmNavigationProperty navProp = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
         WriteFeedCallbackContext context = new WriteFeedCallbackContext();
@@ -282,6 +284,12 @@ public class AtomEntryEntityProducer {
         if (inlineData == null) {
           inlineData = new ArrayList<Map<String, Object>>();
         }
+        
+        // This statement is used for the client use case. Flag should never be set on server side
+        if (properties.isOmitInlineForNullData() && inlineData.isEmpty()) {
+          return;
+        }
+        writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_INLINE);
 
         EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
         EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navProp);
@@ -301,7 +309,6 @@ public class AtomEntryEntityProducer {
 
     if (eia.getExpandedNavigationPropertyNames().contains(navigationPropertyName)) {
       if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
-        writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_INLINE);
 
         EdmNavigationProperty navProp = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
         WriteEntryCallbackContext context = new WriteEntryCallbackContext();
@@ -323,6 +330,13 @@ public class AtomEntryEntityProducer {
           throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
         }
         Map<String, Object> inlineData = result.getEntryData();
+        
+        // This statement is used for the client use case. Flag should never be set on server side
+        if (properties.isOmitInlineForNullData() && (inlineData == null || inlineData.isEmpty())) {
+          return;
+        }
+
+        writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_INLINE);
         if (inlineData != null && !inlineData.isEmpty()) {
           EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
           EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navProp);
@@ -406,10 +420,9 @@ public class AtomEntryEntityProducer {
         mediaResourceMimeType = ContentType.APPLICATION_OCTET_STREAM.toString();
       }
 
-      writer.writeStartElement(FormatXml.ATOM_CONTENT);
+      writer.writeEmptyElement(FormatXml.ATOM_CONTENT);
       writer.writeAttribute(FormatXml.ATOM_TYPE, mediaResourceMimeType);
       writer.writeAttribute(FormatXml.ATOM_SRC, self);
-      writer.writeEndElement();
     } catch (XMLStreamException e) {
       throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
@@ -429,7 +442,14 @@ public class AtomEntryEntityProducer {
       if (titleInfo != null) {
         EdmSimpleType st = (EdmSimpleType) titleInfo.getType();
         Object object = data.get(titleInfo.getName());
-        String title = st.valueToString(object, EdmLiteralKind.DEFAULT, titleInfo.getFacets());
+        String title = null;
+        try {
+          title = st.valueToString(object, EdmLiteralKind.DEFAULT, titleInfo.getFacets());
+        } catch (final EdmSimpleTypeException e) {
+          throw new EntityProviderProducerException(
+              EdmSimpleTypeException.getMessageReference(e.getMessageReference()).
+              updateContent(e.getMessageReference().getContent(), titleInfo.getName()), e);
+        }
         if (title != null) {
           writer.writeCharacters(title);
         }
@@ -451,7 +471,7 @@ public class AtomEntryEntityProducer {
   }
 
   String getUpdatedString(final EntityInfoAggregator eia, final Map<String, Object> data)
-      throws EdmSimpleTypeException {
+      throws EdmSimpleTypeException, EntityProviderProducerException {
     Object updateDate = null;
     EdmFacets updateFacets = null;
     EntityPropertyInfo updatedInfo = eia.getTargetPathInfo(EdmTargetPath.SYNDICATION_UPDATED);
@@ -464,21 +484,30 @@ public class AtomEntryEntityProducer {
     if (updateDate == null) {
       updateDate = new Date();
     }
-    return EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets);
+    try {
+      return EdmDateTimeOffset.getInstance().valueToString(updateDate, EdmLiteralKind.DEFAULT, updateFacets);
+    } catch (final EdmSimpleTypeException e) {
+      throw new EntityProviderProducerException(
+          EdmSimpleTypeException.getMessageReference(e.getMessageReference()).
+          updateContent(e.getMessageReference().getContent(), updatedInfo.getName()), e);
+    }
   }
 
   private String getTargetPathValue(final EntityInfoAggregator eia, final String targetPath,
       final Map<String, Object> data) throws EntityProviderException {
+    EntityPropertyInfo info = null;
     try {
-      EntityPropertyInfo info = eia.getTargetPathInfo(targetPath);
+      info = eia.getTargetPathInfo(targetPath);
       if (info != null) {
         EdmSimpleType type = (EdmSimpleType) info.getType();
         Object value = data.get(info.getName());
         return type.valueToString(value, EdmLiteralKind.DEFAULT, info.getFacets());
       }
       return null;
-    } catch (EdmSimpleTypeException e) {
-      throw new EntityProviderProducerException(e.getMessageReference(), e);
+    } catch (final EdmSimpleTypeException e) {
+      throw new EntityProviderProducerException(
+          EdmSimpleTypeException.getMessageReference(e.getMessageReference()).
+          updateContent(e.getMessageReference().getContent(), info.getName()), e);
     }
   }
 
@@ -575,7 +604,9 @@ public class AtomEntryEntityProducer {
         keys.append(Encoder.encode(type.valueToString(data.get(name), EdmLiteralKind.URI,
             keyPropertyInfo.getFacets())));
       } catch (final EdmSimpleTypeException e) {
-        throw new EntityProviderProducerException(e.getMessageReference(), e);
+        throw new EntityProviderProducerException(
+            EdmSimpleTypeException.getMessageReference(e.getMessageReference()).
+            updateContent(e.getMessageReference().getContent(), name), e);
       }
     }
 
@@ -585,27 +616,49 @@ public class AtomEntryEntityProducer {
   private void appendProperties(final XMLStreamWriter writer, final EntityInfoAggregator eia,
       final Map<String, Object> data) throws EntityProviderException {
     try {
-      List<String> propertyNames = eia.getSelectedPropertyNames();
-      if (!propertyNames.isEmpty()) {
-        writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_PROPERTIES);
-
-        for (String propertyName : propertyNames) {
-          EntityPropertyInfo propertyInfo = eia.getPropertyInfo(propertyName);
-
-          if (isNotMappedViaCustomMapping(propertyInfo)) {
-            Object value = data.get(propertyName);
-            XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties);
-            aps.append(writer, propertyInfo.getName(), propertyInfo, value);
+      if (properties.isDataBasedPropertySerialization()) {
+        if (!data.isEmpty()) {
+          writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_PROPERTIES);
+          for (String propertyName : eia.getPropertyNames()) {
+            if (data.containsKey(propertyName)) {
+              appendPropertyNameValue(writer, eia, data, propertyName);
+            }
           }
+          writer.writeEndElement();
         }
+      } else {
+        List<String> propertyNames = eia.getSelectedPropertyNames();
+        if (!propertyNames.isEmpty()) {
+          writer.writeStartElement(Edm.NAMESPACE_M_2007_08, FormatXml.M_PROPERTIES);
 
-        writer.writeEndElement();
+          for (String propertyName : propertyNames) {
+            appendPropertyNameValue(writer, eia, data, propertyName);
+          }
+          writer.writeEndElement();
+        }
       }
     } catch (XMLStreamException e) {
       throw new EntityProviderProducerException(EntityProviderException.COMMON, e);
     }
   }
 
+  /**
+   * @param writer
+   * @param eia
+   * @param data
+   * @param propertyName
+   * @throws EntityProviderException
+   */
+  private void appendPropertyNameValue(final XMLStreamWriter writer, final EntityInfoAggregator eia,
+      final Map<String, Object> data, String propertyName) throws EntityProviderException {
+    EntityPropertyInfo propertyInfo = eia.getPropertyInfo(propertyName);
+    if (isNotMappedViaCustomMapping(propertyInfo)) {
+      Object value = data.get(propertyName);
+      XmlPropertyEntityProducer aps = new XmlPropertyEntityProducer(properties);
+      aps.append(writer, propertyInfo.getName(), propertyInfo, value);
+    }
+  }
+  
   private boolean isNotMappedViaCustomMapping(final EntityPropertyInfo propertyInfo) {
     EdmCustomizableFeedMappings customMapping = propertyInfo.getCustomMapping();
     if (customMapping != null && customMapping.isFcKeepInContent() != null) {

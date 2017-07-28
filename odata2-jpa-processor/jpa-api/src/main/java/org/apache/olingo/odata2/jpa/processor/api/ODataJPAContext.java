@@ -239,4 +239,20 @@ public interface ODataJPAContext {
    * @return ODataJPATransaction
    */
   public ODataJPATransaction getODataJPATransaction();
+
+  /**
+   * Set the state whether the underlying entity manager is container managed (or not).
+   * (Default is <code>false</code>)
+   *
+   * @param containerManaged <code>true</code> for container managed entity manager
+   */
+  void setContainerManaged(boolean containerManaged);
+
+  /**
+   * The method returns <code>true</code> if the underlying entity manager is container managed.
+   * (Default is <code>false</code>)
+   *
+   * @return <code>true</code> if the underlying entity manger is container manged.
+   */
+  boolean isContainerManaged();
 }

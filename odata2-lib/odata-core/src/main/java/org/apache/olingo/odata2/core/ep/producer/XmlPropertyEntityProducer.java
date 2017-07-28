@@ -30,6 +30,7 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
@@ -45,9 +46,11 @@ public class XmlPropertyEntityProducer {
 
   private final boolean includeSimplePropertyType;
   private final boolean validateFacets;
+  private boolean isDataBasedPropertySerialization = false;
 
   public XmlPropertyEntityProducer(final EntityProviderWriteProperties writeProperties) {
     this(writeProperties.isIncludeSimplePropertyType(), writeProperties.isValidatingFacets());
+    isDataBasedPropertySerialization = writeProperties.isDataBasedPropertySerialization();
   }
 
   public XmlPropertyEntityProducer(final boolean includeSimplePropertyType, final boolean validateFacets) {
@@ -137,7 +140,7 @@ public class XmlPropertyEntityProducer {
    * @param value
    * @throws XMLStreamException
    * @throws EdmException
-   * @throws EntityProviderException
+   * @throws EntityProviderException 
    */
   private void appendProperty(final XMLStreamWriter writer, final EntityComplexPropertyInfo propertyInfo,
       final Object value) throws XMLStreamException, EdmException, EntityProviderException {
@@ -148,6 +151,9 @@ public class XmlPropertyEntityProducer {
       writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.ATOM_TYPE, getFqnTypeName(propertyInfo));
       List<EntityPropertyInfo> propertyInfos = propertyInfo.getPropertyInfos();
       for (EntityPropertyInfo childPropertyInfo : propertyInfos) {
+        if (isDataBasedPropertySerialization && !((Map<?,?>)value).containsKey(childPropertyInfo.getName())) {
+          continue;
+        }
         Object childValue = extractChildValue(value, childPropertyInfo.getName());
         append(writer, childPropertyInfo.getName(), childPropertyInfo, childValue);
       }
@@ -185,9 +191,10 @@ public class XmlPropertyEntityProducer {
    * @param value the value of the property
    * @throws XMLStreamException
    * @throws EdmException
+   * @throws EntityProviderProducerException 
    */
   private void appendProperty(final XMLStreamWriter writer, final EntityPropertyInfo prop, final Object value)
-      throws XMLStreamException, EdmException {
+      throws XMLStreamException, EdmException, EntityProviderProducerException {
     Object contentValue = value;
     String mimeType = null;
     if (prop.getMimeType() != null) {
@@ -208,7 +215,14 @@ public class XmlPropertyEntityProducer {
     }
 
     final EdmFacets facets = validateFacets ? prop.getFacets() : null;
-    final String valueAsString = type.valueToString(contentValue, EdmLiteralKind.DEFAULT, facets);
+    String valueAsString = null;
+    try {
+      valueAsString = type.valueToString(contentValue, EdmLiteralKind.DEFAULT, facets);
+    } catch (EdmSimpleTypeException e) {
+        throw new EntityProviderProducerException(EdmSimpleTypeException.getMessageReference(
+            e.getMessageReference()).updateContent(
+                e.getMessageReference().getContent(), prop.getName()), e);
+    }
     if (valueAsString == null) {
       writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.ATOM_NULL, FormatXml.ATOM_VALUE_TRUE);
     } else {

@@ -29,6 +29,8 @@ public class DataServices {
 
   private List<Schema> schemas;
   private String dataServiceVersion;
+  private String customEdmxVersion;
+  private List<AnnotationElement> annotationElements;
 
   /**
    * Sets the schemas for this {@link DataServices}
@@ -51,6 +53,33 @@ public class DataServices {
   }
 
   /**
+   * Sets the collection of {@link AnnotationElement} for this {@link DataServices}
+   * @param annotationElements
+   * @return {@link ComplexType} for method chaining
+   */
+  public DataServices setAnnotationElements(final List<AnnotationElement> annotationElements) {
+    this.annotationElements = annotationElements;
+    return this;
+  }
+
+  /**
+   * Sets a custom edmx version which is used in the metadata document
+   * @param customEdmxVersion
+   * @return {@link ComplexType} for method chaining
+   */
+  public DataServices setCustomEdmxVersion(String customEdmxVersion) {
+    this.customEdmxVersion = customEdmxVersion;
+    return this;
+  }
+
+  /**
+   * @return collection of {@link AnnotationElement} annotation elements
+   */
+  public List<AnnotationElement> getAnnotationElements() {
+    return annotationElements;
+  }
+
+  /**
    * @return List<{@link Schema}>
    */
   public List<Schema> getSchemas() {
@@ -62,5 +91,12 @@ public class DataServices {
    */
   public String getDataServiceVersion() {
     return dataServiceVersion;
+  }
+
+  /**
+   * @return <b>String</b> custom edmx version
+   */
+  public String getCustomEdmxVersion() {
+    return customEdmxVersion;
   }
 }

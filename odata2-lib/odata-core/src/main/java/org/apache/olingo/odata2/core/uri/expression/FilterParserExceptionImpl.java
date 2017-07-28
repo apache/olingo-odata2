@@ -22,7 +22,6 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmStructuralType;
 import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.exception.MessageReference;
-import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.uri.expression.BinaryOperator;
 import org.apache.olingo.odata2.api.uri.expression.CommonExpression;
 import org.apache.olingo.odata2.api.uri.expression.ExpressionParserException;
@@ -38,10 +37,6 @@ import org.apache.olingo.odata2.api.uri.expression.PropertyExpression;
  */
 public class FilterParserExceptionImpl extends ExpressionParserException {
   private static final long serialVersionUID = 77L;
-
-  static public ExpressionParserException createCOMMON() {
-    return new ExpressionParserException(ODataBadRequestException.COMMON);
-  }
 
   static public ExpressionParserException createERROR_IN_TOKENIZER(final TokenizerException exceptionTokenizer,
       final String expression) {
@@ -105,9 +100,9 @@ public class FilterParserExceptionImpl extends ExpressionParserException {
     return new ExpressionParserException(msgRef);
   }
 
-  static public ExpressionParserException createCOMMA_OR_CLOSING_PHARENTHESIS_EXPECTED_AFTER_POS(final Token token,
+  static public ExpressionParserException createCOMMA_OR_CLOSING_PARENTHESIS_EXPECTED_AFTER_POS(final Token token,
       final String expression) {
-    MessageReference msgRef = ExpressionParserException.COMMA_OR_CLOSING_PHARENTHESIS_EXPECTED_AFTER_POS.create();
+    MessageReference msgRef = ExpressionParserException.COMMA_OR_CLOSING_PARENTHESIS_EXPECTED_AFTER_POS.create();
 
     msgRef.addContent(Integer.toString(token.getPosition() + token.getUriLiteral().length()));
     msgRef.addContent(expression);
@@ -248,9 +243,9 @@ public class FilterParserExceptionImpl extends ExpressionParserException {
     return new ExpressionParserException(msgRef);
   }
 
-  public static ExpressionParserException createMISSING_CLOSING_PHARENTHESIS(final int position,
+  public static ExpressionParserException createMISSING_CLOSING_PARENTHESIS(final int position,
       final String expression, final TokenizerExpectError e) {
-    MessageReference msgRef = ExpressionParserException.MISSING_CLOSING_PHARENTHESIS.create();
+    MessageReference msgRef = ExpressionParserException.MISSING_CLOSING_PARENTHESIS.create();
 
     msgRef.addContent(position + 1);
     msgRef.addContent(expression);

@@ -45,6 +45,7 @@ import org.apache.olingo.odata2.api.edm.EdmStructuralType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 
 public final class JPAEntityParser {
 
@@ -113,10 +114,18 @@ public final class JPAEntityParser {
         if (method == null) {
           String methodName = jpaEmbeddableKeyMap.get(jpaEntityAccessKey).get(propertyName);
           if (methodName != null) {
-            propertyValue = getEmbeddablePropertyValue(methodName, propertyValue);
+        	  boolean isVirtualAccess = false; 
+        	  if (property.getMapping() != null && property.getMapping() instanceof JPAEdmMappingImpl) {
+        		  isVirtualAccess = ((JPAEdmMappingImpl) property.getMapping()).isVirtualAccess();
+        	  }
+        	if (isVirtualAccess) {
+        		propertyValue = getEmbeddablePropertyValue(methodName, propertyValue, true);
+        	} else {
+        		propertyValue = getEmbeddablePropertyValue(methodName, propertyValue);
+        	}
           }
         } else {
-          propertyValue = getPropertyValue(accessModifierMap.get(propertyName), propertyValue);
+          propertyValue = getPropertyValue(accessModifierMap.get(propertyName), propertyValue, propertyName);
         }
         if (property.getType().getKind()
             .equals(EdmTypeKind.COMPLEX)) {
@@ -169,17 +178,25 @@ public final class JPAEntityParser {
     if (navigationPropertyList != null
         && navigationPropertyList.size() != 0) {
 
-      try {
-        for (EdmNavigationProperty navigationProperty : navigationPropertyList) {
-          methodName = getAccessModifierName(navigationProperty.getName(),
-              navigationProperty.getMapping(), ACCESS_MODIFIER_GET);
-          Method getterMethod = jpaEntity.getClass()
-              .getMethod(methodName, (Class<?>[]) null);
-          getterMethod.setAccessible(true);
-          result = getPropertyValue(getterMethod, jpaEntity);
-          navigationMap.put(navigationProperty.getName(), result);
-        }
-      } catch (IllegalArgumentException e) {
+    	try {
+    		for (EdmNavigationProperty navigationProperty : navigationPropertyList) {
+    			methodName = getAccessModifierName(navigationProperty.getName(),
+    					navigationProperty.getMapping(), ACCESS_MODIFIER_GET);
+    			Method getterMethod = null;
+    			JPAEdmMapping jpaEdmMapping = (JPAEdmMapping)navigationProperty.getMapping();
+    			if(jpaEdmMapping != null && jpaEdmMapping.isVirtualAccess()) {
+    				getterMethod = jpaEntity.getClass().getMethod(ACCESS_MODIFIER_GET, String.class);
+    			}else{
+    				getterMethod = jpaEntity.getClass()
+    						.getMethod(methodName, (Class<?>[]) null);
+    			}
+
+    			getterMethod.setAccessible(true);
+    			result = getPropertyValue(getterMethod, jpaEntity,
+    					navigationProperty.getMapping().getInternalName());
+    			navigationMap.put(navigationProperty.getName(), result);
+    		}
+    	} catch (IllegalArgumentException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       } catch (EdmException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
@@ -215,7 +232,8 @@ public final class JPAEntityParser {
     return getAccessModifiers(getEdmProperties(structuralType), jpaEntity.getClass(), accessModifier);
   }
 
-  public static Object getPropertyValue(final Method method, final Object entity) throws ODataJPARuntimeException {
+  public static Object getPropertyValue(final Method method, final Object entity, String propertyName) 
+		  throws ODataJPARuntimeException {
     Object propertyValue = null;
     if (method == null) {
       return null;
@@ -246,7 +264,11 @@ public final class JPAEntityParser {
       } else if (returnType.equals(Clob.class)) {
         propertyValue = getString((Clob) method.invoke(entity));
       } else {
-        propertyValue = method.invoke(entity);
+    	  if(method.getParameterTypes().length>0) {
+    		  propertyValue = method.invoke(entity,propertyName);
+    	  } else {
+    		  propertyValue = method.invoke(entity);
+    	  }
       }
     } catch (IllegalAccessException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
@@ -380,7 +402,7 @@ public final class JPAEntityParser {
     }
   }
 
-  public Object getEmbeddablePropertyValue(final String methodName, final Object jpaEntity)
+  public Object getEmbeddablePropertyValue(final String methodName, final Object jpaEntity, boolean isVirtualAccess)
       throws ODataJPARuntimeException {
 
     String[] nameParts = methodName.split("\\.");
@@ -391,9 +413,15 @@ public final class JPAEntityParser {
         if (propertyValue == null) {
           break;
         }
-        method = propertyValue.getClass().getMethod(namePart, (Class<?>[]) null);
+        if (isVirtualAccess) {
+
+        	method = propertyValue.getClass().getMethod(ACCESS_MODIFIER_GET, String.class);
+        	namePart = namePart.replaceFirst(ACCESS_MODIFIER_GET, "");
+        } else {
+        	method = propertyValue.getClass().getMethod(namePart, (Class<?>[]) null);
+        }
         method.setAccessible(true);
-        propertyValue = getPropertyValue(method, propertyValue);
+        propertyValue = getPropertyValue(method, propertyValue,namePart);
       }
     } catch (NoSuchMethodException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
@@ -403,6 +431,12 @@ public final class JPAEntityParser {
     return propertyValue;
   }
 
+  public Object getEmbeddablePropertyValue(final String methodName, final Object jpaEntity)
+	      throws ODataJPARuntimeException {
+
+	  return getEmbeddablePropertyValue(methodName, jpaEntity, false);
+  }
+  
   public static String toString(final Character[] input) {
     if (input == null) {
       return null;
@@ -485,22 +519,30 @@ public final class JPAEntityParser {
     try {
 
       JPAEdmMapping navPropMapping = (JPAEdmMapping) navigationProperty.getMapping();
-      String name = getAccessModifierName(navigationProperty.getName(), (EdmMapping) navPropMapping, accessModifier);
 
+      String name;
       Class<?>[] params = null;
-      if (accessModifier.equals(ACCESS_MODIFIER_SET)) {
-        EdmAssociationEnd end = navigationProperty.getRelationship().getEnd(navigationProperty.getToRole());
-        switch (end.getMultiplicity()) {
-        case MANY:
-          params = new Class<?>[] { navPropMapping.getJPAType() };
-          break;
-        case ONE:
-          params = new Class<?>[] { ((JPAEdmMapping) end.getEntityType().getMapping()).getJPAType() };
-        default:
-          break;
-        }
+      if (navPropMapping != null && navPropMapping.isVirtualAccess()) {
+  
+    	  return jpaEntityType.getMethod(ACCESS_MODIFIER_SET, String.class, Object.class);
+      } else {
+	      name = getAccessModifierName(navigationProperty.getName(), (EdmMapping) navPropMapping, accessModifier);
+	
+	      if (accessModifier.equals(ACCESS_MODIFIER_SET)) {
+	        EdmAssociationEnd end = navigationProperty.getRelationship().getEnd(navigationProperty.getToRole());
+	        switch (end.getMultiplicity()) {
+	        case MANY:
+	          params = new Class<?>[] { navPropMapping.getJPAType() };
+	          break;
+	        case ONE:
+          case ZERO_TO_ONE:
+	          params = new Class<?>[] { ((JPAEdmMapping) end.getEntityType().getMapping()).getJPAType() };
+	        default:
+	          break;
+	        }
+	      }
+	      return jpaEntityType.getMethod(name, params);
       }
-      return jpaEntityType.getMethod(name, params);
 
     } catch (NoSuchMethodException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
@@ -541,13 +583,23 @@ public final class JPAEntityParser {
               continue;
             }
           } else {
-            if (accessModifier.equals(ACCESS_MODIFIER_SET)) {
-              JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
-              accessModifierMap.put(propertyName, jpaEntityType.getMethod(methodName,
-                  new Class<?>[] { jpaEdmMapping.getJPAType() }));
-            } else {
-              method = jpaEntityType.getMethod(methodName, (Class<?>[]) null);
-            }
+        	  if (accessModifier.equals(ACCESS_MODIFIER_SET)) {
+        		  JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
+        		  if(jpaEdmMapping != null && jpaEdmMapping.isVirtualAccess()) {
+        			  accessModifierMap.put(propertyName, jpaEntityType.getMethod(ACCESS_MODIFIER_SET,
+        					  new Class<?>[] { String.class,Object.class }));
+        		  }else {
+        			  accessModifierMap.put(propertyName, jpaEntityType.getMethod(methodName,
+        					  new Class<?>[] { jpaEdmMapping.getJPAType() }));
+        		  }
+        	  } else {
+        		  JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
+        		  if(jpaEdmMapping != null && jpaEdmMapping.isVirtualAccess()) {
+        			  method = jpaEntityType.getMethod(ACCESS_MODIFIER_GET, String.class);
+        		  }else{
+        			  method = jpaEntityType.getMethod(methodName, (Class<?>[]) null);
+        		  }
+        	  }
           }
         } catch (EdmException exp) {
           throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, exp);

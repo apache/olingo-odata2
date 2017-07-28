@@ -30,6 +30,7 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -135,6 +136,31 @@ public class BasicBatchTest extends AbstractBasicTest {
   }
 
   @Test
+  public void testBatchWithODataBatchRequestHeaders() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=batch_98c1-8b13-36bb");
+    post.setHeader("testHeader", "abc123");
+    HttpEntity entity = new StringEntity(REQUEST_PAYLOAD);
+    post.setEntity(entity);
+    HttpResponse response = getHttpClient().execute(post);
+
+    assertNotNull(response);
+    assertEquals(202, response.getStatusLine().getStatusCode());
+    assertEquals("HTTP/1.1", response.getProtocolVersion().toString());
+    assertTrue(response.containsHeader("Content-Length"));
+    assertTrue(response.containsHeader("Content-Type"));
+    assertTrue(response.containsHeader("DataServiceVersion"));
+    assertTrue(response.getEntity().getContentType().getValue().matches(REG_EX));
+    assertNotNull(response.getEntity().getContent());
+
+    String body = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId2"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId2"));
+  }
+  
+  @Test
   public void testBatchUriEncoded() throws Exception {
     final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "%24batch"));
     post.setHeader("Content-Type", "multipart/mixed;boundary=batch_98c1-8b13-36bb");
@@ -181,8 +207,101 @@ public class BasicBatchTest extends AbstractBasicTest {
     assertTrue(body.contains("Content-Id: requestHeaderContentId1"));
     assertTrue(body.contains("HTTP/1.1 415 Unsupported Media Type"));
   }
+  
+ /* Tests for Custo Query options.A Custom Query String option is defined  
+  * as any name/value pair query string parameter where the name of the 
+  * parameter does not begin  with the "$" character. Any URI exposed by 
+  * an OData service may include one or more Custom Query Options.*/
+  
+  @Test
+  public void testBatchForCustomQuery() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + 
+        "$batch?language=de"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=batch_98c1-8b13-36bb");
+    HttpEntity entity = new StringEntity(REQUEST_PAYLOAD);
+    post.setEntity(entity);
+    HttpResponse response = getHttpClient().execute(post);
+
+    assertNotNull(response);
+    assertEquals(202, response.getStatusLine().getStatusCode());
+    assertEquals("HTTP/1.1", response.getProtocolVersion().toString());
+    assertTrue(response.containsHeader("Content-Length"));
+    assertTrue(response.containsHeader("Content-Type"));
+    assertTrue(response.containsHeader("DataServiceVersion"));
+    assertTrue(response.getEntity().getContentType().getValue().matches(REG_EX));
+    assertNotNull(response.getEntity().getContent());
+
+    String body = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId2"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId2"));
+  }
+  
+  @Test
+  public void testBatchForCustomQueryFail() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + 
+        "$batch?$language=de"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=batch_98c1-8b13-36bb");
+    HttpEntity entity = new StringEntity(REQUEST_PAYLOAD);
+    post.setEntity(entity);
+    HttpResponse result = getHttpClient().execute(post);
+    assertEquals(HttpStatusCodes.BAD_REQUEST.getStatusCode(), result.getStatusLine().getStatusCode());
+
+  }
+  
+  @Test
+  public void testBatchForCustomQuery2() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + 
+        "$batch?@language=de"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=batch_98c1-8b13-36bb");
+    HttpEntity entity = new StringEntity(REQUEST_PAYLOAD);
+    post.setEntity(entity);
+    HttpResponse response = getHttpClient().execute(post);
+
+    assertNotNull(response);
+    assertEquals(202, response.getStatusLine().getStatusCode());
+    assertEquals("HTTP/1.1", response.getProtocolVersion().toString());
+    assertTrue(response.containsHeader("Content-Length"));
+    assertTrue(response.containsHeader("Content-Type"));
+    assertTrue(response.containsHeader("DataServiceVersion"));
+    assertTrue(response.getEntity().getContentType().getValue().matches(REG_EX));
+    assertNotNull(response.getEntity().getContent());
+
+    String body = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId2"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId2"));
+  }
+  
+  @Test
+  public void testBatchForCustomQuery3() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + 
+        "$batch?#language=de"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=batch_98c1-8b13-36bb");
+    HttpEntity entity = new StringEntity(REQUEST_PAYLOAD);
+    post.setEntity(entity);
+    HttpResponse response = getHttpClient().execute(post);
+
+    assertNotNull(response);
+    assertEquals(202, response.getStatusLine().getStatusCode());
+    assertEquals("HTTP/1.1", response.getProtocolVersion().toString());
+    assertTrue(response.containsHeader("Content-Length"));
+    assertTrue(response.containsHeader("Content-Type"));
+    assertTrue(response.containsHeader("DataServiceVersion"));
+    assertTrue(response.getEntity().getContentType().getValue().matches(REG_EX));
+    assertNotNull(response.getEntity().getContent());
+
+    String body = StringHelper.inputStreamToString(response.getEntity().getContent(), true);
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId1"));
+    assertTrue(body.contains("Content-Id: mimeHeaderContentId2"));
+    assertTrue(body.contains("Content-Id: requestHeaderContentId2"));
+  }
 
   static class TestSingleProc extends ODataSingleProcessor {
+    @SuppressWarnings("unchecked")
     @Override
     public ODataResponse executeBatch(final BatchHandler handler, final String requestContentType,
         final InputStream content) {
@@ -200,6 +319,12 @@ public class BasicBatchTest extends AbstractBasicTest {
             EntityProvider.parseBatchRequest(requestContentType, content, batchProperties);
         for (BatchRequestPart batchPart : batchParts) {
           batchResponseParts.add(handler.handleBatchPart(batchPart));
+          List<String> customHeader = ((ArrayList<String>)((HashMap<String, Object>)getContext().
+              getParameter("batchODataRequestHeaders")).get("testheader"));
+          if (getContext().getParameter("batchODataRequestHeaders") != null && 
+              customHeader != null) {
+            assertEquals("abc123", customHeader.get(0));
+          }
         }
         batchResponse = EntityProvider.writeBatchResponse(batchResponseParts);
       } catch (URISyntaxException e) {

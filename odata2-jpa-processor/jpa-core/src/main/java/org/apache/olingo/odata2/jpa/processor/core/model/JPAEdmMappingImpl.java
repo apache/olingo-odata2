@@ -27,6 +27,7 @@ public class JPAEdmMappingImpl extends Mapping implements JPAEdmMapping {
   private String columnName = null;
   private Class<?> type = null;
   private Class<? extends ODataJPATombstoneEntityListener> entityListener = null;
+  private boolean isVirtualAccess;
 
   @Override
   public void setJPAColumnName(final String name) {
@@ -59,5 +60,15 @@ public class JPAEdmMappingImpl extends Mapping implements JPAEdmMapping {
   @Override
   public Class<? extends ODataJPATombstoneEntityListener> getODataJPATombstoneEntityListener() {
     return entityListener;
+  }
+
+  @Override
+  public boolean isVirtualAccess() {
+	  return isVirtualAccess;
+  }
+
+  @Override
+  public void setVirtualAccess(boolean virtualAccess) {
+	  this.isVirtualAccess=virtualAccess;
   }
 }

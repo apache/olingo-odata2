@@ -56,7 +56,7 @@ public class Material {
   private String materialName;
 
   @Column(name = "PRICE")
-  private double price;
+  private Double price;
 
   @Column(name = "MEASUREMENT_UNIT")
   private String measurementUnit;
@@ -106,11 +106,11 @@ public class Material {
     this.materialName = materialName;
   }
 
-  public double getPrice() {
+  public Double getPrice() {
     return price;
   }
 
-  public void setPrice(final double price) {
+  public void setPrice(final Double price) {
     this.price = price;
   }
 

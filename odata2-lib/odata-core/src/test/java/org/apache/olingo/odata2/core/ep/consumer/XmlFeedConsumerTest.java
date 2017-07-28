@@ -23,6 +23,8 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import junit.framework.Assert;
 
@@ -35,6 +37,7 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 import org.junit.Test;
 
@@ -179,5 +182,153 @@ public class XmlFeedConsumerTest extends AbstractXmlConsumerTest {
 
     assertEquals(1, deltaFeed.getEntries().size());
     assertEquals(1, deltaFeed.getDeletedEntries().size());
+  }
+  /**
+   * Room has an Inline Feed Employees and Employee has an inline Entry Team
+   * E.g: Rooms?$expand=nr_Employees/ne_Team
+   * Empty Inline entity is also part of payload
+   * @throws Exception
+   */
+  @Test
+  public void roomsFeedWithRoomInlineEmployeesWithTeams() throws Exception {
+    InputStream stream = getFileAsStream("Rooms_InlineEmployeesTeams.xml");
+    assertNotNull(stream);
+    FeedCallback callback = new FeedCallback();
+
+    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init()
+        .mergeSemantic(false).callback(callback).build();
+
+    ODataFeed feed =
+        EntityProvider.readFeed("application/atom+xml", MockFacade.getMockEdm().getDefaultEntityContainer()
+            .getEntitySet(
+                "Rooms"), stream, readProperties);
+    assertNotNull(feed);
+    assertEquals(3, feed.getEntries().size());
+
+    Map<String, Object> inlineEntries = callback.getNavigationProperties();
+    getExpandedData(inlineEntries, feed);
+    for (ODataEntry entry : feed.getEntries()) {
+      assertEquals(5, entry.getProperties().size());
+      for (ODataEntry innerEntry : ((ODataFeed)entry.getProperties().get("nr_Employees")).getEntries()) {
+        assertEquals(10, innerEntry.getProperties().size());
+        assertEquals(3, ((ODataEntry)innerEntry.getProperties().get("ne_Team")).getProperties().size());
+      }
+    }
+  }
+  
+  /**
+   * Rooms has an inline feed Employees and Rooms has Inline entry Buildings
+   * E.g: Rooms?$expand=nr_Employees,nr_Building
+   * @throws Exception
+   */
+  @Test
+  public void roomsFeedWithRoomInlineEmployeesInlineBuildings() throws Exception {
+    InputStream stream = getFileAsStream("Rooms_InlineEmployees_InlineBuildings.xml");
+    assertNotNull(stream);
+    FeedCallback callback = new FeedCallback();
+
+    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init()
+        .mergeSemantic(false).callback(callback).build();
+
+    ODataFeed feed =
+        EntityProvider.readFeed("application/atom+xml", MockFacade.getMockEdm().getDefaultEntityContainer()
+            .getEntitySet(
+                "Rooms"), stream, readProperties);
+    assertNotNull(feed);
+    assertEquals(2, feed.getEntries().size());
+
+    Map<String, Object> inlineEntries = callback.getNavigationProperties();
+    getExpandedData(inlineEntries, feed);
+    for (ODataEntry entry : feed.getEntries()) {
+      assertEquals(6, entry.getProperties().size());
+      for (ODataEntry employeeEntry : ((ODataFeed)entry.getProperties().get("nr_Employees")).getEntries()) {
+        assertEquals(9, employeeEntry.getProperties().size());
+      }
+      assertEquals(3, ((ODataEntry)entry.getProperties().get("nr_Building")).getProperties().size());
+    }
+  }
+  
+  /**
+   * Rooms navigate to Employees and has inline entry Teams
+   * E.g: Rooms('1')/nr_Employees?$expand=ne_Team
+   * @throws Exception
+   */
+  @Test
+  public void roomsFeedWithRoomsToEmployeesInlineTeams() throws Exception {
+    InputStream stream = getFileAsStream("RoomsToEmployeesWithInlineTeams.xml");
+    assertNotNull(stream);
+    FeedCallback callback = new FeedCallback();
+
+    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init()
+        .mergeSemantic(false).callback(callback).build();
+
+    ODataFeed feed =
+        EntityProvider.readFeed("application/atom+xml", MockFacade.getMockEdm().getDefaultEntityContainer()
+            .getEntitySet(
+                "Employees"), stream, readProperties);
+    assertNotNull(feed);
+    assertEquals(2, feed.getEntries().size());
+
+    Map<String, Object> inlineEntries = callback.getNavigationProperties();
+    getExpandedData(inlineEntries, feed);
+    for (ODataEntry entry : feed.getEntries()) {
+      assertEquals(10, entry.getProperties().size());
+      assertEquals(3, ((ODataEntry)entry.getProperties().get("ne_Team")).getProperties().size());
+    }
+  }
+  
+  /**
+   * @param inlineEntries
+   * @param feed
+   * @param entry
+   */
+  private void getExpandedData(Map<String, Object> inlineEntries, ODataEntry entry) {
+    assertNotNull(entry);
+    Map<String, ExpandSelectTreeNode> expandNodes = entry.getExpandSelectTree().getLinks();
+    for (Entry<String, ExpandSelectTreeNode> expand : expandNodes.entrySet()) {
+      assertNotNull(expand.getKey());
+      if (inlineEntries.containsKey(expand.getKey() + entry.getMetadata().getId())) {
+        if (inlineEntries.get(expand.getKey() + entry.getMetadata().getId()) instanceof ODataFeed) {
+          ODataFeed innerFeed = (ODataFeed) inlineEntries.get(expand.getKey() + entry.getMetadata().getId());
+          assertNotNull(innerFeed);
+          getExpandedData(inlineEntries, innerFeed);
+          entry.getProperties().put(expand.getKey(), innerFeed);
+        } else if (inlineEntries.get(expand.getKey() + entry.getMetadata().getId()) instanceof ODataEntry) {
+          ODataEntry innerEntry = (ODataEntry) inlineEntries.get(expand.getKey() + entry.getMetadata().getId());
+          assertNotNull(innerEntry);
+          getExpandedData(inlineEntries, innerEntry);
+          entry.getProperties().put(expand.getKey(), innerEntry);
+        }
+      }
+    }
+  }
+  
+  /**
+   * @param inlineEntries
+   * @param feed
+   * @param entry
+   */
+  private void getExpandedData(Map<String, Object> inlineEntries, ODataFeed feed) {
+    assertNotNull(feed.getEntries());
+    List<ODataEntry> entries = feed.getEntries();
+    for (ODataEntry entry : entries) {
+      Map<String, ExpandSelectTreeNode> expandNodes = entry.getExpandSelectTree().getLinks();
+      for (Entry<String, ExpandSelectTreeNode> expand : expandNodes.entrySet()) {
+        assertNotNull(expand.getKey());
+        if (inlineEntries.containsKey(expand.getKey() + entry.getMetadata().getId())) {
+          if (inlineEntries.get(expand.getKey() + entry.getMetadata().getId()) instanceof ODataFeed) {
+            ODataFeed innerFeed = (ODataFeed) inlineEntries.get(expand.getKey() + entry.getMetadata().getId());
+            assertNotNull(innerFeed);
+            getExpandedData(inlineEntries, innerFeed);
+            feed.getEntries().get(feed.getEntries().indexOf(entry)).getProperties().put(expand.getKey(), innerFeed);
+          } else if (inlineEntries.get(expand.getKey() + entry.getMetadata().getId()) instanceof ODataEntry) {
+            ODataEntry innerEntry = (ODataEntry) inlineEntries.get(expand.getKey() + entry.getMetadata().getId());
+            assertNotNull(innerEntry);
+            getExpandedData(inlineEntries, innerEntry);
+            feed.getEntries().get(feed.getEntries().indexOf(entry)).getProperties().put(expand.getKey(), innerEntry);
+          }
+        }
+      }
+    }
   }
 }

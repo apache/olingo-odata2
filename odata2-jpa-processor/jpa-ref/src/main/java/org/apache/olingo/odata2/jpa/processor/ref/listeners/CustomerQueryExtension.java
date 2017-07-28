@@ -18,9 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.ref.listeners;
 
+import java.util.Locale;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
+import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
@@ -30,6 +34,16 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 
 public class CustomerQueryExtension extends ODataJPAQueryExtensionEntityListener {
+
+  @Override
+  public Query getQuery(GetEntitySetUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
+    FilterExpression filter = uriInfo.getFilter();
+    if(filter != null && filter.getExpressionString().startsWith("name")) {
+      throw createApplicationError("Filter on name not allowed.", Locale.ENGLISH);
+    }
+    return null;
+  }
+
   @Override
   public Query getQuery(GetEntityUriInfo uriInfo, EntityManager em) {
     Query query = null;
@@ -48,7 +62,7 @@ public class CustomerQueryExtension extends ODataJPAQueryExtensionEntityListener
     } catch (ODataJPARuntimeException e) {
       // Log and return null query object;
     }
-    return query;
+    return null;
   }
 
   @Override

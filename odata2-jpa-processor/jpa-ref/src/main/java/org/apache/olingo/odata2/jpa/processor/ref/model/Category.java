@@ -38,7 +38,6 @@ public class Category {
   private char code[] = new char[2];
 
   @Id
-  @Column(name = "ID")
   private long id;
 
   @Column(name = "DESC")

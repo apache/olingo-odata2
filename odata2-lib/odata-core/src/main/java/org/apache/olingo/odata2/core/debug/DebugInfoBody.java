@@ -36,6 +36,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.commons.XmlHelper;
 import org.apache.olingo.odata2.core.ep.BasicEntityProvider;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
@@ -117,7 +118,8 @@ public class DebugInfoBody implements DebugInfo {
 
   private String formatXml(final String xml) throws IOException {
     try {
-      Transformer transformer = TransformerFactory.newInstance().newTransformer();
+      final TransformerFactory transformerFactory = XmlHelper.getTransformerFactory();
+      Transformer transformer = transformerFactory.newTransformer();
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       StreamResult outputTarget = new StreamResult(new StringWriter());

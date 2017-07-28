@@ -298,7 +298,8 @@ public class ODataExceptionWrapper {
             || ContentType.APPLICATION_ATOM_XML_CS_UTF_8.equals(convertedContentType)) {
           return ContentType.APPLICATION_XML;
         } else if (ContentType.APPLICATION_JSON.equals(convertedContentType)
-            || ContentType.APPLICATION_JSON_CS_UTF_8.equals(convertedContentType)) {
+            || ContentType.APPLICATION_JSON_CS_UTF_8.equals(convertedContentType)
+            || ContentType.APPLICATION_JSON_ODATA_VERBOSE.equals(convertedContentType)) {
           return ContentType.APPLICATION_JSON;
         }
       }
@@ -343,7 +344,8 @@ public class ODataExceptionWrapper {
             || ContentType.APPLICATION_ATOM_XML_CS_UTF_8.equals(convertedContentType)) {
           return ContentType.APPLICATION_XML;
         } else if (ContentType.APPLICATION_JSON.equals(convertedContentType)
-            || ContentType.APPLICATION_JSON_CS_UTF_8.equals(convertedContentType)) {
+            || ContentType.APPLICATION_JSON_CS_UTF_8.equals(convertedContentType)
+            || ContentType.APPLICATION_JSON_ODATA_VERBOSE.equals(convertedContentType)) {
           return ContentType.APPLICATION_JSON;
         }
       }

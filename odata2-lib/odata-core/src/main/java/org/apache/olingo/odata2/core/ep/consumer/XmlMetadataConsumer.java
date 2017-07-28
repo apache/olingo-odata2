@@ -954,7 +954,10 @@ public class XmlMetadataConsumer {
       if (namespacePrefix == null || isDefaultNamespace(namespacePrefix)) {
         namespacePrefix = Edm.PREFIX_EDM;
       }
-      xmlNamespaceMap.put(namespacePrefix, namespaceUri);
+      //Ignoring the duplicate tags, parent tag namespace takes precedence
+      if (!xmlNamespaceMap.containsKey(namespacePrefix)) {
+        xmlNamespaceMap.put(namespacePrefix, namespaceUri);
+      }
     }
   }
 
@@ -991,7 +994,7 @@ public class XmlMetadataConsumer {
             FullQualifiedName fqName = validateEntityTypeWithAlias(baseTypeFQName);
             baseEntityType = entityTypesMap.get(fqName);
           } else {
-            baseEntityType = entityTypesMap.get(baseTypeFQName);
+            baseEntityType = fetchLastBaseType(baseTypeFQName,entityTypesMap);
           }
           if (baseEntityType.getKey() == null) {
             throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
@@ -1004,6 +1007,27 @@ public class XmlMetadataConsumer {
       }
     }
   }
+
+  
+  /* This method gets the last base type of the EntityType 
+   * which has key defined in order to validate it*/
+   private EntityType fetchLastBaseType
+   (FullQualifiedName baseTypeFQName, Map<FullQualifiedName, EntityType> entityTypesMap) 
+       throws EntityProviderException {
+     
+     EntityType baseEntityType = null ;
+     while(baseTypeFQName!=null){
+       baseEntityType = entityTypesMap.get(baseTypeFQName);
+       if(baseEntityType.getKey()!=null){
+         break;
+       }else if(baseEntityType !=null && baseEntityType.getBaseType() !=null){
+           baseTypeFQName = baseEntityType.getBaseType();
+       }else if(baseEntityType.getBaseType() == null){
+         break;
+       }
+     }
+     return baseEntityType;
+   }
 
   private FullQualifiedName validateComplexTypeWithAlias(final FullQualifiedName aliasName)
       throws EntityProviderException {

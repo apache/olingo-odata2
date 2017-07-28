@@ -28,7 +28,7 @@ import java.util.Map;
 public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   private String method;
   private Map<String, String> headers = new HashMap<String, String>();
-  private String body;
+  private Object body;
   private String uri;
   public String contentId;
   private static final String CHANGE_METHODS = "(PUT|POST|DELETE|MERGE|PATCH)";
@@ -40,7 +40,7 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
 
   @Override
   public String getBody() {
-    return body;
+    return body.toString();
   }
 
   @Override
@@ -49,7 +49,11 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
       return new byte[0];
     }
     Charset charset = getCharset();
-    return body.getBytes(charset);
+    if (body instanceof byte[]) {
+      return (byte[]) body; //NOSONAR
+    } else {
+      return body.toString().getBytes(charset);
+    }
   }
 
   private Charset getCharset() {
@@ -74,7 +78,7 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   public class BatchChangeSetRequestBuilderImpl extends BatchChangeSetPartBuilder {
     private String method;
     private Map<String, String> headers = new HashMap<String, String>();
-    private String body;
+    private Object body;
     private String uri;
     private String contentId;
 
@@ -99,6 +103,12 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
 
     @Override
     public BatchChangeSetPartBuilder body(final String body) {
+      this.body = body;
+      return this;
+    }
+    
+    @Override
+    public BatchChangeSetPartBuilder body(byte[] body) {
       this.body = body;
       return this;
     }

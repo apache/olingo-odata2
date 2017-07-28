@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -2510,5 +2511,145 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("http://localhost:19000/Employees('1')", id);
     Map<String, Object> properties = result.getProperties();
     assertEquals(9, properties.size());
+  }
+  /**
+   * Employee with inline entity Room with inline entity Buildings 
+   * Scenario of 1:1:1 navigation
+   * E.g: Employees('1')?$expand=ne_Rooms/nr_Buildings
+   * @throws Exception
+   */
+  @Test
+  public void employeesEntryWithEmployeeToRoomToBuilding() throws Exception {
+    InputStream stream = getFileAsStream("Employee_InlineRoomBuilding.xml");
+    assertNotNull(stream);
+    FeedCallback callback = new FeedCallback();
+
+    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init()
+        .mergeSemantic(false).callback(callback).build();
+
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    XmlEntityConsumer xec = new XmlEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, stream, readProperties);
+    assertNotNull(result);
+    assertEquals(9, result.getProperties().size());
+
+    Map<String, Object> inlineEntries = callback.getNavigationProperties();
+    getExpandedData(inlineEntries, result);
+    assertEquals(10, result.getProperties().size());
+    assertEquals(5, ((ODataEntry)result.getProperties().get("ne_Room")).getProperties().size());
+    assertEquals(3, ((ODataEntry)((ODataEntry)result.getProperties().get("ne_Room")).getProperties()
+        .get("nr_Building")).getProperties().size());
+  }
+  
+  /**
+   * Room has inline entity to Employees and has inline entry To Team
+   * Scenario of 1:n:1 navigation 
+   * E.g: Rooms('1')?$expand=nr_Employees/ne_Team
+   * @throws Exception
+   */
+  @Test
+  public void RoomEntryWithInlineEmployeeInlineTeam() throws Exception {
+    InputStream stream = getFileAsStream("Room_InlineEmployeesToTeam.xml");
+    assertNotNull(stream);
+    FeedCallback callback = new FeedCallback();
+
+    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init()
+        .mergeSemantic(false).callback(callback).build();
+
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    XmlEntityConsumer xec = new XmlEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, stream, readProperties);
+    assertNotNull(result);
+    assertEquals(4, result.getProperties().size());
+
+    Map<String, Object> inlineEntries = callback.getNavigationProperties();
+    getExpandedData(inlineEntries, result);
+    assertEquals(5, result.getProperties().size());
+    for (ODataEntry employeeEntry : ((ODataFeed)result.getProperties().get("nr_Employees")).getEntries()) {
+      assertEquals(10, employeeEntry.getProperties().size());
+      assertEquals(3, ((ODataEntry)employeeEntry.getProperties().get("ne_Team")).getProperties().size());
+    }
+  }
+  
+  /**
+   * Room has empty inline entity to Employees and has inline entry To Team
+   * E.g: Rooms('10')?$expand=nr_Employees/ne_Team
+   * @throws Exception
+   */
+  @Test
+  public void RoomEntryWithEmptyInlineEmployeeInlineTeam() throws Exception {
+    InputStream stream = getFileAsStream("Room_EmptyInlineEmployeesToTeam.xml");
+    assertNotNull(stream);
+    FeedCallback callback = new FeedCallback();
+
+    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init()
+        .mergeSemantic(false).callback(callback).build();
+
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    XmlEntityConsumer xec = new XmlEntityConsumer();
+    ODataEntry result =
+        xec.readEntry(entitySet, stream, readProperties);
+    assertNotNull(result);
+    assertEquals(4, result.getProperties().size());
+
+    Map<String, Object> inlineEntries = callback.getNavigationProperties();
+    getExpandedData(inlineEntries, result);
+    assertEquals(5, result.getProperties().size());
+    assertEquals(0, ((ODataFeed)result.getProperties().get("nr_Employees")).getEntries().size());
+  }
+  /**
+   * @param inlineEntries
+   * @param feed
+   * @param entry
+   */
+  private void getExpandedData(Map<String, Object> inlineEntries, ODataEntry entry) {
+    assertNotNull(entry);
+    Map<String, ExpandSelectTreeNode> expandNodes = entry.getExpandSelectTree().getLinks();
+    for (Entry<String, ExpandSelectTreeNode> expand : expandNodes.entrySet()) {
+      assertNotNull(expand.getKey());
+      if (inlineEntries.containsKey(expand.getKey() + entry.getMetadata().getId())) {
+        if (inlineEntries.get(expand.getKey() + entry.getMetadata().getId()) instanceof ODataFeed) {
+          ODataFeed innerFeed = (ODataFeed) inlineEntries.get(expand.getKey() + entry.getMetadata().getId());
+          assertNotNull(innerFeed);
+          getExpandedData(inlineEntries, innerFeed);
+          entry.getProperties().put(expand.getKey(), innerFeed);
+        } else if (inlineEntries.get(expand.getKey() + entry.getMetadata().getId()) instanceof ODataEntry) {
+          ODataEntry innerEntry = (ODataEntry) inlineEntries.get(expand.getKey() + entry.getMetadata().getId());
+          assertNotNull(innerEntry);
+          getExpandedData(inlineEntries, innerEntry);
+          entry.getProperties().put(expand.getKey(), innerEntry);
+        }
+      }
+    }
+  }
+  /**
+   * @param inlineEntries
+   * @param feed
+   * @param entry
+   */
+  private void getExpandedData(Map<String, Object> inlineEntries, ODataFeed feed) {
+    assertNotNull(feed.getEntries());
+    List<ODataEntry> entries = feed.getEntries();
+    for (ODataEntry entry : entries) {
+      Map<String, ExpandSelectTreeNode> expandNodes = entry.getExpandSelectTree().getLinks();
+      for (Entry<String, ExpandSelectTreeNode> expand : expandNodes.entrySet()) {
+        assertNotNull(expand.getKey());
+        if (inlineEntries.containsKey(expand.getKey() + entry.getMetadata().getId())) {
+          if (inlineEntries.get(expand.getKey() + entry.getMetadata().getId()) instanceof ODataFeed) {
+            ODataFeed innerFeed = (ODataFeed) inlineEntries.get(expand.getKey() + entry.getMetadata().getId());
+            assertNotNull(innerFeed);
+            getExpandedData(inlineEntries, innerFeed);
+            feed.getEntries().get(feed.getEntries().indexOf(entry)).getProperties().put(expand.getKey(), innerFeed);
+          } else if (inlineEntries.get(expand.getKey() + entry.getMetadata().getId()) instanceof ODataEntry) {
+            ODataEntry innerEntry = (ODataEntry) inlineEntries.get(expand.getKey() + entry.getMetadata().getId());
+            assertNotNull(innerEntry);
+            getExpandedData(inlineEntries, innerEntry);
+            feed.getEntries().get(feed.getEntries().indexOf(entry)).getProperties().put(expand.getKey(), innerEntry);
+          }
+        }
+      }
+    }
   }
 }

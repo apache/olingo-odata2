@@ -46,15 +46,12 @@ public class JPAEdmAssociationEndTest extends JPAEdmTestModelView {
   private final static int VARIANT2 = 2;
   private final static int VARIANT3 = 3;
 
-  private static int variant;
-
   private static final String PUNIT_NAME = "salesorderprocessing";
   private static JPAEdmAssociationEnd objJPAEdmAssociationEnd = null;
-  private static JPAEdmAssociationEndTest objJPAEdmAssociationEndTest = null;
 
   @BeforeClass
   public static void setup() {
-    objJPAEdmAssociationEndTest = new JPAEdmAssociationEndTest();
+    InnerMock objJPAEdmAssociationEndTest = new InnerMock(Attribute.PersistentAttributeType.MANY_TO_MANY);
     objJPAEdmAssociationEnd = new JPAEdmAssociationEnd(objJPAEdmAssociationEndTest, objJPAEdmAssociationEndTest);
     try {
       objJPAEdmAssociationEnd.getBuilder().build();
@@ -104,7 +101,48 @@ public class JPAEdmAssociationEndTest extends JPAEdmTestModelView {
     assertEquals(new FullQualifiedName("salesorderprocessing", "SOID"), objJPAEdmAssociationEnd.getEdmAssociationEnd1()
         .getType());
     assertTrue(objJPAEdmAssociationEnd.isConsistent());
+  }
 
+  @Test
+  public void testBuildAssociationEndManyToOne() throws Exception {
+    InnerMock mockFirst = new InnerMock(Attribute.PersistentAttributeType.ONE_TO_MANY);
+    InnerMock mockSecond = new InnerMock(Attribute.PersistentAttributeType.MANY_TO_ONE);
+    JPAEdmAssociationEnd associationEnd = new JPAEdmAssociationEnd(mockFirst, mockSecond);
+    associationEnd.getBuilder().build();
+    assertEquals(EdmMultiplicity.MANY, associationEnd.getEdmAssociationEnd1().getMultiplicity());
+    assertEquals(EdmMultiplicity.ONE, associationEnd.getEdmAssociationEnd2().getMultiplicity());
+    assertEquals("SOID", associationEnd.getEdmAssociationEnd1().getType().getName());
+    assertEquals(new FullQualifiedName("salesorderprocessing", "SOID"), associationEnd.getEdmAssociationEnd1()
+        .getType());
+    assertTrue(associationEnd.isConsistent());
+  }
+
+  @Test
+  public void testBuildAssociationEndOneToMany() throws Exception {
+    InnerMock mockFirst = new InnerMock(Attribute.PersistentAttributeType.MANY_TO_ONE);
+    InnerMock mockSecond = new InnerMock(Attribute.PersistentAttributeType.ONE_TO_MANY);
+    JPAEdmAssociationEnd associationEnd = new JPAEdmAssociationEnd(mockFirst, mockSecond);
+    associationEnd.getBuilder().build();
+    assertEquals(EdmMultiplicity.ONE, associationEnd.getEdmAssociationEnd1().getMultiplicity());
+    assertEquals(EdmMultiplicity.MANY, associationEnd.getEdmAssociationEnd2().getMultiplicity());
+    assertEquals("SOID", associationEnd.getEdmAssociationEnd1().getType().getName());
+    assertEquals(new FullQualifiedName("salesorderprocessing", "SOID"), associationEnd.getEdmAssociationEnd1()
+        .getType());
+    assertTrue(associationEnd.isConsistent());
+  }
+
+  @Test
+  public void testBuildAssociationEndOneToOne() throws Exception {
+    InnerMock mockFirst = new InnerMock(Attribute.PersistentAttributeType.ONE_TO_ONE);
+    InnerMock mockSecond = new InnerMock(Attribute.PersistentAttributeType.ONE_TO_ONE);
+    JPAEdmAssociationEnd associationEnd = new JPAEdmAssociationEnd(mockFirst, mockSecond);
+    associationEnd.getBuilder().build();
+    assertEquals(EdmMultiplicity.ONE, associationEnd.getEdmAssociationEnd1().getMultiplicity());
+    assertEquals(EdmMultiplicity.ONE, associationEnd.getEdmAssociationEnd2().getMultiplicity());
+    assertEquals("SOID", associationEnd.getEdmAssociationEnd1().getType().getName());
+    assertEquals(new FullQualifiedName("salesorderprocessing", "SOID"), associationEnd.getEdmAssociationEnd1()
+        .getType());
+    assertTrue(associationEnd.isConsistent());
   }
 
   private AssociationEnd getAssociationEnd(final String typeName, final int variant) {
@@ -127,51 +165,56 @@ public class JPAEdmAssociationEndTest extends JPAEdmTestModelView {
     return fullQualifiedName;
   }
 
-  private Attribute<?, ?> getJPAAttributeLocal() {
-    AttributeMock<Object, String> attr = new AttributeMock<Object, String>();
-    return attr;
-  }
 
-  @Override
-  public Attribute<?, ?> getJPAAttribute() {
-    return getJPAAttributeLocal();
-  }
+  private static class InnerMock extends JPAEdmTestModelView {
 
-  @Override
-  public String getpUnitName() {
-    return PUNIT_NAME;
-  }
+    private final AttributeMock<Object, String> mock;
 
-  @Override
-  public EntityType getEdmEntityType() {
-    EntityType entityType = new EntityType();
-    entityType.setName(SimpleTypeA.NAME);
-    return entityType;
-  }
-
-  // The inner class which gives us an replica of the jpa attribute
-  @SuppressWarnings("hiding")
-  public class AttributeMock<Object, String> extends JPAAttributeMock<Object, String> {
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Class<String> getJavaType() {
-      return (Class<String>) SimpleType.SimpleTypeA.clazz;
+    public InnerMock(Attribute.PersistentAttributeType variant) {
+      this.mock = new AttributeMock<Object, String>(variant);
     }
 
     @Override
-    public PersistentAttributeType getPersistentAttributeType() {
-      if (variant == VARIANT1) {
-        return PersistentAttributeType.ONE_TO_MANY;
-      } else if (variant == VARIANT2) {
-        return PersistentAttributeType.ONE_TO_ONE;
-      } else if (variant == VARIANT3) {
-        return PersistentAttributeType.MANY_TO_ONE;
-      } else {
-        return PersistentAttributeType.MANY_TO_MANY;
+    public Attribute<?, ?> getJPAAttribute() {
+      return getJPAAttributeLocal();
+    }
+
+    @Override
+    public String getpUnitName() {
+      return PUNIT_NAME;
+    }
+
+    @Override
+    public EntityType getEdmEntityType() {
+      EntityType entityType = new EntityType();
+      entityType.setName(SimpleTypeA.NAME);
+      return entityType;
+    }
+    private Attribute<?, ?> getJPAAttributeLocal() {
+      return mock;
+    }
+
+  }
+
+    // The inner class which gives us an replica of the jpa attribute
+    @SuppressWarnings("hiding")
+    private static class AttributeMock<Object, String> extends JPAAttributeMock<Object, String> {
+
+      final private PersistentAttributeType variant;
+
+      public AttributeMock(PersistentAttributeType variant) {
+        this.variant = variant;
       }
 
-    }
-  }
+      @SuppressWarnings("unchecked")
+      @Override
+      public Class<String> getJavaType() {
+        return (Class<String>) SimpleType.SimpleTypeA.clazz;
+      }
 
+      @Override
+      public PersistentAttributeType getPersistentAttributeType() {
+        return variant;
+      }
+    }
 }

@@ -157,6 +157,13 @@ public class JsonEntryEntityProducer {
         if (inlineData == null) {
           inlineData = new ArrayList<Map<String, Object>>();
         }
+        
+        //This statement is used for the client use case. Flag should never be set on server side
+        if(properties.isOmitInlineForNullData() && inlineData.isEmpty()){
+          writeDeferredUri(entityInfo, navigationPropertyName);
+          return;
+        }
+        
         final EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
         final EntityInfoAggregator inlineEntityInfo =
             EntityInfoAggregator.create(inlineEntitySet, inlineProperties.getExpandSelectTree());
@@ -172,6 +179,13 @@ public class JsonEntryEntityProducer {
         final WriteEntryCallbackResult result =
             ((OnWriteEntryContent) callback).retrieveEntryResult((WriteEntryCallbackContext) context);
         Map<String, Object> inlineData = result.getEntryData();
+        
+        //This statement is used for the client use case. Flag should never be set on server side
+        if(properties.isOmitInlineForNullData() && (inlineData == null || inlineData.isEmpty())){
+          writeDeferredUri(entityInfo, navigationPropertyName);
+          return;
+        }
+        
         if (inlineData != null && !inlineData.isEmpty()) {
           final EntityProviderWriteProperties inlineProperties = result.getInlineProperties();
           final EntityInfoAggregator inlineEntityInfo =
@@ -193,23 +207,43 @@ public class JsonEntryEntityProducer {
     // properties
     boolean omitComma = !containsMetadata;
 
-    for (final String propertyName : type.getPropertyNames()) {
-      if (entityInfo.getSelectedPropertyNames().contains(propertyName)) {
-        if (omitComma) {
-          omitComma = false;
-        } else {
-          jsonStreamWriter.separator();
-        }
-        jsonStreamWriter.name(propertyName);
-
-        JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter,
-            entityInfo.getPropertyInfo(propertyName),
-            data.get(propertyName),
-            properties.isValidatingFacets());
+    List<String> propertyNames = type.getPropertyNames();
+    for (final String propertyName : propertyNames) {
+      if (properties.isDataBasedPropertySerialization() && ((Map<?,?>)data).containsKey(propertyName)) {
+        omitComma = appendPropertyNameValue(entityInfo, data, omitComma, propertyName);
+      } else if (!properties.isDataBasedPropertySerialization() && entityInfo.getSelectedPropertyNames()
+          .contains(propertyName)) {
+        omitComma = appendPropertyNameValue(entityInfo, data, omitComma, propertyName);
       }
     }
   }
 
+  /**
+   * @param entityInfo
+   * @param data
+   * @param omitComma
+   * @param propertyName
+   * @return
+   * @throws IOException
+   * @throws EdmException
+   * @throws EntityProviderException
+   */
+  private boolean appendPropertyNameValue(final EntityInfoAggregator entityInfo, final Map<String, Object> data,
+      boolean omitComma, String propertyName) throws IOException, EdmException, EntityProviderException {
+    if (omitComma) {
+      omitComma = false;
+    } else {
+      jsonStreamWriter.separator();
+    }
+    jsonStreamWriter.name(propertyName);
+ 
+    JsonPropertyEntityProducer.appendPropertyValue(jsonStreamWriter,
+        entityInfo.getPropertyInfo(propertyName),
+        data.get(propertyName),
+        properties.isValidatingFacets(), properties.isDataBasedPropertySerialization());
+    return omitComma;
+  }
+  
   private void writeMetadata(final EntityInfoAggregator entityInfo, final Map<String, Object> data,
       final EdmEntityType type) throws IOException, EntityProviderException, EdmException {
     if (properties.getServiceRoot() == null) {

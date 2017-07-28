@@ -18,6 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.mock.data;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -51,8 +53,12 @@ public class ODataEntryMockUtil {
   public static final byte[] VALUE_MBYTEARRAY = new byte[] { 0XA, 0XB };
   public static final float VALUE_MFLOAT = 2.00F;
   public static final UUID VALUE_UUID = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
-  public static final short VALUE_SHORT = 2;
+  public static final Short VALUE_SHORT = 2;
   public static final JPATypeMock.JPATypeMockEnum VALUE_ENUM = JPATypeMock.JPATypeMockEnum.VALUE;
+  public static java.util.Date VALUE_DATE = null;
+  public static java.sql.Date VALUE_DATE1 = null;
+  public static Time VALUE_TIME = null;
+  public static Timestamp VALUE_TIMESTAMP = null;
 
   public static ODataEntry mockODataEntry(final String entityName) {
     ODataEntry oDataEntry = EasyMock.createMock(ODataEntry.class);
@@ -62,10 +68,54 @@ public class ODataEntryMockUtil {
     EasyMock.replay(oDataEntry);
     return oDataEntry;
   }
+  
+  public static ODataEntry mockODataEntryWithNullValue(final String entityName) {
+    ODataEntry oDataEntry = EasyMock.createMock(ODataEntry.class);
+    Map<String, Object> propertiesMap = mockODataEntryProperties(entityName);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_MINT, null);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_MCHAR, null);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_CLOB, null);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_ENUM, null);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_MBLOB, null);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_MCARRAY, null);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_MC, null);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_MCHARARRAY, null);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_MDATETIME, null);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_MSTRING, null);
+    EasyMock.expect(oDataEntry.getProperties()).andReturn(propertiesMap).anyTimes();
+
+    enhanceMockODataEntry(oDataEntry, false, new ArrayList<String>());
+    EasyMock.replay(oDataEntry);
+    return oDataEntry;
+  }
 
   public static ODataEntry mockODataEntryWithComplexType(final String entityName) {
     ODataEntry oDataEntry = EasyMock.createMock(ODataEntry.class);
     EasyMock.expect(oDataEntry.getProperties()).andReturn(mockODataEntryPropertiesWithComplexType(entityName))
+        .anyTimes();
+
+    enhanceMockODataEntry(oDataEntry, false, new ArrayList<String>());
+    EasyMock.replay(oDataEntry);
+    return oDataEntry;
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static ODataEntry mockODataEntryWithComplexTypeWithNullValue(final String entityName) {
+    ODataEntry oDataEntry = EasyMock.createMock(ODataEntry.class);
+    Map<String, Object> propertiesMap = mockODataEntryPropertiesWithComplexType(entityName);
+    propertiesMap.put(JPATypeMock.PROPERTY_NAME_MCARRAY, null);
+    Map<String, Object> complexPropertiesMap = (Map<String, Object>) propertiesMap.get
+        (JPATypeMock.PROPERTY_NAME_MCOMPLEXTYPE);
+    complexPropertiesMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MSHORT, null);
+    complexPropertiesMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MDATE, null);
+    complexPropertiesMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MDATE1, null);
+    complexPropertiesMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MTIME, null);
+    complexPropertiesMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MTIMESTAMP, null);
+    Map<String, Object> embeddableMap = (Map<String, Object>) complexPropertiesMap.
+        get(JPATypeEmbeddableMock.PROPERTY_NAME_MEMBEDDABLE);
+    embeddableMap.put(JPATypeEmbeddableMock2.PROPERTY_NAME_MUUID, null);
+    embeddableMap.put(JPATypeEmbeddableMock2.PROPERTY_NAME_MFLOAT, null);
+    EasyMock.expect(oDataEntry.getProperties()).andReturn(propertiesMap)
         .anyTimes();
 
     enhanceMockODataEntry(oDataEntry, false, new ArrayList<String>());
@@ -100,6 +150,14 @@ public class ODataEntryMockUtil {
       propertyMap.put(JPARelatedTypeMock.PROPERTY_NAME_MBYTEARRAY, VALUE_MBYTEARRAY);
     } else if (entityName.equals(JPATypeEmbeddableMock.ENTITY_NAME)) {
       propertyMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MSHORT, VALUE_SHORT);
+      VALUE_DATE = Calendar.getInstance(TimeZone.getDefault()).getTime();
+      VALUE_DATE1 = new java.sql.Date(Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
+      VALUE_TIME = new java.sql.Time(Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
+      VALUE_TIMESTAMP = new Timestamp(Calendar.getInstance(TimeZone.getDefault()).getTimeInMillis());
+      propertyMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MDATE, Calendar.getInstance(TimeZone.getDefault()));
+      propertyMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MDATE1, Calendar.getInstance(TimeZone.getDefault()));
+      propertyMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MTIME, Calendar.getInstance(TimeZone.getDefault()));
+      propertyMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MTIMESTAMP, Calendar.getInstance(TimeZone.getDefault()));
       propertyMap.put(JPATypeEmbeddableMock.PROPERTY_NAME_MEMBEDDABLE,
           mockODataEntryProperties(JPATypeEmbeddableMock2.ENTITY_NAME));
     } else if (entityName.equals(JPATypeEmbeddableMock2.ENTITY_NAME)) {

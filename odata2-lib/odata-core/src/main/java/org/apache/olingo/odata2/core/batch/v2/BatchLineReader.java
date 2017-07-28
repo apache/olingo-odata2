@@ -33,9 +33,10 @@ public class BatchLineReader {
   private static final byte LF = '\n';
   private static final int EOF = -1;
   private static final int BUFFER_SIZE = 8192;
-  private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-  private static final Charset CS_ISO_8859_1 = Charset.forName("iso-8859-1");
+  private static final Charset DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
+  private static final String UTF8_CHARSET = "UTF-8";
   private static final String CONTENT_TYPE = "content-type";
+  private static final String XML_SUBTYPE = "xml";
   public static final String BOUNDARY = "boundary";
   public static final String DOUBLE_DASH = "--";
   public static final String CRLF = "\r\n";
@@ -104,7 +105,11 @@ public class BatchLineReader {
           if (charsetString != null) {
             currentCharset = Charset.forName(charsetString);
           } else {
-            currentCharset = DEFAULT_CHARSET;
+            if (ct.isCompatible(ContentType.APPLICATION_JSON) || ct.getSubtype().contains(XML_SUBTYPE)) {
+              currentCharset = Charset.forName(UTF8_CHARSET);
+            } else {
+              currentCharset = DEFAULT_CHARSET;
+            }
           }
           // boundary
           String boundary = ct.getParameters().get(BOUNDARY);
@@ -151,12 +156,7 @@ public class BatchLineReader {
 
       if (!foundLineEnd) {
         byte currentChar = this.buffer[offset++];
-        if(!buffer.hasRemaining()) {
-          buffer.flip();
-          ByteBuffer tmp = ByteBuffer.allocate(buffer.limit() *2);
-          tmp.put(buffer);
-          buffer = tmp;
-        }
+        buffer = grantBuffer(buffer);
         buffer.put(currentChar);
 
         if (currentChar == LF) {
@@ -172,6 +172,7 @@ public class BatchLineReader {
 
           // Check if there is at least one character
           if (limit != EOF && this.buffer[offset] == LF) {
+            buffer = grantBuffer(buffer);
             buffer.put(LF);
             offset++;
           }
@@ -186,11 +187,21 @@ public class BatchLineReader {
       if(readState.isReadBody()) {
         currentLine = new String(buffer.array(), 0, buffer.position(), getCurrentCharset());
       } else {
-        currentLine = new String(buffer.array(), 0, buffer.position(), CS_ISO_8859_1);
+        currentLine = new String(buffer.array(), 0, buffer.position(), DEFAULT_CHARSET);
       }
       updateCurrentCharset(currentLine);
       return currentLine;
     }
+  }
+
+  private ByteBuffer grantBuffer(ByteBuffer buffer) {
+    if(!buffer.hasRemaining()) {
+      buffer.flip();
+      ByteBuffer tmp = ByteBuffer.allocate(buffer.limit() *2);
+      tmp.put(buffer);
+      buffer = tmp;
+    }
+    return buffer;
   }
 
   private int fillBuffer() throws IOException {

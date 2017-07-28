@@ -510,7 +510,8 @@ public class JPAEdmNameBuilder {
           navProp.setFromRole(association.getEnd2().getRole());
         }
       } else {
-        if (association.getEnd2().getMultiplicity().equals(EdmMultiplicity.ONE)) {
+        if (association.getEnd2().getMultiplicity().equals(EdmMultiplicity.ONE)
+            || association.getEnd2().getMultiplicity().equals(EdmMultiplicity.ZERO_TO_ONE)) {
           navProp.setToRole(association.getEnd2().getRole());
           navProp.setFromRole(association.getEnd1().getRole());
         } else {
@@ -529,6 +530,10 @@ public class JPAEdmNameBuilder {
   }
 
   private static String multiplicityToString(EdmMultiplicity multiplicity) {
+    if(multiplicity == null) {
+      return "";
+    }
+
     switch (multiplicity) {
     case MANY:
       return "Many";
@@ -537,9 +542,8 @@ public class JPAEdmNameBuilder {
     case ZERO_TO_ONE:
       return "ZeroToOne";
     default:
-      break;
+      return "";
     }
-    return "";
   }
 
   private static String buildNamespace(final JPAEdmBaseView view) {

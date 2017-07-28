@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.provider.DataServices;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.api.ep.EntityProvider.EntityProviderInterface;
@@ -220,6 +221,12 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   }
 
   @Override
+  public ODataResponse writeMetadata(final DataServices seriviceMetadata,
+      final Map<String, String> predefinedNamespaces) throws EntityProviderException {
+    return create().writeMetadata(seriviceMetadata, predefinedNamespaces);
+  }
+
+  @Override
   public Edm readMetadata(final InputStream inputStream, final boolean validate) throws EntityProviderException {
     EdmProvider provider = new EdmxProvider().parse(inputStream, validate);
     return new EdmImplProv(provider);
@@ -234,7 +241,8 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   @Override
   public List<BatchRequestPart> parseBatchRequest(final String contentType, final InputStream content,
       final EntityProviderBatchProperties properties) throws BatchException {
-    List<BatchRequestPart> batchParts = new BatchParser(contentType, properties, true).parseBatchRequest(content);
+    BatchParser batchParser = new BatchParser(contentType, properties, properties.isStrict());
+    List<BatchRequestPart> batchParts = batchParser.parseBatchRequest(content);
     return batchParts;
   }
 

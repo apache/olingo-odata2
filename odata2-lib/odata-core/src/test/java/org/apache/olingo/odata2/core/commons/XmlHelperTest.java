@@ -25,6 +25,8 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -35,6 +37,7 @@ import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -87,11 +90,39 @@ public class XmlHelperTest {
           "  <data>&rules;</data>" +
           "</extract>";
 
+  private static Object beforeXmlInputFactory;
+
   @BeforeClass
   public static void beforeClass() {
     // CHECKSTYLE:OFF
     System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory"); // NOSONAR
+    //
+    beforeXmlInputFactory = replaceXmlInputFactoryInstance(XMLInputFactory.newInstance());
     // CHECKSTYLE:ON
+  }
+
+  @AfterClass
+  public static void afterClass() {
+    replaceXmlInputFactoryInstance(beforeXmlInputFactory);
+  }
+
+  private static Object replaceXmlInputFactoryInstance(Object newInstance) {
+    try {
+      Field field = XmlHelper.XmlInputFactoryHolder.class.getDeclaredField("INSTANCE");
+      field.setAccessible(true);
+
+      Field modifiersField = Field.class.getDeclaredField("modifiers");
+      modifiersField.setAccessible(true);
+      modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+      Object replaced = field.get(null);
+      field.set(null, newInstance);
+      return replaced;
+    } catch (NoSuchFieldException e) {
+      throw new RuntimeException(e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Test

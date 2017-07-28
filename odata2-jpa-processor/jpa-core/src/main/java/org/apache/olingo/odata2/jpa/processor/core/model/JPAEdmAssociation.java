@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.provider.Association;
 import org.apache.olingo.odata2.api.edm.provider.AssociationEnd;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;
@@ -109,6 +110,7 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
             }
             if (associationEnd.getMappedByName() != null) {
               if (associationEnd.getMappedByName().equals(view.getOwningPropertyName())) {
+                updateAssociationEndMultiplicity(view, association);
                 currentAssociation = association;
                 return association;
               }
@@ -124,6 +126,22 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
       }
     }
     return null;
+  }
+
+  private void updateAssociationEndMultiplicity(JPAEdmAssociationEndView view, Association association) {
+    if (view.getEdmAssociationEnd1().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE
+        && association.getEnd1().getMultiplicity() == EdmMultiplicity.ONE) {
+      association.getEnd1().setMultiplicity(EdmMultiplicity.ZERO_TO_ONE);
+    } else if (view.getEdmAssociationEnd2().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE
+        && association.getEnd2().getMultiplicity() == EdmMultiplicity.ONE) {
+      association.getEnd2().setMultiplicity(EdmMultiplicity.ZERO_TO_ONE);
+    } else if (view.getEdmAssociationEnd1().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE
+        && association.getEnd2().getMultiplicity() == EdmMultiplicity.ONE) {
+      association.getEnd2().setMultiplicity(EdmMultiplicity.ZERO_TO_ONE);
+    } else if (view.getEdmAssociationEnd2().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE
+        && association.getEnd1().getMultiplicity() == EdmMultiplicity.ONE) {
+      association.getEnd1().setMultiplicity(EdmMultiplicity.ZERO_TO_ONE);
+    }
   }
 
   @Override

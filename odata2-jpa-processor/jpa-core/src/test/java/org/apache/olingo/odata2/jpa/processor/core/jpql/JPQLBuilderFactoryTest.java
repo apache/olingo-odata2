@@ -248,58 +248,34 @@ public class JPQLBuilderFactoryTest {
     } catch (IllegalAccessException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
-    EntityManagerFactory emf = new EntityManagerFactory() {
+    final EntityManager em = EasyMock.createMock(EntityManager.class);
+    EasyMock.expect(em.getMetamodel()).andReturn(null);
+    EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
+    EasyMock.replay(em);
 
-      @Override
-      public boolean isOpen() {
-        return false;
-      }
-
-      @Override
-      public Map<String, Object> getProperties() {
-        return null;
-      }
-
-      @Override
-      public PersistenceUnitUtil getPersistenceUnitUtil() {
-        return null;
-      }
-
-      @Override
-      public Metamodel getMetamodel() {
-        return null;
-      }
-
-      @Override
-      public CriteriaBuilder getCriteriaBuilder() {
-        return null;
-      }
-
-      @Override
-      public Cache getCache() {
-        return null;
-      }
-
-      @SuppressWarnings("rawtypes")
-      @Override
-      public EntityManager createEntityManager(final Map arg0) {
-        return null;
-      }
-
-      @Override
-      public EntityManager createEntityManager() {
-        return null;
-      }
-
-      @Override
-      public void close() {}
-    };
-    oDataJPAContextImpl.setEntityManagerFactory(emf);
+    oDataJPAContextImpl.setEntityManagerFactory(new TestEntityManagerFactory(em));
     oDataJPAContextImpl.setPersistenceUnitName("pUnit");
 
     assertNotNull(jpaAccessFactory.getJPAProcessor(oDataJPAContextImpl));
     assertNotNull(jpaAccessFactory.getJPAEdmModelView(oDataJPAContextImpl));
+  }
 
+
+  @Test
+  public void testJPAAccessFactoryEntityManagerOnly() {
+    ODataJPAFactoryImpl oDataJPAFactoryImpl = new ODataJPAFactoryImpl();
+    JPAAccessFactory jpaAccessFactory = oDataJPAFactoryImpl.getJPAAccessFactory();
+    ODataJPAContextImpl oDataJPAContextImpl = new ODataJPAContextImpl();
+
+    final EntityManager em = EasyMock.createMock(EntityManager.class);
+    EasyMock.expect(em.getMetamodel()).andReturn(null);
+    EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
+    EasyMock.replay(em);
+
+    oDataJPAContextImpl.setEntityManager(em);
+
+    assertNotNull(jpaAccessFactory.getJPAProcessor(oDataJPAContextImpl));
+    assertNotNull(jpaAccessFactory.getJPAEdmModelView(oDataJPAContextImpl));
   }
 
   @Test
@@ -309,70 +285,92 @@ public class JPQLBuilderFactoryTest {
     ODataJPAAccessFactory jpaAccessFactory = oDataJPAFactoryImpl.getODataJPAAccessFactory();
     ODataJPAContextImpl oDataJPAContextImpl = new ODataJPAContextImpl();
 
-    EntityManagerFactory emf = new EntityManagerFactory() {
+    final EntityManager em = EasyMock.createMock(EntityManager.class);
+    EasyMock.expect(em.getMetamodel()).andReturn(null);
+    EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
+    EasyMock.replay(em);
 
-      @Override
-      public boolean isOpen() {
-        // TODO Auto-generated method stub
-        return false;
-      }
-
-      @Override
-      public Map<String, Object> getProperties() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public PersistenceUnitUtil getPersistenceUnitUtil() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public Metamodel getMetamodel() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public CriteriaBuilder getCriteriaBuilder() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public Cache getCache() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @SuppressWarnings("rawtypes")
-      @Override
-      public EntityManager createEntityManager(final Map arg0) {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public EntityManager createEntityManager() {
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      @Override
-      public void close() {
-        // TODO Auto-generated method stub
-
-      }
-    };
-    oDataJPAContextImpl.setEntityManagerFactory(emf);
+    oDataJPAContextImpl.setEntityManagerFactory(new TestEntityManagerFactory(em));
     oDataJPAContextImpl.setPersistenceUnitName("pUnit");
 
     assertNotNull(jpaAccessFactory.getODataJPAMessageService(new Locale("en")));
     assertNotNull(jpaAccessFactory.createODataJPAContext());
     assertNotNull(jpaAccessFactory.createJPAEdmProvider(oDataJPAContextImpl));
     assertNotNull(jpaAccessFactory.createODataProcessor(oDataJPAContextImpl));
-
   }
+
+  @Test
+  public void testOdataJpaAccessFactoryEntityManagerOnly() {
+    ODataJPAFactoryImpl oDataJPAFactoryImpl = new ODataJPAFactoryImpl();
+    ODataJPAAccessFactory jpaAccessFactory = oDataJPAFactoryImpl.getODataJPAAccessFactory();
+    ODataJPAContextImpl oDataJPAContextImpl = new ODataJPAContextImpl();
+
+    EntityManager em = EasyMock.createMock(EntityManager.class);
+    EasyMock.expect(em.getMetamodel()).andReturn(null);
+    EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
+    EasyMock.replay(em);
+
+    oDataJPAContextImpl.setEntityManager(em);
+    oDataJPAContextImpl.setPersistenceUnitName("pUnit");
+
+    assertNotNull(jpaAccessFactory.getODataJPAMessageService(new Locale("en")));
+    assertNotNull(jpaAccessFactory.createODataJPAContext());
+    assertNotNull(jpaAccessFactory.createJPAEdmProvider(oDataJPAContextImpl));
+    assertNotNull(jpaAccessFactory.createODataProcessor(oDataJPAContextImpl));
+  }
+
+  private static class TestEntityManagerFactory implements EntityManagerFactory {
+
+    private EntityManager em;
+
+    public TestEntityManagerFactory(EntityManager entityManager) {
+      em = entityManager;
+    }
+
+    @Override
+    public boolean isOpen() {
+      return false;
+    }
+
+    @Override
+    public Map<String, Object> getProperties() {
+      return null;
+    }
+
+    @Override
+    public PersistenceUnitUtil getPersistenceUnitUtil() {
+      return null;
+    }
+
+    @Override
+    public Metamodel getMetamodel() {
+      return null;
+    }
+
+    @Override
+    public CriteriaBuilder getCriteriaBuilder() {
+      return null;
+    }
+
+    @Override
+    public Cache getCache() {
+      return null;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public EntityManager createEntityManager(final Map arg0) {
+      return em;
+    }
+
+    @Override
+    public EntityManager createEntityManager() {
+      return em;
+    }
+
+    @Override
+    public void close() {
+    }
+  };
+
 }

@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -32,8 +33,10 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
+import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.NavigationSegment;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
@@ -188,6 +191,36 @@ public class JPAQueryBuilderTest {
     }
   }
 
+  @Test
+  public void buildQueryGetEntityTest() {
+    EdmMapping mapping = (EdmMapping) mockMapping();
+    try {
+      assertNotNull(builder.build((GetEntityUriInfo) mockURIInfo(mapping)));
+    } catch (ODataException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+  }
+
+  @Test
+  public void buildQueryValueNormalizeTest() {
+    EdmMapping mapping = (EdmMapping) mockNormalizedValueMapping();
+    try {
+      assertNotNull(builder.build((GetEntityUriInfo) mockURIInfo(mapping)));
+    } catch (ODataException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+  }
+
+  @Test
+  public void buildQueryNormalizeTest() {
+    EdmMapping mapping = (EdmMapping) mockNormalizedMapping();
+    try {
+      assertNotNull(builder.build((GetEntityUriInfo) mockURIInfo(mapping)));
+    } catch (ODataException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+  }
+  
   private UriInfo mockURIInfoWithListener(boolean isNavigationEnabled) throws EdmException {
     UriInfo uriInfo = EasyMock.createMock(UriInfo.class);
     if (isNavigationEnabled) {
@@ -206,13 +239,62 @@ public class JPAQueryBuilderTest {
     return uriInfo;
 
   }
+  
+  @SuppressWarnings("unchecked")
+  private UriInfo mockURIInfo(EdmMapping mapping) throws EdmException {
+    
+    UriInfo uriInfo = EasyMock.createMock(UriInfo.class);
+    List<NavigationSegment> navSegments = new ArrayList<NavigationSegment>();
+    EasyMock.expect(uriInfo.getNavigationSegments()).andStubReturn(navSegments);
+    EdmEntityType edmEntityType = EasyMock.createMock(EdmEntityType.class);
+    EasyMock.expect(edmEntityType.getMapping()).andStubReturn(mapping);
+    EdmEntitySet edmEntitySet = EasyMock.createMock(EdmEntitySet.class);
+    EasyMock.expect(edmEntitySet.getEntityType()).andStubReturn(edmEntityType);
+    EasyMock.expect(uriInfo.getTargetEntitySet()).andStubReturn(edmEntitySet);
+    List<KeyPredicate> keyPreds =EasyMock.createMock(ArrayList.class);
+    EdmProperty edmProperty = EasyMock.createMock(EdmProperty.class);
+    EasyMock.expect(edmProperty.getMapping()).andStubReturn(mapping);
+    KeyPredicate keyPredicate = EasyMock.createMock(KeyPredicate.class);
+    EasyMock.expect(keyPredicate.getLiteral()).andReturn("Id").anyTimes();
+    EasyMock.expect(keyPredicate.getProperty()).andReturn(edmProperty).anyTimes();
+    EasyMock.expect(keyPreds.size()).andStubReturn(1);
+    Iterator<KeyPredicate> keyPredicateitr =  EasyMock.createMock(Iterator.class);
+    EasyMock.expect(keyPredicateitr.next()).andStubReturn(keyPredicate);
+    EasyMock.expect(keyPredicateitr.hasNext()).andStubReturn(true);
+    EasyMock.expect(keyPreds.iterator()).andStubReturn(keyPredicateitr);
+    EasyMock.expect(keyPreds.isEmpty()).andStubReturn(false);
+    EasyMock.expect(keyPreds.get(0)).andStubReturn(keyPredicate);
+    EasyMock.expect(uriInfo.getKeyPredicates()).andStubReturn(keyPreds); 
+    EasyMock.replay(edmEntityType, edmEntitySet, uriInfo, keyPredicate, keyPreds, edmProperty);
+    return uriInfo;
+
+  }
 
   private JPAEdmMapping mockEdmMapping() {
     JPAEdmMappingImpl mockedEdmMapping = new JPAEdmMappingImpl();
     mockedEdmMapping.setODataJPATombstoneEntityListener(JPAQueryExtensionMock.class);
     return mockedEdmMapping;
   }
+  
+  private JPAEdmMapping mockMapping() {
+    JPAEdmMappingImpl mockedEdmMapping = new JPAEdmMappingImpl();
+    mockedEdmMapping.setInternalName("Customer");
+    return mockedEdmMapping;
+  }
+  
 
+  private JPAEdmMapping mockNormalizedMapping() {
+    JPAEdmMappingImpl mockedEdmMapping = new JPAEdmMappingImpl();
+    mockedEdmMapping.setInternalName("C1.Customer.Name");
+    return mockedEdmMapping;
+  }
+  
+  private JPAEdmMapping mockNormalizedValueMapping() {
+    JPAEdmMappingImpl mockedEdmMapping = new JPAEdmMappingImpl();
+    mockedEdmMapping.setInternalName("'C1.Customer.Name'");
+    return mockedEdmMapping;
+  }
+  
   public static final class JPAQueryExtensionMock extends ODataJPAQueryExtensionEntityListener {
     Query query = EasyMock.createMock(Query.class);
 
