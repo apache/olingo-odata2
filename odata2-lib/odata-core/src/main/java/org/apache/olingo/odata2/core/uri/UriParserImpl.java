@@ -81,6 +81,7 @@ public class UriParserImpl extends UriParser {
   private static final Pattern NAMED_VALUE_PATTERN = Pattern.compile("(?:([^=]+)=)?([^=]+)");
   private static final char COMMA = ',';
   private static final char SQUOTE = '\'';
+  private static final String ACCEPT_FORM_ENCODING = "odata-accept-forms-encoding";
 
   private final Edm edm;
   private final EdmSimpleTypeFacade simpleTypeFacade;
@@ -584,13 +585,19 @@ public class UriParserImpl extends UriParser {
   }
 
   private void distributeQueryParameters(final Map<String, List<String>> queryParameters) throws UriSyntaxException {
+    boolean formEncoding = false;
+    if(queryParameters.containsKey(ACCEPT_FORM_ENCODING)){
+      formEncoding=Boolean.parseBoolean(queryParameters.get(ACCEPT_FORM_ENCODING).get(0));;
+    }
     for (final String queryOptionString : queryParameters.keySet()) {
       final String decodedString = percentDecode(queryOptionString);
       final List<String> valueList = queryParameters.get(queryOptionString);
 
       if (valueList.size() >= 1) {
         String value = valueList.get(0);
-
+        if(formEncoding){
+          value = getFormEncodedValue(value);
+        }
         if (decodedString.startsWith("$")) {
           SystemQueryOption queryOption;
           try {
@@ -615,6 +622,13 @@ public class UriParserImpl extends UriParser {
         throw new UriSyntaxException(UriSyntaxException.INVALIDNULLVALUE.addContent(queryOptionString));
       }
     }
+  }
+
+  private String getFormEncodedValue(String value) {
+    if(value.contains("+")){
+      value = value.replaceAll("\\+", " ");
+    }
+    return value;    
   }
 
   private void checkSystemQueryOptionsCompatibility() throws UriSyntaxException {

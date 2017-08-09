@@ -63,6 +63,7 @@ import org.junit.Test;
 public class UriParserTest extends BaseTest {
 
   private Edm edm;
+  private static final String ACCEPT_FORM_ENCODING = "odata-accept-forms-encoding";
 
   @Before
   public void getEdm() throws ODataException {
@@ -1034,6 +1035,59 @@ public class UriParserTest extends BaseTest {
     parseWrongUri("Teams('1')?$select=nt_Employees//*", UriSyntaxException.EMPTYSEGMENT);
   }
 
+  @Test
+  public void parseFilterWithSpaceFormEncoding() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=EmployeeId%20eq%20%271%27&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("EmployeeId eq '1'", result.getFilter().getUriLiteral());
+    assertEquals("true", result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }
+  
+  @Test
+  public void parseFilterWithSpaceNoFormEncoding() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=EmployeeId%20eq%20%271%27");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("EmployeeId eq '1'", result.getFilter().getUriLiteral());
+  }
+  
+  @Test
+  public void parseSystemQueryOptionFilterFormEncoding() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=EmployeeId+eq+%271%27&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("EmployeeId eq '1'", result.getFilter().getUriLiteral());
+    assertEquals("true", result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }
+  
+  @Test
+  public void parseFilterFormEncoding() throws Exception {
+    UriInfoImpl result = parse("Employees?odata-accept-forms-encoding=true&$filter=EmployeeId+eq+%271%27");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("EmployeeId eq '1'", result.getFilter().getUriLiteral());
+    assertEquals("true", result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }
+  
+  @Test
+  public void parseSystemQueryOptionFilterFalseFormEncoding() throws Exception {
+    parseWrongUri("Employees?$filter=EmployeeId+eq+%271%27&odata-accept-forms-encoding=false", 
+        UriSyntaxException.INVALIDFILTEREXPRESSION);
+  }
+  
+  @Test
+  public void parseSystemQueryOptionFilterNoFormEncoding() throws Exception {
+    parseWrongUri("Employees?$filter=EmployeeId+eq+%271%27", 
+        UriSyntaxException.INVALIDFILTEREXPRESSION);
+  }
+  
+  @Test
+  public void parseSystemQueryOptionFilterInvalidFormEncoding() throws Exception {
+    parseWrongUri("Employees?$filter=EmployeeId+eq+%271%27&odata-accept-forms-encoding=asdf", 
+        UriSyntaxException.INVALIDFILTEREXPRESSION);
+  }
+  
   @Test
   public void parseSystemQueryOptionExpand() throws Exception {
     UriInfoImpl result = parse("Managers('1')?$expand=nm_Employees");
