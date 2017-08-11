@@ -290,10 +290,7 @@ public abstract class ODataJPADefaultProcessor extends ODataJPAProcessor {
 
       return BatchResponsePart.responses(responses).changeSet(true).build();
     } catch (Exception e) {
-
-      List<ODataResponse> errorResponses = new ArrayList<ODataResponse>(1);
-      errorResponses.add(ODataResponse.entity(e).status(HttpStatusCodes.INTERNAL_SERVER_ERROR).build());
-      return BatchResponsePart.responses(errorResponses).changeSet(false).build();
+      throw new ODataException("Error on processing request content:" + e.getMessage(), e);
     } finally {
       close(true);
     }
