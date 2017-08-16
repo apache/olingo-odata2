@@ -40,7 +40,7 @@ public class AcceptParser {
   private static final Pattern REG_EX_ACCEPT_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT + "(?:;"
       + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QUALITY_FACTOR + ")?");
   private static final Pattern REG_EX_ACCEPT_LANGUAGES = Pattern
-      .compile("((?:(?:[a-z]{1,8})|(?:\\*))(?:-[a-zA-Z0-9]{1,8}){0,3})");
+      .compile("((?:(?:[a-zA-Z]{1,8})(?:-[a-zA-Z0-9]{1,8}){0,})|(?:\\*))");
   private static final Pattern REG_EX_ACCEPT_LANGUAGES_WITH_Q_FACTOR = Pattern.compile(REG_EX_ACCEPT_LANGUAGES + "(?:;"
       + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QUALITY_FACTOR + ")?");
 

@@ -104,10 +104,47 @@ public class AcceptParserTest {
   }
   
   @Test(expected = BatchException.class)
-  public void testInvalidAcceptLanguage3() throws BatchException {
+  public void testAllAcceptLanguageInvalid() throws BatchException {
     AcceptParser parser = new AcceptParser();
-    parser.addAcceptLanguageHeaderValue("en-US-x-XXX-XXXX");
+    parser.addAcceptLanguageHeaderValue("*-DE");
     parser.parseAcceptableLanguages();
+  }
+  
+  @Test(expected = BatchException.class)
+  public void testAcceptLanguage16Char() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("abcdefghijklmnop");
+    parser.parseAcceptableLanguages();
+  }
+  
+  @Test
+  public void testAcceptLanguageUpper() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("EN-DE");
+    List<String> acceptLanguageHeaders = parser.parseAcceptableLanguages();
+    
+    assertNotNull(acceptLanguageHeaders);
+    assertEquals(1, acceptLanguageHeaders.size());
+  }
+  
+  @Test
+  public void testAcceptLanguageManyParts() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("en-DE-FR-IN-AD");
+    List<String> acceptLanguageHeaders = parser.parseAcceptableLanguages();
+    
+    assertNotNull(acceptLanguageHeaders);
+    assertEquals(1, acceptLanguageHeaders.size());
+  }
+  
+  @Test
+  public void testAcceptLanguageCiphers() throws BatchException {
+    AcceptParser parser = new AcceptParser();
+    parser.addAcceptLanguageHeaderValue("en-150");
+    List<String> acceptLanguageHeaders = parser.parseAcceptableLanguages();
+    
+    assertNotNull(acceptLanguageHeaders);
+    assertEquals(1, acceptLanguageHeaders.size());
   }
   
   @Test(expected = BatchException.class)
