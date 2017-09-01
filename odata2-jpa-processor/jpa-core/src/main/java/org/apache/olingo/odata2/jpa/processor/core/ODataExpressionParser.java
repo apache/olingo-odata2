@@ -18,18 +18,40 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core;
 
-import org.apache.olingo.odata2.api.edm.*;
-import org.apache.olingo.odata2.api.exception.ODataException;
-import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
-import org.apache.olingo.odata2.api.uri.KeyPredicate;
-import org.apache.olingo.odata2.api.uri.expression.*;
-import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
-import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmLiteral;
+import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
+import org.apache.olingo.odata2.api.edm.EdmMapping;
+import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
+import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleType;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
+import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
+import org.apache.olingo.odata2.api.edm.EdmTyped;
+import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
+import org.apache.olingo.odata2.api.uri.KeyPredicate;
+import org.apache.olingo.odata2.api.uri.expression.BinaryExpression;
+import org.apache.olingo.odata2.api.uri.expression.BinaryOperator;
+import org.apache.olingo.odata2.api.uri.expression.CommonExpression;
+import org.apache.olingo.odata2.api.uri.expression.ExpressionKind;
+import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
+import org.apache.olingo.odata2.api.uri.expression.LiteralExpression;
+import org.apache.olingo.odata2.api.uri.expression.MemberExpression;
+import org.apache.olingo.odata2.api.uri.expression.MethodExpression;
+import org.apache.olingo.odata2.api.uri.expression.MethodOperator;
+import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
+import org.apache.olingo.odata2.api.uri.expression.OrderExpression;
+import org.apache.olingo.odata2.api.uri.expression.PropertyExpression;
+import org.apache.olingo.odata2.api.uri.expression.SortOrder;
+import org.apache.olingo.odata2.api.uri.expression.UnaryExpression;
+import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
+import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 
 /**
  * This class contains utility methods for parsing the filter expressions built by core library from user OData Query.
@@ -91,18 +113,22 @@ public class ODataExpressionParser {
 
       // Special handling for STARTSWITH and ENDSWITH method expression
       if (operator != null && (operator == MethodOperator.STARTSWITH || operator == MethodOperator.ENDSWITH)) {
-        if (!binaryExpression.getOperator().equals(BinaryOperator.EQ)) {
+        if (!binaryExpression.getOperator().equals(BinaryOperator.EQ) && 
+            !(binaryExpression.getRightOperand() instanceof LiteralExpression) && 
+            ("true".equals(right) || "false".equals(right))) {
           throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.OPERATOR_EQ_NE_MISSING
               .addContent(binaryExpression.getOperator().toString()), null);
-        } else if (right.equals("false")) {
-          return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left.replaceFirst("LIKE", "NOT LIKE")
-              + JPQLStatement.DELIMITER.SPACE
-              + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
-        } else {
-          return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left
-              + JPQLStatement.DELIMITER.SPACE
-              + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
-        }
+        } else if (binaryExpression.getOperator().equals(BinaryOperator.EQ)) {
+          if ("false".equals(right)) {
+            return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left.replaceFirst("LIKE", "NOT LIKE")
+                + JPQLStatement.DELIMITER.SPACE
+                + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
+          } else if ("true".equals(right)){
+            return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left
+                + JPQLStatement.DELIMITER.SPACE
+                + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
+          }
+        } 
       }
       switch (binaryExpression.getOperator()) {
       case AND:
@@ -227,9 +253,11 @@ public class ODataExpressionParser {
    * @param first
    */
   private static String updateValueIfWildcards(String value) {
-    value = value.replace("\\", "\\\\");
-    value = value.replace("%", "\\%");
-    value = value.replace("_", "\\_");
+    if (value != null) {
+      value = value.replace("\\", "\\\\");
+      value = value.replace("%", "\\%");
+      value = value.replace("_", "\\_");
+    }
     return value;
   }
   /**

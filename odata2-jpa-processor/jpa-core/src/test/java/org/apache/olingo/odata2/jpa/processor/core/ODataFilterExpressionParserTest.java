@@ -99,7 +99,32 @@ public class ODataFilterExpressionParserTest {
   private static final String[] EXPRESSION_NULL = { "date eq null", "(E1.date IS null)" };
 
   private static final String[] EXPRESSION_NOT_NULL = { "date ne null", "(E1.date IS NOT null)" };
+  
+  private static final String[] EXPRESSION_STARTSWITH_EQBINARY = { "startswith(id,'123') and text eq 'abc'", 
+      "(E1.id LIKE CONCAT('123','%') ESCAPE '\\' AND (E1.text = 'abc'))" };
+  
+  private static final String[] EXPRESSION_STARTSWITHEQ_EQBINARY = { "startswith(id,'123') eq true and text eq 'abc'", 
+  "((E1.id LIKE CONCAT('123','%') ESCAPE '\\' ) AND (E1.text = 'abc'))" };
+  
+  private static final String[] EXPRESSION_EQBINARY_STARTSWITH = { "text eq 'abc' and startswith(id,'123')", 
+      "((E1.text = 'abc') AND E1.id LIKE CONCAT('123','%') ESCAPE '\\')" };
+  
+  private static final String[] EXPRESSION_EQBINARY_STARTSWITHEQ = { "text eq 'abc' and startswith(id,'123') eq true", 
+  "((E1.text = 'abc') AND (E1.id LIKE CONCAT('123','%') ESCAPE '\\' ))" };
 
+  private static final String[] EXPRESSION_STARTSWITH_STARTSWITH = { "startswith(text,'abc') and startswith(id,'123')", 
+  "(E1.text LIKE CONCAT('abc','%') ESCAPE '\\' AND E1.id LIKE CONCAT('123','%') ESCAPE '\\')" };
+  
+  private static final String[] EXPRESSION_STARTSWITHEQ_STARTSWITHEQ = { 
+      "startswith(text,'abc') eq true and startswith(id,'123') eq true", 
+  "((E1.text LIKE CONCAT('abc','%') ESCAPE '\\' ) AND (E1.id LIKE CONCAT('123','%') ESCAPE '\\' ))" };
+  
+  private static final String[] EXPRESSION_STARTSWITH_ANDTRUE = {"startswith(text,'abc') and true", 
+      "(E1.text LIKE CONCAT('abc','%') ESCAPE '\\' AND true)"};
+  
+  private static final String[] EXPRESSION_STARTSWITHEQTRUE_ANDTRUE = {"startswith(text,'abc') eq true and true", 
+      "((E1.text LIKE CONCAT('abc','%') ESCAPE '\\' ) AND true)"};
+  
   private static Edm edm = null;
 
   @BeforeClass
@@ -242,5 +267,52 @@ public class ODataFilterExpressionParserTest {
       }
     }
     return "";
+  }
+  
+  @Test
+  public void testStartsWith_BinaryEq() {
+    assertEquals(EXPRESSION_STARTSWITH_EQBINARY[OUTPUT], parseWhereExpression(
+        EXPRESSION_STARTSWITH_EQBINARY[INPUT], false));
+  }
+  
+  @Test
+  public void testBinaryEq_StartsWith() {
+    assertEquals(EXPRESSION_EQBINARY_STARTSWITH[OUTPUT], parseWhereExpression(
+        EXPRESSION_EQBINARY_STARTSWITH[INPUT], false));
+  }
+  
+  public void testStartsWithEq_BinaryEq() {
+    assertEquals(EXPRESSION_STARTSWITHEQ_EQBINARY[OUTPUT], parseWhereExpression(
+        EXPRESSION_STARTSWITHEQ_EQBINARY[INPUT], false));
+  }
+  
+  @Test
+  public void testBinaryEq_StartsWithEq() {
+    assertEquals(EXPRESSION_EQBINARY_STARTSWITHEQ[OUTPUT], parseWhereExpression(
+        EXPRESSION_EQBINARY_STARTSWITHEQ[INPUT], false));
+  }
+  
+  @Test
+  public void testStartsWith_StartsWith() {
+    assertEquals(EXPRESSION_STARTSWITH_STARTSWITH[OUTPUT], parseWhereExpression(
+        EXPRESSION_STARTSWITH_STARTSWITH[INPUT], false));
+  }
+  
+  @Test
+  public void testStartsWithEq_StartsWithEq() {
+    assertEquals(EXPRESSION_STARTSWITHEQ_STARTSWITHEQ[OUTPUT], parseWhereExpression(
+        EXPRESSION_STARTSWITHEQ_STARTSWITHEQ[INPUT], false));
+  }
+  
+  @Test
+  public void testStartsWithEq_AndTrue() {
+    assertEquals(EXPRESSION_STARTSWITHEQTRUE_ANDTRUE[OUTPUT], parseWhereExpression(
+        EXPRESSION_STARTSWITHEQTRUE_ANDTRUE[INPUT], false));
+  }
+  
+  @Test
+  public void testStarts_AndTrue() {
+    assertEquals(EXPRESSION_STARTSWITH_ANDTRUE[OUTPUT], parseWhereExpression(
+        EXPRESSION_STARTSWITH_ANDTRUE[INPUT], false));
   }
 }
