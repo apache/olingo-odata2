@@ -561,10 +561,10 @@ public class FilterParserImpl implements FilterParser {
 
     // special case for navigation property (non-)equality comparison with null
     if (binOpt.getCategory().equals("Equality")
-        && (leftType.getKind() == EdmTypeKind.ENTITY
+        && (leftType != null && leftType.getKind() == EdmTypeKind.ENTITY
             && rightType == EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Null)
             || leftType == EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Null)
-            && rightType.getKind() == EdmTypeKind.ENTITY)) {
+            && rightType != null && rightType.getKind() == EdmTypeKind.ENTITY)) {
       binaryExpression.setEdmType(EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Boolean));
       return;
     }

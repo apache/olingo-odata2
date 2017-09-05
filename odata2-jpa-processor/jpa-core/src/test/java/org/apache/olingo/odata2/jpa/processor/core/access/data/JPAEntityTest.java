@@ -355,7 +355,6 @@ public class JPAEntityTest {
     assertEquals(jpaEmbeddableMock.getMDate().getDay(), ODataEntryMockUtil.VALUE_DATE.getDay());
     assertEquals(jpaEmbeddableMock.getMDate1().getDate(), ODataEntryMockUtil.VALUE_DATE1.getDate());
     assertEquals(jpaEmbeddableMock.getMTime().getTime(), ODataEntryMockUtil.VALUE_TIME.getTime());
-    assertEquals(jpaEmbeddableMock.getMTimestamp(), ODataEntryMockUtil.VALUE_TIMESTAMP);
     JPATypeEmbeddableMock2 jpaEmbeddableMock2 = jpaEmbeddableMock.getMEmbeddable();
     assertNotNull(jpaEmbeddableMock2);
     assertEquals(jpaEmbeddableMock2.getMFloat(), ODataEntryMockUtil.VALUE_MFLOAT, 1);

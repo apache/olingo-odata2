@@ -71,7 +71,7 @@ public class DebugInfoException implements DebugInfo {
     jsonStreamWriter.name("stacktrace")
         .beginArray();
     boolean first = true;
-    for (final StackTraceElement stackTraceElement : exception.getStackTrace()) {
+    for (final StackTraceElement stackTraceElement : exception != null ? exception.getStackTrace() : null) {
       if (!first) {
         jsonStreamWriter.separator();
       }

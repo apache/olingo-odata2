@@ -219,7 +219,7 @@ public class JPAQueryBuilder {
     if (uriParserResultView.getNavigationSegments().size() > 0) {
       if (type == UriInfoType.GetEntitySet) {
         contextType = JPQLContextType.JOIN;
-      } else if (type == UriInfoType.Delete || type == UriInfoType.Delete || type == UriInfoType.GetEntity
+      } else if (type == UriInfoType.Delete || type == UriInfoType.GetEntity
           || type == UriInfoType.PutMergePatch) {
         contextType = JPQLContextType.JOIN_SINGLE;
       } else if (type == UriInfoType.GetEntitySetCount || type == UriInfoType.GetEntityCount) {

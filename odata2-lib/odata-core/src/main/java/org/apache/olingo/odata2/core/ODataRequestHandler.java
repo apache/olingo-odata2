@@ -410,7 +410,7 @@ public class ODataRequestHandler {
   }
 
   private static boolean isPropertyNullable(final EdmProperty property) throws EdmException {
-    return property.getFacets() == null || property.getFacets().isNullable();
+    return property != null && (property.getFacets() == null || property.getFacets().isNullable());
   }
 
   /**
@@ -474,10 +474,15 @@ public class ODataRequestHandler {
   }
 
   private static List<ContentType> getSupportedContentTypes(final EdmProperty property) throws EdmException {
-    return property.getType() == EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance()
-        ? Collections.singletonList(property.getMimeType() == null
-          ? ContentType.WILDCARD : ContentType.create(property.getMimeType()))
-          : Arrays.asList(ContentType.TEXT_PLAIN, ContentType.TEXT_PLAIN_CS_UTF_8);
+    if (property != null) {
+      return property.getType() == EdmSimpleTypeKind.Binary.getEdmSimpleTypeInstance()
+          ? Collections.singletonList(property.getMimeType() == null
+            ? ContentType.WILDCARD : ContentType.create(property.getMimeType()))
+            : Arrays.asList(ContentType.TEXT_PLAIN, ContentType.TEXT_PLAIN_CS_UTF_8);
+    } else {
+      return null;
+    }
+    
   }
 
   private List<String> getSupportedContentTypes(final UriInfoImpl uriInfo, final ODataHttpMethod method)

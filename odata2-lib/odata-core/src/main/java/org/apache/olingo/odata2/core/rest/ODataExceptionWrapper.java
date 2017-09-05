@@ -88,7 +88,7 @@ public class ODataExceptionWrapper {
       final ODataErrorCallback errorCallback) {
     try {
       contentType = getContentType(uriInfo, httpHeaders).toContentTypeString();
-      requestUri = uriInfo.getRequestUri();
+      requestUri = uriInfo != null ? uriInfo.getRequestUri() : null;
     } catch (IllegalArgumentException e) {
       contentType = null;
       requestUri = null;

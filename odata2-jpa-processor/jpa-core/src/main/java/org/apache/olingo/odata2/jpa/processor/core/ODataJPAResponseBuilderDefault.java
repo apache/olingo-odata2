@@ -502,7 +502,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
         String nextLink =
             serviceRoot.relativize(pathInfo.getRequestUri()).toString();
         nextLink = percentEncodeNextLink(nextLink);
-        nextLink += (nextLink.contains("?") ? "&" : "?")
+        nextLink += (nextLink != null ? nextLink.contains("?") ? "&" : "?" : "?")
             + "$skiptoken=" + odataJPAContext.getPaging().getNextPage();
         entityFeedPropertiesBuilder.nextLink(nextLink);
       }

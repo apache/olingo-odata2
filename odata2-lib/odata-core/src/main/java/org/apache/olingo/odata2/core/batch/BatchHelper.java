@@ -253,12 +253,14 @@ public class BatchHelper {
       if(entity == null) {
         return EMPTY_BYTES;
       } else if(entity instanceof InputStream) {
+		  ReadableByteChannel ic = null;
+		  WritableByteChannel oc = null;
         try {
           extractCharset(ContentType.parse(response.getHeader("Content-Type")));
           ByteArrayOutputStream output = new ByteArrayOutputStream();
           ByteBuffer inBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-          ReadableByteChannel ic = Channels.newChannel((InputStream) entity);
-          WritableByteChannel oc = Channels.newChannel(output);
+          ic = Channels.newChannel((InputStream) entity);
+          oc = Channels.newChannel(output);
           while (ic.read(inBuffer) > 0) {
             inBuffer.flip();
             oc.write(inBuffer);
@@ -267,6 +269,21 @@ public class BatchHelper {
           return output.toByteArray();
         } catch (IOException e) {
           throw new ODataRuntimeException("Error on reading request content");
+        } finally {
+          try {
+			  if (ic != null) {
+				ic.close();  
+			  }
+          } catch (IOException e) {
+            throw new ODataRuntimeException("Error closing the Readable Byte Channel", e);
+          }
+          try {
+			  if (oc != null) {
+				oc.close();  
+			  }
+          } catch (IOException e) {
+            throw new ODataRuntimeException("Error closing the Writable Byte Channel", e);
+          }
         }
       } else if (entity instanceof byte[]) {
         setDefaultValues(ISO_ENCODING);

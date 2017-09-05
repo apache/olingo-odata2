@@ -489,7 +489,8 @@ public class AtomEntryEntityProducer {
     } catch (final EdmSimpleTypeException e) {
       throw new EntityProviderProducerException(
           EdmSimpleTypeException.getMessageReference(e.getMessageReference()).
-          updateContent(e.getMessageReference().getContent(), updatedInfo.getName()), e);
+          updateContent(e.getMessageReference().getContent(), updatedInfo != null ? 
+              updatedInfo.getName() : null), e);
     }
   }
 

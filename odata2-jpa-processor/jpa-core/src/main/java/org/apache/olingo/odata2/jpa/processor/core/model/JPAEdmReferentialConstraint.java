@@ -118,9 +118,9 @@ public class JPAEdmReferentialConstraint extends JPAEdmBaseViewImpl implements J
         referentialConstraint.setDependent(dependentRoleView.getEdmReferentialConstraintRole());
       }
 
-      exists = principalRoleView.isExists() & dependentRoleView.isExists();
+      exists = principalRoleView.isExists() && dependentRoleView.isExists();
 
-      isConsistent = principalRoleView.isConsistent() & dependentRoleView.isConsistent();
+      isConsistent = principalRoleView.isConsistent() && dependentRoleView.isConsistent();
 
     }
 

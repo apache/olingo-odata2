@@ -996,7 +996,7 @@ public class XmlMetadataConsumer {
           } else {
             baseEntityType = fetchLastBaseType(baseTypeFQName,entityTypesMap);
           }
-          if (baseEntityType.getKey() == null) {
+          if (baseEntityType != null && baseEntityType.getKey() == null) {
             throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT
                 .addContent("Missing key for EntityType " + baseEntityType.getName()));
           }
