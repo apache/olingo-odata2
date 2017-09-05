@@ -239,7 +239,7 @@ public class JPAQueryBuilder {
   }
 
   private static final Pattern NORMALIZATION_NEEDED_PATTERN = Pattern.compile(".*[\\s(](\\S+\\.\\S+\\.\\S+).*");
-  private static final Pattern VALUE_NORM_PATTERN = Pattern.compile("(?:^|\\s)'([^'](\\S+\\.\\S+\\.\\S+)')");
+  private static final Pattern VALUE_NORM_PATTERN = Pattern.compile("(?:^|\\s|\\()'(([^']*)')");
   private static final Pattern JOIN_ALIAS_PATTERN = Pattern.compile(".*\\sJOIN\\s(\\S*\\s\\S*).*");
 
   private static String normalizeMembers(EntityManager em, String jpqlQuery) {  
