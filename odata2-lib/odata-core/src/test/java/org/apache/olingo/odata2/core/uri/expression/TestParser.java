@@ -389,11 +389,12 @@ public class TestParser extends TestBase {
     final EdmEntityType entityType = edmInfo.getTypeEtKeyTypeInteger();
     final EdmEntityType entityType2 = edmInfo.getTypeEtKeyTypeString();
     GetPTF_noTEST(entityType, "navProperty").aExKey(ExpressionParserException.TYPE_EXPECTED_AT);
-    GetPTF_noTEST(entityType, "navProperty/navProperty").aExKey(ExpressionParserException.INVALID_MULTIPLICITY);
+    GetPTF_noTEST(entityType, "navProperty/navProperty").aExKey(ExpressionParserException.TYPE_EXPECTED_AT);
     GetPTF_noTEST(entityType, "navProperty/KeyString eq 'a'")
         .root().left().left().aEdmType(entityType2)
         .root().left().right().aEdmType(EdmString.getInstance());
-    GetPTF_noTEST(entityType2, "navProperty/KeyInteger eq 1").aExKey(ExpressionParserException.INVALID_MULTIPLICITY);
+    GetPTF_noTEST(entityType2, "navProperty/KeyInteger eq 1")
+        .aExKey(ExpressionParserException.INVALID_TYPES_FOR_BINARY_OPERATOR);
     GetPTF_noTEST(entityType, "navProperty ne null").root().left().aEdmType(entityType2);
     GetPTF_noTEST(entityType, "navProperty ne null and not (navProperty eq null)")
         .root().aKind(ExpressionKind.BINARY)
