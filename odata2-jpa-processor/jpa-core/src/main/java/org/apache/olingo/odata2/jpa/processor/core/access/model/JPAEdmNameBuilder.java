@@ -213,7 +213,7 @@ public class JPAEdmNameBuilder {
    * ************************************************************************
    */
   public static void build(final JPAEdmEntityContainerView view) {
-    view.getEdmEntityContainer().setName(buildNamespace(view) + ENTITY_CONTAINER_SUFFIX);
+    view.getEdmEntityContainer().setName(buildEntityContainerName(view));
   }
 
   /*
@@ -557,6 +557,27 @@ public class JPAEdmNameBuilder {
     }
 
     return namespace;
+  }
+
+  private static String buildEntityContainerName(final JPAEdmBaseView view) {
+    JPAEdmMappingModelAccess mappingModelAccess = view.getJPAEdmMappingModelAccess();
+    String name = null;
+    if (mappingModelAccess != null && mappingModelAccess.isMappingModelExists()) {
+      name = mappingModelAccess.mapJPAPersistenceUnit(view.getpUnitName());
+    }
+    if (name == null) {
+      return normalizeName(view.getpUnitName()) + ENTITY_CONTAINER_SUFFIX;
+    }
+    return name;
+  }
+
+  /**
+   * Replace `.` with `_` as
+   * @param name
+   * @return
+   */
+  private static String normalizeName(String name) {
+    return name.replace('.', '_');
   }
 
 }
