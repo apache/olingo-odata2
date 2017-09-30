@@ -33,6 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -55,6 +58,8 @@ import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 
 public class JPAEntity {
 
+	
+	
   private Object jpaEntity = null;
   private JPAEntity parentJPAEntity = null;
   private EdmEntityType oDataEntityType = null;
@@ -505,6 +510,25 @@ public class JPAEntity {
           Enum e = entityPropertyValue != null ?
               Enum.valueOf((Class<Enum>) parameterType, (String) entityPropertyValue) : null;
           method.invoke(entity, e);
+        } else {
+          String setterName = method.getName();
+      	  String getterName = setterName.replace("set", "get");
+      	  try {
+            Method getMethod = entity.getClass().getDeclaredMethod(getterName);
+            if(getMethod.isAnnotationPresent(XmlJavaTypeAdapter.class)) {
+              XmlAdapter xmlAdapter = getMethod.getAnnotation(XmlJavaTypeAdapter.class)
+                  .value().newInstance();
+              method.invoke(entity, xmlAdapter.unmarshal(entityPropertyValue));
+            }
+          } catch (SecurityException e) {
+            throw new IllegalAccessException(e.toString());
+          } catch (NoSuchMethodException e) {
+            throw new IllegalAccessException(e.toString());
+          } catch (InstantiationException e) {
+            throw new IllegalAccessException(e.toString());
+          } catch (Exception e) {
+            throw new IllegalAccessException(e.toString());
+          }
         }
       } else if (parameterType.equals(Blob.class)) {
         if (onJPAWriteContent == null) {
