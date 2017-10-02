@@ -46,7 +46,7 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmFunctionImportView
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.jpa.processor.core.access.model.JPAEdmNameBuilder;
-import org.apache.olingo.odata2.jpa.processor.core.access.model.JPATypeConvertor;
+import org.apache.olingo.odata2.jpa.processor.core.access.model.JPATypeConverter;
 
 public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFunctionImportView {
 
@@ -193,7 +193,7 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
               functionImportParameter.setName(annotation.name());
             }
 
-            functionImportParameter.setType(JPATypeConvertor.convertToEdmSimpleType(parameterType, null));
+            functionImportParameter.setType(JPATypeConverter.convertToEdmSimpleType(parameterType, null));
 
             Facets facets = new Facets();
             if (annotation.facets().maxLength() > 0) {
@@ -268,7 +268,7 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
           functionReturnType.setTypeName(JPAEdmNameBuilder.build(schemaView, edmEntityType.getName()));
           break;
         case SIMPLE:
-          EdmSimpleTypeKind edmSimpleTypeKind = JPATypeConvertor.convertToEdmSimpleType(methodReturnType, null);
+          EdmSimpleTypeKind edmSimpleTypeKind = JPATypeConverter.convertToEdmSimpleType(methodReturnType, null);
           functionReturnType.setTypeName(edmSimpleTypeKind.getFullQualifiedName());
 
           break;

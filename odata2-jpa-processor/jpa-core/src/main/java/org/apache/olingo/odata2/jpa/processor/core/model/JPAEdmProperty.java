@@ -57,7 +57,7 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmReferentialConstraintView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmSchemaView;
 import org.apache.olingo.odata2.jpa.processor.core.access.model.JPAEdmNameBuilder;
-import org.apache.olingo.odata2.jpa.processor.core.access.model.JPATypeConvertor;
+import org.apache.olingo.odata2.jpa.processor.core.access.model.JPATypeConverter;
 
 public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
     JPAEdmPropertyView, JPAEdmComplexPropertyView {
@@ -332,7 +332,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
 
       boolean isForeignKey = joinColumn != null;
       JPAEdmNameBuilder.build(JPAEdmProperty.this, isBuildModeComplexType, skipDefaultNaming, isForeignKey);
-      EdmSimpleTypeKind simpleTypeKind = JPATypeConvertor
+      EdmSimpleTypeKind simpleTypeKind = JPATypeConverter
           .convertToEdmSimpleType(jpaAttribute
               .getJavaType(), jpaAttribute);
       simpleProperty.setType(simpleTypeKind);

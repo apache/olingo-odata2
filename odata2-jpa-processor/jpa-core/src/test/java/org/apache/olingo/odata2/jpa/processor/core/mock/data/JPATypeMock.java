@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 /* ========================================================================= */
 public class JPATypeMock {
 
@@ -46,7 +48,8 @@ public class JPATypeMock {
   public static final String PROPERTY_NAME_MKEY = "key";
   public static final String PROPERTY_NAME_MCOMPLEXTYPE = "complexType";
   public static final String PROPERTY_NAME_ENUM = "mSomeEnum";
-  
+  public static final String PROPERTY_NAME_XMLADAPTER = "propertyWithXmlAdapter";
+
   public static final String NAVIGATION_PROPERTY_X = "mRelatedEntity";
   public static final String NAVIGATION_PROPERTY_XS = "mRelatedEntities";
 
@@ -62,6 +65,8 @@ public class JPATypeMock {
   private Character mChar;
   private Character[] mCharArray;
   private JPATypeMockEnum mSomeEnum;
+  
+  private EntityWithXmlAdapterOnProperty propertyWithXmlAdapter;
 
   public Clob getMClob() {
     return mClob;
@@ -176,6 +181,15 @@ public class JPATypeMock {
 
   public void setMSomeEnum(JPATypeMockEnum mSomeEnum) {
     this.mSomeEnum = mSomeEnum;
+  }
+  
+  @XmlJavaTypeAdapter(XmlAdapter.class)
+  public EntityWithXmlAdapterOnProperty getPropertyWithXmlAdapter() {
+    return propertyWithXmlAdapter;
+  }
+
+  public void setPropertyWithXmlAdapter(EntityWithXmlAdapterOnProperty propertyWithXmlAdapter) {
+    this.propertyWithXmlAdapter = propertyWithXmlAdapter;
   }
 
   /* ========================================================================= */

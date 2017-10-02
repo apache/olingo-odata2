@@ -41,7 +41,16 @@ public interface JPQLSelectContextView extends JPQLContextView {
   /**
    * The method returns an JPQL ORDERBY clause. The ORDERBY clause
    * is built from $orderby OData system query option. The hash map contains
-   * @return an order by expression (JPA Property Name,Sort Order)
+   * <ol>
+   * <li>Key - JPA Entity Property name to be ordered</li>
+   * <li>Value - Sort Order in JPQL (desc,asc)</li>
+   * </ol>
+   * in the order based on the expression specified
+   * (accessible with <code>Map.entrySet(..)</code>).
+   * 
+   * https://issues.apache.org/jira/browse/OLINGO-606
+   * 
+   * @return an ordered map of (JPA Property Name,Sort Order)
    */
   public String getOrderByCollection();
 

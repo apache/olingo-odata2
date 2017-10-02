@@ -47,6 +47,7 @@ public class ODataEntryMockUtil {
   public static final String VALUE_CHAR = "I";
   public static final String VALUE_CHARARRAY = "LMN";
   public static final String VALUE_MSTRING = "Mock";
+  public static final String VALUE_XMLADAPTER = "DOES-NOT-MATTER";
   public static final long VALUE_MLONG = 1234567890L;
   public static final double VALUE_MDOUBLE = 20.12;
   public static final byte VALUE_MBYTE = 0XA;
@@ -143,6 +144,7 @@ public class ODataEntryMockUtil {
       propertyMap.put(JPATypeMock.PROPERTY_NAME_MCHAR, VALUE_CHAR);
       propertyMap.put(JPATypeMock.PROPERTY_NAME_MCHARARRAY, VALUE_CHARARRAY);
       propertyMap.put(JPATypeMock.PROPERTY_NAME_MSTRING, VALUE_MSTRING);
+      propertyMap.put(JPATypeMock.PROPERTY_NAME_XMLADAPTER, VALUE_XMLADAPTER);
     } else if (entityName.equals(JPARelatedTypeMock.ENTITY_NAME)) {
       propertyMap.put(JPARelatedTypeMock.PROPERTY_NAME_MLONG, VALUE_MLONG);
       propertyMap.put(JPARelatedTypeMock.PROPERTY_NAME_MDOUBLE, VALUE_MDOUBLE);

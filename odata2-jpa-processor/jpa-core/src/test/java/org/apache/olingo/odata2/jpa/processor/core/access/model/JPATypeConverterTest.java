@@ -36,16 +36,18 @@ import java.util.UUID;
 import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.metamodel.ManagedType;
 
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.jpa.processor.core.mock.data.EntityWithXmlAdapterOnProperty;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAAttributeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAJavaMemberMock;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
-public class JPATypeConvertorTest {
+public class JPATypeConverterTest {
 
   private static String testCase = "datetime";
 
@@ -82,19 +84,19 @@ public class JPATypeConvertorTest {
     Character charObj = new Character('c');
 
     try {
-      edmSimpleKindTypeString = JPATypeConvertor.convertToEdmSimpleType(str.getClass(), null);
-      edmSimpleKindTypeByteArr = JPATypeConvertor.convertToEdmSimpleType(byteArr.getClass(), null);
-      edmSimpleKindTypeLong = JPATypeConvertor.convertToEdmSimpleType(longObj.getClass(), null);
-      edmSimpleKindTypeShort = JPATypeConvertor.convertToEdmSimpleType(shortObj.getClass(), null);
-      edmSimpleKindTypeInteger = JPATypeConvertor.convertToEdmSimpleType(integerObj.getClass(), null);
-      edmSimpleKindTypeDouble = JPATypeConvertor.convertToEdmSimpleType(doubleObj.getClass(), null);
-      edmSimpleKindTypeFloat = JPATypeConvertor.convertToEdmSimpleType(floatObj.getClass(), null);
-      edmSimpleKindTypeBigDecimal = JPATypeConvertor.convertToEdmSimpleType(bigDecimalObj.getClass(), null);
-      edmSimpleKindTypeByte = JPATypeConvertor.convertToEdmSimpleType(byteObj.getClass(), null);
-      edmSimpleKindTypeBoolean = JPATypeConvertor.convertToEdmSimpleType(booleanObj.getClass(), null);
-      edmSimpleKindTypeStringFromEnum = JPATypeConvertor.convertToEdmSimpleType(someEnum.getClass(), null);
-      edmSimpleKindTypeCharacter = JPATypeConvertor.convertToEdmSimpleType(charObj.getClass(), null);
-      edmSimpleKindTypeUUID = JPATypeConvertor.convertToEdmSimpleType(uUID.getClass(), null);
+      edmSimpleKindTypeString = JPATypeConverter.convertToEdmSimpleType(str.getClass(), null);
+      edmSimpleKindTypeByteArr = JPATypeConverter.convertToEdmSimpleType(byteArr.getClass(), null);
+      edmSimpleKindTypeLong = JPATypeConverter.convertToEdmSimpleType(longObj.getClass(), null);
+      edmSimpleKindTypeShort = JPATypeConverter.convertToEdmSimpleType(shortObj.getClass(), null);
+      edmSimpleKindTypeInteger = JPATypeConverter.convertToEdmSimpleType(integerObj.getClass(), null);
+      edmSimpleKindTypeDouble = JPATypeConverter.convertToEdmSimpleType(doubleObj.getClass(), null);
+      edmSimpleKindTypeFloat = JPATypeConverter.convertToEdmSimpleType(floatObj.getClass(), null);
+      edmSimpleKindTypeBigDecimal = JPATypeConverter.convertToEdmSimpleType(bigDecimalObj.getClass(), null);
+      edmSimpleKindTypeByte = JPATypeConverter.convertToEdmSimpleType(byteObj.getClass(), null);
+      edmSimpleKindTypeBoolean = JPATypeConverter.convertToEdmSimpleType(booleanObj.getClass(), null);
+      edmSimpleKindTypeStringFromEnum = JPATypeConverter.convertToEdmSimpleType(someEnum.getClass(), null);
+      edmSimpleKindTypeCharacter = JPATypeConverter.convertToEdmSimpleType(charObj.getClass(), null);
+      edmSimpleKindTypeUUID = JPATypeConverter.convertToEdmSimpleType(uUID.getClass(), null);
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -117,9 +119,9 @@ public class JPATypeConvertorTest {
   @Test
   public void testConvertTypeCharacter() {
     try {
-      assertEquals(EdmSimpleTypeKind.String, JPATypeConvertor.convertToEdmSimpleType(Character[].class, null));
-      assertEquals(EdmSimpleTypeKind.String, JPATypeConvertor.convertToEdmSimpleType(char[].class, null));
-      assertEquals(EdmSimpleTypeKind.String, JPATypeConvertor.convertToEdmSimpleType(char.class, null));
+      assertEquals(EdmSimpleTypeKind.String, JPATypeConverter.convertToEdmSimpleType(Character[].class, null));
+      assertEquals(EdmSimpleTypeKind.String, JPATypeConverter.convertToEdmSimpleType(char[].class, null));
+      assertEquals(EdmSimpleTypeKind.String, JPATypeConverter.convertToEdmSimpleType(char.class, null));
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -128,13 +130,13 @@ public class JPATypeConvertorTest {
   @Test
   public void testConvertTypeNumbers() {
     try {
-      assertEquals(EdmSimpleTypeKind.Int64, JPATypeConvertor.convertToEdmSimpleType(long.class, null));
-      assertEquals(EdmSimpleTypeKind.Int16, JPATypeConvertor.convertToEdmSimpleType(short.class, null));
-      assertEquals(EdmSimpleTypeKind.Int32, JPATypeConvertor.convertToEdmSimpleType(int.class, null));
-      assertEquals(EdmSimpleTypeKind.Double, JPATypeConvertor.convertToEdmSimpleType(double.class, null));
-      assertEquals(EdmSimpleTypeKind.Single, JPATypeConvertor.convertToEdmSimpleType(float.class, null));
-      assertEquals(EdmSimpleTypeKind.Byte, JPATypeConvertor.convertToEdmSimpleType(byte.class, null));
-      assertEquals(EdmSimpleTypeKind.Boolean, JPATypeConvertor.convertToEdmSimpleType(boolean.class, null));
+      assertEquals(EdmSimpleTypeKind.Int64, JPATypeConverter.convertToEdmSimpleType(long.class, null));
+      assertEquals(EdmSimpleTypeKind.Int16, JPATypeConverter.convertToEdmSimpleType(short.class, null));
+      assertEquals(EdmSimpleTypeKind.Int32, JPATypeConverter.convertToEdmSimpleType(int.class, null));
+      assertEquals(EdmSimpleTypeKind.Double, JPATypeConverter.convertToEdmSimpleType(double.class, null));
+      assertEquals(EdmSimpleTypeKind.Single, JPATypeConverter.convertToEdmSimpleType(float.class, null));
+      assertEquals(EdmSimpleTypeKind.Byte, JPATypeConverter.convertToEdmSimpleType(byte.class, null));
+      assertEquals(EdmSimpleTypeKind.Boolean, JPATypeConverter.convertToEdmSimpleType(boolean.class, null));
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -143,7 +145,7 @@ public class JPATypeConvertorTest {
   @Test
   public void testConvertTypeByteArray() {
     try {
-      assertEquals(EdmSimpleTypeKind.Binary, JPATypeConvertor.convertToEdmSimpleType(Byte[].class, null));
+      assertEquals(EdmSimpleTypeKind.Binary, JPATypeConverter.convertToEdmSimpleType(Byte[].class, null));
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -153,7 +155,7 @@ public class JPATypeConvertorTest {
   public void testConvertTypeBlob() {
     testCase = "lob";
     try {
-      assertEquals(EdmSimpleTypeKind.Binary, JPATypeConvertor.convertToEdmSimpleType(Blob.class,
+      assertEquals(EdmSimpleTypeKind.Binary, JPATypeConverter.convertToEdmSimpleType(Blob.class,
           new JPASimpleAttribute()));
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -164,7 +166,7 @@ public class JPATypeConvertorTest {
   public void testConvertTypeClob() {
     testCase = "lob";
     try {
-      assertEquals(EdmSimpleTypeKind.String, JPATypeConvertor.convertToEdmSimpleType(Clob.class,
+      assertEquals(EdmSimpleTypeKind.String, JPATypeConverter.convertToEdmSimpleType(Clob.class,
           new JPASimpleAttribute()));
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -174,7 +176,7 @@ public class JPATypeConvertorTest {
   @Test
   public void testConvertTypeBLobNegative() {
     try {
-      JPATypeConvertor.convertToEdmSimpleType(Blob.class, null);
+      JPATypeConverter.convertToEdmSimpleType(Blob.class, null);
     } catch (ODataJPAModelException e) {
       assertTrue(true);
       return;
@@ -185,7 +187,7 @@ public class JPATypeConvertorTest {
   @Test
   public void testConvertTypeClobNegative() {
     try {
-      JPATypeConvertor.convertToEdmSimpleType(Clob.class, null);
+      JPATypeConverter.convertToEdmSimpleType(Clob.class, null);
     } catch (ODataJPAModelException e) {
       assertTrue(true);
       return;
@@ -196,11 +198,11 @@ public class JPATypeConvertorTest {
   @Test
   public void testConvertTypeCalendar() {
     try {
-      assertEquals(EdmSimpleTypeKind.DateTime, JPATypeConvertor.convertToEdmSimpleType(Calendar.class, null));
-      assertEquals(EdmSimpleTypeKind.Time, JPATypeConvertor.convertToEdmSimpleType(Time.class, null));
-      assertEquals(EdmSimpleTypeKind.DateTime, JPATypeConvertor.convertToEdmSimpleType(Date.class, null));
-      assertEquals(EdmSimpleTypeKind.DateTime, JPATypeConvertor.convertToEdmSimpleType(Timestamp.class, null));
-      assertEquals(EdmSimpleTypeKind.DateTime, JPATypeConvertor.convertToEdmSimpleType(java.sql.Date.class, null));
+      assertEquals(EdmSimpleTypeKind.DateTime, JPATypeConverter.convertToEdmSimpleType(Calendar.class, null));
+      assertEquals(EdmSimpleTypeKind.Time, JPATypeConverter.convertToEdmSimpleType(Time.class, null));
+      assertEquals(EdmSimpleTypeKind.DateTime, JPATypeConverter.convertToEdmSimpleType(Date.class, null));
+      assertEquals(EdmSimpleTypeKind.DateTime, JPATypeConverter.convertToEdmSimpleType(Timestamp.class, null));
+      assertEquals(EdmSimpleTypeKind.DateTime, JPATypeConverter.convertToEdmSimpleType(java.sql.Date.class, null));
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
       ;
@@ -211,7 +213,7 @@ public class JPATypeConvertorTest {
   public void testConvertTypeTemporal() {
     testCase = "datetime";
     try {
-      EdmSimpleTypeKind edmDateType = JPATypeConvertor.convertToEdmSimpleType(Calendar.class, new JPASimpleAttribute());
+      EdmSimpleTypeKind edmDateType = JPATypeConverter.convertToEdmSimpleType(Calendar.class, new JPASimpleAttribute());
       assertEquals(EdmSimpleTypeKind.DateTime, edmDateType);
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -222,7 +224,7 @@ public class JPATypeConvertorTest {
   public void testConvertTypeTemporalTime() {
     testCase = "time";
     try {
-      EdmSimpleTypeKind edmTimeType = JPATypeConvertor.convertToEdmSimpleType(Calendar.class, new JPASimpleAttribute());
+      EdmSimpleTypeKind edmTimeType = JPATypeConverter.convertToEdmSimpleType(Calendar.class, new JPASimpleAttribute());
       assertEquals(EdmSimpleTypeKind.Time, edmTimeType);
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -233,7 +235,7 @@ public class JPATypeConvertorTest {
   public void testConvertTypeTemporalNull() {
     testCase = "temporalnull";
     try {
-      EdmSimpleTypeKind edmDateType = JPATypeConvertor.convertToEdmSimpleType(Calendar.class, new JPASimpleAttribute());
+      EdmSimpleTypeKind edmDateType = JPATypeConverter.convertToEdmSimpleType(Calendar.class, new JPASimpleAttribute());
       assertEquals(EdmSimpleTypeKind.DateTime, edmDateType);
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
@@ -244,11 +246,26 @@ public class JPATypeConvertorTest {
   public void testConvertTypeTemporalNull2() {
     testCase = "temporalnull2";
     try {
-      EdmSimpleTypeKind edmDateType = JPATypeConvertor.convertToEdmSimpleType(Calendar.class, new JPASimpleAttribute());
+      EdmSimpleTypeKind edmDateType =
+    		  JPATypeConverter.convertToEdmSimpleType(Calendar.class,new JPASimpleAttribute());
       assertEquals(EdmSimpleTypeKind.DateTime, edmDateType);
     } catch (ODataJPAModelException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
+  }
+  
+  @Test
+  public void testConvertPropertyWithXmlAdapter() {
+	  try {
+		 EdmSimpleTypeKind edmDateType =
+				 JPATypeConverter
+				 .convertToEdmSimpleType(EntityWithXmlAdapterOnProperty.class,
+						 new JPAAttributeWithXmlAdapterType());
+		 assertEquals(EdmSimpleTypeKind.String, edmDateType);
+	} catch (ODataJPAModelException e) {
+		fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() +
+				ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+	}
   }
 
   private static class JPASimpleAttribute extends JPAAttributeMock<Object, String> {
@@ -297,5 +314,19 @@ public class JPATypeConvertorTest {
       return null;
 
     }
+  }
+  
+  private static class JPAAttributeWithXmlAdapterType extends JPAAttributeMock<EntityWithXmlAdapterOnProperty, String> {
+	  @Override
+	  public String getName() {
+		  return "self";
+	  }
+	  
+	  public ManagedType<EntityWithXmlAdapterOnProperty> getDeclaringType() {
+		ManagedType<EntityWithXmlAdapterOnProperty> mock = EasyMock.createMock(ManagedType.class);
+		EasyMock.expect(mock.getJavaType()).andStubReturn(EntityWithXmlAdapterOnProperty.class);
+		EasyMock.replay(mock);
+		return mock;
+	  }
   }
 }

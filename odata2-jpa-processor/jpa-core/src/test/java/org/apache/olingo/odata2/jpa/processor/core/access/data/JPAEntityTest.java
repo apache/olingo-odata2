@@ -37,6 +37,7 @@ import org.apache.olingo.odata2.jpa.processor.core.mock.ODataContextMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.ODataJPAContextMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.PathInfoMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.EdmMockUtilV2;
+import org.apache.olingo.odata2.jpa.processor.core.mock.data.EntityWithXmlAdapterOnProperty;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.JPATypeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.JPATypeMock.JPARelatedTypeMock;
 import org.apache.olingo.odata2.jpa.processor.core.mock.data.JPATypeMock.JPATypeEmbeddableMock;
@@ -108,6 +109,28 @@ public class JPAEntityTest {
     assertEquals(ODataEntryMockUtil.VALUE_ENUM, jpaTypeMock.getMSomeEnum());
     assertEquals(ODataEntryMockUtil.VALUE_CHARARRAY, JPAEntityParser.toString(jpaTypeMock.getMCharArray()));
     assertTrue(jpaTypeMock.getMDateTime().equals(ODataEntryMockUtil.VALUE_DATE_TIME));
+  }
+
+  @Test
+  public void testCreateODataEntryWithXmlAdapter() {
+    try {
+      EdmEntitySet edmEntitySet = EdmMockUtilV2.mockEdmEntitySet(JPATypeMock.ENTITY_NAME, false);
+      EdmEntityType edmEntityType = edmEntitySet.getEntityType();
+
+      jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, mockODataJPAContext());
+      jpaEntity.create(ODataEntryMockUtil.mockODataEntry(JPATypeMock.ENTITY_NAME));
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
+          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (EdmException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
+          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
+          + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+    JPATypeMock jpaTypeMock = (JPATypeMock) jpaEntity.getJPAEntity();
+    assertEquals(jpaTypeMock.getPropertyWithXmlAdapter().getClass(), EntityWithXmlAdapterOnProperty.class);
   }
 
   @Test

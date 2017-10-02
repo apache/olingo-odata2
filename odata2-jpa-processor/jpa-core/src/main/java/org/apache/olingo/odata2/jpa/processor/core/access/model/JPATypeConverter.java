@@ -19,6 +19,8 @@
 package org.apache.olingo.odata2.jpa.processor.core.access.model;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -31,6 +33,8 @@ import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.metamodel.Attribute;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
@@ -41,7 +45,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelExcepti
  * 
  * 
  */
-public class JPATypeConvertor {
+public class JPATypeConverter {
 
   /**
    * This utility method converts a given jpa Type to equivalent
@@ -107,10 +111,42 @@ public class JPATypeConvertor {
       return EdmSimpleTypeKind.String;
     } else if (jpaType.isEnum()) {
       return EdmSimpleTypeKind.String;
+    } else {
+        // https://issues.apache.org/jira/browse/OLINGO-605
+    	// if we cannot find a generic JPA type we try to use the XmlJavaTypeAdapter
+    	// to find a property that we can serialize
+    	if(currentAttribute == null) {
+    		throw ODataJPAModelException.throwException(ODataJPAModelException.TYPE_NOT_SUPPORTED
+			        .addContent(jpaType.toString()), null);
+    	}
+	    String propertyName = currentAttribute.getName();
+	    if(propertyName == null) {
+	    	throw ODataJPAModelException.throwException(ODataJPAModelException.TYPE_NOT_SUPPORTED
+			        .addContent(jpaType.toString()), null);
+	    }
+	    String getterName = "get"+propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+	    try {
+        Method method = currentAttribute.getDeclaringType().getJavaType().getMethod(getterName);
+        XmlJavaTypeAdapter xmlAdapterAnnotation = method.getAnnotation(XmlJavaTypeAdapter.class);
+        if(xmlAdapterAnnotation == null) {
+          throw ODataJPAModelException.throwException(ODataJPAModelException.TYPE_NOT_SUPPORTED
+                  .addContent(jpaType.toString()), null);
+			}
+			@SuppressWarnings("unchecked")
+			Class<XmlAdapter<?,?>> xmlAdapterClass = (Class<XmlAdapter<?, ?>>) xmlAdapterAnnotation.value();
+			
+			ParameterizedType genericSuperClass =
+          (ParameterizedType) xmlAdapterClass.getGenericSuperclass();
+			Class<?> converterTargetType = (Class<?>) genericSuperClass.getActualTypeArguments()[0];
+			return convertToEdmSimpleType(converterTargetType, currentAttribute);
+		} catch (NoSuchMethodException e) {
+			throw ODataJPAModelException.throwException(
+			    ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
+		} catch (SecurityException e) {
+			throw ODataJPAModelException.throwException(
+			    ODataJPAModelException.GENERAL.addContent(e.getMessage()), e);
+		}
     }
-
-    throw ODataJPAModelException.throwException(ODataJPAModelException.TYPE_NOT_SUPPORTED
-        .addContent(jpaType.toString()), null);
   }
 
   private static boolean isBlob(final Attribute<?, ?> currentAttribute) {
