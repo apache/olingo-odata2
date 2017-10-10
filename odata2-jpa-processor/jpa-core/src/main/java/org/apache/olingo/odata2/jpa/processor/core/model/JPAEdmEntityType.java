@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.model;
 
+import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -91,7 +92,7 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntity
     @Override
     public void build() throws ODataJPAModelException, ODataJPARuntimeException {
 
-      Set<javax.persistence.metamodel.EntityType<?>> jpaEntityTypes = metaModel.getEntities();
+      Collection<javax.persistence.metamodel.EntityType<?>> jpaEntityTypes = metaModel.getEntities();
 
       if (jpaEntityTypes == null || jpaEntityTypes.isEmpty() == true) {
         return;
@@ -100,6 +101,7 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntity
 
       }
 
+      jpaEntityTypes = sortJPAEntityTypes(jpaEntityTypes);
       for (javax.persistence.metamodel.EntityType<?> jpaEntityType : jpaEntityTypes) {
         currentEdmEntityType = new EntityType();
         currentJPAEntityType = jpaEntityType;
@@ -140,6 +142,31 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntity
         consistentEntityTypeMap.put(currentJPAEntityType.getName(), currentEdmEntityType);
       }
 
+    }
+
+    private List<javax.persistence.metamodel.EntityType<?>> sortJPAEntityTypes(
+      final Collection<javax.persistence.metamodel.EntityType<?>> entities) {
+
+      List<javax.persistence.metamodel.EntityType<?>> entityTypeList =
+        new ArrayList<javax.persistence.metamodel.EntityType<?>>(entities.size());
+
+        Iterator<javax.persistence.metamodel.EntityType<?>> itr;
+        javax.persistence.metamodel.EntityType<?> smallestJpaEntity;
+        javax.persistence.metamodel.EntityType<?> currentJpaEntity;
+        while (!entities.isEmpty()) {
+          itr = entities.iterator();
+          smallestJpaEntity = itr.next();
+          while (itr.hasNext()) {
+            currentJpaEntity = itr.next();
+            if (smallestJpaEntity.getName().compareTo(currentJpaEntity.getName()) > 0) {
+              smallestJpaEntity = currentJpaEntity;
+            }
+          }
+          entityTypeList.add(smallestJpaEntity);
+          entities.remove(smallestJpaEntity);
+        }
+
+      return entityTypeList;
     }
 
     private boolean isExcluded(final JPAEdmEntityType jpaEdmEntityType) {
