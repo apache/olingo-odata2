@@ -62,7 +62,9 @@ public class JPQLJoinSelectSingleContext extends JPQLSelectSingleContext impleme
         setKeyPredicates(entityView.getKeyPredicates());
 
         setSelectExpression(generateSelectExpression());
-
+        
+        ODataExpressionParser.reInitializePositionalParameters();
+        
       } catch (EdmException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL, e);
       }

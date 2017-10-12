@@ -21,12 +21,17 @@ package org.apache.olingo.odata2.jpa.processor.core.access.data;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -59,6 +64,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.core.ODataEntityParser;
+import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAPage.JPAPageBuilder;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAQueryBuilder.JPAQueryInfo;
 
@@ -146,6 +152,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       JPAQueryBuilder queryBuilder = new JPAQueryBuilder(oDataJPAContext);
       JPAQueryInfo queryInfo = queryBuilder.build(uriParserResultView);
       Query query = queryInfo.getQuery();
+      setPositionalParametersToQuery(query);
       ODataJPATombstoneEntityListener listener =
           queryBuilder.getODataJPATombstoneEntityListener((UriInfo) uriParserResultView);
       Map<String, String> customQueryOptions = uriParserResultView.getCustomQueryOptions();
@@ -180,6 +187,33 @@ public class JPAProcessorImpl implements JPAProcessor {
     }
   }
 
+  /**
+   * @param query
+   */
+  private void setPositionalParametersToQuery(Query query) {
+    Map<String, Map<Integer, Object>> parameterizedMap = ODataParameterizedWhereExpressionUtil.
+        getParameterizedQueryMap();
+    if (parameterizedMap != null && parameterizedMap.size() > 0) {
+      for (Entry<String, Map<Integer, Object>> parameterEntry : parameterizedMap.entrySet()) {
+        if (ODataParameterizedWhereExpressionUtil.getJPQLStatement().contains(parameterEntry.getKey())) {
+          Map<Integer, Object> positionalParameters = parameterEntry.getValue();
+          for (Entry<Integer, Object> param : positionalParameters.entrySet()) {
+            if (param.getValue() instanceof Calendar || param.getValue() instanceof Timestamp) {
+              query.setParameter(param.getKey(), (Calendar) param.getValue(), TemporalType.TIMESTAMP);
+            } else if (param.getValue() instanceof Time) {
+              query.setParameter(param.getKey(), (Time) param.getValue(), TemporalType.TIME);
+            } else {
+              query.setParameter(param.getKey(), param.getValue());
+            }
+          }
+          parameterizedMap.remove(parameterEntry.getKey());
+          ODataParameterizedWhereExpressionUtil.setJPQLStatement(null);
+          break;
+        }
+      }
+    }
+  }
+  
   /* Process Get Entity Request (Read) */
   @Override
   public <T> Object process(GetEntityUriInfo uriParserResultView)
@@ -194,6 +228,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
     JPAQueryBuilder queryBuilder = new JPAQueryBuilder(oDataJPAContext);
     Query query = queryBuilder.build(resultsView);
+    setPositionalParametersToQuery(query);
     List<?> resultList = query.getResultList();
     if (resultList != null && resultList.size() == 1) {
       return Long.valueOf(resultList.get(0).toString());
@@ -208,6 +243,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
     JPAQueryBuilder queryBuilder = new JPAQueryBuilder(oDataJPAContext);
     Query query = queryBuilder.build(resultsView);
+    setPositionalParametersToQuery(query);
     List<?> resultList = query.getResultList();
     if (resultList != null && resultList.size() == 1) {
       return Long.valueOf(resultList.get(0).toString());

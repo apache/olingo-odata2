@@ -18,10 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmLiteral;
@@ -52,6 +57,7 @@ import org.apache.olingo.odata2.api.uri.expression.SortOrder;
 import org.apache.olingo.odata2.api.uri.expression.UnaryExpression;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 
 /**
  * This class contains utility methods for parsing the filter expressions built by core library from user OData Query.
@@ -63,7 +69,10 @@ public class ODataExpressionParser {
 
   public static final String EMPTY = ""; //$NON-NLS-1$
   public static final ThreadLocal<Integer> methodFlag = new ThreadLocal<Integer>();
-
+  public static final Character[] EMPTY_CHARACTER_ARRAY = new Character[0];
+  private static int index = 1;
+  private static Map<Integer, Object> positionalParameters = new HashMap<Integer, Object>();  
+  
   /**
    * This method returns the parsed where condition corresponding to the filter input in the user query.
    *
@@ -91,6 +100,7 @@ public class ODataExpressionParser {
           return "-" + operand; //$NON-NLS-1$
         }
       default:
+        reInitializePositionalParameters();
         throw new ODataNotImplementedException();
       }
 
@@ -109,6 +119,7 @@ public class ODataExpressionParser {
         }
       }
       final String left = parseToJPAWhereExpression(binaryExpression.getLeftOperand(), tableAlias);
+      index++;
       final String right = parseToJPAWhereExpression(binaryExpression.getRightOperand(), tableAlias);
 
       // Special handling for STARTSWITH and ENDSWITH method expression
@@ -116,6 +127,7 @@ public class ODataExpressionParser {
         if (!binaryExpression.getOperator().equals(BinaryOperator.EQ) && 
             !(binaryExpression.getRightOperand() instanceof LiteralExpression) && 
             ("true".equals(right) || "false".equals(right))) {
+          reInitializePositionalParameters();
           throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.OPERATOR_EQ_NE_MISSING
               .addContent(binaryExpression.getOperator().toString()), null);
         } else if (binaryExpression.getOperator().equals(BinaryOperator.EQ)) {
@@ -167,8 +179,10 @@ public class ODataExpressionParser {
             + JPQLStatement.Operator.GE + JPQLStatement.DELIMITER.SPACE + right
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case PROPERTY_ACCESS:
+        reInitializePositionalParameters();
         throw new ODataNotImplementedException();
       default:
+        reInitializePositionalParameters();
         throw new ODataNotImplementedException();
 
       }
@@ -200,14 +214,16 @@ public class ODataExpressionParser {
       final LiteralExpression literal = (LiteralExpression) whereExpression;
       final EdmSimpleType literalType = (EdmSimpleType) literal.getEdmType();
       EdmLiteral uriLiteral = EdmSimpleTypeKind.parseUriLiteral(literal.getUriLiteral());
-      return evaluateComparingExpression(uriLiteral.getLiteral(), literalType);
+      return evaluateComparingExpression(uriLiteral.getLiteral(), literalType, null);
 
     case METHOD:
       final MethodExpression methodExpression = (MethodExpression) whereExpression;
       String first = parseToJPAWhereExpression(methodExpression.getParameters().get(0), tableAlias);
+      index++;
       String second =
           methodExpression.getParameterCount() > 1 ? parseToJPAWhereExpression(methodExpression.getParameters().get(1),
               tableAlias) : null;
+      index++;
       String third =
           methodExpression.getParameterCount() > 2 ? parseToJPAWhereExpression(methodExpression.getParameters().get(2),
               tableAlias) : null;
@@ -219,12 +235,10 @@ public class ODataExpressionParser {
       case SUBSTRINGOF:
         if (methodFlag.get() != null && methodFlag.get() == 1) {
           methodFlag.set(null);
-          updateValueIfWildcards(first);
           return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%')) ESCAPE '\\') "
               + "THEN TRUE ELSE FALSE END)",
               second, first);
         } else {
-          first = updateValueIfWildcards(first);
           return String.format("(CASE WHEN (%s LIKE CONCAT('%%',CONCAT(%s,'%%')) ESCAPE '\\') "
               + "THEN TRUE ELSE FALSE END) = true",
               second, first);
@@ -232,12 +246,11 @@ public class ODataExpressionParser {
       case TOLOWER:
         return String.format("LOWER(%s)", first);
       case STARTSWITH:
-        second = updateValueIfWildcards(second);
         return String.format("%s LIKE CONCAT(%s,'%%') ESCAPE '\\'", first, second);
       case ENDSWITH:
-        second = updateValueIfWildcards(second);
         return String.format("%s LIKE CONCAT('%%',%s) ESCAPE '\\'", first, second);
       default:
+        reInitializePositionalParameters();
         throw new ODataNotImplementedException();
       }
 
@@ -245,7 +258,33 @@ public class ODataExpressionParser {
       throw new ODataNotImplementedException();
     }
   }
+  
+  public static Map<Integer, Object> getPositionalParameters() {
+    return positionalParameters;
+  }
+  
+  public static void reInitializePositionalParameters() {
+    index = 1;
+    positionalParameters = new HashMap<Integer, Object>();
+  }
 
+  /**
+   * This method converts String to Byte array
+   * @param uriLiteral
+   */  
+  public static Byte[] toByteArray(String uriLiteral) {
+    int length =  uriLiteral.length();
+    if (length == 0) {
+        return new Byte[0];
+    }
+    byte[] byteValues = uriLiteral.getBytes();
+    final Byte[] result = new Byte[length];
+    for (int i = 0; i < length; i++) {
+        result[i] = new Byte(byteValues[i]);
+    }
+    return result;
+ }
+  
   /**
    * This method escapes the wildcards
    * @param first
@@ -341,6 +380,7 @@ public class ODataExpressionParser {
     String literal = null;
     String propertyName = null;
     EdmSimpleType edmSimpleType = null;
+    Class<?> edmMappedType = null;
     StringBuilder keyFilters = new StringBuilder();
     int i = 0;
     for (KeyPredicate keyPredicate : keyPredicates) {
@@ -352,11 +392,12 @@ public class ODataExpressionParser {
       try {
         propertyName = keyPredicate.getProperty().getMapping().getInternalName();
         edmSimpleType = (EdmSimpleType) keyPredicate.getProperty().getType();
+        edmMappedType = ((JPAEdmMappingImpl)keyPredicate.getProperty().getMapping()).getJPAType();
       } catch (EdmException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
 
-      literal = evaluateComparingExpression(literal, edmSimpleType);
+      literal = evaluateComparingExpression(literal, edmSimpleType, edmMappedType);
 
       if (edmSimpleType == EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance()
           || edmSimpleType == EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance()) {
@@ -367,12 +408,32 @@ public class ODataExpressionParser {
           + JPQLStatement.Operator.EQ + JPQLStatement.DELIMITER.SPACE + literal);
     }
     if (keyFilters.length() > 0) {
+      Map<String, Map<Integer, Object>> parameterizedExpressionMap = 
+          new HashMap<String, Map<Integer,Object>>();
+      parameterizedExpressionMap.put(keyFilters.toString(), ODataExpressionParser.getPositionalParameters());
+      ODataParameterizedWhereExpressionUtil.setParameterizedQueryMap(parameterizedExpressionMap);
       return keyFilters.toString();
     } else {
       return null;
     }
   }
-
+  
+  /**
+   * Convert char array to Character Array
+   * */
+  public static Character[] toCharacterArray(char[] array) {
+    if (array == null) {
+        return null;
+    } else if (array.length == 0) {
+        return EMPTY_CHARACTER_ARRAY;
+    }
+    final Character[] result = new Character[array.length];
+    for (int i = 0; i < array.length; i++) {
+        result[i] = new Character(array[i]);
+    }
+    return result;
+ }
+  
   public static String parseKeyPropertiesToJPAOrderByExpression(
       final List<EdmProperty> edmPropertylist, final String tableAlias) throws ODataJPARuntimeException {
     String propertyName = null;
@@ -401,16 +462,25 @@ public class ODataExpressionParser {
    *
    * @param uriLiteral
    * @param edmSimpleType
+   * @param edmMappedType 
    * @return the evaluated expression
    * @throws ODataJPARuntimeException
    */
-  private static String evaluateComparingExpression(String uriLiteral, final EdmSimpleType edmSimpleType)
-      throws ODataJPARuntimeException {
+  private static String evaluateComparingExpression(String uriLiteral, final EdmSimpleType edmSimpleType,
+      Class<?> edmMappedType) throws ODataJPARuntimeException {
 
     if (EdmSimpleTypeKind.String.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)
         || EdmSimpleTypeKind.Guid.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)) {
       uriLiteral = uriLiteral.replaceAll("'", "''");
-      uriLiteral = "'" + uriLiteral + "'"; //$NON-NLS-1$	//$NON-NLS-2$
+      uriLiteral = updateValueIfWildcards(uriLiteral);
+      if (!positionalParameters.containsKey(index)) {
+        if(edmMappedType != null){
+          evaluateExpressionForString(uriLiteral, edmMappedType);
+        }else{
+          positionalParameters.put(index, String.valueOf(uriLiteral));
+        }
+      }
+      uriLiteral = "?" + index;
     } else if (EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)
         || EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)) {
       try {
@@ -418,19 +488,10 @@ public class ODataExpressionParser {
             (Calendar) edmSimpleType.valueOfString(uriLiteral, EdmLiteralKind.DEFAULT, null, edmSimpleType
                 .getDefaultType());
 
-        String year = String.format("%04d", datetime.get(Calendar.YEAR));
-        String month = String.format("%02d", datetime.get(Calendar.MONTH) + 1);
-        String day = String.format("%02d", datetime.get(Calendar.DAY_OF_MONTH));
-        String hour = String.format("%02d", datetime.get(Calendar.HOUR_OF_DAY));
-        String min = String.format("%02d", datetime.get(Calendar.MINUTE));
-        String sec = String.format("%02d", datetime.get(Calendar.SECOND));
-
-        uriLiteral =
-            JPQLStatement.DELIMITER.LEFT_BRACE + JPQLStatement.KEYWORD.TIMESTAMP + JPQLStatement.DELIMITER.SPACE + "\'"
-                + year + JPQLStatement.DELIMITER.HYPHEN + month + JPQLStatement.DELIMITER.HYPHEN + day
-                + JPQLStatement.DELIMITER.SPACE + hour + JPQLStatement.DELIMITER.COLON + min
-                + JPQLStatement.DELIMITER.COLON + sec + JPQLStatement.KEYWORD.OFFSET + "\'"
-                + JPQLStatement.DELIMITER.RIGHT_BRACE;
+        if (!positionalParameters.containsKey(index)) {
+          positionalParameters.put(index, datetime);
+        }
+        uriLiteral = "?" + index;
 
       } catch (EdmSimpleTypeException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
@@ -445,20 +506,94 @@ public class ODataExpressionParser {
         String hourValue = String.format("%02d", time.get(Calendar.HOUR_OF_DAY));
         String minValue = String.format("%02d", time.get(Calendar.MINUTE));
         String secValue = String.format("%02d", time.get(Calendar.SECOND));
-
+        
         uriLiteral =
-            "\'" + hourValue + JPQLStatement.DELIMITER.COLON + minValue + JPQLStatement.DELIMITER.COLON + secValue
-                + "\'";
+            hourValue + JPQLStatement.DELIMITER.COLON + minValue + JPQLStatement.DELIMITER.COLON + secValue;
+       if (!positionalParameters.containsKey(index)) {
+         positionalParameters.put(index, Time.valueOf(uriLiteral));
+       }
+       uriLiteral = "?" + index;
       } catch (EdmSimpleTypeException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
 
-    } else if (Long.class.equals(edmSimpleType.getDefaultType())) {
-      uriLiteral = uriLiteral + JPQLStatement.DELIMITER.LONG; //$NON-NLS-1$
+    } else {
+      uriLiteral = evaluateExpressionForNumbers(uriLiteral, edmSimpleType, edmMappedType);
     }
     return uriLiteral;
   }
 
+  private static String evaluateExpressionForNumbers(String uriLiteral, EdmSimpleType edmSimpleType,
+      Class<?> edmMappedType) {
+    Class<? extends Object> type = edmMappedType==null? edmSimpleType.getDefaultType():
+      edmMappedType;
+    if (Long.class.equals(type)) {
+      if (!positionalParameters.containsKey(index)) {
+        positionalParameters.put(index, Long.valueOf(uriLiteral));
+      }
+      uriLiteral = "?" + index;
+    } else if (Double.class.equals(type)) {
+      if (!positionalParameters.containsKey(index)) {
+        positionalParameters.put(index, Double.valueOf(uriLiteral));
+      }
+      uriLiteral = "?" + index;
+    } else if (Integer.class.equals(type)) {
+      if (!positionalParameters.containsKey(index)) {
+        positionalParameters.put(index, Integer.valueOf(uriLiteral));
+      }
+      uriLiteral = "?" + index;
+    } else if (Byte.class.equals(type)) {
+      if (!positionalParameters.containsKey(index)) {
+        positionalParameters.put(index, Byte.valueOf(uriLiteral));
+      }
+      uriLiteral = "?" + index;
+    }  else if (Byte[].class.equals(type)) {
+      if (!positionalParameters.containsKey(index)) {
+        positionalParameters.put(index, toByteArray(uriLiteral));
+      }
+      uriLiteral = "?" + index;
+    } else if (Short.class.equals(type)) {
+      if (!positionalParameters.containsKey(index)) {
+        positionalParameters.put(index, Short.valueOf(uriLiteral));
+      }
+      uriLiteral = "?" + index;
+    } else if (BigDecimal.class.equals(type)) {
+      if (!positionalParameters.containsKey(index)) {
+        positionalParameters.put(index, new BigDecimal(uriLiteral));
+      }
+      uriLiteral = "?" + index;
+    } else if (BigInteger.class.equals(type)) {
+      if (!positionalParameters.containsKey(index)) {
+        positionalParameters.put(index, new BigInteger(uriLiteral));
+      }
+      uriLiteral = "?" + index;
+    } else if (Float.class.equals(type)) {
+      if (!positionalParameters.containsKey(index)) {
+        positionalParameters.put(index, Float.valueOf(uriLiteral));
+      }
+      uriLiteral = "?" + index;
+    }
+    return uriLiteral;
+  }
+
+  private static void evaluateExpressionForString(String uriLiteral, Class<?> edmMappedType) {
+
+    if(edmMappedType.equals(char[].class)){
+      positionalParameters.put(index, uriLiteral.toCharArray());
+    }else if(edmMappedType.equals(char.class)){
+      positionalParameters.put(index, uriLiteral.charAt(0));
+    }else if(edmMappedType.equals(Character[].class)){
+      char[] charArray = uriLiteral.toCharArray();
+      Character[] charObjectArray =toCharacterArray(charArray);
+      positionalParameters.put(index, charObjectArray);
+    }else if(edmMappedType.equals(Character.class)){
+      positionalParameters.put(index, (Character)uriLiteral.charAt(0));
+    }else {
+      positionalParameters.put(index, String.valueOf(uriLiteral));
+    }
+  
+  }
+  
   private static String getPropertyName(final CommonExpression whereExpression) throws EdmException,
       ODataJPARuntimeException {
     EdmTyped edmProperty = ((PropertyExpression) whereExpression).getEdmProperty();

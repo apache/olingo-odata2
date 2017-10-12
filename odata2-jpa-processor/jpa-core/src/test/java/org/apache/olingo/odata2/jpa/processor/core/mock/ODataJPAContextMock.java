@@ -76,7 +76,9 @@ public abstract class ODataJPAContextMock {
     Query jpqlquery = EasyMock.createMock(Query.class);
     Capture<String> capturedArgument = new Capture<String>();
     EasyMock.expect(em.createQuery(EasyMock.capture(capturedArgument))).andReturn(jpqlquery);
-    EasyMock.replay(em,mm);
+    EasyMock.expect(jpqlquery.setParameter(EasyMock.anyInt(), EasyMock.anyObject()))
+    .andReturn(jpqlquery).anyTimes();
+    EasyMock.replay(em,mm,jpqlquery);
     return em;
 
   }

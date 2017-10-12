@@ -18,6 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.jpql;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
@@ -29,6 +32,7 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLSelectContextView;
 import org.apache.olingo.odata2.jpa.processor.core.ODataExpressionParser;
+import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
 
 public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextView {
 
@@ -154,8 +158,16 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
      */
     protected String generateWhereExpression() throws ODataException {
       if (entitySetView.getFilter() != null) {
-        return ODataExpressionParser.parseToJPAWhereExpression(entitySetView.getFilter(), getJPAEntityAlias());
+        String whereExpression = ODataExpressionParser.parseToJPAWhereExpression(
+            entitySetView.getFilter(), getJPAEntityAlias());
+        Map<String, Map<Integer, Object>> parameterizedExpressionMap = 
+            new HashMap<String, Map<Integer,Object>>();
+        parameterizedExpressionMap.put(whereExpression, ODataExpressionParser.getPositionalParameters());
+        ODataParameterizedWhereExpressionUtil.setParameterizedQueryMap(parameterizedExpressionMap);
+        ODataExpressionParser.reInitializePositionalParameters();
+        return whereExpression;
       }
+      ODataExpressionParser.reInitializePositionalParameters();
       return null;
     }
   }

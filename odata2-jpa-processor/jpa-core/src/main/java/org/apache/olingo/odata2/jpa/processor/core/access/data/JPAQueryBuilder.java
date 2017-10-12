@@ -18,14 +18,19 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
 
@@ -46,6 +51,7 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
+import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
 
 public class JPAQueryBuilder {
 
@@ -180,7 +186,29 @@ public class JPAQueryBuilder {
     JPQLContext jpqlContext = buildJPQLContext(contextType, uriParserResultView);
     JPQLStatement jpqlStatement = JPQLStatement.createBuilder(jpqlContext).build();
 
-    return em.createQuery(normalizeMembers(em, jpqlStatement.toString()));
+    Query query = em.createQuery(normalizeMembers(em, jpqlStatement.toString()));
+    Map<String, Map<Integer, Object>> parameterizedMap = ODataParameterizedWhereExpressionUtil.
+        getParameterizedQueryMap();
+    if (parameterizedMap != null && parameterizedMap.size() > 0) {
+      for (Entry<String, Map<Integer, Object>> parameterEntry : parameterizedMap.entrySet()) {
+        if (jpqlStatement.toString().contains(parameterEntry.getKey())) {
+          Map<Integer, Object> positionalParameters = parameterEntry.getValue();
+          for (Entry<Integer, Object> param : positionalParameters.entrySet()) {
+            if (param.getValue() instanceof Calendar || param.getValue() instanceof Timestamp) {
+              query.setParameter(param.getKey(), (Calendar) param.getValue(), TemporalType.TIMESTAMP);
+            } else if (param.getValue() instanceof Time) {
+              query.setParameter(param.getKey(), (Time) param.getValue(), TemporalType.TIME);
+            } else {
+              query.setParameter(param.getKey(), param.getValue());
+            }
+          }
+          parameterizedMap.remove(parameterEntry.getKey());
+          ODataParameterizedWhereExpressionUtil.setJPQLStatement(null);
+          break;
+        }
+      }
+    }
+    return query;
   }
 
   

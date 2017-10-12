@@ -23,11 +23,12 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
-import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
@@ -39,6 +40,8 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
+import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +72,9 @@ public class JPQLSelectSingleStatementBuilderTest {
     KeyPredicate keyPredicate = EasyMock.createMock(KeyPredicate.class);
     EdmProperty kpProperty = EasyMock.createMock(EdmProperty.class);
     EdmSimpleType edmType = EdmSimpleTypeKind.Int32.getEdmSimpleTypeInstance();
-    EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
+    JPAEdmMappingImpl edmMapping = EasyMock.createMock(JPAEdmMappingImpl.class);
+    EasyMock.expect(edmMapping.getJPAType())
+    .andStubReturn(null);
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("Field1");
     EasyMock.expect(keyPredicate.getLiteral()).andStubReturn("1");
     try {
@@ -114,11 +119,22 @@ public class JPQLSelectSingleStatementBuilderTest {
 
   @Test
   public void testBuildSimpleQuery() throws EdmException, ODataJPARuntimeException {
+
     JPQLSelectSingleContext JPQLSelectSingleContextImpl = createSelectContext();
     JPQLSelectSingleStatementBuilder = new JPQLSelectSingleStatementBuilder(JPQLSelectSingleContextImpl);
 
-    assertEquals("SELECT E1 FROM SalesOrderHeader E1 WHERE E1.Field1 = 1", JPQLSelectSingleStatementBuilder.build()
-        .toString());
+    String query = JPQLSelectSingleStatementBuilder.build().toString();
+    query = query.substring(0, query.indexOf("?"));
+    Map<String, Map<Integer, Object>> positionalParameters = 
+        ODataParameterizedWhereExpressionUtil.getParameterizedQueryMap();
+    for (Entry<String, Map<Integer, Object>> param : positionalParameters.entrySet()) {
+      for (Entry<Integer, Object> postionalParam : param.getValue().entrySet()) {
+        query += postionalParam.getValue();
+      }
+    }
+    
+    assertEquals("SELECT E1 FROM SalesOrderHeader E1 WHERE E1.Field1 = 1", query);
+  
   }
 
 }

@@ -44,6 +44,7 @@ import org.apache.olingo.odata2.jpa.processor.api.access.JPAJoinClause;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLJoinSelectSingleContext.JPQLJoinSelectSingleContextBuilder;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -195,7 +196,9 @@ public class JPQLJoinSelectSingleContextTest {
     KeyPredicate keyPredicate = EasyMock.createMock(KeyPredicate.class);
     EasyMock.expect(keyPredicate.getLiteral()).andStubReturn("1");
     EdmProperty edmProperty = EasyMock.createMock(EdmProperty.class);
-    EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
+    JPAEdmMappingImpl edmMapping = EasyMock.createMock(JPAEdmMappingImpl.class);
+    EasyMock.expect(edmMapping.getJPAType())
+    .andStubReturn(null);
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("soid");
     EasyMock.expect(edmProperty.getMapping()).andStubReturn(edmMapping);
     EasyMock.expect(edmProperty.getName()).andStubReturn("soid");

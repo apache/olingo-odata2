@@ -39,7 +39,6 @@ import javax.persistence.metamodel.Metamodel;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
-import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
@@ -61,6 +60,7 @@ import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
 import org.apache.olingo.odata2.jpa.processor.core.factory.ODataJPAFactoryImpl;
 import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLSelectContext.JPQLSelectContextBuilder;
 import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLSelectSingleContext.JPQLSelectSingleContextBuilder;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
@@ -181,9 +181,11 @@ public class JPQLBuilderFactoryTest {
     KeyPredicate keyPredicate = EasyMock.createMock(KeyPredicate.class);
     EdmProperty kpProperty = EasyMock.createMock(EdmProperty.class);
     EdmSimpleType edmType = EdmSimpleTypeKind.Int32.getEdmSimpleTypeInstance();
-    EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
+    JPAEdmMappingImpl edmMapping = EasyMock.createMock(JPAEdmMappingImpl.class);
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("Field1");
     EasyMock.expect(keyPredicate.getLiteral()).andStubReturn("1");
+    EasyMock.expect(edmMapping.getJPAType())
+    .andStubReturn(null);
     try {
       EasyMock.expect(kpProperty.getName()).andStubReturn("Field1");
       EasyMock.expect(kpProperty.getType()).andStubReturn(edmType);
