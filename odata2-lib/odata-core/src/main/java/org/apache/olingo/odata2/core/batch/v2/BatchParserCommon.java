@@ -72,6 +72,10 @@ public class BatchParserCommon {
       Pattern.CASE_INSENSITIVE);
   public static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(\\?.*)?");
 
+  private BatchParserCommon() {
+    
+  }
+  
   public static String trimLineListToLength(final List<Line> list, final int length) {
     final String message = lineListToString(list);
     final int lastIndex = Math.min(length, message.length());
@@ -146,9 +150,9 @@ public class BatchParserCommon {
       }
     }
 
-    final int lineNumber = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
+    final int lineNumber = (!message.isEmpty()) ? message.get(0).getLineNumber() : 0;
     // Remove preamble
-    if (messageParts.size() > 0) {
+    if (!messageParts.isEmpty()) {
       messageParts.remove(0);
     } else {
 
@@ -159,7 +163,7 @@ public class BatchParserCommon {
       throw new BatchException(BatchException.MISSING_CLOSE_DELIMITER.addContent(lineNumber));
     }
 
-    if (messageParts.size() == 0) {
+    if (messageParts.isEmpty()) {
       throw new BatchException(BatchException.NO_MATCH_WITH_BOUNDARY_STRING
           .addContent(boundary).addContent(lineNumber));
     }
@@ -168,7 +172,7 @@ public class BatchParserCommon {
   }
 
   private static void removeEndingCRLFFromList(final List<Line> list) {
-    if (list.size() > 0) {
+    if (!list.isEmpty()) {
       Line lastLine = list.remove(list.size() - 1);
       list.add(removeEndingCRLF(lastLine));
     }
@@ -186,7 +190,7 @@ public class BatchParserCommon {
   }
 
   public static Header consumeHeaders(final List<Line> remainingMessage) throws BatchException {
-    final int headerLineNumber = remainingMessage.size() != 0 ? remainingMessage.get(0).getLineNumber() : 0;
+    final int headerLineNumber = !remainingMessage.isEmpty() ? remainingMessage.get(0).getLineNumber() : 0;
     final Header headers = new Header(headerLineNumber);
     final Iterator<Line> iter = remainingMessage.iterator();
     final AcceptParser acceptParser = new AcceptParser();
@@ -227,11 +231,11 @@ public class BatchParserCommon {
 
   public static void consumeBlankLine(final List<Line> remainingMessage, final boolean isStrict)
       throws BatchException {
-    if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*\r\n\\s*")) {
+    if (!remainingMessage.isEmpty() && remainingMessage.get(0).toString().matches("\\s*\r\n\\s*")) {
       remainingMessage.remove(0);
     } else {
       if (isStrict) {
-        final int lineNumber = (remainingMessage.size() > 0) ? remainingMessage.get(0).getLineNumber() : 0;
+        final int lineNumber = (!remainingMessage.isEmpty()) ? remainingMessage.get(0).getLineNumber() : 0;
         throw new BatchException(BatchException.MISSING_BLANK_LINE.addContent("[None]").addContent(lineNumber));
       }
     }

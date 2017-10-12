@@ -53,19 +53,19 @@ public class BatchBodyPart implements BatchPart {
 
   private boolean isChangeSet(final Header headers) throws BatchException {
     final List<String> contentTypes = headers.getHeaders(HttpHeaders.CONTENT_TYPE);
-    boolean isChangeSet = false;
+    boolean isChgSet = false;
 
-    if (contentTypes.size() == 0) {
+    if (contentTypes.isEmpty()) {
       throw new BatchException(BatchException.MISSING_CONTENT_TYPE.addContent(headers.getLineNumber()));
     }
 
     for (String contentType : contentTypes) {
       if (isContentTypeMultiPartMixed(contentType)) {
-        isChangeSet = true;
+        isChgSet = true;
       }
     }
 
-    return isChangeSet;
+    return isChgSet;
   }
 
   private boolean isContentTypeMultiPartMixed(final String contentType) {

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 public class Header implements Cloneable {
@@ -95,9 +96,9 @@ public class Header implements Cloneable {
   public Map<String, String> toSingleMap() {
     final Map<String, String> singleMap = new HashMap<String, String>();
 
-    for (final String key : headers.keySet()) {
-      HeaderField field = headers.get(key);
-      singleMap.put(field.getFieldName(), getHeader(key));
+    for (Entry<String, HeaderField> header : headers.entrySet()) {
+      HeaderField field = header.getValue();
+      singleMap.put(field.getFieldName(), getHeader(header.getKey()));
     }
 
     return singleMap;
@@ -106,8 +107,8 @@ public class Header implements Cloneable {
   public Map<String, List<String>> toMultiMap() {
     final Map<String, List<String>> singleMap = new HashMap<String, List<String>>();
 
-    for (final String key : headers.keySet()) {
-      HeaderField field = headers.get(key);
+    for (Entry<String, HeaderField> header : headers.entrySet()) {
+      HeaderField field = header.getValue();
       singleMap.put(field.getFieldName(), field.getValues());
     }
 
@@ -129,8 +130,8 @@ public class Header implements Cloneable {
   public Header clone() {
     final Header newInstance = new Header(lineNumber);
 
-    for (final String key : headers.keySet()) {
-      newInstance.headers.put(key, headers.get(key).clone());
+    for (Entry<String, HeaderField> header : headers.entrySet()) {
+      newInstance.headers.put(header.getKey(), header.getValue().clone());
     }
 
     return newInstance;

@@ -57,11 +57,11 @@ public class OrderByParserImpl extends FilterParserImpl implements OrderByParser
       Token token = tokenList.lookToken();
       if (token == null) {
         orderNode.setSortOrder(SortOrder.asc);
-      } else if ((token.getKind() == TokenKind.LITERAL) && (token.getUriLiteral().equals("asc"))) {
+      } else if ((token.getKind() == TokenKind.LITERAL) && ("asc".equals(token.getUriLiteral()))) {
         orderNode.setSortOrder(SortOrder.asc);
         tokenList.next();
         token = tokenList.lookToken();
-      } else if ((token.getKind() == TokenKind.LITERAL) && (token.getUriLiteral().equals("desc"))) {
+      } else if ((token.getKind() == TokenKind.LITERAL) && ("desc".equals(token.getUriLiteral()))) {
         orderNode.setSortOrder(SortOrder.desc);
         tokenList.next();
         token = tokenList.lookToken();

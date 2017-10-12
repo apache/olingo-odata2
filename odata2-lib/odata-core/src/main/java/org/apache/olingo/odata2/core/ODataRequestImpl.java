@@ -179,11 +179,11 @@ public class ODataRequestImpl extends ODataRequest {
 
     @Override
     public ODataRequestBuilder queryParameters(final Map<String, String> queryParameters) {
-      for (String key : queryParameters.keySet()) {
+      for (Entry<String, String> queryParam : queryParameters.entrySet()) {
         List<String> parameterValues = new LinkedList<String>();
-        parameterValues.add(queryParameters.get(key));
+        parameterValues.add(queryParam.getValue());
 
-        allQueryParameters.put(key, parameterValues);
+        allQueryParameters.put(queryParam.getKey(), parameterValues);
       }
       return this;
     }
@@ -240,8 +240,8 @@ public class ODataRequestImpl extends ODataRequest {
     private <T, K> Map<T, K> convertMultiMaptoSingleMap(final Map<T, List<K>> multiMap) {
       final Map<T, K> singleMap = new HashMap<T, K>();
 
-      for (T key : multiMap.keySet()) {
-        singleMap.put(key, multiMap.get(key).get(0));
+      for (Entry<T, List<K>> entry : multiMap.entrySet()) {
+        singleMap.put(entry.getKey(), entry.getValue().get(0));
       }
 
       return singleMap;

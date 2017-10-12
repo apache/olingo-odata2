@@ -64,9 +64,9 @@ public class EdmFunctionImportImplProv extends EdmNamedImplProv implements EdmFu
   private void buildFunctionImportParametersInternal() {
     parameters = new HashMap<String, FunctionImportParameter>();
 
-    List<FunctionImportParameter> parameters = functionImport.getParameters();
-    if (parameters != null) {
-      for (FunctionImportParameter parameter : parameters) {
+    List<FunctionImportParameter> functionImportParameters = functionImport.getParameters();
+    if (functionImportParameters != null) {
+      for (FunctionImportParameter parameter : functionImportParameters) {
         this.parameters.put(parameter.getName(), parameter);
       }
     }
@@ -99,9 +99,9 @@ public class EdmFunctionImportImplProv extends EdmNamedImplProv implements EdmFu
     if (parametersList == null) {
       parametersList = new ArrayList<String>();
 
-      List<FunctionImportParameter> parameters = functionImport.getParameters();
-      if(parameters != null) {
-        for (FunctionImportParameter parameter : parameters) {
+      List<FunctionImportParameter> functionImportParameters = functionImport.getParameters();
+      if(functionImportParameters != null) {
+        for (FunctionImportParameter parameter : functionImportParameters) {
           parametersList.add(parameter.getName());
         }
       }

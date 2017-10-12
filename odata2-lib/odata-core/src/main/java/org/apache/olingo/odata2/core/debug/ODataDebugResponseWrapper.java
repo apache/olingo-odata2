@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -242,8 +243,8 @@ public class ODataDebugResponseWrapper {
       throws IOException {
     jsonStreamWriter.beginObject();
     boolean first = true;
-    for (final String name : entries.keySet()) {
-      final String value = entries.get(name);
+    for (final Entry<String, String> entry : entries.entrySet()) {
+      final String value = entries.get(entry.getKey());
       if (value == null) {
         continue;
       }
@@ -251,7 +252,7 @@ public class ODataDebugResponseWrapper {
         jsonStreamWriter.separator();
       }
       first = false;
-      jsonStreamWriter.namedStringValue(name, value);
+      jsonStreamWriter.namedStringValue(entry.getKey(), value);
     }
     jsonStreamWriter.endObject();
   }
@@ -260,10 +261,10 @@ public class ODataDebugResponseWrapper {
     writer.append("<table>\n<thead>\n")
         .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
         .append("</thead>\n<tbody>\n");
-    for (final String name : entries.keySet()) {
-      final String value = entries.get(name);
+    for (final Entry<String, String> entry : entries.entrySet()) {
+      final String value = entry.getValue();
       if (value != null) {
-        writer.append("<tr><td class=\"name\">").append(name).append("</td>")
+        writer.append("<tr><td class=\"name\">").append(entry.getKey()).append("</td>")
             .append("<td class=\"value\">")
             .append(ODataDebugResponseWrapper.escapeHtml(value))
             .append("</td></tr>\n");

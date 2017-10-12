@@ -209,16 +209,16 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
   @Override
   public List<EdmEntitySet> getEntitySets() throws EdmException {
     try {
-      List<EdmEntitySet> edmEntitySets = new ArrayList<EdmEntitySet>();
-      List<EntityContainer> entityContainerHierachy = getEntityContainerHierachy();
-      for (EntityContainer entityContainer : entityContainerHierachy) {
+      List<EdmEntitySet> edmEntitySetsList = new ArrayList<EdmEntitySet>();
+      List<EntityContainer> entityContainerHierachyList = getEntityContainerHierachy();
+      for (EntityContainer entityContainer : entityContainerHierachyList) {
         List<EntitySet> entitySets = entityContainer.getEntitySets();
         for (EntitySet entitySet : entitySets) {
           EdmEntitySet ees = createEntitySet(entitySet);
-          edmEntitySets.add(ees);
+          edmEntitySetsList.add(ees);
         }
       }
-      return edmEntitySets;
+      return edmEntitySetsList;
     } catch (ODataException e) {
       throw new EdmException(EdmException.PROVIDERPROBLEM, e);
     }
@@ -228,16 +228,16 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
   public List<EdmAssociationSet> getAssociationSets() throws EdmException {
     try {
       List<EntityContainer> containers = getEntityContainerHierachy();
-      List<EdmAssociationSet> edmAssociationSets = new ArrayList<EdmAssociationSet>();
+      List<EdmAssociationSet> edmAssociationSetsList = new ArrayList<EdmAssociationSet>();
       for (EntityContainer entityContainer : containers) {
         List<AssociationSet> associationSets = entityContainer.getAssociationSets();
         for (AssociationSet associationSet : associationSets) {
           EdmAssociationSet eas = createAssociationSet(associationSet);
-          edmAssociationSets.add(eas);
+          edmAssociationSetsList.add(eas);
         }
       }
 
-      return edmAssociationSets;
+      return edmAssociationSetsList;
     } catch (ODataException e) {
       throw new EdmException(EdmException.PROVIDERPROBLEM, e);
     }

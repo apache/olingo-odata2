@@ -163,7 +163,7 @@ public class XmlFeedConsumer {
     String inlineCountString = reader.getElementText();
     if (inlineCountString != null) {
       try {
-        int inlineCountNumber = Integer.valueOf(inlineCountString);
+        int inlineCountNumber = Integer.parseInt(inlineCountString);
         if (inlineCountNumber >= 0) {
           metadata.setInlineCount(inlineCountNumber);
         } else {

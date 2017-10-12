@@ -97,6 +97,7 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
         break;
       case JOIN_SINGLE:
         builder = new JPQLJoinSelectSingleStatementBuilder(context);
+        break;
       default:
         break;
       }
@@ -132,6 +133,7 @@ public class ODataJPAFactoryImpl extends ODataJPAFactory {
       case JOIN_COUNT:
         JPQLJoinSelectContext joinCountContext = new JPQLJoinSelectContext(true);
         contextBuilder = joinCountContext.new JPQLJoinContextBuilder();
+        break;
       default:
         break;
       }

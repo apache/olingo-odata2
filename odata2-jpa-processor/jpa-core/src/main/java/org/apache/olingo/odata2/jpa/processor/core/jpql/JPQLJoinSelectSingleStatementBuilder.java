@@ -52,7 +52,7 @@ public class JPQLJoinSelectSingleStatementBuilder extends JPQLStatementBuilder {
     jpqlQuery.append(context.getSelectExpression()).append(JPQLStatement.DELIMITER.SPACE);
     jpqlQuery.append(JPQLStatement.KEYWORD.FROM).append(JPQLStatement.DELIMITER.SPACE);
 
-    if (context.getJPAJoinClauses() != null && context.getJPAJoinClauses().size() > 0) {
+    if (context.getJPAJoinClauses() != null && !context.getJPAJoinClauses().isEmpty()) {
       List<JPAJoinClause> joinClauseList = context.getJPAJoinClauses();
       JPAJoinClause joinClause = joinClauseList.get(0);
       String joinCondition = joinClause.getJoinCondition();

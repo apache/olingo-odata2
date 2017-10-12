@@ -360,7 +360,7 @@ public abstract class ODataSingleProcessor implements MetadataProcessor, Service
     final Edm edm = getContext().getService().getEntityDataModel();
 
     //Service Document has version 1.0 specifically
-    if (getContext().getHttpMethod().equals("HEAD")) {
+    if ("HEAD".equals(getContext().getHttpMethod())) {
       return ODataResponse.header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10).build();
     } else {
       final String serviceRoot = getContext().getPathInfo().getServiceRoot().toASCIIString();

@@ -70,11 +70,11 @@ public class EdmDouble extends AbstractSimpleType {
     String valueString = value;
     Double result = null;
     // Handle special values first.
-    if (value.equals("-INF")) {
+    if ("-INF".equals(value)) {
       result = Double.NEGATIVE_INFINITY;
-    } else if (value.equals("INF")) {
+    } else if ("INF".equals(value)) {
       result = Double.POSITIVE_INFINITY;
-    } else if (value.equals("NaN")) {
+    } else if ("NaN".equals(value)) {
       result = Double.NaN;
     } else {
       // Now only "normal" numbers remain.
@@ -166,7 +166,7 @@ public class EdmDouble extends AbstractSimpleType {
 
   @Override
   public String toUriLiteral(final String literal) {
-    return literal.equals("-INF") || literal.equals("INF") || literal.equals("NaN") ?
+    return "-INF".equals(literal) || "INF".equals(literal) || "NaN".equals(literal) ?
         literal : literal + "D";
   }
 }

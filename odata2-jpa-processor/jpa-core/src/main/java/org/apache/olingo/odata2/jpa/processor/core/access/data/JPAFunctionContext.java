@@ -113,8 +113,8 @@ public class JPAFunctionContext extends JPAMethodContext {
         for (String paramName : functionImport.getParameterNames()) {
           EdmLiteral literal = edmArguments.get(paramName);
           EdmParameter parameter = functionImport.getParameter(paramName);
-          JPAEdmMapping mapping = (JPAEdmMapping) parameter.getMapping();
-          args[i++] = convertArgument(literal, parameter.getFacets(), mapping.getJPAType());
+          JPAEdmMapping mappingValue = (JPAEdmMapping) parameter.getMapping();
+          args[i++] = convertArgument(literal, parameter.getFacets(), mappingValue.getJPAType());
         }
         return args;
       }

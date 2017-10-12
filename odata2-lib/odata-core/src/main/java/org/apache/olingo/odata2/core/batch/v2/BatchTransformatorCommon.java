@@ -43,7 +43,7 @@ public class BatchTransformatorCommon {
   public static void validateContentType(final Header headers) throws BatchException {
     List<String> contentTypes = headers.getHeaders(HttpHeaders.CONTENT_TYPE);
 
-    if (contentTypes.size() == 0) {
+    if (contentTypes.isEmpty()) {
       throw new BatchException(BatchException.MISSING_CONTENT_TYPE);
     }
     if (!headers.isHeaderMatching(HttpHeaders.CONTENT_TYPE, BatchParserCommon.PATTERN_MULTIPART_MIXED)
@@ -194,9 +194,9 @@ public class BatchTransformatorCommon {
     }
 
     private PathInfo parseUri(final String uri) throws BatchException {
-      PathInfoImpl pathInfo = new PathInfoImpl();
-      pathInfo.setServiceRoot(batchRequestPathInfo.getServiceRoot());
-      pathInfo.setPrecedingPathSegment(batchRequestPathInfo.getPrecedingSegments());
+      PathInfoImpl pInfo = new PathInfoImpl();
+      pInfo.setServiceRoot(batchRequestPathInfo.getServiceRoot());
+      pInfo.setPrecedingPathSegment(batchRequestPathInfo.getPrecedingSegments());
 
       try {
         final URI uriObject = new URI(uri);
@@ -217,10 +217,10 @@ public class BatchTransformatorCommon {
           final String odataPathSegmentsAsString = uriParts.group(1);
           final String queryParametersAsString = uriParts.group(2) != null ? uriParts.group(2) : "";
 
-          pathInfo.setODataPathSegment(parseODataPathSegments(odataPathSegmentsAsString));
+          pInfo.setODataPathSegment(parseODataPathSegments(odataPathSegmentsAsString));
           if (!odataPathSegmentsAsString.startsWith("$")) {
             String requestUri = requestBaseUri + "/" + odataPathSegmentsAsString + queryParametersAsString;
-            pathInfo.setRequestUri(new URI(requestUri));
+            pInfo.setRequestUri(new URI(requestUri));
           }
 
         } else {
@@ -230,7 +230,7 @@ public class BatchTransformatorCommon {
         throw new BatchException(BatchException.INVALID_URI.addContent(statusLine.getLineNumber()), e);
       }
 
-      return pathInfo;
+      return pInfo;
     }
 
     private List<PathSegment> parseODataPathSegments(final String odataPathSegmentsAsString) {

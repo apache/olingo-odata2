@@ -532,38 +532,6 @@ public class AnnotationEdmProvider extends EdmProvider {
       return navProp;
     }
 
-    // private EdmSimpleTypeKind getEdmSimpleType(Class<?> type) {
-    // if (type == String.class) {
-    // return EdmType.String;
-    // } else if (type == boolean.class || type == Boolean.class) {
-    // return EdmType.Boolean;
-    // } else if (type == byte.class || type == Byte.class) {
-    // return EdmType.SByte;
-    // } else if (type == short.class || type == Short.class) {
-    // return EdmType.Int16;
-    // } else if (type == int.class || type == Integer.class) {
-    // return EdmType.Int32;
-    // } else if (type == long.class || type == Long.class) {
-    // return EdmType.Int64;
-    // } else if (type == double.class || type == Double.class) {
-    // return EdmType.Double;
-    // } else if (type == float.class || type == Float.class) {
-    // return EdmType.Single;
-    // } else if (type == BigInteger.class || type == BigDecimal.class) {
-    // return EdmType.Decimal;
-    // } else if (type == Byte[].class || type == byte[].class) {
-    // return EdmType.Binary;
-    // } else if (type == Date.class) {
-    // return EdmType.DateTime;
-    // } else if (type == Calendar.class) {
-    // return EdmType.DateTimeOffset;
-    // } else if (type == UUID.class) {
-    // return EdmType.Guid;
-    // } else {
-    // throw new UnsupportedOperationException("Not yet supported type '" + type + "'.");
-    // }
-    // }
-
     private EdmType getEdmType(final Class<?> type) {
       if (type == String.class) {
         return EdmType.STRING;
@@ -650,7 +618,6 @@ public class AnnotationEdmProvider extends EdmProvider {
   static class SchemaBuilder {
 
     final private String namespace;
-    // private String alias;
     private final List<Using> usings = new ArrayList<Using>();
     private final List<EntityType> entityTypes = new ArrayList<EntityType>();
     private final List<ComplexType> complexTypes = new ArrayList<ComplexType>();
@@ -736,8 +703,6 @@ public class AnnotationEdmProvider extends EdmProvider {
     private final List<EntitySet> entitySets = new ArrayList<EntitySet>();
     private final List<AssociationSet> associationSets = new ArrayList<AssociationSet>();
     private final List<FunctionImport> functionImports = new ArrayList<FunctionImport>();
-
-    // private Documentation documentation;
 
     private ContainerBuilder(final String namespace, final String containerName) {
       this.namespace = namespace;

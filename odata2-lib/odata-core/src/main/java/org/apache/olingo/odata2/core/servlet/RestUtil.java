@@ -232,7 +232,7 @@ public class RestUtil {
       StringBuilder stringBuilder = new StringBuilder();
       stringBuilder.append(req.getContextPath()).append(req.getServletPath());
       for (final PathSegment ps : precedingPathSegments) {
-        if (!ps.getPath().equals("") && ps.getPath().length() > 0) {
+        if (!"".equals(ps.getPath()) && ps.getPath().length() > 0) {
           stringBuilder.append("/").append(ps.getPath());
         }
         for (final String key : ps.getMatrixParameters().keySet()) {

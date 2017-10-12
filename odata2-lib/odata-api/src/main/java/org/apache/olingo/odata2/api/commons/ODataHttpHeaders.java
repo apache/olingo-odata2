@@ -26,4 +26,7 @@ public class ODataHttpHeaders {
 
   public static final String DATASERVICEVERSION = "DataServiceVersion";
 
+  private ODataHttpHeaders() {
+    
+  }
 }

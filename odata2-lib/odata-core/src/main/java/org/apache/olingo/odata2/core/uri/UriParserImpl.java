@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -135,11 +136,11 @@ public class UriParserImpl extends UriParser {
   private <T, K> Map<T, List<K>> convertFromSingleMapToMultiMap(final Map<T, K> singleMap) {
     Map<T, List<K>> multiMap = new HashMap<T, List<K>>();
 
-    for (T key : singleMap.keySet()) {
+    for (Entry<T, K> entry : singleMap.entrySet()) {
       List<K> valueList = new LinkedList<K>();
-      valueList.add(singleMap.get(key));
+      valueList.add(entry.getValue());
 
-      multiMap.put(key, valueList);
+      multiMap.put(entry.getKey(), valueList);
     }
 
     return multiMap;
@@ -147,19 +148,19 @@ public class UriParserImpl extends UriParser {
 
   private void preparePathSegments() throws UriSyntaxException {
     // Remove an empty path segment at the start of the OData part of the resource path.
-    if (!pathSegments.isEmpty() && pathSegments.get(0).equals("")) {
+    if (!pathSegments.isEmpty() && "".equals(pathSegments.get(0))) {
       pathSegments.remove(0);
     }
 
     // Remove an empty path segment at the end of the resource path,
     // although there is nothing in the OData specification that would allow that.
-    if (!pathSegments.isEmpty() && pathSegments.get(pathSegments.size() - 1).equals("")) {
+    if (!pathSegments.isEmpty() && "".equals(pathSegments.get(pathSegments.size() - 1))) {
       pathSegments.remove(pathSegments.size() - 1);
     }
 
     // Intermediate empty path segments are an error, however.
     for (String pathSegment : pathSegments) {
-      if (pathSegment.equals("")) {
+      if ("".equals(pathSegment)) {
         throw new UriSyntaxException(UriSyntaxException.EMPTYSEGMENT);
       }
     }

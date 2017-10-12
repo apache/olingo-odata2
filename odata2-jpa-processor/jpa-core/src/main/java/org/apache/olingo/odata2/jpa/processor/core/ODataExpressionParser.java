@@ -232,11 +232,9 @@ public class ODataExpressionParser {
       case TOLOWER:
         return String.format("LOWER(%s)", first);
       case STARTSWITH:
-        // second = second.substring(1, second.length() - 1);
         second = updateValueIfWildcards(second);
         return String.format("%s LIKE CONCAT(%s,'%%') ESCAPE '\\'", first, second);
       case ENDSWITH:
-        // second = second.substring(1, second.length() - 1);
         second = updateValueIfWildcards(second);
         return String.format("%s LIKE CONCAT('%%',%s) ESCAPE '\\'", first, second);
       default:
@@ -269,7 +267,7 @@ public class ODataExpressionParser {
    */
   public static String parseToJPASelectExpression(final String tableAlias, final ArrayList<String> selectedFields) {
 
-    if ((selectedFields == null) || (selectedFields.size() == 0)) {
+    if ((selectedFields == null) || (selectedFields.isEmpty())) {
       return tableAlias;
     }
 

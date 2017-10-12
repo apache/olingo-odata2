@@ -262,29 +262,29 @@ public class ODataExceptionWrapper {
 
   private ContentType getContentType(final Map<String, String> queryParameters,
       final List<String> acceptHeaderContentTypes) {
-    ContentType contentType = getContentTypeByUriInfo(queryParameters);
-    if (contentType == null) {
-      contentType = getContentTypeByAcceptHeader(acceptHeaderContentTypes);
+    ContentType cntType = getContentTypeByUriInfo(queryParameters);
+    if (cntType == null) {
+      cntType = getContentTypeByAcceptHeader(acceptHeaderContentTypes);
     }
-    return contentType;
+    return cntType;
   }
 
   private ContentType getContentTypeByUriInfo(final Map<String, String> queryParameters) {
-    ContentType contentType = null;
+    ContentType cntType = null;
     if (queryParameters != null) {
       if (queryParameters.containsKey(DOLLAR_FORMAT)) {
         String contentTypeString = queryParameters.get(DOLLAR_FORMAT);
         if (DOLLAR_FORMAT_JSON.equals(contentTypeString)) {
-          contentType = ContentType.APPLICATION_JSON;
+          cntType = ContentType.APPLICATION_JSON;
         } else {
           // Any format mentioned in the $format parameter other than json results in an application/xml content type
           // for error messages
           // due to the OData V2 Specification
-          contentType = ContentType.APPLICATION_XML;
+          cntType = ContentType.APPLICATION_XML;
         }
       }
     }
-    return contentType;
+    return cntType;
   }
 
   private ContentType getContentTypeByAcceptHeader(final List<String> acceptHeaderContentTypes) {
@@ -308,29 +308,29 @@ public class ODataExceptionWrapper {
   }
 
   private ContentType getContentType(final UriInfo uriInfo, final HttpHeaders httpHeaders) {
-    ContentType contentType = getContentTypeByUriInfo(uriInfo);
-    if (contentType == null) {
-      contentType = getContentTypeByAcceptHeader(httpHeaders);
+    ContentType cntType = getContentTypeByUriInfo(uriInfo);
+    if (cntType == null) {
+      cntType = getContentTypeByAcceptHeader(httpHeaders);
     }
-    return contentType;
+    return cntType;
   }
 
   private ContentType getContentTypeByUriInfo(final UriInfo uriInfo) {
-    ContentType contentType = null;
+    ContentType cntType = null;
     if (uriInfo != null && uriInfo.getQueryParameters() != null) {
       MultivaluedMap<String, String> queryParameters = uriInfo.getQueryParameters();
       if (queryParameters.containsKey(DOLLAR_FORMAT)) {
         String contentTypeString = queryParameters.getFirst(DOLLAR_FORMAT);
         if (DOLLAR_FORMAT_JSON.equals(contentTypeString)) {
-          contentType = ContentType.APPLICATION_JSON;
+          cntType = ContentType.APPLICATION_JSON;
         } else {
           // Any format mentioned in the $format parameter other than json results in an application/xml content type
           // for error messages due to the OData V2 Specification.
-          contentType = ContentType.APPLICATION_XML;
+          cntType = ContentType.APPLICATION_XML;
         }
       }
     }
-    return contentType;
+    return cntType;
   }
 
   private ContentType getContentTypeByAcceptHeader(final HttpHeaders httpHeaders) {
@@ -355,10 +355,10 @@ public class ODataExceptionWrapper {
 
   private ODataErrorCallback getErrorHandlerCallbackFromContext(final ODataContext context)
       throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-    ODataErrorCallback callback = null;
+    ODataErrorCallback cback = null;
     ODataServiceFactory serviceFactory = context.getServiceFactory();
-    callback = serviceFactory.getCallback(ODataErrorCallback.class);
-    return callback;
+    cback = serviceFactory.getCallback(ODataErrorCallback.class);
+    return cback;
   }
 
 }

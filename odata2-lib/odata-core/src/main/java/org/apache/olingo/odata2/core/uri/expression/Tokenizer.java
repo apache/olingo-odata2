@@ -34,7 +34,6 @@ import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
  */
 public class Tokenizer {
 
-  // Pattern OTHER_LIT = Pattern.compile("^([[A-Za-z0-9]._~%!$&*+;:@-]+)");
   private static final Pattern OTHER_LIT = Pattern.compile("(?:\\p{L}|\\p{Digit}|[-._~%!$&*+;:@])+");
   private static final Pattern FUNK =
       Pattern
@@ -194,7 +193,7 @@ public class Tokenizer {
 
   private boolean checkForBoolean(final int oldPosition, final String rem_expr) {
     boolean isBoolean = false;
-    if (rem_expr.equals("true") || rem_expr.equals("false")) {
+    if ("true".equals(rem_expr) || "false".equals(rem_expr)) {
       curPosition = curPosition + rem_expr.length();
       tokens.appendEdmTypedToken(oldPosition, TokenKind.SIMPLE_TYPE, rem_expr, new EdmLiteral(EdmSimpleTypeFacadeImpl
           .getEdmSimpleType(EdmSimpleTypeKind.Boolean), rem_expr));

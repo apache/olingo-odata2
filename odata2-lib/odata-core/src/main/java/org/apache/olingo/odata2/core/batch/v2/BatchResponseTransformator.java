@@ -36,12 +36,11 @@ public class BatchResponseTransformator implements BatchTransformator {
   @Override
   public List<BatchParserResult> transform(final BatchBodyPart bodyPart, final PathInfo pathInfo, final String baseUri)
       throws BatchException {
-    return processQueryOperation(bodyPart, pathInfo, baseUri);
+    return processQueryOperation(bodyPart);
   }
 
-  private List<BatchParserResult> processQueryOperation(final BatchBodyPart bodyPart,
-      final PathInfo pathInfo,
-      final String baseUri) throws BatchException {
+  private List<BatchParserResult> processQueryOperation(final BatchBodyPart bodyPart) 
+      throws BatchException {
 
     List<BatchParserResult> resultList = new ArrayList<BatchParserResult>();
 

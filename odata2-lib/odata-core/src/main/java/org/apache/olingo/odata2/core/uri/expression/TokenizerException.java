@@ -75,19 +75,6 @@ public class TokenizerException extends ODataMessageException {
     return new TokenizerException(msgRef, ex).setToken(token);
   }
 
-  /*
-   * static public TokenizerException createTYPEDECTECTION_FAILED_ON_EDMTYPE(EdmLiteralException ex, int position,
-   * String uriLiteral)
-   * {
-   * MessageReference msgRef = TokenizerException.TYPEDECTECTION_FAILED_ON_EDMTYPE.create();
-   * 
-   * msgRef.addContent(uriLiteral);
-   * msgRef.addContent(position);
-   * Token token = new Token(TokenKind.UNKNOWN, position, uriLiteral);
-   * 
-   * return new TokenizerException(msgRef).setToken(token);
-   * }
-   */
   static public TokenizerException createUNKNOWN_CHARACTER(final int position, final String uriLiteral,
       final String expression) {
     MessageReference msgRef = TokenizerException.UNKNOWN_CHARACTER.create();

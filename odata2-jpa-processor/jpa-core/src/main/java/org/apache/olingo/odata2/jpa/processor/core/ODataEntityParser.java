@@ -111,9 +111,9 @@ public final class ODataEntityParser {
     try {
       uriString = EntityProvider.readLink(contentType, entitySet, content);
       ODataContext odataContext = context.getODataContext();
-      final String serviceRoot = odataContext.getPathInfo().getServiceRoot().toString();
+      final String svcRoot = odataContext.getPathInfo().getServiceRoot().toString();
       final String path =
-          uriString.startsWith(serviceRoot.toString()) ? uriString.substring(serviceRoot.length()) : uriString;
+          uriString.startsWith(svcRoot.toString()) ? uriString.substring(svcRoot.length()) : uriString;
       final List<PathSegment> pathSegment = getPathSegment(path);
       edm = getEdm();
       uri = UriParser.parse(edm, pathSegment, Collections.<String, String> emptyMap());

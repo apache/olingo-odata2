@@ -37,4 +37,8 @@ public class EdmTargetPath {
   public static final String SYNDICATION_CONTRIBUTORURI = "SyndicationContributorUri";
   public static final String SYNDICATION_SOURCE = "SyndicationSource";
   public static final String SYNDICATION_SUMMARY = "SyndicationSummary";
+  
+  private EdmTargetPath() {
+    
+  }
 }

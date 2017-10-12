@@ -44,7 +44,7 @@ public class JsonDeletedEntryEntityProducer {
       throws EntityProviderException {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
     try {
-      if (deletedEntries.size() > 0) {
+      if (!deletedEntries.isEmpty()) {
         if(!noPreviousEntries){
           jsonStreamWriter.separator();
         }

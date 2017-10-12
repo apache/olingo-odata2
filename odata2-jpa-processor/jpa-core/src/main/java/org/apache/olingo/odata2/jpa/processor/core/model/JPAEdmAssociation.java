@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -91,8 +92,8 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
   @Override
   public Association searchAssociation(final JPAEdmAssociationEndView view) {
     if (view != null) {
-      for (String key : associationMap.keySet()) {
-        Association association = associationMap.get(key);
+      for (Entry<String, Association> assoc : associationMap.entrySet()) {
+        Association association = assoc.getValue();
         if (association != null) {
           if (view.compare(association.getEnd1(), association.getEnd2())) {
             JPAEdmAssociationEndView associationEnd = associationEndMap.get(association.getName());
@@ -210,8 +211,8 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
       if (associationMap.size() == consistentAssociatonList.size()) {
         isConsistent = true;
       } else {
-        for (String key : associationMap.keySet()) {
-          Association association = associationMap.get(key);
+        for (Entry<String, Association> entry : associationMap.entrySet()) {
+          Association association = entry.getValue();
           if (!consistentAssociatonList.contains(association)) {
             consistentAssociatonList.add(association);
           }
@@ -237,8 +238,8 @@ public class JPAEdmAssociation extends JPAEdmBaseViewImpl implements JPAEdmAssoc
     int count = 0;
     AssociationEnd end1 = null;
     AssociationEnd end2 = null;
-    for (String key : associationMap.keySet()) {
-      Association association = associationMap.get(key);
+    for (Entry<String, Association> entry : associationMap.entrySet()) {
+      Association association = entry.getValue();
       if (association != null) {
         end1 = association.getEnd1();
         end2 = association.getEnd2();

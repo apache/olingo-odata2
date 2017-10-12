@@ -347,7 +347,6 @@ public class ODataServlet extends HttpServlet {
     ODataExceptionWrapper exceptionWrapper = new ODataExceptionWrapper(req, serviceFactory);
     ODataResponse response =
         exceptionWrapper.wrapInExceptionResponse(new ODataNotImplementedException(messageReference));
-//    resp.setStatus(HttpStatusCodes.NOT_IMPLEMENTED.getStatusCode());
     createResponse(resp, response);
   }
 

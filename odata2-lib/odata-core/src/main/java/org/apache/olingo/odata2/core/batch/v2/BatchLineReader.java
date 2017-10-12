@@ -143,7 +143,7 @@ public class BatchLineReader {
       return null;
     }
 
-    ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+    ByteBuffer buf = ByteBuffer.allocate(BUFFER_SIZE);
     boolean foundLineEnd = false; // EOF will be considered as line ending
 
     while (!foundLineEnd) {
@@ -156,8 +156,8 @@ public class BatchLineReader {
 
       if (!foundLineEnd) {
         byte currentChar = this.buffer[offset++];
-        buffer = grantBuffer(buffer);
-        buffer.put(currentChar);
+        buf = grantBuffer(buf);
+        buf.put(currentChar);
 
         if (currentChar == LF) {
           foundLineEnd = true;
@@ -172,22 +172,22 @@ public class BatchLineReader {
 
           // Check if there is at least one character
           if (limit != EOF && this.buffer[offset] == LF) {
-            buffer = grantBuffer(buffer);
-            buffer.put(LF);
+            buf = grantBuffer(buf);
+            buf.put(LF);
             offset++;
           }
         }
       }
     }
 
-    if(buffer.position() == 0) {
+    if(buf.position() == 0) {
       return null;
     } else {
       String currentLine;
       if(readState.isReadBody()) {
-        currentLine = new String(buffer.array(), 0, buffer.position(), getCurrentCharset());
+        currentLine = new String(buf.array(), 0, buf.position(), getCurrentCharset());
       } else {
-        currentLine = new String(buffer.array(), 0, buffer.position(), DEFAULT_CHARSET);
+        currentLine = new String(buf.array(), 0, buf.position(), DEFAULT_CHARSET);
       }
       updateCurrentCharset(currentLine);
       return currentLine;

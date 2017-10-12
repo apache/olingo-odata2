@@ -88,12 +88,12 @@ public class JPALink {
 
   public void create(final PostUriInfo uriInfo, final InputStream content, final String requestContentType,
       final String contentType) throws ODataJPARuntimeException, ODataJPAModelException {
-    modifyLink((UriInfo) uriInfo, content, requestContentType, contentType);
+    modifyLink((UriInfo) uriInfo, content, requestContentType);
   }
 
   public void update(final PutMergePatchUriInfo putUriInfo, final InputStream content, final String requestContentType,
       final String contentType) throws ODataJPARuntimeException, ODataJPAModelException {
-    modifyLink((UriInfo) putUriInfo, content, requestContentType, contentType);
+    modifyLink((UriInfo) putUriInfo, content, requestContentType);
   }
 
   public void delete(final DeleteUriInfo uriInfo) throws ODataJPARuntimeException {
@@ -285,8 +285,7 @@ public class JPALink {
     return links;
   }
 
-  private void modifyLink(final UriInfo uriInfo, final InputStream content, final String requestContentType,
-      final String contentType)
+  private void modifyLink(final UriInfo uriInfo, final InputStream content, final String requestContentType)
       throws ODataJPARuntimeException, ODataJPAModelException {
     try {
       EdmEntitySet targetEntitySet = uriInfo.getTargetEntitySet();

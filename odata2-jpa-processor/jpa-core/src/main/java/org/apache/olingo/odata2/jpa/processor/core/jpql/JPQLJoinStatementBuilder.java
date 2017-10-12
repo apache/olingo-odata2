@@ -61,7 +61,7 @@ public class JPQLJoinStatementBuilder extends JPQLStatementBuilder {
 
     jpqlQuery.append(JPQLStatement.KEYWORD.FROM).append(JPQLStatement.DELIMITER.SPACE);
 
-    if (context.getJPAJoinClauses() != null && context.getJPAJoinClauses().size() > 0) {
+    if (context.getJPAJoinClauses() != null && !context.getJPAJoinClauses().isEmpty()) {
       List<JPAJoinClause> joinClauseList = context.getJPAJoinClauses();
       JPAJoinClause joinClause = joinClauseList.get(0);
       String joinCondition = joinClause.getJoinCondition();

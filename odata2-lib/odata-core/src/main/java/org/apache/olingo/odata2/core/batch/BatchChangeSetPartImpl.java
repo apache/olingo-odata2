@@ -30,7 +30,7 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   private Map<String, String> headers = new HashMap<String, String>();
   private Object body;
   private String uri;
-  public String contentId;
+  public String cntId;
   private static final String CHANGE_METHODS = "(PUT|POST|DELETE|MERGE|PATCH)";
 
   @Override
@@ -72,7 +72,7 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
 
   @Override
   public String getContentId() {
-    return contentId;
+    return cntId;
   }
 
   public class BatchChangeSetRequestBuilderImpl extends BatchChangeSetPartBuilder {
@@ -91,7 +91,7 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
       BatchChangeSetPartImpl.this.headers = headers;
       BatchChangeSetPartImpl.this.body = body;
       BatchChangeSetPartImpl.this.uri = uri;
-      BatchChangeSetPartImpl.this.contentId = contentId;
+      BatchChangeSetPartImpl.this.cntId = contentId;
       return BatchChangeSetPartImpl.this;
     }
 

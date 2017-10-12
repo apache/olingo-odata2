@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
  * 
  */
 public class ODataServiceVersion {
-
   private static final Pattern DATASERVICEVERSIONPATTERN = Pattern.compile("(\\p{Digit}+\\.\\p{Digit}+)(:?;.*)?");
 
   /**
@@ -42,6 +41,10 @@ public class ODataServiceVersion {
    * ODataServiceVersion 3.0
    */
   public static final String V30 = "3.0";
+  
+  private ODataServiceVersion() {
+    
+  }
 
   /**
    * Validates format and range of a data service version string.

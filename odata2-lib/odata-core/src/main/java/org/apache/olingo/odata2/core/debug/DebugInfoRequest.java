@@ -23,6 +23,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
@@ -61,8 +62,8 @@ public class DebugInfoRequest implements DebugInfo {
           .name("headers")
           .beginObject();
       boolean first = true;
-      for (final String name : headers.keySet()) {
-        for (final String value : headers.get(name)) {
+      for (final Entry<String, List<String>> header : headers.entrySet()) {
+        for (final String value : header.getValue()) {
           if (value == null) {
             continue;
           }
@@ -70,7 +71,7 @@ public class DebugInfoRequest implements DebugInfo {
             jsonStreamWriter.separator();
           }
           first = false;
-          jsonStreamWriter.namedStringValue(name, value);
+          jsonStreamWriter.namedStringValue(header.getKey(), value);
         }
       }
       jsonStreamWriter.endObject();
@@ -91,10 +92,10 @@ public class DebugInfoRequest implements DebugInfo {
         .append("<table>\n<thead>\n")
         .append("<tr><th class=\"name\">Name</th><th class=\"value\">Value</th></tr>\n")
         .append("</thead>\n<tbody>\n");
-    for (final String name : headers.keySet()) {
-      for (final String value : headers.get(name)) {
+    for (final Entry<String, List<String>> header : headers.entrySet()) {
+      for (final String value : header.getValue()) {
         if (value != null) {
-          writer.append("<tr><td class=\"name\">").append(name).append("</td>")
+          writer.append("<tr><td class=\"name\">").append(header.getKey()).append("</td>")
               .append("<td class=\"value\">").append(ODataDebugResponseWrapper.escapeHtml(value))
               .append("</td></tr>\n");
         }

@@ -216,7 +216,7 @@ public class JPAQueryBuilder {
   public JPQLContextType determineJPQLContextType(UriInfo uriParserResultView, UriInfoType type) {
     JPQLContextType contextType = null;
 
-    if (uriParserResultView.getNavigationSegments().size() > 0) {
+    if (!uriParserResultView.getNavigationSegments().isEmpty()) {
       if (type == UriInfoType.GetEntitySet) {
         contextType = JPQLContextType.JOIN;
       } else if (type == UriInfoType.Delete || type == UriInfoType.GetEntity

@@ -149,7 +149,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       if (nextEntitySet == null) {
         nextEntitySet = context.getSourceEntitySet().getRelatedEntitySet(currentNavigationProperty);
       }
-      if (currentExpandTreeNode.getProperties().size() > 0) {
+      if (!currentExpandTreeNode.getProperties().isEmpty()) {
         edmEntityList =
             jpaResultParser.parse2EdmEntityList(listOfItems, getEdmProperties(nextEntitySet,
                 currentExpandTreeNode));

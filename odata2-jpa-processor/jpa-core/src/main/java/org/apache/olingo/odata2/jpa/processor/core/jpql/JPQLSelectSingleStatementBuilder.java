@@ -52,7 +52,7 @@ public class JPQLSelectSingleStatementBuilder extends JPQLStatementBuilder {
     jpqlQuery.append(JPQLStatement.KEYWORD.FROM).append(JPQLStatement.DELIMITER.SPACE);
     jpqlQuery.append(fromClause);
 
-    if (context.getKeyPredicates() != null && context.getKeyPredicates().size() > 0) {
+    if (context.getKeyPredicates() != null && !context.getKeyPredicates().isEmpty()) {
       jpqlQuery.append(JPQLStatement.DELIMITER.SPACE);
       jpqlQuery.append(JPQLStatement.KEYWORD.WHERE).append(JPQLStatement.DELIMITER.SPACE);
       jpqlQuery.append(ODataExpressionParser

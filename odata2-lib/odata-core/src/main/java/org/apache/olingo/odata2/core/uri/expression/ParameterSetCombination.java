@@ -77,7 +77,7 @@ public interface ParameterSetCombination {
 
     @Override
     public ParameterSet validate(final List<EdmType> actualParameterTypes) throws ExpressionParserInternalError {
-      if (combinations.size() == 0) {
+      if (combinations.isEmpty()) {
         return new ParameterSet(null, null);
       }
 
@@ -117,7 +117,6 @@ public interface ParameterSetCombination {
     public ParameterSet validate(final List<EdmType> actualParameterTypes) throws ExpressionParserInternalError {
       EdmType xxx = actualParameterTypes.get(actualParameterTypes.size() - 1);
       return new ParameterSet(xxx, null);
-      // return actualParameterTypes.get(actualParameterTypes.size() - 1);
     }
 
     @Override

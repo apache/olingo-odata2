@@ -86,7 +86,7 @@ public class EdmSimpleTypeFacadeImpl implements EdmSimpleTypeFacade {
     if (uriLiteral.endsWith("D") || uriLiteral.endsWith("d")) {
       return createEdmLiteral(EdmSimpleTypeKind.Double, uriLiteral, 0, 1);
     }
-    if (uriLiteral.equals("-INF") || uriLiteral.equals("INF") || uriLiteral.equals("NaN")) {
+    if ("-INF".equals(uriLiteral) || "INF".equals(uriLiteral) || "NaN".equals(uriLiteral)) {
       return new EdmLiteral(getEdmSimpleType(EdmSimpleTypeKind.Single), uriLiteral);
     }
     if (uriLiteral.endsWith("F") || uriLiteral.endsWith("f")) {

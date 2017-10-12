@@ -387,7 +387,7 @@ public class JsonEntryConsumer {
 
   private void updateExpandSelectTree(final String navigationPropertyName, final ODataFeed feed) {
     List<ODataEntry> entries = feed.getEntries();
-    if (entries.size() > 0) {
+    if (!entries.isEmpty()) {
       updateExpandSelectTree(navigationPropertyName, entries.get(0));
     } else {
       expandSelectTree.setExpanded();

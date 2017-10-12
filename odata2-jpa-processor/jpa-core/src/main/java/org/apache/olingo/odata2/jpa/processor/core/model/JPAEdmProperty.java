@@ -371,7 +371,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         ODataJPARuntimeException {
       joinColumnNames = joinColumnNames == null ? new ArrayList<String[]>() : joinColumnNames;
       String[] name = { null, null };
-      name[0] = joinColumn.name().equals("") == true ? jpaAttribute.getName() : joinColumn.name();
+      name[0] = "".equals(joinColumn.name()) == true ? jpaAttribute.getName() : joinColumn.name();
 
       EntityType<?> referencedEntityType = null;
       if (jpaAttribute.isCollection()) {
@@ -381,7 +381,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         referencedEntityType = metaModel.entity(jpaAttribute.getJavaType());
       }
 
-      if (joinColumn.referencedColumnName().equals("")) {
+      if ("".equals(joinColumn.referencedColumnName())) {
         for (Attribute<?, ?> referencedAttribute : referencedEntityType.getAttributes()) {
           if (referencedAttribute.getPersistentAttributeType() == PersistentAttributeType.BASIC &&
               ((SingularAttribute<?, ?>) referencedAttribute).isId()) {

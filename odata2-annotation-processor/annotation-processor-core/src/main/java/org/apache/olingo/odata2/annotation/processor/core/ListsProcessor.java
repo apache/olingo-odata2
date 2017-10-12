@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.olingo.odata2.annotation.processor.core.datasource.DataSource;
 import org.apache.olingo.odata2.annotation.processor.core.datasource.DataSource.BinaryData;
@@ -431,7 +432,6 @@ public class ListsProcessor extends DataSourceProcessor {
         mapFunctionParameters(uriInfo.getFunctionImportParameters()),
         uriInfo.getNavigationSegments());
 
-    // if (!appliesFilter(data, uriInfo.getFilter()))
     if (data == null) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
@@ -482,7 +482,6 @@ public class ListsProcessor extends DataSourceProcessor {
 
     final Object targetData = dataSource.readRelatedData(entitySet, sourceData, targetEntitySet, keys);
 
-    // if (!appliesFilter(targetData, uriInfo.getFilter()))
     if (targetData == null) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
@@ -559,7 +558,6 @@ public class ListsProcessor extends DataSourceProcessor {
         mapFunctionParameters(uriInfo.getFunctionImportParameters()),
         uriInfo.getNavigationSegments());
 
-    // if (!appliesFilter(data, uriInfo.getFilter()))
     if (data == null) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
@@ -597,7 +595,6 @@ public class ListsProcessor extends DataSourceProcessor {
         mapFunctionParameters(uriInfo.getFunctionImportParameters()),
         uriInfo.getNavigationSegments());
 
-    // if (!appliesFilter(data, uriInfo.getFilter()))
     if (data == null) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
@@ -882,10 +879,10 @@ public class ListsProcessor extends DataSourceProcessor {
       return Collections.emptyMap();
     } else {
       Map<String, Object> parameterMap = new HashMap<String, Object>();
-      for (final String parameterName : functionImportParameters.keySet()) {
-        final EdmLiteral literal = functionImportParameters.get(parameterName);
+      for (final Entry<String, EdmLiteral> parameter : functionImportParameters.entrySet()) {
+        final EdmLiteral literal = parameter.getValue();
         final EdmSimpleType type = literal.getType();
-        parameterMap.put(parameterName, type.valueOfString(literal.getLiteral(), EdmLiteralKind.DEFAULT, null, type
+        parameterMap.put(parameter.getKey(), type.valueOfString(literal.getLiteral(), EdmLiteralKind.DEFAULT, null, type
             .getDefaultType()));
       }
       return parameterMap;
@@ -1278,7 +1275,7 @@ public class ListsProcessor extends DataSourceProcessor {
     final int timingHandle = context.startRuntimeMeasurement(getClass().getSimpleName(), "appliesFilter");
 
     try {
-      return data != null && (filter == null || evaluateExpression(data, filter.getExpression()).equals("true"));
+      return data != null && (filter == null || "true".equals(evaluateExpression(data, filter.getExpression())));
     } catch (final RuntimeException e) {
       return false;
     } finally {
@@ -1344,9 +1341,9 @@ public class ListsProcessor extends DataSourceProcessor {
           return Long.toString(Long.valueOf(left) % Long.valueOf(right));
         }
       case AND:
-        return Boolean.toString(left.equals("true") && right.equals("true"));
+        return Boolean.toString("true".equals(left) && "true".equals(right));
       case OR:
-        return Boolean.toString(left.equals("true") || right.equals("true"));
+        return Boolean.toString("true".equals(left) || "true".equals(right));
       case EQ:
         return Boolean.toString(left.equals(right));
       case NE:

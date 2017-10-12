@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.olingo.odata2.api.uri.PathSegment;
 
@@ -45,10 +46,10 @@ public class ODataPathSegmentImpl implements PathSegment {
 
     Map<String, List<String>> unmodifiableMap = new HashMap<String, List<String>>();
     if (matrixParameters != null) {
-      for (String key : matrixParameters.keySet()) {
-        List<String> values = matrixParameters.get(key);
+      for (Entry<String, List<String>> matrixParam : matrixParameters.entrySet()) {
+        List<String> values = matrixParam.getValue();
         List<String> tempList = values == null ? null: Collections.unmodifiableList(new ArrayList<String>(values));
-        unmodifiableMap.put(key, tempList);
+        unmodifiableMap.put(matrixParam.getKey(), tempList);
       }
     }
 

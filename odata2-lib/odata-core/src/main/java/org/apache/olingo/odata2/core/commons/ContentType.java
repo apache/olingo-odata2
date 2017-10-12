@@ -766,13 +766,14 @@ public class ContentType {
     } else {
       sb.append(type).append(TYPE_SUBTYPE_SEPARATOR).append(subtype);
     }
-
-    for (String key : parameters.keySet()) {
-      if (isParameterAllowed(key)) {
-        String value = parameters.get(key);
-        sb.append(";").append(key).append("=").append(value);
+    
+    for (Entry<String, String> parameter : parameters.entrySet()) {
+      if (isParameterAllowed(parameter.getKey())) {
+        String value = parameter.getValue();
+        sb.append(";").append(parameter.getKey()).append("=").append(value);
       }
     }
+    
     return sb.toString();
   }
 

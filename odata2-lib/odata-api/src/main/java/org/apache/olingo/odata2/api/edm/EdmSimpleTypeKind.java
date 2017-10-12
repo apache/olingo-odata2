@@ -85,6 +85,10 @@ public enum EdmSimpleTypeKind {
    * or parsing of {@link EdmLiteral}s.
    */
   private static class SimpleTypeFacadeHolder {
+    
     static final EdmSimpleTypeFacade instance = RuntimeDelegate.getSimpleTypeFacade();
+    private SimpleTypeFacadeHolder() {
+      
+    }
   }
 }

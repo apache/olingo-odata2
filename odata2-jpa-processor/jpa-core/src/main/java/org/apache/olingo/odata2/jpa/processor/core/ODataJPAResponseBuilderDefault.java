@@ -93,14 +93,14 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       List<Map<String, Object>> edmEntityList = null;
       JPAEntityParser jpaResultParser = new JPAEntityParser();
       final List<SelectItem> selectedItems = resultsView.getSelect();
-      if (selectedItems != null && selectedItems.size() > 0) {
+      if (selectedItems != null && !selectedItems.isEmpty()) {
         edmEntityList =
             jpaResultParser.parse2EdmEntityList(jpaEntities, buildSelectItemList(selectedItems, edmEntityType));
       } else {
         edmEntityList = jpaResultParser.parse2EdmEntityList(jpaEntities, edmEntityType);
       }
       expandList = resultsView.getExpand();
-      if (expandList != null && expandList.size() != 0) {
+      if (expandList != null && !expandList.isEmpty()) {
         int count = 0;
         List<EdmNavigationProperty> edmNavPropertyList = constructListofNavProperty(expandList);
         for (Object jpaEntity : jpaEntities) {
@@ -148,7 +148,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
       JPAEntityParser jpaResultParser = new JPAEntityParser();
       final List<SelectItem> selectedItems = resultsView.getSelect();
-      if (selectedItems != null && selectedItems.size() > 0) {
+      if (selectedItems != null && !selectedItems.isEmpty()) {
         edmPropertyValueMap =
             jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, buildSelectItemList(selectedItems, resultsView
                 .getTargetEntitySet().getEntityType()));
@@ -157,7 +157,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       }
 
       expandList = resultsView.getExpand();
-      if (expandList != null && expandList.size() != 0) {
+      if (expandList != null && !expandList.isEmpty()) {
         HashMap<String, Object> navigationMap =
             jpaResultParser.parse2EdmNavigationValueMap(jpaEntity, constructListofNavProperty(expandList));
         edmPropertyValueMap.putAll(navigationMap);
@@ -216,7 +216,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
       EntityProviderWriteProperties feedProperties = null;
       try {
-        feedProperties = getEntityProviderPropertiesforPost(oDataJPAContext, uriInfo);
+        feedProperties = getEntityProviderPropertiesforPost(oDataJPAContext);
       } catch (ODataException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       }
@@ -592,7 +592,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
   }
 
   private static EntityProviderWriteProperties getEntityProviderPropertiesforPost(
-      final ODataJPAContext odataJPAContext, final PostUriInfo resultsView) throws ODataJPARuntimeException {
+      final ODataJPAContext odataJPAContext) throws ODataJPARuntimeException {
     ODataEntityProviderPropertiesBuilder entityFeedPropertiesBuilder = null;
     try {
       entityFeedPropertiesBuilder =

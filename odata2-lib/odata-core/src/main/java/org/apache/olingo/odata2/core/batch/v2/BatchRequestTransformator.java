@@ -138,12 +138,12 @@ public class BatchRequestTransformator implements BatchTransformator {
     final HeaderField operationHeader = operation.getHeaders().getHeaderField(BatchHelper.HTTP_CONTENT_ID);
     final HeaderField parentHeader = parentPart.getHeaders().getHeaderField(BatchHelper.HTTP_CONTENT_ID);
 
-    if (operationHeader != null && operationHeader.getValues().size() != 0) {
+    if (operationHeader != null && !operationHeader.getValues().isEmpty()) {
       headers.addHeader(BatchHelper.REQUEST_HEADER_CONTENT_ID, operationHeader.getValues(), operationHeader
           .getLineNumber());
     }
 
-    if (parentHeader != null && parentHeader.getValues().size() != 0) {
+    if (parentHeader != null && !parentHeader.getValues().isEmpty()) {
       headers.addHeader(BatchHelper.MIME_HEADER_CONTENT_ID, parentHeader.getValues(), parentHeader.getLineNumber());
     }
 

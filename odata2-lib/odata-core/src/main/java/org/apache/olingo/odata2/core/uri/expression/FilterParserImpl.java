@@ -405,7 +405,7 @@ public class FilterParserImpl implements FilterParser {
     if (token == null) {
       return null;
     }
-    if ((token.getKind() == TokenKind.SYMBOL) && (token.getUriLiteral().equals("/"))) {
+    if ((token.getKind() == TokenKind.SYMBOL) && ("/".equals(token.getUriLiteral()))) {
       operator = availableBinaryOperators.get(token.getUriLiteral());
     } else if (token.getKind() == TokenKind.LITERAL) {
       operator = availableBinaryOperators.get(token.getUriLiteral());
@@ -571,7 +571,7 @@ public class FilterParserImpl implements FilterParser {
     actualParameterTypes.add(rightType);
 
     // special case for navigation property (non-)equality comparison with null
-    if (binOpt.getCategory().equals("Equality")
+    if ("Equality".equals(binOpt.getCategory())
         && (leftType != null && leftType.getKind() == EdmTypeKind.ENTITY
             && rightType == EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Null)
             || leftType == EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Null)
@@ -629,7 +629,6 @@ public class FilterParserImpl implements FilterParser {
     Map<String, InfoUnaryOperator> lAvailableUnaryOperators = new HashMap<String, InfoUnaryOperator>();
 
     // create type validators
-    // InputTypeValidator typeValidatorPromotion = new InputTypeValidator.TypePromotionValidator();
     ParameterSetCombination combination = null;
     // create type helpers
     EdmSimpleType boolean_ = EdmSimpleTypeFacadeImpl.getEdmSimpleType(EdmSimpleTypeKind.Boolean);
@@ -790,24 +789,7 @@ public class FilterParserImpl implements FilterParser {
         "Relational", 40, combination));
 
     // ---Equality---
-    // combination = new ParameterSetCombination.PSCflex();
     combination.addFirst(new ParameterSet(boolean_, boolean_, boolean_));
-    /*
-     * combination.add(new ParameterSet(boolean_, string, string));
-     * combination.add(new ParameterSet(boolean_, time, time));
-     * combination.add(new ParameterSet(boolean_, datetime, datetime));
-     * combination.add(new ParameterSet(boolean_, datetimeoffset, datetimeoffset));
-     * combination.add(new ParameterSet(boolean_, guid, guid));
-     * combination.add(new ParameterSet(boolean_, sbyte, sbyte));
-     * combination.add(new ParameterSet(boolean_, byte_, byte_));
-     * combination.add(new ParameterSet(boolean_, int16, int16));
-     * combination.add(new ParameterSet(boolean_, int32, int32));
-     * combination.add(new ParameterSet(boolean_, int64, int64));
-     * combination.add(new ParameterSet(boolean_, single, single));
-     * combination.add(new ParameterSet(boolean_, double_, double_));
-     * combination.add(new ParameterSet(boolean_, decimal, decimal));
-     * combination.add(new ParameterSet(boolean_, binary, binary));
-     */
     
     combination.add(new ParameterSet(boolean_, boolean_, null_));
     combination.add(new ParameterSet(boolean_, null_, boolean_));

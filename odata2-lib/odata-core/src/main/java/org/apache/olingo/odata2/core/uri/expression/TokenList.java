@@ -85,7 +85,7 @@ public class TokenList implements Iterator<Token> {
   }
 
   public boolean hasTokens() {
-    return (tokens.size() > 0);
+    return (!tokens.isEmpty());
   }
 
   public int tokenCount() {

@@ -30,6 +30,9 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
  */
 public class EdmProviderFactory {
 
+  private EdmProviderFactory() {
+    
+  }
   /**
    * Creates and returns an edm provider.
    * @param metadataXml a metadata xml input stream (means the metadata document)

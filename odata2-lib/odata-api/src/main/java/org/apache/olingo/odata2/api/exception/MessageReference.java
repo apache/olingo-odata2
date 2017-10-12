@@ -176,7 +176,7 @@ public abstract class MessageReference {
   public MessageReference updateContent(List<?> oldContent, Object... newContent) {
     
     final List<Object> mergedContent = new ArrayList<Object>();
-    if (oldContent != null && oldContent.size() > 0) {
+    if (oldContent != null && !oldContent.isEmpty()) {
       mergedContent.addAll(oldContent); 
     }
     mergedContent.addAll(Arrays.asList(newContent));

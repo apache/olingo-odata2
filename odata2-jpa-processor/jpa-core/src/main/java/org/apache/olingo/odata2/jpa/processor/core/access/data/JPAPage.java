@@ -162,7 +162,7 @@ public class JPAPage implements JPAPaging {
     }
 
     private void formulateNextPage() {
-      if (pagedEntities.size() == 0) {
+      if (pagedEntities.isEmpty()) {
         nextPage = 0;
       } else if (pagedEntities.size() < pageSize) {
         nextPage = 0;

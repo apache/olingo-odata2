@@ -88,7 +88,7 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
             timeZone += matcher.group(2) + String.valueOf(offsetInMinutes / 60)
                 + ":" + String.format("%02d", offsetInMinutes % 60);
             // Convert the local-time milliseconds to UTC.
-            millis -= (matcher.group(2).equals("+") ? 1 : -1) * offsetInMinutes * 60 * 1000;
+            millis -= ("+".equals(matcher.group(2)) ? 1 : -1) * offsetInMinutes * 60 * 1000;
           }
         }
         dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone(timeZone));

@@ -176,7 +176,7 @@ public final class JPAEntityParser {
       return navigationMap;
     }
     if (navigationPropertyList != null
-        && navigationPropertyList.size() != 0) {
+        && !navigationPropertyList.isEmpty()) {
 
     	try {
     		for (EdmNavigationProperty navigationProperty : navigationPropertyList) {
@@ -537,6 +537,7 @@ public final class JPAEntityParser {
 	        case ONE:
           case ZERO_TO_ONE:
 	          params = new Class<?>[] { ((JPAEdmMapping) end.getEntityType().getMapping()).getJPAType() };
+	          break;
 	        default:
 	          break;
 	        }

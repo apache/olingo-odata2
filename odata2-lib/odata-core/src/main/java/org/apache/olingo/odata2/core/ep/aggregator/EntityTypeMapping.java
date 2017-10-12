@@ -96,9 +96,9 @@ public class EntityTypeMapping {
    */
   public EntityTypeMapping getEntityTypeMapping(final String name) {
     if (isComplex()) {
-      for (EntityTypeMapping mapping : mappings) {
-        if (mapping.propertyName.equals(name)) {
-          return mapping;
+      for (EntityTypeMapping mappingValue : mappings) {
+        if (mappingValue.propertyName.equals(name)) {
+          return mappingValue;
         }
       }
     }
@@ -113,9 +113,9 @@ public class EntityTypeMapping {
    */
   public Class<?> getMappingClass(final String name) {
     if (isComplex()) {
-      for (EntityTypeMapping mapping : mappings) {
-        if (mapping.propertyName.equals(name)) {
-          return mapping.mapping;
+      for (EntityTypeMapping mappingValue : mappings) {
+        if (mappingValue.propertyName.equals(name)) {
+          return mappingValue.mapping;
         }
       }
     }

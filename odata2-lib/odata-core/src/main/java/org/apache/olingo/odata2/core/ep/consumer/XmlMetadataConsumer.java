@@ -547,7 +547,7 @@ public class XmlMetadataConsumer {
     reader.require(XMLStreamConstants.START_ELEMENT, edmNamespace, XmlMetadataConstants.EDM_ENTITY_TYPE);
     EntityType entityType = new EntityType();
     List<Property> properties = new ArrayList<Property>();
-    List<NavigationProperty> navProperties = new ArrayList<NavigationProperty>();
+    List<NavigationProperty> navPropertiesList = new ArrayList<NavigationProperty>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
     Key key = null;
 
@@ -578,7 +578,7 @@ public class XmlMetadataConsumer {
         } else if (XmlMetadataConstants.EDM_PROPERTY.equals(currentHandledStartTagName)) {
           properties.add(readProperty(reader));
         } else if (XmlMetadataConstants.EDM_NAVIGATION_PROPERTY.equals(currentHandledStartTagName)) {
-          navProperties.add(readNavigationProperty(reader));
+          navPropertiesList.add(readNavigationProperty(reader));
         } else {
           annotationElements.add(readAnnotationElement(reader));
         }
@@ -588,7 +588,7 @@ public class XmlMetadataConsumer {
     if (!annotationElements.isEmpty()) {
       entityType.setAnnotationElements(annotationElements);
     }
-    entityType.setKey(key).setProperties(properties).setNavigationProperties(navProperties);
+    entityType.setKey(key).setProperties(properties).setNavigationProperties(navPropertiesList);
     if (entityType.getName() != null) {
       FullQualifiedName fqName = new FullQualifiedName(currentNamespace, entityType.getName());
       entityTypesMap.put(fqName, entityType);

@@ -151,7 +151,7 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
       if (edmAnnotationFunctionImport != null && edmAnnotationFunctionImport.returnType() != null) {
         FunctionImport functionImport = new FunctionImport();
 
-        if (edmAnnotationFunctionImport.name().equals("")) {
+        if ("".equals(edmAnnotationFunctionImport.name())) {
           functionImport.setName(method.getName());
         } else {
           functionImport.setName(edmAnnotationFunctionImport.name());
@@ -186,7 +186,7 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
           if (element instanceof EdmFunctionImportParameter) {
             EdmFunctionImportParameter annotation = (EdmFunctionImportParameter) element;
             FunctionImportParameter functionImportParameter = new FunctionImportParameter();
-            if (annotation.name().equals("")) {
+            if ("".equals(annotation.name())) {
               throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_PARAM_NAME_EXP.addContent(method
                   .getDeclaringClass().getName(), method.getName()), null);
             } else {
@@ -241,14 +241,14 @@ public class JPAEdmFunctionImport extends JPAEdmBaseViewImpl implements JPAEdmFu
 
         if (returnType.type() == ReturnType.Type.ENTITY) {
           String entitySet = edmAnnotationFunctionImport.entitySet();
-          if (entitySet.equals("")) {
+          if ("".equals(entitySet)) {
             throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_ENTITYSET_EXP, null);
           }
           functionImport.setEntitySet(entitySet);
         }
 
         Class<?> methodReturnType = method.getReturnType();
-        if (methodReturnType == null || methodReturnType.getName().equals("void")) {
+        if (methodReturnType == null || "void".equals(methodReturnType.getName())) {
           throw ODataJPAModelException.throwException(ODataJPAModelException.FUNC_RETURN_TYPE_EXP.addContent(method
               .getDeclaringClass(), method.getName()), null);
         }
