@@ -148,6 +148,7 @@ public class ODataExceptionWrapper {
   private void enhanceContextWithApplicationException(final ODataApplicationException toHandleException) {
     errorContext.setHttpStatus(toHandleException.getHttpStatus());
     errorContext.setErrorCode(toHandleException.getCode());
+    errorContext.setLocale(messageLocale);
   }
 
   private void enhanceContextWithMessageException(final ODataMessageException toHandleException) {
