@@ -300,6 +300,8 @@ public class JPAProcessorImpl implements JPAProcessor {
         }
       } catch(PersistenceException e){
         em.getTransaction().rollback();
+        throw ODataJPARuntimeException.throwException(
+            ODataJPARuntimeException.ERROR_JPQL_DELETE_REQUEST, e);
       }
     }
     return selectedObject;
