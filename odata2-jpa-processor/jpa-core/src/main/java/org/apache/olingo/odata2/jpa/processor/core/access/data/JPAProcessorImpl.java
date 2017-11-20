@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
@@ -290,12 +291,15 @@ public class JPAProcessorImpl implements JPAProcessor {
     }
     Object selectedObject = readEntity(new JPAQueryBuilder(oDataJPAContext).build(uriParserResultView));
     if (selectedObject != null) {
-
-      boolean isLocalTransaction = setTransaction();
-      em.remove(selectedObject);
-      em.flush();
-      if (isLocalTransaction) {
-        oDataJPAContext.getODataJPATransaction().commit();
+      try{
+        boolean isLocalTransaction = setTransaction();
+        em.remove(selectedObject);
+        em.flush(); 
+        if (isLocalTransaction) {
+          oDataJPAContext.getODataJPATransaction().commit();
+        }
+      } catch(PersistenceException e){
+        em.getTransaction().rollback();
       }
     }
     return selectedObject;
@@ -423,6 +427,10 @@ public class JPAProcessorImpl implements JPAProcessor {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
     } catch (EdmException e) {
+      throw ODataJPARuntimeException.throwException(
+          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+    } catch (PersistenceException e) {
+      em.getTransaction().rollback();
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
     }

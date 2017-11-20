@@ -275,6 +275,9 @@ public class JPAQueryBuilder {
     //check if clause values are string with x.y.z format
     //starting with quotes;
     String query = checkConditionValues(jpqlQuery);
+    //remove any orderby clause parameters  with x.y.z format
+    //no normalization for such clause
+    query = removeExtraClause(jpqlQuery);
     // check if normalization is needed (if query contains "x.y.z" elements
     // starting with space or parenthesis)
     Matcher normalizationNeededMatcher = NORMALIZATION_NEEDED_PATTERN.matcher(query);
@@ -330,6 +333,7 @@ public class JPAQueryBuilder {
           alias + JPQLStatement.DELIMITER.PERIOD);
       //check for values like "x.y.z"
       query = checkConditionValues(normalizedJpqlQuery);
+      query = removeExtraClause(normalizedJpqlQuery);
       // check if further normalization is needed
       normalizationNeededMatcher = NORMALIZATION_NEEDED_PATTERN.matcher(query);
       normalizationNeeded = normalizationNeededMatcher.find();
@@ -341,6 +345,20 @@ public class JPAQueryBuilder {
         JPQLStatement.KEYWORD.SELECT_DISTINCT + JPQLStatement.DELIMITER.SPACE);
   }
 
+  /**
+   * Check if the statement contains ORDERBY having x.y.z kind of format
+   * It will remove those values before checking for normalization 
+   * and later added back
+   * */
+  private static String removeExtraClause(String jpqlQuery) {
+    String query = jpqlQuery;
+    if(query.contains(JPQLStatement.KEYWORD.ORDERBY )){
+      int index = query.indexOf(JPQLStatement.KEYWORD.ORDERBY);
+      query = query.substring(0, index);  
+    }
+    return query;
+  }
+  
   /**
    * Check if the statement contains string values having x.y.z kind of format
    * It will replace those values with parameters before checking for normalization 
