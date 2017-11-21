@@ -1041,7 +1041,7 @@ public class UriParserTest extends BaseTest {
     assertEquals("Employees", result.getTargetEntitySet().getName());
     assertEquals(UriType.URI1, result.getUriType());
     assertEquals("EmployeeId eq '1'", result.getFilter().getUriLiteral());
-    assertEquals("true", result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
   }
   
   @Test
@@ -1058,7 +1058,7 @@ public class UriParserTest extends BaseTest {
     assertEquals("Employees", result.getTargetEntitySet().getName());
     assertEquals(UriType.URI1, result.getUriType());
     assertEquals("EmployeeId eq '1'", result.getFilter().getUriLiteral());
-    assertEquals("true", result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
   }
   
   @Test
@@ -1067,7 +1067,7 @@ public class UriParserTest extends BaseTest {
     assertEquals("Employees", result.getTargetEntitySet().getName());
     assertEquals(UriType.URI1, result.getUriType());
     assertEquals("EmployeeId eq '1'", result.getFilter().getUriLiteral());
-    assertEquals("true", result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
   }
   
   @Test

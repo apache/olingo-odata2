@@ -69,6 +69,7 @@ public class RestUtil {
       Pattern.compile(REG_EX_ACCEPT_LANGUAGES + "(?:;" + REG_EX_OPTIONAL_WHITESPACE + REG_EX_QVALUE + ")?");
 
   private static final Pattern REG_EX_MATRIX_PARAMETER = Pattern.compile("([^=]*)(?:=(.*))?");
+  private static final String ACCEPT_FORM_ENCODING = "odata-accept-forms-encoding";
 
   public static ContentType extractRequestContentType(final String contentType)
       throws ODataUnsupportedMediaTypeException {
@@ -109,9 +110,13 @@ public class RestUtil {
     return queryParametersMap;
   }
 
-  public static Map<String, List<String>> extractAllQueryParameters(final String queryString) {
+  public static Map<String, List<String>> extractAllQueryParameters(final String queryString, String formEncoding) {
     Map<String, List<String>> allQueryParameterMap = new HashMap<String, List<String>>();
-
+    if(Boolean.parseBoolean(formEncoding)){
+      List<String> encoding = new ArrayList<String>();
+      encoding.add(formEncoding);
+      allQueryParameterMap.put(ACCEPT_FORM_ENCODING, encoding );
+    }
     if (queryString != null && queryString.length() > 0) {
       // At first the queryString will be decoded.
       List<String> queryParameters = Arrays.asList(queryString.split("\\&"));
@@ -136,7 +141,6 @@ public class RestUtil {
         }
       }
     }
-
     return allQueryParameterMap;
   }
 

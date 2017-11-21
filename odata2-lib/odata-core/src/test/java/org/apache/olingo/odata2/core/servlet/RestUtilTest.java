@@ -41,17 +41,17 @@ public class RestUtilTest {
 
   @Test
   public void testExtractAllQueryParameters() throws Exception {
-    Map<String, List<String>> result = RestUtil.extractAllQueryParameters("some=value");
+    Map<String, List<String>> result = RestUtil.extractAllQueryParameters("some=value", "false");
     Assert.assertEquals("value", result.get("some").get(0));
 
-    result = RestUtil.extractAllQueryParameters("some=value&another=v");
+    result = RestUtil.extractAllQueryParameters("some=value&another=v", "false");
     Assert.assertEquals("value", result.get("some").get(0));
     Assert.assertEquals("v", result.get("another").get(0));
 
-    result = RestUtil.extractAllQueryParameters("");
+    result = RestUtil.extractAllQueryParameters("", "false");
     Assert.assertTrue(result.isEmpty());
 
-    result = RestUtil.extractAllQueryParameters("some=v1&another=v&some=v2");
+    result = RestUtil.extractAllQueryParameters("some=v1&another=v&some=v2", "false");
     Assert.assertEquals("v1", result.get("some").get(0));
     Assert.assertEquals("v2", result.get("some").get(1));
     Assert.assertEquals("v", result.get("another").get(0));

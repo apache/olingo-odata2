@@ -50,6 +50,11 @@ public abstract class ODataServiceFactory {
    * Label used in web.xml to assign servlet init parameter for a path split (service resolution).
    */
   public static final String PATH_SPLIT_LABEL = "org.apache.olingo.odata2.path.split";
+  
+  /**
+   * Label used in web.xml to assign servlet init parameter for a accept form encoding.
+   */
+  public static final String ACCEPT_FORM_ENCODING ="org.apache.olingo.odata.accept.forms.encoding";
 
   /**
    * Create instance of custom {@link ODataService}.

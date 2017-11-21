@@ -588,7 +588,8 @@ public class UriParserImpl extends UriParser {
   private void distributeQueryParameters(final Map<String, List<String>> queryParameters) throws UriSyntaxException {
     boolean formEncoding = false;
     if(queryParameters.containsKey(ACCEPT_FORM_ENCODING)){
-      formEncoding=Boolean.parseBoolean(queryParameters.get(ACCEPT_FORM_ENCODING).get(0));;
+      formEncoding=Boolean.parseBoolean(queryParameters.get(ACCEPT_FORM_ENCODING).get(0));
+      queryParameters.remove(ACCEPT_FORM_ENCODING);
     }
     for (final String queryOptionString : queryParameters.keySet()) {
       final String decodedString = percentDecode(queryOptionString);
