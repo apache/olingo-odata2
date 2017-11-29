@@ -403,9 +403,14 @@ public class ODataExpressionParser {
           || edmSimpleType == EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance()) {
         literal = literal.substring(literal.indexOf('\''), literal.indexOf('}'));
       }
-
-      keyFilters.append(tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName + JPQLStatement.DELIMITER.SPACE
-          + JPQLStatement.Operator.EQ + JPQLStatement.DELIMITER.SPACE + literal);
+      if(edmSimpleType == EdmSimpleTypeKind.String.getEdmSimpleTypeInstance()){
+        keyFilters.append(tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName + JPQLStatement.DELIMITER.SPACE
+            + JPQLStatement.Operator.LIKE + JPQLStatement.DELIMITER.SPACE + literal +  " ESCAPE '\\'");
+       
+      }else{
+        keyFilters.append(tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName + JPQLStatement.DELIMITER.SPACE
+            + JPQLStatement.Operator.EQ + JPQLStatement.DELIMITER.SPACE + literal);
+      }
     }
     if (keyFilters.length() > 0) {
       Map<String, Map<Integer, Object>> parameterizedExpressionMap = 
