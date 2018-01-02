@@ -48,7 +48,7 @@ public class ODataFilterExpressionParserTest {
   private static final String NAMESPACE = "SalesOrderProcessing";
   private static final String ENTITY_NOTE = "Note";
   // Index 0 - Is test input and Index 1 - Is expected output
-  private static final String[] EXPRESSION_EQ = { "id eq '123'", "(E1.id = '123')" };
+  private static final String[] EXPRESSION_EQ = { "id eq '123'", "(E1.id LIKE '123' ESCAPE '\\')" };
   private static final String[] EXPRESSION_NE = { "id ne '123'", "(E1.id <> '123')" };
   private static final String[] EXPRESSION_ESCAPE = { "id ne '123''22'", "(E1.id <> '123''22')" };
   private static final String[] EXPRESSION_BINARY_AND =
@@ -60,7 +60,7 @@ public class ODataFilterExpressionParserTest {
   private static final String[] EXPRESSION_BINARY_OR = { "id ge '123' or soId gt 123L",
       "((E1.id >= '123') OR (E1.soId > 123))" };
   private static final String[] EXPRESSION_MEMBER_OR = { "id lt '123' or oValue/Currency eq 'INR'",
-      "((E1.id < '123') OR (E1.oValue.Currency = 'INR'))" };
+      "((E1.id < '123') OR (E1.oValue.Currency LIKE 'INR' ESCAPE '\\'))" };
   private static final String[] EXPRESSION_STARTS_WITH = { "startswith(oValue/Currency,'INR')",
       "E1.oValue.Currency LIKE CONCAT('INR','%') ESCAPE '\\'" };
   private static final String[] EXPRESSION_STARTS_WITH_EQUAL = { "startswith(oValue/Currency,'INR') eq true",
@@ -77,7 +77,7 @@ public class ODataFilterExpressionParserTest {
       "((CASE WHEN ('123' LIKE CONCAT('%',CONCAT(E1.id,'%')) ESCAPE '\\') THEN TRUE ELSE FALSE END) <> true)" };
   private static final String[] EXPRESSION_STARTS_WITH_WRONG_OP = { "startswith(oValue/Currency,'INR') lt true", "" };
   private static final String[] EXPRESSION_SUBSTRING_ALL_OP = { "substring(oValue/Currency,1,3) eq 'INR'",
-      "(SUBSTRING(E1.oValue.Currency, 1 + 1 , 3) = 'INR')" };
+      "(SUBSTRING(E1.oValue.Currency, 1 + 1 , 3) LIKE 'INR' ESCAPE '\\')" };
   private static final String[] EXPRESSION_SUBSTRINGOF_INJECTION1 = {
       "substringof('a'' OR 1=1 OR E1.id LIKE ''b',id) eq true",
       "((CASE WHEN (E1.id LIKE CONCAT('%',CONCAT('a'' OR 1=1 OR E1.id LIKE ''b','%')) ESCAPE '\\') "
@@ -97,7 +97,8 @@ public class ODataFilterExpressionParserTest {
       "(E1.id LIKE CONCAT('%','Str''eet') ESCAPE '\\' )" };
   private static final String[] EXPRESSION_PRECEDENCE = {
       "id eq '123' and id ne '123' or (id eq '123' and id ne '123')",
-      "(((E1.id = '123') AND (E1.id <> '123')) OR ((E1.id = '123') AND (E1.id <> '123')))" };
+      "(((E1.id LIKE '123' ESCAPE '\\') AND (E1.id <> '123')) OR ((E1.id LIKE '123' ESCAPE '\\') "
+      + "AND (E1.id <> '123')))" };
   private static final String[] EXPRESSION_DATETIME = { "date eq datetime'2000-01-01T00:00:00'",
       "(E1.date = 2000-01-01 00:00:00.000)" };
   
@@ -106,16 +107,16 @@ public class ODataFilterExpressionParserTest {
   private static final String[] EXPRESSION_NOT_NULL = { "date ne null", "(E1.date IS NOT null)" };
   
   private static final String[] EXPRESSION_STARTSWITH_EQBINARY = { "startswith(id,'123') and text eq 'abc'", 
-      "(E1.id LIKE CONCAT('123','%') ESCAPE '\\' AND (E1.text = 'abc'))" };
+      "(E1.id LIKE CONCAT('123','%') ESCAPE '\\' AND (E1.text LIKE 'abc' ESCAPE '\\'))" };
   
   private static final String[] EXPRESSION_STARTSWITHEQ_EQBINARY = { "startswith(id,'123') eq true and text eq 'abc'", 
-  "((E1.id LIKE CONCAT('123','%') ESCAPE '\\' ) AND (E1.text = 'abc'))" };
+  "((E1.id LIKE CONCAT('123','%') ESCAPE '\\' ) AND (E1.text LIKE 'abc' ESCAPE '\\'))" };
   
   private static final String[] EXPRESSION_EQBINARY_STARTSWITH = { "text eq 'abc' and startswith(id,'123')", 
-      "((E1.text = 'abc') AND E1.id LIKE CONCAT('123','%') ESCAPE '\\')" };
+      "((E1.text LIKE 'abc' ESCAPE '\\') AND E1.id LIKE CONCAT('123','%') ESCAPE '\\')" };
   
   private static final String[] EXPRESSION_EQBINARY_STARTSWITHEQ = { "text eq 'abc' and startswith(id,'123') eq true", 
-  "((E1.text = 'abc') AND (E1.id LIKE CONCAT('123','%') ESCAPE '\\' ))" };
+  "((E1.text LIKE 'abc' ESCAPE '\\') AND (E1.id LIKE CONCAT('123','%') ESCAPE '\\' ))" };
 
   private static final String[] EXPRESSION_STARTSWITH_STARTSWITH = { "startswith(text,'abc') and startswith(id,'123')", 
   "(E1.text LIKE CONCAT('abc','%') ESCAPE '\\' AND E1.id LIKE CONCAT('123','%') ESCAPE '\\')" };

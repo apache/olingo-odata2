@@ -35,6 +35,7 @@ import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
+import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
@@ -506,6 +507,8 @@ public class JPAQueryBuilderTest {
     EasyMock.expect(commonExpression.getKind()).andStubReturn(ExpressionKind.BINARY);
     MethodExpression methodExp = EasyMock.createMock(MethodExpression.class);
     EasyMock.expect(commonExpression.getLeftOperand()).andStubReturn(methodExp);
+    EdmSimpleType type = EasyMock.createMock(EdmSimpleType.class);;
+    EasyMock.expect(methodExp.getEdmType()).andStubReturn(type );
     
     LiteralExpression literalValueExp = EasyMock.createMock(LiteralExpression.class);
     EasyMock.expect(commonExpression.getRightOperand()).andStubReturn(literalValueExp);
