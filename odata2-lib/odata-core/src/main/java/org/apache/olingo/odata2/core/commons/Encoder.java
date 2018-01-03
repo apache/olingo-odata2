@@ -96,7 +96,12 @@ public class Encoder {
    */
   private String encodeInternal(final String input) {
     StringBuilder resultStr = new StringBuilder();
-
+    
+    // avoid NPE if the given input is null
+    if (input == null) {
+        return null;
+    }
+    
     try {
       for (byte utf8Byte : input.getBytes("UTF-8")) {
         final char character = (char) utf8Byte;
