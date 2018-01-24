@@ -157,6 +157,13 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
     } else if (value instanceof Long) {
       milliSeconds = (Long) value;
       offset = 0;
+    } else if (value instanceof Instant) {
+      try {
+        milliSeconds = ((Instant) value).toEpochMilli();
+      } catch (ArithmeticException e) { // in case the Instant is far away from epoch
+        milliSeconds = Long.MAX_VALUE;
+      }
+      offset = 0;
     } else {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass()));
     }
