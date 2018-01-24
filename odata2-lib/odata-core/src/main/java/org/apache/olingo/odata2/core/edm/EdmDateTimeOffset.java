@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.core.edm;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -150,6 +151,12 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
       milliSeconds = dateTimeValue.getTimeInMillis();
     } else if (value instanceof Long) {
       milliSeconds = (Long) value;
+    } else if (value instanceof Instant) {
+      try {
+        milliSeconds = ((Instant) value).toEpochMilli();
+      } catch (ArithmeticException e) { // in case the Instant is far away from epoch
+        milliSeconds = Long.MAX_VALUE;
+      }
     } else {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass()));
     }
