@@ -95,13 +95,11 @@ public class Encoder {
    * @return encoded representation
    */
   private String encodeInternal(final String input) {
-    StringBuilder resultStr = new StringBuilder();
-    
-    // avoid NPE if the given input is null
     if (input == null) {
         return null;
     }
-    
+
+    StringBuilder resultStr = new StringBuilder();
     try {
       for (byte utf8Byte : input.getBytes("UTF-8")) {
         final char character = (char) utf8Byte;
