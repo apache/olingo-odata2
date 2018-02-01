@@ -405,10 +405,6 @@ public class ODataExpressionParser {
 
       literal = evaluateComparingExpression(literal, edmSimpleType, edmMappedType);
 
-      if (edmSimpleType == EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance()
-          || edmSimpleType == EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance()) {
-        literal = literal.substring(literal.indexOf('\''), literal.indexOf('}'));
-      }
       if(edmSimpleType == EdmSimpleTypeKind.String.getEdmSimpleTypeInstance()){
         keyFilters.append(tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName + JPQLStatement.DELIMITER.SPACE
             + JPQLStatement.Operator.LIKE + JPQLStatement.DELIMITER.SPACE + literal +  " ESCAPE '\\'");
@@ -492,6 +488,7 @@ public class ODataExpressionParser {
         }
       }
       uriLiteral = "?" + index;
+      index++;
     } else if (EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)
         || EdmSimpleTypeKind.DateTimeOffset.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)) {
       try {
@@ -503,6 +500,7 @@ public class ODataExpressionParser {
           positionalParameters.put(index, datetime);
         }
         uriLiteral = "?" + index;
+        index++;
 
       } catch (EdmSimpleTypeException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
@@ -524,6 +522,7 @@ public class ODataExpressionParser {
          positionalParameters.put(index, Time.valueOf(uriLiteral));
        }
        uriLiteral = "?" + index;
+       index++;
       } catch (EdmSimpleTypeException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
       }
@@ -538,51 +537,47 @@ public class ODataExpressionParser {
       Class<?> edmMappedType) {
     Class<? extends Object> type = edmMappedType==null? edmSimpleType.getDefaultType():
       edmMappedType;
+    int size = positionalParameters.size();
     if (Long.class.equals(type)) {
       if (!positionalParameters.containsKey(index)) {
         positionalParameters.put(index, Long.valueOf(uriLiteral));
       }
-      uriLiteral = "?" + index;
     } else if (Double.class.equals(type)) {
       if (!positionalParameters.containsKey(index)) {
         positionalParameters.put(index, Double.valueOf(uriLiteral));
       }
-      uriLiteral = "?" + index;
     } else if (Integer.class.equals(type)) {
       if (!positionalParameters.containsKey(index)) {
         positionalParameters.put(index, Integer.valueOf(uriLiteral));
       }
-      uriLiteral = "?" + index;
     } else if (Byte.class.equals(type)) {
       if (!positionalParameters.containsKey(index)) {
         positionalParameters.put(index, Byte.valueOf(uriLiteral));
       }
-      uriLiteral = "?" + index;
     }  else if (Byte[].class.equals(type)) {
       if (!positionalParameters.containsKey(index)) {
         positionalParameters.put(index, toByteArray(uriLiteral));
       }
-      uriLiteral = "?" + index;
     } else if (Short.class.equals(type)) {
       if (!positionalParameters.containsKey(index)) {
         positionalParameters.put(index, Short.valueOf(uriLiteral));
       }
-      uriLiteral = "?" + index;
     } else if (BigDecimal.class.equals(type)) {
       if (!positionalParameters.containsKey(index)) {
         positionalParameters.put(index, new BigDecimal(uriLiteral));
       }
-      uriLiteral = "?" + index;
     } else if (BigInteger.class.equals(type)) {
       if (!positionalParameters.containsKey(index)) {
         positionalParameters.put(index, new BigInteger(uriLiteral));
       }
-      uriLiteral = "?" + index;
     } else if (Float.class.equals(type)) {
       if (!positionalParameters.containsKey(index)) {
         positionalParameters.put(index, Float.valueOf(uriLiteral));
       }
+    }
+    if(size+1 == positionalParameters.size()){
       uriLiteral = "?" + index;
+      index++;
     }
     return uriLiteral;
   }
