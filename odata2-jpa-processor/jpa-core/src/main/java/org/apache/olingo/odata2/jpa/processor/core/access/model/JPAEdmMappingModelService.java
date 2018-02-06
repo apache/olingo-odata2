@@ -202,13 +202,15 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
   }
 
   private JPAEmbeddableTypeMapType searchJPAEmbeddableTypeMapType(final String jpaEmbeddableTypeName) {
-    for (JPAEmbeddableTypeMapType jpaEmbeddableType : mappingModel.getPersistenceUnit().getJPAEmbeddableTypes()
-        .getJPAEmbeddableType()) {
-      if (jpaEmbeddableType.getName().equals(jpaEmbeddableTypeName)) {
-        return jpaEmbeddableType;
+    if (null != mappingModel.getPersistenceUnit() && 
+        null != mappingModel.getPersistenceUnit().getJPAEmbeddableTypes()) {
+      for (JPAEmbeddableTypeMapType jpaEmbeddableType : mappingModel.getPersistenceUnit().getJPAEmbeddableTypes()
+          .getJPAEmbeddableType()) {
+        if (jpaEmbeddableType.getName().equals(jpaEmbeddableTypeName)) {
+          return jpaEmbeddableType;
+        }
       }
     }
-
     return null;
   }
 
