@@ -24,6 +24,7 @@ import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
+import org.apache.olingo.odata2.core.commons.ContentType;
 
 import java.util.List;
 
@@ -109,6 +110,9 @@ public class BatchResponseWriter {
     writer.append(CRLF);
     writer.append("HTTP/1.1").append(SP).append(String.valueOf(response.getStatus().getStatusCode())).append(SP)
         .append(response.getStatus().getInfo()).append(CRLF);
+    if (response.getHeader("Content-Type") != null) {
+      BatchHelper.extractCharset(ContentType.parse(response.getHeader("Content-Type")));
+    }
     appendHeader(response);
     if (!HttpStatusCodes.NO_CONTENT.equals(response.getStatus())) {
       BatchHelper.Body body = new BatchHelper.Body(response);

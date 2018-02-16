@@ -42,7 +42,7 @@ public class BatchHelper {
   public static final String BINARY_ENCODING = "binary";
   public static final String UTF8_ENCODING = "UTF-8";
   public static final String ISO_ENCODING = "ISO-8859-1";
-  public static String DEFAULT_ENCODING = "UTF-8";
+  public static String DEFAULT_ENCODING = "ISO-8859-1";
   public static final String HTTP_CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
   public static final String HTTP_CONTENT_ID = "Content-Id";
   public static final String MIME_HEADER_CONTENT_ID = "MimeHeader-ContentId";
@@ -145,7 +145,7 @@ public class BatchHelper {
     }
 
     public BodyBuilder append(String string) {
-      byte [] b = string.getBytes(CHARSET_ISO_8859_1);
+      byte [] b = string.getBytes(DEFAULT_CHARSET);
       put(b);
       return this;
     }
@@ -223,6 +223,7 @@ public class BatchHelper {
 
     public Body() {
       this.content = EMPTY_BYTES;
+      setDefaultValues(ISO_ENCODING);
     }
 
     public int getLength() {

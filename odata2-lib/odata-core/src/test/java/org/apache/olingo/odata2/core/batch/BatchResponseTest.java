@@ -26,6 +26,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -218,5 +219,31 @@ public class BatchResponseTest {
       data[i - Byte.MIN_VALUE] = (byte) i;
     }
     return data;
+  }
+  
+  @Test
+  public void testissueWithHeaderHavingUmlautChars() throws BatchException, IOException {
+    List<BatchResponsePart> parts = new ArrayList<BatchResponsePart>();
+    String headerValue = "<notification xmlns:ns=\"http://namespace\">"
+        + "<code>TEST_MSG/004</code><message>Team ID 'XXX_E'äöü Ö is not in the defined range."
+        + "</message><target>Team_Identifier</target><severity>error</severity><details><detail>"
+        + "<code>TEST_MSG/010</code><message>"
+        + "This is a message text of a business exception raised by the provider.</message><target>"
+        + "</target><severity>warning</severity></detail></details></notification>";
+    ODataResponse response = ODataResponse.entity("Walter Winter")
+        .status(HttpStatusCodes.OK)
+        .header("message", headerValue)
+        .contentHeader("application/xml")
+        .build();
+    List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
+    responses.add(response);
+    parts.add(BatchResponsePart.responses(responses).changeSet(false).build());
+
+    BatchResponseWriter writer = new BatchResponseWriter();
+    ODataResponse batchResponse = writer.writeResponse(parts);
+
+    assertNotNull(batchResponse.getEntity());
+    assertTrue(batchResponse.getEntity().toString().
+        contains("Team ID 'XXX_E'äöü Ö is not in the defined range."));
   }
 }
