@@ -468,7 +468,7 @@ public class AnnotationEdmProvider extends EdmProvider {
 
     private Property createProperty(final EdmProperty ep, final Field field) {
       if (isAnnotatedEntity(field.getType())) {
-        return createComplexProperty(field);
+        return createComplexProperty(ep, field);
       } else {
         return createSimpleProperty(ep, field);
       }
@@ -505,7 +505,7 @@ public class AnnotationEdmProvider extends EdmProvider {
       return resultFacets;
     }
 
-    private Property createComplexProperty(final Field field) {
+    private Property createComplexProperty(EdmProperty ep, final Field field) {
       ComplexProperty cp = new ComplexProperty();
       // settings from property
       String entityName = ANNOTATION_HELPER.getPropertyName(field);
@@ -515,6 +515,8 @@ public class AnnotationEdmProvider extends EdmProvider {
       FullQualifiedName fqn = ANNOTATION_HELPER.extractComplexTypeFqn(field.getType());
       cp.setType(fqn);
 
+      cp.setFacets(createFacets(ep.facets(), field.getAnnotation(EdmConcurrencyControl.class)));
+      
       return cp;
     }
 

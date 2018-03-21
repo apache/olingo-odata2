@@ -58,7 +58,7 @@ public class Employee {
   private String imageUrl;
   @EdmProperty(name = "EntryDate", type = EdmType.DATE_TIME)
   private Calendar entryDate;
-  @EdmProperty(name = "Location")
+  @EdmProperty(name = "Location", facets = @EdmFacets(nullable = false))
   private Location location;
 
   public Employee(final String employeeId, final String name) {

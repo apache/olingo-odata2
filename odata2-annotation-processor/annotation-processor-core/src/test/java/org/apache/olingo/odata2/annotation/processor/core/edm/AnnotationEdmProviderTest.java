@@ -453,6 +453,7 @@ public class AnnotationEdmProviderTest {
         new FullQualifiedName(ModelSharedConstants.NAMESPACE_1, "c_Location"));
     assertEquals("c_Location", locationType.getName());
     assertEquals(2, locationType.getProperties().size());
+    assertEquals(false, location.getFacets().isNullable());
   }
 
   @Test
