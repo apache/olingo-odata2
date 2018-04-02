@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" >
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="API_PRODUCT_SRV" xml:lang="en"  xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="A_ProductType" >
+				<Key>
+					<PropertyRef Name="Product"/>
+				</Key>
+				<Property Name="Product" Type="Edm.String" Nullable="false" MaxLength="40" />
+				<Property Name="BaseUnit" Type="Edm.String" MaxLength="3" />
+				<Property Name="ProductType" Type="Edm.String" MaxLength="4"/>
+				<NavigationProperty Name="to_Description" Relationship="API_PRODUCT_SRV.assoc_B3BC21CD74485D381C22EBC58AD5D2F4" FromRole="FromRole_assoc_B3BC21CD74485D381C22EBC58AD5D2F4" ToRole="ToRole_assoc_B3BC21CD74485D381C22EBC58AD5D2F4"/>
+				</EntityType>
+			<EntityType Name="A_ProductDescriptionType" >
+				<Key>
+					<PropertyRef Name="Product"/>
+					<PropertyRef Name="Language"/>
+				</Key>
+				<Property Name="Product" Type="Edm.String" Nullable="false" MaxLength="40" />
+				<Property Name="Language" Type="Edm.String" Nullable="false" MaxLength="2" />
+				<Property Name="ProductDescription" Type="Edm.String" MaxLength="40" />
+			</EntityType>
+			<Association Name="assoc_2754A00DBA9C146B098B85A076E625EE" >
+				<End Type="API_PRODUCT_SRV.A_ProductPlantType" Multiplicity="1" Role="FromRole_assoc_2754A00DBA9C146B098B85A076E625EE"/>
+				<End Type="API_PRODUCT_SRV.A_ProductStorageLocationType" Multiplicity="*" Role="ToRole_assoc_2754A00DBA9C146B098B85A076E625EE"/>
+			</Association>
+			<Association Name="assoc_9E0A9389B585D61EBCFB6C47D388CE0D" >
+				<End Type="API_PRODUCT_SRV.A_ProductType" Multiplicity="1" Role="FromRole_assoc_9E0A9389B585D61EBCFB6C47D388CE0D"/>
+				<End Type="API_PRODUCT_SRV.A_ProductPlantType" Multiplicity="*" Role="ToRole_assoc_9E0A9389B585D61EBCFB6C47D388CE0D"/>
+			</Association>
+			<Association Name="assoc_0D511862D40D30AD11CA2FE43EBDB1DD" >
+				<End Type="API_PRODUCT_SRV.A_ProductType" Multiplicity="1" Role="FromRole_assoc_0D511862D40D30AD11CA2FE43EBDB1DD"/>
+				<End Type="API_PRODUCT_SRV.A_ProductSalesTaxType" Multiplicity="*" Role="ToRole_assoc_0D511862D40D30AD11CA2FE43EBDB1DD"/>
+			</Association>
+			<Association Name="assoc_4AFBA201432776E45B5D3FB9FF74534E" >
+				<End Type="API_PRODUCT_SRV.A_ProductType" Multiplicity="1" Role="FromRole_assoc_4AFBA201432776E45B5D3FB9FF74534E"/>
+				<End Type="API_PRODUCT_SRV.A_ProductSalesDeliveryType" Multiplicity="*" Role="ToRole_assoc_4AFBA201432776E45B5D3FB9FF74534E"/>
+			</Association>
+			<Association Name="assoc_B3BC21CD74485D381C22EBC58AD5D2F4" >
+				<End Type="API_PRODUCT_SRV.A_ProductType" Multiplicity="1" Role="FromRole_assoc_B3BC21CD74485D381C22EBC58AD5D2F4"/>
+				<End Type="API_PRODUCT_SRV.A_ProductDescriptionType" Multiplicity="*" Role="ToRole_assoc_B3BC21CD74485D381C22EBC58AD5D2F4"/>
+			</Association>
+			<EntityContainer Name="API_PRODUCT_SRV_Entities" m:IsDefaultEntityContainer="true" >
+				<EntitySet Name="A_Product" EntityType="API_PRODUCT_SRV.A_ProductType" />
+				<EntitySet Name="A_ProductDescription" EntityType="API_PRODUCT_SRV.A_ProductDescriptionType" />
+				<AssociationSet Name="assoc_B3BC21CD74485D381C22EBC58AD5D2F4" Association="API_PRODUCT_SRV.assoc_B3BC21CD74485D381C22EBC58AD5D2F4" >
+					<End EntitySet="A_Product" Role="FromRole_assoc_B3BC21CD74485D381C22EBC58AD5D2F4"/>
+					<End EntitySet="A_ProductDescription" Role="ToRole_assoc_B3BC21CD74485D381C22EBC58AD5D2F4"/>
+				</AssociationSet>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

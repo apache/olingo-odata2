@@ -102,9 +102,16 @@ public class EntityProviderException extends ODataMessageException {
   /** MISSING_RESULTS_ARRAY requires no content value */
   public static final MessageReference MISSING_RESULTS_ARRAY = createMessageReference(EntityProviderException.class,
       "MISSING_RESULTS_ARRAY");
-
+  public static final MessageReference NULL_VALUE = createMessageReference(EntityProviderException.class, 
+      "NULL_VALUE");
   public static final MessageReference INVALID_DELETED_ENTRY_METADATA = createMessageReference(
       EntityProviderException.class, "INVALID_DELETED_ENTRY_METADATA");
+  /** Navigation Property has incorrect type */
+  public static final MessageReference INCORRECT_NAVIGATION_TYPE = createMessageReference(
+      EntityProviderException.class, "INCORRECT_NAVIGATION_TYPE");
+  /** MANDATORY_WRITE_PROPERTY requires no content value */
+  public static final MessageReference MANDATORY_WRITE_PROPERTY = createMessageReference(EntityProviderException.class, 
+    "MANDATORY_WRITE_PROPERTY");
 
   public EntityProviderException(final MessageReference messageReference) {
     super(messageReference);

@@ -209,6 +209,22 @@ class EdmMock {
     when(employeeSearchParameter.getType()).thenReturn(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance());
     when(employeeSearchFunctionImport.getParameterNames()).thenReturn(Arrays.asList("q"));
     when(employeeSearchFunctionImport.getParameter("q")).thenReturn(employeeSearchParameter);
+    when(employeeSearchParameter.getName()).thenReturn("q");
+    
+    EdmFunctionImport buildingSearchFunctionImport =
+        createFunctionImportMock(defaultContainer, "BuildingSearch", employeeType, EdmMultiplicity.MANY);
+    when(buildingSearchFunctionImport.getEntitySet()).thenReturn(buildingEntitySet);
+    EdmParameter buildingSearchParameter1 = mock(EdmParameter.class);
+    when(buildingSearchParameter1.getType()).thenReturn(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance());
+    when(buildingSearchFunctionImport.getParameterNames()).thenReturn(Arrays.asList("q", "r"));
+    when(buildingSearchFunctionImport.getParameter("q")).thenReturn(buildingSearchParameter1);
+    when(buildingSearchParameter1.getName()).thenReturn("q");
+    EdmParameter buildingSearchParameter2 = mock(EdmParameter.class);
+    when(buildingSearchParameter2.getType()).thenReturn(EdmSimpleTypeKind.Int16.getEdmSimpleTypeInstance());
+    when(buildingSearchFunctionImport.getParameter("r")).thenReturn(buildingSearchParameter2);
+    when(buildingSearchParameter2.getName()).thenReturn("r");
+    
+    
     createFunctionImportMock(defaultContainer, "AllLocations", locationComplexType, EdmMultiplicity.MANY);
     createFunctionImportMock(defaultContainer, "AllUsedRoomIds", EdmSimpleTypeKind.String.getEdmSimpleTypeInstance(),
         EdmMultiplicity.MANY);
@@ -223,18 +239,20 @@ class EdmMock {
     EdmFacets managerPhotoParameterFacets = mock(EdmFacets.class);
     when(managerPhotoParameterFacets.isNullable()).thenReturn(false);
     when(managerPhotoParameter.getFacets()).thenReturn(managerPhotoParameterFacets);
+    when(managerPhotoParameter.getName()).thenReturn("Id");
     when(managerPhotoFunctionImport.getParameterNames()).thenReturn(Arrays.asList("Id"));
     when(managerPhotoFunctionImport.getParameter("Id")).thenReturn(managerPhotoParameter);
     EdmFunctionImport oldestEmployeeFunctionImport =
         createFunctionImportMock(defaultContainer, "OldestEmployee", employeeType, EdmMultiplicity.ONE);
     when(oldestEmployeeFunctionImport.getEntitySet()).thenReturn(employeeEntitySet);
-
+    
     // Issue with not explicitly nullable parameters and facets
     EdmFunctionImport functionImportNullableParameter =
         createFunctionImportMock(defaultContainer, "FINullableParameter", EdmSimpleTypeKind.Boolean
             .getEdmSimpleTypeInstance(), EdmMultiplicity.ONE);
     EdmParameter nullableFIParameter = mock(EdmParameter.class);
     when(nullableFIParameter.getType()).thenReturn(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance());
+    when(nullableFIParameter.getName()).thenReturn("Id");
     EdmFacets nullableFIParameterFacets = mock(EdmFacets.class);
     when(nullableFIParameterFacets.isNullable()).thenReturn(null);
     when(nullableFIParameterFacets.getMaxLength()).thenReturn(new Integer(1));
@@ -320,6 +338,23 @@ class EdmMock {
     when(edm.getEntityType("RefScenario", "Company")).thenReturn(companyType);
     when(edm.getEntityType("RefScenario", "Organization")).thenReturn(organizationType);
     
+    EdmFunctionImport photoSearchFunctionImport =
+        createFunctionImportMock(photoContainer, "PhotoSearch", photoEntityType,
+            EdmMultiplicity.ONE);
+    when(photoSearchFunctionImport.getEntitySet()).thenReturn(photoEntitySet);
+    EdmParameter photoParameter1 = mock(EdmParameter.class);
+    when(photoParameter1.getType()).thenReturn(EdmSimpleTypeKind.Int16.getEdmSimpleTypeInstance());
+    EdmFacets photoParameterFacets = mock(EdmFacets.class);
+    when(photoParameterFacets.isNullable()).thenReturn(true);
+    when(photoParameter1.getFacets()).thenReturn(photoParameterFacets);
+    when(photoParameter1.getName()).thenReturn("Id");
+    EdmParameter photoParameter2 = mock(EdmParameter.class);
+    when(photoParameter2.getType()).thenReturn(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance());
+    when(photoParameter2.getName()).thenReturn("Type");
+    when(photoSearchFunctionImport.getParameterNames()).thenReturn(Arrays.asList("Id","Type"));
+    when(photoSearchFunctionImport.getParameter("Id")).thenReturn(photoParameter1);
+    when(photoSearchFunctionImport.getParameter("Type")).thenReturn(photoParameter2);
+    
     return edm;
   }
 
@@ -330,7 +365,8 @@ class EdmMock {
 
     EdmNavigationProperty navigationProperty = mock(EdmNavigationProperty.class);
     when(navigationProperty.getName()).thenReturn(name);
-    when(navigationProperty.getType()).thenReturn(navigationType);
+    EdmType type = targetEntitySet.getEntityType();
+    when(navigationProperty.getType()).thenReturn(type);
     when(navigationProperty.getMultiplicity()).thenReturn(multiplicity);
 
     when(entitySet.getEntityType().getProperty(name)).thenReturn(navigationProperty);

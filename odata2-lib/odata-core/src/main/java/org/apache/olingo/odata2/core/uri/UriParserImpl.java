@@ -112,6 +112,7 @@ public class UriParserImpl extends UriParser {
     return parseAll(pathSegments, convertFromSingleMapToMultiMap(queryParameters));
   }
 
+  
   @Override
   public UriInfo parseAll(final List<PathSegment> pathSegments, final Map<String, List<String>> allQueryParameters)
       throws UriSyntaxException, UriNotMatchingException, EdmException {
