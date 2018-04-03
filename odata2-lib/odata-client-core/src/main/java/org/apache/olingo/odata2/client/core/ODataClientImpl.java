@@ -168,24 +168,6 @@ public class ODataClientImpl extends ODataClient implements DeserializerMetadata
     }
   }
 
-  
-/**
- * Fetch Query parameters 
- * @param uri
- * @return
- */
-  private Map<String, String> getQueryParametersWithStrictFilter(String uri) {
-    Map<String, String> queryParameters = new HashMap<String, String>();
-    for (final String option : uri.split(AMP)) {
-      final String[] keyAndValue = option.split(EQUAL);
-      if (keyAndValue.length == 2) {
-        queryParameters.put(keyAndValue[0], keyAndValue[1]);
-      } else {
-        queryParameters.put(keyAndValue[0], "");
-      }
-    }
-    return queryParameters;
-  }
 
 @Override
   public EdmURIBuilder edmUriBuilder(String serviceRoot) {
