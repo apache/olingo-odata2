@@ -50,6 +50,7 @@ import org.apache.olingo.odata2.core.ep.util.CircleStreamBuffer;
  */
 public class EdmServiceMetadataImplProv implements EdmServiceMetadata {
 
+  private static final String EDM_PROVIDER_EXEPTION = "EdmProvider is not set.";
   private EdmProvider edmProvider;
   private String dataServiceVersion;
   private List<Schema> schemas;
@@ -61,10 +62,12 @@ public class EdmServiceMetadataImplProv implements EdmServiceMetadata {
 
   @Override
   public InputStream getMetadata() throws ODataException {
+    if(edmProvider == null){
+       throw new ODataException(EDM_PROVIDER_EXEPTION);
+    }
     if (schemas == null) {
       schemas = edmProvider.getSchemas();
     }
-
     OutputStreamWriter writer = null;
     CircleStreamBuffer csb = new CircleStreamBuffer();
     EntityProviderException cachedException = null;
@@ -98,6 +101,9 @@ public class EdmServiceMetadataImplProv implements EdmServiceMetadata {
 
   @Override
   public String getDataServiceVersion() throws ODataException {
+    if(edmProvider == null){
+      throw new ODataException(EDM_PROVIDER_EXEPTION);
+   }
     if (schemas == null) {
       schemas = edmProvider.getSchemas();
     }
@@ -135,6 +141,9 @@ public class EdmServiceMetadataImplProv implements EdmServiceMetadata {
 
   @Override
   public List<EdmEntitySetInfo> getEntitySetInfos() throws ODataException {
+    if(edmProvider == null){
+      throw new ODataException(EDM_PROVIDER_EXEPTION);
+   }
     if (entitySetInfos == null) {
       entitySetInfos = new ArrayList<EdmEntitySetInfo>();
 

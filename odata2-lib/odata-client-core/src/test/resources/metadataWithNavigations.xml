@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:atom="http://www.w3.org/2005/Atom">
+	<edmx:DataServices m:DataServiceVersion="2.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+		<Schema Namespace="ODataSet" xmlns="http://schemas.microsoft.com/ado/2008/09/edm" >
+			<EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+				<EntitySet Name="User" EntityType="ODataNS.User" />			
+			</EntityContainer>
+		</Schema>
+		<Schema Namespace="ODataNS" xmlns="http://schemas.microsoft.com/ado/2008/09/edm" >
+			<EntityType Name="User">
+				<Key>
+					<PropertyRef Name="userId"/>
+				</Key>
+						<Property Name="userId" Type="Edm.String" Nullable="false"  MaxLength="100" />
+					</EntityType>
+			
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,13 @@
+{
+	"d" : {
+		"Id" : "1",
+		"Name" : "Room 1",
+		"Seats" : 1,
+		"Version" : 1,
+		"nr_Building" : {
+			"__deferred" : {
+				"uri" : "http://host:8080/ReferenceScenario.svc/Buildings('1')"
+			}
+		}
+	}
+}

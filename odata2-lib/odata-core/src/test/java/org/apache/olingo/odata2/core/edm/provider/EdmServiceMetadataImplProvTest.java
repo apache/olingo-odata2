@@ -39,6 +39,7 @@ import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.edm.provider.EntityContainer;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.edm.provider.Schema;
+import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.mock.EdmTestProvider;
@@ -77,6 +78,25 @@ public class EdmServiceMetadataImplProvTest extends BaseTest {
     assertNotNull(infos);
     assertTrue(infos.isEmpty());
   }
+  
+  @Test(expected = ODataException.class)
+  public void errorEdmProviderEntitySet() throws Exception {
+    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImplProv(null);
+    serviceMetadata.getEntitySetInfos();
+  }
+  
+  @Test(expected = ODataException.class)
+  public void errorEdmProviderServiceVersion() throws Exception {
+    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImplProv(null);
+    serviceMetadata.getDataServiceVersion();
+  }
+  
+  @Test(expected = ODataException.class)
+  public void errorEdmProvider() throws Exception {
+    EdmServiceMetadata serviceMetadata = new EdmServiceMetadataImplProv(null);
+    serviceMetadata.getMetadata();
+  }
+
 
   @Test
   public void getEntitySetInfosForEmptyEdmProviderSchemas() throws Exception {

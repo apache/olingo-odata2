@@ -30,5 +30,7 @@
         <module>odata-fit</module>
         <module>odata-ref</module>
         <module>odata-web</module>
+        <module>odata-client-api</module>
+        <module>odata-client-core</module>
     </modules>
 </project>
