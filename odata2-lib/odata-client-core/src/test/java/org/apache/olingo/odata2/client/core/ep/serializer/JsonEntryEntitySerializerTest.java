@@ -829,7 +829,7 @@ public class JsonEntryEntitySerializerTest extends BaseTest {
 
     final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
     assertNotNull(json);
-    assertEquals("{\"__metadata\":{\"id\":\"http://host:80/service/Rooms\","
+    assertEquals("{\"__metadata\":{\"id\":\"http://host:80/service/Rooms('A')\","
         + "\"uri\":\"http://host:80/service/Rooms('A')\",\"type\":\"RefScenario.Room\"},"
         + "\"Version\":1,\"nr_Building\":{\"Name\":\"Building1\"}}", json);
   }
