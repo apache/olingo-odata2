@@ -156,7 +156,7 @@ public class ODataExpressionParser {
         if(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance().isCompatible(type)){
           return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
               + (!"null".equals(right) ? JPQLStatement.Operator.LIKE : "IS") + JPQLStatement.DELIMITER.SPACE + right
-              + " ESCAPE '\\'" + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
+              + ("null".equals(right) ? "" : " ESCAPE '\\'") + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
         }
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
             + (!"null".equals(right) ? JPQLStatement.Operator.EQ : "IS") + JPQLStatement.DELIMITER.SPACE + right

@@ -130,6 +130,8 @@ public class ODataFilterExpressionParserTest {
   
   private static final String[] EXPRESSION_STARTSWITHEQTRUE_ANDTRUE = {"startswith(text,'abc') eq true and true", 
       "((E1.text LIKE CONCAT('abc','%') ESCAPE '\\' ) AND true)"};
+
+  private static final String[] EXPRESSION_NULL_EQ = { "id eq null", "(E1.id IS null)" };
   
   private static Edm edm = null;
 
@@ -246,6 +248,14 @@ public class ODataFilterExpressionParserTest {
     String whereExpression = parseWhereExpression(EXPRESSION_EQ[INPUT], false);
     whereExpression = replacePositionalParameters(whereExpression);
     assertEquals(EXPRESSION_EQ[OUTPUT], whereExpression);
+  
+  }
+  
+  @Test
+  public void testNullEqRelation() {
+    String whereExpression = parseWhereExpression(EXPRESSION_NULL_EQ[INPUT], false);
+    whereExpression = replacePositionalParameters(whereExpression);
+    assertEquals(EXPRESSION_NULL_EQ[OUTPUT], whereExpression);
   
   }
 
