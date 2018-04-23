@@ -129,7 +129,7 @@ public class EdmEntityContainerImpl implements EdmEntityContainer, EdmAnnotatabl
   public EdmEntitySet getEntitySet(final String name) throws EdmException {
     EdmEntitySet edmEntitySet = null;
       for(EdmEntitySet entity:edmEntitySets){
-        if(name.equals(entity.getName())){
+        if(entity.getName().equals(name)){
           edmEntitySet = entity;
                 
       }

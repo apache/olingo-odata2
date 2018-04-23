@@ -545,42 +545,47 @@ public class UriParserImpl extends UriParser {
   private void handleFunctionImport(final EdmFunctionImport functionImport, final String emptyParentheses,
       final String keyPredicate) throws UriSyntaxException, UriNotMatchingException, EdmException {
     final EdmTyped returnType = functionImport.getReturnType();
-    final EdmType type = returnType.getType();
-    final boolean isCollection = returnType.getMultiplicity() == EdmMultiplicity.MANY;
-
-    if (type.getKind() == EdmTypeKind.ENTITY && isCollection) {
-      handleEntitySet(functionImport.getEntitySet(), keyPredicate);
-      return;
-    }
-
-    if (emptyParentheses != null) {
-      throw new UriSyntaxException(UriSyntaxException.INVALIDSEGMENT.addContent(emptyParentheses));
-    }
-
-    uriResult.setTargetType(type);
-    switch (type.getKind()) {
-    case SIMPLE:
-      uriResult.setUriType(isCollection ? UriType.URI13 : UriType.URI14);
-      break;
-    case COMPLEX:
-      uriResult.setUriType(isCollection ? UriType.URI11 : UriType.URI12);
-      break;
-    case ENTITY:
-      uriResult.setUriType(UriType.URI10);
-      break;
-    default:
-      throw new UriSyntaxException(UriSyntaxException.INVALIDRETURNTYPE.addContent(type.getKind()));
-    }
-
-    if (!pathSegments.isEmpty()) {
-      if (uriResult.getUriType() == UriType.URI14) {
-        currentPathSegment = pathSegments.remove(0);
-        if ("$value".equals(percentDecode(currentPathSegment))) {
-          uriResult.setValue(true);
-        } else {
-          throw new UriSyntaxException(UriSyntaxException.INVALIDSEGMENT.addContent(currentPathSegment));
+    
+    if (returnType != null && returnType.getType() != null) {
+      final EdmType type = returnType.getType();
+      final boolean isCollection = returnType.getMultiplicity() == EdmMultiplicity.MANY;
+  
+      if (type.getKind() == EdmTypeKind.ENTITY && isCollection) {
+        handleEntitySet(functionImport.getEntitySet(), keyPredicate);
+        return;
+      }
+  
+      if (emptyParentheses != null) {
+        throw new UriSyntaxException(UriSyntaxException.INVALIDSEGMENT.addContent(emptyParentheses));
+      }
+  
+      uriResult.setTargetType(type);
+      switch (type.getKind()) {
+      case SIMPLE:
+        uriResult.setUriType(isCollection ? UriType.URI13 : UriType.URI14);
+        break;
+      case COMPLEX:
+        uriResult.setUriType(isCollection ? UriType.URI11 : UriType.URI12);
+        break;
+      case ENTITY:
+        uriResult.setUriType(UriType.URI10);
+        break;
+      default:
+        throw new UriSyntaxException(UriSyntaxException.INVALIDRETURNTYPE.addContent(type.getKind()));
+      }
+  
+      if (!pathSegments.isEmpty()) {
+        if (uriResult.getUriType() == UriType.URI14) {
+          currentPathSegment = pathSegments.remove(0);
+          if ("$value".equals(percentDecode(currentPathSegment))) {
+            uriResult.setValue(true);
+          } else {
+            throw new UriSyntaxException(UriSyntaxException.INVALIDSEGMENT.addContent(currentPathSegment));
+          }
         }
       }
+    } else {
+      uriResult.setUriType(UriType.URI14);
     }
     ensureLastSegment();
   }

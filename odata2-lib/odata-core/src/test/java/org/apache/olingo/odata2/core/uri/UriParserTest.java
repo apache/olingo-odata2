@@ -711,6 +711,10 @@ public class UriParserTest extends BaseTest {
     result = parse("OldestEmployee");
     assertEquals("OldestEmployee", result.getFunctionImport().getName());
     assertEquals(UriType.URI10, result.getUriType());
+    
+    result = parse("SetEmployee");
+    assertEquals("SetEmployee", result.getFunctionImport().getName());
+    assertEquals(UriType.URI14, result.getUriType());
   }
 
   @Test

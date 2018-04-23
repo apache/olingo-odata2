@@ -544,22 +544,33 @@ public class XmlMetadataDeserializer {
     EdmAnnotationsImpl annotations = new EdmAnnotationsImpl();
     Map<String, EdmParameter> edmParamMap = new HashMap<String, EdmParameter>();
     List<String> parametersList =  new ArrayList<String>();
-
+    FullQualifiedName fqName ;
     function.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
     function.setHttpMethod(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08,
         XmlMetadataConstants.EDM_FUNCTION_IMPORT_HTTP_METHOD));
-    function.setEntitySet(reader.getAttributeValue(null, XmlMetadataConstants.EDM_ENTITY_SET));
+    String entitySet = reader.getAttributeValue(null, XmlMetadataConstants.EDM_ENTITY_SET);
+    function.setEntitySet(entitySet);
 
     String returnTypeString = reader.getAttributeValue(null, XmlMetadataConstants.EDM_FUNCTION_IMPORT_RETURN);
     EdmTypedImpl returnType = new EdmTypedImpl();
     if (returnTypeString != null) {
       if (returnTypeString.startsWith("Collection") || returnTypeString.startsWith("collection")) {
-        returnType.setMultiplicity(EdmMultiplicity.MANY);
         returnTypeString = returnTypeString.substring(returnTypeString.indexOf("(") + 1, returnTypeString.length() - 1);
+        fqName = extractFQName(returnTypeString);
+        if(entitySet == null && entityTypesMap.get(fqName) != null){
+          throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent
+              ("EntitySet = "+entitySet, XmlMetadataConstants.EDM_FUNCTION_IMPORT +" = "+ function.getName()));
+        }
+        returnType.setMultiplicity(EdmMultiplicity.MANY);
       } else {
+        fqName = extractFQName(returnTypeString);
+        if(entitySet != null && entityTypesMap.get(fqName) == null) {
+          throw new EntityProviderException(EntityProviderException.INVALID_ATTRIBUTE.addContent
+              ("EntitySet = "+entitySet, XmlMetadataConstants.EDM_FUNCTION_IMPORT 
+                  + " = "+ function.getName()));
+        }
         returnType.setMultiplicity(EdmMultiplicity.ONE);
       }
-      FullQualifiedName fqName = extractFQName(returnTypeString);
       returnType.setTypeName(fqName);
       ((EdmNamedImpl) returnType).setName(fqName.getName());
       ((EdmNamedImpl) returnType).setEdm(edm);

@@ -359,6 +359,266 @@ public class XMLMetadataFunctionImportDeserializerTest {
     }
   }
 
+//Function Import with return type as entity type and entityset attribute set
+  @Test
+  public void testFunctionImportEntity() throws Exception {
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\""
+            + propertyNames[1]
+            + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<FunctionImport Name=\"EmployeeSearch\" ReturnType=\"RefScenario.Employee\" " +
+            "EntitySet=\"Employees\" m:HttpMethod=\"GET\">"
+            + "<Parameter Name=\"q1\" Type=\"Edm.String\" Nullable=\"true\" />"
+            + "<Parameter Name=\"q2\" Type=\"Edm.Int32\" Nullable=\"false\" />"
+            + "</FunctionImport>"
+            + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    XmlMetadataDeserializer parser = new XmlMetadataDeserializer();
+    InputStream reader = createStreamReader(xmWithEntityContainer);
+    EdmDataServices result = parser.readMetadata(reader, true);
+    for (EdmSchema schema : result.getEdm().getSchemas()) {
+      for (EdmEntityContainer container : schema.getEntityContainers()) {
+        assertEquals("Container1", container.getName());
+        assertEquals(Boolean.TRUE, container.isDefaultEntityContainer());
+
+        EdmFunctionImport functionImport1 = container.getFunctionImport("EmployeeSearch");
+
+        assertEquals("EmployeeSearch", functionImport1.getName());
+        assertEquals("Employees", functionImport1.getEntitySet().getName());
+        assertEquals(EdmMultiplicity.ONE, functionImport1.getReturnType().getMultiplicity());
+        assertEquals("GET", functionImport1.getHttpMethod());
+      }
+    }
+  }
+  
+//Function Import with return type as entity type and entityset attribute not set
+  @Test
+  public void testFunctionImportEntityWithoutEntitySet() throws Exception {
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\""
+            + propertyNames[1]
+            + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<FunctionImport Name=\"EmployeeSearch\" ReturnType=\"RefScenario.Employee\" " +
+            " m:HttpMethod=\"GET\">"
+            + "<Parameter Name=\"q1\" Type=\"Edm.String\" Nullable=\"true\" />"
+            + "<Parameter Name=\"q2\" Type=\"Edm.Int32\" Nullable=\"false\" />"
+            + "</FunctionImport>"
+            + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    XmlMetadataDeserializer parser = new XmlMetadataDeserializer();
+    InputStream reader = createStreamReader(xmWithEntityContainer);
+    EdmDataServices result = parser.readMetadata(reader, true);
+    for (EdmSchema schema : result.getEdm().getSchemas()) {
+      for (EdmEntityContainer container : schema.getEntityContainers()) {
+        assertEquals("Container1", container.getName());
+        EdmFunctionImport functionImport1 = container.getFunctionImport("EmployeeSearch");
+
+        assertEquals("EmployeeSearch", functionImport1.getName());
+        assertNull(functionImport1.getEntitySet());
+        assertEquals("GET", functionImport1.getHttpMethod());
+      }
+    }
+  }
+  
+  //Function Import with return type collection of complex type and entityset attribute not set
+  @Test
+  public void testFunctionImportCollection() throws Exception {
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Room\" >"
+            + "<Key><PropertyRef Name=\"RoomId\"/></Key>"
+            + "<Property Name=\""
+            + "RoomId"
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\""
+            + propertyNames[2]
+            + "\" Type=\"Edm.String\" />"
+            + "</EntityType>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Rooms\" EntityType=\"RefScenario.Room\"/>"
+            + "<FunctionImport Name=\"LocationSearch\" ReturnType=\"Collection(RefScenario.Location)\" " +
+            " m:HttpMethod=\"GET\">"
+            + "<Parameter Name=\"q1\" Type=\"Edm.String\" Nullable=\"true\" Mode=\"In\"/>"
+            + "<Parameter Name=\"q2\" Type=\"Edm.Int32\" Nullable=\"false\" />"
+            + "</FunctionImport>"
+            + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    XmlMetadataDeserializer parser = new XmlMetadataDeserializer();
+    InputStream reader = createStreamReader(xmWithEntityContainer);
+    EdmDataServices result = parser.readMetadata(reader, true);
+    for (EdmSchema schema : result.getEdm().getSchemas()) {
+      for (EdmEntityContainer container : schema.getEntityContainers()) {
+        assertEquals("Container1", container.getName());
+        assertEquals(Boolean.TRUE, container.isDefaultEntityContainer());
+
+        EdmFunctionImport functionImport2 = container.getFunctionImport("LocationSearch");
+        assertEquals("LocationSearch", functionImport2.getName());
+        assertNull(functionImport2.getEntitySet());
+        assertEquals(EdmMultiplicity.MANY, functionImport2.getReturnType().getMultiplicity());
+        assertEquals("GET", functionImport2.getHttpMethod());
+        assertEquals(EdmMultiplicity.MANY, functionImport2.getReturnType().getMultiplicity());
+      }
+    }
+  }
+  //Function import returning collection of entitysets must have entityset attribute defined
+  @Test(expected = EntityProviderException.class)
+  public void testFunctionImportCollError() throws Exception {
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\""
+            + propertyNames[1]
+            + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<FunctionImport Name=\"EmployeeSearch\" ReturnType=\"Collection(RefScenario.Employee)\" " +
+            " m:HttpMethod=\"GET\">"
+            + "<Parameter Name=\"q1\" Type=\"Edm.String\" Nullable=\"true\" />"
+            + "<Parameter Name=\"q2\" Type=\"Edm.Int32\" Nullable=\"false\" />"
+            + "</FunctionImport>"
+            + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    XmlMetadataDeserializer parser = new XmlMetadataDeserializer();
+    InputStream reader = createStreamReader(xmWithEntityContainer);
+    parser.readMetadata(reader, true);
+  }
+  
+  //Function import returning complextype or edmsimpletype must not have entityset attribute
+  @Test(expected = EntityProviderException.class)
+  public void testFunctionImportError() throws Exception {
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\""
+            + propertyNames[1]
+            + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<FunctionImport Name=\"NoReturn\" " +
+            "EntitySet=\"Rooms\" m:HttpMethod=\"GET\"/>"
+            + "<FunctionImport Name=\"SingleRoomReturnType\" ReturnType=\"RefScenario.Room\" " +
+            "EntitySet=\"Rooms\" m:HttpMethod=\"GET\">"
+            + "</FunctionImport>"
+            + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    XmlMetadataDeserializer parser = new XmlMetadataDeserializer();
+    InputStream reader = createStreamReader(xmWithEntityContainer);
+    parser.readMetadata(reader, true);
+  }
+//Function import returning complextype or edmsimpletype must not have entityset attribute positive flow
+  @Test
+  public void testFunctionImportProperty() throws Exception {
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\""
+            + propertyNames[1]
+            + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<FunctionImport Name=\"GetId\" ReturnType=\"Edm.String\""
+            + " m:HttpMethod=\"GET\"/>"
+            + "</EntityContainer>" + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    XmlMetadataDeserializer parser = new XmlMetadataDeserializer();
+    InputStream reader = createStreamReader(xmWithEntityContainer);
+    EdmDataServices result = parser.readMetadata(reader, true);
+    for (EdmSchema schema : result.getEdm().getSchemas()) {
+      for (EdmEntityContainer container : schema.getEntityContainers()) {
+        EdmFunctionImport functionImport4 = container.getFunctionImport("GetId");
+        assertEquals("GetId", functionImport4.getName());
+        assertNull(functionImport4.getEntitySet());
+      }
+    }
+  }
+  
   /**
    * @param i
    * @param functionImport

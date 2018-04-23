@@ -257,7 +257,7 @@ public class XmlMetadataConsumer {
     FunctionImport function = new FunctionImport();
     List<FunctionImportParameter> functionParameters = new ArrayList<FunctionImportParameter>();
     List<AnnotationElement> annotationElements = new ArrayList<AnnotationElement>();
-
+    FullQualifiedName fqName;
     function.setName(reader.getAttributeValue(null, XmlMetadataConstants.EDM_NAME));
     function.setHttpMethod(reader.getAttributeValue(Edm.NAMESPACE_M_2007_08,
         XmlMetadataConstants.EDM_FUNCTION_IMPORT_HTTP_METHOD));
@@ -267,12 +267,23 @@ public class XmlMetadataConsumer {
     if (returnTypeString != null) {
       ReturnType returnType = new ReturnType();
       if (returnTypeString.startsWith("Collection") || returnTypeString.startsWith("collection")) {
-        returnType.setMultiplicity(EdmMultiplicity.MANY);
         returnTypeString = returnTypeString.substring(returnTypeString.indexOf("(") + 1, returnTypeString.length() - 1);
+        fqName = extractFQName(returnTypeString);
+        if(function.getEntitySet() == null && entityTypesMap.get(fqName) != null){
+          throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent
+              ("EntitySet = "+function.getEntitySet(), XmlMetadataConstants.EDM_FUNCTION_IMPORT + function.getName()));
+        }
+        returnType.setMultiplicity(EdmMultiplicity.MANY);
       } else {
+        fqName = extractFQName(returnTypeString);
+        if(function.getEntitySet() != null && entityTypesMap.get(fqName) == null) {
+          throw new EntityProviderException(EntityProviderException.INVALID_ATTRIBUTE.addContent
+              ("EntitySet = "+function.getEntitySet(), XmlMetadataConstants.EDM_FUNCTION_IMPORT 
+                  + " : "+ function.getName()));
+        }
         returnType.setMultiplicity(EdmMultiplicity.ONE);
       }
-      FullQualifiedName fqName = extractFQName(returnTypeString);
+      fqName = extractFQName(returnTypeString);
       returnType.setTypeName(fqName);
       function.setReturnType(returnType);
     }

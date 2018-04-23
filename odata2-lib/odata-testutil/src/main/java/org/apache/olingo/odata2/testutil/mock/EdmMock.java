@@ -242,6 +242,10 @@ class EdmMock {
     EdmFunctionImport oldestEmployeeFunctionImport =
         createFunctionImportMock(defaultContainer, "OldestEmployee", employeeType, EdmMultiplicity.ONE);
     when(oldestEmployeeFunctionImport.getEntitySet()).thenReturn(employeeEntitySet);
+    EdmFunctionImport employeeActionImport =
+        createFunctionImportMock(defaultContainer, "SetEmployee", null, EdmMultiplicity.ONE);
+    when(employeeActionImport.getEntitySet()).thenReturn(employeeEntitySet);
+    when(employeeActionImport.getHttpMethod()).thenReturn(ODataHttpMethod.POST.name());
 
     // Issue with not explicitly nullable parameters and facets
     EdmFunctionImport functionImportNullableParameter =

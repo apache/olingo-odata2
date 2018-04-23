@@ -113,7 +113,11 @@ public class EntityProviderException extends ODataMessageException {
 
   public static final MessageReference INVALID_DELETED_ENTRY_METADATA = createMessageReference(
       EntityProviderException.class, "INVALID_DELETED_ENTRY_METADATA");
-
+  
+  /** INVALID_ATTRIBUTE found ('invalid attribute name') */
+  public static final MessageReference INVALID_ATTRIBUTE = createMessageReference(EntityProviderException.class,
+      "INVALID_ATTRIBUTE");
+  
   public EntityProviderException(final MessageReference messageReference) {
     super(messageReference);
   }

@@ -144,7 +144,11 @@ public class EdmFunctionImportImpl extends EdmNamedImpl implements EdmFunctionIm
 
   @Override
   public EdmEntitySet getEntitySet() throws EdmException {
-    return edmEntityContainer.getEntitySet(entitySet);
+    if(edmEntityContainer != null){
+      return edmEntityContainer.getEntitySet(entitySet);
+    }else{
+      return null;
+    }
   }
 
   @Override
