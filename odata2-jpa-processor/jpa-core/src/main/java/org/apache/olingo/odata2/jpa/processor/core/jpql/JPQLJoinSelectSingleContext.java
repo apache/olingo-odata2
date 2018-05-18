@@ -19,13 +19,16 @@
 package org.apache.olingo.odata2.jpa.processor.core.jpql;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.provider.Mapping;
+import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.uri.NavigationSegment;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAJoinClause;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
@@ -34,18 +37,43 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLJoinSelectSingleContextView;
 import org.apache.olingo.odata2.jpa.processor.core.ODataExpressionParser;
+import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
 
 public class JPQLJoinSelectSingleContext extends JPQLSelectSingleContext implements JPQLJoinSelectSingleContextView {
 
   private List<JPAJoinClause> jpaJoinClauses = null;
+  protected String whereCondition;
+
+  protected final void setWhereExpression(final String filterExpression) {
+    whereCondition = filterExpression;
+  }
+
+  public String getWhereExpression() {
+    return whereCondition;
+  }
 
   protected void setJPAJoinClause(final List<JPAJoinClause> jpaJoinClauses) {
     this.jpaJoinClauses = jpaJoinClauses;
   }
-
   public class JPQLJoinSelectSingleContextBuilder extends JPQLSelectSingleContextBuilder {
 
     protected int relationShipAliasCounter = 0;
+
+
+    protected String generateWhereExpression() throws ODataException {
+      if (entityView.getFilter() != null) {
+        String whereExpression = ODataExpressionParser.parseToJPAWhereExpression(
+            entityView.getFilter(), getJPAEntityAlias());
+        Map<String, Map<Integer, Object>> parameterizedExpressionMap =
+            new HashMap<String, Map<Integer,Object>>();
+        parameterizedExpressionMap.put(whereExpression, ODataExpressionParser.getPositionalParameters());
+        ODataParameterizedWhereExpressionUtil.setParameterizedQueryMap(parameterizedExpressionMap);
+        ODataExpressionParser.reInitializePositionalParameters();
+        return whereExpression;
+      }
+      ODataExpressionParser.reInitializePositionalParameters();
+      return null;
+    }
 
     @Override
     public JPQLContext build() throws ODataJPAModelException, ODataJPARuntimeException {
@@ -62,10 +90,12 @@ public class JPQLJoinSelectSingleContext extends JPQLSelectSingleContext impleme
         setKeyPredicates(entityView.getKeyPredicates());
 
         setSelectExpression(generateSelectExpression());
-        
+
+        setWhereExpression(generateWhereExpression());
+
         ODataExpressionParser.reInitializePositionalParameters();
         
-      } catch (EdmException e) {
+      } catch (Exception e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL, e);
       }
 

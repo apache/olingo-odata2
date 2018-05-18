@@ -97,10 +97,24 @@ public class JPQLJoinSelectSingleStatementBuilder extends JPQLStatementBuilder {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.JOIN_CLAUSE_EXPECTED, null);
     }
 
+    String whereExpression = context.getWhereExpression();
+
+    boolean addWhere = true;
     if (joinWhereCondition.length() > 0) {
       jpqlQuery.append(JPQLStatement.DELIMITER.SPACE);
       jpqlQuery.append(JPQLStatement.KEYWORD.WHERE).append(JPQLStatement.DELIMITER.SPACE);
       jpqlQuery.append(joinWhereCondition.toString());
+      addWhere = false;
+    }
+
+    if (whereExpression != null && !whereExpression.isEmpty()) {
+      jpqlQuery.append(JPQLStatement.DELIMITER.SPACE);
+      if (addWhere) {
+        jpqlQuery.append(JPQLStatement.KEYWORD.WHERE).append(JPQLStatement.DELIMITER.SPACE);
+      } else {
+        jpqlQuery.append("AND").append(JPQLStatement.DELIMITER.SPACE);
+        jpqlQuery.append(whereExpression);
+      }
     }
 
     return jpqlQuery.toString();

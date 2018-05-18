@@ -42,4 +42,6 @@ public interface JPQLJoinSelectSingleContextView extends JPQLSelectSingleContext
    * @return a list of {@link org.apache.olingo.odata2.jpa.processor.api.access.JPAJoinClause}
    */
   public abstract List<JPAJoinClause> getJPAJoinClauses();
+
+  public abstract String getWhereExpression();
 }
