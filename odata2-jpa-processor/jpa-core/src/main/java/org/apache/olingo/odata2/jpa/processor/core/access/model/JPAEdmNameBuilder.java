@@ -148,7 +148,7 @@ public class JPAEdmNameBuilder {
     }
 
     if (skipDefaultNaming == false && propertyName == null) {
-      propertyName = Character.toUpperCase(jpaAttributeName.charAt(0)) + jpaAttributeName.substring(1);
+      propertyName = jpaAttributeName;
     } else if (propertyName == null) {
       propertyName = jpaAttributeName;
       if (isForeignKey) {
@@ -237,7 +237,7 @@ public class JPAEdmNameBuilder {
     }
 
     if (entitySetName == null) {
-      entitySetName = fQname.getName() + ENTITY_SET_SUFFIX;
+      entitySetName = fQname.getName();
     }
 
     view.getEdmEntitySet().setName(entitySetName);
