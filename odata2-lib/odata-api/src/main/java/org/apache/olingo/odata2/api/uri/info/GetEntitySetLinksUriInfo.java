@@ -141,4 +141,6 @@ public interface GetEntitySetLinksUriInfo {
    * @return Map of {@literal <String, String>} custom query options
    */
   public Map<String, String> getCustomQueryOptions();
+
+  public String getCallback();
 }

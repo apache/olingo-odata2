@@ -664,6 +664,9 @@ public class UriParserImpl extends UriParser {
       case $filter:
         handleSystemQueryOptionFilter(systemQueryOptions.get(SystemQueryOption.$filter));
         break;
+      case $callback:
+        handleCallbackToken(systemQueryOptions.get(SystemQueryOption.$callback));
+        break;
       case $inlinecount:
         handleSystemQueryOptionInlineCount(systemQueryOptions.get(SystemQueryOption.$inlinecount));
         break;
@@ -747,6 +750,10 @@ public class UriParserImpl extends UriParser {
     } else if (skip.startsWith("+")) {
       throw new UriSyntaxException(UriSyntaxException.INVALIDVALUE.addContent(skip));
     }
+  }
+
+  private void handleCallbackToken(final String callbackToken) throws UriSyntaxException {
+    uriResult.setCallback(callbackToken);
   }
 
   private void handleSystemQueryOptionTop(final String top) throws UriSyntaxException {

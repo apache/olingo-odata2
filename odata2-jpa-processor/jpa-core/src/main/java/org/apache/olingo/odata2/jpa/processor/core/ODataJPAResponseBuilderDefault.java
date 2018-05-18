@@ -422,7 +422,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       ODataContext context = oDataJPAContext.getODataContext();
       EntityProviderWriteProperties entryProperties =
           EntityProviderWriteProperties.serviceRoot(context.getPathInfo().getServiceRoot()).inlineCountType(
-              resultsView.getInlineCount()).inlineCount(count).build();
+              resultsView.getInlineCount()).callback(resultsView.getCallback()).inlineCount(count).build();
 
       odataResponse = EntityProvider.writeLinks(contentType, entitySet, edmEntityList, entryProperties);
 
@@ -507,6 +507,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
         entityFeedPropertiesBuilder.nextLink(nextLink);
       }
       entityFeedPropertiesBuilder.inlineCount(count);
+      entityFeedPropertiesBuilder.callback(resultsView.getCallback());
       entityFeedPropertiesBuilder.inlineCountType(resultsView.getInlineCount());
       ExpandSelectTreeNode expandSelectTree =
           UriParser.createExpandSelectTree(resultsView.getSelect(), resultsView.getExpand());
@@ -582,6 +583,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
           EntityProviderWriteProperties.serviceRoot(odataJPAContext.getODataContext().getPathInfo().getServiceRoot());
       expandSelectTree = UriParser.createExpandSelectTree(resultsView.getSelect(), resultsView.getExpand());
       entityFeedPropertiesBuilder.expandSelectTree(expandSelectTree);
+      entityFeedPropertiesBuilder.callback(resultsView.getCallback());
       entityFeedPropertiesBuilder.callbacks(JPAExpandCallBack.getCallbacks(odataJPAContext.getODataContext()
           .getPathInfo().getServiceRoot(), expandSelectTree, resultsView.getExpand()));
     } catch (ODataException e) {

@@ -193,6 +193,7 @@ public class ListsProcessor extends DataSourceProcessor {
         .serviceRoot(context.getPathInfo().getServiceRoot())
         .inlineCountType(inlineCountType)
         .inlineCount(count)
+        .callback(uriInfo.getCallback())
         .expandSelectTree(UriParser.createExpandSelectTree(uriInfo.getSelect(), uriInfo.getExpand()))
         .callbacks(getCallbacks(data, entityType))
         .nextLink(nextLink)
@@ -285,6 +286,7 @@ public class ListsProcessor extends DataSourceProcessor {
         .serviceRoot(context.getPathInfo().getServiceRoot())
         .inlineCountType(uriInfo.getInlineCount())
         .inlineCount(count)
+        .callback(uriInfo.getCallback())
         .build();
 
     final int timingHandle = context.startRuntimeMeasurement("EntityProvider", "writeLinks");

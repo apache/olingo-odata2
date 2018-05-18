@@ -242,4 +242,7 @@ public interface UriInfo extends GetServiceDocumentUriInfo,
    */
   @Override
   public Map<String, String> getCustomQueryOptions();
+
+  @Override
+  String getCallback();
 }

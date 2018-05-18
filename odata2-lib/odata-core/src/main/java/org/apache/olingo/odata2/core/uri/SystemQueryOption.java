@@ -22,5 +22,5 @@ package org.apache.olingo.odata2.core.uri;
  *  
  */
 public enum SystemQueryOption {
-  $format, $filter, $inlinecount, $orderby, $skiptoken, $skip, $top, $expand, $select;
+  $format, $filter, $inlinecount, $orderby, $skiptoken, $skip, $top, $expand, $select, $callback;
 }

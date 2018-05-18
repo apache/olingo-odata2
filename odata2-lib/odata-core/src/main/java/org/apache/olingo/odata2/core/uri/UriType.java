@@ -33,11 +33,12 @@ public enum UriType {
    */
   URI1(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$inlinecount,
       SystemQueryOption.$orderby, SystemQueryOption.$skiptoken, SystemQueryOption.$skip, SystemQueryOption.$top,
-      SystemQueryOption.$expand, SystemQueryOption.$select),
+      SystemQueryOption.$expand, SystemQueryOption.$select, SystemQueryOption.$callback),
   /**
    * Entity set with key predicate
    */
-  URI2(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$expand, SystemQueryOption.$select),
+  URI2(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$expand, SystemQueryOption.$select,
+      SystemQueryOption.$callback),
   /**
    * Complex property of an entity
    */
@@ -53,22 +54,26 @@ public enum UriType {
   /**
    * Navigation property of an entity with target multiplicity '1' or '0..1'
    */
-  URI6A(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$expand, SystemQueryOption.$select),
+  URI6A(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$expand, SystemQueryOption.$select,
+      SystemQueryOption.$callback),
   /**
    * Navigation property of an entity with target multiplicity '*'
    */
   URI6B(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$inlinecount,
       SystemQueryOption.$orderby, SystemQueryOption.$skiptoken, SystemQueryOption.$skip, SystemQueryOption.$top,
-      SystemQueryOption.$expand, SystemQueryOption.$select),
+      SystemQueryOption.$expand, SystemQueryOption.$select,
+      SystemQueryOption.$callback),
   /**
    * Link to a single entity
    */
-  URI7A(SystemQueryOption.$format, SystemQueryOption.$filter),
+  URI7A(SystemQueryOption.$format, SystemQueryOption.$filter,
+      SystemQueryOption.$callback),
   /**
    * Link to multiple entities
    */
   URI7B(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$inlinecount,
-      SystemQueryOption.$orderby, SystemQueryOption.$skiptoken, SystemQueryOption.$skip, SystemQueryOption.$top),
+      SystemQueryOption.$orderby, SystemQueryOption.$skiptoken, SystemQueryOption.$skip, SystemQueryOption.$top,
+      SystemQueryOption.$callback),
   /**
    * Metadata document
    */
@@ -100,23 +105,28 @@ public enum UriType {
   /**
    * Count of an entity set
    */
-  URI15(SystemQueryOption.$filter, SystemQueryOption.$orderby, SystemQueryOption.$skip, SystemQueryOption.$top),
+  URI15(SystemQueryOption.$filter, SystemQueryOption.$orderby, SystemQueryOption.$skip, SystemQueryOption.$top,
+      SystemQueryOption.$callback),
   /**
    * Count of a single entity
    */
-  URI16(SystemQueryOption.$filter),
+  URI16(SystemQueryOption.$filter,
+      SystemQueryOption.$callback),
   /**
    * Media resource of an entity
    */
-  URI17(SystemQueryOption.$format, SystemQueryOption.$filter),
+  URI17(SystemQueryOption.$format, SystemQueryOption.$filter,
+      SystemQueryOption.$callback),
   /**
    * Count of link to a single entity
    */
-  URI50A(SystemQueryOption.$filter),
+  URI50A(SystemQueryOption.$filter,
+      SystemQueryOption.$callback),
   /**
    * Count of links to multiple entities
    */
-  URI50B(SystemQueryOption.$filter, SystemQueryOption.$orderby, SystemQueryOption.$skip, SystemQueryOption.$top);
+  URI50B(SystemQueryOption.$filter, SystemQueryOption.$orderby, SystemQueryOption.$skip, SystemQueryOption.$top,
+      SystemQueryOption.$callback);
 
   private ArrayList<SystemQueryOption> whiteList = new ArrayList<SystemQueryOption>();
 

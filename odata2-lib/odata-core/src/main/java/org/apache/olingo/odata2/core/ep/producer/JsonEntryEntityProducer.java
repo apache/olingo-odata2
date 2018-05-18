@@ -72,6 +72,12 @@ public class JsonEntryEntityProducer {
 
     try {
       jsonStreamWriter = new JsonStreamWriter(writer);
+
+      if (properties.getCallback() != null) {
+        jsonStreamWriter.unquotedValue(properties.getCallback());
+        jsonStreamWriter.unquotedValue("(");
+      }
+
       if (isRootElement && !properties.isOmitJsonWrapper()) {
         jsonStreamWriter.beginObject().name(FormatJson.D);
       }
@@ -96,6 +102,10 @@ public class JsonEntryEntityProducer {
 
       if (isRootElement && !properties.isOmitJsonWrapper()) {
         jsonStreamWriter.endObject();
+      }
+
+      if (properties.getCallback() != null) {
+        jsonStreamWriter.unquotedValue(")");
       }
 
       writer.flush();

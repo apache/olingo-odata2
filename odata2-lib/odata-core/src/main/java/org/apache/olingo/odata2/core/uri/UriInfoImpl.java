@@ -59,6 +59,7 @@ public class UriInfoImpl implements UriInfo {
   private boolean links;
 
   private String format;
+  private String callback;
   private FilterExpression filter;
   private InlineCount inlineCount;
   private OrderByExpression orderBy;
@@ -208,6 +209,15 @@ public class UriInfoImpl implements UriInfo {
   @Override
   public FilterExpression getFilter() {
     return filter;
+  }
+
+  @Override
+  public String getCallback() {
+    return callback;
+  }
+
+  public void setCallback(final String callback) {
+    this.callback = callback;
   }
 
   public void setInlineCount(final InlineCount inlineCount) {

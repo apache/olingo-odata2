@@ -36,6 +36,7 @@ public class EntityProviderWriteProperties {
   private URI serviceRoot;
   private InlineCount inlineCountType;
   private Integer inlineCount;
+  private String callback;
   private String nextLink;
   private ExpandSelectTreeNode expandSelectTree;
   private Map<String, ODataCallback> callbacks = Collections.emptyMap();
@@ -131,6 +132,10 @@ public class EntityProviderWriteProperties {
     return inlineCount;
   }
 
+  public final String getCallback() {
+    return callback;
+  }
+
   /**
    * Gets the next link used for server-side paging of feeds.
    * @return the next link
@@ -203,6 +208,11 @@ public class EntityProviderWriteProperties {
      */
     public final ODataEntityProviderPropertiesBuilder inlineCount(final Integer inlineCount) {
       properties.inlineCount = inlineCount;
+      return this;
+    }
+
+    public final ODataEntityProviderPropertiesBuilder callback(final String callback) {
+      properties.callback = callback;
       return this;
     }
 
@@ -308,6 +318,7 @@ public class EntityProviderWriteProperties {
     public ODataEntityProviderPropertiesBuilder fromProperties(final EntityProviderWriteProperties properties) {
       this.properties.inlineCountType = properties.getInlineCountType();
       this.properties.inlineCount = properties.getInlineCount();
+      this.properties.callback = properties.getCallback();
       this.properties.nextLink = properties.getNextLink();
       this.properties.expandSelectTree = properties.getExpandSelectTree();
       this.properties.callbacks = properties.getCallbacks();

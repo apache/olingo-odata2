@@ -53,6 +53,11 @@ public class JsonFeedEntityProducer {
     TombstoneCallback callback = getTombstoneCallback();
 
     try {
+      if (properties.getCallback() != null) {
+        jsonStreamWriter.unquotedValue(properties.getCallback());
+        jsonStreamWriter.unquotedValue("(");
+      }
+
       jsonStreamWriter.beginObject();
 
       if (isRootElement) {
@@ -84,6 +89,10 @@ public class JsonFeedEntityProducer {
       }
 
       jsonStreamWriter.endObject();
+
+      if (properties.getCallback() != null) {
+        jsonStreamWriter.unquotedValue(")");
+      }
     } catch (final IOException e) {
       throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
           .getSimpleName()), e);
