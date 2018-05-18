@@ -144,7 +144,11 @@ public class ODataRequestHandler {
         extendedResponse = extendedResponse.header(ODataHttpHeaders.DATASERVICEVERSION, serverDataServiceVersion);
       }
       if (!HttpStatusCodes.NO_CONTENT.equals(s) && !odataResponse.containsHeader(HttpHeaders.CONTENT_TYPE)) {
-        extendedResponse.header(HttpHeaders.CONTENT_TYPE, acceptContentType.toContentTypeString());
+        if (acceptContentType.isCompatible(ContentType.APPLICATION_JSON) && uriInfo.getCallback() != null) {
+          extendedResponse.header(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_JAVASCRIPT_UTF_8.toContentTypeString());
+        } else {
+          extendedResponse.header(HttpHeaders.CONTENT_TYPE, acceptContentType.toContentTypeString());
+        }
       }
 
       odataResponse = extendedResponse.build();

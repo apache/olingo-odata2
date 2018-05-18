@@ -73,7 +73,7 @@ public class JsonEntryEntityProducer {
     try {
       jsonStreamWriter = new JsonStreamWriter(writer);
 
-      if (properties.getCallback() != null) {
+      if (properties.getCallback() != null && isRootElement) {
         jsonStreamWriter.unquotedValue(properties.getCallback());
         jsonStreamWriter.unquotedValue("(");
       }
@@ -104,7 +104,7 @@ public class JsonEntryEntityProducer {
         jsonStreamWriter.endObject();
       }
 
-      if (properties.getCallback() != null) {
+      if (properties.getCallback() != null && isRootElement) {
         jsonStreamWriter.unquotedValue(")");
       }
 

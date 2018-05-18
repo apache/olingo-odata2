@@ -53,7 +53,7 @@ public class JsonFeedEntityProducer {
     TombstoneCallback callback = getTombstoneCallback();
 
     try {
-      if (properties.getCallback() != null) {
+      if (properties.getCallback() != null && isRootElement) {
         jsonStreamWriter.unquotedValue(properties.getCallback());
         jsonStreamWriter.unquotedValue("(");
       }
@@ -90,7 +90,7 @@ public class JsonFeedEntityProducer {
 
       jsonStreamWriter.endObject();
 
-      if (properties.getCallback() != null) {
+      if (properties.getCallback() != null && isRootElement) {
         jsonStreamWriter.unquotedValue(")");
       }
     } catch (final IOException e) {

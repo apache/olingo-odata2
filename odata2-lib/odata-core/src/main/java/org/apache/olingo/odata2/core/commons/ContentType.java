@@ -77,7 +77,7 @@ import java.util.regex.Pattern;
 public class ContentType {
 
   public enum ODataFormat {
-    ATOM, XML, JSON, MIME, CUSTOM
+    ATOM, XML, JSON, MIME, CUSTOM, JAVASCRIPT
   }
 
   private static final Set<String> KNOWN_MIME_TYPES = new HashSet<String>();
@@ -143,6 +143,11 @@ public class ContentType {
   public static final ContentType TEXT_PLAIN_CS_UTF_8 = ContentType
       .create(TEXT_PLAIN, PARAMETER_CHARSET, CHARSET_UTF_8);
   public static final ContentType MULTIPART_MIXED = new ContentType("multipart", "mixed");
+
+  public static final ContentType TEXT_JAVASCRIPT = new ContentType("text", "javascript", ODataFormat.JAVASCRIPT);
+
+  public static final ContentType TEXT_JAVASCRIPT_UTF_8 = ContentType.create(TEXT_JAVASCRIPT, PARAMETER_CHARSET, CHARSET_UTF_8);
+
 
   private final String type;
   private final String subtype;
