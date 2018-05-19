@@ -54,7 +54,6 @@ import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 
 public class JPAEdmNameBuilder {
   private static final String ENTITY_CONTAINER_SUFFIX = "Container";
-  private static final String ENTITY_SET_SUFFIX = "s";
   private static final String ASSOCIATIONSET_SUFFIX = "Set";
   private static final String NAVIGATION_NAME = "Details";
   private static final String UNDERSCORE = "_";
