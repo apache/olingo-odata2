@@ -18,12 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.mock;
 
+import java.sql.Time;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
@@ -75,10 +78,14 @@ public abstract class ODataJPAContextMock {
     EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
     Query jpqlquery = EasyMock.createMock(Query.class);
     Capture<String> capturedArgument = new Capture<String>();
-    EasyMock.expect(em.createQuery(EasyMock.capture(capturedArgument))).andReturn(jpqlquery);
+    EasyMock.expect(em.createQuery(EasyMock.capture(capturedArgument))).andReturn(jpqlquery).anyTimes();
     EasyMock.expect(jpqlquery.setParameter(EasyMock.anyInt(), EasyMock.anyObject()))
-    .andReturn(jpqlquery).anyTimes();
-    EasyMock.replay(em,mm,jpqlquery);
+        .andReturn(jpqlquery).anyTimes();
+    EasyMock.expect(jpqlquery.setParameter(EasyMock.anyInt(), (Calendar) EasyMock.anyObject(), 
+        EasyMock.anyObject(TemporalType.TIMESTAMP.getClass()))).andReturn(jpqlquery).anyTimes();
+    EasyMock.expect(jpqlquery.setParameter(EasyMock.anyInt(), (Time) EasyMock.anyObject(), 
+        EasyMock.anyObject(TemporalType.TIME.getClass()))).andReturn(jpqlquery).anyTimes();
+    EasyMock.replay(em, mm, jpqlquery);
     return em;
 
   }

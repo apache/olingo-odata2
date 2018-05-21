@@ -40,7 +40,6 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
-import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
 import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -139,11 +138,11 @@ public class JPQLSelectSingleStatementBuilderTest {
 
     String query = JPQLSelectSingleStatementBuilder.build().toString();
     query = query.substring(0, query.indexOf("?"));
-    Map<String, Map<Integer, Object>> positionalParameters = 
-        ODataParameterizedWhereExpressionUtil.getParameterizedQueryMap();
-    for (Entry<String, Map<Integer, Object>> param : positionalParameters.entrySet()) {
-      for (Entry<Integer, Object> postionalParam : param.getValue().entrySet()) {
-        query += postionalParam.getValue();
+    Map<String, Map<Integer,Object>> parameterizedQuery = JPQLSelectSingleContextImpl.
+        getParameterizedQueryMap();
+    for (Entry<String, Map<Integer, Object>> parameter : parameterizedQuery.entrySet()) {
+      for (Entry<Integer, Object> param : parameter.getValue().entrySet()) {
+        query += param.getValue();
       }
     }
     
@@ -166,11 +165,11 @@ public class JPQLSelectSingleStatementBuilderTest {
 
     String query = JPQLSelectSingleStatementBuilder.build().toString();
     query = query.substring(0, query.indexOf("?"));
-    Map<String, Map<Integer, Object>> positionalParameters = 
-        ODataParameterizedWhereExpressionUtil.getParameterizedQueryMap();
-    for (Entry<String, Map<Integer, Object>> param : positionalParameters.entrySet()) {
-      for (Entry<Integer, Object> postionalParam : param.getValue().entrySet()) {
-        query += postionalParam.getValue();
+    Map<String, Map<Integer,Object>> parameterizedQuery = JPQLSelectSingleContextImpl.
+        getParameterizedQueryMap();
+    for (Entry<String, Map<Integer, Object>> parameter : parameterizedQuery.entrySet()) {
+      for (Entry<Integer, Object> param : parameter.getValue().entrySet()) {
+        query += param.getValue();
       }
     }
     

@@ -273,7 +273,7 @@ public class ODataFilterExpressionParserTest {
     assertEquals(EXPRESSION_BINARY_AND[OUTPUT], whereExpression);
   }
 
-  @Test
+ @Test
   public void testBinaryOr() {
     String whereExpression = parseWhereExpression(EXPRESSION_BINARY_OR[INPUT], false);
     whereExpression = replacePositionalParameters(whereExpression);
@@ -387,7 +387,7 @@ public class ODataFilterExpressionParserTest {
   }
   
   private String replacePositionalParameters(String whereExpression) {
-    Map<Integer, Object> positionalParameters = ODataExpressionParser.getPositionalParameters();
+    Map<Integer, Object> positionalParameters = ODataExpressionParser.getPositionalParametersThreadLocal();
     for (Entry<Integer, Object> param : positionalParameters.entrySet()) {
       Integer key = param.getKey();
       if (param.getValue() instanceof String) {
@@ -412,7 +412,6 @@ public class ODataFilterExpressionParserTest {
         whereExpression = whereExpression.replaceAll("\\?" + String.valueOf(key), param.getValue().toString());
       }
     }
-    ODataExpressionParser.reInitializePositionalParameters();
     return whereExpression;
   }
   

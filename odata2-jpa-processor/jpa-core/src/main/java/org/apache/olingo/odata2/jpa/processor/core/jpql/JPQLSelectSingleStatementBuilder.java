@@ -18,13 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.jpql;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextView;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLSelectSingleContextView;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement.JPQLStatementBuilder;
 import org.apache.olingo.odata2.jpa.processor.core.ODataExpressionParser;
-import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
 
 public class JPQLSelectSingleStatementBuilder extends JPQLStatementBuilder {
 
@@ -34,12 +36,11 @@ public class JPQLSelectSingleStatementBuilder extends JPQLStatementBuilder {
   public JPQLSelectSingleStatementBuilder(final JPQLContextView context) {
     this.context = (JPQLSelectSingleContextView) context;
   }
-
+  
   @Override
   public JPQLStatement build() throws ODataJPARuntimeException {
     jpqlStatement = createStatement(createJPQLQuery());
-    ODataParameterizedWhereExpressionUtil.setJPQLStatement(jpqlStatement.toString());
-    ODataExpressionParser.reInitializePositionalParameters();
+    this.context.setJPQLStatement(jpqlStatement.toString());
     return jpqlStatement;
 
   }
@@ -58,8 +59,16 @@ public class JPQLSelectSingleStatementBuilder extends JPQLStatementBuilder {
     if (context.getKeyPredicates() != null && !context.getKeyPredicates().isEmpty()) {
       jpqlQuery.append(JPQLStatement.DELIMITER.SPACE);
       jpqlQuery.append(JPQLStatement.KEYWORD.WHERE).append(JPQLStatement.DELIMITER.SPACE);
-      jpqlQuery.append(ODataExpressionParser
-          .parseKeyPredicates(context.getKeyPredicates(), context.getJPAEntityAlias()));
+      String keyString = ODataExpressionParser
+          .parseKeyPredicates(context.getKeyPredicates(), context.getJPAEntityAlias());
+      Map<String, Map<Integer, Object>> parameterizedExpressionMap = 
+          new HashMap<String, Map<Integer,Object>>();
+      if (keyString != null) { 
+        parameterizedExpressionMap.put(keyString, 
+            ODataExpressionParser.getPositionalParametersThreadLocal());
+        ((JPQLSelectSingleContext)this.context).setParameterizedQueryMap(parameterizedExpressionMap);
+      }
+      jpqlQuery.append(keyString);
     }
 
     return jpqlQuery.toString();

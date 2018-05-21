@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.jpa.processor.api.jpql;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
 
@@ -50,4 +51,11 @@ public interface JPQLSelectSingleContextView extends JPQLContextView {
    * @return a list of key predicates
    */
   public List<KeyPredicate> getKeyPredicates();
+  
+  /**
+   * Key in the map is the JPA query and value is a map with key being index and 
+   * value being parameter value
+   * @return a map of String and value is another map of Integer and Object
+   */
+  public Map<String, Map<Integer, Object>> getParameterizedQueryMap();
 }

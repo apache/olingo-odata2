@@ -167,7 +167,7 @@ public class JPAProcessorImplTest {
     EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
     EasyMock.expect(objUriInfo.getKeyPredicates()).andStubReturn(getKeyPredicates());
     EasyMock.expect(objUriInfo.isLinks()).andStubReturn(false);
-    EasyMock.expect(objUriInfo.getNavigationSegments()).andReturn(new ArrayList<NavigationSegment>());
+    EasyMock.expect(objUriInfo.getNavigationSegments()).andStubReturn(new ArrayList<NavigationSegment>());
     EasyMock.replay(objUriInfo);
     return objUriInfo;
   }

@@ -32,13 +32,14 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLSelectContextView;
 import org.apache.olingo.odata2.jpa.processor.core.ODataExpressionParser;
-import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
 
 public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextView {
 
   protected String selectExpression;
   protected String orderByCollection;
   protected String whereCondition;
+  protected Map<String, Map<Integer, Object>> parameterizedQueryMap;
+  protected String jpqlStatement;
 
   protected boolean isCountOnly = false;// Support for $count
 
@@ -52,6 +53,11 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
 
   protected final void setWhereExpression(final String filterExpression) {
     whereCondition = filterExpression;
+  }
+  
+  protected final void setParameterizedQueryMap(
+      final Map<String, Map<Integer, Object>> parameterizedQueryMap) {
+    this.parameterizedQueryMap = parameterizedQueryMap;
   }
 
   protected final void setSelectExpression(final String selectExpression) {
@@ -109,6 +115,9 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
           setSelectExpression(generateSelectExpression());
 
           setWhereExpression(generateWhereExpression());
+          
+          setJPQLContext(JPQLSelectContext.this);
+          
         } catch (ODataException e) {
           throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
         }
@@ -162,14 +171,27 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
             entitySetView.getFilter(), getJPAEntityAlias());
         Map<String, Map<Integer, Object>> parameterizedExpressionMap = 
             new HashMap<String, Map<Integer,Object>>();
-        parameterizedExpressionMap.put(whereExpression, ODataExpressionParser.getPositionalParameters());
-        ODataParameterizedWhereExpressionUtil.setParameterizedQueryMap(parameterizedExpressionMap);
-        ODataExpressionParser.reInitializePositionalParameters();
+        parameterizedExpressionMap.put(whereExpression, 
+            ODataExpressionParser.getPositionalParametersThreadLocal());
+        setParameterizedQueryMap(parameterizedExpressionMap);
         return whereExpression;
       }
-      ODataExpressionParser.reInitializePositionalParameters();
       return null;
     }
   }
 
+  @Override
+  public Map<String, Map<Integer, Object>> getParameterizedQueryMap() {
+    return parameterizedQueryMap;
+  }
+
+  @Override
+  public void setJPQLStatement(String jpqlStatement) {
+    this.jpqlStatement = jpqlStatement;
+  }
+
+  @Override
+  public String getJPQLStatement() {
+    return jpqlStatement;
+  }
 }

@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.jpa.processor.core.jpql;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -35,6 +36,8 @@ public class JPQLSelectSingleContext extends JPQLContext implements JPQLSelectSi
 
   private String selectExpression;
   private List<KeyPredicate> keyPredicates;
+  protected Map<String, Map<Integer, Object>> parameterizedQueryMap;
+  protected String jpqlStatement;
 
   protected void setKeyPredicates(final List<KeyPredicate> keyPredicates) {
     this.keyPredicates = keyPredicates;
@@ -49,11 +52,21 @@ public class JPQLSelectSingleContext extends JPQLContext implements JPQLSelectSi
     this.selectExpression = selectExpression;
   }
 
+  protected final void setParameterizedQueryMap(
+      final Map<String, Map<Integer, Object>> parameterizedQueryMap) {
+    this.parameterizedQueryMap = parameterizedQueryMap;
+  }
+  
   @Override
   public String getSelectExpression() {
     return selectExpression;
   }
 
+  @Override
+  public Map<String, Map<Integer, Object>> getParameterizedQueryMap() {
+    return parameterizedQueryMap;
+  }
+  
   public class JPQLSelectSingleContextBuilder extends
   org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder {
 
@@ -80,7 +93,9 @@ public class JPQLSelectSingleContext extends JPQLContext implements JPQLSelectSi
           setKeyPredicates(entityView.getKeyPredicates());
 
           setSelectExpression(generateSelectExpression());
-
+          
+          setJPQLContext(JPQLSelectSingleContext.this);
+          
         } catch (EdmException e) {
           throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
         }
@@ -105,5 +120,15 @@ public class JPQLSelectSingleContext extends JPQLContext implements JPQLSelectSi
     protected String generateSelectExpression() throws EdmException {
       return getJPAEntityAlias();
     }
+  }
+
+  @Override
+  public void setJPQLStatement(String jpqlStatement) {
+    this.jpqlStatement = jpqlStatement;
+  }
+
+  @Override
+  public String getJPQLStatement() {
+    return jpqlStatement;
   }
 }

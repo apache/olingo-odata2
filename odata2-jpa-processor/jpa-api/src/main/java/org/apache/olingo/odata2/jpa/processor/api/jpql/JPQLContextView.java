@@ -50,4 +50,16 @@ public interface JPQLContextView {
    * @return an instance of type {@link org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType}
    */
   public JPQLContextType getType();
+  
+  /**
+   * Set the JPQL Statement to the context
+   * @param jpqlStatement
+   */
+  public void setJPQLStatement(String jpqlStatement);
+  
+  /**
+   * Return the JPQL Statement set in context
+   * @return String JPQLStatement
+   */
+  public String getJPQLStatement();
 }

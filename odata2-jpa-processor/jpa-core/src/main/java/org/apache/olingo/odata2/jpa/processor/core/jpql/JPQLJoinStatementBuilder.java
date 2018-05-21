@@ -27,8 +27,6 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextView;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLJoinContextView;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement.JPQLStatementBuilder;
-import org.apache.olingo.odata2.jpa.processor.core.ODataExpressionParser;
-import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
 
 public class JPQLJoinStatementBuilder extends JPQLStatementBuilder {
 
@@ -42,8 +40,7 @@ public class JPQLJoinStatementBuilder extends JPQLStatementBuilder {
   @Override
   public JPQLStatement build() throws ODataJPARuntimeException {
     jpqlStatement = createStatement(createJPQLQuery());
-    ODataParameterizedWhereExpressionUtil.setJPQLStatement(jpqlStatement.toString());
-    ODataExpressionParser.reInitializePositionalParameters();
+    this.context.setJPQLStatement(jpqlStatement.toString());
     return jpqlStatement;
 
   }

@@ -53,6 +53,7 @@ public abstract class JPQLContext implements JPQLContextView {
    */
   protected JPQLContextType type;
   protected boolean pagingRequested = false;
+  protected static final ThreadLocal<JPQLContext> jpqlContext = new ThreadLocal<JPQLContext>();
 
   /**
    * sets JPA Entity Name into the context
@@ -91,7 +92,7 @@ public abstract class JPQLContext implements JPQLContextView {
   protected final void setType(final JPQLContextType type) {
     this.type = type;
   }
-
+  
   /**
    * gets the JPA entity name set into the context
    */
@@ -111,7 +112,7 @@ public abstract class JPQLContext implements JPQLContextView {
   protected void isPagingRequested(final boolean pagingRequested) {
     this.pagingRequested = pagingRequested;
   }
-
+  
   /**
    * the method returns an instance of type
    * {@link org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext.JPQLContextBuilder} based on the
@@ -150,7 +151,18 @@ public abstract class JPQLContext implements JPQLContextView {
       throws ODataJPARuntimeException {
     return JPQLContextBuilder.create(contextType, resultsView, withPaging);
   }
-
+  
+  protected static void setJPQLContext(JPQLContext context) {
+    jpqlContext.set(context);
+  }
+  
+  public final static JPQLContext getJPQLContext() {
+    return jpqlContext.get();
+  }
+  
+  public final static void removeJPQLContext() {
+    jpqlContext.remove();
+  }
   /**
    * The abstract class is extended by specific JPQLContext builder for
    * building JPQLContexts.

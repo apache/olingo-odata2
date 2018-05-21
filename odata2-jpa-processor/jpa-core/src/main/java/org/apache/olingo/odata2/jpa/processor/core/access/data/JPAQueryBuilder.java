@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,9 +50,15 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelExcepti
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
+import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextView;
+import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLJoinContextView;
+import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLJoinSelectSingleContextView;
+import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLSelectContextView;
+import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLSelectSingleContextView;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
-import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
+import org.apache.olingo.odata2.jpa.processor.core.ODataExpressionParser;
+import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLSelectContext;
 
 public class JPAQueryBuilder {
 
@@ -79,6 +86,8 @@ public class JPAQueryBuilder {
       ODataJPATombstoneEntityListener listener = getODataJPATombstoneEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
+        JPQLContext jpqlContext = JPQLContext.getJPQLContext();
+        query = getParameterizedQueryForListeners(jpqlContext, query);
       }
       if (query == null) {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.GetEntitySet);
@@ -88,6 +97,9 @@ public class JPAQueryBuilder {
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+    } finally {
+      JPQLContext.removeJPQLContext();
+      ODataExpressionParser.removePositionalParametersThreadLocal();
     }
     queryInfo.setQuery(query);
     return queryInfo;
@@ -99,6 +111,8 @@ public class JPAQueryBuilder {
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
+        JPQLContext jpqlContext = JPQLContext.getJPQLContext();
+        query = getParameterizedQueryForListeners(jpqlContext, query);
       }
       if (query == null) {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.GetEntity);
@@ -106,6 +120,9 @@ public class JPAQueryBuilder {
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+    } finally {
+      JPQLContext.removeJPQLContext();
+      ODataExpressionParser.removePositionalParametersThreadLocal();
     }
     return query;
   }
@@ -116,6 +133,8 @@ public class JPAQueryBuilder {
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
+        JPQLContext jpqlContext = JPQLContext.getJPQLContext();
+        query = getParameterizedQueryForListeners(jpqlContext, query);
       }
       if (query == null) {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.GetEntitySetCount);
@@ -123,6 +142,9 @@ public class JPAQueryBuilder {
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+    } finally {
+      JPQLContext.removeJPQLContext();
+      ODataExpressionParser.removePositionalParametersThreadLocal();
     }
     return query;
   }
@@ -133,6 +155,8 @@ public class JPAQueryBuilder {
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
+        JPQLContext jpqlContext = JPQLContext.getJPQLContext();
+        query = getParameterizedQueryForListeners(jpqlContext, query);
       }
       if (query == null) {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.GetEntityCount);
@@ -140,6 +164,9 @@ public class JPAQueryBuilder {
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+    } finally {
+      JPQLContext.removeJPQLContext();
+      ODataExpressionParser.removePositionalParametersThreadLocal();
     }
     return query;
   }
@@ -150,6 +177,8 @@ public class JPAQueryBuilder {
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
+        JPQLContext jpqlContext = JPQLContext.getJPQLContext();
+        query = getParameterizedQueryForListeners(jpqlContext, query);
       }
       if (query == null) {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.Delete);
@@ -157,6 +186,9 @@ public class JPAQueryBuilder {
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+    } finally {
+      JPQLContext.removeJPQLContext();
+      ODataExpressionParser.removePositionalParametersThreadLocal();
     }
     return query;
   }
@@ -167,6 +199,8 @@ public class JPAQueryBuilder {
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
+        JPQLContext jpqlContext = JPQLContext.getJPQLContext();
+        query = getParameterizedQueryForListeners(jpqlContext, query);
       }
       if (query == null) {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.PutMergePatch);
@@ -174,6 +208,9 @@ public class JPAQueryBuilder {
     } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+    } finally {
+      JPQLContext.removeJPQLContext();
+      ODataExpressionParser.removePositionalParametersThreadLocal();
     }
     return query;
   }
@@ -185,10 +222,30 @@ public class JPAQueryBuilder {
     JPQLContextType contextType = determineJPQLContextType(uriParserResultView, type);
     JPQLContext jpqlContext = buildJPQLContext(contextType, uriParserResultView);
     JPQLStatement jpqlStatement = JPQLStatement.createBuilder(jpqlContext).build();
-
+    
     Query query = em.createQuery(normalizeMembers(em, jpqlStatement.toString()));
-    Map<String, Map<Integer, Object>> parameterizedMap = ODataParameterizedWhereExpressionUtil.
-        getParameterizedQueryMap();
+    getParameterizedQuery(contextType, jpqlContext, jpqlStatement, query);
+    return query;
+  }
+
+  /**
+   * @param contextType
+   * @param jpqlContext
+   * @param jpqlStatement
+   * @param query
+   */
+  private Query getParameterizedQuery(JPQLContextType contextType, JPQLContext jpqlContext, JPQLStatement jpqlStatement,
+      Query query) {
+    Map<String, Map<Integer, Object>> parameterizedMap = null;
+    if (contextType == JPQLContextType.JOIN || contextType == JPQLContextType.JOIN_COUNT) {
+      parameterizedMap = ((JPQLJoinContextView) jpqlContext).getParameterizedQueryMap();
+    } else if (contextType == JPQLContextType.JOIN_SINGLE) {
+      parameterizedMap = ((JPQLJoinSelectSingleContextView) jpqlContext).getParameterizedQueryMap();
+    } else if (contextType == JPQLContextType.SELECT || contextType == JPQLContextType.SELECT_COUNT) {
+      parameterizedMap = ((JPQLSelectContextView) jpqlContext).getParameterizedQueryMap();
+    } else if (contextType == JPQLContextType.SELECT_SINGLE) {
+      parameterizedMap = ((JPQLSelectSingleContextView) jpqlContext).getParameterizedQueryMap();
+    }
     if (parameterizedMap != null && parameterizedMap.size() > 0) {
       for (Entry<String, Map<Integer, Object>> parameterEntry : parameterizedMap.entrySet()) {
         if (jpqlStatement.toString().contains(parameterEntry.getKey())) {
@@ -202,16 +259,46 @@ public class JPAQueryBuilder {
               query.setParameter(param.getKey(), param.getValue());
             }
           }
-          parameterizedMap.remove(parameterEntry.getKey());
-          ODataParameterizedWhereExpressionUtil.setJPQLStatement(null);
-          break;
+        }
+      }
+     }
+    return query;
+  }
+  
+  private Query getParameterizedQueryForListeners(JPQLContext jpqlContext, Query query) {
+    Map<String, Map<Integer, Object>> parameterizedMap = null;
+    String jpqlStatement = null;
+    if (jpqlContext instanceof JPQLJoinContextView) {
+      parameterizedMap = ((JPQLJoinContextView) jpqlContext).getParameterizedQueryMap();
+      jpqlStatement = ((JPQLJoinContextView) jpqlContext).getJPQLStatement();
+    } else if (jpqlContext instanceof JPQLJoinSelectSingleContextView) {
+      parameterizedMap = ((JPQLJoinSelectSingleContextView) jpqlContext).getParameterizedQueryMap();
+      jpqlStatement = ((JPQLJoinSelectSingleContextView) jpqlContext).getJPQLStatement();
+    } else if (jpqlContext instanceof JPQLSelectContextView) {
+      parameterizedMap = ((JPQLSelectContextView) jpqlContext).getParameterizedQueryMap();
+      jpqlStatement = ((JPQLSelectContextView) jpqlContext).getJPQLStatement();
+    } else if (jpqlContext instanceof JPQLSelectSingleContextView) {
+      parameterizedMap = ((JPQLSelectSingleContextView) jpqlContext).getParameterizedQueryMap();
+      jpqlStatement = ((JPQLSelectSingleContextView) jpqlContext).getJPQLStatement();
+    }
+    if (parameterizedMap != null && parameterizedMap.size() > 0) {
+      for (Entry<String, Map<Integer, Object>> parameterEntry : parameterizedMap.entrySet()) {
+        if (jpqlStatement.contains(parameterEntry.getKey())) {
+          Map<Integer, Object> positionalParameters = parameterEntry.getValue();
+          for (Entry<Integer, Object> param : positionalParameters.entrySet()) {
+            if (param.getValue() instanceof Calendar || param.getValue() instanceof Timestamp) {
+              query.setParameter(param.getKey(), (Calendar) param.getValue(), TemporalType.TIMESTAMP);
+            } else if (param.getValue() instanceof Time) {
+              query.setParameter(param.getKey(), (Time) param.getValue(), TemporalType.TIME);
+            } else {
+              query.setParameter(param.getKey(), param.getValue());
+            }
+          }
         }
       }
     }
     return query;
   }
-
-  
 
   public ODataJPAQueryExtensionEntityListener getODataJPAQueryEntityListener(UriInfo uriInfo) throws EdmException,
       InstantiationException, IllegalAccessException {
@@ -226,7 +313,7 @@ public class JPAQueryBuilder {
   public ODataJPATombstoneEntityListener getODataJPATombstoneEntityListener(UriInfo uriParserResultView)
       throws InstantiationException, IllegalAccessException, EdmException {
     JPAEdmMapping mapping = (JPAEdmMapping) uriParserResultView.getTargetEntitySet().getEntityType().getMapping();
-    if (mapping.getODataJPATombstoneEntityListener() != null) {
+    if (null != mapping && mapping.getODataJPATombstoneEntityListener() != null) {
       return  (ODataJPATombstoneEntityListener) mapping.getODataJPATombstoneEntityListener().newInstance();
     }
     return null;
@@ -244,7 +331,8 @@ public class JPAQueryBuilder {
   public JPQLContextType determineJPQLContextType(UriInfo uriParserResultView, UriInfoType type) {
     JPQLContextType contextType = null;
 
-    if (!uriParserResultView.getNavigationSegments().isEmpty()) {
+    if (uriParserResultView.getNavigationSegments() != null && 
+        !uriParserResultView.getNavigationSegments().isEmpty()) {
       if (type == UriInfoType.GetEntitySet) {
         contextType = JPQLContextType.JOIN;
       } else if (type == UriInfoType.Delete || type == UriInfoType.GetEntity

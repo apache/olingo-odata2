@@ -58,6 +58,9 @@ public class JPQLJoinSelectSingleStatementBuilderTest {
     EasyMock.expect(context.getKeyPredicates()).andStubReturn(createKeyPredicates());
     EasyMock.expect(context.getSelectExpression()).andStubReturn("gt1");
     EasyMock.expect(context.getJPAJoinClauses()).andStubReturn(joinClauseList);
+    context.setJPQLStatement("SELECT gt1 FROM SOHeader soh JOIN "
+        + "soh.soItem soi JOIN soi.material mat WHERE soh.soId = 1 AND " +
+            "soi.shId = soh.soId AND mat.id = 'abc'");
     EasyMock.replay(context);
   }
 
