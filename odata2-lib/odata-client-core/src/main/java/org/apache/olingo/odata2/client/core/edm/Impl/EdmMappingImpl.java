@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.client.core.edm.Impl;
 
 import org.apache.olingo.odata2.api.edm.EdmMapping;
+import org.apache.olingo.odata2.api.edm.provider.Mapping;
 
 /**
  * Object of this class represent the mapping of a value to a MIME type.
@@ -30,10 +31,21 @@ public class EdmMappingImpl implements EdmMapping {
   private Object object;
   private String mediaResourceSourceKey;
   private String mediaResourceMimeTypeKey;
+  private String expression;
 
   @Override
   public String getInternalName() {
     return value;
+  }
+
+  @Override
+  public String getInternalExpression() {
+    return this.expression;
+  }
+
+  public EdmMappingImpl setInternalExpression(final String value) {
+    this.expression = value;
+    return this;
   }
 
   @Override

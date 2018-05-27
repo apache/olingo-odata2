@@ -579,7 +579,11 @@ public class AtomEntryEntityProducer {
     if (!eia.isDefaultEntityContainer()) {
       sb.append(Encoder.encode(eia.getEntityContainerName())).append(Edm.DELIMITER);
     }
-    sb.append(Encoder.encode(eia.getEntitySetName()));
+    try {
+      sb.append(Encoder.encode(eia.getEntityType().getName()));
+    } catch (EdmException e) {
+      sb.append(Encoder.encode(eia.getEntitySetName()));
+    }
 
     sb.append("(").append(createEntryKey(eia, data)).append(")").append(extension == null ? "" : ("/" + extension));
     return sb.toString();

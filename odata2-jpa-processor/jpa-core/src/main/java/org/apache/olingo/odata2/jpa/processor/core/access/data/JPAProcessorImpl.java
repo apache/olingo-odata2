@@ -23,10 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
@@ -489,8 +486,53 @@ public class JPAProcessorImpl implements JPAProcessor {
     JPAPage page = pageBuilder.build();
     oDataJPAContext.setPaging(page);
 
-    return page.getPagedEntities();
+    List<Object> entities = page.getPagedEntities();
 
+    if (entities != null && !entities.isEmpty()) {
+      entities.removeAll(Collections.singleton(null));
+      Class entityClazz = entities.get(0).getClass();
+      try {
+        if (!uriParserResultView.getTargetType().getName().equals(entityClazz.getSimpleName())) {
+          Class clazz = Class.forName(uriParserResultView.getTargetType().getNamespace() + "." + uriParserResultView.getTargetType().getName());
+          List<Object> newEntities = new ArrayList<Object>(entities.size());
+          for (Object obj : entities) {
+            Object entity = clazz.newInstance();
+            if (obj.getClass().isArray()) {
+              int i = 0;
+              for (Object o : (Object[]) obj) {
+                Method method = findMethod(entity, "setCronAppParam"+i);
+
+                method.invoke(entity, o);
+                i++;
+              }
+            } else {
+              Method method = findMethod(entity, "setCronAppParam0");
+              method.invoke(entity, obj);
+            }
+
+            newEntities.add(entity);
+
+          }
+          entities = newEntities;
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+    return entities;
+
+  }
+
+  private Method findMethod(Object obj, String method) {
+    Method[] methods = obj.getClass().getMethods();
+    for (Method m: methods) {
+      if (m.getName().equals(method)) {
+        return m;
+      }
+    }
+
+    return null;
   }
 
   private boolean setTransaction() {

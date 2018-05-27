@@ -194,8 +194,11 @@ public class ODataExpressionParser {
       }
 
     case PROPERTY:
-      String returnStr = tableAlias + JPQLStatement.DELIMITER.PERIOD
-          + getPropertyName(whereExpression);
+      String returnStr = getPropertyName(whereExpression);
+      if (tableAlias != null) {
+        returnStr = tableAlias + JPQLStatement.DELIMITER.PERIOD
+            + returnStr;
+      }
       return returnStr;
 
     case MEMBER:
@@ -614,6 +617,6 @@ public class ODataExpressionParser {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL, null);
     }
 
-    return mapping != null ? mapping.getInternalName() : edmProperty.getName();
+    return mapping != null ? (mapping.getInternalExpression() != null? mapping.getInternalExpression() : mapping.getInternalName()) : edmProperty.getName();
   }
 }

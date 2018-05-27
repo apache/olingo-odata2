@@ -30,10 +30,16 @@ public class Mapping implements EdmMapping {
   private Object object;
   private String mediaResourceSourceKey;
   private String mediaResourceMimeTypeKey;
+  private String expression;
 
   @Override
   public String getInternalName() {
     return value;
+  }
+
+  @Override
+  public String getInternalExpression() {
+    return expression;
   }
 
   @Override
@@ -58,6 +64,11 @@ public class Mapping implements EdmMapping {
    */
   public Mapping setInternalName(final String value) {
     this.value = value;
+    return this;
+  }
+
+  public Mapping setInternalExpression(final String value) {
+    this.expression = value;
     return this;
   }
 

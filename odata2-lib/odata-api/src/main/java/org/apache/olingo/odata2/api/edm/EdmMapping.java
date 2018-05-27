@@ -32,6 +32,8 @@ public interface EdmMapping {
    */
   String getInternalName();
 
+  String getInternalExpression();
+
   /**
    * Gets the key under which the resource source value can be found in the data map.
    * @return the key of the media resource source

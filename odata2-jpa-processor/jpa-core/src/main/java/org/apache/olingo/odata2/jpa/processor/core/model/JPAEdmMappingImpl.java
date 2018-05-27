@@ -71,4 +71,5 @@ public class JPAEdmMappingImpl extends Mapping implements JPAEdmMapping {
   public void setVirtualAccess(boolean virtualAccess) {
 	  this.isVirtualAccess=virtualAccess;
   }
+
 }
