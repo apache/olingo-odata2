@@ -354,7 +354,11 @@ public class ODataExpressionParser {
           if (orderBy.getExpression().getKind() == ExpressionKind.MEMBER) {
             orderByField = parseToJPAWhereExpression(orderBy.getExpression(), tableAlias);
           } else {
-            orderByField = tableAlias + JPQLStatement.DELIMITER.PERIOD + getPropertyName(orderBy.getExpression());
+            if (tableAlias != null) {
+              orderByField = tableAlias + JPQLStatement.DELIMITER.PERIOD + getPropertyName(orderBy.getExpression());
+            } else {
+              orderByField = getPropertyName(orderBy.getExpression());
+            }
           }
           orderByDirection = (orderBy.getSortOrder() == SortOrder.asc) ? EMPTY :
               JPQLStatement.DELIMITER.SPACE + "DESC"; //$NON-NLS-1$
