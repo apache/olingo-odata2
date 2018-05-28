@@ -124,6 +124,7 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   public EntityManager getEntityManager() {
     if (em == null || !em.isOpen()) {
       em = emf.createEntityManager();
+      transaction = null;
     }
     return em;
   }

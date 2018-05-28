@@ -92,6 +92,8 @@ public class EntityInfoAggregator {
   private EdmEntityType entityType;
   private EdmEntitySet entitySet;
 
+  private boolean canEdit = true;
+
   /**
    * Constructor is private to force creation over {@link #create(EdmEntitySet)} method.
    */
@@ -114,6 +116,10 @@ public class EntityInfoAggregator {
     EntityInfoAggregator eia = new EntityInfoAggregator();
     eia.initialize(entitySet, expandSelectTree);
     return eia;
+  }
+
+  public boolean canEdit() {
+    return canEdit;
   }
 
   /**
@@ -314,6 +320,11 @@ public class EntityInfoAggregator {
     try {
       this.entitySet = entitySet;
       entityType = entitySet.getEntityType();
+
+      if (entityType.getMapping() != null && "doNotEdit".equals(entityType.getMapping().getObject())) {
+        canEdit = false;
+      }
+
       entitySetName = entitySet.getName();
       isDefaultEntityContainer = entitySet.getEntityContainer().isDefaultEntityContainer();
       entityContainerName = entitySet.getEntityContainer().getName();

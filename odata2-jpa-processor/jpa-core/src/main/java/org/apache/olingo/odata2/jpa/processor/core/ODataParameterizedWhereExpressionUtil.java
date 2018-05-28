@@ -26,31 +26,45 @@ public class ODataParameterizedWhereExpressionUtil {
    * Map includes where expression clause as the key and the 
    * ODataParameterizedWhereExpression as the value
    */
-  private static Map<String, Map<Integer, Object>> parameterizedQueryMap = new 
-      HashMap<String, Map<Integer,Object>>();
+  private static ThreadLocal<Map<String, Map<Integer, Object>>> parameterizedQueryMap = new ThreadLocal<Map<String, Map<Integer, Object>>>() {
+    @Override
+    protected Map<String, Map<Integer, Object>> initialValue() {
+      return new HashMap<String, Map<Integer,Object>>();
+    }
+  };
   
-  private static String jpqlStatement = null;
+  private static ThreadLocal<String> jpqlStatement = new ThreadLocal<String>() {
+    @Override
+    protected String initialValue() {
+      return null;
+    }
+  };
 
   /**
    * @return the parameterizedQueryMap
    */
   public static Map<String, Map<Integer, Object>> getParameterizedQueryMap() {
-    return parameterizedQueryMap;
+    return parameterizedQueryMap.get();
   }
 
   /**
    * @param parameterizedQueryMap the parameterizedQueryMap to set
    */
   public static void setParameterizedQueryMap(Map<String, Map<Integer, Object>> parameterizedQueryMap) {
-    ODataParameterizedWhereExpressionUtil.parameterizedQueryMap = parameterizedQueryMap;
+    ODataParameterizedWhereExpressionUtil.parameterizedQueryMap.set(parameterizedQueryMap);
   }
   
   public static void setJPQLStatement(String jpqlStatement) {
-    ODataParameterizedWhereExpressionUtil.jpqlStatement = jpqlStatement;
+    ODataParameterizedWhereExpressionUtil.jpqlStatement.set(jpqlStatement);
   }
   
   public static String getJPQLStatement() {
-    return jpqlStatement;
+    return jpqlStatement.get();
+  }
+
+  public static void clear() {
+    parameterizedQueryMap.remove();
+    jpqlStatement.remove();
   }
  
 }

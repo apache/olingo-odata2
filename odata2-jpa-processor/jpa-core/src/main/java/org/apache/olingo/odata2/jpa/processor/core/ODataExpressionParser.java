@@ -70,8 +70,18 @@ public class ODataExpressionParser {
   public static final String EMPTY = ""; //$NON-NLS-1$
   public static final ThreadLocal<Integer> methodFlag = new ThreadLocal<Integer>();
   public static final Character[] EMPTY_CHARACTER_ARRAY = new Character[0];
-  private static int index = 1;
-  private static Map<Integer, Object> positionalParameters = new HashMap<Integer, Object>();  
+  private static ThreadLocal<Integer> index = new ThreadLocal<Integer>() {
+    @Override
+    protected Integer initialValue() {
+      return 1;
+    }
+  };
+  private static ThreadLocal<Map<Integer, Object>> positionalParameters = new ThreadLocal<Map<Integer, Object>>() {
+    @Override
+    protected Map<Integer, Object> initialValue() {
+      return new HashMap<Integer, Object>();
+    }
+  };
   
   /**
    * This method returns the parsed where condition corresponding to the filter input in the user query.
@@ -119,7 +129,7 @@ public class ODataExpressionParser {
         }
       }
       final String left = parseToJPAWhereExpression(binaryExpression.getLeftOperand(), tableAlias);
-      index++;
+      index.set(index.get()+1);
       final String right = parseToJPAWhereExpression(binaryExpression.getRightOperand(), tableAlias);
 
       // Special handling for STARTSWITH and ENDSWITH method expression
@@ -228,11 +238,11 @@ public class ODataExpressionParser {
     case METHOD:
       final MethodExpression methodExpression = (MethodExpression) whereExpression;
       String first = parseToJPAWhereExpression(methodExpression.getParameters().get(0), tableAlias);
-      index++;
+      index.set(index.get()+1);
       String second =
           methodExpression.getParameterCount() > 1 ? parseToJPAWhereExpression(methodExpression.getParameters().get(1),
               tableAlias) : null;
-      index++;
+      index.set(index.get()+1);
       String third =
           methodExpression.getParameterCount() > 2 ? parseToJPAWhereExpression(methodExpression.getParameters().get(2),
               tableAlias) : null;
@@ -269,12 +279,12 @@ public class ODataExpressionParser {
   }
   
   public static Map<Integer, Object> getPositionalParameters() {
-    return positionalParameters;
+    return positionalParameters.get();
   }
   
   public static void reInitializePositionalParameters() {
-    index = 1;
-    positionalParameters = new HashMap<Integer, Object>();
+    index.set(1);
+    positionalParameters.set(new HashMap<Integer, Object>());
   }
 
   /**
@@ -483,6 +493,9 @@ public class ODataExpressionParser {
   private static String evaluateComparingExpression(String uriLiteral, final EdmSimpleType edmSimpleType,
       Class<?> edmMappedType) throws ODataJPARuntimeException {
 
+    Map<Integer, Object> positionalParameters = ODataExpressionParser.getPositionalParameters();
+    int index = ODataExpressionParser.index.get();
+
     if (EdmSimpleTypeKind.String.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)
         || EdmSimpleTypeKind.Guid.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)) {
       uriLiteral = uriLiteral.replaceAll("'", "''");
@@ -537,11 +550,15 @@ public class ODataExpressionParser {
     } else {
       uriLiteral = evaluateExpressionForNumbers(uriLiteral, edmSimpleType, edmMappedType);
     }
+    ODataExpressionParser.index.set(index);
     return uriLiteral;
   }
 
   private static String evaluateExpressionForNumbers(String uriLiteral, EdmSimpleType edmSimpleType,
       Class<?> edmMappedType) {
+    Map<Integer, Object> positionalParameters = ODataExpressionParser.getPositionalParameters();
+    int index = ODataExpressionParser.index.get();
+
     Class<? extends Object> type = edmMappedType==null? edmSimpleType.getDefaultType():
       edmMappedType;
     int size = positionalParameters.size();
@@ -586,10 +603,14 @@ public class ODataExpressionParser {
       uriLiteral = "?" + index;
       index++;
     }
+
+    ODataExpressionParser.index.set(index);
     return uriLiteral;
   }
 
   private static void evaluateExpressionForString(String uriLiteral, Class<?> edmMappedType) {
+    Map<Integer, Object> positionalParameters = ODataExpressionParser.getPositionalParameters();
+    int index = ODataExpressionParser.index.get();
 
     if(edmMappedType.equals(char[].class)){
       positionalParameters.put(index, uriLiteral.toCharArray());
@@ -622,5 +643,11 @@ public class ODataExpressionParser {
     }
 
     return mapping != null ? (mapping.getInternalExpression() != null? mapping.getInternalExpression() : mapping.getInternalName()) : edmProperty.getName();
+  }
+
+  public static void clear() {
+    ODataExpressionParser.positionalParameters.remove();
+    ODataExpressionParser.index.remove();
+    methodFlag.remove();
   }
 }
