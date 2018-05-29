@@ -595,23 +595,30 @@ public class AtomEntryEntityProducer {
 
     StringBuilder keys = new StringBuilder();
     for (final EntityPropertyInfo keyPropertyInfo : keyPropertyInfos) {
-      if (keys.length() > 0) {
-        keys.append(',');
-      }
-
       final String name = keyPropertyInfo.getName();
-      if (keyPropertyInfos.size() > 1) {
-        keys.append(Encoder.encode(name)).append('=');
-      }
-
       final EdmSimpleType type = (EdmSimpleType) keyPropertyInfo.getType();
+      String value = null;
+
       try {
-        keys.append(Encoder.encode(type.valueToString(data.get(name), EdmLiteralKind.URI,
-            keyPropertyInfo.getFacets())));
+        value = type.valueToString(data.get(name), EdmLiteralKind.URI,
+            keyPropertyInfo.getFacets());
       } catch (final EdmSimpleTypeException e) {
         throw new EntityProviderProducerException(
             EdmSimpleTypeException.getMessageReference(e.getMessageReference()).
-            updateContent(e.getMessageReference().getContent(), name), e);
+                updateContent(e.getMessageReference().getContent(), name), e);
+      }
+
+      if (value != null) {
+
+        if (keys.length() > 0) {
+          keys.append(',');
+        }
+
+        if (keyPropertyInfos.size() > 1) {
+          keys.append(Encoder.encode(name)).append('=');
+        }
+
+        keys.append(Encoder.encode(value));
       }
     }
 

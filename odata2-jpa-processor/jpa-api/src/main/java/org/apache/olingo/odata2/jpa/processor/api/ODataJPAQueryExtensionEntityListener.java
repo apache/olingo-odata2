@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -24,6 +24,9 @@ import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.olingo.odata2.api.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
@@ -119,5 +122,13 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
   protected ODataJPARuntimeException createApplicationError(String message, Locale locale) {
     return ODataJPARuntimeException.throwException(
         ODataJPARuntimeException.GENERAL, new ODataApplicationException(message, locale));
+  }
+
+  public boolean authorizeProperty(EdmEntityType entityType, EdmProperty property) {
+    return true;
+  }
+
+  public Class forName(String className) throws ClassNotFoundException {
+    return Class.forName(className);
   }
 }

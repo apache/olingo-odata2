@@ -305,7 +305,7 @@ public class JPAEntityParserTest {
     selectPropertyList.add(edmProperty1);
     selectPropertyList.add(edmProperty2);
     try {
-      Map<String, Object> result = resultParser.parse2EdmPropertyValueMap(jpaEntity, selectPropertyList);
+      Map<String, Object> result = resultParser.parse2EdmPropertyValueMap(jpaEntity, selectPropertyList, null);
       assertEquals(1, ((HashMap<String, Object>) result.get("Order")).size());
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
@@ -441,7 +441,7 @@ public class JPAEntityParserTest {
     JPAEntityParser resultParser = new JPAEntityParser();
     Object jpaEntity = new DemoItem2("abc");
     try {
-      resultParser.parse2EdmPropertyValueMap(jpaEntity, getEdmPropertyList());
+      resultParser.parse2EdmPropertyValueMap(jpaEntity, getEdmPropertyList(), null);
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
@@ -452,7 +452,7 @@ public class JPAEntityParserTest {
     JPAEntityParser resultParser = new JPAEntityParser();
     Object jpaEntity = new DemoItem2("abc");
     try {
-      resultParser.parse2EdmPropertyValueMap(jpaEntity, getEdmPropertyListWithVirtualAccess());
+      resultParser.parse2EdmPropertyValueMap(jpaEntity, getEdmPropertyListWithVirtualAccess(), null);
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }

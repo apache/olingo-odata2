@@ -50,10 +50,7 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneContext;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
-import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
+import org.apache.olingo.odata2.jpa.processor.api.*;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAFunction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAMethodContext;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAProcessor;
@@ -167,7 +164,7 @@ public class JPAProcessorImpl implements JPAProcessor {
             (List<Object>) ODataJPATombstoneContext.getDeltaResult(((EdmMapping) mapping).getInternalName());
         result = handlePaging(deltaResult, uriParserResultView);
       } else {
-        result = handlePaging(query, uriParserResultView);
+        result = handlePaging(query, uriParserResultView, queryBuilder);
       }
       if (listener != null && listener.isTombstoneSupported()) {
         ODataJPATombstoneContext.setDeltaToken(listener.generateDeltaToken((List<Object>) result, query));
@@ -467,7 +464,7 @@ public class JPAProcessorImpl implements JPAProcessor {
     return page.getPagedEntities();
   }
 
-  private List<Object> handlePaging(final Query query, final GetEntitySetUriInfo uriParserResultView) {
+  private List<Object> handlePaging(final Query query, final GetEntitySetUriInfo uriParserResultView, JPAQueryBuilder queryBuilder) {
 
     JPAPageBuilder pageBuilder = new JPAPageBuilder();
     pageBuilder.pageSize(oDataJPAContext.getPageSize())
@@ -493,7 +490,14 @@ public class JPAProcessorImpl implements JPAProcessor {
       Class entityClazz = entities.get(0).getClass();
       try {
         if (!uriParserResultView.getTargetType().getName().equals(entityClazz.getSimpleName())) {
-          Class clazz = Class.forName(uriParserResultView.getTargetType().getNamespace() + "." + uriParserResultView.getTargetType().getName());
+
+          Class clazz;
+          ODataJPAQueryExtensionEntityListener listener = queryBuilder.getODataJPAQueryEntityListener((UriInfo) uriParserResultView);
+          if (listener != null) {
+            clazz = listener.forName(uriParserResultView.getTargetType().getNamespace() + "." + uriParserResultView.getTargetType().getName());
+          } else {
+            clazz = Class.forName(uriParserResultView.getTargetType().getNamespace() + "." + uriParserResultView.getTargetType().getName());
+          }
           List<Object> newEntities = new ArrayList<Object>(entities.size());
           for (Object obj : entities) {
             Object entity = clazz.newInstance();

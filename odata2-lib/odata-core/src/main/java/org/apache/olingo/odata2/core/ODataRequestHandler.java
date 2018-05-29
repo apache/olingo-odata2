@@ -153,6 +153,7 @@ public class ODataRequestHandler {
 
       odataResponse = extendedResponse.build();
     } catch (final Exception e) {
+      e.printStackTrace();
       exception = e;
       odataResponse = new ODataExceptionWrapper(context, request.getQueryParameters(), request.getAcceptHeaders())
           .wrapInExceptionResponse(e);

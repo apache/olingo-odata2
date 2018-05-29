@@ -64,5 +64,4 @@ public abstract class ODataJPAException extends ODataException {
   public MessageReference getMessageReference() {
     return messageReference;
   }
-
 }

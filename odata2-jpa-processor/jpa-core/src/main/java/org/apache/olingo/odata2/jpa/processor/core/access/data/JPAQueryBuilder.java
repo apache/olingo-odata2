@@ -86,8 +86,7 @@ public class JPAQueryBuilder {
         queryInfo.setTombstoneQuery(true);
       }
     } catch (Exception e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     }
     queryInfo.setQuery(query);
     return queryInfo;
@@ -104,8 +103,7 @@ public class JPAQueryBuilder {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.GetEntity);
       }
     } catch (Exception e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     }
     return query;
   }
@@ -121,8 +119,7 @@ public class JPAQueryBuilder {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.GetEntitySetCount);
       }
     } catch (Exception e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     }
     return query;
   }
@@ -138,8 +135,7 @@ public class JPAQueryBuilder {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.GetEntityCount);
       }
     } catch (Exception e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     }
     return query;
   }
@@ -155,8 +151,7 @@ public class JPAQueryBuilder {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.Delete);
       }
     } catch (Exception e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     }
     return query;
   }
@@ -172,8 +167,7 @@ public class JPAQueryBuilder {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.PutMergePatch);
       }
     } catch (Exception e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     }
     return query;
   }

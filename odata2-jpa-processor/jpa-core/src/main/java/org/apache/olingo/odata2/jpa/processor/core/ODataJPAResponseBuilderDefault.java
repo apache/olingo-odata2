@@ -95,7 +95,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       final List<SelectItem> selectedItems = resultsView.getSelect();
       if (selectedItems != null && !selectedItems.isEmpty()) {
         edmEntityList =
-            jpaResultParser.parse2EdmEntityList(jpaEntities, buildSelectItemList(selectedItems, edmEntityType));
+            jpaResultParser.parse2EdmEntityList(jpaEntities, buildSelectItemList(selectedItems, edmEntityType), edmEntityType);
       } else {
         edmEntityList = jpaResultParser.parse2EdmEntityList(jpaEntities, edmEntityType);
       }
@@ -151,7 +151,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       if (selectedItems != null && !selectedItems.isEmpty()) {
         edmPropertyValueMap =
             jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, buildSelectItemList(selectedItems, resultsView
-                .getTargetEntitySet().getEntityType()));
+                .getTargetEntitySet().getEntityType()), edmEntityType);
       } else {
         edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType);
       }
@@ -368,7 +368,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       Map<String, Object> edmPropertyValueMap = null;
 
       JPAEntityParser jpaResultParser = new JPAEntityParser();
-      edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType.getKeyProperties());
+      edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType.getKeyProperties(), edmEntityType);
 
       EntityProviderWriteProperties entryProperties =
           EntityProviderWriteProperties.serviceRoot(oDataJPAContext.getODataContext().getPathInfo().getServiceRoot())
@@ -404,7 +404,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       JPAEntityParser jpaResultParser = new JPAEntityParser();
 
       for (Object jpaEntity : jpaEntities) {
-        edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, keyProperties);
+        edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, keyProperties, edmEntityType);
         edmEntityList.add(edmPropertyValueMap);
       }
 

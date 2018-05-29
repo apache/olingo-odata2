@@ -199,7 +199,7 @@ public class ODataExceptionWrapper {
     }
     errorContext.setException(exception);
     errorContext.setErrorCode(null);
-    errorContext.setMessage(exception.getMessage());
+    errorContext.setMessage(ErrorMessageHandler.getExceptionMessage(exception));
     errorContext.setLocale(DEFAULT_RESPONSE_LOCALE);
 
     if (httpRequestHeaders != null) {
