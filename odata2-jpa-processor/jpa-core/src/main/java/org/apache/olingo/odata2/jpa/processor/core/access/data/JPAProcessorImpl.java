@@ -32,11 +32,7 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.apache.olingo.odata2.api.commons.InlineCount;
-import org.apache.olingo.odata2.api.edm.EdmEntitySet;
-import org.apache.olingo.odata2.api.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.edm.EdmException;
-import org.apache.olingo.odata2.api.edm.EdmMapping;
-import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
+import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.uri.UriInfo;
@@ -50,6 +46,7 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.*;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAFunction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAMethodContext;
@@ -214,7 +211,7 @@ public class JPAProcessorImpl implements JPAProcessor {
   @Override
   public <T> Object process(GetEntityUriInfo uriParserResultView)
       throws ODataJPAModelException, ODataJPARuntimeException {
-    return readEntity(new JPAQueryBuilder(oDataJPAContext).build(uriParserResultView));
+    return readEntity(new JPAQueryBuilder(oDataJPAContext).build(uriParserResultView), (UriInfo) uriParserResultView);
   }
 
   /* Process $count for Get Entity Set Request */
@@ -296,7 +293,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       listener.checkAuthorization(uriParserResultView);
     }
 
-    Object selectedObject = readEntity(new JPAQueryBuilder(oDataJPAContext).build(uriParserResultView));
+    Object selectedObject = readEntity(new JPAQueryBuilder(oDataJPAContext).build(uriParserResultView), (UriInfo) uriParserResultView);
     if (selectedObject != null) {
       try{
         boolean isLocalTransaction = setTransaction();
@@ -349,11 +346,20 @@ public class JPAProcessorImpl implements JPAProcessor {
 
   }
 
+  private Object readEntity(final Query query, final UriInfo uriInfo) throws ODataJPARuntimeException {
+    return readEntity(query, uriInfo, false);
+  }
+
   /* Common method for Read and Delete */
-  private Object readEntity(final Query query) throws ODataJPARuntimeException {
+  private Object readEntity(final Query query, final UriInfo uriInfo, final boolean rawEntity) throws ODataJPARuntimeException {
     Object selectedObject = null;
     @SuppressWarnings("rawtypes")
-    final List resultList = query.getResultList();
+    List resultList = query.getResultList();
+
+    if (!rawEntity) {
+      resultList = normalizeList(resultList, uriInfo);
+    }
+
     if (!resultList.isEmpty()) {
       selectedObject = resultList.get(0);
     }
@@ -402,7 +408,7 @@ public class JPAProcessorImpl implements JPAProcessor {
         if (isLocalTransaction) {
           oDataJPAContext.getODataJPATransaction().commit();
         }
-        return jpaEntity;
+        return readEntity(new JPAQueryBuilder(oDataJPAContext).build((UriInfo) createView, false), (UriInfo) createView);
       }
     } catch (ODataBadRequestException e) {
       throw ODataJPARuntimeException.throwException(
@@ -419,17 +425,6 @@ public class JPAProcessorImpl implements JPAProcessor {
       throws ODataJPAModelException, ODataJPARuntimeException {
     Object jpaEntity = null;
     try {
-      boolean isLocalTransaction = setTransaction();
-      jpaEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build(updateView));
-
-      if (jpaEntity == null) {
-        throw ODataJPARuntimeException
-            .throwException(ODataJPARuntimeException.RESOURCE_NOT_FOUND, null);
-      }
-
-      final EdmEntitySet oDataEntitySet = updateView.getTargetEntitySet();
-      final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
-
       JPAQueryBuilder queryBuilder = new JPAQueryBuilder(oDataJPAContext);
       ODataJPAQueryExtensionEntityListener listener = null;
       try {
@@ -441,6 +436,17 @@ public class JPAProcessorImpl implements JPAProcessor {
       if (listener != null) {
         listener.checkAuthorization(updateView);
       }
+
+      boolean isLocalTransaction = setTransaction();
+      jpaEntity = readEntity(queryBuilder.build(updateView, true), (UriInfo) updateView, true);
+
+      if (jpaEntity == null) {
+        throw ODataJPARuntimeException
+            .throwException(ODataJPARuntimeException.RESOURCE_NOT_FOUND, null);
+      }
+
+      final EdmEntitySet oDataEntitySet = updateView.getTargetEntitySet();
+      final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
 
       final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet, oDataJPAContext);
       virtualJPAEntity.setJPAEntity(jpaEntity);
@@ -454,10 +460,13 @@ public class JPAProcessorImpl implements JPAProcessor {
       } else {
         return null;
       }
+
       em.flush();
       if (isLocalTransaction) {
         oDataJPAContext.getODataJPATransaction().commit();
       }
+
+      jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView);
     } catch (ODataBadRequestException e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
@@ -469,6 +478,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
     }
+
     return jpaEntity;
   }
 
@@ -522,9 +532,14 @@ public class JPAProcessorImpl implements JPAProcessor {
     JPAPage page = pageBuilder.build();
     oDataJPAContext.setPaging(page);
 
-    List<Object> entities = page.getPagedEntities();
+    List<Object> entities = normalizeList(page.getPagedEntities(), (UriInfo) uriParserResultView);
 
-    if (entities != null && !entities.isEmpty()) {
+    return entities;
+
+  }
+
+  private List normalizeList(List entities, final UriInfo uriParserResultView) {
+    if (entities != null && uriParserResultView != null && !entities.isEmpty()) {
       entities.removeAll(Collections.singleton(null));
       Class entityClazz = entities.get(0).getClass();
       try {
@@ -544,7 +559,8 @@ public class JPAProcessorImpl implements JPAProcessor {
                 i++;
               }
             } else {
-              String key = names.get(0);;
+              String key = names.get(0);
+              ;
               entity.set(key, obj);
             }
 
@@ -554,7 +570,7 @@ public class JPAProcessorImpl implements JPAProcessor {
           entities = newEntities;
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        throw new RuntimeException(e);
       }
     }
 

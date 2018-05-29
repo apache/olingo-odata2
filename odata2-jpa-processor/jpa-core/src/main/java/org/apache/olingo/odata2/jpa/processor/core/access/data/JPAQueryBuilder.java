@@ -165,6 +165,10 @@ public class JPAQueryBuilder {
   }
 
   public Query build(PutMergePatchUriInfo uriInfo) throws ODataJPARuntimeException {
+    return build(uriInfo, false);
+  }
+
+  public Query build(PutMergePatchUriInfo uriInfo, boolean rawEntity) throws ODataJPARuntimeException {
     Query query = null;
     try {
 
@@ -176,7 +180,8 @@ public class JPAQueryBuilder {
 
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
-        query = listener.getQuery(uriInfo, em);
+        if (!rawEntity)
+          query = listener.getQuery(uriInfo, em);
       }
       if (query == null) {
         query = buildQuery((UriInfo) uriInfo, UriInfoType.PutMergePatch);

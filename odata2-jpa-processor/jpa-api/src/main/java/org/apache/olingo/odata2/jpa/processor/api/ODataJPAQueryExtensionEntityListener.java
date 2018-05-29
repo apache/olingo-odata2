@@ -134,8 +134,4 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
   public void checkAuthorization(final DeleteUriInfo deleteView) throws ODataJPARuntimeException {
 
   }
-
-  public Class forName(String className) throws ClassNotFoundException {
-    return Class.forName(className);
-  }
 }

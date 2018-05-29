@@ -369,8 +369,17 @@ public class JPAEntity {
           boolean isNullable = edmProperty.getFacets() == null ? (keyNames.contains(propertyName)? false : true)
               : edmProperty.getFacets().isNullable() == null ? true : edmProperty.getFacets().isNullable();
           if (isVirtual) {
-            setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
-                .getType(), isNullable);
+            try {
+              setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
+                  .getType(), propertyName, isNullable);
+            } catch(Exception e) {
+              try {
+                setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
+                    .getType(), isNullable);
+              } catch(Exception e3) {
+                //
+              }
+            }
           } else {
             setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
                 .getType(), isNullable);
@@ -481,6 +490,7 @@ public class JPAEntity {
       final EdmSimpleType type, String propertyName, boolean isNullable) throws
       IllegalAccessException, IllegalArgumentException, InvocationTargetException, ODataJPARuntimeException, 
       EdmException {
+
     if (entityPropertyValue != null || isNullable) {
       if (propertyName != null) {
         method.invoke(entity, propertyName, entityPropertyValue);

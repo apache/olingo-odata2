@@ -600,8 +600,18 @@ public final class JPAEntityParser {
         	  if (accessModifier.equals(ACCESS_MODIFIER_SET)) {
         		  JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
         		  if(jpaEdmMapping != null && jpaEdmMapping.isVirtualAccess()) {
-        			  accessModifierMap.put(propertyName, jpaEntityType.getMethod(ACCESS_MODIFIER_SET,
-        					  new Class<?>[] { String.class,Object.class }));
+        		    try {
+                  accessModifierMap.put(propertyName, jpaEntityType.getMethod(ACCESS_MODIFIER_SET,
+                      new Class<?>[]{String.class, Object.class}));
+                } catch(Exception e) {
+        		      try {
+                    accessModifierMap.put(propertyName, jpaEntityType.getMethod(methodName,
+                        new Class<?>[]{jpaEdmMapping != null ?
+                            jpaEdmMapping.getJPAType() : null}));
+                  } catch(Exception e2) {
+
+                  }
+                }
         		  }else {
         			  accessModifierMap.put(propertyName, jpaEntityType.getMethod(methodName,
         					  new Class<?>[] { jpaEdmMapping != null ? 

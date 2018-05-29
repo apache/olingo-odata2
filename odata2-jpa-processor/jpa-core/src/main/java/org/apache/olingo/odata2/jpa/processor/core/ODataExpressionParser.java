@@ -413,7 +413,11 @@ public class ODataExpressionParser {
       i++;
       literal = keyPredicate.getLiteral();
       try {
-        propertyName = keyPredicate.getProperty().getMapping().getInternalName();
+        if (keyPredicate.getProperty().getMapping().getInternalExpression() != null && tableAlias == null) {
+          propertyName = keyPredicate.getProperty().getMapping().getInternalExpression();
+        } else {
+          propertyName = keyPredicate.getProperty().getMapping().getInternalName();
+        }
         edmSimpleType = (EdmSimpleType) keyPredicate.getProperty().getType();
         edmMappedType = ((JPAEdmMappingImpl)keyPredicate.getProperty().getMapping()).getJPAType();
       } catch (EdmException e) {
@@ -423,11 +427,17 @@ public class ODataExpressionParser {
       literal = evaluateComparingExpression(literal, edmSimpleType, edmMappedType);
 
       if(edmSimpleType == EdmSimpleTypeKind.String.getEdmSimpleTypeInstance()){
-        keyFilters.append(tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName + JPQLStatement.DELIMITER.SPACE
+        if (tableAlias != null)
+          keyFilters.append(tableAlias + JPQLStatement.DELIMITER.PERIOD);
+
+        keyFilters.append(propertyName + JPQLStatement.DELIMITER.SPACE
             + JPQLStatement.Operator.LIKE + JPQLStatement.DELIMITER.SPACE + literal +  " ESCAPE '\\'");
        
       }else{
-        keyFilters.append(tableAlias + JPQLStatement.DELIMITER.PERIOD + propertyName + JPQLStatement.DELIMITER.SPACE
+        if (tableAlias != null)
+          keyFilters.append(tableAlias + JPQLStatement.DELIMITER.PERIOD );
+
+        keyFilters.append(propertyName + JPQLStatement.DELIMITER.SPACE
             + JPQLStatement.Operator.EQ + JPQLStatement.DELIMITER.SPACE + literal);
       }
     }

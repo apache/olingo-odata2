@@ -24,6 +24,8 @@ import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.batch.BatchHandler;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
+import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.exception.ODataMethodNotAllowedException;
@@ -58,6 +60,19 @@ public class Dispatcher {
   public Dispatcher(final ODataServiceFactory serviceFactory, final ODataService service) {
     this.service = service;
     this.serviceFactory = serviceFactory;
+  }
+
+  public void checkUri(final UriInfoImpl uriInfo) {
+    try {
+      if (!uriInfo.getTargetEntitySet().getEntityType().getMapping().getInternalName().equals(uriInfo.getTargetEntitySet().getEntityType().getName())) {
+        EdmEntitySet set = uriInfo.getEntityContainer().getEntitySet(uriInfo.getTargetEntitySet().getEntityType().getMapping().getInternalName());
+        uriInfo.setTargetEntitySet(set);
+        uriInfo.setStartEntitySet(set);
+        uriInfo.setTargetType(set.getEntityType());
+      }
+    } catch (EdmException e) {
+      e.printStackTrace();
+    }
   }
 
   public ODataResponse dispatch(final ODataHttpMethod method, final UriInfoImpl uriInfo, final InputStream content,
