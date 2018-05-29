@@ -83,7 +83,7 @@ public interface ODataJPAResponseBuilder {
    * @throws ODataJPARuntimeException
    * @throws ODataNotFoundException
    */
-  public ODataResponse build(final PutMergePatchUriInfo putUriInfo, final Object updatedObject)
+  public ODataResponse build(final PutMergePatchUriInfo putUriInfo, final Object updatedObject, final String contentType)
       throws ODataJPARuntimeException, ODataNotFoundException;
 
   /**

@@ -62,6 +62,7 @@ import org.apache.olingo.odata2.jpa.processor.core.ODataEntityParser;
 import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAPage.JPAPageBuilder;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAQueryBuilder.JPAQueryInfo;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 
 public class JPAProcessorImpl implements JPAProcessor {
 
@@ -283,6 +284,18 @@ public class JPAProcessorImpl implements JPAProcessor {
         return deleteLink(uriParserResultView);
       }
     }
+    JPAQueryBuilder queryBuilder = new JPAQueryBuilder(oDataJPAContext);
+    ODataJPAQueryExtensionEntityListener listener = null;
+    try {
+      listener = queryBuilder.getODataJPAQueryEntityListener((UriInfo) uriParserResultView);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    if (listener != null) {
+      listener.checkAuthorization(uriParserResultView);
+    }
+
     Object selectedObject = readEntity(new JPAQueryBuilder(oDataJPAContext).build(uriParserResultView));
     if (selectedObject != null) {
       try{
@@ -354,6 +367,19 @@ public class JPAProcessorImpl implements JPAProcessor {
     try {
       final EdmEntitySet oDataEntitySet = createView.getTargetEntitySet();
       final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
+
+      JPAQueryBuilder queryBuilder = new JPAQueryBuilder(oDataJPAContext);
+      ODataJPAQueryExtensionEntityListener listener = null;
+      try {
+        listener = queryBuilder.getODataJPAQueryEntityListener((UriInfo) createView);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      if (listener != null) {
+        listener.checkAuthorization(createView);
+      }
+
       final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet, oDataJPAContext);
       Object jpaEntity = null;
 
@@ -403,6 +429,19 @@ public class JPAProcessorImpl implements JPAProcessor {
 
       final EdmEntitySet oDataEntitySet = updateView.getTargetEntitySet();
       final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
+
+      JPAQueryBuilder queryBuilder = new JPAQueryBuilder(oDataJPAContext);
+      ODataJPAQueryExtensionEntityListener listener = null;
+      try {
+        listener = queryBuilder.getODataJPAQueryEntityListener((UriInfo) updateView);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      if (listener != null) {
+        listener.checkAuthorization(updateView);
+      }
+
       final JPAEntity virtualJPAEntity = new JPAEntity(oDataEntityType, oDataEntitySet, oDataJPAContext);
       virtualJPAEntity.setJPAEntity(jpaEntity);
       if (content != null) {
@@ -491,27 +530,22 @@ public class JPAProcessorImpl implements JPAProcessor {
       try {
         if (!uriParserResultView.getTargetType().getName().equals(entityClazz.getSimpleName())) {
 
-          Class clazz;
-          ODataJPAQueryExtensionEntityListener listener = queryBuilder.getODataJPAQueryEntityListener((UriInfo) uriParserResultView);
-          if (listener != null) {
-            clazz = listener.forName(uriParserResultView.getTargetType().getNamespace() + "." + uriParserResultView.getTargetType().getName());
-          } else {
-            clazz = Class.forName(uriParserResultView.getTargetType().getNamespace() + "." + uriParserResultView.getTargetType().getName());
-          }
+          List<String> names = uriParserResultView.getTargetEntitySet().getEntityType().getPropertyNames();
+
           List<Object> newEntities = new ArrayList<Object>(entities.size());
           for (Object obj : entities) {
-            Object entity = clazz.newInstance();
+            VirtualClass entity = new VirtualClass();
             if (obj.getClass().isArray()) {
               int i = 0;
-              for (Object o : (Object[]) obj) {
-                Method method = findMethod(entity, "setCronAppParam"+i);
 
-                method.invoke(entity, o);
+              for (Object o : (Object[]) obj) {
+                String key = names.get(i);
+                entity.set(key, o);
                 i++;
               }
             } else {
-              Method method = findMethod(entity, "setCronAppParam0");
-              method.invoke(entity, obj);
+              String key = names.get(0);;
+              entity.set(key, obj);
             }
 
             newEntities.add(entity);

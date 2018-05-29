@@ -28,12 +28,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
-import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
-import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.api.uri.info.*;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 
 /**
@@ -126,6 +121,18 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
 
   public boolean authorizeProperty(EdmEntityType entityType, EdmProperty property) {
     return true;
+  }
+
+  public void checkAuthorization(final PostUriInfo postView) throws ODataJPARuntimeException {
+
+  }
+
+  public void checkAuthorization(final PutMergePatchUriInfo putView) throws ODataJPARuntimeException {
+
+  }
+
+  public void checkAuthorization(final DeleteUriInfo deleteView) throws ODataJPARuntimeException {
+
   }
 
   public Class forName(String className) throws ClassNotFoundException {

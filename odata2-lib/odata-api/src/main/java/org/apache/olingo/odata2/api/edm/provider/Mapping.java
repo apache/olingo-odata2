@@ -31,6 +31,7 @@ public class Mapping implements EdmMapping {
   private String mediaResourceSourceKey;
   private String mediaResourceMimeTypeKey;
   private String expression;
+  private boolean canEdit = true;
 
   @Override
   public String getInternalName() {
@@ -102,4 +103,11 @@ public class Mapping implements EdmMapping {
     return this;
   }
 
+  public boolean canEdit() {
+    return canEdit;
+  }
+
+  public void setCanEdit(boolean canEdit) {
+    this.canEdit = canEdit;
+  }
 }

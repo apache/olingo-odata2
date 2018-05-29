@@ -52,6 +52,7 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpressionUtil;
+import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 
 public class JPAQueryBuilder {
 
@@ -143,6 +144,13 @@ public class JPAQueryBuilder {
   public Query build(DeleteUriInfo uriInfo) throws ODataJPARuntimeException {
     Query query = null;
     try {
+
+      if (uriInfo.getTargetEntitySet().getEntityType().getMapping() != null) {
+        if (!((JPAEdmMappingImpl)uriInfo.getTargetEntitySet().getEntityType().getMapping()).canEdit()) {
+          throw new RuntimeException("Entity is Read Only");
+        }
+      }
+
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);
@@ -159,6 +167,13 @@ public class JPAQueryBuilder {
   public Query build(PutMergePatchUriInfo uriInfo) throws ODataJPARuntimeException {
     Query query = null;
     try {
+
+      if (uriInfo.getTargetEntitySet().getEntityType().getMapping() != null) {
+        if (!((JPAEdmMappingImpl)uriInfo.getTargetEntitySet().getEntityType().getMapping()).canEdit()) {
+          throw new RuntimeException("Entity is Read Only");
+        }
+      }
+
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
       if (listener != null) {
         query = listener.getQuery(uriInfo, em);

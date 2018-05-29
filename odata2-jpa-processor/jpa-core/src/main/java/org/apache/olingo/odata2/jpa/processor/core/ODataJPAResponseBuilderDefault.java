@@ -237,12 +237,12 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
   /* Response for Update Entity */
   @Override
-  public ODataResponse build(final PutMergePatchUriInfo putUriInfo, final Object updatedObject)
+  public ODataResponse build(final PutMergePatchUriInfo putUriInfo, final Object updatedObject, final String contentType)
       throws ODataJPARuntimeException, ODataNotFoundException {
     if (updatedObject == null) {
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
     }
-    return ODataResponse.status(HttpStatusCodes.NO_CONTENT).build();
+    return build((PostUriInfo) putUriInfo, updatedObject, contentType);
   }
 
   /* Response for Delete Entity */
