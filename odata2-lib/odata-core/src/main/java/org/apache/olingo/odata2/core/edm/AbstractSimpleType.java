@@ -98,11 +98,7 @@ public abstract class AbstractSimpleType implements EdmSimpleType {
   public final String valueToString(final Object value, final EdmLiteralKind literalKind, final EdmFacets facets)
       throws EdmSimpleTypeException {
     if (value == null) {
-      if (facets == null || facets.isNullable() == null || facets.isNullable()) {
-        return null;
-      } else {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_NULL_NOT_ALLOWED);
-      }
+      return null;
     }
 
     if (literalKind == null) {

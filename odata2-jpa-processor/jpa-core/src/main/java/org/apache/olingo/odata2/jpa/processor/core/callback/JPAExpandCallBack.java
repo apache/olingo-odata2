@@ -44,7 +44,10 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser;
 
 public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryContent, ODataCallback {
@@ -75,6 +78,23 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       if (nextEntitySet == null) {
         nextEntitySet = context.getSourceEntitySet().getRelatedEntitySet(currentNavigationProperty);
       }
+
+      ODataJPAQueryExtensionEntityListener queryListener = null;
+
+      try {
+        ODataJPATombstoneEntityListener listener = ((JPAEdmMapping) ((EdmEntityType) nextEntitySet.getEntityType()).getMapping()).getODataJPATombstoneEntityListener().newInstance();
+
+        if (listener instanceof ODataJPAQueryExtensionEntityListener) {
+          queryListener = (ODataJPAQueryExtensionEntityListener) listener;
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      if (queryListener != null) {
+        queryListener.checkEntityGetAuthorization((EdmEntityType) nextEntitySet.getEntityType());
+      }
+
       edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(inlinedEntry, nextEntitySet.getEntityType());
       result.setEntryData(edmPropertyValueMap);
       navigationLinks = context.getCurrentExpandSelectTreeNode().getLinks();

@@ -165,4 +165,8 @@ public class EdmEntityTypeImplProv extends EdmStructuralTypeImplProv implements 
   protected EdmTyped createNavigationProperty(final NavigationProperty property) throws EdmException {
     return new EdmNavigationPropertyImplProv(edm, property);
   }
+
+  public Map<String, NavigationProperty> getNavigationProperties() {
+    return navigationProperties;
+  }
 }

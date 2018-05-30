@@ -245,4 +245,6 @@ public interface UriInfo extends GetServiceDocumentUriInfo,
 
   @Override
   String getCallback();
+
+  boolean rawEntity();
 }

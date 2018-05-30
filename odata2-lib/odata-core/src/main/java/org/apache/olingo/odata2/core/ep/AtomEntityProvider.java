@@ -181,8 +181,7 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       throw e;
     } catch (Exception e) {
       csb.close();
-      throw new EntityProviderProducerException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-          .getSimpleName()), e);
+      throw new RuntimeException(e);
     }
   }
 

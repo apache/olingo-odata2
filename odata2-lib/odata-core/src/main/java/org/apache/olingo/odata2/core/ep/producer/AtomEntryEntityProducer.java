@@ -580,11 +580,7 @@ public class AtomEntryEntityProducer {
       sb.append(Encoder.encode(eia.getEntityContainerName())).append(Edm.DELIMITER);
     }
     try {
-      if (eia.getEntityType().getMapping().getInternalName() != null) {
-        sb.append(Encoder.encode(eia.getEntityType().getMapping().getInternalName()));
-      } else {
-        sb.append(Encoder.encode(eia.getEntityType().getName()));
-      }
+      sb.append(Encoder.encode(eia.getEntityType().getName()));
     } catch (EdmException e) {
       sb.append(Encoder.encode(eia.getEntitySetName()));
     }

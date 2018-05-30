@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.uri;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -70,6 +71,7 @@ public class UriInfoImpl implements UriInfo {
   private List<SelectItem> select = Collections.emptyList();
   private Map<String, EdmLiteral> functionImportParameters = Collections.emptyMap();
   private Map<String, String> customQueryOptions = Collections.emptyMap();
+  private boolean rawEntity = false;
 
   public UriType getUriType() {
     return uriType;
@@ -305,6 +307,14 @@ public class UriInfoImpl implements UriInfo {
     this.customQueryOptions = customQueryOptions;
   }
 
+  public boolean rawEntity() {
+    return rawEntity;
+  }
+
+  public void setRawEntity(boolean rawEntity) {
+    this.rawEntity = rawEntity;
+  }
+
   @Override
   public String toString() {
     return "UriParserResult: uriType=" + uriType + ", "
@@ -329,6 +339,50 @@ public class UriInfoImpl implements UriInfo {
         + "expand=" + expand + ", "
         + "select=" + select + ", "
         + "functionImportParameters=" + functionImportParameters + ", "
-        + "customQueryOptions=" + customQueryOptions;
+        + "customQueryOptions=" + customQueryOptions + ", "
+        + "callback=" + callback + ", "
+        + "rawEntity=" + rawEntity;
+  }
+
+  private Object clone(Object obj) {
+
+    if (obj == null)
+      return null;
+
+    Object newObj = null;
+
+    if (obj instanceof Map) {
+      newObj = new HashMap();
+      ((Map)newObj).putAll((Map) obj);
+    }
+
+    else if (obj instanceof List) {
+      newObj = new ArrayList();
+      ((List)newObj).addAll((List) obj);
+    } else {
+      newObj = obj;
+    }
+
+    return newObj;
+
+  }
+
+  private Object getFieldValue(String name) throws IllegalAccessException, NoSuchFieldException {
+    Field f = UriInfoImpl.class.getDeclaredField(name);
+    return f.get(this);
+  }
+
+  public UriInfoImpl getClone()  {
+    UriInfoImpl newObj = new UriInfoImpl();
+
+    for (Field f : UriInfoImpl.class.getDeclaredFields()) {
+      try {
+        f.set(newObj, clone(getFieldValue(f.getName())));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+    return newObj;
   }
 }

@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Time;
@@ -33,8 +34,10 @@ import javax.persistence.TemporalType;
 
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.*;
+import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
+import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
@@ -46,6 +49,8 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.core.edm.provider.EdmEntityTypeImplProv;
+import org.apache.olingo.odata2.core.uri.KeyPredicateImpl;
 import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.*;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAFunction;
@@ -293,7 +298,9 @@ public class JPAProcessorImpl implements JPAProcessor {
       listener.checkAuthorization(uriParserResultView);
     }
 
-    Object selectedObject = readEntity(new JPAQueryBuilder(oDataJPAContext).build(uriParserResultView), (UriInfo) uriParserResultView);
+    ((UriInfoImpl) uriParserResultView).setRawEntity(true);
+
+    Object selectedObject = readEntity(new JPAQueryBuilder(oDataJPAContext).build(uriParserResultView), (UriInfo) uriParserResultView, true);
     if (selectedObject != null) {
       try{
         boolean isLocalTransaction = setTransaction();
@@ -403,12 +410,94 @@ public class JPAProcessorImpl implements JPAProcessor {
       boolean isLocalTransaction = setTransaction();
       jpaEntity = virtualJPAEntity.getJPAEntity();
 
-      em.persist(jpaEntity);
+      Object tempEntity = jpaEntity;
+
+      boolean manymany = false;
+
+      if (createView.getNavigationSegments().size() > 0) {
+        UriInfoImpl clone = ((UriInfoImpl) createView).getClone();
+        clone.setTargetEntitySet(createView.getStartEntitySet());
+        clone.getNavigationSegments().clear();
+        clone.setTargetType(clone.getTargetEntitySet().getEntityType());
+        Object relatedEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build((PutMergePatchUriInfo) clone), (UriInfo) clone);
+
+        if (createView.getNavigationSegments().size() == 1) {
+
+
+          NavigationProperty navigationProperty = ((EdmEntityTypeImplProv) createView.getStartEntitySet().getEntityType()).getNavigationProperties().get(createView.getNavigationSegments().get(0).getNavigationProperty().getName());
+
+          if (navigationProperty.getRelationship().getName().toLowerCase().contains("many_many")) {
+            manymany = true;
+          }
+
+          String property;
+          if (manymany) {
+            JPAEdmMappingImpl mapping = ((JPAEdmMappingImpl) navigationProperty.getMapping());
+            property = mapping.getInternalName();
+
+            try {
+              Field field = relatedEntity.getClass().getDeclaredField(property);
+              field.setAccessible(true);
+              List list = (List) field.get(relatedEntity);
+              list.add(jpaEntity);
+
+              jpaEntity = relatedEntity;
+
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+
+          } else {
+            property = createView.getNavigationSegments().get(0).getNavigationProperty().getRelationship().getReferentialConstraint().getDependent().getPropertyRefNames().get(0);
+
+            try {
+              Field field = jpaEntity.getClass().getDeclaredField(property);
+              field.setAccessible(true);
+              field.set(jpaEntity, relatedEntity);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+        }
+      }
+
+      if (manymany) {
+        em.merge(jpaEntity);
+      } else {
+        em.persist(jpaEntity);
+      }
+
       if (em.contains(jpaEntity)) {
         if (isLocalTransaction) {
           oDataJPAContext.getODataJPATransaction().commit();
         }
-        return readEntity(new JPAQueryBuilder(oDataJPAContext).build((UriInfo) createView, false), (UriInfo) createView);
+
+        if (manymany) {
+          jpaEntity = tempEntity;
+        }
+
+        EdmEntityType edmEntityType= createView.getEntityContainer().getEntitySet(createView.getTargetEntitySet()
+                       .getEntityType().getMapping().getInternalName()).getEntityType();
+
+
+        JPAEntityParser jpaResultParser = new JPAEntityParser();
+        HashMap<String, Object> edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType);
+
+        List<KeyPredicate> predicates = new ArrayList<KeyPredicate>();
+
+        for (EdmProperty key: createView.getTargetEntitySet().getEntityType().getKeyProperties()) {
+          final EdmSimpleType type = (EdmSimpleType) key.getType();
+          final EdmFacets facets = key.getFacets();
+          String literal = type.valueToString(edmPropertyValueMap.get(key.getName()), EdmLiteralKind.DEFAULT, facets);
+          KeyPredicateImpl predicate = new KeyPredicateImpl(literal, key);
+          predicates.add(predicate);
+          createView.getNavigationSegments().clear();
+        }
+
+        ((UriInfoImpl) createView).setKeyPredicates(predicates);
+        ((UriInfoImpl) createView).setRawEntity(false);
+
+        return readEntity(new JPAQueryBuilder(oDataJPAContext).build((PutMergePatchUriInfo) createView), (UriInfo) createView);
       }
     } catch (ODataBadRequestException e) {
       throw ODataJPARuntimeException.throwException(
@@ -438,7 +527,9 @@ public class JPAProcessorImpl implements JPAProcessor {
       }
 
       boolean isLocalTransaction = setTransaction();
-      jpaEntity = readEntity(queryBuilder.build(updateView, true), (UriInfo) updateView, true);
+      ((UriInfoImpl) updateView).setRawEntity(true);
+
+      jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView, true);
 
       if (jpaEntity == null) {
         throw ODataJPARuntimeException
@@ -465,6 +556,8 @@ public class JPAProcessorImpl implements JPAProcessor {
       if (isLocalTransaction) {
         oDataJPAContext.getODataJPATransaction().commit();
       }
+
+      ((UriInfoImpl) updateView).setRawEntity(false);
 
       jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView);
     } catch (ODataBadRequestException e) {

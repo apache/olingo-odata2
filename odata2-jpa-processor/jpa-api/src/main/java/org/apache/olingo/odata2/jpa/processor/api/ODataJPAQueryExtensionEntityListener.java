@@ -134,4 +134,8 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
   public void checkAuthorization(final DeleteUriInfo deleteView) throws ODataJPARuntimeException {
 
   }
+
+  public void checkEntityGetAuthorization(final EdmEntityType entityType) throws ODataJPARuntimeException {
+
+  }
 }
