@@ -255,4 +255,8 @@ public interface ODataJPAContext {
    * @return <code>true</code> if the underlying entity manger is container manged.
    */
   boolean isContainerManaged();
+
+  public ODataJPAQueryExtensionEntityListener getODataJPAQueryExtensionEntityListener();
+
+  public void setoDataJPAQueryExtensionEntityListener(ODataJPAQueryExtensionEntityListener oDataJPAQueryExtensionEntityListener);
 }

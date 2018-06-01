@@ -52,4 +52,6 @@ public interface EdmMapping {
    * @return {@link Object} object
    */
   Object getObject();
+
+  boolean isCalculated();
 }

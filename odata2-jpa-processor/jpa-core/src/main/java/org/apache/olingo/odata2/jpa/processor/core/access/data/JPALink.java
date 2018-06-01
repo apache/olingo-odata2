@@ -197,7 +197,7 @@ public class JPALink {
             }
           }
           if (!targetJPAEntities.isEmpty()) {
-            linkJPAEntities(targetJPAEntities, sourceJPAEntity, navProperty);
+            linkJPAEntities(context, targetJPAEntities, sourceJPAEntity, navProperty);
           }
           targetJPAEntities.clear();
         }
@@ -209,7 +209,7 @@ public class JPALink {
   }
 
   @SuppressWarnings("unchecked")
-  public static void linkJPAEntities(final Collection<Object> targetJPAEntities, final Object sourceJPAEntity,
+  public static void linkJPAEntities(final ODataJPAContext oDataJPAContext, final Collection<Object> targetJPAEntities, final Object sourceJPAEntity,
       final EdmNavigationProperty navigationProperty) throws ODataJPARuntimeException {
     if (targetJPAEntities == null || sourceJPAEntity == null || navigationProperty == null) {
       return;
@@ -217,7 +217,7 @@ public class JPALink {
 
     try {
 
-      JPAEntityParser entityParser = new JPAEntityParser();
+      JPAEntityParser entityParser = new JPAEntityParser(oDataJPAContext);
 	  Method setMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
 			navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 
@@ -318,7 +318,7 @@ public class JPALink {
       if (targetJPAEntity != null && sourceJPAEntity != null) {
         List<Object> targetJPAEntities = new ArrayList<Object>();
         targetJPAEntities.add(targetJPAEntity);
-        linkJPAEntities(targetJPAEntities, sourceJPAEntity, navigationProperty);
+        linkJPAEntities(context, targetJPAEntities, sourceJPAEntity, navigationProperty);
       }
 
     } catch (IllegalArgumentException e) {
@@ -336,7 +336,7 @@ public class JPALink {
       throws ODataJPARuntimeException {
 
     try {
-      JPAEntityParser entityParser = new JPAEntityParser();
+      JPAEntityParser entityParser = new JPAEntityParser(context);
       Method setMethod = entityParser.getAccessModifier(jpaEntity.getClass(),
           targetNavigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 

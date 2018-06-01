@@ -91,7 +91,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     try {
       edmEntityType = resultsView.getTargetEntitySet().getEntityType();
       List<Map<String, Object>> edmEntityList = null;
-      JPAEntityParser jpaResultParser = new JPAEntityParser();
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
       final List<SelectItem> selectedItems = resultsView.getSelect();
       if (selectedItems != null && !selectedItems.isEmpty()) {
         edmEntityList =
@@ -146,7 +146,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       edmEntityType = resultsView.getTargetEntitySet().getEntityType();
       Map<String, Object> edmPropertyValueMap = null;
 
-      JPAEntityParser jpaResultParser = new JPAEntityParser();
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
       final List<SelectItem> selectedItems = resultsView.getSelect();
       if (selectedItems != null && !selectedItems.isEmpty()) {
         edmPropertyValueMap =
@@ -211,7 +211,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       edmEntityType = uriInfo.getTargetEntitySet().getEntityType();
       Map<String, Object> edmPropertyValueMap = null;
 
-      JPAEntityParser jpaResultParser = new JPAEntityParser();
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
       edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(createdObject, edmEntityType);
 
       EntityProviderWriteProperties feedProperties = null;
@@ -296,7 +296,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     ODataResponse odataResponse = null;
 
     if (resultList != null) {
-      JPAEntityParser jpaResultParser = new JPAEntityParser();
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
       EdmType edmType = null;
       EdmFunctionImport functionImport = null;
       Map<String, Object> edmPropertyValueMap = null;
@@ -367,7 +367,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       edmEntityType = entitySet.getEntityType();
       Map<String, Object> edmPropertyValueMap = null;
 
-      JPAEntityParser jpaResultParser = new JPAEntityParser();
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
       edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType.getKeyProperties(), edmEntityType);
 
       EntityProviderWriteProperties entryProperties =
@@ -401,7 +401,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
       List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
       Map<String, Object> edmPropertyValueMap = null;
-      JPAEntityParser jpaResultParser = new JPAEntityParser();
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
 
       for (Object jpaEntity : jpaEntities) {
         edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, keyProperties, edmEntityType);
@@ -513,7 +513,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
           UriParser.createExpandSelectTree(resultsView.getSelect(), resultsView.getExpand());
 
       Map<String, ODataCallback> expandCallBack =
-          JPAExpandCallBack.getCallbacks(serviceRoot, expandSelectTree, resultsView.getExpand());
+          JPAExpandCallBack.getCallbacks(odataJPAContext, serviceRoot, expandSelectTree, resultsView.getExpand());
 
       Map<String, ODataCallback> callBackMap = new HashMap<String, ODataCallback>();
       callBackMap.putAll(expandCallBack);
@@ -584,7 +584,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       expandSelectTree = UriParser.createExpandSelectTree(resultsView.getSelect(), resultsView.getExpand());
       entityFeedPropertiesBuilder.expandSelectTree(expandSelectTree);
       entityFeedPropertiesBuilder.callback(resultsView.getCallback());
-      entityFeedPropertiesBuilder.callbacks(JPAExpandCallBack.getCallbacks(odataJPAContext.getODataContext()
+      entityFeedPropertiesBuilder.callbacks(JPAExpandCallBack.getCallbacks(odataJPAContext, odataJPAContext.getODataContext()
           .getPathInfo().getServiceRoot(), expandSelectTree, resultsView.getExpand()));
     } catch (ODataException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);

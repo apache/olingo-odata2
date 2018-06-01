@@ -480,7 +480,7 @@ public class JPAProcessorImpl implements JPAProcessor {
                        .getEntityType().getMapping().getInternalName()).getEntityType();
 
 
-        JPAEntityParser jpaResultParser = new JPAEntityParser();
+        JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
         HashMap<String, Object> edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType);
 
         List<KeyPredicate> predicates = new ArrayList<KeyPredicate>();
@@ -633,11 +633,9 @@ public class JPAProcessorImpl implements JPAProcessor {
 
   private List normalizeList(List entities, final UriInfo uriParserResultView) {
     if (entities != null && uriParserResultView != null && !entities.isEmpty()) {
-      entities.removeAll(Collections.singleton(null));
-      Class entityClazz = entities.get(0).getClass();
       try {
-        if (!uriParserResultView.getTargetType().getName().equals(entityClazz.getSimpleName())) {
 
+        if (((JPAEdmMappingImpl) ((EdmEntityTypeImplProv) uriParserResultView.getTargetType()).getMapping()).isVirtualAccess()) {
           List<String> names = uriParserResultView.getTargetEntitySet().getEntityType().getPropertyNames();
 
           List<Object> newEntities = new ArrayList<Object>(entities.size());
@@ -653,7 +651,6 @@ public class JPAProcessorImpl implements JPAProcessor {
               }
             } else {
               String key = names.get(0);
-              ;
               entity.set(key, obj);
             }
 
@@ -669,17 +666,6 @@ public class JPAProcessorImpl implements JPAProcessor {
 
     return entities;
 
-  }
-
-  private Method findMethod(Object obj, String method) {
-    Method[] methods = obj.getClass().getMethods();
-    for (Method m: methods) {
-      if (m.getName().equals(method)) {
-        return m;
-      }
-    }
-
-    return null;
   }
 
   private boolean setTransaction() {

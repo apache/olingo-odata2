@@ -39,6 +39,7 @@ import org.apache.olingo.odata2.api.uri.SelectItem;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
+import org.apache.olingo.odata2.core.CloneUtils;
 
 /**
  *  
@@ -344,45 +345,7 @@ public class UriInfoImpl implements UriInfo {
         + "rawEntity=" + rawEntity;
   }
 
-  private Object clone(Object obj) {
-
-    if (obj == null)
-      return null;
-
-    Object newObj = null;
-
-    if (obj instanceof Map) {
-      newObj = new HashMap();
-      ((Map)newObj).putAll((Map) obj);
-    }
-
-    else if (obj instanceof List) {
-      newObj = new ArrayList();
-      ((List)newObj).addAll((List) obj);
-    } else {
-      newObj = obj;
-    }
-
-    return newObj;
-
-  }
-
-  private Object getFieldValue(String name) throws IllegalAccessException, NoSuchFieldException {
-    Field f = UriInfoImpl.class.getDeclaredField(name);
-    return f.get(this);
-  }
-
-  public UriInfoImpl getClone()  {
-    UriInfoImpl newObj = new UriInfoImpl();
-
-    for (Field f : UriInfoImpl.class.getDeclaredFields()) {
-      try {
-        f.set(newObj, clone(getFieldValue(f.getName())));
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-
-    return newObj;
+  public UriInfoImpl getClone() {
+    return (UriInfoImpl) CloneUtils.getClone(this);
   }
 }

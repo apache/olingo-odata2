@@ -20,6 +20,7 @@ package org.apache.olingo.odata2.jpa.processor.api;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -137,5 +138,13 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
 
   public void checkEntityGetAuthorization(final EdmEntityType entityType) throws ODataJPARuntimeException {
 
+  }
+
+  public Map<String, Object> getDefaultFieldValues(final EdmEntityType entityType, Object data) throws ODataJPARuntimeException {
+    return null;
+  }
+
+  public Map<String, Object> getCalcFieldValues(final EdmEntityType entityType, Object data) throws ODataJPARuntimeException {
+    return null;
   }
 }

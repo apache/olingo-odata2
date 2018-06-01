@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.*;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
@@ -54,7 +55,11 @@ public final class JPAEntityParser {
   private HashMap<String, HashMap<String, Method>> jpaEntityAccessMap = null;
   private HashMap<String, HashMap<String, String>> jpaEmbeddableKeyMap = null;
 
-  public JPAEntityParser() {
+
+  private final ODataJPAContext oDataJPAContext;
+
+  public JPAEntityParser(final ODataJPAContext context) {
+    oDataJPAContext = context;
     jpaEntityAccessMap = new HashMap<String, HashMap<String, Method>>(
         MAX_SIZE);
     jpaEmbeddableKeyMap = new HashMap<String, HashMap<String, String>>();
@@ -100,28 +105,39 @@ public final class JPAEntityParser {
     }
 
     ODataJPAQueryExtensionEntityListener queryListener = null;
-
     try {
-      ODataJPATombstoneEntityListener listener = ((JPAEdmMapping) ((EdmEntityType) structuralType).getMapping()).getODataJPATombstoneEntityListener().newInstance();
+      if (((JPAEdmMapping) ((EdmEntityType) structuralType).getMapping()).getODataJPATombstoneEntityListener() != null) {
 
-      if (listener instanceof ODataJPAQueryExtensionEntityListener) {
-        queryListener = (ODataJPAQueryExtensionEntityListener) listener;
+        ODataJPATombstoneEntityListener listener = ((JPAEdmMapping) ((EdmEntityType) structuralType).getMapping()).getODataJPATombstoneEntityListener().newInstance();
+
+        if (listener instanceof ODataJPAQueryExtensionEntityListener) {
+          queryListener = (ODataJPAQueryExtensionEntityListener) listener;
+        }
+
+      } else {
+        if (oDataJPAContext != null)
+          queryListener = oDataJPAContext.getODataJPAQueryExtensionEntityListener();
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
 
+    boolean hasCalc = false;
+
     for (EdmProperty property : selectPropertyList) {
-
-      if (queryListener != null) {
-        if (!queryListener.authorizeProperty((EdmEntityType) structuralType, property)) {
-          continue;
-        }
-      }
-
-      propertyValue = jpaEntity;
-
       try {
+        if (property.getMapping().isCalculated()) {
+          hasCalc = true;
+        }
+
+        if (queryListener != null) {
+          if (!queryListener.authorizeProperty((EdmEntityType) structuralType, property)) {
+            continue;
+          }
+        }
+
+        propertyValue = jpaEntity;
+
         String propertyName = property.getName();
         Method method = accessModifierMap.get(propertyName);
         if (method == null) {
@@ -144,6 +160,7 @@ public final class JPAEntityParser {
             .equals(EdmTypeKind.COMPLEX)) {
           propertyValue = parse2EdmPropertyValueMap(propertyValue, (EdmStructuralType) property.getType());
         }
+
         edmEntity.put(propertyName, propertyValue);
       } catch (EdmException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
@@ -153,6 +170,14 @@ public final class JPAEntityParser {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       }
     }
+
+    if (hasCalc) {
+      Map<String, Object> calcs = queryListener.getCalcFieldValues((EdmEntityType) structuralType, edmEntity);
+      if (calcs != null) {
+        edmEntity.putAll(calcs);
+      }
+    }
+
 
     return edmEntity;
   }
@@ -620,7 +645,11 @@ public final class JPAEntityParser {
         	  } else {
         		  JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
         		  if(jpaEdmMapping != null && jpaEdmMapping.isVirtualAccess()) {
-        			  method = jpaEntityType.getMethod(ACCESS_MODIFIER_GET, String.class);
+        		    try {
+                  method = jpaEntityType.getMethod(ACCESS_MODIFIER_GET, String.class);
+                } catch(Exception e) {
+        		      //Abafa
+                }
         		  }else{
         			  method = jpaEntityType.getMethod(methodName, (Class<?>[]) null);
         		  }

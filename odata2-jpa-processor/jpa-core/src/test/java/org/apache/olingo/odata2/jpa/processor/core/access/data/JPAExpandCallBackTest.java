@@ -102,7 +102,7 @@ public class JPAExpandCallBackTest {
           new URI("http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/SalesOrderProcessing.svc/");
       ExpandSelectTreeNode expandSelectTreeNode = EdmMockUtil.mockExpandSelectTreeNode();
       List<ArrayList<NavigationPropertySegment>> expandList = EdmMockUtil.getExpandList();
-      callBacks = JPAExpandCallBack.getCallbacks(baseUri, expandSelectTreeNode, expandList);
+      callBacks = JPAExpandCallBack.getCallbacks(null, baseUri, expandSelectTreeNode, expandList);
     } catch (URISyntaxException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (EdmException e) {
@@ -194,7 +194,7 @@ public class JPAExpandCallBackTest {
           new URI("http://localhost:8080/org.apache.olingo.odata2.processor.ref.web/SalesOrderProcessing.svc/");
       ExpandSelectTreeNode expandSelectTreeNode = EdmMockUtil.mockExpandSelectTreeNode();
       List<ArrayList<NavigationPropertySegment>> expandList = EdmMockUtil.getExpandList();
-      callBacks = JPAExpandCallBack.getCallbacks(baseUri, expandSelectTreeNode, expandList);
+      callBacks = JPAExpandCallBack.getCallbacks(null, baseUri, expandSelectTreeNode, expandList);
     } catch (URISyntaxException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (EdmException e) {

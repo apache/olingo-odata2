@@ -18,7 +18,11 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.api.edm.provider;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 
@@ -181,5 +185,47 @@ public class EntityType extends ComplexType {
   public EntityType setAnnotationElements(final List<AnnotationElement> annotationElements) {
     super.setAnnotationElements(annotationElements);
     return this;
+  }
+
+  private Object clone(Object obj) {
+
+    if (obj == null)
+      return null;
+
+    Object newObj = null;
+
+    if (obj instanceof Map) {
+      newObj = new HashMap();
+      ((Map)newObj).putAll((Map) obj);
+    }
+
+    else if (obj instanceof List) {
+      newObj = new ArrayList();
+      ((List)newObj).addAll((List) obj);
+    } else {
+      newObj = obj;
+    }
+
+    return newObj;
+
+  }
+
+  private Object getFieldValue(String name) throws IllegalAccessException, NoSuchFieldException {
+    Field f = this.getClass().getDeclaredField(name);
+    return f.get(this);
+  }
+
+  public EntityType getClone()  {
+    EntityType newObj = new EntityType();
+
+    for (Field f : this.getClass().getDeclaredFields()) {
+      try {
+        f.set(newObj, clone(getFieldValue(f.getName())));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+    return newObj;
   }
 }

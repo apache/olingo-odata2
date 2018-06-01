@@ -28,7 +28,7 @@ import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 public enum EdmSimpleTypeKind {
 
   Binary, Boolean, Byte, DateTime, DateTimeOffset, Decimal, Double, Guid, Int16, Int32, Int64, SByte, Single, String,
-  Time, Null;
+  Time, Null, Auto;
 
   /**
    * Returns the {@link FullQualifiedName} for this SimpleTypeKind.

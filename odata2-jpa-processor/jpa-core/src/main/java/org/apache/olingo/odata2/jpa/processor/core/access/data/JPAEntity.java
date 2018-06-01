@@ -82,7 +82,7 @@ public class JPAEntity {
     } catch (EdmException e) {
       return;
     }
-    jpaEntityParser = new JPAEntityParser();
+    jpaEntityParser = new JPAEntityParser(oDataJPAContext);
     onJPAWriteContent = oDataJPAContext.getODataContext().getServiceFactory().getCallback(OnJPAWriteContent.class);
   }
 
@@ -132,7 +132,7 @@ public class JPAEntity {
               (EdmNavigationProperty) oDataEntityType.getProperty(navigationPropertyName);
           if (relatedJPAEntityMap != null && relatedJPAEntityMap.containsKey(navigationPropertyName)) {
             oDataEntry.getProperties().get(navigationPropertyName);
-            JPALink.linkJPAEntities(relatedJPAEntityMap.get(navigationPropertyName), jpaEntity,
+            JPALink.linkJPAEntities(oDataJPAContext, relatedJPAEntityMap.get(navigationPropertyName), jpaEntity,
                 navProperty);
             continue;
           }
@@ -143,7 +143,7 @@ public class JPAEntity {
               && navProperty.getRelationship().equals(getViaNavigationProperty().getRelationship())) {
             List<Object> targetJPAEntities = new ArrayList<Object>();
             targetJPAEntities.add(parentJPAEntity.getJPAEntity());
-            JPALink.linkJPAEntities(targetJPAEntities, jpaEntity, navProperty);
+            JPALink.linkJPAEntities(oDataJPAContext, targetJPAEntities, jpaEntity, navProperty);
           } else if (!entryMetadata.getAssociationUris(navigationPropertyName).isEmpty()) {
             if (!relatedJPAEntityLink.contains(navigationPropertyName)) {
               relatedJPAEntityLink.add(navigationPropertyName);

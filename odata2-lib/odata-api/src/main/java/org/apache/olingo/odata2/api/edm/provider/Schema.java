@@ -154,6 +154,15 @@ public class Schema {
     return entityTypes;
   }
 
+  public EntityType getEntityType(String name) {
+    for (EntityType type: entityTypes) {
+      if (name.equals(type.getName())) {
+        return type;
+      }
+    }
+    return null;
+  }
+
   /**
    * @return List<{@link ComplexType}> of this {@link Schema}
    */

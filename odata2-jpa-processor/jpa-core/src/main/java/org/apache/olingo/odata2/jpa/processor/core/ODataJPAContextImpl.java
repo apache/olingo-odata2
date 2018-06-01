@@ -25,6 +25,7 @@ import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
@@ -45,6 +46,7 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   private boolean defaultNaming = true;
   private ODataJPATransaction transaction = null;
   private boolean containerManaged = false;
+  private ODataJPAQueryExtensionEntityListener oDataJPAQueryExtensionEntityListener;
 
   @Override
   public String getPersistenceUnitName() {
@@ -190,6 +192,16 @@ public class ODataJPAContextImpl implements ODataJPAContext {
   @Override
   public boolean isContainerManaged() {
     return this.containerManaged;
+  }
+
+  @Override
+  public ODataJPAQueryExtensionEntityListener getODataJPAQueryExtensionEntityListener() {
+    return oDataJPAQueryExtensionEntityListener;
+  }
+
+  @Override
+  public void setoDataJPAQueryExtensionEntityListener(ODataJPAQueryExtensionEntityListener oDataJPAQueryExtensionEntityListener) {
+    this.oDataJPAQueryExtensionEntityListener = oDataJPAQueryExtensionEntityListener;
   }
 
   @Override

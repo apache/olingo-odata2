@@ -44,6 +44,7 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
@@ -52,13 +53,15 @@ import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser;
 
 public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryContent, ODataCallback {
 
+  private ODataJPAContext oDataJPAContext;
   private URI baseUri;
   private List<ArrayList<NavigationPropertySegment>> expandList;
   private EdmEntitySet nextEntitySet = null;
   private HashMap<String, List<EdmProperty>> edmPropertyMap = new HashMap<String, List<EdmProperty>>();
 
-  private JPAExpandCallBack(final URI baseUri, final List<ArrayList<NavigationPropertySegment>> expandList) {
+  private JPAExpandCallBack(final ODataJPAContext oDataJPAContext, final URI baseUri, final List<ArrayList<NavigationPropertySegment>> expandList) {
     super();
+    this.oDataJPAContext = oDataJPAContext;
     this.baseUri = baseUri;
     this.expandList = expandList;
   }
@@ -71,7 +74,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     Map<String, Object> edmPropertyValueMap = null;
     List<EdmNavigationProperty> currentNavPropertyList = null;
     Map<String, ExpandSelectTreeNode> navigationLinks = null;
-    JPAEntityParser jpaResultParser = new JPAEntityParser();
+    JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
     EdmNavigationProperty currentNavigationProperty = context.getNavigationProperty();
     try {
       Object inlinedEntry = entry.get(currentNavigationProperty.getName());
@@ -82,14 +85,21 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       ODataJPAQueryExtensionEntityListener queryListener = null;
 
       try {
-        ODataJPATombstoneEntityListener listener = ((JPAEdmMapping) ((EdmEntityType) nextEntitySet.getEntityType()).getMapping()).getODataJPATombstoneEntityListener().newInstance();
+        if (((JPAEdmMapping) ((EdmEntityType) nextEntitySet.getEntityType()).getMapping()).getODataJPATombstoneEntityListener() != null) {
+          ODataJPATombstoneEntityListener listener = ((JPAEdmMapping) ((EdmEntityType) nextEntitySet.getEntityType()).getMapping()).getODataJPATombstoneEntityListener().newInstance();
 
-        if (listener instanceof ODataJPAQueryExtensionEntityListener) {
-          queryListener = (ODataJPAQueryExtensionEntityListener) listener;
+          if (listener instanceof ODataJPAQueryExtensionEntityListener) {
+            queryListener = (ODataJPAQueryExtensionEntityListener) listener;
+          }
+        } else {
+          if (oDataJPAContext != null) {
+            queryListener = oDataJPAContext.getODataJPAQueryExtensionEntityListener();
+          }
         }
       } catch (Exception e) {
         e.printStackTrace();
       }
+
 
       if (queryListener != null) {
         queryListener.checkEntityGetAuthorization((EdmEntityType) nextEntitySet.getEntityType());
@@ -158,7 +168,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     WriteFeedCallbackResult result = new WriteFeedCallbackResult();
     HashMap<String, Object> inlinedEntry = (HashMap<String, Object>) context.getEntryData();
     List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
-    JPAEntityParser jpaResultParser = new JPAEntityParser();
+    JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
     List<EdmNavigationProperty> currentNavPropertyList = null;
     EdmNavigationProperty currentNavigationProperty = context.getNavigationProperty();
     ExpandSelectTreeNode currentExpandTreeNode = context.getCurrentExpandSelectTreeNode();
@@ -239,13 +249,13 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
 	  return navProperty.getName().equals(navigationProperty.getName());
   }
   
-  public static Map<String, ODataCallback> getCallbacks(final URI baseUri,
-      final ExpandSelectTreeNode expandSelectTreeNode, final List<ArrayList<NavigationPropertySegment>> expandList)
+  public static Map<String, ODataCallback> getCallbacks(final ODataJPAContext oDataJPAContext, final URI baseUri,
+                                                        final ExpandSelectTreeNode expandSelectTreeNode, final List<ArrayList<NavigationPropertySegment>> expandList)
       throws EdmException {
     Map<String, ODataCallback> callbacks = new HashMap<String, ODataCallback>();
 
     for (String navigationPropertyName : expandSelectTreeNode.getLinks().keySet()) {
-      callbacks.put(navigationPropertyName, new JPAExpandCallBack(baseUri, expandList));
+      callbacks.put(navigationPropertyName, new JPAExpandCallBack(oDataJPAContext, baseUri, expandList));
     }
 
     return callbacks;
@@ -255,7 +265,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
   private EntityProviderWriteProperties getInlineEntityProviderProperties(final WriteCallbackContext context)
       throws EdmException {
     ODataEntityProviderPropertiesBuilder propertiesBuilder = EntityProviderWriteProperties.serviceRoot(baseUri);
-    propertiesBuilder.callbacks(getCallbacks(baseUri, context.getCurrentExpandSelectTreeNode(), expandList));
+    propertiesBuilder.callbacks(getCallbacks(oDataJPAContext, baseUri, context.getCurrentExpandSelectTreeNode(), expandList));
     propertiesBuilder.expandSelectTree(context.getCurrentExpandSelectTreeNode());
     return propertiesBuilder.build();
   }

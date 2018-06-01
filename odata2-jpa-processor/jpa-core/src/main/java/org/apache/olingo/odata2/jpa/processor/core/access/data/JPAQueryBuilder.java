@@ -67,10 +67,12 @@ public class JPAQueryBuilder {
 
   private EntityManager em = null;
   private int pageSize = 0;
+  private ODataJPAContext odataJPAContext;
 
   public JPAQueryBuilder(ODataJPAContext odataJPAContext) {
     this.em = odataJPAContext.getEntityManager();
     this.pageSize = odataJPAContext.getPageSize();
+    this.odataJPAContext = odataJPAContext;
   }
 
   public JPAQueryInfo build(GetEntitySetUriInfo uriInfo) throws ODataJPARuntimeException {
@@ -224,12 +226,14 @@ public class JPAQueryBuilder {
 
   public ODataJPAQueryExtensionEntityListener getODataJPAQueryEntityListener(UriInfo uriInfo) throws EdmException,
       InstantiationException, IllegalAccessException {
-    ODataJPAQueryExtensionEntityListener queryListener = null;
     ODataJPATombstoneEntityListener listener = getODataJPATombstoneEntityListener(uriInfo);
     if (listener instanceof ODataJPAQueryExtensionEntityListener) {
+      ODataJPAQueryExtensionEntityListener queryListener = null;
       queryListener = (ODataJPAQueryExtensionEntityListener) listener;
+      return queryListener;
     }
-    return queryListener;
+
+    return odataJPAContext.getODataJPAQueryExtensionEntityListener();
   }
 
   public ODataJPATombstoneEntityListener getODataJPATombstoneEntityListener(UriInfo uriParserResultView)
@@ -238,7 +242,7 @@ public class JPAQueryBuilder {
     if (mapping.getODataJPATombstoneEntityListener() != null) {
       return  (ODataJPATombstoneEntityListener) mapping.getODataJPATombstoneEntityListener().newInstance();
     }
-    return null;
+    return odataJPAContext.getODataJPAQueryExtensionEntityListener();
   }
 
   public JPQLContext buildJPQLContext(JPQLContextType contextType, UriInfo uriParserResultView)

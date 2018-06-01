@@ -51,8 +51,8 @@ public class JPAEntityParserTest {
    */
   @Test
   public void testCreate() {
-    JPAEntityParser resultParser1 = new JPAEntityParser();
-    JPAEntityParser resultParser2 = new JPAEntityParser();
+    JPAEntityParser resultParser1 = new JPAEntityParser(null);
+    JPAEntityParser resultParser2 = new JPAEntityParser(null);
 
     if (resultParser1.equals(resultParser2)) {
       fail();
@@ -61,7 +61,7 @@ public class JPAEntityParserTest {
 
   @Test
   public void testparse2EdmPropertyValueMap() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     Object jpaEntity = new demoItem("abc", 10);
     EdmStructuralType structuralType = EasyMock.createMock(EdmStructuralType.class);
     EdmProperty edmTyped = EasyMock.createMock(EdmProperty.class);
@@ -115,7 +115,7 @@ public class JPAEntityParserTest {
 
   @Test
   public void testparse2EdmPropertyValueMapEdmExcep() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     Object jpaEntity = new demoItem("abc", 10);
     EdmStructuralType structuralType = EasyMock
         .createMock(EdmStructuralType.class);
@@ -181,7 +181,7 @@ public class JPAEntityParserTest {
   
   @Test
   public void testparse2EdmPropertyListMap() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     Map<String, Object> edmEntity = new HashMap<String, Object>();
     edmEntity.put("SoId", 1);
     DemoRelatedEntity relatedEntity = new DemoRelatedEntity("NewOrder");
@@ -214,7 +214,7 @@ public class JPAEntityParserTest {
 
   @Test
   public void testparse2EdmPropertyListMapWithVirtualAccess() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     Map<String, Object> edmEntity = new HashMap<String, Object>();
     edmEntity.put("SoId", 1);
     DemoRelatedEntity relatedEntity = new DemoRelatedEntity("NewOrder");
@@ -249,7 +249,7 @@ public class JPAEntityParserTest {
   @SuppressWarnings("unchecked")
   @Test
   public void testparse2EdmPropertyValueMapFromListComplex() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     demoItem jpaEntity = new demoItem("laptop", 1);
     DemoRelatedEntity relatedEntity = new DemoRelatedEntity("DemoOrder");
     jpaEntity.setRelatedEntity(relatedEntity);
@@ -321,7 +321,7 @@ public class JPAEntityParserTest {
    */
   @Test
   public void testGetGettersWithOutMapping() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     try {
 
       /*
@@ -351,7 +351,7 @@ public class JPAEntityParserTest {
 
   @Test
   public void testGetGettersWithNullPropname() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     try {
 
       /*
@@ -389,7 +389,7 @@ public class JPAEntityParserTest {
    */
   @Test
   public void testGetGettersWithMapping() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     EdmMapping edmMapping = EasyMock.createMock(EdmMapping.class);
     EasyMock.expect(edmMapping.getInternalName()).andStubReturn("field1");
     EasyMock.replay(edmMapping);
@@ -419,7 +419,7 @@ public class JPAEntityParserTest {
 
   @Test
   public void testGetGettersNoSuchMethodException() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     try {
 
       Method getGetterName = resultParser.getClass().getDeclaredMethod("getGetterName1", EdmProperty.class);
@@ -438,7 +438,7 @@ public class JPAEntityParserTest {
   
   @Test
   public void testParse2EdmPropertyValueMap() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     Object jpaEntity = new DemoItem2("abc");
     try {
       resultParser.parse2EdmPropertyValueMap(jpaEntity, getEdmPropertyList(), null);
@@ -449,7 +449,7 @@ public class JPAEntityParserTest {
 
   @Test
   public void testParse2EdmPropertyValueMapWithVirtualAccess() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     Object jpaEntity = new DemoItem2("abc");
     try {
       resultParser.parse2EdmPropertyValueMap(jpaEntity, getEdmPropertyListWithVirtualAccess(), null);
@@ -460,7 +460,7 @@ public class JPAEntityParserTest {
 
   @Test
   public void testGetGetterEdmException() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     Object jpaEntity = new demoItem("abc", 10);
     EdmStructuralType structuralType = EasyMock.createMock(EdmStructuralType.class);
     try {
@@ -492,7 +492,7 @@ public class JPAEntityParserTest {
 
   @Test
   public void testForNullJPAEntity() {
-    JPAEntityParser resultParser = new JPAEntityParser();
+    JPAEntityParser resultParser = new JPAEntityParser(null);
     EdmStructuralType structuralType = EasyMock.createMock(EdmStructuralType.class);
     Object map;
     try {

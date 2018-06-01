@@ -163,6 +163,8 @@ public class EdmSimpleTypeFacadeImpl implements EdmSimpleTypeFacade {
       return EdmSByte.getInstance();
     case Single:
       return EdmSingle.getInstance();
+    case Auto:
+      return EdmAuto.getInstance();
     case String:
       return EdmString.getInstance();
     case Time:
