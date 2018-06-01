@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,85 +18,96 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
-import org.apache.olingo.odata2.api.edm.EdmFacets;
-import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
-import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
+import org.apache.olingo.odata2.api.edm.*;
 
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
- * Implementation of the EDM simple type String.
- * 
+ * Implementation of the EDM simple type Auto.
  */
 public class EdmAuto extends AbstractSimpleType {
 
-  private static final Pattern PATTERN_ASCII = Pattern.compile("\\p{ASCII}*");
   private static final EdmAuto instance = new EdmAuto();
+
+  private EdmString internal = new EdmString();
 
   public static EdmAuto getInstance() {
     return instance;
   }
 
+  public EdmSimpleType getType(Object value) {
+    if (value == null) {
+      return EdmString.getInstance();
+    } else {
+
+      Class jpaType = value.getClass();
+
+      if (jpaType.equals(String.class) || jpaType.equals(Character.class) || jpaType.equals(char.class)
+          || jpaType.equals(char[].class) ||
+          jpaType.equals(Character[].class)) {
+        return EdmString.getInstance();
+      } else if (jpaType.equals(Long.class) || jpaType.equals(long.class)) {
+        return EdmInt64.getInstance();
+      } else if (jpaType.equals(Short.class) || jpaType.equals(short.class)) {
+        return EdmInt16.getInstance();
+      } else if (jpaType.equals(Integer.class) || jpaType.equals(int.class)) {
+        return EdmInt32.getInstance();
+      } else if (jpaType.equals(Double.class) || jpaType.equals(double.class)) {
+        return EdmDouble.getInstance();
+      } else if (jpaType.equals(Float.class) || jpaType.equals(float.class)) {
+        return EdmSingle.getInstance();
+      } else if (jpaType.equals(BigDecimal.class)) {
+        return EdmDecimal.getInstance();
+      } else if (jpaType.equals(byte[].class)) {
+        return EdmString.getInstance();
+      } else if (jpaType.equals(Byte.class) || jpaType.equals(byte.class)) {
+        return EdmByte.getInstance();
+      } else if (jpaType.equals(Boolean.class) || jpaType.equals(boolean.class)) {
+        return EdmBoolean.getInstance();
+      } else if (jpaType.equals(java.sql.Time.class)) {
+        return EdmTime.getInstance();
+      } else if (jpaType.equals(Date.class) || value instanceof Calendar ||
+          jpaType.equals(Timestamp.class) || jpaType.equals(java.util.Date.class)) {
+        return EdmDateTime.getInstance();
+      } else if (jpaType.equals(UUID.class)) {
+        return EdmGuid.getInstance();
+      } else if (jpaType.equals(Byte[].class)) {
+        return EdmBinary.getInstance();
+      } else if (jpaType.equals(Blob.class)) {
+        return EdmBinary.getInstance();
+      } else if (jpaType.equals(Clob.class)) {
+        return EdmString.getInstance();
+      } else if (jpaType.isEnum()) {
+        return EdmString.getInstance();
+      } else {
+        return EdmString.getInstance();
+      }
+    }
+  }
+
+  @Override
+  protected <T> T internalValueOfString(String value, EdmLiteralKind literalKind, EdmFacets facets, Class<T> returnType) throws EdmSimpleTypeException {
+    return internal.internalValueOfString(value, literalKind, facets, returnType);
+  }
+
+  @Override
+  protected <T> String internalValueToString(T value, EdmLiteralKind literalKind, EdmFacets facets) throws EdmSimpleTypeException {
+    return internal.internalValueToString(value, literalKind, facets);
+  }
+
   @Override
   public Class<?> getDefaultType() {
-    return String.class;
-  }
-
-  @Override
-  protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
-      final Class<T> returnType) throws EdmSimpleTypeException {
-    String result;
-    if (literalKind == EdmLiteralKind.URI) {
-      if (value.length() >= 2 && value.startsWith("'") && value.endsWith("'")) {
-        result = (value.substring(1, value.length() - 1)).replace("''", "'");
-      } else {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
-      }
-    } else {
-      result = value;
-    }
-
-    if (facets != null
-        && (facets.isUnicode() != null && !facets.isUnicode() && !PATTERN_ASCII.matcher(result).matches()
-        || facets.getMaxLength() != null && facets.getMaxLength() < result.length())) {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets));
-    }
-
-    if (returnType.isAssignableFrom(String.class)) {
-      return returnType.cast(result);
-    } else {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType));
-    }
-  }
-
-  @Override
-  protected <T> String internalValueToString(final T value, final EdmLiteralKind literalKind, final EdmFacets facets)
-      throws EdmSimpleTypeException {
-    final String result = value instanceof String ? (String) value : String.valueOf(value);
-
-    if (facets != null
-        && (facets.isUnicode() != null && !facets.isUnicode() && !PATTERN_ASCII.matcher(result).matches()
-        || facets.getMaxLength() != null && facets.getMaxLength() < result.length())) {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets));
-    }
-
-    return result;
-  }
-
-  @Override
-  public String toUriLiteral(final String literal) throws EdmSimpleTypeException {
-    final int length = literal.length();
-
-    StringBuilder uriLiteral = new StringBuilder(length + 2);
-    uriLiteral.append('\'');
-    for (int i = 0; i < length; i++) {
-      final char c = literal.charAt(i);
-      if (c == '\'') {
-        uriLiteral.append(c);
-      }
-      uriLiteral.append(c);
-    }
-    uriLiteral.append('\'');
-    return uriLiteral.toString();
+    return internal.getDefaultType();
   }
 }

@@ -33,6 +33,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
+import org.apache.olingo.odata2.core.edm.EdmAuto;
 import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityComplexPropertyInfo;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
@@ -208,7 +209,10 @@ public class XmlPropertyEntityProducer {
       writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.M_MIME_TYPE, mimeType);
     }
 
-    final EdmSimpleType type = (EdmSimpleType) prop.getType();
+    EdmSimpleType type = (EdmSimpleType) prop.getType();
+    if (type instanceof EdmAuto) {
+      type = ((EdmAuto) type).getType(value);
+    }
     if (includeSimplePropertyType) {
       String fqnTypeName = type.getNamespace() + Edm.DELIMITER + type.getName();
       writer.writeAttribute(Edm.NAMESPACE_M_2007_08, FormatXml.ATOM_TYPE, fqnTypeName);

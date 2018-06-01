@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
+import org.apache.olingo.odata2.core.edm.EdmAuto;
 import org.apache.olingo.odata2.core.ep.EntityProviderProducerException;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityComplexPropertyInfo;
 import org.apache.olingo.odata2.core.ep.aggregator.EntityPropertyInfo;
@@ -97,7 +98,10 @@ public class JsonPropertyEntityProducer {
             .addContent("A complex property must have a Map as data"));
       }
     } else {
-      final EdmSimpleType type = (EdmSimpleType) propertyInfo.getType();
+      EdmSimpleType type = (EdmSimpleType) propertyInfo.getType();
+      if (type instanceof EdmAuto) {
+        type = ((EdmAuto) type).getType(value);
+      }
       final Object contentValue = value instanceof Map ? ((Map<?, ?>) value).get(propertyInfo.getName()) : value;
       final EdmFacets facets = validatingFacets ? propertyInfo.getFacets(): null;
       String valueAsString = null;
@@ -117,6 +121,7 @@ public class JsonPropertyEntityProducer {
       case SByte:
       case Int16:
       case Int32:
+      case Double:
         jsonStreamWriter.unquotedValue(valueAsString);
         break;
       case DateTime:
