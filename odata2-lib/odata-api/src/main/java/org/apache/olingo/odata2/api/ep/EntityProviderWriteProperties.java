@@ -20,8 +20,10 @@ package org.apache.olingo.odata2.api.ep;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.ClientCallback;
 import org.apache.olingo.odata2.api.ODataCallback;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
@@ -40,6 +42,7 @@ public class EntityProviderWriteProperties {
   private String nextLink;
   private ExpandSelectTreeNode expandSelectTree;
   private Map<String, ODataCallback> callbacks = Collections.emptyMap();
+  private List<ClientCallback> clientCallbacks = Collections.emptyList();
   private URI selfLink;
   private boolean includeSimplePropertyType;
   private Map<String, Map<String, Object>> additionalLinks;
@@ -134,6 +137,14 @@ public class EntityProviderWriteProperties {
 
   public final String getCallback() {
     return callback;
+  }
+
+  public List<ClientCallback> getClientCallbacks() {
+    return clientCallbacks;
+  }
+
+  public void setClientCallbacks(List<ClientCallback> clientCallbacks) {
+    this.clientCallbacks = clientCallbacks;
   }
 
   /**
@@ -253,6 +264,11 @@ public class EntityProviderWriteProperties {
 
     public ODataEntityProviderPropertiesBuilder callbacks(final Map<String, ODataCallback> callbacks) {
       properties.callbacks = callbacks;
+      return this;
+    }
+
+    public ODataEntityProviderPropertiesBuilder clientCallbacks(final List<ClientCallback> callbacks) {
+      properties.clientCallbacks = callbacks;
       return this;
     }
 

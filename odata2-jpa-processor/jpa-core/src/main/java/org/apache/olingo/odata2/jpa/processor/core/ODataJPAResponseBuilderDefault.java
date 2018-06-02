@@ -213,6 +213,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       EntityProviderWriteProperties feedProperties = null;
       try {
         feedProperties = getEntityProviderPropertiesforPost(oDataJPAContext);
+        feedProperties.setClientCallbacks(((UriInfo) uriInfo).getClientCallbacks());
       } catch (ODataException e) {
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       }
@@ -418,7 +419,8 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       ODataContext context = oDataJPAContext.getODataContext();
       EntityProviderWriteProperties entryProperties =
           EntityProviderWriteProperties.serviceRoot(context.getPathInfo().getServiceRoot()).inlineCountType(
-              resultsView.getInlineCount()).callback(resultsView.getCallback()).inlineCount(count).build();
+              resultsView.getInlineCount())
+              .clientCallbacks(resultsView.getClientCallbacks()).callback(resultsView.getCallback()).inlineCount(count).build();
 
       odataResponse = EntityProvider.writeLinks(contentType, entitySet, edmEntityList, entryProperties);
 
@@ -503,6 +505,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
         entityFeedPropertiesBuilder.nextLink(nextLink);
       }
       entityFeedPropertiesBuilder.inlineCount(count);
+      entityFeedPropertiesBuilder.clientCallbacks(resultsView.getClientCallbacks());
       entityFeedPropertiesBuilder.callback(resultsView.getCallback());
       entityFeedPropertiesBuilder.inlineCountType(resultsView.getInlineCount());
       ExpandSelectTreeNode expandSelectTree =
@@ -579,6 +582,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
           EntityProviderWriteProperties.serviceRoot(odataJPAContext.getODataContext().getPathInfo().getServiceRoot());
       expandSelectTree = UriParser.createExpandSelectTree(resultsView.getSelect(), resultsView.getExpand());
       entityFeedPropertiesBuilder.expandSelectTree(expandSelectTree);
+      entityFeedPropertiesBuilder.clientCallbacks(resultsView.getClientCallbacks());
       entityFeedPropertiesBuilder.callback(resultsView.getCallback());
       entityFeedPropertiesBuilder.callbacks(JPAExpandCallBack.getCallbacks(odataJPAContext, odataJPAContext.getODataContext()
           .getPathInfo().getServiceRoot(), expandSelectTree, resultsView.getExpand()));

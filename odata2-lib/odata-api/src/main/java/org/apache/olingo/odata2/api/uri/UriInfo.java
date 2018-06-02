@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.ClientCallback;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -233,4 +234,7 @@ public interface UriInfo extends GetServiceDocumentUriInfo,
   boolean rawEntity();
 
   boolean isNew();
+
+  @Override
+  public List<ClientCallback> getClientCallbacks();
 }

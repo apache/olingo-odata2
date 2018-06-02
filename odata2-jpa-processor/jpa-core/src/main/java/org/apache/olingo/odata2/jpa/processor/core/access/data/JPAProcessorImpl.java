@@ -291,6 +291,7 @@ public class JPAProcessorImpl implements JPAProcessor {
   @Override
   public Object process(DeleteUriInfo uriParserResultView, final String contentType)
       throws ODataJPAModelException, ODataJPARuntimeException {
+
     if (uriParserResultView instanceof DeleteUriInfo) {
       if (((UriInfo) uriParserResultView).isLinks()) {
         return deleteLink(uriParserResultView);
@@ -313,13 +314,22 @@ public class JPAProcessorImpl implements JPAProcessor {
     Object selectedObject = readEntity(new JPAQueryBuilder(oDataJPAContext).build(uriParserResultView), (UriInfo) uriParserResultView, true);
     if (selectedObject != null) {
       try {
+        final EdmEntitySet oDataEntitySet = uriParserResultView.getTargetEntitySet();
+        final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
+
         boolean isLocalTransaction = setTransaction();
+        if (listener != null) {
+          listener.execEvent(((UriInfoImpl) uriParserResultView), oDataEntityType, "beforeDelete", selectedObject);
+        }
         em.remove(selectedObject);
         em.flush();
         if (isLocalTransaction) {
           oDataJPAContext.getODataJPATransaction().commit();
         }
-      } catch (PersistenceException e) {
+        if (listener != null) {
+          listener.execEvent(((UriInfoImpl) uriParserResultView), oDataEntityType, "afterDelete", selectedObject);
+        }
+      } catch (Exception e) {
         em.getTransaction().rollback();
         throw ODataJPARuntimeException.throwException(
             ODataJPARuntimeException.ERROR_JPQL_DELETE_REQUEST, e);
@@ -493,8 +503,16 @@ public class JPAProcessorImpl implements JPAProcessor {
       }
 
       if (manymany) {
+        if (listener != null) {
+          listener.execEvent(((UriInfoImpl) createView), oDataEntityType, "beforeInsert", jpaEntity);
+        }
+
         em.merge(jpaEntity);
       } else {
+        if (listener != null) {
+          listener.execEvent(((UriInfoImpl) createView), oDataEntityType, "beforeInsert", tempEntity);
+        }
+
         em.persist(jpaEntity);
       }
 
@@ -528,7 +546,13 @@ public class JPAProcessorImpl implements JPAProcessor {
         ((UriInfoImpl) createView).setKeyPredicates(predicates);
         ((UriInfoImpl) createView).setRawEntity(false);
 
-        return readEntity(new JPAQueryBuilder(oDataJPAContext).build((PutMergePatchUriInfo) createView), (UriInfo) createView);
+        Object resultEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build((PutMergePatchUriInfo) createView), (UriInfo) createView);
+
+        if (listener != null) {
+          listener.execEvent(((UriInfoImpl) createView), oDataEntityType, "afterInsert", resultEntity);
+        }
+
+        return resultEntity;
       }
     } catch (ODataBadRequestException e) {
       throw ODataJPARuntimeException.throwException(
@@ -583,6 +607,10 @@ public class JPAProcessorImpl implements JPAProcessor {
         return null;
       }
 
+      if (listener != null) {
+        listener.execEvent(((UriInfoImpl) updateView), oDataEntityType, "beforeUpdate", jpaEntity);
+      }
+
       em.flush();
       if (isLocalTransaction) {
         oDataJPAContext.getODataJPATransaction().commit();
@@ -591,6 +619,10 @@ public class JPAProcessorImpl implements JPAProcessor {
       ((UriInfoImpl) updateView).setRawEntity(false);
 
       jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView);
+
+      if (listener != null) {
+        listener.execEvent(((UriInfoImpl) updateView), oDataEntityType, "afterUpdate", jpaEntity);
+      }
     } catch (ODataBadRequestException e) {
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);

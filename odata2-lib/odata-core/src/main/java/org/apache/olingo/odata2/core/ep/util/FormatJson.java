@@ -27,6 +27,7 @@ public class FormatJson {
   public static final String D = "d";
   public static final String RESULTS = "results";
   public static final String COUNT = "__count";
+  public static final String CALLBACK = "__callback";
   public static final String METADATA = "__metadata";
   public static final String DEFERRED = "__deferred";
   public static final String ID = "id";

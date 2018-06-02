@@ -78,8 +78,15 @@ public class JsonEntryEntityProducer {
         jsonStreamWriter.unquotedValue("(");
       }
 
+
       if (isRootElement && !properties.isOmitJsonWrapper()) {
-        jsonStreamWriter.beginObject().name(FormatJson.D);
+        jsonStreamWriter.beginObject();
+
+        if (properties.getClientCallbacks() != null && !properties.getClientCallbacks().isEmpty()) {
+          JsonFeedEntityProducer.appendClientCallbacks(jsonStreamWriter, properties.getClientCallbacks());
+        }
+
+        jsonStreamWriter.name(FormatJson.D);
       }
 
       jsonStreamWriter.beginObject();

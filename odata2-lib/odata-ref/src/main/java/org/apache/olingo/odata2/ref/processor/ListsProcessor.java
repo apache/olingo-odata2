@@ -200,6 +200,7 @@ public class ListsProcessor extends ODataSingleProcessor {
         .inlineCountType(inlineCountType)
         .inlineCount(count)
         .callback(uriInfo.getCallback())
+        .clientCallbacks(uriInfo.getClientCallbacks())
         .expandSelectTree(UriParser.createExpandSelectTree(uriInfo.getSelect(), uriInfo.getExpand()))
         .callbacks(getCallbacks(data, entityType))
         .nextLink(nextLink)
@@ -293,6 +294,7 @@ public class ListsProcessor extends ODataSingleProcessor {
         .inlineCountType(uriInfo.getInlineCount())
         .inlineCount(count)
         .callback(uriInfo.getCallback())
+        .clientCallbacks(uriInfo.getClientCallbacks())
         .build();
 
     final int timingHandle = context.startRuntimeMeasurement("EntityProvider", "writeLinks");

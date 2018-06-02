@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.jpa.processor.core;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import org.apache.olingo.odata2.api.ClientCallback;
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataProcessor;
@@ -30,6 +31,8 @@ import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityLi
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmExtension;
+
+import java.util.List;
 
 public class ODataJPAContextImpl implements ODataJPAContext {
 

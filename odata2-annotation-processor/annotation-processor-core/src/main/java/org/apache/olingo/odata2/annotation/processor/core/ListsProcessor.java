@@ -194,6 +194,7 @@ public class ListsProcessor extends DataSourceProcessor {
         .inlineCountType(inlineCountType)
         .inlineCount(count)
         .callback(uriInfo.getCallback())
+        .clientCallbacks(uriInfo.getClientCallbacks())
         .expandSelectTree(UriParser.createExpandSelectTree(uriInfo.getSelect(), uriInfo.getExpand()))
         .callbacks(getCallbacks(data, entityType))
         .nextLink(nextLink)
@@ -286,6 +287,7 @@ public class ListsProcessor extends DataSourceProcessor {
         .serviceRoot(context.getPathInfo().getServiceRoot())
         .inlineCountType(uriInfo.getInlineCount())
         .inlineCount(count)
+        .clientCallbacks(uriInfo.getClientCallbacks())
         .callback(uriInfo.getCallback())
         .build();
 

@@ -66,6 +66,7 @@ import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
 import org.apache.olingo.odata2.core.ODataPathSegmentImpl;
 import org.apache.olingo.odata2.core.commons.Decoder;
 import org.apache.olingo.odata2.core.edm.EdmSimpleTypeFacadeImpl;
+import org.apache.olingo.odata2.core.edm.provider.EdmEntityTypeImplProv;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 import org.apache.olingo.odata2.core.uri.expression.FilterParserImpl;
 import org.apache.olingo.odata2.core.uri.expression.OrderByParserImpl;
@@ -493,6 +494,10 @@ public class UriParserImpl extends UriParser {
           keyProperty = testKeyProperty;
           break;
         }
+      }
+      if (keyProperty == null) {
+        //TODO: Habilitar parêmetros
+        //keyProperty = (EdmProperty) ((EdmEntityTypeImplProv) entityType).getProperty(name);
       }
       if (keyProperty == null) {
         throw new UriSyntaxException(UriSyntaxException.INVALIDKEYPREDICATE.addContent(keyPredicate));

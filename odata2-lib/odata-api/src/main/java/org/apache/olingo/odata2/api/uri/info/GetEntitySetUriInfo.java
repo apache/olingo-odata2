@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.ClientCallback;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -164,4 +165,6 @@ public interface GetEntitySetUriInfo {
   public String getCallback();
 
   public boolean isNew();
+
+  public List<ClientCallback> getClientCallbacks();
 }

@@ -21,6 +21,7 @@ package org.apache.olingo.odata2.api.uri.info;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.ClientCallback;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -143,4 +144,6 @@ public interface GetEntitySetLinksUriInfo {
   public Map<String, String> getCustomQueryOptions();
 
   public String getCallback();
+
+  public List<ClientCallback> getClientCallbacks();
 }

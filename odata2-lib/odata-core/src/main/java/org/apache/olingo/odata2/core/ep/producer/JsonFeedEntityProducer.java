@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,6 +23,7 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.ClientCallback;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
@@ -35,7 +36,6 @@ import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
 /**
  * Producer for writing an entity collection (a feed) in JSON.
- * 
  */
 public class JsonFeedEntityProducer {
 
@@ -61,6 +61,11 @@ public class JsonFeedEntityProducer {
       jsonStreamWriter.beginObject();
 
       if (isRootElement) {
+
+        if (properties.getClientCallbacks() != null && !properties.getClientCallbacks().isEmpty()) {
+          appendClientCallbacks(jsonStreamWriter, properties.getClientCallbacks());
+        }
+
         jsonStreamWriter.name(FormatJson.D)
             .beginObject();
       }
@@ -99,6 +104,39 @@ public class JsonFeedEntityProducer {
     }
   }
 
+  public static void appendClientCallbacks(final JsonStreamWriter writer, List<ClientCallback> callbacks) throws EntityProviderException, IOException {
+    writer.name(FormatJson.CALLBACK)
+        .beginArray();
+    boolean first1 = true;
+    for (ClientCallback callback: callbacks) {
+      if (!first1) {
+        writer.separator();
+      }
+      first1 = false;
+      writer.beginObject();
+      writer.namedStringValue("name", callback.getFunction());
+      writer.separator();
+      writer.name("params");
+      writer.beginArray();
+      boolean first2 = true;
+      for (Object o: callback.getParams()) {
+        if (!first2) {
+          writer.separator();
+        }
+        first2 = false;
+        if (o instanceof OlingoJsonSerializer) {
+          writer.unquotedValue(((OlingoJsonSerializer) o).serializeAsJson());
+        } else {
+          writer.stringValue(o.toString());
+        }
+      }
+      writer.endArray();
+      writer.endObject();
+    }
+    writer.endArray();
+    writer.separator();
+  }
+
   public void appendAsArray(final Writer writer, final EntityInfoAggregator entityInfo,
                             final List<Map<String, Object>> data) throws EntityProviderException {
     JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
@@ -113,7 +151,7 @@ public class JsonFeedEntityProducer {
   }
 
   private void appendDeletedEntries(final Writer writer, final EntityInfoAggregator entityInfo,
-      final List<Map<String, Object>> data, TombstoneCallback callback) throws EntityProviderException {
+                                    final List<Map<String, Object>> data, TombstoneCallback callback) throws EntityProviderException {
     JsonDeletedEntryEntityProducer deletedEntryProducer = new JsonDeletedEntryEntityProducer(properties);
     TombstoneCallbackResult callbackResult = callback.getTombstoneCallbackResult();
     List<Map<String, Object>> deletedEntries = callbackResult.getDeletedEntriesData();
@@ -123,7 +161,7 @@ public class JsonFeedEntityProducer {
   }
 
   private void appendEntries(final Writer writer, final EntityInfoAggregator entityInfo,
-      final List<Map<String, Object>> data, JsonStreamWriter jsonStreamWriter) throws EntityProviderException,
+                             final List<Map<String, Object>> data, JsonStreamWriter jsonStreamWriter) throws EntityProviderException,
       IOException {
     JsonEntryEntityProducer entryProducer = new JsonEntryEntityProducer(properties);
     boolean first = true;

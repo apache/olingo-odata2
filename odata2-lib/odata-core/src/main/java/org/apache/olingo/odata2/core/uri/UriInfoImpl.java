@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.ClientCallback;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
@@ -74,6 +75,7 @@ public class UriInfoImpl implements UriInfo {
   private Map<String, String> customQueryOptions = Collections.emptyMap();
   private boolean rawEntity = false;
   private boolean isNew = false;
+  private List<ClientCallback> clientCallbacks;
 
   public UriType getUriType() {
     return uriType;
@@ -316,6 +318,15 @@ public class UriInfoImpl implements UriInfo {
   @Override
   public boolean isNew() {
     return isNew;
+  }
+
+  @Override
+  public List<ClientCallback> getClientCallbacks() {
+    return clientCallbacks;
+  }
+
+  public void setClientCallbacks(List<ClientCallback> clientCallbacks) {
+    this.clientCallbacks = clientCallbacks;
   }
 
   public void setNew(boolean isNew) {
