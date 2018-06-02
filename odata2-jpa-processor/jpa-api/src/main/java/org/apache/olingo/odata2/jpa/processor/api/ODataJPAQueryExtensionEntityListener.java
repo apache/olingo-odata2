@@ -29,6 +29,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
+import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.info.*;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 
@@ -146,5 +147,8 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
 
   public Map<String, Object> getCalcFieldValues(final EdmEntityType entityType, Object data) throws ODataJPARuntimeException {
     return null;
+  }
+
+  public void checkFilter(final EdmEntityType entityType, final FilterExpression filter) throws ODataJPARuntimeException {
   }
 }

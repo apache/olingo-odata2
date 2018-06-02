@@ -193,6 +193,20 @@ public class JPAQueryBuilder {
       throws EdmException,
       ODataJPAModelException, ODataJPARuntimeException {
 
+    if (uriParserResultView.getFilter() != null) {
+      ODataJPAQueryExtensionEntityListener listener = null;
+      try {
+        listener = getODataJPAQueryEntityListener(uriParserResultView);
+      } catch (Exception e) {
+       //NoCommand
+      }
+
+      if (listener != null) {
+        listener.checkFilter(uriParserResultView.getTargetEntitySet().getEntityType(), uriParserResultView.getFilter());
+      }
+    }
+
+
     JPQLContextType contextType = determineJPQLContextType(uriParserResultView, type);
     JPQLContext jpqlContext = buildJPQLContext(contextType, uriParserResultView);
     JPQLStatement jpqlStatement = JPQLStatement.createBuilder(jpqlContext).build();
