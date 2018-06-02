@@ -217,7 +217,7 @@ public class JPALink {
 
     try {
 
-      JPAEntityParser entityParser = new JPAEntityParser(oDataJPAContext);
+      JPAEntityParser entityParser = new JPAEntityParser(oDataJPAContext, null);
 	  Method setMethod = entityParser.getAccessModifier(sourceJPAEntity.getClass(),
 			navigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 
@@ -336,7 +336,7 @@ public class JPALink {
       throws ODataJPARuntimeException {
 
     try {
-      JPAEntityParser entityParser = new JPAEntityParser(context);
+      JPAEntityParser entityParser = new JPAEntityParser(context, null);
       Method setMethod = entityParser.getAccessModifier(jpaEntity.getClass(),
           targetNavigationProperty, JPAEntityParser.ACCESS_MODIFIER_SET);
 

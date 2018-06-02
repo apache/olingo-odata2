@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 import org.apache.olingo.odata2.api.uri.PathInfo;
+import org.apache.olingo.odata2.api.uri.UriInfo;
 
 /**
  * 

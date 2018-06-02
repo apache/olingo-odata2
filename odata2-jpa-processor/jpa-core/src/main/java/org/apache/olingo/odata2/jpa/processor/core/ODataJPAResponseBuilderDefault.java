@@ -49,11 +49,7 @@ import org.apache.olingo.odata2.api.exception.ODataHttpException;
 import org.apache.olingo.odata2.api.exception.ODataNotFoundException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
-import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
-import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
-import org.apache.olingo.odata2.api.uri.PathInfo;
-import org.apache.olingo.odata2.api.uri.SelectItem;
-import org.apache.olingo.odata2.api.uri.UriParser;
+import org.apache.olingo.odata2.api.uri.*;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityLinkUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetLinksUriInfo;
@@ -91,11 +87,11 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     try {
       edmEntityType = resultsView.getTargetEntitySet().getEntityType();
       List<Map<String, Object>> edmEntityList = null;
-      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, (UriInfo) resultsView);
       final List<SelectItem> selectedItems = resultsView.getSelect();
       if (selectedItems != null && !selectedItems.isEmpty()) {
         edmEntityList =
-            jpaResultParser.parse2EdmEntityList(jpaEntities, buildSelectItemList(selectedItems, edmEntityType), edmEntityType);
+            jpaResultParser.parse2EdmEntityList((UriInfo) resultsView, jpaEntities, buildSelectItemList(selectedItems, edmEntityType), edmEntityType);
       } else {
         edmEntityList = jpaResultParser.parse2EdmEntityList(jpaEntities, edmEntityType);
       }
@@ -146,7 +142,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       edmEntityType = resultsView.getTargetEntitySet().getEntityType();
       Map<String, Object> edmPropertyValueMap = null;
 
-      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, (UriInfo) resultsView);
       final List<SelectItem> selectedItems = resultsView.getSelect();
       if (selectedItems != null && !selectedItems.isEmpty()) {
         edmPropertyValueMap =
@@ -211,7 +207,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       edmEntityType = uriInfo.getTargetEntitySet().getEntityType();
       Map<String, Object> edmPropertyValueMap = null;
 
-      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, (UriInfo) uriInfo);
       edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(createdObject, edmEntityType);
 
       EntityProviderWriteProperties feedProperties = null;
@@ -296,7 +292,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     ODataResponse odataResponse = null;
 
     if (resultList != null) {
-      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, (UriInfo) resultsView);
       EdmType edmType = null;
       EdmFunctionImport functionImport = null;
       Map<String, Object> edmPropertyValueMap = null;
@@ -367,7 +363,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       edmEntityType = entitySet.getEntityType();
       Map<String, Object> edmPropertyValueMap = null;
 
-      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, (UriInfo) resultsView);
       edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType.getKeyProperties(), edmEntityType);
 
       EntityProviderWriteProperties entryProperties =
@@ -401,7 +397,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
       List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
       Map<String, Object> edmPropertyValueMap = null;
-      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, (UriInfo) resultsView);
 
       for (Object jpaEntity : jpaEntities) {
         edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, keyProperties, edmEntityType);

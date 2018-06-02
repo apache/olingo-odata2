@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.*;
+import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
@@ -51,6 +52,7 @@ public final class JPAEntityParser {
   public static final String ACCESS_MODIFIER_GET = "get";
   public static final String ACCESS_MODIFIER_SET = "set";
   private static final String ACCESS_MODIFIER_IS = "is";
+  private final UriInfo infoView;
 
   private HashMap<String, HashMap<String, Method>> jpaEntityAccessMap = null;
   private HashMap<String, HashMap<String, String>> jpaEmbeddableKeyMap = null;
@@ -58,8 +60,9 @@ public final class JPAEntityParser {
 
   private final ODataJPAContext oDataJPAContext;
 
-  public JPAEntityParser(final ODataJPAContext context) {
+  public JPAEntityParser(final ODataJPAContext context, final UriInfo infoView) {
     oDataJPAContext = context;
+    this.infoView = infoView;
     jpaEntityAccessMap = new HashMap<String, HashMap<String, Method>>(
         MAX_SIZE);
     jpaEmbeddableKeyMap = new HashMap<String, HashMap<String, String>>();
@@ -73,7 +76,7 @@ public final class JPAEntityParser {
     return jpaEmbeddableKeyMap.get(jpaEntityName);
   }
 
-  public List<Map<String, Object>> parse2EdmEntityList(final Collection<Object> jpaEntityList,
+  public List<Map<String, Object>> parse2EdmEntityList(final UriInfo infoView, final Collection<Object> jpaEntityList,
       final List<EdmProperty> properties, final EdmEntityType entity)
       throws ODataJPARuntimeException {
 
@@ -89,7 +92,7 @@ public final class JPAEntityParser {
   }
 
   public final HashMap<String, Object> parse2EdmPropertyValueMap(final Object jpaEntity,
-      final List<EdmProperty> selectPropertyList, final EdmStructuralType structuralType) throws ODataJPARuntimeException {
+                                                                 final List<EdmProperty> selectPropertyList, final EdmStructuralType structuralType) throws ODataJPARuntimeException {
 
     HashMap<String, Object> edmEntity = new HashMap<String, Object>();
     HashMap<String, Method> accessModifierMap = null;
@@ -123,6 +126,12 @@ public final class JPAEntityParser {
     }
 
     boolean hasCalc = false;
+
+    Map<String, Object> defaults = null;
+
+    if (infoView != null && infoView.isNew() && queryListener != null) {
+      defaults = queryListener.getDefaultFieldValues((EdmEntityType) structuralType, edmEntity);
+    }
 
     for (EdmProperty property : selectPropertyList) {
       try {
@@ -159,6 +168,10 @@ public final class JPAEntityParser {
         if (property.getType().getKind()
             .equals(EdmTypeKind.COMPLEX)) {
           propertyValue = parse2EdmPropertyValueMap(propertyValue, (EdmStructuralType) property.getType());
+        }
+
+        if (defaults != null && propertyValue == null) {
+          propertyValue = defaults.get(propertyName);
         }
 
         edmEntity.put(propertyName, propertyValue);

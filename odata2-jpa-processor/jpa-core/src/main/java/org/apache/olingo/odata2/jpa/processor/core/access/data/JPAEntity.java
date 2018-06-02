@@ -82,7 +82,7 @@ public class JPAEntity {
     } catch (EdmException e) {
       return;
     }
-    jpaEntityParser = new JPAEntityParser(oDataJPAContext);
+    jpaEntityParser = new JPAEntityParser(oDataJPAContext, null);
     onJPAWriteContent = oDataJPAContext.getODataContext().getServiceFactory().getCallback(OnJPAWriteContent.class);
   }
 

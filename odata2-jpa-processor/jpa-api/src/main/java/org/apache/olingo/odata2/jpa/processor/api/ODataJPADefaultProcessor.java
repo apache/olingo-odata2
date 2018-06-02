@@ -58,8 +58,13 @@ public abstract class ODataJPADefaultProcessor extends ODataJPAProcessor {
     try {
       oDataJPAContext.setODataContext(getContext());
       List<Object> jpaEntities = jpaProcessor.process(uriParserResultView);
-      oDataResponse =
-          responseBuilder.build(uriParserResultView, jpaEntities, contentType);
+      if (uriParserResultView.isNew()) {
+        oDataResponse =
+            responseBuilder.build((GetEntityUriInfo)uriParserResultView, jpaEntities.get(0), contentType);
+      } else {
+        oDataResponse =
+            responseBuilder.build(uriParserResultView, jpaEntities, contentType);
+      }
     } finally {
       close();
     }

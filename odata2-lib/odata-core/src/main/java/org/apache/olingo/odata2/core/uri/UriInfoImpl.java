@@ -73,6 +73,7 @@ public class UriInfoImpl implements UriInfo {
   private Map<String, EdmLiteral> functionImportParameters = Collections.emptyMap();
   private Map<String, String> customQueryOptions = Collections.emptyMap();
   private boolean rawEntity = false;
+  private boolean isNew = false;
 
   public UriType getUriType() {
     return uriType;
@@ -312,6 +313,15 @@ public class UriInfoImpl implements UriInfo {
     return rawEntity;
   }
 
+  @Override
+  public boolean isNew() {
+    return isNew;
+  }
+
+  public void setNew(boolean isNew) {
+    this.isNew = isNew;
+  }
+
   public void setRawEntity(boolean rawEntity) {
     this.rawEntity = rawEntity;
   }
@@ -342,6 +352,7 @@ public class UriInfoImpl implements UriInfo {
         + "functionImportParameters=" + functionImportParameters + ", "
         + "customQueryOptions=" + customQueryOptions + ", "
         + "callback=" + callback + ", "
+        + "isNew=" + isNew + ", "
         + "rawEntity=" + rawEntity;
   }
 

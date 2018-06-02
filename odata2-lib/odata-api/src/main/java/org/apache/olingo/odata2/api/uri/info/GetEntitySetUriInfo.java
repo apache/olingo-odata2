@@ -162,4 +162,6 @@ public interface GetEntitySetUriInfo {
   public Map<String, String> getCustomQueryOptions();
 
   public String getCallback();
+
+  public boolean isNew();
 }

@@ -233,7 +233,11 @@ public class UriParserImpl extends UriParser {
       } else {
         currentPathSegment = pathSegments.remove(0);
         checkCount();
-        if (uriResult.isCount()) {
+        checkNew();
+        if (uriResult.isNew()) {
+          uriResult.setUriType(UriType.URI6B);
+        }
+        else if (uriResult.isCount()) {
           uriResult.setUriType(UriType.URI15);
         } else {
           throw new UriSyntaxException(UriSyntaxException.ENTITYSETINSTEADOFENTITY.addContent(entitySet.getName()));
@@ -254,7 +258,11 @@ public class UriParserImpl extends UriParser {
     final String decodedPath = percentDecode(currentPathSegment);
 
     checkCount();
-    if (uriResult.isCount()) {
+    checkNew();
+    if (uriResult.isNew()) {
+      uriResult.setUriType(UriType.URI6B); // Count of multiple entities is handled elsewhere
+    }
+    else if (uriResult.isCount()) {
       uriResult.setUriType(UriType.URI16); // Count of multiple entities is handled elsewhere
 
     } else if ("$value".equals(decodedPath)) {
@@ -338,6 +346,7 @@ public class UriParserImpl extends UriParser {
       } else if (many || uriResult.isLinks()) {
         currentPathSegment = pathSegments.remove(0);
         checkCount();
+        checkNew();
         if (!uriResult.isCount()) {
           throw new UriSyntaxException(UriSyntaxException.INVALIDSEGMENT.addContent(currentPathSegment));
         }
@@ -438,6 +447,16 @@ public class UriParserImpl extends UriParser {
     if ("$count".equals(percentDecode(currentPathSegment))) {
       if (pathSegments.isEmpty()) {
         uriResult.setCount(true);
+      } else {
+        throw new UriSyntaxException(UriSyntaxException.MUSTBELASTSEGMENT.addContent(currentPathSegment));
+      }
+    }
+  }
+
+  private void checkNew() throws UriSyntaxException {
+    if ("$new".equals(percentDecode(currentPathSegment)) || "__new__".equals(percentDecode(currentPathSegment))) {
+      if (pathSegments.isEmpty()) {
+        uriResult.setNew(true);
       } else {
         throw new UriSyntaxException(UriSyntaxException.MUSTBELASTSEGMENT.addContent(currentPathSegment));
       }
@@ -667,6 +686,9 @@ public class UriParserImpl extends UriParser {
       case $callback:
         handleCallbackToken(systemQueryOptions.get(SystemQueryOption.$callback));
         break;
+      case $new:
+        handleNewToken("true".equals(systemQueryOptions.get(SystemQueryOption.$new)));
+        break;
       case $inlinecount:
         handleSystemQueryOptionInlineCount(systemQueryOptions.get(SystemQueryOption.$inlinecount));
         break;
@@ -754,6 +776,10 @@ public class UriParserImpl extends UriParser {
 
   private void handleCallbackToken(final String callbackToken) throws UriSyntaxException {
     uriResult.setCallback(callbackToken);
+  }
+
+  private void handleNewToken(final boolean newToken) throws UriSyntaxException {
+    uriResult.setNew(newToken);
   }
 
   private void handleSystemQueryOptionTop(final String top) throws UriSyntaxException {

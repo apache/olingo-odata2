@@ -139,4 +139,6 @@ public interface GetEntityUriInfo {
   public Map<String, String> getCustomQueryOptions();
 
   public String getCallback();
+
+  public boolean isNew();
 }

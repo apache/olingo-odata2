@@ -268,6 +268,18 @@ public class ODataExpressionParser {
         return String.format("%s LIKE CONCAT(%s,'%%') ESCAPE '\\'", first, second);
       case ENDSWITH:
         return String.format("%s LIKE CONCAT('%%',%s) ESCAPE '\\'", first, second);
+      case YEAR:
+        return String.format("EXTRACT(YEAR %s)", first);
+      case DAY:
+        return String.format("EXTRACT(DAY %s)", first);
+      case MONTH:
+        return String.format("EXTRACT(MONTH %s)", first);
+      case HOUR:
+        return String.format("EXTRACT(HOUR %s)", first);
+      case MINUTE:
+        return String.format("EXTRACT(MINUTE %s)", first);
+      case SECOND:
+        return String.format("EXTRACT(SECOND %s)", first);
       default:
         reInitializePositionalParameters();
         throw new ODataNotImplementedException();

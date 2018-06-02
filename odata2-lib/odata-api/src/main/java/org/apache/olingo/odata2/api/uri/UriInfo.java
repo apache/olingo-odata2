@@ -31,23 +31,7 @@ import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
-import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetComplexPropertyUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityLinkCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityLinkUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetLinksCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetLinksUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetMediaResourceUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetMetadataUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetServiceDocumentUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetSimplePropertyUriInfo;
-import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
-import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.api.uri.info.*;
 
 /**
  * Structured parts of the request URI - the result of URI parsing.
@@ -247,4 +231,6 @@ public interface UriInfo extends GetServiceDocumentUriInfo,
   String getCallback();
 
   boolean rawEntity();
+
+  boolean isNew();
 }

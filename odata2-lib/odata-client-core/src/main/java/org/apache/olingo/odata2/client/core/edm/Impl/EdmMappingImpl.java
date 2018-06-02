@@ -32,6 +32,7 @@ public class EdmMappingImpl implements EdmMapping {
   private String mediaResourceSourceKey;
   private String mediaResourceMimeTypeKey;
   private String expression;
+  private boolean calculated;
 
   @Override
   public String getInternalName() {
@@ -51,6 +52,15 @@ public class EdmMappingImpl implements EdmMapping {
   @Override
   public Object getObject() {
     return object;
+  }
+
+  @Override
+  public boolean isCalculated() {
+    return calculated;
+  }
+
+  public void setCalculated(boolean calculated) {
+    this.calculated = calculated;
   }
 
   @Override

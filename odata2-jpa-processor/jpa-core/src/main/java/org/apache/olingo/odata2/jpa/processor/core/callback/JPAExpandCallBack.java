@@ -44,6 +44,7 @@ import org.apache.olingo.odata2.api.ep.callback.WriteFeedCallbackResult;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
+import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
@@ -74,7 +75,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     Map<String, Object> edmPropertyValueMap = null;
     List<EdmNavigationProperty> currentNavPropertyList = null;
     Map<String, ExpandSelectTreeNode> navigationLinks = null;
-    JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
+    JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, null);
     EdmNavigationProperty currentNavigationProperty = context.getNavigationProperty();
     try {
       Object inlinedEntry = entry.get(currentNavigationProperty.getName());
@@ -168,7 +169,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
     WriteFeedCallbackResult result = new WriteFeedCallbackResult();
     HashMap<String, Object> inlinedEntry = (HashMap<String, Object>) context.getEntryData();
     List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
-    JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext);
+    JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, null);
     List<EdmNavigationProperty> currentNavPropertyList = null;
     EdmNavigationProperty currentNavigationProperty = context.getNavigationProperty();
     ExpandSelectTreeNode currentExpandTreeNode = context.getCurrentExpandSelectTreeNode();
@@ -181,7 +182,7 @@ public class JPAExpandCallBack implements OnWriteFeedContent, OnWriteEntryConten
       }
       if (!currentExpandTreeNode.getProperties().isEmpty()) {
         edmEntityList =
-            jpaResultParser.parse2EdmEntityList(listOfItems, getEdmProperties(nextEntitySet,
+            jpaResultParser.parse2EdmEntityList(null, listOfItems, getEdmProperties(nextEntitySet,
                 currentExpandTreeNode), nextEntitySet.getEntityType());
       } else {
         edmEntityList = jpaResultParser.parse2EdmEntityList(listOfItems, nextEntitySet.getEntityType());

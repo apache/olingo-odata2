@@ -26,6 +26,7 @@ import org.apache.olingo.odata2.api.ODataService;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.uri.PathInfo;
+import org.apache.olingo.odata2.api.uri.UriInfo;
 
 /**
  * Compilation of generic context objects.
@@ -146,7 +147,6 @@ public interface ODataContext {
    * with highest preference first.
    */
   List<Locale> getAcceptableLanguages();
-
   /**
    * <p>Runtime measurements.</p>
    * <p>All times are in nanoseconds since some fixed but arbitrary time
