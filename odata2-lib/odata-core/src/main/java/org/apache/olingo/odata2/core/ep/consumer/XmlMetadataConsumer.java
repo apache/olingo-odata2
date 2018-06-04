@@ -78,6 +78,7 @@ public class XmlMetadataConsumer {
   private Map<FullQualifiedName, Association> associationsMap = new HashMap<FullQualifiedName, Association>();
   private Map<FullQualifiedName, EntityContainer> containerMap = new HashMap<FullQualifiedName, EntityContainer>();
   private List<NavigationProperty> navProperties = new ArrayList<NavigationProperty>();
+  private List<FunctionImport> edmFunctionImportList = new ArrayList<FunctionImport>();
   private String currentHandledStartTagName;
   private String currentNamespace;
   private String edmNamespace = Edm.NAMESPACE_EDM_2008_09;
@@ -246,7 +247,7 @@ public class XmlMetadataConsumer {
       container.setAnnotationElements(annotationElements);
     }
     container.setEntitySets(entitySets).setAssociationSets(associationSets).setFunctionImports(functionImports);
-
+    edmFunctionImportList.addAll(functionImports);
     containerMap.put(new FullQualifiedName(currentNamespace, container.getName()), container);
     return container;
   }
@@ -268,19 +269,8 @@ public class XmlMetadataConsumer {
       ReturnType returnType = new ReturnType();
       if (returnTypeString.startsWith("Collection") || returnTypeString.startsWith("collection")) {
         returnTypeString = returnTypeString.substring(returnTypeString.indexOf("(") + 1, returnTypeString.length() - 1);
-        fqName = extractFQName(returnTypeString);
-        if(function.getEntitySet() == null && entityTypesMap.get(fqName) != null){
-          throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent
-              ("EntitySet = "+function.getEntitySet(), XmlMetadataConstants.EDM_FUNCTION_IMPORT + function.getName()));
-        }
         returnType.setMultiplicity(EdmMultiplicity.MANY);
       } else {
-        fqName = extractFQName(returnTypeString);
-        if(function.getEntitySet() != null && entityTypesMap.get(fqName) == null) {
-          throw new EntityProviderException(EntityProviderException.INVALID_ATTRIBUTE.addContent
-              ("EntitySet = "+function.getEntitySet(), XmlMetadataConstants.EDM_FUNCTION_IMPORT 
-                  + " : "+ function.getName()));
-        }
         returnType.setMultiplicity(EdmMultiplicity.ONE);
       }
       fqName = extractFQName(returnTypeString);
@@ -1088,6 +1078,26 @@ public class XmlMetadataConsumer {
     }
 
   }
+  
+  private void validateFunctionImport() throws EntityProviderException {
+    for (FunctionImport functionImport : edmFunctionImportList) {
+      ReturnType returnType = functionImport.getReturnType();
+      if (returnType != null) {
+        String entitySet = functionImport.getEntitySet();
+        FullQualifiedName fqn = returnType.getTypeName();
+        if (returnType.getMultiplicity() == EdmMultiplicity.MANY && entitySet == null && entityTypesMap.get(
+            fqn) != null) {
+          throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent("EntitySet = "
+              + entitySet, XmlMetadataConstants.EDM_FUNCTION_IMPORT + " = " + functionImport.getName()));
+        } else if (returnType.getMultiplicity() != EdmMultiplicity.MANY && entitySet != null && entityTypesMap.get(
+            fqn) == null) {
+          throw new EntityProviderException(EntityProviderException.INVALID_ATTRIBUTE.addContent("EntitySet = "
+              + entitySet, XmlMetadataConstants.EDM_FUNCTION_IMPORT
+                  + " = " + functionImport.getName()));
+        }
+      }
+    }
+  }
 
   private void validateAssociation() throws EntityProviderException {
     for (Map.Entry<FullQualifiedName, EntityContainer> container : containerMap.entrySet()) {
@@ -1145,6 +1155,7 @@ public class XmlMetadataConsumer {
     validateRelationship();
     validateEntitySet();
     validateAssociation();
+    validateFunctionImport();
   }
 
   private void initialize() {

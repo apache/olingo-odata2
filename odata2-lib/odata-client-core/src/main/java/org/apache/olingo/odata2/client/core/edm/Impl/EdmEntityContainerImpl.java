@@ -32,7 +32,6 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
-import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.client.api.edm.ClientEdm;
 import org.apache.olingo.odata2.client.api.edm.EdmDocumentation;
 
@@ -131,7 +130,7 @@ public class EdmEntityContainerImpl implements EdmEntityContainer, EdmAnnotatabl
       for(EdmEntitySet entity:edmEntitySets){
         if(entity.getName().equals(name)){
           edmEntitySet = entity;
-                
+          break;
       }
     }
     return edmEntitySet;

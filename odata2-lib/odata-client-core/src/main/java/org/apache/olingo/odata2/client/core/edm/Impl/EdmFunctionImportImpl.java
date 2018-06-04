@@ -99,6 +99,10 @@ public class EdmFunctionImportImpl extends EdmNamedImpl implements EdmFunctionIm
     this.edmEntityContainer = edmEntityContainer;
   }
 
+  public String getEntitySetName() {
+    return entitySet;
+  } 
+  
   public Map<String, EdmParameter> getEdmParameters() {
     return edmParameters;
   }

@@ -1004,6 +1004,65 @@ public class XmlMetadataConsumerTest extends AbstractXmlConsumerTest {
     }
   }
   
+  @Test
+  public void testFunctionImportEntityOrderChange() throws XMLStreamException, EntityProviderException {
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\""
+            + Edm.NAMESPACE_EDMX_2007_06
+            + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\""
+            + Edm.NAMESPACE_M_2007_08
+            + "\">"
+            + "<Schema Namespace=\""
+            + NAMESPACE
+            + "\" xmlns=\""
+            + Edm.NAMESPACE_EDM_2008_09
+            + "\">"
+            + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>"
+            + "<FunctionImport Name=\"EmployeeSearch\" ReturnType=\"RefScenario.Employee\" " +
+            "EntitySet=\"Employees\" m:HttpMethod=\"GET\">"
+            + "<Parameter Name=\"q1\" Type=\"Edm.String\" Nullable=\"true\" />"
+            + "<Parameter Name=\"q2\" Type=\"Edm.Int32\" Nullable=\"false\" />"
+            + "</FunctionImport>"
+            + "</EntityContainer>" 
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">"
+            + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\""
+            + propertyNames[0]
+            + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\""
+            + propertyNames[1]
+            + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>"
+            + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    XmlMetadataConsumer parser = new XmlMetadataConsumer();
+    XMLStreamReader reader = createStreamReader(xmWithEntityContainer);
+    DataServices result = parser.readMetadata(reader, true);
+    for (Schema schema : result.getSchemas()) {
+      for (EntityContainer container : schema.getEntityContainers()) {
+        assertEquals("Container1", container.getName());
+        assertEquals(Boolean.TRUE, container.isDefaultEntityContainer());
+
+        FunctionImport functionImport1 = container.getFunctionImports().get(0);
+
+        assertEquals("EmployeeSearch", functionImport1.getName());
+        assertEquals("Employees", functionImport1.getEntitySet());
+        assertEquals(NAMESPACE, functionImport1.getReturnType().getTypeName().getNamespace());
+        assertEquals("Employee", functionImport1.getReturnType().getTypeName().getName());
+        assertEquals(EdmMultiplicity.ONE, functionImport1.getReturnType().getMultiplicity());
+        assertEquals("GET", functionImport1.getHttpMethod());
+        assertEquals(2, functionImport1.getParameters().size());
+        assertEquals("q1", functionImport1.getParameters().get(0).getName());
+        assertEquals(EdmSimpleTypeKind.String, functionImport1.getParameters().get(0).getType());
+        assertEquals(Boolean.TRUE, functionImport1.getParameters().get(0).getFacets().isNullable());
+        assertEquals("q2", functionImport1.getParameters().get(1).getName());
+        assertEquals(EdmSimpleTypeKind.Int32, functionImport1.getParameters().get(1).getType());
+        assertEquals(Boolean.FALSE, functionImport1.getParameters().get(1).getFacets().isNullable());
+      }
+    }
+  }
+  
 //Function Import with return type as entity type and entityset attribute not set
   @Test
   public void testFunctionImportEntityWithoutEntitySet() throws XMLStreamException, EntityProviderException {

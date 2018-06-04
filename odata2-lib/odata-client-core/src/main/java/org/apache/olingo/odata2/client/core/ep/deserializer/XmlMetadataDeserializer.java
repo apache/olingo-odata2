@@ -60,6 +60,7 @@ import org.apache.olingo.odata2.api.edm.EdmReferentialConstraintRole;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
+import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Facets;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
@@ -125,7 +126,7 @@ public class XmlMetadataDeserializer {
       new HashMap<FullQualifiedName, FullQualifiedName>();
   private Map<FullQualifiedName, FullQualifiedName> complexBaseTypeMap = 
       new HashMap<FullQualifiedName, FullQualifiedName>();
-   private List<EdmFunctionImport> edmFunctionImportList = new ArrayList<EdmFunctionImport>();
+  private List<EdmFunctionImport> edmFunctionImportList = new ArrayList<EdmFunctionImport>();
   private List<EdmEntitySet> edmEntitySetList = new ArrayList<EdmEntitySet>();
   private List<EdmNavigationProperty> navProperties = new ArrayList<EdmNavigationProperty>();
   private String currentHandledStartTagName;
@@ -556,21 +557,11 @@ public class XmlMetadataDeserializer {
     if (returnTypeString != null) {
       if (returnTypeString.startsWith("Collection") || returnTypeString.startsWith("collection")) {
         returnTypeString = returnTypeString.substring(returnTypeString.indexOf("(") + 1, returnTypeString.length() - 1);
-        fqName = extractFQName(returnTypeString);
-        if(entitySet == null && entityTypesMap.get(fqName) != null){
-          throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent
-              ("EntitySet = "+entitySet, XmlMetadataConstants.EDM_FUNCTION_IMPORT +" = "+ function.getName()));
-        }
         returnType.setMultiplicity(EdmMultiplicity.MANY);
       } else {
-        fqName = extractFQName(returnTypeString);
-        if(entitySet != null && entityTypesMap.get(fqName) == null) {
-          throw new EntityProviderException(EntityProviderException.INVALID_ATTRIBUTE.addContent
-              ("EntitySet = "+entitySet, XmlMetadataConstants.EDM_FUNCTION_IMPORT 
-                  + " = "+ function.getName()));
-        }
         returnType.setMultiplicity(EdmMultiplicity.ONE);
       }
+      fqName = extractFQName(returnTypeString);
       returnType.setTypeName(fqName);
       ((EdmNamedImpl) returnType).setName(fqName.getName());
       ((EdmNamedImpl) returnType).setEdm(edm);
@@ -1557,6 +1548,27 @@ public class XmlMetadataDeserializer {
     }
   }
 
+  private void validateFunctionImport() throws EntityProviderException, EdmException {
+    for (EdmFunctionImport functionImport : edmFunctionImportList) {
+      EdmTyped returnType = functionImport.getReturnType();
+      if (returnType != null) {
+        FullQualifiedName fqn = extractFQName(returnType.toString());
+        String entitySet = ((EdmFunctionImportImpl)functionImport).getEntitySetName();
+        if (returnType.getMultiplicity() == EdmMultiplicity.MANY && entitySet == null && entityTypesMap.get(
+            fqn) != null) {
+          throw new EntityProviderException(EntityProviderException.MISSING_ATTRIBUTE.addContent("EntitySet = "
+              + entitySet, XmlMetadataConstants.EDM_FUNCTION_IMPORT + " = " + functionImport.getName()));
+        } else if (returnType.getMultiplicity() != EdmMultiplicity.MANY && entitySet != null && entityTypesMap.get(
+            fqn) == null) {
+          throw new EntityProviderException(EntityProviderException.INVALID_ATTRIBUTE.addContent("EntitySet = "
+              + entitySet, XmlMetadataConstants.EDM_FUNCTION_IMPORT
+                  + " = " + functionImport.getName()));
+        }
+      }
+    }
+  }
+
+  
   private void validate() throws EntityProviderException, EdmException {
     checkMandatoryNamespacesAvailable();
     validateEntityTypes();
@@ -1564,6 +1576,7 @@ public class XmlMetadataDeserializer {
     validateRelationship();
     validateEntitySet();
     validateAssociation();
+    validateFunctionImport();
   }
 
   private void initialize() {
