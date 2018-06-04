@@ -214,13 +214,6 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         case BASIC:
           currentSimpleProperty = new SimpleProperty();
           properties.add(buildSimpleProperty(currentAttribute, currentSimpleProperty));
-          if (((SingularAttribute<?, ?>) currentAttribute).isId()) {
-            if (keyView == null) {
-              keyView = new JPAEdmKey(JPAEdmProperty.this);
-              keyViewBuilder = keyView.getBuilder();
-            }
-            keyViewBuilder.build();
-          }
           break;
         case EMBEDDED:
           ComplexType complexType = complexTypeView.searchEdmComplexType(currentAttribute.getJavaType().getName());

@@ -644,17 +644,13 @@ public final class JPAEntityParser {
                       new Class<?>[]{String.class, Object.class}));
                 } catch(Exception e) {
         		      try {
-                    accessModifierMap.put(propertyName, jpaEntityType.getMethod(methodName,
-                        new Class<?>[]{jpaEdmMapping != null ?
-                            jpaEdmMapping.getJPAType() : null}));
+                    accessModifierMap.put(propertyName, ReflectionUtil.getMethod(jpaEntityType, methodName));
                   } catch(Exception e2) {
-
+                    accessModifierMap.put(propertyName, null);
                   }
                 }
         		  }else {
-        			  accessModifierMap.put(propertyName, jpaEntityType.getMethod(methodName,
-        					  new Class<?>[] { jpaEdmMapping != null ? 
-        					      jpaEdmMapping.getJPAType() : null }));
+        			  accessModifierMap.put(propertyName,  ReflectionUtil.getMethod(jpaEntityType, methodName));
         		  }
         	  } else {
         		  JPAEdmMapping jpaEdmMapping = (JPAEdmMapping) property.getMapping();
@@ -665,7 +661,7 @@ public final class JPAEntityParser {
         		      //Abafa
                 }
         		  }else{
-        			  method = jpaEntityType.getMethod(methodName, (Class<?>[]) null);
+        			  method =  ReflectionUtil.getMethod(jpaEntityType, methodName);
         		  }
         	  }
           }

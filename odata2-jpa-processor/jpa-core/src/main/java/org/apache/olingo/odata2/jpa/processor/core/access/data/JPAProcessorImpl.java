@@ -464,7 +464,6 @@ public class JPAProcessorImpl implements JPAProcessor {
 
         if (createView.getNavigationSegments().size() == 1) {
 
-
           NavigationProperty navigationProperty = ((EdmEntityTypeImplProv) createView.getStartEntitySet().getEntityType()).getNavigationProperties().get(createView.getNavigationSegments().get(0).getNavigationProperty().getName());
 
           if (navigationProperty.getRelationship().getName().toLowerCase().contains("many_many")) {

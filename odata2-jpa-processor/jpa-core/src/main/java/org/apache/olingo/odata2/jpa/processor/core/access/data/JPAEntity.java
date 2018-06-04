@@ -24,14 +24,7 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -49,6 +42,7 @@ import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.apache.olingo.odata2.core.edm.provider.EdmSimplePropertyImplProv;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
@@ -377,6 +371,39 @@ public class JPAEntity {
                 setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
                     .getType(), isNullable);
               } catch(Exception e3) {
+                JPAEdmMappingImpl mapping = ((JPAEdmMappingImpl) ((EdmSimplePropertyImplProv) edmTyped).getMapping());
+
+                String expression = mapping.getInternalExpression();
+                if (expression != null) {
+                  try {
+                    Object o = jpaEntity;
+                    String[] parts = expression.split("\\.");
+                    for (int i = 1; i < parts.length; i++) {
+                      String p = parts[i];
+
+                      Method mget = ReflectionUtil.getMethod(o, "get" + p);
+                      Method mset = ReflectionUtil.getMethod(o, "set" + p);
+
+                      if (i < parts.length - 1) {
+                        Object value = mget.invoke(o);
+                        if (value == null) {
+                          value = mget.getReturnType().newInstance();
+                          mset.invoke(o, value);
+                        }
+                        o = value;
+                      }
+
+                      if (i == parts.length -1) {
+                        setProperty(mset, o, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
+                            .getType(), isNullable);
+                      }
+                    }
+                  } catch(Exception e1) {
+
+                  }
+                }
+
+
                 //
               }
             }
