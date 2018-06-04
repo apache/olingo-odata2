@@ -317,6 +317,23 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         default:
           break;
         }
+
+        if ((attributeType == PersistentAttributeType.BASIC
+            || attributeType == PersistentAttributeType.MANY_TO_MANY
+            || attributeType == PersistentAttributeType.ONE_TO_MANY
+            || attributeType == PersistentAttributeType.ONE_TO_ONE
+            || attributeType == PersistentAttributeType.MANY_TO_ONE)
+            && (currentAttribute instanceof SingularAttribute && ((SingularAttribute<?, ?>) currentAttribute).isId())) {
+
+          if (keyView == null) {
+            keyView = new JPAEdmKey(JPAEdmProperty.this);
+            keyViewBuilder = keyView.getBuilder();
+          }
+
+          if (keyViewBuilder != null) {
+            keyViewBuilder.build();
+          }
+        }
       }
 
     }
@@ -339,6 +356,19 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
       Facets facets = JPAEdmFacets.createAndSet(jpaAttribute, simpleProperty);
       if(isForeignKey) {
         facets.setNullable(joinColumn.nullable());
+      }
+
+      int total = 0;
+      String name = simpleProperty.getName();
+      for (Property property: properties) {
+        if (property.getName().equals(name)) {
+          total++;
+          name = simpleProperty.getName() + "_"+ total;
+        }
+      }
+
+      if (total > 0) {
+        simpleProperty.setName(name);
       }
 
       return simpleProperty;

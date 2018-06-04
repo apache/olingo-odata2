@@ -622,6 +622,7 @@ public final class JPAEntityParser {
     Method method = null;
     try {
       for (EdmProperty property : edmProperties) {
+        method = null;
         String propertyName = property.getName();
         if (accessModifierMap.containsKey(propertyName)) {
           continue;
