@@ -362,8 +362,9 @@ public class JPAProcessorImpl implements JPAProcessor {
       final InputStream content, final Map<String, Object> properties, final String requestContentType)
       throws ODataJPAModelException, ODataJPARuntimeException {
     Object jpaEntity = null;
+    boolean isLocalTransaction = false;
     try {
-      boolean isLocalTransaction = setTransaction();
+      isLocalTransaction = setTransaction();
       jpaEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build(updateView));
 
       if (jpaEntity == null) {
@@ -399,6 +400,10 @@ public class JPAProcessorImpl implements JPAProcessor {
       em.getTransaction().rollback();
       throw ODataJPARuntimeException.throwException(
           ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+    } finally {
+      if (isLocalTransaction && oDataJPAContext.getODataJPATransaction().isActive()) {
+          oDataJPAContext.getODataJPATransaction().rollback();
+      }
     }
     return jpaEntity;
   }
