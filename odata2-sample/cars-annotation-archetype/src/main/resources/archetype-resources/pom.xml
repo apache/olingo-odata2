@@ -32,7 +32,7 @@
     <version.servlet-api>2.5</version.servlet-api>
     <version.jaxrs-api>2.0-m10</version.jaxrs-api>
     <version.slf4j>1.7.1</version.slf4j>
-    <version.olingo>2.0.11-SNAPSHOT</version.olingo>
+    <version.olingo>1.0.0-SNAPSHOT</version.olingo>
   </properties>
 
   <build>
@@ -94,29 +94,29 @@
   <dependencies>
     <!-- Apache Olingo Library dependencies -->
     <dependency>
-      <groupId>org.apache.olingo</groupId>
+      <groupId>io.cronapp</groupId>
       <artifactId>olingo-odata2-api</artifactId>
       <version>${version.olingo}</version>
     </dependency>
     <dependency>
       <artifactId>olingo-odata2-api-annotation</artifactId>
-      <groupId>org.apache.olingo</groupId>
+      <groupId>io.cronapp</groupId>
       <type>jar</type>
       <version>${version.olingo}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.olingo</groupId>
+      <groupId>io.cronapp</groupId>
       <artifactId>olingo-odata2-core</artifactId>
       <version>${version.olingo}</version>
     </dependency>
     <!-- Apache Olingo Annotation Processor Extension dependencies -->
     <dependency>
-      <groupId>org.apache.olingo</groupId>
+      <groupId>io.cronapp</groupId>
       <artifactId>olingo-odata2-annotation-processor-api</artifactId>
       <version>${version.olingo}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.olingo</groupId>
+      <groupId>io.cronapp</groupId>
       <artifactId>olingo-odata2-annotation-processor-core</artifactId>
       <version>${version.olingo}</version>
     </dependency>

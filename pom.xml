@@ -10,9 +10,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.apache.olingo</groupId>
+	<groupId>io.cronapp</groupId>
 	<artifactId>olingo-odata2-parent</artifactId>
-	<version>2.0.11-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>${project.artifactId}</name>
@@ -101,10 +101,6 @@
 					<groupId>org.apache.rat</groupId>
 					<artifactId>apache-rat-plugin</artifactId>
 					<version>0.9</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>2.10</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -227,30 +223,6 @@
 					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
 					<revisionOnScmFailure>?</revisionOnScmFailure>
 					<timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ssZ}</timestampFormat>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>checkstyle</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<outputFileFormat>xml</outputFileFormat>
-					<consoleOutput>true</consoleOutput>
-					<enableRSS>false</enableRSS>
-					<linkXRef>false</linkXRef>
-					<configLocation>src/checkstyle/config.xml</configLocation>
-					<sourceDirectory>${basedir}/src</sourceDirectory>
-					<encoding>UTF-8</encoding>
-					<failOnViolation>true</failOnViolation>
-					<violationSeverity>warning</violationSeverity>
-					<excludes>**/archetype-resources/**/*</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -465,4 +437,16 @@
           </dependency>
       </dependencies>
     </dependencyManagement>
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>artifactory.cronapp.io-releases</name>
+            <url>https://artifactory.cronapp.io/public-release</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>artifactory.cronapp.io-snapshots</name>
+            <url>https://artifactory.cronapp.io/public-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
