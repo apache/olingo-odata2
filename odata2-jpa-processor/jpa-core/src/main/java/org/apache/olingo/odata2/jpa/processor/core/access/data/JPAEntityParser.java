@@ -191,6 +191,10 @@ public final class JPAEntityParser {
       }
     }
 
+    if (queryListener != null) {
+      queryListener.execEvent(infoView, (EdmEntityType) structuralType, "onNavigate", edmEntity);
+    }
+
 
     return edmEntity;
   }
