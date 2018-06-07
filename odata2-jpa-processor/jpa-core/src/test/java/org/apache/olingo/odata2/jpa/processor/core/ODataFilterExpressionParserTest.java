@@ -133,6 +133,10 @@ public class ODataFilterExpressionParserTest {
 
   private static final String[] EXPRESSION_NULL_EQ = { "id eq null", "(E1.id IS null)" };
   
+  private static final String[] EXPRESSION_GUID_EQ = { 
+      "ExternalRecommendationUUID eq guid'56fe79b1-1c88-465b-b309-33bf8b8f6800'", 
+      "(E1.ExternalRecommendationUUID = 56fe79b1-1c88-465b-b309-33bf8b8f6800)" };
+	  
   private static Edm edm = null;
 
   @BeforeClass
@@ -146,6 +150,13 @@ public class ODataFilterExpressionParserTest {
     }
   }
 
+  @Test
+  public void testUUID() {
+    String whereExpression = parseWhereExpression(EXPRESSION_GUID_EQ[INPUT], false);
+    whereExpression = replacePositionalParameters(whereExpression);
+    assertEquals(EXPRESSION_GUID_EQ[OUTPUT], whereExpression);
+  }
+  
   @Test
   public void testDateTime() {
     String whereExpression = parseWhereExpression(EXPRESSION_DATETIME[INPUT], false);

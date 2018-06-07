@@ -20,6 +20,8 @@ package org.apache.olingo.odata2.jpa.processor.core.jpql;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -57,7 +59,11 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
   
   protected final void setParameterizedQueryMap(
       final Map<String, Map<Integer, Object>> parameterizedQueryMap) {
-    this.parameterizedQueryMap = parameterizedQueryMap;
+    if (null == this.parameterizedQueryMap || this.parameterizedQueryMap.isEmpty()) {
+      this.parameterizedQueryMap = parameterizedQueryMap;
+    } else {
+      this.parameterizedQueryMap.putAll(parameterizedQueryMap);
+    }
   }
 
   protected final void setSelectExpression(final String selectExpression) {
@@ -167,8 +173,23 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
      */
     protected String generateWhereExpression() throws ODataException {
       if (entitySetView.getFilter() != null) {
-        String whereExpression = ODataExpressionParser.parseToJPAWhereExpression(
-            entitySetView.getFilter(), getJPAEntityAlias());
+        String whereExpression = null;
+        if (null != parameterizedQueryMap && !parameterizedQueryMap.isEmpty()) {
+          int index = 1;
+          int previousIndex = 1;
+          for (Entry<String, Map<Integer, Object>> parameter : parameterizedQueryMap.entrySet()) {
+            index = getIndexValue(parameter.getValue());
+            if (index > previousIndex) {
+              previousIndex = index;
+            }
+          }
+          whereExpression = ODataExpressionParser.parseToJPAWhereExpression(
+              entitySetView.getFilter(), getJPAEntityAlias(), 
+              previousIndex, new ConcurrentHashMap<Integer, Object>());
+        } else {
+          whereExpression = ODataExpressionParser.parseToJPAWhereExpression(
+              entitySetView.getFilter(), getJPAEntityAlias());
+        }
         Map<String, Map<Integer, Object>> parameterizedExpressionMap = 
             new HashMap<String, Map<Integer,Object>>();
         parameterizedExpressionMap.put(whereExpression, 
@@ -177,6 +198,18 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
         return whereExpression;
       }
       return null;
+    }
+  }
+  
+  private int getIndexValue(Map<Integer, Object> map) {
+    int index = 1;
+    if (map != null) {
+      for (Entry<Integer, Object> entry : map.entrySet()) {
+        index = entry.getKey();
+      }
+      return index + 1;
+    } else {
+      return index;
     }
   }
 

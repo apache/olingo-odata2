@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.olingo.odata2.api.edm.EdmException;
@@ -90,7 +91,7 @@ public class ODataExpressionParser {
   }
   
   public static String parseToJPAWhereExpression(final CommonExpression whereExpression, final String tableAlias, 
-      int index, ConcurrentHashMap<Integer,Object> positionalParameters) throws ODataException {
+      int index, Map<Integer,Object> positionalParameters) throws ODataException {
     switch (whereExpression.getKind()) {
     case UNARY:
       final UnaryExpression unaryExpression = (UnaryExpression) whereExpression;
@@ -127,9 +128,9 @@ public class ODataExpressionParser {
         }
       }
       final String left = parseToJPAWhereExpression(binaryExpression.getLeftOperand(), tableAlias, 
-          getIndexValue(positionalParameters), positionalParameters);
+          getIndexValue(index, positionalParameters), positionalParameters);
       final String right = parseToJPAWhereExpression(binaryExpression.getRightOperand(), tableAlias, 
-          getIndexValue(positionalParameters), positionalParameters);
+          getIndexValue(index, positionalParameters), positionalParameters);
 
       // Special handling for STARTSWITH and ENDSWITH method expression
       if (operator != null && (operator == MethodOperator.STARTSWITH || operator == MethodOperator.ENDSWITH)) {
@@ -232,13 +233,13 @@ public class ODataExpressionParser {
     case METHOD:
       final MethodExpression methodExpression = (MethodExpression) whereExpression;
       String first = parseToJPAWhereExpression(methodExpression.getParameters().get(0), tableAlias, 
-          getIndexValue(positionalParameters), positionalParameters);
+          getIndexValue(index, positionalParameters), positionalParameters);
       String second =
           methodExpression.getParameterCount() > 1 ? parseToJPAWhereExpression(methodExpression.getParameters().get(1),
-              tableAlias, getIndexValue(positionalParameters), positionalParameters) : null;
+              tableAlias, getIndexValue(index, positionalParameters), positionalParameters) : null;
       String third =
           methodExpression.getParameterCount() > 2 ? parseToJPAWhereExpression(methodExpression.getParameters().get(2),
-              tableAlias, getIndexValue(positionalParameters), positionalParameters) : null;
+              tableAlias, getIndexValue(index, positionalParameters), positionalParameters) : null;
 
       switch (methodExpression.getMethod()) {
       case SUBSTRING:
@@ -270,12 +271,15 @@ public class ODataExpressionParser {
     }
   }
   
-  private static int getIndexValue(Map<Integer, Object> map) {
-    int index = 1;
-    for (Entry<Integer, Object> entry : map.entrySet()) {
-      index = entry.getKey();
+  private static int getIndexValue(int index, Map<Integer, Object> map) {
+    if (map != null && !map.isEmpty()) {
+      for (Entry<Integer, Object> entry : map.entrySet()) {
+        index = entry.getKey();
+      }
+      return index + 1;
+    } else {
+      return index;
     }
-    return index + 1;
   }
 
   /**
@@ -398,7 +402,7 @@ public class ODataExpressionParser {
     for (KeyPredicate keyPredicate : keyPredicates) {
 	  int index = null == getPositionalParametersThreadLocal() ||
 	    getPositionalParametersThreadLocal().size() == 0 ? 1 :
-		getIndexValue(getPositionalParametersThreadLocal());
+		getIndexValue(1, getPositionalParametersThreadLocal());
       if (i > 0) {
         keyFilters.append(JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.AND + JPQLStatement.DELIMITER.SPACE);
       }
@@ -490,7 +494,11 @@ public class ODataExpressionParser {
         if(edmMappedType != null){
           evaluateExpressionForString(uriLiteral, edmMappedType, positionalParameters, index);
         }else{
-          positionalParameters.put(index, String.valueOf(uriLiteral));
+          if (EdmSimpleTypeKind.Guid.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)) {
+            positionalParameters.put(index, UUID.fromString(uriLiteral.toString()));
+          } else {
+            positionalParameters.put(index, String.valueOf(uriLiteral));
+          }
         }
       }
       uriLiteral = "?" + index;
@@ -598,6 +606,8 @@ public class ODataExpressionParser {
       positionalParameters.put(index, charObjectArray);
     }else if(edmMappedType.equals(Character.class)){
       positionalParameters.put(index, (Character)uriLiteral.charAt(0));
+    }else if(edmMappedType.equals(UUID.class)){
+      positionalParameters.put(index, UUID.fromString(uriLiteral));
     }else {
       positionalParameters.put(index, String.valueOf(uriLiteral));
     }

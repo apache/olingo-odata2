@@ -26,6 +26,7 @@
 				<Property Name="time" Type="Edm.Time" Nullable="false" />
 				<Property Name="text" Type="Edm.String" Nullable="true"
 					MaxLength="255" />
+				<Property Name="ExternalRecommendationUUID" Type="Edm.Guid" Nullable="false"/>
 				<NavigationProperty Name="salesOrderHeader"
 					Relationship="SalesOrderProcessing.Note_SalesOrder" FromRole="Note"
 					ToRole="SalesOrder" />

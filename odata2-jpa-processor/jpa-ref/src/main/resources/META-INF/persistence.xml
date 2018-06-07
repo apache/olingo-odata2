@@ -24,8 +24,10 @@
 		<class>org.apache.olingo.odata2.jpa.processor.ref.model.Category</class>
 		<class>org.apache.olingo.odata2.jpa.processor.ref.model.Material</class>
 		<class>org.apache.olingo.odata2.jpa.processor.ref.model.Employee</class>
+		<class>org.apache.olingo.odata2.jpa.processor.ref.model.SampleGuid</class>
 		<class>org.apache.olingo.odata2.jpa.processor.ref.converter.BlobToByteConverter</class>
 		<class>org.apache.olingo.odata2.jpa.processor.ref.converter.ClobToStringConverter</class>
+		<class>org.apache.olingo.odata2.jpa.processor.ref.converter.UUIDConverter</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:apache.olingo.jpa.sample" />

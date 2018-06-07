@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +49,6 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelExcepti
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContext;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextType;
-import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLContextView;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLJoinContextView;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLJoinSelectSingleContextView;
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLSelectContextView;
@@ -58,7 +56,6 @@ import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLSelectSingleContextVi
 import org.apache.olingo.odata2.jpa.processor.api.jpql.JPQLStatement;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.core.ODataExpressionParser;
-import org.apache.olingo.odata2.jpa.processor.core.jpql.JPQLSelectContext;
 
 public class JPAQueryBuilder {
 
