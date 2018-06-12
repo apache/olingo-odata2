@@ -23,7 +23,7 @@
 	<parent>
         <groupId>io.cronapp</groupId>
         <artifactId>olingo-odata2-sample</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.23.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 	

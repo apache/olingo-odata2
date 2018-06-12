@@ -19,7 +19,7 @@
       <defaultValue>cars-annotations-sample</defaultValue>
     </requiredProperty>
     <requiredProperty key="version">
-      <defaultValue>1.0.0-SNAPSHOT</defaultValue>
+      <defaultValue>1.23.0-SNAPSHOT</defaultValue>
     </requiredProperty>
     <requiredProperty key="package">
       <defaultValue>org.apache.olingo.sample.annotation</defaultValue>
