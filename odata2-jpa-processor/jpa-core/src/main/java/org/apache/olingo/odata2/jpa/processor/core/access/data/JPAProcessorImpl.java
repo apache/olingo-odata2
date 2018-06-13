@@ -440,7 +440,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       if (content != null) {
         final ODataEntityParser oDataEntityParser = new ODataEntityParser(oDataJPAContext);
         final ODataEntry oDataEntry =
-            oDataEntityParser.parseEntry(oDataEntitySet, content, requestedContentType, false);
+            oDataEntityParser.parseEntry((UriInfo) createView, oDataEntitySet, content, requestedContentType, false);
         virtualJPAEntity.create(oDataEntry);
       } else if (properties != null) {
         virtualJPAEntity.create(properties);
@@ -598,7 +598,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       if (content != null) {
         final ODataEntityParser oDataEntityParser = new ODataEntityParser(oDataJPAContext);
         ODataEntry oDataEntry;
-        oDataEntry = oDataEntityParser.parseEntry(oDataEntitySet, content, requestContentType, false);
+        oDataEntry = oDataEntityParser.parseEntry((UriInfo) updateView, oDataEntitySet, content, requestContentType, false);
         virtualJPAEntity.update(oDataEntry);
       } else if (properties != null) {
         virtualJPAEntity.update(properties);

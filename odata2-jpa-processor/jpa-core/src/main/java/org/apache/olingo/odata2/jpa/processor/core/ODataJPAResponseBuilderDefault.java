@@ -58,12 +58,14 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneContext;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser;
+import org.apache.olingo.odata2.jpa.processor.core.access.data.ReflectionUtil;
 import org.apache.olingo.odata2.jpa.processor.core.callback.JPAExpandCallBack;
 import org.apache.olingo.odata2.jpa.processor.core.callback.JPATombstoneCallBack;
 
@@ -160,8 +162,20 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       }
       EntityProviderWriteProperties feedProperties = null;
       feedProperties = getEntityProviderProperties(oDataJPAContext, resultsView);
-      odataResponse =
-          EntityProvider.writeEntry(contentType, resultsView.getTargetEntitySet(), edmPropertyValueMap, feedProperties);
+
+      if (resultsView.getTargetType() instanceof EdmEntityType) {
+        odataResponse =
+            EntityProvider.writeEntry(contentType, resultsView.getTargetEntitySet(), edmPropertyValueMap, feedProperties);
+      } else {
+        EdmProperty property = ((UriInfoImpl) resultsView).getPropertyPath().get(0);
+        if (((UriInfoImpl) resultsView).isValue()) {
+          odataResponse =
+              EntityProvider.writePropertyValue(property, edmPropertyValueMap.get(property.getName()));
+        } else {
+          odataResponse =
+              EntityProvider.writeProperty(contentType, property, edmPropertyValueMap.get(property.getName()));
+        }
+      }
 
       odataResponse = ODataResponse.fromResponse(odataResponse).status(HttpStatusCodes.OK).build();
 
@@ -218,10 +232,23 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
         throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
       }
 
-      odataResponse =
-          EntityProvider.writeEntry(contentType, uriInfo.getTargetEntitySet(), edmPropertyValueMap, feedProperties);
+      if (uriInfo.getTargetType() instanceof EdmEntityType) {
+        odataResponse =
+            EntityProvider.writeEntry(contentType, uriInfo.getTargetEntitySet(), edmPropertyValueMap, feedProperties);
+      } else {
+        EdmProperty property = ((UriInfoImpl) uriInfo).getPropertyPath().get(0);
+        if (((UriInfo) uriInfo).isValue()) {
+          odataResponse =
+              EntityProvider.writePropertyValue(property, edmPropertyValueMap.get(property.getName()));
+        } else {
+          odataResponse =
+              EntityProvider.writeProperty(contentType, property, edmPropertyValueMap.get(property.getName()));
+        }
+
+      }
 
       odataResponse = ODataResponse.fromResponse(odataResponse).status(HttpStatusCodes.CREATED).build();
+
 
     } catch (EntityProviderException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);

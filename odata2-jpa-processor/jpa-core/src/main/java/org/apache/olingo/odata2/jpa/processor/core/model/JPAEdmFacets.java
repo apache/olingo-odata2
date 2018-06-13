@@ -53,9 +53,6 @@ public class JPAEdmFacets {
     setNullable(column, edmProperty);
 
     switch (edmTypeKind) {
-    case Binary:
-      setMaxLength(column, edmProperty);
-      break;
     case DateTime:
       setPrecision(column, edmProperty);
       break;

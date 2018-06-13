@@ -87,5 +87,12 @@
 			<artifactId>olingo-odata2-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>io.cronapp</groupId>
+            <artifactId>olingo-odata2-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 	</dependencies>
 </project>

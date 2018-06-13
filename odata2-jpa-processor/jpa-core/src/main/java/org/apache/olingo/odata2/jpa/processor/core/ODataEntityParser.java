@@ -19,13 +19,11 @@
 package org.apache.olingo.odata2.jpa.processor.core;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
@@ -33,9 +31,15 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.exception.ODataException;
 import org.apache.olingo.odata2.api.processor.ODataContext;
+import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
 import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.UriParser;
+import org.apache.olingo.odata2.core.ep.entry.EntryMetadataImpl;
+import org.apache.olingo.odata2.core.ep.entry.MediaMetadataImpl;
+import org.apache.olingo.odata2.core.ep.entry.ODataEntryImpl;
+import org.apache.olingo.odata2.core.uri.ExpandSelectTreeNodeImpl;
+import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
 
@@ -54,15 +58,28 @@ public final class ODataEntityParser {
     }
   }
 
-  public final ODataEntry parseEntry(final EdmEntitySet entitySet,
+  public final ODataEntry parseEntry(final UriInfo info, final EdmEntitySet entitySet,
       final InputStream content, final String requestContentType, final boolean merge)
       throws ODataBadRequestException {
     ODataEntry entryValues;
     try {
       EntityProviderReadProperties entityProviderProperties =
           EntityProviderReadProperties.init().mergeSemantic(merge).build();
-      entryValues = EntityProvider.readEntry(requestContentType, entitySet, content, entityProviderProperties);
-    } catch (EntityProviderException e) {
+      if (info.isValue()) {
+        EdmProperty property = info.getPropertyPath().get(0);
+        Object value = EntityProvider.readPropertyValue(property, content);
+        HashMap<String, Object> properties = new HashMap<String, Object>();
+        MediaMetadataImpl mediaMetadata = new MediaMetadataImpl();
+        EntryMetadataImpl entryMetadata = new EntryMetadataImpl();
+        ExpandSelectTreeNodeImpl expandSelectTree = new ExpandSelectTreeNodeImpl();
+        properties.put(property.getName(), value);
+        entryValues = new ODataEntryImpl(properties,mediaMetadata,entryMetadata,expandSelectTree);
+
+      } else {
+
+        entryValues = EntityProvider.readEntry(requestContentType, entitySet, content, entityProviderProperties);
+      }
+    } catch (Exception e) {
       throw new ODataBadRequestException(ODataBadRequestException.BODY, e);
     }
     return entryValues;
