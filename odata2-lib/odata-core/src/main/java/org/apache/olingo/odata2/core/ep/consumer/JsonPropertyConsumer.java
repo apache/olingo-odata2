@@ -209,6 +209,7 @@ public class JsonPropertyConsumer {
         break;
       case Single:
       case Double:
+      case Decimal:
         if (tokenType == JsonToken.STRING) {
           value = reader.nextString();
         } else if (tokenType == JsonToken.NUMBER) {

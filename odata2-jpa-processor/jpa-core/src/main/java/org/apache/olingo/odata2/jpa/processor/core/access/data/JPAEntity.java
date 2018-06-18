@@ -520,11 +520,27 @@ public class JPAEntity {
 
     if (entityPropertyValue != null || isNullable) {
       if (propertyName != null) {
-        method.invoke(entity, propertyName, entityPropertyValue);
+        if (entityPropertyValue == null) {
+          try {
+            method.invoke(entity, propertyName, new Object[]{null});
+          } catch(Exception e) {
+            //abafa
+          }
+        }
+        else {
+          method.invoke(entity, propertyName, entityPropertyValue);
+        }
         return;
       }
       Class<?> parameterType = method.getParameterTypes()[0];
-      if (type != null && type.getDefaultType().equals(String.class)) {
+      if (entityPropertyValue == null) {
+        try {
+          method.invoke(entity, new Object[]{null});
+        } catch(Exception e) {
+          //abafa
+        }
+      }
+      else if (type != null && type.getDefaultType().equals(String.class)) {
         if (parameterType.equals(String.class)) {
           method.invoke(entity, entityPropertyValue);
         } else if (parameterType.equals(char[].class)) {
