@@ -70,7 +70,11 @@ public class Decoder {
           }
           encodedPart = -2;
         } else {
+          if (c == '+') {
+            result[position++] = (byte) ' ';
+          } else {
           result[position++] = (byte) c;
+        }
         }
       } else {
         throw new IllegalArgumentException();
