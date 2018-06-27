@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Blob;
@@ -26,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 
+import javax.persistence.Id;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -382,14 +384,21 @@ public class JPAEntity {
                 if (expression != null) {
                   try {
                     Object o = jpaEntity;
+                    Object lastObject = o;
+                    Method lastSet = null;
+                    Method mget = null;
+                    Method mset = null;
                     String[] parts = expression.split("\\.");
                     for (int i = start; i < parts.length; i++) {
                       String p = parts[i];
 
-                      Method mget = ReflectionUtil.getMethod(o, "get" + p);
-                      Method mset = ReflectionUtil.getMethod(o, "set" + p);
+                      lastSet = mset;
+
+                      mget = ReflectionUtil.getMethod(o, "get" + p);
+                      mset = ReflectionUtil.getMethod(o, "set" + p);
 
                       if (i < parts.length - 1) {
+                        lastObject = o;
                         Object value = mget.invoke(o);
                         if (value == null) {
                           value = mget.getReturnType().newInstance();
@@ -399,8 +408,14 @@ public class JPAEntity {
                       }
 
                       if (i == parts.length -1) {
-                        setProperty(mset, o, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
-                            .getType(), isNullable);
+                        Field f = ReflectionUtil.getField(o, p);
+                        if (oDataEntryProperties.get(propertyName) == null && f.getAnnotation(Id.class) != null && lastSet != null) {
+                          setProperty(lastSet, lastObject, null, (EdmSimpleType) edmTyped
+                              .getType(), isNullable);
+                        } else {
+                          setProperty(mset, o, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
+                              .getType(), isNullable);
+                        }
                       }
                     }
                   } catch(Exception e1) {
@@ -522,6 +537,10 @@ public class JPAEntity {
       final EdmSimpleType type, String propertyName, boolean isNullable) throws
       IllegalAccessException, IllegalArgumentException, InvocationTargetException, ODataJPARuntimeException, 
       EdmException {
+
+    if (method == null) {
+      throw new RuntimeException("Null");
+    }
 
     if (entityPropertyValue != null || isNullable) {
       if (propertyName != null) {
