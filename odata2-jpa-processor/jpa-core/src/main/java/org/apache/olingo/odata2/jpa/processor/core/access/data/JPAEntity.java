@@ -334,9 +334,9 @@ public class JPAEntity {
 
         propertyNames = new HashSet<String>();
         propertyNames.addAll(oDataEntryProperties.keySet());
-        for (String key : embeddableKeys.keySet()) {
-          propertyNames.remove(key);
-        }
+        //for (String key : embeddableKeys.keySet()) {
+        //propertyNames.remove(key);
+        //}
       } else {
         propertyNames = oDataEntryProperties.keySet();
       }
@@ -362,7 +362,7 @@ public class JPAEntity {
           EdmProperty edmProperty = (EdmProperty)oDataEntityType.getProperty(propertyName);
           boolean isNullable = edmProperty.getFacets() == null ? (keyNames.contains(propertyName)? false : true)
               : edmProperty.getFacets().isNullable() == null ? true : edmProperty.getFacets().isNullable();
-          if (isVirtual) {
+          if (isVirtual || accessModifier == null) {
             try {
               setProperty(accessModifier, jpaEntity, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
                   .getType(), propertyName, isNullable);
@@ -374,11 +374,16 @@ public class JPAEntity {
                 JPAEdmMappingImpl mapping = ((JPAEdmMappingImpl) ((EdmSimplePropertyImplProv) edmTyped).getMapping());
 
                 String expression = mapping.getInternalExpression();
+                int start = 1;
+                if (expression == null && accessModifier == null) {
+                  expression = mapping.getInternalName();
+                  start = 0;
+                }
                 if (expression != null) {
                   try {
                     Object o = jpaEntity;
                     String[] parts = expression.split("\\.");
-                    for (int i = 1; i < parts.length; i++) {
+                    for (int i = start; i < parts.length; i++) {
                       String p = parts[i];
 
                       Method mget = ReflectionUtil.getMethod(o, "get" + p);
