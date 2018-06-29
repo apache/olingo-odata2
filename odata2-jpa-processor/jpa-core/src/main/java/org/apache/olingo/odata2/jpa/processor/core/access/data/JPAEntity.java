@@ -344,6 +344,8 @@ public class JPAEntity {
       }
 
       boolean isVirtual = false;
+      Map<String, Object> created = new HashMap();
+
       for (String propertyName : propertyNames) {
         EdmTyped edmTyped = (EdmTyped) oDataEntityType.getProperty(propertyName);
         if (edmTyped instanceof EdmProperty) {
@@ -375,12 +377,16 @@ public class JPAEntity {
               } catch(Exception e3) {
                 JPAEdmMappingImpl mapping = ((JPAEdmMappingImpl) ((EdmSimplePropertyImplProv) edmTyped).getMapping());
 
+                boolean customType = true;
+
                 String expression = mapping.getInternalExpression();
                 int start = 1;
                 if (expression == null && accessModifier == null) {
                   expression = mapping.getInternalName();
                   start = 0;
+                  customType = false;
                 }
+
                 if (expression != null) {
                   try {
                     Object o = jpaEntity;
@@ -389,8 +395,17 @@ public class JPAEntity {
                     Method mget = null;
                     Method mset = null;
                     String[] parts = expression.split("\\.");
+
+                    String path = "";
+                    boolean hasObject = false;
                     for (int i = start; i < parts.length; i++) {
                       String p = parts[i];
+
+                      if (!path.isEmpty()) {
+                        path += ".";
+                      }
+
+                      path += p;
 
                       lastSet = mset;
 
@@ -400,11 +415,15 @@ public class JPAEntity {
                       if (i < parts.length - 1) {
                         lastObject = o;
                         Object value = mget.invoke(o);
-                        if (value == null) {
+
+                        if (value == null || (value != null && !created.containsKey(path))) {
                           value = mget.getReturnType().newInstance();
                           mset.invoke(o, value);
+                          created.put(path, value);
                         }
+
                         o = value;
+                        hasObject = true;
                       }
 
                       if (i == parts.length -1) {
@@ -413,8 +432,12 @@ public class JPAEntity {
                           setProperty(lastSet, lastObject, null, (EdmSimpleType) edmTyped
                               .getType(), isNullable);
                         } else {
-                          setProperty(mset, o, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
-                              .getType(), isNullable);
+                          if (hasObject && f.getAnnotation(Id.class) == null) {
+                            continue;
+                          } else {
+                            setProperty(mset, o, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
+                                .getType(), isNullable);
+                          }
                         }
                       }
                     }
