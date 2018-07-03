@@ -26,11 +26,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
+import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
@@ -410,6 +413,32 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
               joinColumnNames.add(name);
               currentRefAttribute = referencedAttribute;
               break;
+            } else if(annotatedElement2.getAnnotation(AttributeOverrides.class) != null) {
+              AttributeOverrides attributeOverrides = annotatedElement2.getAnnotation(AttributeOverrides.class);
+              if(attributeOverrides != null && referencedAttribute instanceof SingularAttribute) {
+                boolean found = false;
+                // Check if there there is the column name in the defined overrides
+                for(AttributeOverride attributeOverride : attributeOverrides.value()) {
+                  if(attributeOverride.column() != null &&
+                      joinColumn.referencedColumnName().equals(attributeOverride.column().name())) {
+                    name[1] = attributeOverride.column().name();
+                    // add the column
+                    joinColumnNames.add(name);
+                    // get the correct attribute from the embeddable type
+                    if(((SingularAttribute<?,?>)referencedAttribute).getType() instanceof EmbeddableType) {
+                      EmbeddableType<?> embedableTypeAttribute = (EmbeddableType<?>) ((SingularAttribute<?, ?>) referencedAttribute).getType();
+                      currentRefAttribute = embedableTypeAttribute.getDeclaredAttribute(attributeOverride.name());
+                    } else {
+                      currentRefAttribute = referencedAttribute;
+                    }
+                    found = true;
+                    break;
+                  }
+                }
+                if(found) {
+                  break;
+                }
+              } 
             }
           }
         }
