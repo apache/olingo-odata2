@@ -477,6 +477,7 @@ public final class JPAEntityParser {
         }
         method.setAccessible(true);
         propertyValue = getPropertyValue(method, propertyValue,namePart);
+        isVirtualAccess = false;
       }
     } catch (NoSuchMethodException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);

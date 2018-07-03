@@ -36,6 +36,7 @@ public class EntityType extends ComplexType {
   private CustomizableFeedMappings customizableFeedMappings;
   private Key key;
   private List<NavigationProperty> navigationProperties;
+  private boolean showMetadata = true;
 
   /**
    * @return <b>boolean</b> if this EntityType is a media resource
@@ -227,5 +228,13 @@ public class EntityType extends ComplexType {
     }
 
     return newObj;
+  }
+
+  public boolean showMetadata() {
+    return showMetadata;
+  }
+
+  public void setShowMetadata(boolean showMetadata) {
+    this.showMetadata = showMetadata;
   }
 }
