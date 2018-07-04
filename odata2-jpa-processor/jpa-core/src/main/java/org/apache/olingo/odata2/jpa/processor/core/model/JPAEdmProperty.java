@@ -370,13 +370,13 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
     }
 
     private void buildForeignKey(final JoinColumn joinColumn, final Attribute<?, ?> jpaAttribute)
-        throws ODataJPAModelException,
-        ODataJPARuntimeException {
+        throws ODataJPAModelException, ODataJPARuntimeException {
+
       joinColumnNames = joinColumnNames == null ? new ArrayList<String[]>() : joinColumnNames;
       String[] name = { null, null };
-      name[0] = "".equals(joinColumn.name()) == true ? jpaAttribute.getName() : joinColumn.name();
+      name[0] = "".equals(joinColumn.name()) ? jpaAttribute.getName() : joinColumn.name();
 
-      EntityType<?> referencedEntityType = null;
+      EntityType<?> referencedEntityType;
       if (jpaAttribute.isCollection()) {
         referencedEntityType =
             metaModel.entity(((PluralAttribute<?, ?, ?>) currentAttribute).getElementType().getJavaType());
@@ -417,7 +417,7 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
               AttributeOverrides attributeOverrides = annotatedElement2.getAnnotation(AttributeOverrides.class);
               if(attributeOverrides != null && referencedAttribute instanceof SingularAttribute) {
                 boolean found = false;
-                // Check if there there is the column name in the defined overrides
+                // Check if the column name is in the defined overrides
                 for(AttributeOverride attributeOverride : attributeOverrides.value()) {
                   if(attributeOverride.column() != null &&
                       joinColumn.referencedColumnName().equals(attributeOverride.column().name())) {
@@ -426,8 +426,9 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
                     joinColumnNames.add(name);
                     // get the correct attribute from the embeddable type
                     if(((SingularAttribute<?,?>)referencedAttribute).getType() instanceof EmbeddableType) {
-                      EmbeddableType<?> embedableTypeAttribute = (EmbeddableType<?>) ((SingularAttribute<?, ?>) referencedAttribute).getType();
-                      currentRefAttribute = embedableTypeAttribute.getDeclaredAttribute(attributeOverride.name());
+                      EmbeddableType<?> embeddableTypeAttribute =
+                          (EmbeddableType<?>) ((SingularAttribute<?, ?>) referencedAttribute).getType();
+                      currentRefAttribute = embeddableTypeAttribute.getDeclaredAttribute(attributeOverride.name());
                     } else {
                       currentRefAttribute = referencedAttribute;
                     }
