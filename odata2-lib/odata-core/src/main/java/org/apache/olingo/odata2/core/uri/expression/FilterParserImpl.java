@@ -730,6 +730,10 @@ public class FilterParserImpl implements FilterParser {
     combination.add(new ParameterSet(boolean_, time, time));
     combination.add(new ParameterSet(boolean_, datetime, datetime));
     combination.add(new ParameterSet(boolean_, datetimeoffset, datetimeoffset));
+
+    combination.add(new ParameterSet(boolean_, datetime, datetimeoffset));
+    combination.add(new ParameterSet(boolean_, datetimeoffset, datetime));
+
     combination.add(new ParameterSet(boolean_, guid, guid));
     combination.add(new ParameterSet(boolean_, sbyte, sbyte));
     combination.add(new ParameterSet(boolean_, byte_, byte_));

@@ -34,6 +34,7 @@ public class EntitySet {
   private Documentation documentation;
   private List<AnnotationAttribute> annotationAttributes;
   private List<AnnotationElement> annotationElements;
+  private boolean showMetadata = true;
 
   /**
    * @return <b>String> name of this entity set
@@ -135,5 +136,13 @@ public class EntitySet {
   public EntitySet setAnnotationElements(final List<AnnotationElement> annotationElements) {
     this.annotationElements = annotationElements;
     return this;
+  }
+
+  public boolean showMMetadata() {
+    return showMetadata;
+  }
+
+  public void setShowMetadata(boolean showMetadata) {
+    this.showMetadata = showMetadata;
   }
 }
