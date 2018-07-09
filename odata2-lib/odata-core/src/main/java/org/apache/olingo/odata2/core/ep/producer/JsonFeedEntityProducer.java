@@ -114,7 +114,7 @@ public class JsonFeedEntityProducer {
       }
       first1 = false;
       writer.beginObject();
-      writer.namedStringValue("name", callback.getFunction());
+      writer.namedStringValue("function", callback.getFunction());
       writer.separator();
       writer.name("params");
       writer.beginArray();
