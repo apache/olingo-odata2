@@ -138,7 +138,7 @@ public class EntitySet {
     return this;
   }
 
-  public boolean showMMetadata() {
+  public boolean showMetadata() {
     return showMetadata;
   }
 
