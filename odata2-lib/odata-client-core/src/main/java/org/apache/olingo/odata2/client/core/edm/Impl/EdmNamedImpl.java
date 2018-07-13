@@ -61,7 +61,7 @@ public abstract class EdmNamedImpl implements EdmNamed {
   }
 
   public void setName(String name) throws EdmException  {
-    this.name = getValidatedName(name);
+    this.name = name;
   }
 
   @Override
