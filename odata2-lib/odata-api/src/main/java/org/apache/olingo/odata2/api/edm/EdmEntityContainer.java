@@ -33,6 +33,12 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotatable {
    * @return <b>boolean</b> true if this is the default container
    */
   boolean isDefaultEntityContainer();
+  
+  /**
+   * @return <b>String</b> namepspace of the container
+   * @throws EdmException
+   */
+  String getNamespace() throws EdmException;
 
   /**
    * Get contained EntitySet by name

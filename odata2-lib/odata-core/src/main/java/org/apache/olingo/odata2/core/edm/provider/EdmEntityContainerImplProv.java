@@ -55,7 +55,8 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
   private EdmEntityContainer edmExtendedEntityContainer;
   private boolean isDefaultContainer;
   private EdmAnnotations annotations;
-
+  private String namespace;
+  
   public EdmEntityContainerImplProv(final EdmImplProv edm, final EntityContainerInfo entityContainerInfo)
       throws EdmException {
     this.edm = edm;
@@ -273,5 +274,31 @@ public class EdmEntityContainerImplProv implements EdmEntityContainer, EdmAnnota
       throw new EdmException(EdmException.PROVIDERPROBLEM, "No container at all found.");
     }
     return entityContainerHierachy;
+  }
+  
+
+  @Override
+  public String getNamespace()  throws EdmException{
+    try {
+      if (namespace == null) {
+        List<Schema> schemas;
+        schemas = edm.edmProvider.getSchemas();
+        for (Schema schema : schemas) {
+          List<EntityContainer> containers = schema.getEntityContainers();
+          for (EntityContainer container : containers) {
+            if (container.getName().equals(entityContainerInfo.getName())) {
+              this.namespace = schema.getNamespace();
+              break;
+            }
+          }
+          if (namespace != null) {
+            break;
+          }
+        }
+      }
+    } catch (ODataException e) {
+      throw new EdmException(EdmException.PROVIDERPROBLEM, e);
+    }
+    return namespace;
   }
 }

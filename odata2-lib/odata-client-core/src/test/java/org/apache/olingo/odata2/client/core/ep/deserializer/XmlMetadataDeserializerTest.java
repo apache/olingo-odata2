@@ -963,7 +963,33 @@ public class XmlMetadataDeserializerTest extends AbstractXmlDeserializerTest {
       }
     }
   }
-
+  
+  @Test
+  public void testEntityContainer() throws XMLStreamException, 
+  EntityProviderException, EdmException, UnsupportedEncodingException {
+    final String xmWithEntityContainer =
+        "<edmx:Edmx Version=\"1.0\" xmlns:edmx=\"" + Edm.NAMESPACE_EDMX_2007_06 + "\">"
+            + "<edmx:DataServices m:DataServiceVersion=\"2.0\" xmlns:m=\"" + Edm.NAMESPACE_M_2007_08 + "\">"
+            + "<Schema Namespace=\"" + NAMESPACE + "\" xmlns=\"" + Edm.NAMESPACE_EDM_2008_09 + "\">"
+            + "<EntityType Name= \"Employee\" m:HasStream=\"true\">" + "<Key><PropertyRef Name=\"EmployeeId\"/></Key>"
+            + "<Property Name=\"" + propertyNames[0] + "\" Type=\"Edm.String\" Nullable=\"false\"/>"
+            + "<Property Name=\"" + propertyNames[1] + "\" Type=\"Edm.String\" m:FC_TargetPath=\"SyndicationTitle\"/>"
+            + "</EntityType>" + "<EntityContainer Name=\"Container1\" m:IsDefaultEntityContainer=\"true\">"
+            + "<EntitySet Name=\"Employees\" EntityType=\"RefScenario.Employee\"/>" + "</EntityContainer>"
+            + "</Schema>" + "</edmx:DataServices>" + "</edmx:Edmx>";
+    XmlMetadataDeserializer parser = new XmlMetadataDeserializer();
+    InputStream reader = createStreamReader(xmWithEntityContainer);
+    EdmDataServices result = parser.readMetadata(reader, true);
+    assertEquals("Container1", result.getEdm().getEntityContainer("Container1").getName());
+    for (EdmSchema schema : result.getEdm().getSchemas()) {
+      for (EdmEntityContainer container : schema.getEntityContainers()) {
+        assertEquals("Container1", container.getName());
+        assertEquals(Boolean.TRUE, container.isDefaultEntityContainer());
+        assertEquals(NAMESPACE, container.getNamespace());
+      }
+    }
+  }
+  
   @Test
   public void testAssociationSet() throws XMLStreamException, 
   EntityProviderException, EdmException, UnsupportedEncodingException {

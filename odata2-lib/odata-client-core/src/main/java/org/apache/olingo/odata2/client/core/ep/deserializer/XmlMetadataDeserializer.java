@@ -503,6 +503,7 @@ public class XmlMetadataDeserializer {
     if (edmAssociationSets != null && !edmAssociationSets.isEmpty()) {
       setConatinerInAssociationSet(edmAssociationSets, container);
     }
+    container.setNamespace(currentNamespace);
     container.setEdmEntitySets(edmEntitySets).setEdmAssociationSets(edmAssociationSets).setEdmFunctionImports(
         edmFunctionImports);
 

@@ -77,6 +77,7 @@ public class EdmEntityContainerImplProvTest extends BaseTest {
     entityContainers.add(entityContainer);
     entityContainers.add(parentEntityContainer);
     when(mockedSchema.getEntityContainers()).thenReturn(entityContainers);
+    when(mockedSchema.getNamespace()).thenReturn("Namespace");
     schemas.add(mockedSchema);
     when(edmProvider.getSchemas()).thenReturn(schemas);
 
@@ -125,6 +126,11 @@ public class EdmEntityContainerImplProvTest extends BaseTest {
   @Test
   public void testEntityContainerName() throws EdmException {
     assertEquals("Container", edmEntityContainer.getName());
+  }
+
+  @Test
+  public void testEntityContainerNamespace() throws EdmException {
+    assertEquals("Namespace", edmEntityContainer.getNamespace());
   }
 
   @Test

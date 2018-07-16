@@ -52,6 +52,7 @@ public class EdmEntityContainerImpl implements EdmEntityContainer, EdmAnnotatabl
   private EdmDocumentation documentation;
   private String name;
   private String extendz;
+  private String namespace;
 
   public Map<String, EdmAssociationSet> getEdmAssociationSetMap() {
     return edmAssociationSetMap;
@@ -73,6 +74,10 @@ public class EdmEntityContainerImpl implements EdmEntityContainer, EdmAnnotatabl
     this.edm = edm;
   }
 
+  public void setNamespace(String namespace) throws EdmException {
+    this.namespace = namespace;
+  }
+  
   public ClientEdm getEdm() {
     return edm;
   }
@@ -217,5 +222,10 @@ public class EdmEntityContainerImpl implements EdmEntityContainer, EdmAnnotatabl
   @Override
   public String toString() {
       return String.format(name);
+  }
+  
+  @Override
+  public String getNamespace() throws EdmException {
+    return namespace;
   }
 }
