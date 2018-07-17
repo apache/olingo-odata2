@@ -100,9 +100,6 @@ public class EdmDecimal extends AbstractSimpleType {
   @Override
   protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
       final Class<T> returnType) throws EdmSimpleTypeException {
-    if (!validateLiteral(value, literalKind)) {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
-    }
     if (!validatePrecisionAndScale(value, facets)) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets));
     }
