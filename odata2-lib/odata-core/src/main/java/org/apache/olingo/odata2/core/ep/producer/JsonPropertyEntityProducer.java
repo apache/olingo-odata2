@@ -122,7 +122,9 @@ public class JsonPropertyEntityProducer {
       case Int16:
       case Int32:
       case Double:
-        jsonStreamWriter.unquotedValue(valueAsString);
+      case Single:
+      case Int64:
+          jsonStreamWriter.unquotedValue(valueAsString);
         break;
       case DateTime:
       case DateTimeOffset:
