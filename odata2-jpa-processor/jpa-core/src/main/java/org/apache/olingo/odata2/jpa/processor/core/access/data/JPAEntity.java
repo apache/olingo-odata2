@@ -377,14 +377,11 @@ public class JPAEntity {
               } catch(Exception e3) {
                 JPAEdmMappingImpl mapping = ((JPAEdmMappingImpl) ((EdmSimplePropertyImplProv) edmTyped).getMapping());
 
-                boolean customType = true;
-
                 String expression = mapping.getInternalExpression();
                 int start = 1;
                 if (expression == null && accessModifier == null) {
                   expression = mapping.getInternalName();
                   start = 0;
-                  customType = false;
                 }
 
                 if (expression != null) {
@@ -396,47 +393,68 @@ public class JPAEntity {
                     Method mset = null;
                     String[] parts = expression.split("\\.");
 
-                    String path = "";
-                    boolean hasObject = false;
-                    for (int i = start; i < parts.length; i++) {
-                      String p = parts[i];
+                    boolean canContinue = true;
+                    if (parts.length > 1) {
+                      Class clazz = jpaEntity.getClass();
+                      for (int i = start; i < parts.length; i++) {
+                        String p = parts[i];
+                        mget = ReflectionUtil.getMethod(o, "get" + p);
 
-                      if (!path.isEmpty()) {
-                        path += ".";
+                        if (i == parts.length - 1) {
+                          Field f = ReflectionUtil.getField(clazz, p);
+                          if (f != null) {
+                            canContinue = f.getAnnotation(Id.class) != null;
+                          }
+                        } else {
+                          clazz = mget.getReturnType();
+                        }
                       }
+                    }
 
-                      path += p;
+                    if (canContinue) {
+                      String path = "";
+                      mset = null;
+                      boolean hasObject = false;
+                      for (int i = start; i < parts.length; i++) {
+                        String p = parts[i];
 
-                      lastSet = mset;
-
-                      mget = ReflectionUtil.getMethod(o, "get" + p);
-                      mset = ReflectionUtil.getMethod(o, "set" + p);
-
-                      if (i < parts.length - 1) {
-                        lastObject = o;
-                        Object value = mget.invoke(o);
-
-                        if (value == null || (value != null && !created.containsKey(path))) {
-                          value = mget.getReturnType().newInstance();
-                          mset.invoke(o, value);
-                          created.put(path, value);
+                        if (!path.isEmpty()) {
+                          path += ".";
                         }
 
-                        o = value;
-                        hasObject = true;
-                      }
+                        path += p;
 
-                      if (i == parts.length -1) {
-                        Field f = ReflectionUtil.getField(o, p);
-                        if (oDataEntryProperties.get(propertyName) == null && f.getAnnotation(Id.class) != null && lastSet != null) {
-                          setProperty(lastSet, lastObject, null, (EdmSimpleType) edmTyped
-                              .getType(), isNullable);
-                        } else {
-                          if (hasObject && f.getAnnotation(Id.class) == null) {
-                            continue;
-                          } else {
-                            setProperty(mset, o, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
+                        lastSet = mset;
+
+                        mget = ReflectionUtil.getMethod(o, "get" + p);
+                        mset = ReflectionUtil.getMethod(o, "set" + p);
+
+                        if (i < parts.length - 1) {
+                          lastObject = o;
+                          Object value = mget.invoke(o);
+
+                          if (value == null || (value != null && !created.containsKey(path))) {
+                            value = mget.getReturnType().newInstance();
+                            mset.invoke(o, value);
+                            created.put(path, value);
+                          }
+
+                          o = value;
+                          hasObject = true;
+                        }
+
+                        if (i == parts.length - 1) {
+                          Field f = ReflectionUtil.getField(o, p);
+                          if (oDataEntryProperties.get(propertyName) == null && f.getAnnotation(Id.class) != null && lastSet != null) {
+                            setProperty(lastSet, lastObject, null, (EdmSimpleType) edmTyped
                                 .getType(), isNullable);
+                          } else {
+                            if (hasObject && f.getAnnotation(Id.class) == null) {
+                              continue;
+                            } else {
+                              setProperty(mset, o, oDataEntryProperties.get(propertyName), (EdmSimpleType) edmTyped
+                                  .getType(), isNullable);
+                            }
                           }
                         }
                       }
