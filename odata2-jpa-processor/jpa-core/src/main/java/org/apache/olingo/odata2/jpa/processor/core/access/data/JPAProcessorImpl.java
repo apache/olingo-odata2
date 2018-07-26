@@ -556,6 +556,8 @@ public class JPAProcessorImpl implements JPAProcessor {
         ((UriInfoImpl) createView).setKeyPredicates(predicates);
         ((UriInfoImpl) createView).setRawEntity(false);
 
+        em.clear();
+
         Object resultEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build((PutMergePatchUriInfo) createView), (UriInfo) createView);
 
         if (listener != null) {
