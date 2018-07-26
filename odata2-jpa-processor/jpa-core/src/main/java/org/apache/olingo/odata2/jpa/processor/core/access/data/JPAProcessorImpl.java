@@ -628,6 +628,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
       ((UriInfoImpl) updateView).setRawEntity(false);
 
+      em.clear();
       jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView);
 
       if (listener != null) {
