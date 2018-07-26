@@ -199,6 +199,7 @@ public class JsonPropertyConsumer {
       case SByte:
       case Int16:
       case Int32:
+      case Int64:
         if (tokenType == JsonToken.NUMBER) {
           value = reader.nextInt();
           value = value.toString();
@@ -209,6 +210,7 @@ public class JsonPropertyConsumer {
         break;
       case Single:
       case Double:
+      case Decimal:
         if (tokenType == JsonToken.STRING) {
           value = reader.nextString();
         } else if (tokenType == JsonToken.NUMBER) {

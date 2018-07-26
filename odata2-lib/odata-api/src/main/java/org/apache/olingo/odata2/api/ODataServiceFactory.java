@@ -84,4 +84,8 @@ public abstract class ODataServiceFactory {
     return null;
   }
 
+  public Exception handleException(Throwable throwable) {
+    return null;
+  }
+
 }

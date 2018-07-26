@@ -57,7 +57,7 @@ public abstract class EdmNamedImplProv implements EdmNamed {
 
   public EdmNamedImplProv(final EdmImplProv edm, final String name) throws EdmException {
     this.edm = edm;
-    this.name = getValidatedName(name);
+    this.name = name;
   }
 
   @Override

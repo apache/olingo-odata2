@@ -37,7 +37,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
  */
 public class EdmDateTimeOffset extends AbstractSimpleType {
 
-  private static final Pattern PATTERN = Pattern.compile(
+  public static final Pattern PATTERN = Pattern.compile(
       "\\p{Digit}{1,4}-\\p{Digit}{1,2}-\\p{Digit}{1,2}"
           + "T\\p{Digit}{1,2}:\\p{Digit}{1,2}(?::\\p{Digit}{1,2}(?:\\.\\p{Digit}{1,7})?)?"
           + "(Z|([-+]\\p{Digit}{1,2}:\\p{Digit}{2}))?");

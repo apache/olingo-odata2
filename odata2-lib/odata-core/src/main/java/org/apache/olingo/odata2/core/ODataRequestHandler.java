@@ -153,9 +153,15 @@ public class ODataRequestHandler {
       odataResponse = extendedResponse.build();
     } catch (final Exception e) {
       e.printStackTrace();
-      exception = e;
+
+      Exception newException = serviceFactory.handleException(e);
+      if (newException != null) {
+        exception = newException;
+      } else {
+        exception = e;
+      }
       odataResponse = new ODataExceptionWrapper(context, request.getQueryParameters(), request.getAcceptHeaders())
-          .wrapInExceptionResponse(e);
+          .wrapInExceptionResponse(exception);
     }
     context.stopRuntimeMeasurement(timingHandle);
 

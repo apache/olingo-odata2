@@ -38,7 +38,7 @@ public class Tokenizer {
   private static final Pattern FUNK =
       Pattern
           .compile("^(startswith|endswith|substring|substring|substringof|indexof|replace|tolower|toupper" +
-              "|trim|concat|length|year|mounth|day|hour|minute|second|round|ceiling|floor)( *)\\(");
+              "|trim|concat|length|year|month|day|hour|minute|second|round|ceiling|floor)( *)\\(");
   private static final Pattern AND_SUB1 = Pattern.compile("^(add|sub|mul|div|mod|not) ");
   private static final Pattern AND_SUB = Pattern.compile("^(and|or|eq|ne|lt|gt|le|ge) ");
   private static final Pattern prefix = Pattern.compile("^(X|binary|guid|datetime|datetimeoffset|time)'");

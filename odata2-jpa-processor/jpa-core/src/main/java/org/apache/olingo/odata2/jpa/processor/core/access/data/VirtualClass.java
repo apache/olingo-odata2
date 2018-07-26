@@ -6,11 +6,11 @@ public class VirtualClass {
   private HashMap<String, Object> map = new HashMap<String, Object>();
 
   public Object get(String name) {
-    return map.get(name);
+    return map.get(name.toLowerCase());
   }
 
   public VirtualClass set(String name, Object value) {
-    map.put(name, value);
+    map.put(name.toLowerCase(), value);
 
     return this;
   }

@@ -23,24 +23,21 @@ import org.apache.olingo.odata2.api.batch.BatchRequestPart;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmEntityType;
+import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.provider.EntitySet;
 import org.apache.olingo.odata2.api.ep.EntityProvider;
 import org.apache.olingo.odata2.api.ep.EntityProviderBatchProperties;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.exception.ODataNotImplementedException;
 import org.apache.olingo.odata2.api.processor.ODataRequest;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.PathInfo;
+import org.apache.olingo.odata2.api.uri.SelectItem;
 import org.apache.olingo.odata2.api.uri.UriInfo;
-import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityLinkUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetLinksUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
-import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
-import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.api.uri.info.*;
+import org.apache.olingo.odata2.core.uri.UriInfoImpl;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,7 +132,21 @@ public abstract class ODataJPADefaultProcessor extends ODataJPAProcessor {
     ODataResponse oDataResponse = null;
     try {
       oDataJPAContext.setODataContext(getContext());
+
+
+      EdmType type = null;
+
+      if (!(uriParserResultView.getTargetType() instanceof EdmEntityType)) {
+        type = uriParserResultView.getTargetType();
+        ((UriInfoImpl) uriParserResultView).setTargetType(uriParserResultView.getTargetEntitySet().getEntityType());
+      }
+
       Object jpaEntity = jpaProcessor.process(uriParserResultView, content, requestContentType);
+
+      if (type != null) {
+        ((UriInfoImpl) uriParserResultView).setTargetType(type);
+      }
+
       oDataResponse = responseBuilder.build(uriParserResultView, jpaEntity, contentType);
     } finally {
       close();
@@ -302,5 +313,39 @@ public abstract class ODataJPADefaultProcessor extends ODataJPAProcessor {
     } finally {
       close(true);
     }
+  }
+
+  @Override
+  public ODataResponse readEntitySimpleProperty(GetSimplePropertyUriInfo uriInfo, String contentType) throws ODataException {
+    ODataResponse oDataResponse = null;
+    try {
+      EdmType type = uriInfo.getTargetType();
+      ((UriInfoImpl) uriInfo).setTargetType(uriInfo.getTargetEntitySet().getEntityType());
+      oDataJPAContext.setODataContext(getContext());
+      Object jpaEntity = jpaProcessor.process((GetEntityUriInfo) uriInfo);
+      ((UriInfoImpl) uriInfo).setTargetType(type);
+      oDataResponse =
+          responseBuilder.build((GetEntityUriInfo) uriInfo, jpaEntity, contentType);
+    } finally {
+      close();
+    }
+    return oDataResponse;
+  }
+
+  @Override
+  public ODataResponse readEntitySimplePropertyValue(final GetSimplePropertyUriInfo uriInfo, final String contentType)
+      throws ODataException {
+    return readEntitySimpleProperty(uriInfo, contentType);
+  }
+
+  @Override
+  public ODataResponse updateEntitySimpleProperty(final PutMergePatchUriInfo uriInfo, final InputStream content,
+                                                  final String requestContentType, final String contentType) throws ODataException {
+    return updateEntity(uriInfo, content, requestContentType, true, contentType);
+  }
+
+  @Override
+  public ODataResponse updateEntitySimplePropertyValue(PutMergePatchUriInfo uriInfo, InputStream content, String requestContentType, String contentType) throws ODataException {
+    return updateEntity(uriInfo, content, requestContentType, true, contentType);
   }
 }

@@ -67,7 +67,7 @@ public class EdmTime extends AbstractSimpleType {
         literalKind == EdmLiteralKind.URI ? value.substring(5, value.length() - 1) : value);
     if (!matcher.matches()
         || (matcher.group(1) == null && matcher.group(2) == null && matcher.group(3) == null)) {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
+      return EdmDateTimeOffset.getInstance().internalValueOfString(value, literalKind, facets, returnType);
     }
 
     Calendar dateTimeValue = Calendar.getInstance();

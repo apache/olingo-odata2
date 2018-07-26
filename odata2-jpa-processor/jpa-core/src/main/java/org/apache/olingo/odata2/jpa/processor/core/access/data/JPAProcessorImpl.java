@@ -50,6 +50,7 @@ import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
 import org.apache.olingo.odata2.core.edm.provider.EdmEntityTypeImplProv;
+import org.apache.olingo.odata2.core.edm.provider.EdmSimplePropertyImplProv;
 import org.apache.olingo.odata2.core.uri.KeyPredicateImpl;
 import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.*;
@@ -181,14 +182,11 @@ public class JPAProcessorImpl implements JPAProcessor {
       }
       return result == null ? new ArrayList<Object>() : result;
     } catch (EdmException e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     } catch (InstantiationException e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     } catch (IllegalAccessException e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     }
   }
 
@@ -331,8 +329,7 @@ public class JPAProcessorImpl implements JPAProcessor {
         }
       } catch (Exception e) {
         em.getTransaction().rollback();
-        throw ODataJPARuntimeException.throwException(
-            ODataJPARuntimeException.ERROR_JPQL_DELETE_REQUEST, e);
+        throw new RuntimeException(e);
       }
     }
     return selectedObject;
@@ -400,15 +397,29 @@ public class JPAProcessorImpl implements JPAProcessor {
       final EdmEntitySet oDataEntitySet = newView.getTargetEntitySet();
       final EdmEntityType oDataEntityType = oDataEntitySet.getEntityType();
 
+      jpaEntity = ((JPAEdmMappingImpl) oDataEntityType.getMapping()).getJPAType().newInstance();
+
       if (((JPAEdmMappingImpl) oDataEntityType.getMapping()).isVirtualAccess()) {
-        jpaEntity = new VirtualClass();
-      } else {
-        jpaEntity = ((JPAEdmMappingImpl) oDataEntityType.getMapping()).getJPAType().newInstance();
+
+        JPAQueryBuilder queryBuilder = new JPAQueryBuilder(oDataJPAContext);
+        ODataJPAQueryExtensionEntityListener listener = null;
+        try {
+          listener = queryBuilder.getODataJPAQueryEntityListener((UriInfo) newView);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+
+        if (listener != null) {
+          Object newObj = listener.processNew(newView);
+          if (newObj != null) {
+            jpaEntity = newObj;
+          }
+        }
+
       }
 
     } catch (Exception e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     }
     return jpaEntity;
 
@@ -440,7 +451,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       if (content != null) {
         final ODataEntityParser oDataEntityParser = new ODataEntityParser(oDataJPAContext);
         final ODataEntry oDataEntry =
-            oDataEntityParser.parseEntry(oDataEntitySet, content, requestedContentType, false);
+            oDataEntityParser.parseEntry((UriInfo) createView, oDataEntitySet, content, requestedContentType, false);
         virtualJPAEntity.create(oDataEntry);
       } else if (properties != null) {
         virtualJPAEntity.create(properties);
@@ -545,6 +556,8 @@ public class JPAProcessorImpl implements JPAProcessor {
         ((UriInfoImpl) createView).setKeyPredicates(predicates);
         ((UriInfoImpl) createView).setRawEntity(false);
 
+        em.clear();
+
         Object resultEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build((PutMergePatchUriInfo) createView), (UriInfo) createView);
 
         if (listener != null) {
@@ -554,11 +567,9 @@ public class JPAProcessorImpl implements JPAProcessor {
         return resultEntity;
       }
     } catch (ODataBadRequestException e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     } catch (EdmException e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     }
     return null;
   }
@@ -598,7 +609,7 @@ public class JPAProcessorImpl implements JPAProcessor {
       if (content != null) {
         final ODataEntityParser oDataEntityParser = new ODataEntityParser(oDataJPAContext);
         ODataEntry oDataEntry;
-        oDataEntry = oDataEntityParser.parseEntry(oDataEntitySet, content, requestContentType, false);
+        oDataEntry = oDataEntityParser.parseEntry((UriInfo) updateView, oDataEntitySet, content, requestContentType, false);
         virtualJPAEntity.update(oDataEntry);
       } else if (properties != null) {
         virtualJPAEntity.update(properties);
@@ -617,21 +628,19 @@ public class JPAProcessorImpl implements JPAProcessor {
 
       ((UriInfoImpl) updateView).setRawEntity(false);
 
+      em.clear();
       jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView);
 
       if (listener != null) {
         listener.execEvent(((UriInfoImpl) updateView), oDataEntityType, "afterUpdate", jpaEntity);
       }
     } catch (ODataBadRequestException e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     } catch (EdmException e) {
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     } catch (PersistenceException e) {
       em.getTransaction().rollback();
-      throw ODataJPARuntimeException.throwException(
-          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+      throw new RuntimeException(e);
     }
 
     return jpaEntity;

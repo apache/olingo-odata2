@@ -12,7 +12,7 @@
 
 	<groupId>io.cronapp</groupId>
 	<artifactId>olingo-odata2-parent</artifactId>
-	<version>1.22.0</version>
+	<version>1.23.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>${project.artifactId}</name>
@@ -84,7 +84,6 @@
 		<module>odata2-jpa-processor</module>
 		<module>odata2-annotation-processor</module>
 		<module>odata2-dist</module>
-		<module>odata2-sample</module>
 	</modules>
 
 	<build>

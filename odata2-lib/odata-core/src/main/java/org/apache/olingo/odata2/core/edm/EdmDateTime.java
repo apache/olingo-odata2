@@ -94,9 +94,9 @@ public class EdmDateTime extends AbstractSimpleType {
       valueString = value;
     }
 
-    final Matcher matcher = PATTERN.matcher(valueString);
+    Matcher matcher = PATTERN.matcher(valueString);
     if (!matcher.matches()) {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
+       return EdmDateTimeOffset.getInstance().internalValueOfString(value, literalKind, facets, returnType);
     }
 
     dateTimeValue.set(

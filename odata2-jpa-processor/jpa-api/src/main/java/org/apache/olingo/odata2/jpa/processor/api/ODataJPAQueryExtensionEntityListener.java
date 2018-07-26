@@ -18,22 +18,20 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.api;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.apache.olingo.odata2.api.ClientCallback;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
-import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.exception.ODataApplicationException;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.info.*;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Extend this class to build JPA Query object for a given OData request. The extended class can be registered as JPA
@@ -160,5 +158,9 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
 
   public void execEvent(final UriInfo infoView, final EdmEntityType entityType, String type, Object data) throws ODataJPARuntimeException {
 
+  }
+
+  public Object processNew(final UriInfo infoView) {
+    return null;
   }
 }
