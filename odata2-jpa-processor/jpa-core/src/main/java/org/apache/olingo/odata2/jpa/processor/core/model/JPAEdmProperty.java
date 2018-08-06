@@ -19,6 +19,7 @@
 package org.apache.olingo.odata2.jpa.processor.core.model;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -193,10 +194,10 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
       String targetEntityName = null;
       String entityTypeName = null;
       if (isBuildModeComplexType) {
-        jpaAttributes = sortInAscendingOrder(complexTypeView.getJPAEmbeddableType().getAttributes());
+        jpaAttributes = sortInAscendingOrder(complexTypeView.getJPAEmbeddableType().getAttributes(), complexTypeView.getJPAEmbeddableType().getJavaType());
         entityTypeName = complexTypeView.getJPAEmbeddableType().getJavaType().getSimpleName();
       } else {
-        jpaAttributes = sortInAscendingOrder(entityTypeView.getJPAEntityType().getAttributes());
+        jpaAttributes = sortInAscendingOrder(entityTypeView.getJPAEntityType().getAttributes(), entityTypeView.getJPAEntityType().getJavaType());
         entityTypeName = entityTypeView.getJPAEntityType().getName();
       }
 
@@ -453,23 +454,28 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
 
     }
 
-    @SuppressWarnings("rawtypes")
-    private List<Attribute<?, ?>> sortInAscendingOrder(final Set<?> jpaAttributes) {
-      List<Attribute<?, ?>> jpaAttributeList = new ArrayList<Attribute<?, ?>>();
-      Attribute<?, ?> smallestJpaAttribute;
-      Attribute<?, ?> currentJpaAttribute;
-      while (!jpaAttributes.isEmpty()) {
-        Iterator itr = jpaAttributes.iterator();
-        smallestJpaAttribute = (Attribute<?, ?>) itr.next();
-        while (itr.hasNext()) {
-          currentJpaAttribute = (Attribute<?, ?>) itr.next();
-          if (smallestJpaAttribute.getName().compareTo(currentJpaAttribute.getName()) > 0) {
-            smallestJpaAttribute = currentJpaAttribute;
-          }
+    private Attribute<?, ?> findField(final Set<?> jpaAttributes, String name) {
+      for (Object o: jpaAttributes) {
+        if(((Attribute<?, ?>) o).getName().equals(name)) {
+          return ((Attribute<?, ?>) o);
         }
-        jpaAttributeList.add(smallestJpaAttribute);
-        jpaAttributes.remove(smallestJpaAttribute);
       }
+
+      return null;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private List<Attribute<?, ?>> sortInAscendingOrder(final Set<?> jpaAttributes, Class clazz) {
+      List<Attribute<?, ?>> jpaAttributeList = new ArrayList<Attribute<?, ?>>();
+      Field[] fields = clazz.getDeclaredFields();
+
+      for (Field field: fields) {
+        Attribute<?, ?> attr = findField(jpaAttributes, field.getName());
+        if (attr != null) {
+          jpaAttributeList.add(attr);
+        }
+      }
+
       return jpaAttributeList;
     }
   }
