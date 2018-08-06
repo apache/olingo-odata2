@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
+import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteral;
 import org.apache.olingo.odata2.api.edm.EdmLiteralException;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
@@ -31,6 +32,8 @@ import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
  *  
  */
 public class EdmSimpleTypeFacadeImpl implements EdmSimpleTypeFacade {
+  
+  private EdmFacets facets = null;
 
   @Override
   public EdmLiteral parseUriLiteral(final String uriLiteral) throws EdmLiteralException {
@@ -46,7 +49,7 @@ public class EdmSimpleTypeFacadeImpl implements EdmSimpleTypeFacade {
         && uriLiteral.startsWith("'") && uriLiteral.endsWith("'")) {
       try {
         final EdmSimpleType type = getEdmSimpleType(EdmSimpleTypeKind.String);
-        return new EdmLiteral(type, type.valueOfString(uriLiteral, EdmLiteralKind.URI, null, String.class));
+        return new EdmLiteral(type, type.valueOfString(uriLiteral, EdmLiteralKind.URI, facets, String.class));
       } catch (EdmSimpleTypeException e) {
         throw new EdmLiteralException(EdmLiteralException.LITERALFORMAT.addContent(uriLiteral), e);
       }
@@ -56,7 +59,7 @@ public class EdmSimpleTypeFacadeImpl implements EdmSimpleTypeFacade {
       try {
         final int i =
             getEdmSimpleType(EdmSimpleTypeKind.Int32)
-                .valueOfString(uriLiteral, EdmLiteralKind.URI, null, Integer.class);
+                .valueOfString(uriLiteral, EdmLiteralKind.URI, facets, Integer.class);
         if (i == 0 || i == 1) {
           return new EdmLiteral(getInternalEdmSimpleTypeByString("Bit"), uriLiteral);
         }
@@ -109,14 +112,20 @@ public class EdmSimpleTypeFacadeImpl implements EdmSimpleTypeFacade {
     if (uriLiteral.startsWith("X'") || uriLiteral.startsWith("binary'")) {
       try {
         final EdmSimpleType type = getEdmSimpleType(EdmSimpleTypeKind.Binary);
-        final byte[] value = type.valueOfString(uriLiteral, EdmLiteralKind.URI, null, byte[].class);
-        return new EdmLiteral(type, type.valueToString(value, EdmLiteralKind.DEFAULT, null));
+        final byte[] value = type.valueOfString(uriLiteral, EdmLiteralKind.URI, facets, byte[].class);
+        return new EdmLiteral(type, type.valueToString(value, EdmLiteralKind.DEFAULT, facets));
       } catch (EdmSimpleTypeException e) {
         throw new EdmLiteralException(EdmLiteralException.LITERALFORMAT.addContent(uriLiteral), e);
       }
     }
 
     throw new EdmLiteralException(EdmLiteralException.UNKNOWNLITERAL.addContent(uriLiteral));
+  }
+  
+  @Override
+  public EdmLiteral parseUriLiteral(String uriLiteral, EdmFacets facets) throws EdmLiteralException {
+    this.facets = facets;
+    return parseUriLiteral(uriLiteral);
   }
 
   private static EdmLiteral createEdmLiteral(final EdmSimpleTypeKind typeKind, final String literal,

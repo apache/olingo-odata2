@@ -35,6 +35,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmLiteral;
 import org.apache.olingo.odata2.api.edm.EdmLiteralException;
@@ -893,12 +894,28 @@ public class UriParserImpl extends UriParser {
           }
         }
 
-        EdmLiteral uriLiteral = parseLiteral(value, (EdmSimpleType) parameter.getType());
+        EdmLiteral uriLiteral = parseLiteral(value, (EdmSimpleType) parameter.getType(), parameter.getFacets());
         uriResult.addFunctionImportParameter(parameterName, uriLiteral);
       }
     }
 
     uriResult.setCustomQueryOptions(otherQueryParameters);
+  }
+
+  private EdmLiteral parseLiteral(String value, EdmSimpleType expectedType, EdmFacets facets) 
+      throws UriSyntaxException {
+    EdmLiteral literal;
+    try {
+      literal = simpleTypeFacade.parseUriLiteral(value, facets);
+    } catch (EdmLiteralException e) {
+      throw convertEdmLiteralException(e);
+    }
+
+    if (expectedType.isCompatible(literal.getType())) {
+      return literal;
+    } else {
+      throw new UriSyntaxException(UriSyntaxException.INCOMPATIBLELITERAL.addContent(value, expectedType));
+    }
   }
 
   private EdmLiteral parseLiteral(final String value, final EdmSimpleType expectedType) throws UriSyntaxException {

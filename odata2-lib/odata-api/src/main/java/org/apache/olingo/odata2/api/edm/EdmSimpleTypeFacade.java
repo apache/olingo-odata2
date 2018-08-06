@@ -35,6 +35,16 @@ public interface EdmSimpleTypeFacade {
   public EdmLiteral parseUriLiteral(final String uriLiteral) throws EdmLiteralException;
 
   /**
+   * IMPORTANT: Use {@link EdmSimpleTypeKind} parseUriLiteral for the implementation.
+   * <p>This method definition is used only inside the core of this library.
+   * @param uriLiteral
+   * @param facets
+   * @return the parsed literal
+   * @throws EdmLiteralException
+   */
+  public EdmLiteral parseUriLiteral(final String uriLiteral, final EdmFacets facets) throws EdmLiteralException;
+  
+  /**
    * IMPORTANT: Use {@link EdmSimpleTypeKind#getEdmSimpleTypeInstance()} for the application development.
    * 
    * <p>This method definition is used only inside the core of this library.</p>
