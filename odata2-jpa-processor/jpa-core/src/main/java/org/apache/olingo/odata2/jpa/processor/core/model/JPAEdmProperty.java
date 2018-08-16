@@ -443,13 +443,11 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
         throw ODataJPAModelException.throwException(ODataJPAModelException.REF_ATTRIBUTE_NOT_FOUND
             .addContent(joinColumn.referencedColumnName() + " -> " + referencedEntityType.getName()), null);
       }
-      if (joinColumn.insertable() && joinColumn.updatable()) {
-        currentSimpleProperty = new SimpleProperty();
-        properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty, joinColumn));
-        if(joinColumn.nullable()) {
-          currentSimpleProperty.getFacets();
+      currentSimpleProperty = new SimpleProperty();
+      properties.add(buildSimpleProperty(currentRefAttribute, currentSimpleProperty, joinColumn));
+      if(joinColumn.nullable()) {
+        currentSimpleProperty.getFacets();
 
-        }
       }
 
     }
