@@ -2033,7 +2033,23 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertTrue(properties.containsKey("EntryDate"));
     assertNull(properties.get("EntryDate"));
   }
-
+  
+  @Test(expected = EntityProviderException.class)
+  public void readEntryNullId() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Employees");
+    final String content = EMPLOYEE_1_XML.replace("<d:EmployeeId>1</d:EmployeeId>",
+        "<d:EmployeeId m:null='true' />");
+    InputStream contentBody = createContentAsStream(content);
+    try {
+      new XmlEntityConsumer().readEntry(entitySet, contentBody, EntityProviderReadProperties.init().mergeSemantic(
+          true).build());
+    } catch (EntityProviderException e) {
+      assertEquals(EntityProviderException.EXCEPTION_OCCURRED.getKey(), e.getMessageReference().getKey());
+      assertEquals("EdmSimpleTypeException", e.getMessageReference().getContent().get(0));
+      throw e;
+    }
+  }
+  
   @Test(expected = EntityProviderException.class)
   public void readEntryTooManyValues() throws Exception {
     // prepare

@@ -159,7 +159,7 @@ public class XmlPropertyConsumer {
 
       if (TRUE.equals(nullAttribute)) {
         if ((readProperties == null || readProperties.isValidatingFacets()) && propertyInfo.isMandatory()) {
-          throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE.addContent(name));
+          throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_NULL_NOT_ALLOWED.addContent(name));
         }
         reader.nextTag();
       } else if (propertyInfo.isComplex()) {
