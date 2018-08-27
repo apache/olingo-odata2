@@ -22,6 +22,7 @@ import org.apache.olingo.odata2.api.batch.BatchHandler;
 import org.apache.olingo.odata2.api.batch.BatchRequestPart;
 import org.apache.olingo.odata2.api.batch.BatchResponsePart;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
+import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmType;
@@ -55,6 +56,13 @@ public abstract class ODataJPADefaultProcessor extends ODataJPAProcessor {
     try {
       oDataJPAContext.setODataContext(getContext());
       List<Object> jpaEntities = jpaProcessor.process(uriParserResultView);
+
+      InlineCount inlineCount = uriParserResultView.getInlineCount();
+      if (inlineCount != null && inlineCount.equals(InlineCount.ALLPAGES)) {
+        ((UriInfoImpl) uriParserResultView).setCount(true);
+        responseBuilder.setCount(jpaProcessor.process((GetEntitySetCountUriInfo) uriParserResultView));
+      }
+
       if (uriParserResultView.isNew()) {
         oDataResponse =
             responseBuilder.build((GetEntityUriInfo)uriParserResultView, jpaEntities.get(0), contentType);

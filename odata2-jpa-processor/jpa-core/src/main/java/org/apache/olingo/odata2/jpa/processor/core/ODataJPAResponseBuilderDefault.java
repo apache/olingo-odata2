@@ -72,9 +72,14 @@ import org.apache.olingo.odata2.jpa.processor.core.callback.JPATombstoneCallBack
 public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBuilder {
 
   private final ODataJPAContext oDataJPAContext;
+  private long count = -1;
 
   public ODataJPAResponseBuilderDefault(final ODataJPAContext context) {
     oDataJPAContext = context;
+  }
+
+  public void setCount(long count) {
+    this.count = count;
   }
 
   /* Response for Read Entity Set */
@@ -112,7 +117,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
       EntityProviderWriteProperties feedProperties = null;
 
-      feedProperties = getEntityProviderProperties(oDataJPAContext, resultsView, edmEntityList);
+      feedProperties = getEntityProviderProperties(oDataJPAContext, resultsView, edmEntityList, count);
       odataResponse =
           EntityProvider.writeFeed(contentType, resultsView.getTargetEntitySet(), edmEntityList, feedProperties);
       odataResponse = ODataResponse.fromResponse(odataResponse).status(HttpStatusCodes.OK).build();
@@ -500,20 +505,14 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
    * be registered here
    */
   private static EntityProviderWriteProperties getEntityProviderProperties(final ODataJPAContext odataJPAContext,
-      final GetEntitySetUriInfo resultsView, final List<Map<String, Object>> edmEntityList)
+      final GetEntitySetUriInfo resultsView, final List<Map<String, Object>> edmEntityList, long queryCount)
       throws ODataJPARuntimeException {
     ODataEntityProviderPropertiesBuilder entityFeedPropertiesBuilder = null;
     ODataContext context = odataJPAContext.getODataContext();
 
     Integer count = null;
-    if (resultsView.getInlineCount() != null) {
-      if ((resultsView.getSkip() != null || resultsView.getTop() != null)) {
-        // when $skip and/or $top is present with $inlinecount
-        count = getInlineCountForNonFilterQueryEntitySet(edmEntityList, resultsView);
-      } else {
-        // In all other cases
-        count = resultsView.getInlineCount() == InlineCount.ALLPAGES ? edmEntityList.size() : null;
-      }
+    if (queryCount != -1) {
+      count = Integer.valueOf((int)queryCount);
     }
 
     try {

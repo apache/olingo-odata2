@@ -128,6 +128,8 @@ public class JPAPage implements JPAPaging {
         }
         if (top > 0) {
           topSkip.top = top;
+        } else {
+          topSkip.top = 100;
         }
       } else {
         if (skip >= pageSize) { // No Records to fetch

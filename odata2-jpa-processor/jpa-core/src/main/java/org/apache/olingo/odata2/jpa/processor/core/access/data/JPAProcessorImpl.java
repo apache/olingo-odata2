@@ -663,11 +663,11 @@ public class JPAProcessorImpl implements JPAProcessor {
         .skipToken(uriParserResultView.getSkipToken());
 
     // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
-    if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
+    if (uriParserResultView.getSkip() != null) {
       pageBuilder.skip(uriParserResultView.getSkip().intValue());
     }
 
-    if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
+    if (uriParserResultView.getTop() != null) {
       pageBuilder.top(uriParserResultView.getTop().intValue());
     }
 
@@ -685,11 +685,11 @@ public class JPAProcessorImpl implements JPAProcessor {
         .skipToken(uriParserResultView.getSkipToken());
 
     // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
-    if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
+    if (uriParserResultView.getSkip() != null) {
       pageBuilder.skip(uriParserResultView.getSkip().intValue());
     }
 
-    if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
+    if (uriParserResultView.getTop() != null) {
       pageBuilder.top(uriParserResultView.getTop().intValue());
     }
 
