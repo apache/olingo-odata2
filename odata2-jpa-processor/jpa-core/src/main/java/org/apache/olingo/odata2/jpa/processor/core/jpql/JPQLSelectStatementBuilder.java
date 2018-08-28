@@ -70,13 +70,15 @@ public class JPQLSelectStatementBuilder extends JPQLStatementBuilder {
       jpqlQuery.append(context.getWhereExpression());
     }
 
-    if (context.getOrderByCollection() != null && context.getOrderByCollection().length() > 0) {
+    if (!context.getType().equals(JPQLContextType.SELECT_COUNT)) {
+      if (context.getOrderByCollection() != null && context.getOrderByCollection().length() > 0) {
 
-      StringBuilder orderByBuilder = new StringBuilder();
-      orderByBuilder.append(context.getOrderByCollection());
-      jpqlQuery.append(JPQLStatement.DELIMITER.SPACE);
-      jpqlQuery.append(JPQLStatement.KEYWORD.ORDERBY).append(JPQLStatement.DELIMITER.SPACE);
-      jpqlQuery.append(orderByBuilder);
+        StringBuilder orderByBuilder = new StringBuilder();
+        orderByBuilder.append(context.getOrderByCollection());
+        jpqlQuery.append(JPQLStatement.DELIMITER.SPACE);
+        jpqlQuery.append(JPQLStatement.KEYWORD.ORDERBY).append(JPQLStatement.DELIMITER.SPACE);
+        jpqlQuery.append(orderByBuilder);
+      }
     }
 
     return jpqlQuery.toString();
