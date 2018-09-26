@@ -72,8 +72,8 @@ public class JPAPage implements JPAPaging {
     private List<Object> pagedEntities;
 
     private static class TopSkip {
-      public int top;
-      public int skip;
+      public Integer top;
+      public Integer skip;
     }
 
     public JPAPageBuilder() {}
@@ -99,10 +99,15 @@ public class JPAPage implements JPAPaging {
     private JPAPage buildFromEntities() {
       TopSkip topSkip = formulateTopSkip();
       pagedEntities = new ArrayList<Object>();
-      if (topSkip.skip <= 0) {
-        topSkip.skip = 1;
+      Integer top = topSkip.top;
+      Integer skip = topSkip.skip;
+      if (skip == null || topSkip.skip <= 0) {
+        skip = 1;
       }
-      for (int i = topSkip.skip - 1, j = 0; (j < topSkip.top && i < entities.size()); j++) {
+      if(top == null || topSkip.top <= 0){
+        top = 0;
+      }
+      for (int i = skip - 1, j = 0; (j < top && i < entities.size()); j++) {
         pagedEntities.add(entities.get(i++));
       }
       formulateNextPage();
@@ -112,8 +117,12 @@ public class JPAPage implements JPAPaging {
     @SuppressWarnings("unchecked")
     private JPAPage buildFromQuery() {
       TopSkip topSkip = formulateTopSkip();
-      query.setFirstResult(topSkip.skip);
-      query.setMaxResults(topSkip.top);
+      if(topSkip.skip != null){
+        query.setFirstResult(topSkip.skip);
+      }
+      if(topSkip.top != null){
+        query.setMaxResults(topSkip.top);
+      }
       pagedEntities = query.getResultList();
       formulateNextPage();
       return new JPAPage(startPage, nextPage, pagedEntities, pageSize);
