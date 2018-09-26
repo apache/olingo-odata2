@@ -171,11 +171,20 @@ public class ODataExpressionParser {
             + (!"null".equals(right) ? JPQLStatement.Operator.EQ : "IS") + JPQLStatement.DELIMITER.SPACE + right
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case NE:
+        EdmSimpleType edmType = (EdmSimpleType)((BinaryExpression)whereExpression).getLeftOperand().getEdmType();
+        if(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance().isCompatible(edmType)){
+          return  JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
+              + (!"null".equals(right) ?
+                  JPQLStatement.Operator.NOT +JPQLStatement.DELIMITER.SPACE +  JPQLStatement.Operator.LIKE :
+                  "IS" + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.NOT)
+              + JPQLStatement.DELIMITER.SPACE + right + ("null".equals(right) ? "" :" ESCAPE '\\'")
+              + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
+        }
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
             + (!"null".equals(right) ?
                 JPQLStatement.Operator.NE :
                 "IS" + JPQLStatement.DELIMITER.SPACE + JPQLStatement.Operator.NOT)
-            + JPQLStatement.DELIMITER.SPACE + right
+            + JPQLStatement.DELIMITER.SPACE + right 
             + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
       case LT:
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
