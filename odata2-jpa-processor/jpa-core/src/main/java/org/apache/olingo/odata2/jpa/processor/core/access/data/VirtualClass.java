@@ -2,7 +2,7 @@ package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
 import java.util.HashMap;
 
-public class VirtualClass {
+public class VirtualClass implements VirtualClassInterface {
   private HashMap<String, Object> map = new HashMap<String, Object>();
 
   public Object get(String name) {

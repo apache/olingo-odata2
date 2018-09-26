@@ -40,8 +40,9 @@ import java.util.Map;
 public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombstoneEntityListener {
   /**
    * Override this method to build JPA Query for OData request - GetEntitySet; SELECT *
+   *
    * @param uriInfo is a reference to OData request
-   * @param em is a reference to {@link javax.persistence.EntityManager}
+   * @param em      is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
   public Query getQuery(GetEntitySetUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
@@ -51,8 +52,9 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
   /**
    * Override this method to build JPA Query for OData request - GetEntity; SELECT SINGLE with key in WHERE
    * clause
+   *
    * @param uriInfo is a reference to OData request
-   * @param em is a reference to {@link javax.persistence.EntityManager}
+   * @param em      is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
   public Query getQuery(GetEntityUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
@@ -62,8 +64,9 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
   /**
    * Override this method to build JPA Query for OData request - GetEntity Count; SELECT SINGLE with key in WHERE
    * clause
+   *
    * @param uriInfo is a reference to OData request
-   * @param em is a reference to {@link javax.persistence.EntityManager}
+   * @param em      is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
   public Query getQuery(GetEntityCountUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
@@ -72,8 +75,9 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
 
   /**
    * Override this method to build JPA Query for OData request - GetEntitySet Count; SELECT COUNT(*)
+   *
    * @param uriInfo is a reference to OData request
-   * @param em is a reference to {@link javax.persistence.EntityManager}
+   * @param em      is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
   public Query getQuery(GetEntitySetCountUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
@@ -83,8 +87,9 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
   /**
    * Override this method to build JPA Query for OData request - Update; SELECT SINGLE with key in WHERE
    * clause
+   *
    * @param uriInfo is a reference to OData request
-   * @param em is a reference to {@link javax.persistence.EntityManager}
+   * @param em      is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
   public Query getQuery(PutMergePatchUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
@@ -94,8 +99,9 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
   /**
    * Override this method to build JPA Query for OData request - Delete; SELECT SINGLE with key in WHERE
    * clause
+   *
    * @param uriInfo is a reference to OData request
-   * @param em is a reference to {@link javax.persistence.EntityManager}
+   * @param em      is a reference to {@link javax.persistence.EntityManager}
    * @return an instance of type {@link javax.persistence.Query}
    */
   public Query getQuery(DeleteUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
@@ -109,6 +115,7 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
 
   /**
    * Implement this method to indicate whether the extended class can handle OData Tombstone feature as well
+   *
    * @return false by default
    */
   @Override
@@ -163,4 +170,30 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
   public Object processNew(final UriInfo infoView) {
     return null;
   }
+
+  public Object overridePost(UriInfo infoView, Object entity) {
+    return null;
+  }
+
+
+  public Object overridePut(UriInfo infoView, Object entity) {
+    return null;
+  }
+
+  public boolean overrideDelete(UriInfo infoView, Object entity) {
+    return false;
+  }
+
+  public boolean canOverridePut(UriInfo infoView) {
+    return false;
+  }
+
+  public boolean canOverridePost(UriInfo infoView) {
+    return false;
+  }
+
+  public boolean canOverrideDelete(UriInfo infoView) {
+    return false;
+  }
+
 }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,20 +18,6 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.*;
-import java.util.Map.Entry;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
@@ -39,18 +25,8 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
 import org.apache.olingo.odata2.api.uri.KeyPredicate;
 import org.apache.olingo.odata2.api.uri.UriInfo;
-import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityLinkUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetLinksUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
-import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
-import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
-import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.api.uri.info.*;
 import org.apache.olingo.odata2.core.edm.provider.EdmEntityTypeImplProv;
-import org.apache.olingo.odata2.core.edm.provider.EdmSimplePropertyImplProv;
 import org.apache.olingo.odata2.core.uri.KeyPredicateImpl;
 import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.*;
@@ -66,6 +42,19 @@ import org.apache.olingo.odata2.jpa.processor.core.ODataParameterizedWhereExpres
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAPage.JPAPageBuilder;
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAQueryBuilder.JPAQueryInfo;
 import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class JPAProcessorImpl implements JPAProcessor {
 
@@ -319,10 +308,14 @@ public class JPAProcessorImpl implements JPAProcessor {
         if (listener != null) {
           listener.execEvent(((UriInfoImpl) uriParserResultView), oDataEntityType, "beforeDelete", selectedObject);
         }
-        em.remove(selectedObject);
-        em.flush();
-        if (isLocalTransaction) {
-          oDataJPAContext.getODataJPATransaction().commit();
+
+        boolean override = listener.overrideDelete((UriInfo) uriParserResultView, selectedObject);
+        if (!override) {
+          em.remove(selectedObject);
+          em.flush();
+          if (isLocalTransaction) {
+            oDataJPAContext.getODataJPATransaction().commit();
+          }
         }
         if (listener != null) {
           listener.execEvent(((UriInfoImpl) uriParserResultView), oDataEntityType, "afterDelete", selectedObject);
@@ -426,8 +419,8 @@ public class JPAProcessorImpl implements JPAProcessor {
   }
 
   private Object processCreate(final PostUriInfo createView, final InputStream content,
-      final Map<String, Object> properties,
-      final String requestedContentType) throws ODataJPAModelException,
+                               final Map<String, Object> properties,
+                               final String requestedContentType) throws ODataJPAModelException,
       ODataJPARuntimeException {
     try {
       final EdmEntitySet oDataEntitySet = createView.getTargetEntitySet();
@@ -523,6 +516,12 @@ public class JPAProcessorImpl implements JPAProcessor {
           listener.execEvent(((UriInfoImpl) createView), oDataEntityType, "beforeInsert", tempEntity);
         }
 
+        Object resultEntity = listener.overridePost((UriInfo) createView, jpaEntity);
+
+        if (resultEntity != null) {
+          return resultEntity;
+        }
+
         em.persist(jpaEntity);
       }
 
@@ -535,8 +534,8 @@ public class JPAProcessorImpl implements JPAProcessor {
           jpaEntity = tempEntity;
         }
 
-        EdmEntityType edmEntityType= createView.getEntityContainer().getEntitySet(createView.getTargetEntitySet()
-                       .getEntityType().getMapping().getInternalName()).getEntityType();
+        EdmEntityType edmEntityType = createView.getEntityContainer().getEntitySet(createView.getTargetEntitySet()
+            .getEntityType().getMapping().getInternalName()).getEntityType();
 
 
         JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, (UriInfo) createView);
@@ -544,7 +543,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
         List<KeyPredicate> predicates = new ArrayList<KeyPredicate>();
 
-        for (EdmProperty key: createView.getTargetEntitySet().getEntityType().getKeyProperties()) {
+        for (EdmProperty key : createView.getTargetEntitySet().getEntityType().getKeyProperties()) {
           final EdmSimpleType type = (EdmSimpleType) key.getType();
           final EdmFacets facets = key.getFacets();
           String literal = type.valueToString(edmPropertyValueMap.get(key.getName()), EdmLiteralKind.DEFAULT, facets);
@@ -558,7 +557,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
         em.clear();
 
-        Object resultEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build((PutMergePatchUriInfo) createView), (UriInfo) createView);
+        Object resultEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build((GetEntityUriInfo) createView), (UriInfo) createView);
 
         if (listener != null) {
           listener.execEvent(((UriInfoImpl) createView), oDataEntityType, "afterInsert", resultEntity);
@@ -575,7 +574,7 @@ public class JPAProcessorImpl implements JPAProcessor {
   }
 
   private <T> Object processUpdate(PutMergePatchUriInfo updateView,
-      final InputStream content, final Map<String, Object> properties, final String requestContentType)
+                                   final InputStream content, final Map<String, Object> properties, final String requestContentType)
       throws ODataJPAModelException, ODataJPARuntimeException {
     Object jpaEntity = null;
     try {
@@ -594,11 +593,17 @@ public class JPAProcessorImpl implements JPAProcessor {
       boolean isLocalTransaction = setTransaction();
       ((UriInfoImpl) updateView).setRawEntity(true);
 
-      jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView, true);
+      boolean canOverride = listener.canOverridePut((UriInfo) updateView);
 
-      if (jpaEntity == null) {
-        throw ODataJPARuntimeException
-            .throwException(ODataJPARuntimeException.RESOURCE_NOT_FOUND, null);
+      if (!canOverride) {
+        jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView, true);
+
+        if (jpaEntity == null) {
+          throw ODataJPARuntimeException
+              .throwException(ODataJPARuntimeException.RESOURCE_NOT_FOUND, null);
+        }
+      } else {
+        jpaEntity = new VirtualClass();
       }
 
       final EdmEntitySet oDataEntitySet = updateView.getTargetEntitySet();
@@ -610,7 +615,12 @@ public class JPAProcessorImpl implements JPAProcessor {
         final ODataEntityParser oDataEntityParser = new ODataEntityParser(oDataJPAContext);
         ODataEntry oDataEntry;
         oDataEntry = oDataEntityParser.parseEntry((UriInfo) updateView, oDataEntitySet, content, requestContentType, false);
-        virtualJPAEntity.update(oDataEntry);
+        if (!canOverride) {
+          virtualJPAEntity.update(oDataEntry);
+        } else {
+          virtualJPAEntity.create(oDataEntry);
+          jpaEntity = virtualJPAEntity.getJPAEntity();
+        }
       } else if (properties != null) {
         virtualJPAEntity.update(properties);
       } else {
@@ -621,15 +631,21 @@ public class JPAProcessorImpl implements JPAProcessor {
         listener.execEvent(((UriInfoImpl) updateView), oDataEntityType, "beforeUpdate", jpaEntity);
       }
 
-      em.flush();
-      if (isLocalTransaction) {
-        oDataJPAContext.getODataJPATransaction().commit();
+      Object overridePut = listener.overridePut((UriInfo) updateView, jpaEntity);
+
+      if (overridePut != null) {
+        jpaEntity = overridePut;
+      } else {
+        em.flush();
+        if (isLocalTransaction) {
+          oDataJPAContext.getODataJPATransaction().commit();
+        }
+        em.clear();
+
+        jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView);
       }
 
       ((UriInfoImpl) updateView).setRawEntity(false);
-
-      em.clear();
-      jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView);
 
       if (listener != null) {
         listener.execEvent(((UriInfoImpl) updateView), oDataEntityType, "afterUpdate", jpaEntity);
@@ -711,18 +727,23 @@ public class JPAProcessorImpl implements JPAProcessor {
 
           List<Object> newEntities = new ArrayList<Object>(entities.size());
           for (Object obj : entities) {
-            VirtualClass entity = new VirtualClass();
-            if (obj.getClass().isArray()) {
-              int i = 0;
-
-              for (Object o : (Object[]) obj) {
-                String key = names.get(i);
-                entity.set(key, o);
-                i++;
-              }
+            VirtualClassInterface entity;
+            if (obj instanceof VirtualClassInterface) {
+              entity = (VirtualClassInterface) obj;
             } else {
-              String key = names.get(0);
-              entity.set(key, obj);
+              entity = new VirtualClass();
+              if (obj.getClass().isArray()) {
+                int i = 0;
+
+                for (Object o : (Object[]) obj) {
+                  String key = names.get(i);
+                  entity.set(key, o);
+                  i++;
+                }
+              } else {
+                String key = names.get(0);
+                entity.set(key, obj);
+              }
             }
 
             newEntities.add(entity);
