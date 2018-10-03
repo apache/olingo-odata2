@@ -603,7 +603,7 @@ public class AtomEntryEntitySerializer {
       } else if (edmType == BigDecimal.class) {
         return BigDecimal.valueOf(0.0);
       } else if (edmType == UUID.class) {
-        return UUID.fromString("0");
+        return UUID.fromString("00000000-0000-0000-0000-000000000000");
       } else if (edmType == Timestamp.class) {
         return new Timestamp(Calendar.getInstance().getTimeInMillis());
       } else if (edmType == Calendar.class) {
