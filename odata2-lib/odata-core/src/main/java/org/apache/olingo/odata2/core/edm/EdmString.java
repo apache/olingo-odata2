@@ -55,15 +55,10 @@ public class EdmString extends AbstractSimpleType {
     } else {
       result = value;
     }
-    /*
-    Removido validação de tamanho do campo, para poder enviar base64
-    */
-//    if (facets != null
-//        && (facets.isUnicode() != null && !facets.isUnicode() && !PATTERN_ASCII.matcher(result).matches()
-//        || facets.getMaxLength() != null && facets.getMaxLength() < result.length())) {
+
     if (facets != null
-        && (facets.isUnicode() != null && !facets.isUnicode() && !PATTERN_ASCII.matcher(result).matches())
-    ) {
+        && (facets.isUnicode() != null && !facets.isUnicode() && !PATTERN_ASCII.matcher(result).matches()
+        || facets.getMaxLength() != null && facets.getMaxLength() < result.length())) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets));
     }
 
