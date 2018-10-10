@@ -18,6 +18,10 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
+/*
+* FIXED OO1 - Removido validação de tamanho do campo, para poder enviar base64
+**/
+
 import java.util.regex.Pattern;
 
 import org.apache.olingo.odata2.api.edm.EdmFacets;
@@ -42,6 +46,9 @@ public class EdmString extends AbstractSimpleType {
     return String.class;
   }
 
+
+
+
   @Override
   protected <T> T internalValueOfString(final String value, final EdmLiteralKind literalKind, final EdmFacets facets,
       final Class<T> returnType) throws EdmSimpleTypeException {
@@ -56,9 +63,17 @@ public class EdmString extends AbstractSimpleType {
       result = value;
     }
 
-    if (facets != null
+    /*
+     FIXED OO1 - START
+      if (facets != null
         && (facets.isUnicode() != null && !facets.isUnicode() && !PATTERN_ASCII.matcher(result).matches()
         || facets.getMaxLength() != null && facets.getMaxLength() < result.length())) {
+        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets));
+      }
+     FIXED OO1 - END
+    **/
+    if (facets != null
+        && (facets.isUnicode() != null && !facets.isUnicode() && !PATTERN_ASCII.matcher(result).matches())) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets));
     }
 
