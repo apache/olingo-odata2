@@ -218,8 +218,9 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
     if (mappingModelStream != null) {
       return mappingModelStream;
     }
-    return JPAEdmMappingModelService.class.getClassLoader().getResourceAsStream("../../" + mappingModelName);
-
+    ClassLoader classLoader = JPAEdmMappingModelService.class.getClassLoader();
+    InputStream modelStream = classLoader.getResourceAsStream("../../" + mappingModelName);
+    return (modelStream != null) ? modelStream : classLoader.getResourceAsStream(mappingModelName);
   }
 
   @Override
