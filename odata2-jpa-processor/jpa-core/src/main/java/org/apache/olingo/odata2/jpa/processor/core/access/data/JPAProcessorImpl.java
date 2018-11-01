@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
+import com.google.gson.JsonElement;
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.edm.provider.NavigationProperty;
@@ -728,7 +729,11 @@ public class JPAProcessorImpl implements JPAProcessor {
           List<Object> newEntities = new ArrayList<Object>(entities.size());
           for (Object obj : entities) {
             VirtualClassInterface entity;
-            if (obj instanceof VirtualClassInterface) {
+
+            if (obj instanceof JsonElement) {
+              entity = new VirtualClassWrapper(obj);
+            }
+            else if (obj instanceof VirtualClassInterface) {
               entity = (VirtualClassInterface) obj;
             } else {
               entity = new VirtualClass();
