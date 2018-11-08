@@ -152,7 +152,6 @@ public class ODataRequestHandler {
 
       odataResponse = extendedResponse.build();
     } catch (final Exception e) {
-      e.printStackTrace();
 
       Exception newException = serviceFactory.handleException(e);
       if (newException != null) {
