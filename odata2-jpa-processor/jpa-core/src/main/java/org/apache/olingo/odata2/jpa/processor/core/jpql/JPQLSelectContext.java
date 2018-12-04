@@ -185,7 +185,7 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
           }
           whereExpression = ODataExpressionParser.parseToJPAWhereExpression(
               entitySetView.getFilter(), getJPAEntityAlias(), 
-              previousIndex, new ConcurrentHashMap<Integer, Object>());
+              previousIndex, new ConcurrentHashMap<Integer, Object>(), null);
         } else {
           whereExpression = ODataExpressionParser.parseToJPAWhereExpression(
               entitySetView.getFilter(), getJPAEntityAlias());

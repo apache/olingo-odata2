@@ -31,6 +31,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.olingo.odata2.api.edm.EdmElement;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmLiteral;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
@@ -87,16 +88,18 @@ public class ODataExpressionParser {
    */
   public static String parseToJPAWhereExpression(final CommonExpression whereExpression, final String tableAlias)
       throws ODataException {
-    return parseToJPAWhereExpression(whereExpression, tableAlias, 1, new ConcurrentHashMap<Integer,Object>());
+    EdmMapping edmMapping = null;
+    return parseToJPAWhereExpression(whereExpression, tableAlias, 1, 
+        new ConcurrentHashMap<Integer,Object>(), edmMapping);
   }
   
   public static String parseToJPAWhereExpression(final CommonExpression whereExpression, final String tableAlias, 
-      int index, Map<Integer,Object> positionalParameters) throws ODataException {
+      int index, Map<Integer,Object> positionalParameters,EdmMapping edmMapping) throws ODataException {
     switch (whereExpression.getKind()) {
     case UNARY:
       final UnaryExpression unaryExpression = (UnaryExpression) whereExpression;
       final String operand = parseToJPAWhereExpression(unaryExpression.getOperand(), tableAlias, 
-          index, positionalParameters);
+          index, positionalParameters, edmMapping);
 
       switch (unaryExpression.getOperator()) {
       case NOT:
@@ -114,7 +117,7 @@ public class ODataExpressionParser {
 
     case FILTER:
       return parseToJPAWhereExpression(((FilterExpression) whereExpression).getExpression(), tableAlias, 
-          index, positionalParameters);
+          index, positionalParameters, edmMapping);
     case BINARY:
       final BinaryExpression binaryExpression = (BinaryExpression) whereExpression;
       MethodOperator operator = null;
@@ -128,9 +131,10 @@ public class ODataExpressionParser {
         }
       }
       final String left = parseToJPAWhereExpression(binaryExpression.getLeftOperand(), tableAlias, 
-          getIndexValue(index, positionalParameters), positionalParameters);
+          getIndexValue(index, positionalParameters), positionalParameters, edmMapping);
+      edmMapping = getEdmMapping(binaryExpression);
       final String right = parseToJPAWhereExpression(binaryExpression.getRightOperand(), tableAlias, 
-          getIndexValue(index, positionalParameters), positionalParameters);
+          getIndexValue(index, positionalParameters), positionalParameters, edmMapping);
 
       // Special handling for STARTSWITH and ENDSWITH method expression
       if (operator != null && (operator == MethodOperator.STARTSWITH || operator == MethodOperator.ENDSWITH)) {
@@ -236,19 +240,20 @@ public class ODataExpressionParser {
       final LiteralExpression literal = (LiteralExpression) whereExpression;
       final EdmSimpleType literalType = (EdmSimpleType) literal.getEdmType();
       EdmLiteral uriLiteral = EdmSimpleTypeKind.parseUriLiteral(literal.getUriLiteral());
-      return evaluateComparingExpression(uriLiteral.getLiteral(), literalType, null, 
+      Class<?> edmMap = edmMapping != null ?((JPAEdmMappingImpl)edmMapping).getJPAType(): null;
+      return evaluateComparingExpression(uriLiteral.getLiteral(), literalType, edmMap,
           positionalParameters, index);
 
     case METHOD:
       final MethodExpression methodExpression = (MethodExpression) whereExpression;
       String first = parseToJPAWhereExpression(methodExpression.getParameters().get(0), tableAlias, 
-          getIndexValue(index, positionalParameters), positionalParameters);
+          getIndexValue(index, positionalParameters), positionalParameters, edmMapping);
       String second =
           methodExpression.getParameterCount() > 1 ? parseToJPAWhereExpression(methodExpression.getParameters().get(1),
-              tableAlias, getIndexValue(index, positionalParameters), positionalParameters) : null;
+              tableAlias, getIndexValue(index, positionalParameters), positionalParameters, edmMapping) : null;
       String third =
           methodExpression.getParameterCount() > 2 ? parseToJPAWhereExpression(methodExpression.getParameters().get(2),
-              tableAlias, getIndexValue(index, positionalParameters), positionalParameters) : null;
+              tableAlias, getIndexValue(index, positionalParameters), positionalParameters, edmMapping) : null;
 
       switch (methodExpression.getMethod()) {
       case SUBSTRING:
@@ -278,6 +283,17 @@ public class ODataExpressionParser {
     default:
       throw new ODataNotImplementedException();
     }
+  }
+  
+  private static EdmMapping getEdmMapping(BinaryExpression binaryExpression) throws EdmException {
+    if(binaryExpression!=null && binaryExpression.getLeftOperand() instanceof PropertyExpression){
+      PropertyExpression left = (PropertyExpression)binaryExpression.getLeftOperand();
+      if(left != null && left.getEdmProperty() instanceof EdmElement){
+        EdmElement property = (EdmElement)left.getEdmProperty();
+        return property.getMapping();
+      }
+    }
+    return null;
   }
   
   private static int getIndexValue(int index, Map<Integer, Object> map) {
@@ -367,7 +383,7 @@ public class ODataExpressionParser {
         try {
           if (orderBy.getExpression().getKind() == ExpressionKind.MEMBER) {
             orderByField = parseToJPAWhereExpression(orderBy.getExpression(), tableAlias, 1, 
-                new ConcurrentHashMap<Integer, Object>());
+                new ConcurrentHashMap<Integer, Object>(), null);
           } else {
             orderByField = tableAlias + JPQLStatement.DELIMITER.PERIOD + getPropertyName(orderBy.getExpression());
           }
