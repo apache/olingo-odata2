@@ -57,6 +57,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.SelectItem;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
+import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
@@ -570,12 +571,17 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     navigationPropertyList.add(navigationPropertySegment);
     expandList.add(navigationPropertyList);
     // Mocking EntityUriInfo
-    GetEntitySetUriInfo entitySetUriInfo = EasyMock.createMock(GetEntitySetUriInfo.class);
+    UriInfoImpl entitySetUriInfo = EasyMock.createMock(UriInfoImpl.class);
     EasyMock.expect(entitySetUriInfo.getSelect()).andStubReturn(selectItemList);
     EasyMock.expect(entitySetUriInfo.getExpand()).andStubReturn(expandList);
     EasyMock.expect(entitySetUriInfo.getInlineCount()).andStubReturn(InlineCount.ALLPAGES);
     EasyMock.expect(entitySetUriInfo.getSkip()).andStubReturn(new Integer(1));
     EasyMock.expect(entitySetUriInfo.getTop()).andStubReturn(new Integer(2));
+    Map<String, String> customQuery = new HashMap<String, String>();
+    customQuery.put("count", "5");
+    entitySetUriInfo.setCustomQueryOptions(null);
+    EasyMock.expectLastCall().times(1);
+    EasyMock.expect(entitySetUriInfo.getCustomQueryOptions()).andStubReturn(customQuery );
     EasyMock.replay(entitySetUriInfo);
     return entitySetUriInfo;
   }

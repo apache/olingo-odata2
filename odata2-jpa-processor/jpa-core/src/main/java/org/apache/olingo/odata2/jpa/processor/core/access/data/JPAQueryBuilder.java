@@ -22,6 +22,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -42,6 +43,7 @@ import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
@@ -101,6 +103,50 @@ public class JPAQueryBuilder {
     queryInfo.setQuery(query);
     return queryInfo;
   }
+
+
+  public void getCount(GetEntitySetUriInfo uriInfo) throws ODataJPARuntimeException {
+    JPAQueryInfo queryInfo = new JPAQueryInfo();
+    Query query = null;
+    UriInfoImpl info = (UriInfoImpl)uriInfo;
+    boolean count = info.isCount();
+    info.setCount(true);
+    try {
+      ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
+      if (listener != null) {
+        query = listener.getQuery((GetEntitySetCountUriInfo)uriInfo, em);
+        if(query != null){
+          JPQLContextType contextType = determineJPQLContextType(info, UriInfoType.GetEntitySetCount);
+          JPQLContext jpqlContext = buildJPQLContext(contextType, info);
+          JPQLStatement jpqlStatement = JPQLStatement.createBuilder(jpqlContext).build();
+          jpqlContext.setJPQLStatement(jpqlStatement.toString());
+          query = getParameterizedQueryForListeners(jpqlContext, query);
+        }
+      }
+      if (query == null) {
+        query = buildQuery((UriInfo) uriInfo, UriInfoType.GetEntitySetCount);
+      } else {
+        queryInfo.setTombstoneQuery(true);
+      }
+    } catch (Exception e) {
+      throw ODataJPARuntimeException.throwException(
+          ODataJPARuntimeException.ERROR_JPQL_QUERY_CREATE, e);
+    } finally {
+      JPQLContext.removeJPQLContext();
+      ODataExpressionParser.removePositionalParametersThreadLocal();
+    }
+    queryInfo.setQuery(query);
+    Query countQuery = queryInfo.getQuery();
+    List<Object> countList = countQuery.getResultList();
+    info.setCount(count);
+    if(countList!= null && !countList.isEmpty()){
+      String countNumber = countList.get(0).toString();
+      Map<String, String> customQueryOptions = new HashMap<String, String>();
+      customQueryOptions.put("count", countNumber);
+      info.setCustomQueryOptions(customQueryOptions);
+    }
+  }
+
 
   public Query build(GetEntityUriInfo uriInfo) throws ODataJPARuntimeException {
     Query query = null;

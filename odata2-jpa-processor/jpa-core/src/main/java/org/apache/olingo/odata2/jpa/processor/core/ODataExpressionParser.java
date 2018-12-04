@@ -167,9 +167,11 @@ public class ODataExpressionParser {
       case EQ:
         EdmSimpleType type = (EdmSimpleType)((BinaryExpression)whereExpression).getLeftOperand().getEdmType();
         if(EdmSimpleTypeKind.String.getEdmSimpleTypeInstance().isCompatible(type)){
-          return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
+          if(edmMapping== null || (edmMapping!=null && !(((JPAEdmMappingImpl)edmMapping).getJPAType()).isEnum())){
+            return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
               + (!"null".equals(right) ? JPQLStatement.Operator.LIKE : "IS") + JPQLStatement.DELIMITER.SPACE + right
               + ("null".equals(right) ? "" : " ESCAPE '\\'") + JPQLStatement.DELIMITER.PARENTHESIS_RIGHT;
+          }
         }
         return JPQLStatement.DELIMITER.PARENTHESIS_LEFT + left + JPQLStatement.DELIMITER.SPACE
             + (!"null".equals(right) ? JPQLStatement.Operator.EQ : "IS") + JPQLStatement.DELIMITER.SPACE + right
@@ -272,6 +274,8 @@ public class ODataExpressionParser {
         }
       case TOLOWER:
         return String.format("LOWER(%s)", first);
+      case TOUPPER:
+        return String.format("UPPER(%s)", first);
       case STARTSWITH:
         return String.format("%s LIKE CONCAT(%s,'%%') ESCAPE '\\'", first, second);
       case ENDSWITH:
@@ -633,6 +637,10 @@ public class ODataExpressionParser {
       positionalParameters.put(index, (Character)uriLiteral.charAt(0));
     }else if(edmMappedType.equals(UUID.class)){
       positionalParameters.put(index, UUID.fromString(uriLiteral));
+    }else if (edmMappedType.isEnum()) {
+      Class enCl = (Class<? extends Enum>)edmMappedType;
+      positionalParameters.put(index, Enum.valueOf(enCl, 
+          (String) uriLiteral));
     }else {
       positionalParameters.put(index, String.valueOf(uriLiteral));
     }

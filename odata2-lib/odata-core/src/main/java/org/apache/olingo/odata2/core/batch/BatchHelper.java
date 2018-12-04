@@ -42,13 +42,13 @@ public class BatchHelper {
   public static final String BINARY_ENCODING = "binary";
   public static final String UTF8_ENCODING = "UTF-8";
   public static final String ISO_ENCODING = "ISO-8859-1";
-  public static String DEFAULT_ENCODING = "ISO-8859-1";
+  private static String DEFAULT_ENCODING = "ISO-8859-1";
   public static final String HTTP_CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
   public static final String HTTP_CONTENT_ID = "Content-Id";
   public static final String MIME_HEADER_CONTENT_ID = "MimeHeader-ContentId";
   public static final String REQUEST_HEADER_CONTENT_ID = "RequestHeader-ContentId";
 
-  public static Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_ENCODING);
+  protected static Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_ENCODING);
 
   protected static String generateBoundary(final String value) {
     return value + "_" + UUID.randomUUID().toString();

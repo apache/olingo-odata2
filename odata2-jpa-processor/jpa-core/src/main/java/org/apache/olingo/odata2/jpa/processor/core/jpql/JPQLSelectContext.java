@@ -153,12 +153,12 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
      */
     protected String generateOrderByFileds() throws ODataJPARuntimeException, EdmException {
 
-      if (entitySetView.getOrderBy() != null) {
+      if (entitySetView.getOrderBy() != null  && !isCountOnly) {
 
         return ODataExpressionParser.parseToJPAOrderByExpression(entitySetView.getOrderBy(), getJPAEntityAlias());
 
-      } else if (entitySetView.getTop() != null || entitySetView.getSkip() != null ||
-          pagingRequested == true) {
+      } else if ((entitySetView.getTop() != null || entitySetView.getSkip() != null ||
+          pagingRequested) && !isCountOnly) {
 
         return ODataExpressionParser.parseKeyPropertiesToJPAOrderByExpression(entitySetView.getTargetEntitySet()
             .getEntityType().getKeyProperties(), getJPAEntityAlias());

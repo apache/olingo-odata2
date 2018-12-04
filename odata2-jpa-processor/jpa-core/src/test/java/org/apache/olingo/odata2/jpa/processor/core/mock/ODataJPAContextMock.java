@@ -19,8 +19,10 @@
 package org.apache.olingo.odata2.jpa.processor.core.mock;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -85,6 +87,9 @@ public abstract class ODataJPAContextMock {
         EasyMock.anyObject(TemporalType.TIMESTAMP.getClass()))).andReturn(jpqlquery).anyTimes();
     EasyMock.expect(jpqlquery.setParameter(EasyMock.anyInt(), (Time) EasyMock.anyObject(), 
         EasyMock.anyObject(TemporalType.TIME.getClass()))).andReturn(jpqlquery).anyTimes();
+    List<Object> result = new ArrayList<Object>();
+    result.add(5);
+    EasyMock.expect(jpqlquery.getResultList()).andReturn(result).anyTimes();
     EasyMock.replay(em, mm, jpqlquery);
     return em;
 

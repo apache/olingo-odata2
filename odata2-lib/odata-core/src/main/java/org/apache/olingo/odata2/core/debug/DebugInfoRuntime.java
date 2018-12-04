@@ -38,8 +38,8 @@ public class DebugInfoRuntime implements DebugInfo {
     protected long timeStarted;
     protected long timeStopped;
     protected List<RuntimeNode> children = new ArrayList<RuntimeNode>();
-    public long memoryStarted;
-    public long memoryStopped;
+    protected long memoryStarted;
+    protected long memoryStopped;
 
     protected RuntimeNode() {
       timeStarted = 0;

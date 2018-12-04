@@ -30,7 +30,7 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   private Map<String, String> headers = new HashMap<String, String>();
   private Object body;
   private String uri;
-  public String cntId;
+  private String cntId;
   private static final String CHANGE_METHODS = "(PUT|POST|DELETE|MERGE|PATCH)";
 
   @Override

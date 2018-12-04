@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,8 +40,6 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.persistence.metamodel.Metamodel;
 
-import junit.framework.Assert;
-
 import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmConcurrencyMode;
 import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
@@ -48,6 +47,7 @@ import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmFacets;
+import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmType;
@@ -64,18 +64,30 @@ import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
 import org.apache.olingo.odata2.api.uri.info.DeleteUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityCountUriInfo;
+import org.apache.olingo.odata2.api.uri.info.GetEntityLinkUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
+import org.apache.olingo.odata2.api.uri.info.GetEntitySetLinksUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
+import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
+import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
+import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPAModelException;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.core.common.ODataJPATestConstants;
+import org.apache.olingo.odata2.jpa.processor.core.mock.data.SalesOrderHeader;
 import org.apache.olingo.odata2.jpa.processor.core.model.JPAEdmMappingImpl;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 public class JPAProcessorImplTest {
 
@@ -126,6 +138,48 @@ public class JPAProcessorImplTest {
     } catch (ODataJPARuntimeException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
+  }
+  
+  @Test
+  public void testProcessGetEntitySetUriInfoWithListener() throws EdmException {
+    try {
+      Assert.assertNotNull(objJPAProcessorImpl.process((GetEntitySetUriInfo)mockURIInfoWithTopSkipInlineListener()));
+    } catch (ODataJPAModelException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+  }
+  
+  @Test
+  public void testProcessGetEntityLinkUriInfo() {
+    try {
+      Assert.assertNotNull(objJPAProcessorImpl.process(getEntityLinkUriInfo()));
+    } catch (ODataJPAModelException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+  }
+  
+  @Test
+  public void testProcessGetEntitySetLinksUriInfo() {
+    try {
+      Assert.assertNotNull(objJPAProcessorImpl.process(getEntitySetLinksUriInfo()));
+    } catch (ODataJPAModelException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+  }
+  
+  @Test(expected = ODataJPARuntimeException.class)
+  public void testProcessFunctionImportUriInfo() throws ODataJPARuntimeException {
+    try {
+     objJPAProcessorImpl.process(getFunctionImportUriInfo());
+    } catch (ODataJPAModelException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } 
   }
 
   @Test
@@ -184,6 +238,14 @@ public class JPAProcessorImplTest {
   private GetEntityCountUriInfo getEntityCountUriInfo() {
     return getLocalUriInfo();
   }
+  
+  private GetFunctionImportUriInfo getFunctionImportUriInfo() {
+
+    GetFunctionImportUriInfo objUriInfo = EasyMock.createMock(UriInfo.class);
+    EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(getLocalEdmFunctionImport());
+    EasyMock.replay(objUriInfo);
+    return objUriInfo;
+  }
 
   private GetEntitySetUriInfo getEntitySetUriInfo() {
 
@@ -200,6 +262,54 @@ public class JPAProcessorImplTest {
     EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(null);
     EasyMock.expect(objUriInfo.getCustomQueryOptions()).andStubReturn(null);
     EasyMock.expect(objUriInfo.getNavigationSegments()).andStubReturn(new ArrayList<NavigationSegment>());
+    EasyMock.replay(objUriInfo);
+    return objUriInfo;
+  }
+  
+  private GetEntityLinkUriInfo getEntityLinkUriInfo () {
+
+    UriInfo objUriInfo = EasyMock.createMock(UriInfo.class);
+    EasyMock.expect(objUriInfo.getStartEntitySet()).andStubReturn(getLocalEdmEntitySet());
+    EasyMock.expect(objUriInfo.getTargetEntitySet()).andStubReturn(getLocalEdmEntitySet());
+    EasyMock.expect(objUriInfo.getSelect()).andStubReturn(null);
+    EasyMock.expect(objUriInfo.getOrderBy()).andStubReturn(getOrderByExpression());
+    EasyMock.expect(objUriInfo.getTop()).andStubReturn(getTop());
+    EasyMock.expect(objUriInfo.getSkip()).andStubReturn(getSkip());
+    EasyMock.expect(objUriInfo.getKeyPredicates()).andReturn(getKeyPredicates());
+    EasyMock.expect(objUriInfo.getInlineCount()).andStubReturn(getInlineCount());
+    EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
+    EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(null);
+    EasyMock.expect(objUriInfo.getCustomQueryOptions()).andStubReturn(null);
+    EasyMock.expect(objUriInfo.getNavigationSegments()).andStubReturn(new ArrayList<NavigationSegment>());
+    EasyMock.replay(objUriInfo);
+    return objUriInfo;
+  }
+  
+  private GetEntitySetLinksUriInfo getEntitySetLinksUriInfo () {
+
+    UriInfoImpl objUriInfo = EasyMock.createMock(UriInfoImpl.class);
+    EasyMock.expect(objUriInfo.getStartEntitySet()).andStubReturn(getLocalEdmEntitySet());
+    EasyMock.expect(objUriInfo.getTargetEntitySet()).andStubReturn(getLocalEdmEntitySet());
+    EasyMock.expect(objUriInfo.getSelect()).andStubReturn(null);
+    EasyMock.expect(objUriInfo.getOrderBy()).andStubReturn(getOrderByExpression());
+    EasyMock.expect(objUriInfo.getTop()).andStubReturn(2);
+    EasyMock.expect(objUriInfo.getSkip()).andStubReturn(1);
+    EasyMock.expect(objUriInfo.getSkipToken()).andReturn("5");
+    EasyMock.expect(objUriInfo.getInlineCount()).andStubReturn(InlineCount.ALLPAGES);
+    EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
+    EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(null);
+    EasyMock.expect(objUriInfo.isCount()).andStubReturn(false);
+    EasyMock.expect(objUriInfo.getCustomQueryOptions()).andStubReturn(null);
+    EasyMock.expect(objUriInfo.getNavigationSegments()).andStubReturn(new ArrayList<NavigationSegment>());
+    objUriInfo.setCount(true);
+    EasyMock.expectLastCall().times(1);
+    objUriInfo.setCount(false);
+    EasyMock.expectLastCall().times(1);
+    Map<String, String> data = new HashMap<String, String>();
+    data.put("count", "11");
+    objUriInfo.setCustomQueryOptions(data );
+    EasyMock.expectLastCall().times(1);
+    EasyMock.expect(objUriInfo.getCustomQueryOptions()).andStubReturn(data);
     EasyMock.replay(objUriInfo);
     return objUriInfo;
   }
@@ -220,6 +330,31 @@ public class JPAProcessorImplTest {
     EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
     EasyMock.replay(objUriInfo);
     return objUriInfo;
+  }
+  
+  /**
+   * @return
+   * @throws EdmException
+   */
+  private EdmFunctionImport getLocalEdmFunctionImport() {
+    EdmFunctionImport edmFunction = EasyMock.createMock(EdmFunctionImport.class);
+    try {
+      EasyMock.expect(edmFunction.getName()).andStubReturn(SALES_ORDER_HEADERS);
+      EasyMock.expect(edmFunction.getEntityContainer()).andStubReturn(getLocalEdmEntityContainer());
+      EasyMock.expect(edmFunction.getReturnType()).andStubReturn(null);
+      EasyMock.expect(edmFunction.getHttpMethod()).andStubReturn("GET");
+      EasyMock.expect(edmFunction.getParameterNames()).andStubReturn(new ArrayList<String>());
+      JPAEdmMappingImpl mockedEdmMapping = EasyMock.createMock(JPAEdmMappingImpl.class);
+    //  ((Mapping) mockedEdmMapping).setInternalName(SALES_ORDER_HEADERS);
+      EasyMock.expect(edmFunction.getMapping()).andStubReturn(mockedEdmMapping);
+      EasyMock.expect(mockedEdmMapping.getInternalName()).andStubReturn(SALES_ORDER_HEADERS);
+      EasyMock.<Class<?>> expect(mockedEdmMapping.getJPAType()).andReturn(SalesOrderHeader.class);
+      EasyMock.replay(mockedEdmMapping);
+      EasyMock.replay(edmFunction);
+    } catch (EdmException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+    return edmFunction;
   }
 
   /**
@@ -643,5 +778,105 @@ public class JPAProcessorImplTest {
   }
 
   // -------------------------------- Common End ------------------------------------
+  private UriInfo mockURIInfoWithTopSkipInlineListener() throws EdmException {
 
+    UriInfoImpl objUriInfo = EasyMock.createMock(UriInfoImpl.class);
+    EdmEntityType edmEntityType = EasyMock.createMock(EdmEntityType.class);
+    EasyMock.expect(edmEntityType.getMapping()).andStubReturn((EdmMapping) mockEdmMapping());
+    EdmEntitySet edmEntitySet = EasyMock.createMock(EdmEntitySet.class);
+    EasyMock.expect(edmEntitySet.getEntityType()).andStubReturn(edmEntityType);
+    EasyMock.expect(edmEntityType.getKeyProperties()).andStubReturn(new ArrayList<EdmProperty>());
+    EasyMock.expect(objUriInfo.getStartEntitySet()).andStubReturn(edmEntitySet);
+    EasyMock.expect(objUriInfo.getTargetEntitySet()).andStubReturn(edmEntitySet);
+    EasyMock.expect(objUriInfo.getSelect()).andStubReturn(null);
+    EasyMock.expect(objUriInfo.getOrderBy()).andStubReturn(getOrderByExpression());
+    EasyMock.expect(objUriInfo.getTop()).andStubReturn(1);
+    EasyMock.expect(objUriInfo.getSkip()).andStubReturn(1);
+    EasyMock.expect(objUriInfo.getSkipToken()).andReturn("5");
+    EasyMock.expect(objUriInfo.getFilter()).andStubReturn(getFilter());
+    EasyMock.expect(objUriInfo.getFunctionImport()).andStubReturn(null);
+    Map<String, String> delta = new HashMap<String, String>();
+    delta.put("!deltatoken", "!deltatoken");
+    EasyMock.expect(objUriInfo.getCustomQueryOptions()).andStubReturn(delta );
+    EasyMock.expect(objUriInfo.isCount()).andReturn(false);
+    EasyMock.expect(objUriInfo.getNavigationSegments()).andStubReturn(new ArrayList<NavigationSegment>());
+    EasyMock.expect(objUriInfo.getInlineCount()).andStubReturn(InlineCount.ALLPAGES);
+    objUriInfo.setCount(true);
+    EasyMock.expectLastCall().times(1);
+    objUriInfo.setCount(false);
+    EasyMock.expectLastCall().times(1);
+    Map<String, String> data = new HashMap<String, String>();
+    data.put("count", "11");
+    objUriInfo.setCustomQueryOptions(data );
+    EasyMock.expectLastCall().times(1);
+    EasyMock.replay(edmEntityType, edmEntitySet, objUriInfo);
+    return objUriInfo;
+
+  }
+  
+  private JPAEdmMapping mockEdmMapping() {
+    JPATombstoneExtensionMock tombstone = new JPATombstoneExtensionMock();
+    tombstone.handleDelta(new String("delta"));
+    JPAEdmMappingImpl mockedEdmMapping = new JPAEdmMappingImpl();
+    mockedEdmMapping.setODataJPATombstoneEntityListener(JPAQueryExtensionMock.class);
+    mockedEdmMapping.setODataJPATombstoneEntityListener(JPATombstoneExtensionMock.class);
+    mockedEdmMapping.setInternalName(SALES_ORDER_HEADERS);
+    return mockedEdmMapping;
+  }
+  
+  public static final class JPATombstoneExtensionMock extends ODataJPATombstoneEntityListener {
+    
+    public void handleDelta(final Object entity) {
+      addToDelta(entity, SALES_ORDER_HEADERS);
+    }
+
+    @Override
+    public Query getQuery(GetEntitySetUriInfo resultsView, EntityManager em) throws ODataJPARuntimeException {
+      return null;
+    }
+
+    @Override
+    public String generateDeltaToken(List<Object> deltas, Query query) {
+      return null;
+    }
+    
+  }
+  public static final class JPAQueryExtensionMock extends ODataJPAQueryExtensionEntityListener {
+    Query query = EasyMock.createMock(Query.class);
+
+    @Override
+    public Query getQuery(GetEntityUriInfo uriInfo, EntityManager em) {
+      return query;
+    }
+
+    @Override
+    public Query getQuery(GetEntitySetUriInfo uriInfo, EntityManager em) {
+      return null;
+    }
+
+    @Override
+    public Query getQuery(GetEntitySetCountUriInfo uriInfo, EntityManager em) {
+      return query;
+    }
+
+    @Override
+    public Query getQuery(DeleteUriInfo uriInfo, EntityManager em) {
+      return query;
+    }
+
+    @Override
+    public Query getQuery(GetEntityCountUriInfo uriInfo, EntityManager em) {
+      return query;
+    }
+
+    @Override
+    public Query getQuery(PutMergePatchUriInfo uriInfo, EntityManager em) {
+      return query;
+    }
+
+    @Override
+    public boolean isTombstoneSupported() {
+      return true;
+    }
+  }
 }

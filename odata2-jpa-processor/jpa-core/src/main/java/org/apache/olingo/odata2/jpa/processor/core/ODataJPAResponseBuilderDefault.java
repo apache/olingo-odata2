@@ -62,6 +62,7 @@ import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PutMergePatchUriInfo;
+import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneContext;
@@ -73,6 +74,7 @@ import org.apache.olingo.odata2.jpa.processor.core.callback.JPATombstoneCallBack
 
 public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBuilder {
 
+  private static final String COUNT = "count";
   private final ODataJPAContext oDataJPAContext;
 
   public ODataJPAResponseBuilderDefault(final ODataJPAContext context) {
@@ -482,13 +484,7 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 
     Integer count = null;
     if (resultsView.getInlineCount() != null) {
-      if ((resultsView.getSkip() != null || resultsView.getTop() != null)) {
-        // when $skip and/or $top is present with $inlinecount
-        count = getInlineCountForNonFilterQueryEntitySet(edmEntityList, resultsView);
-      } else {
-        // In all other cases
-        count = resultsView.getInlineCount() == InlineCount.ALLPAGES ? edmEntityList.size() : null;
-      }
+       count = getInlineCountForNonFilterQueryEntitySet(edmEntityList, resultsView);
     }
 
     try {
@@ -542,6 +538,10 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
         .replaceAll("\\$skip=.+?(?:&|$)", "")
         .replaceFirst("(?:\\?|&)$", ""); // Remove potentially trailing "?" or "&" left over from remove actions
   }
+  
+  public static boolean isNumeric(String strNum) {
+    return strNum.matches("-?\\d+(\\.\\d+)?");
+}
 
   /*
    * This method handles $inlinecount request. It also modifies the list of results in case of
@@ -552,21 +552,15 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     // when $skip and/or $top is present with $inlinecount, first get the total count
     Integer count = null;
     if (resultsView.getInlineCount() == InlineCount.ALLPAGES) {
-      if (resultsView.getSkip() != null || resultsView.getTop() != null) {
-        count = edmEntityList.size();
-        // Now update the list
-        if (resultsView.getSkip() != null) {
-          // Index checks to avoid IndexOutOfBoundsException
-          if (resultsView.getSkip() > edmEntityList.size()) {
-            edmEntityList.clear();
-            return count;
+      count = edmEntityList.size();
+      if (resultsView.getCustomQueryOptions() != null) {
+        String countValue = resultsView.getCustomQueryOptions().get(COUNT);
+        if (countValue != null && isNumeric(countValue)) {
+          count = Integer.parseInt(countValue);
+          resultsView.getCustomQueryOptions().remove(COUNT);
+          if (resultsView.getCustomQueryOptions().size() == 0) {
+            ((UriInfoImpl) resultsView).setCustomQueryOptions(null);
           }
-          edmEntityList.subList(0, resultsView.getSkip()).clear();
-        }
-        if (resultsView.getTop() != null && resultsView.getTop() >= 0 && resultsView.getTop() < edmEntityList.size()) {
-          final List<Map<String, Object>> edmEntitySubList =
-              new ArrayList<Map<String, Object>>(edmEntityList.subList(0, resultsView.getTop()));
-          edmEntityList.retainAll(edmEntitySubList);
         }
       }
     }// Inlinecount of None is handled by default - null

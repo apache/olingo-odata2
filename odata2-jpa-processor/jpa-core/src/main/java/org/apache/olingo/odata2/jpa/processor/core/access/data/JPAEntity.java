@@ -68,7 +68,7 @@ public class JPAEntity {
   private ODataJPAContext oDataJPAContext;
   private OnJPAWriteContent onJPAWriteContent = null;
   private List<String> relatedJPAEntityLink = new ArrayList<String>();
-  public HashMap<String, List<Object>> relatedJPAEntityMap = null;
+  private HashMap<String, List<Object>> relatedJPAEntityMap = null;
   private EdmNavigationProperty viaNavigationProperty;
 
   public JPAEntity(final EdmEntityType oDataEntityType, final EdmEntitySet oDataEntitySet,
@@ -553,6 +553,10 @@ public class JPAEntity {
         java.sql.Time t = entityPropertyValue != null ? 
             new java.sql.Time(((Calendar) entityPropertyValue).getTimeInMillis()) : null;
         method.invoke(entity, t);
+      } else if (parameterType.equals(byte.class)) {
+        byte b = entityPropertyValue != null ? 
+             Byte.parseByte(entityPropertyValue.toString()) : 0;
+        method.invoke(entity, b);
       } else {
         method.invoke(entity, entityPropertyValue);
       }

@@ -29,10 +29,10 @@ import org.apache.olingo.odata2.api.uri.expression.MethodOperator;
  */
 class InfoMethod {
 
-  public MethodOperator method;
-  public String syntax;
-  public int minParameter;
-  public int maxParameter;
+  private MethodOperator method;
+  private String syntax;
+  private int minParameter;
+  private int maxParameter;
   ParameterSetCombination combination;
 
   public InfoMethod(final MethodOperator method, final ParameterSetCombination combination) {

@@ -34,7 +34,7 @@ public interface ParameterSetCombination {
   EdmType getReturnType();
 
   public static class PSCflex implements ParameterSetCombination {
-    public List<ParameterSet> combinations = new ArrayList<ParameterSet>();
+    private List<ParameterSet> combinations = new ArrayList<ParameterSet>();
 
     @Override
     public void add(final ParameterSet parameterSet) {

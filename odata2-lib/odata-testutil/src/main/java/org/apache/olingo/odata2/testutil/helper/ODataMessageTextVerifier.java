@@ -47,7 +47,7 @@ public class ODataMessageTextVerifier {
   private static final String BUNDLE_NAME = "i18n"; //$NON-NLS-1$
   private static final Locale locale = Locale.ROOT;
 
-  public ResourceBundle resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
+  private ResourceBundle resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
   private final List<Throwable> errorCollector;
 
   public ODataMessageTextVerifier() {

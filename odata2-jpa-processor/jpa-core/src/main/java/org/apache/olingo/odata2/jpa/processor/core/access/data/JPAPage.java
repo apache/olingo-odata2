@@ -72,8 +72,8 @@ public class JPAPage implements JPAPaging {
     private List<Object> pagedEntities;
 
     private static class TopSkip {
-      public Integer top;
-      public Integer skip;
+      private Integer top;
+      private Integer skip;
     }
 
     public JPAPageBuilder() {}

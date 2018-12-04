@@ -36,7 +36,7 @@ import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 @SuppressWarnings("javadoc")
 public class ParameterSet {
   private EdmType returnType = null;
-  public ArrayList<EdmSimpleType> types = new ArrayList<EdmSimpleType>();
+  private ArrayList<EdmSimpleType> types = new ArrayList<EdmSimpleType>();
   private EdmSimpleType furtherType = null;
 
   public ParameterSet(final EdmType returnType, final EdmSimpleType type1) {

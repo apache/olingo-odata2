@@ -24,6 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
+import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAQueryExtensionEntityListener;
@@ -45,6 +46,27 @@ public class CustomerQueryExtension extends ODataJPAQueryExtensionEntityListener
   }
 
   @Override
+  public Query getQuery(GetEntitySetCountUriInfo uriInfo, EntityManager em) throws ODataJPARuntimeException {
+    Query query = null;
+    JPQLContextType contextType = null;
+    if (uriInfo.getNavigationSegments().size() > 0) {
+      contextType = JPQLContextType.JOIN_SINGLE;
+    } else {
+      contextType = JPQLContextType.SELECT_COUNT;
+    }
+    JPQLContext jpqlContext;
+    try {
+      jpqlContext = JPQLContext.createBuilder(contextType, uriInfo).build();
+      query = em.createQuery(JPQLStatement.createBuilder(jpqlContext).build().toString());
+    } catch (ODataJPAModelException e) {
+      // Log and return null query object;
+    } catch (ODataJPARuntimeException e) {
+      // Log and return null query object;
+    }
+    return query;
+  }
+  
+  @Override
   public Query getQuery(GetEntityUriInfo uriInfo, EntityManager em) {
     Query query = null;
     JPQLContextType contextType = null;
@@ -62,7 +84,7 @@ public class CustomerQueryExtension extends ODataJPAQueryExtensionEntityListener
     } catch (ODataJPARuntimeException e) {
       // Log and return null query object;
     }
-    return null;
+    return query;
   }
 
   @Override

@@ -168,6 +168,9 @@ public class JPAProcessorImpl implements JPAProcessor {
       if (listener != null && listener.isTombstoneSupported()) {
         ODataJPATombstoneContext.setDeltaToken(listener.generateDeltaToken((List<Object>) result, query));
       }
+      if(InlineCount.ALLPAGES.equals(uriParserResultView.getInlineCount())){
+        queryBuilder.getCount(uriParserResultView);
+      }
       return result == null ? new ArrayList<Object>() : result;
     } catch (EdmException e) {
       throw ODataJPARuntimeException.throwException(
@@ -420,11 +423,11 @@ public class JPAProcessorImpl implements JPAProcessor {
         .skipToken(uriParserResultView.getSkipToken());
 
     // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
-    if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
+    if (uriParserResultView.getSkip() != null) {
       pageBuilder.skip(uriParserResultView.getSkip().intValue());
     }
 
-    if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
+    if (uriParserResultView.getTop() != null) {
       pageBuilder.top(uriParserResultView.getTop().intValue());
     }
 
@@ -442,11 +445,11 @@ public class JPAProcessorImpl implements JPAProcessor {
         .skipToken(uriParserResultView.getSkipToken());
 
     // $top/$skip with $inlinecount case handled in response builder to avoid multiple DB call
-    if (uriParserResultView.getSkip() != null && uriParserResultView.getInlineCount() == null) {
+    if (uriParserResultView.getSkip() != null) {
       pageBuilder.skip(uriParserResultView.getSkip().intValue());
     }
 
-    if (uriParserResultView.getTop() != null && uriParserResultView.getInlineCount() == null) {
+    if (uriParserResultView.getTop() != null) {
       pageBuilder.top(uriParserResultView.getTop().intValue());
     }
 
