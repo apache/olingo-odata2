@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
@@ -160,5 +161,25 @@ public class JsonFunctionImportTest extends BaseTest {
         + "\"ne_Team\":{\"__deferred\":{\"uri\":\"" + uri + "Employees('1')/ne_Team\"}},"
         + "\"ne_Room\":{\"__deferred\":{\"uri\":\"" + uri + "Employees('1')/ne_Room\"}}}}",
         json);
+  }
+  
+  
+  @Test
+  public void noReturnTypeAction() throws Exception {
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AddEmployee");
+    final String uri = "http://host:80/service/";
+    final EntityProviderWriteProperties properties =
+        EntityProviderWriteProperties.serviceRoot(URI.create(uri)).build();
+    Map<String, Object> employeeData = new HashMap<String, Object>();
+    employeeData.put("EmployeeId", "1");
+    employeeData.put("getImageType", "image/jpeg");
+    final ODataResponse response =
+        new JsonEntityProvider().writeFunctionImport(functionImport, employeeData, properties);
+    assertNotNull(response);
+    assertNull(response.getEntity());
+    assertNull(response.getContentHeader());
+    assertEquals(HttpStatusCodes.ACCEPTED, response.getStatus());
+   
   }
 }

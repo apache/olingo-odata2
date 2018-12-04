@@ -333,21 +333,24 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
   public ODataResponse writeFunctionImport(final EdmFunctionImport functionImport, final Object data,
       final EntityProviderWriteProperties properties) throws EntityProviderException {
     try {
-      final EdmType type = functionImport.getReturnType().getType();
-      final boolean isCollection = functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY;
-
-      if (type.getKind() == EdmTypeKind.ENTITY) {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> map = (Map<String, Object>) data;
-        return writeEntry(functionImport.getEntitySet(), map, properties);
-      }
-
-      final EntityPropertyInfo info = EntityInfoAggregator.create(functionImport);
-      if (isCollection) {
-        return writeCollection(info, (List<?>) data);
-      } else {
-        return writeSingleTypedElement(info, data);
-      }
+      if(functionImport.getReturnType() !=null){
+        final EdmType type = functionImport.getReturnType().getType();
+        final boolean isCollection = functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY;
+  
+        if (type.getKind() == EdmTypeKind.ENTITY) {
+          @SuppressWarnings("unchecked")
+          Map<String, Object> map = (Map<String, Object>) data;
+          return writeEntry(functionImport.getEntitySet(), map, properties);
+        }
+        final EntityPropertyInfo info = EntityInfoAggregator.create(functionImport);
+        if (isCollection) {
+          return writeCollection(info, (List<?>) data);
+        } else {
+          return writeSingleTypedElement(info, data);
+        }
+     }else{
+       return ODataResponse.newBuilder().status(HttpStatusCodes.ACCEPTED).build();
+     }
     } catch (EdmException e) {
       throw new EntityProviderProducerException(e.getMessageReference(), e);
     }

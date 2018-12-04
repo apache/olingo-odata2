@@ -247,6 +247,13 @@ class EdmMock {
     when(employeeActionImport.getEntitySet()).thenReturn(employeeEntitySet);
     when(employeeActionImport.getHttpMethod()).thenReturn(ODataHttpMethod.POST.name());
 
+    //Issue no return type
+    EdmFunctionImport addEmployeeActionImport =
+        createActionImportMock(defaultContainer, "AddEmployee", null, EdmMultiplicity.ONE);
+    when(addEmployeeActionImport.getEntitySet()).thenReturn(employeeEntitySet);
+    when(addEmployeeActionImport.getHttpMethod()).thenReturn(ODataHttpMethod.POST.name());
+    
+    
     // Issue with not explicitly nullable parameters and facets
     EdmFunctionImport functionImportNullableParameter =
         createFunctionImportMock(defaultContainer, "FINullableParameter", EdmSimpleTypeKind.Boolean
@@ -427,6 +434,21 @@ class EdmMock {
     EdmFunctionImport functionImport = mock(EdmFunctionImport.class);
     when(functionImport.getName()).thenReturn(name);
     when(functionImport.getReturnType()).thenReturn(returnType);
+    when(functionImport.getHttpMethod()).thenReturn(ODataHttpMethod.GET.name());
+
+    when(container.getFunctionImport(name)).thenReturn(functionImport);
+
+    return functionImport;
+  }
+  
+  
+  
+  private static EdmFunctionImport createActionImportMock(final EdmEntityContainer container, final String name,
+      final EdmType type, final EdmMultiplicity multiplicity) throws EdmException {
+
+    EdmFunctionImport functionImport = mock(EdmFunctionImport.class);
+    when(functionImport.getName()).thenReturn(name);
+    when(functionImport.getReturnType()).thenReturn(null);
     when(functionImport.getHttpMethod()).thenReturn(ODataHttpMethod.GET.name());
 
     when(container.getFunctionImport(name)).thenReturn(functionImport);

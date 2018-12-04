@@ -102,6 +102,7 @@ public class ScenarioEdmProvider extends EdmProvider {
   private static final String FUNCTION_IMPORT_5 = "MostCommonLocation";
   private static final String FUNCTION_IMPORT_6 = "ManagerPhoto";
   private static final String FUNCTION_IMPORT_7 = "OldestEmployee";
+  private static final String ACTION_IMPORT_1   = "AddEmployee";
 
   @Override
   public List<Schema> getSchemas() throws ODataException {
@@ -157,6 +158,7 @@ public class ScenarioEdmProvider extends EdmProvider {
     functionImports.add(getFunctionImport(ENTITY_CONTAINER_1, FUNCTION_IMPORT_5));
     functionImports.add(getFunctionImport(ENTITY_CONTAINER_1, FUNCTION_IMPORT_6));
     functionImports.add(getFunctionImport(ENTITY_CONTAINER_1, FUNCTION_IMPORT_7));
+    functionImports.add(getFunctionImport(ENTITY_CONTAINER_1, ACTION_IMPORT_1));
     entityContainer.setFunctionImports(functionImports);
 
     schema.setEntityContainers(Arrays.asList(entityContainer));
@@ -472,6 +474,12 @@ public class ScenarioEdmProvider extends EdmProvider {
             .setReturnType(new ReturnType().setTypeName(ENTITY_TYPE_1_1).setMultiplicity(EdmMultiplicity.ZERO_TO_ONE))
             .setEntitySet(ENTITY_SET_1_1)
             .setHttpMethod("GET");
+      } else if (ACTION_IMPORT_1.equals(name)) {
+        return new FunctionImport().setName(name)
+            .setEntitySet(ENTITY_SET_1_1)
+            .setHttpMethod("POST")/*.setParameters(Arrays.asList(
+                new FunctionImportParameter().setName("Id").setType(EdmSimpleTypeKind.String)
+                .setFacets(new Facets().setNullable(false))))*/;
       }
     }
 

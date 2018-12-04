@@ -266,7 +266,10 @@ public class ScenarioDataSource {
       }
       throw new ODataNotFoundException(ODataNotFoundException.ENTITY);
 
-    } else if (function.getName().equals("OldestEmployee")) {
+    } else if (function.getName().equals("AddEmployee")) {
+        return null;
+
+    }  else if (function.getName().equals("OldestEmployee")) {
       return getOldestEmployee();
 
     } else {

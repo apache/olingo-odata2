@@ -20,12 +20,14 @@ package org.apache.olingo.odata2.core.ep.producer;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.Arrays;
 
+import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.ep.AbstractProviderTest;
@@ -139,5 +141,19 @@ public class XmlFunctionImportTest extends AbstractProviderTest {
     assertXpathExists("/a:entry", xml);
     assertXpathExists("/a:entry/a:link[@href=\"Employees('1')/$value\"]", xml);
     assertXpathEvaluatesTo("Duckburg", "/a:entry/m:properties/d:Location/d:City/d:CityName/text()", xml);
+  }
+  
+  @Test
+  public void noReturnTypeAction() throws Exception {
+    final EdmFunctionImport functionImport =
+        MockFacade.getMockEdm().getDefaultEntityContainer().getFunctionImport("AddEmployee");
+
+    final ODataResponse response =
+        createAtomEntityProvider().writeFunctionImport(functionImport, employeeData, DEFAULT_PROPERTIES);
+    assertNotNull(response);
+    assertNull(response.getEntity());
+    assertNull(response.getContentHeader());
+    assertEquals(HttpStatusCodes.ACCEPTED, response.getStatus());
+   
   }
 }

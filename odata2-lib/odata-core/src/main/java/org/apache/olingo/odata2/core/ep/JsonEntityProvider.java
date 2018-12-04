@@ -286,17 +286,21 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
   public ODataResponse writeFunctionImport(final EdmFunctionImport functionImport, final Object data,
       final EntityProviderWriteProperties properties) throws EntityProviderException {
     try {
-      if (functionImport.getReturnType().getType().getKind() == EdmTypeKind.ENTITY) {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> map = (Map<String, Object>) data;
-        return writeEntry(functionImport.getEntitySet(), map, properties);
-      }
-
-      final EntityPropertyInfo info = EntityInfoAggregator.create(functionImport);
-      if (functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY) {
-        return writeCollection(info, (List<?>) data);
-      } else {
-        return writeSingleTypedElement(info, data);
+      if(functionImport.getReturnType() !=null){
+        if (functionImport.getReturnType().getType().getKind() == EdmTypeKind.ENTITY) {
+          @SuppressWarnings("unchecked")
+          Map<String, Object> map = (Map<String, Object>) data;
+          return writeEntry(functionImport.getEntitySet(), map, properties);
+        }
+  
+        final EntityPropertyInfo info = EntityInfoAggregator.create(functionImport);
+        if (functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY) {
+          return writeCollection(info, (List<?>) data);
+        } else {
+          return writeSingleTypedElement(info, data);
+        }
+      }else{
+        return ODataResponse.newBuilder().status(HttpStatusCodes.ACCEPTED).build();
       }
     } catch (final EdmException e) {
       throw new EntityProviderProducerException(e.getMessageReference(), e);
