@@ -605,6 +605,9 @@ public class JPAEntity {
           //abafa
         }
       }
+      else if (type != null && type.getDefaultType().equals(Short.class) && parameterType.equals(Byte.class)) {
+        method.invoke(entity, ((Short)entityPropertyValue).byteValue());
+      }
       else if (type != null && type.getDefaultType().equals(String.class)) {
         if (parameterType.equals(String.class)) {
           method.invoke(entity, entityPropertyValue);

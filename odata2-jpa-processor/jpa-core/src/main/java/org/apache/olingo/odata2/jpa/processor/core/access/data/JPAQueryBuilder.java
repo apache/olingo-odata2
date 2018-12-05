@@ -68,6 +68,7 @@ public class JPAQueryBuilder {
   private EntityManager em = null;
   private int pageSize = 0;
   private ODataJPAContext odataJPAContext;
+  private boolean ignoreListener = false;
 
   public JPAQueryBuilder(ODataJPAContext odataJPAContext) {
     this.em = odataJPAContext.getEntityManager();
@@ -75,12 +76,17 @@ public class JPAQueryBuilder {
     this.odataJPAContext = odataJPAContext;
   }
 
+  public JPAQueryBuilder ignoreListenner(boolean ignoreListenner) {
+    this.ignoreListener = ignoreListenner;
+    return this;
+  }
+
   public JPAQueryInfo build(GetEntitySetUriInfo uriInfo) throws ODataJPARuntimeException {
     JPAQueryInfo queryInfo = new JPAQueryInfo();
     Query query = null;
     try {
       ODataJPATombstoneEntityListener listener = getODataJPATombstoneEntityListener((UriInfo) uriInfo);
-      if (listener != null) {
+      if (listener != null && !ignoreListener) {
         query = listener.getQuery(uriInfo, em);
       }
       if (query == null) {
@@ -99,7 +105,7 @@ public class JPAQueryBuilder {
     Query query = null;
     try {
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
-      if (listener != null) {
+      if (listener != null && !ignoreListener) {
         query = listener.getQuery(uriInfo, em);
       }
       if (query == null) {
@@ -115,7 +121,7 @@ public class JPAQueryBuilder {
     Query query = null;
     try {
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
-      if (listener != null) {
+      if (listener != null && !ignoreListener) {
         query = listener.getQuery(uriInfo, em);
       }
       if (query == null) {
@@ -131,7 +137,7 @@ public class JPAQueryBuilder {
     Query query = null;
     try {
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
-      if (listener != null) {
+      if (listener != null && !ignoreListener) {
         query = listener.getQuery(uriInfo, em);
       }
       if (query == null) {
@@ -154,7 +160,7 @@ public class JPAQueryBuilder {
       }
 
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
-      if (listener != null) {
+      if (listener != null && !ignoreListener) {
         query = listener.getQuery(uriInfo, em);
       }
       if (query == null) {
@@ -177,7 +183,7 @@ public class JPAQueryBuilder {
       }
 
       ODataJPAQueryExtensionEntityListener listener = getODataJPAQueryEntityListener((UriInfo) uriInfo);
-      if (listener != null) {
+      if (listener != null && !ignoreListener) {
         query = listener.getQuery(uriInfo, em);
       }
       if (query == null) {
@@ -201,11 +207,10 @@ public class JPAQueryBuilder {
        //NoCommand
       }
 
-      if (listener != null) {
+      if (listener != null && !ignoreListener) {
         listener.checkFilter(uriParserResultView.getTargetEntitySet().getEntityType(), uriParserResultView.getFilter());
       }
     }
-
 
     JPQLContextType contextType = determineJPQLContextType(uriParserResultView, type);
     JPQLContext jpqlContext = buildJPQLContext(contextType, uriParserResultView);

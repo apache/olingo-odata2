@@ -142,8 +142,8 @@ public class JPQLSelectContext extends JPQLContext implements JPQLSelectContextV
 
         return ODataExpressionParser.parseToJPAOrderByExpression(entitySetView.getOrderBy(), getJPAEntityAlias());
 
-      } else if (entitySetView.getTop() != null || entitySetView.getSkip() != null ||
-          pagingRequested == true) {
+      } else if ((entitySetView.getTop() != null || entitySetView.getSkip() != null ||
+          pagingRequested == true) && !getType().equals(JPQLContextType.SELECT_COUNT)) {
 
         return ODataExpressionParser.parseKeyPropertiesToJPAOrderByExpression(entitySetView.getTargetEntitySet()
             .getEntityType().getKeyProperties(), getJPAEntityAlias());

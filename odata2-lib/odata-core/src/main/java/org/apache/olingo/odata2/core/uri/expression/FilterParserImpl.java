@@ -728,6 +728,13 @@ public class FilterParserImpl implements FilterParser {
     combination = new ParameterSetCombination.PSCflex();
     combination.add(new ParameterSet(boolean_, string, string));
     combination.add(new ParameterSet(boolean_, time, time));
+
+    combination.add(new ParameterSet(boolean_, time, datetime));
+    combination.add(new ParameterSet(boolean_, datetime, time));
+
+    combination.add(new ParameterSet(boolean_, time, datetimeoffset));
+    combination.add(new ParameterSet(boolean_, datetimeoffset, time));
+
     combination.add(new ParameterSet(boolean_, datetime, datetime));
     combination.add(new ParameterSet(boolean_, datetimeoffset, datetimeoffset));
 

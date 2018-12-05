@@ -71,6 +71,7 @@ import org.apache.olingo.odata2.core.uri.UriType;
  *  
  */
 public class ODataRequestHandler {
+  public static boolean PRINT_EXCEPTION = true;
 
   private final ODataServiceFactory serviceFactory;
   private final ODataService service;
@@ -152,7 +153,9 @@ public class ODataRequestHandler {
 
       odataResponse = extendedResponse.build();
     } catch (final Exception e) {
-      e.printStackTrace();
+      if (PRINT_EXCEPTION) {
+        e.printStackTrace();
+      }
 
       Exception newException = serviceFactory.handleException(e);
       if (newException != null) {

@@ -38,6 +38,8 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
  */
 public interface ODataJPAResponseBuilder {
 
+  public void setCount(long count);
+
   /**
    * The method builds an OData response for an OData Query Request from a queried list of JPA Entities.
    * @param queryUriInfo is an information about the request URI

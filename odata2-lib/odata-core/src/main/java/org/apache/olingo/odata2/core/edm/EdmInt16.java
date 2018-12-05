@@ -82,7 +82,7 @@ public class EdmInt16 extends AbstractSimpleType {
       throws EdmSimpleTypeException {
     if (value instanceof Byte || value instanceof Short) {
       return value.toString();
-    } else if (value instanceof Integer || value instanceof Long) {
+    } else if (value instanceof Integer || value instanceof Long || value instanceof Number) {
       if (((Number) value).longValue() >= Short.MIN_VALUE && ((Number) value).longValue() <= Short.MAX_VALUE) {
         return value.toString();
       } else {

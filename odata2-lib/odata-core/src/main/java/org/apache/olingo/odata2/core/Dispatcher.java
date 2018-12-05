@@ -71,7 +71,7 @@ public class Dispatcher {
         uriInfo.setTargetType(set.getEntityType());
       }
     } catch (EdmException e) {
-      e.printStackTrace();
+      //
     }
   }
 
