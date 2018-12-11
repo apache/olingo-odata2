@@ -163,8 +163,8 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
     return null;
   }
 
-  public void execEvent(final UriInfo infoView, final EdmEntityType entityType, String type, Object data) throws ODataJPARuntimeException {
-
+  public Object execEvent(final UriInfo infoView, final EdmEntityType entityType, String type, Object data) throws ODataJPARuntimeException {
+    return null;
   }
 
   public Object processNew(final UriInfo infoView) {
