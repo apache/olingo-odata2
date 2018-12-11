@@ -250,7 +250,7 @@ public class JPAProcessorImpl implements JPAProcessor {
   /* Process Create Entity Request */
   @Override
   public Object process(final PostUriInfo createView, final InputStream content,
-                        final String requestedContentType) throws ODataJPAModelException,
+      final String requestedContentType) throws ODataJPAModelException,
       ODataJPARuntimeException {
     return processCreate(createView, content, null, requestedContentType);
   }
@@ -264,7 +264,7 @@ public class JPAProcessorImpl implements JPAProcessor {
   /* Process Update Entity Request */
   @Override
   public Object process(final PutMergePatchUriInfo updateView,
-                        final InputStream content, final String requestContentType)
+      final InputStream content, final String requestContentType)
       throws ODataJPAModelException, ODataJPARuntimeException {
     return processUpdate(updateView, content, null, requestContentType);
   }
@@ -314,12 +314,16 @@ public class JPAProcessorImpl implements JPAProcessor {
         if (!override) {
           em.remove(selectedObject);
           em.flush();
+        }
+
+        if (listener != null) {
+          listener.execEvent(((UriInfoImpl) uriParserResultView), oDataEntityType, "afterDelete", selectedObject);
+        }
+
+        if (!override) {
           if (isLocalTransaction) {
             oDataJPAContext.getODataJPATransaction().commit();
           }
-        }
-        if (listener != null) {
-          listener.execEvent(((UriInfoImpl) uriParserResultView), oDataEntityType, "afterDelete", selectedObject);
         }
       } catch (Exception e) {
         em.getTransaction().rollback();
@@ -346,7 +350,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
   @Override
   public void process(final PostUriInfo uriInfo,
-                      final InputStream content, final String requestContentType, final String contentType)
+      final InputStream content, final String requestContentType, final String contentType)
       throws ODataJPARuntimeException, ODataJPAModelException {
     JPALink link = new JPALink(oDataJPAContext);
     link.create(uriInfo, content, requestContentType, contentType);
@@ -355,7 +359,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
   @Override
   public void process(final PutMergePatchUriInfo putUriInfo,
-                      final InputStream content, final String requestContentType, final String contentType)
+      final InputStream content, final String requestContentType, final String contentType)
       throws ODataJPARuntimeException, ODataJPAModelException {
 
     JPALink link = new JPALink(oDataJPAContext);
@@ -420,8 +424,8 @@ public class JPAProcessorImpl implements JPAProcessor {
   }
 
   private Object processCreate(final PostUriInfo createView, final InputStream content,
-                               final Map<String, Object> properties,
-                               final String requestedContentType) throws ODataJPAModelException,
+      final Map<String, Object> properties,
+      final String requestedContentType) throws ODataJPAModelException,
       ODataJPARuntimeException {
     try {
       final EdmEntitySet oDataEntitySet = createView.getTargetEntitySet();
@@ -527,9 +531,6 @@ public class JPAProcessorImpl implements JPAProcessor {
       }
 
       if (em.contains(jpaEntity)) {
-        if (isLocalTransaction) {
-          oDataJPAContext.getODataJPATransaction().commit();
-        }
 
         if (manymany) {
           jpaEntity = tempEntity;
@@ -537,7 +538,6 @@ public class JPAProcessorImpl implements JPAProcessor {
 
         EdmEntityType edmEntityType = createView.getEntityContainer().getEntitySet(createView.getTargetEntitySet()
             .getEntityType().getMapping().getInternalName()).getEntityType();
-
 
         JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, (UriInfo) createView);
         HashMap<String, Object> edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType);
@@ -556,12 +556,17 @@ public class JPAProcessorImpl implements JPAProcessor {
         ((UriInfoImpl) createView).setKeyPredicates(predicates);
         ((UriInfoImpl) createView).setRawEntity(false);
 
+        em.flush();
         em.clear();
 
         Object resultEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build((GetEntityUriInfo) createView), (UriInfo) createView);
 
         if (listener != null) {
           listener.execEvent(((UriInfoImpl) createView), oDataEntityType, "afterInsert", resultEntity);
+        }
+
+        if (isLocalTransaction) {
+          oDataJPAContext.getODataJPATransaction().commit();
         }
 
         return resultEntity;
@@ -575,7 +580,7 @@ public class JPAProcessorImpl implements JPAProcessor {
   }
 
   private <T> Object processUpdate(PutMergePatchUriInfo updateView,
-                                   final InputStream content, final Map<String, Object> properties, final String requestContentType)
+      final InputStream content, final Map<String, Object> properties, final String requestContentType)
       throws ODataJPAModelException, ODataJPARuntimeException {
     Object jpaEntity = null;
     try {
@@ -628,29 +633,32 @@ public class JPAProcessorImpl implements JPAProcessor {
         return null;
       }
 
+      Object overridePut = null;
       if (listener != null) {
         listener.execEvent(((UriInfoImpl) updateView), oDataEntityType, "beforeUpdate", jpaEntity);
+        overridePut = listener.overridePut((UriInfo) updateView, jpaEntity);
       }
-
-      Object overridePut = listener.overridePut((UriInfo) updateView, jpaEntity);
 
       if (overridePut != null) {
         jpaEntity = overridePut;
       } else {
         em.flush();
-        if (isLocalTransaction) {
-          oDataJPAContext.getODataJPATransaction().commit();
-        }
         em.clear();
 
         jpaEntity = readEntity(queryBuilder.build(updateView), (UriInfo) updateView);
+
+        if (listener != null) {
+          listener.execEvent(((UriInfoImpl) updateView), oDataEntityType, "afterUpdate", jpaEntity);
+        }
+
+        if (isLocalTransaction) {
+          oDataJPAContext.getODataJPATransaction().commit();
+        }
       }
 
       ((UriInfoImpl) updateView).setRawEntity(false);
 
-      if (listener != null) {
-        listener.execEvent(((UriInfoImpl) updateView), oDataEntityType, "afterUpdate", jpaEntity);
-      }
+
     } catch (ODataBadRequestException e) {
       throw new RuntimeException(e);
     } catch (EdmException e) {
