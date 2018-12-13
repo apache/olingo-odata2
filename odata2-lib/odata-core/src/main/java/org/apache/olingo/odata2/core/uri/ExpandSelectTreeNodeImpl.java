@@ -60,7 +60,8 @@ public class ExpandSelectTreeNodeImpl extends ExpandSelectTreeNode {
   private boolean isExpanded = false;
   private final List<EdmProperty> properties = new ArrayList<EdmProperty>();
   private final Map<String, ExpandSelectTreeNodeImpl> links = new HashMap<String, ExpandSelectTreeNodeImpl>();
-
+  private final List<ExpandSelectTreeNode> expandselectTreeNodes = new ArrayList<ExpandSelectTreeNode>();
+  
   @Override
   public boolean isAll() {
     return isAll.getBoolean();
@@ -76,6 +77,11 @@ public class ExpandSelectTreeNodeImpl extends ExpandSelectTreeNode {
   public Map<String, ExpandSelectTreeNode> getLinks() {
     return (Map<String, ExpandSelectTreeNode>) ((Map<String, ? extends ExpandSelectTreeNode>) Collections
         .unmodifiableMap(links));
+  }
+  
+  @Override
+  public List<ExpandSelectTreeNode> getExpandedList() {
+    return expandselectTreeNodes;
   }
 
   public void putLink(final String name, final ExpandSelectTreeNodeImpl node) {
@@ -275,5 +281,4 @@ public class ExpandSelectTreeNodeImpl extends ExpandSelectTreeNode {
     }
 
   }
-
 }

@@ -389,6 +389,14 @@ public class JsonEntryConsumer {
     List<ODataEntry> entries = feed.getEntries();
     if (!entries.isEmpty()) {
       updateExpandSelectTree(navigationPropertyName, entries.get(0));
+      for(ODataEntry entry : entries){
+        ExpandSelectTreeNodeImpl newExpandedSelectedTree = new ExpandSelectTreeNodeImpl();
+        newExpandedSelectedTree.setExpanded();
+        newExpandedSelectedTree.setExplicitlySelected();
+        newExpandedSelectedTree.putLink(navigationPropertyName, 
+            (ExpandSelectTreeNodeImpl) entry.getExpandSelectTree());
+        expandSelectTree.getExpandedList().add(newExpandedSelectedTree);
+      }
     } else {
       expandSelectTree.setExpanded();
       expandSelectTree.setExplicitlySelected();

@@ -53,7 +53,13 @@ public abstract class ExpandSelectTreeNode {
    * otherwise the link must be expanded with information found in that node
    */
   public abstract Map<String, ExpandSelectTreeNode> getLinks();
-
+  
+  /**
+   * A list of all expanded links within the parent entity. 
+   * @return {@link ExpandSelectTreeNodeBuilder} for method chaining.
+   */
+  public abstract List<ExpandSelectTreeNode> getExpandedList();
+  
   /**
    * Creates a builder instance and sets the entitySet for this node.
    * @param entitySet on which this node is based

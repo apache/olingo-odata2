@@ -1,0 +1,160 @@
+
+            {
+                "Id": "1",
+                "Name": "Room 1",
+                "Seats": 1,
+                "Version": 1,
+                "nr_Employees": {
+                    "results": [
+                  
+                        {
+                            "EmployeeId": "4",
+                            "EmployeeName": "Walter Winter",
+                            "ManagerId": "4",
+                            "RoomId": "4",
+                            "TeamId": "4",
+                            "Location": {
+                                "__metadata": {
+                                    "type": "RefScenario.c_Location"
+                                },
+                                "City": {
+                                    "__metadata": {
+                                        "type": "RefScenario.c_City"
+                                    },
+                                    "PostalCode": "69124",
+                                    "CityName": "Heidelberg"
+                                },
+                                "Country": "Germany"
+                            },
+                            "Age": 52,
+                            "EntryDate": "/Date(915148800000)/",
+                            "ImageUrl": "Employees('4')/$value",
+                           
+                            "ne_Room": {
+                                "__metadata": {
+                                    "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenarioNonJaxrs.svc/Rooms('1')",
+                                    "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenarioNonJaxrs.svc/Rooms('1')",
+                                    "type": "RefScenario.Room",
+                                    "etag": "W/\"1\""
+                                },
+                                "Id": "1",
+                                "Name": "Room 1",
+                                "Seats": 1,
+                                "Version": 1,
+                                "nr_Building": {
+				                    "__metadata": {
+				                        "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenarioNonJaxrs.svc/Buildings('3')",
+				                        "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenarioNonJaxrs.svc/Buildings('3')",
+				                        "type": "RefScenario.Building"
+				                    },
+				                    "Id": "3",
+				                    "Name": "Building 3",
+				                    "Image": null,
+				                    "nb_Rooms": {
+				                        "__deferred": {
+				                            "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenarioNonJaxrs.svc/Buildings('3')/nb_Rooms"
+				                        }
+				                    }
+				                }
+                            }
+                        },                      
+						{
+                            "EmployeeId": "1",
+                            "EmployeeName": "Walter Winter",
+                            "ManagerId": "1",
+                            "RoomId": "1",
+                            "TeamId": "1",
+                            "Location": {
+                                "__metadata": {
+                                    "type": "RefScenario.c_Location"
+                                },
+                                "City": {
+                                    "__metadata": {
+                                        "type": "RefScenario.c_City"
+                                    },
+                                    "PostalCode": "69124",
+                                    "CityName": "Heidelberg"
+                                },
+                                "Country": "Germany"
+                            },
+                            "Age": 52,
+                            "EntryDate": "/Date(915148800000)/",
+                            "ImageUrl": "Employees('1')/$value",
+                           
+                            "ne_Room": {
+                                "__metadata": {
+                                    "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenarioNonJaxrs.svc/Rooms('1')",
+                                    "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenarioNonJaxrs.svc/Rooms('1')",
+                                    "type": "RefScenario.Room",
+                                    "etag": "W/\"1\""
+                                },
+                                "Id": "1",
+                                "Name": "Room 1",
+                                "Seats": 1,
+                                "Version": 1
+                            }
+                        },
+                         {
+                            "EmployeeId": "3",
+                            "EmployeeName": "Walter Winter",
+                            "ManagerId": "3",
+                            "RoomId": "1",
+                            "TeamId": "1",
+                            "Location": {
+                                "__metadata": {
+                                    "type": "RefScenario.c_Location"
+                                },
+                                "City": {
+                                    "__metadata": {
+                                        "type": "RefScenario.c_City"
+                                    },
+                                    "PostalCode": "69124",
+                                    "CityName": "Heidelberg"
+                                },
+                                "Country": "Germany"
+                            },
+                            "Age": 51,
+                            "EntryDate": "/Date(915148800005)/",
+                            "ImageUrl": "Employees('3')/$value"
+                        } ,
+                          {
+                            "EmployeeId": "2",
+                            "EmployeeName": "Walter Winter",
+                            "ManagerId": "2",
+                            "RoomId": "1",
+                            "TeamId": "1",
+                            "Location": {
+                                "__metadata": {
+                                    "type": "RefScenario.c_Location"
+                                },
+                                "City": {
+                                    "__metadata": {
+                                        "type": "RefScenario.c_City"
+                                    },
+                                    "PostalCode": "69124",
+                                    "CityName": "Heidelberg"
+                                },
+                                "Country": "Germany"
+                            },
+                            "Age": 51,
+                            "EntryDate": "/Date(915148800005)/",
+                            "ImageUrl": "Employees('2')/$value",
+                            "ne_Team": {
+			                    "__metadata": {
+			                        "id": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenarioNonJaxrs.svc/Teams('1')",
+			                        "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenarioNonJaxrs.svc/Teams('1')",
+			                        "type": "RefScenario.Team"
+			                    },
+			                    "Id": "1",
+			                    "Name": "Team 1",
+			                    "isScrumTeam": false,
+			                    "nt_Employees": {
+			                        "__deferred": {
+			                            "uri": "http://localhost:8080/olingo-odata2-ref-web/ReferenceScenarioNonJaxrs.svc/Teams('1')/nt_Employees"
+			                        }
+			                    }
+			                }
+                        }
+                    ]
+                }
+            }

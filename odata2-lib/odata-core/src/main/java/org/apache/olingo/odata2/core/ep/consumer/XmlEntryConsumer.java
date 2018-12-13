@@ -345,6 +345,15 @@ public class XmlEntryConsumer {
     expandSelectTree.setExpanded();
     ExpandSelectTreeNodeImpl subNode = getExpandSelectTreeNode(inlineEntries);
     expandSelectTree.putLink(navigationPropertyName, subNode);
+    for(ODataEntry entry : inlineEntries){
+      ExpandSelectTreeNodeImpl newExpandedSelectedTree = new ExpandSelectTreeNodeImpl();
+      newExpandedSelectedTree.setExpanded();
+      newExpandedSelectedTree.setExplicitlySelected();
+      newExpandedSelectedTree.putLink(navigationPropertyName, 
+          (ExpandSelectTreeNodeImpl) entry.getExpandSelectTree());
+      expandSelectTree.getExpandedList().add(newExpandedSelectedTree);
+    }
+    
   }
 
   /**

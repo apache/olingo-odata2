@@ -434,6 +434,34 @@ public class JsonEntryConsumerTest extends AbstractConsumerTest {
     assertEquals(5, result.getProperties().size());
     assertEquals(0, ((ODataFeed)result.getProperties().get("nr_Employees")).getEntries().size());
   }
+  
+  
+  @Test
+  public void roomsFeedWithRoomInlineDifferent() throws Exception {
+    InputStream stream = getFileAsStream("jsonEmployeesWithDifferentInlines.json");
+    assertNotNull(stream);
+
+    EntityProviderReadProperties readProperties = EntityProviderReadProperties.init()
+        .mergeSemantic(false).isValidatingFacets(false).build();
+
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataEntry entry = xec.readEntry(entitySet, stream, readProperties);
+    assertNotNull(entry);
+    assertNotNull(entry.getExpandSelectTree().getLinks().get("nr_Employees"));
+    assertNotNull(entry.getExpandSelectTree().getExpandedList().get(3)
+        .getLinks().get("nr_Employees").getLinks().get("ne_Team"));
+    assertNotNull(entry.getExpandSelectTree().getExpandedList().get(0)
+        .getLinks().get("nr_Employees").getLinks().get("ne_Room"));
+    assertNotNull(entry.getExpandSelectTree().getExpandedList().get(0)
+        .getLinks().get("nr_Employees").getLinks().get("ne_Room")
+        .getLinks().get("nr_Building"));
+    assertNotNull(entry.getExpandSelectTree().getExpandedList().get(1)
+        .getLinks().get("nr_Employees").getLinks().get("ne_Room"));
+    assertNull(entry.getExpandSelectTree().getExpandedList().get(2)
+        .getLinks().get("nr_Employees").getLinks().get("ne_Room"));
+  }
+  
   /**
    * @param inlineEntries
    * @param feed
