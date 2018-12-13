@@ -254,6 +254,17 @@ public class UriParserTest extends BaseTest {
     assertEquals("1", result.getKeyPredicates().get(0).getLiteral());
     assertEquals("EmployeeId", result.getKeyPredicates().get(0).getProperty().getName());
   }
+  
+  @Test
+  public void parseEmployeesEntityWithEmptyKey() throws Exception {
+    parseWrongUri("/Employees('')", UriSyntaxException.INVALIDVALUE.addContent("''"));
+  }
+  
+  @Test
+  public void parseEmployeesEntityWithNullKey() throws Exception {
+    parseWrongUri("/Employees(null)", UriSyntaxException.INCOMPATIBLELITERAL);
+  }
+
 
   @Test
   public void parseEmployeesEntityWithKeyWithComma() throws Exception {
