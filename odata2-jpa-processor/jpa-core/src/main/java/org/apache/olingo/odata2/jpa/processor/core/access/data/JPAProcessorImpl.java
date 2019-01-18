@@ -544,20 +544,26 @@ public class JPAProcessorImpl implements JPAProcessor {
 
         List<KeyPredicate> predicates = new ArrayList<KeyPredicate>();
 
-        for (EdmProperty key : createView.getTargetEntitySet().getEntityType().getKeyProperties()) {
-          final EdmSimpleType type = (EdmSimpleType) key.getType();
-          final EdmFacets facets = key.getFacets();
-          String literal = type.valueToString(edmPropertyValueMap.get(key.getName()), EdmLiteralKind.DEFAULT, facets);
-          KeyPredicateImpl predicate = new KeyPredicateImpl(literal, key);
-          predicates.add(predicate);
-          createView.getNavigationSegments().clear();
-        }
-
-        ((UriInfoImpl) createView).setKeyPredicates(predicates);
+       ((UriInfoImpl) createView).setKeyPredicates(predicates);
         ((UriInfoImpl) createView).setRawEntity(false);
 
         em.flush();
         em.clear();
+
+        for (EdmProperty key : createView.getTargetEntitySet().getEntityType().getKeyProperties()) {
+          final EdmSimpleType type = (EdmSimpleType) key.getType();
+          final EdmFacets facets = key.getFacets();
+          Object value;
+          try {
+            value = ReflectionUtil.getter(jpaEntity, key.getName());
+          } catch(Exception e) {
+            value = edmPropertyValueMap.get(key.getName());
+          }
+          String literal = type.valueToString(value, EdmLiteralKind.DEFAULT, facets);
+          KeyPredicateImpl predicate = new KeyPredicateImpl(literal, key);
+          predicates.add(predicate);
+          createView.getNavigationSegments().clear();
+        }
 
         Object resultEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build((GetEntityUriInfo) createView), (UriInfo) createView);
 

@@ -45,4 +45,29 @@ public class ReflectionUtil {
     throw new NoSuchFieldException("No such Field");
   }
 
+  public static Object getter(Object o, String name) throws NoSuchFieldException {
+    try {
+      Method method = getMethod(o, "get"+name);
+      if (method != null) {
+        return method.invoke(o);
+      }
+    } catch (Exception e) {
+       //NoCommand
+    }
+
+    try {
+      Field field = getField(o, name);
+      if (field != null) {
+        field.setAccessible(true);
+        return field.get(o);
+      }
+    } catch (Exception e) {
+      //NoCommand
+    }
+
+
+    throw new NoSuchFieldException("No such Field");
+
+  }
+
 }
