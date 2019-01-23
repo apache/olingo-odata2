@@ -149,10 +149,10 @@ public final class JPAEntityParser {
 
         String propertyName = property.getName();
         Method method = accessModifierMap.get(propertyName);
-        if (method == null) {
+        if (method == null && !hasCalc) {
           String methodName = jpaEmbeddableKeyMap.get(jpaEntityAccessKey).get(propertyName);
           if (methodName != null) {
-        	  boolean isVirtualAccess = false; 
+        	  boolean isVirtualAccess = false;
         	  if (property.getMapping() != null && property.getMapping() instanceof JPAEdmMappingImpl) {
         		  isVirtualAccess = ((JPAEdmMappingImpl) property.getMapping()).isVirtualAccess();
         	  }
