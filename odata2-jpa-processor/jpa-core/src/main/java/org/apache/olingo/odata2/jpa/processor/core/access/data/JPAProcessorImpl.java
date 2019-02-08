@@ -226,8 +226,12 @@ public class JPAProcessorImpl implements JPAProcessor {
     Query query = queryBuilder.build(resultsView);
     setPositionalParametersToQuery(query);
     List<?> resultList = query.getResultList();
-    if (resultList != null && resultList.size() == 1) {
+    if (resultList != null && resultList.size() > 0) {
+      try {
       return Long.valueOf(resultList.get(0).toString());
+      } catch(Exception e) {
+        return resultList.size();
+      }
     }
 
     return 0;
