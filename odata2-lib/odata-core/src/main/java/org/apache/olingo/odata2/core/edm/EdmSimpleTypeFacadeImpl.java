@@ -18,6 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.edm;
 
+import java.util.Calendar;
 import org.apache.olingo.odata2.api.edm.EdmLiteral;
 import org.apache.olingo.odata2.api.edm.EdmLiteralException;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
@@ -132,6 +133,48 @@ public class EdmSimpleTypeFacadeImpl implements EdmSimpleTypeFacade {
   @Override
   public EdmSimpleType getEdmSimpleTypeInstance(final EdmSimpleTypeKind typeKind) {
     return getEdmSimpleType(typeKind);
+  }
+
+  public static Class getEdmClassType(final EdmSimpleTypeKind typeKind) {
+
+    switch (typeKind) {
+      case Binary:
+        return Object.class;
+      case Boolean:
+        return Boolean.class;
+      case Byte:
+        return Integer.class;
+      case DateTime:
+        return Calendar.class;
+      case DateTimeOffset:
+        return Calendar.class;
+      case Decimal:
+        return Double.class;
+      case Double:
+        return Double.class;
+      case Guid:
+        return String.class;
+      case Int16:
+        return Long.class;
+      case Int32:
+        return Long.class;
+      case Int64:
+        return Long.class;
+      case SByte:
+        return Integer.class;
+      case Single:
+        return Integer.class;
+      case Auto:
+        return Object.class;
+      case String:
+        return String.class;
+      case Time:
+        return Calendar.class;
+      case Null:
+        return Object.class;
+      default:
+        throw new ODataRuntimeException("Invalid Type " + typeKind);
+    }
   }
 
   public static EdmSimpleType getEdmSimpleType(final EdmSimpleTypeKind typeKind) {

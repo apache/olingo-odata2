@@ -2,6 +2,7 @@ package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 public class ReflectionUtil {
 
@@ -46,6 +47,13 @@ public class ReflectionUtil {
   }
 
   public static Object getter(Object o, String name) throws NoSuchFieldException {
+    if (o instanceof Map) {
+      return ((Map) o).get(name);
+    }
+
+    if (o instanceof VirtualClassInterface) {
+      return ((VirtualClassInterface) o).get(name);
+    }
     try {
       Method method = getMethod(o, "get"+name);
       if (method != null) {
