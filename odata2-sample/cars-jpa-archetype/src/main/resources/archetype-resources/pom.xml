@@ -23,7 +23,7 @@
 		<version.eclipselink>2.5.1</version.eclipselink>
 		<version.javax.persistence>2.0.5</version.javax.persistence>
 		<version.hsqldb>2.3.2</version.hsqldb>
-		<version.olingo>2.0.11-RC01</version.olingo>
+		<version.olingo>2.0.11</version.olingo>
 	</properties>
 
 	<dependencies>
