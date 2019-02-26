@@ -560,6 +560,9 @@ public class JPAProcessorImpl implements JPAProcessor {
           Object value;
           try {
             value = ReflectionUtil.getter(jpaEntity, key.getName());
+            if (ClassUtils.isComplexType(value.getClass())) {
+              value = edmPropertyValueMap.get(key.getName());
+            }
           } catch(Exception e) {
             value = edmPropertyValueMap.get(key.getName());
           }
