@@ -544,7 +544,6 @@ public class JPAProcessorImpl implements JPAProcessor {
             .getEntityType().getMapping().getInternalName()).getEntityType();
 
         JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, (UriInfo) createView);
-        HashMap<String, Object> edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType);
 
         List<KeyPredicate> predicates = new ArrayList<KeyPredicate>();
 
@@ -554,15 +553,12 @@ public class JPAProcessorImpl implements JPAProcessor {
         em.flush();
         em.clear();
 
+        HashMap<String, Object> edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, edmEntityType);
+
         for (EdmProperty key : createView.getTargetEntitySet().getEntityType().getKeyProperties()) {
           final EdmSimpleType type = (EdmSimpleType) key.getType();
           final EdmFacets facets = key.getFacets();
-          Object value;
-          try {
-            value = ReflectionUtil.getter(jpaEntity, key.getName());
-          } catch(Exception e) {
-            value = edmPropertyValueMap.get(key.getName());
-          }
+          Object value = edmPropertyValueMap.get(key.getName());
           String literal = type.valueToString(value, EdmLiteralKind.DEFAULT, facets);
           KeyPredicateImpl predicate = new KeyPredicateImpl(literal, key);
           predicates.add(predicate);
