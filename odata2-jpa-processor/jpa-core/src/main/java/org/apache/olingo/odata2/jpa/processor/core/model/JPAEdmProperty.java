@@ -53,6 +53,7 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmComplexPropertyVie
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmComplexTypeView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmKeyView;
+import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmMapping;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmNavigationPropertyView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmReferentialConstraintView;
@@ -364,6 +365,8 @@ public class JPAEdmProperty extends JPAEdmBaseViewImpl implements
       if (total > 0) {
         simpleProperty.setName(name);
       }
+
+      ((JPAEdmMapping) simpleProperty.getMapping()).setOriginalType(jpaAttribute.getJavaType());
 
       return simpleProperty;
 
