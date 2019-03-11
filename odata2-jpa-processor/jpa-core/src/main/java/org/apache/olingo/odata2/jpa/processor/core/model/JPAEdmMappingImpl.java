@@ -28,6 +28,7 @@ public class JPAEdmMappingImpl extends Mapping implements JPAEdmMapping {
   private Class<?> type = null;
   private Class<? extends ODataJPATombstoneEntityListener> entityListener = null;
   private boolean isVirtualAccess;
+  private Class originalType;
 
   @Override
   public void setJPAColumnName(final String name) {
@@ -72,6 +73,19 @@ public class JPAEdmMappingImpl extends Mapping implements JPAEdmMapping {
 	  this.isVirtualAccess=virtualAccess;
   }
 
+  @Override
+  public Class getOriginaType() {
+    if (originalType != null) {
+      return originalType;
+    } else {
+      return type;
+    }
+  }
+
+  @Override
+  public void setOriginalType(Class type) {
+    this.originalType = type;
+  }
 
 
 }

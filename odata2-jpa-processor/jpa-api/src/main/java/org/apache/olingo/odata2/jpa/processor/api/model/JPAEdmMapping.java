@@ -80,4 +80,8 @@ public interface JPAEdmMapping {
   
   public void setVirtualAccess(boolean virtualAccess);
 
+  public Class getOriginaType();
+
+  public void setOriginalType(Class type);
+
 }
