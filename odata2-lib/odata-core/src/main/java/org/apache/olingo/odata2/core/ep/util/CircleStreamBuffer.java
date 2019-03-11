@@ -110,7 +110,11 @@ public class CircleStreamBuffer {
     // clear references to byte buffers
     ByteBuffer buffer = bufferQueue.poll();
     while (buffer != null) {
-      buffer.clear();
+      try {
+        buffer.clear();
+      } catch(Exception e) {
+        //
+      }
       buffer = bufferQueue.poll();
     }
   }
