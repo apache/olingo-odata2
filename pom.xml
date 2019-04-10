@@ -72,7 +72,7 @@
 		<xmlunit.version>1.3</xmlunit.version>
 
 		<version.eclipselink>2.5.1</version.eclipselink>
-		<version.javax.persistence>2.0.5</version.javax.persistence>
+		<version.javax.persistence>2.1.0</version.javax.persistence>
 
 		<spring.version>3.2.12.RELEASE</spring.version>
 
