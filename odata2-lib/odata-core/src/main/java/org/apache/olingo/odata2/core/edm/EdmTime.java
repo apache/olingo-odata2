@@ -43,6 +43,7 @@ public class EdmTime extends AbstractSimpleType {
   private static final Pattern PATTERN = Pattern.compile(
       "PT(?:(\\p{Digit}{1,2})H)?(?:(\\p{Digit}{1,4})M)?(?:(\\p{Digit}{1,5})(?:\\.(\\p{Digit}+?)0*)?S)?");
   private static final EdmTime instance = new EdmTime();
+  private static final TimeZone TIME_ZONE_GMT = TimeZone.getTimeZone("GMT");
 
   public static EdmTime getInstance() {
     return instance;
@@ -129,7 +130,7 @@ public class EdmTime extends AbstractSimpleType {
     } else if (value instanceof Calendar) {
       dateTimeValue = (Calendar) ((Calendar) value).clone();
     } else if (value instanceof Long) {
-      dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+      dateTimeValue = Calendar.getInstance(TIME_ZONE_GMT);
       dateTimeValue.clear();
       dateTimeValue.setTimeInMillis((Long) value);
     } else {
