@@ -33,6 +33,10 @@ public class Mapping implements EdmMapping {
   private String expression;
   private boolean canEdit = true;
   private boolean isCalculated = false;
+  private boolean isPath = false;
+  private String path;
+  private String complexPath;
+  private int complexIndex = -1;
 
   @Override
   public String getInternalName() {
@@ -72,6 +76,38 @@ public class Mapping implements EdmMapping {
   public Mapping setInternalExpression(final String value) {
     this.expression = value;
     return this;
+  }
+
+  public boolean isPath() {
+    return isPath;
+  }
+
+  public void setIsPath(boolean path) {
+    isPath = path;
+  }
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+  public String getComplexPath() {
+    return complexPath;
+  }
+
+  public void setComplexPath(String complexPath) {
+    this.complexPath = complexPath;
+  }
+
+  public int getComplexIndex() {
+    return complexIndex;
+  }
+
+  public void setComplexIndex(int complexIndex) {
+    this.complexIndex = complexIndex;
   }
 
   /**
