@@ -76,6 +76,8 @@
 
 		<spring.version>3.2.12.RELEASE</spring.version>
 
+		<jaxb.version>2.3.0</jaxb.version>
+
     <!-- Setting needed for Java 8 release builds -->
     <additionalparam>-Xdoclint:none</additionalparam>
 	</properties>

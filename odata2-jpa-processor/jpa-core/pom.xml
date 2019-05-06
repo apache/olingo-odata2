@@ -98,15 +98,6 @@
         </dependency>
 
 		<!-- ########################## -->
-		<!-- Java Persistence API -->
-		<!-- ########################## -->
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.persistence</artifactId>
-			<version>${version.javax.persistence}</version>
-		</dependency>
-
-		<!-- ########################## -->
 		<!-- OData Java Library Support -->
 		<!-- ########################## -->
 		<dependency>

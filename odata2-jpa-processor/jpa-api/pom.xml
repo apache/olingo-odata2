@@ -74,14 +74,13 @@
 	</build>
 	
 	<dependencies>
-		<!-- JPA Support -->
+		<!-- OData Java Library -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.persistence</artifactId>
-			<version>${version.javax.persistence}</version>
+			<artifactId>eclipselink</artifactId>
+			<version>${version.eclipselink}</version>
 		</dependency>
 
-		<!-- OData Java Library -->
 		<dependency>
 			<groupId>io.cronapp</groupId>
 			<artifactId>olingo-odata2-api</artifactId>
