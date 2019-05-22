@@ -1471,6 +1471,8 @@ public class ListsProcessor extends ODataSingleProcessor {
           final int offset = second.length() == 0 ? 0 : Integer.parseInt(second);
           final int length = third.length() == 0 ? 0 : Integer.parseInt(second);
           return first.substring(offset, offset + length);
+        case REPLACE:
+          return first.replace(second, third);
       case SUBSTRINGOF:
         return Boolean.toString(second.contains(first));
       case CONCAT:

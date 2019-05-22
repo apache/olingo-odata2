@@ -862,6 +862,12 @@ public class FilterParserImpl implements FilterParser {
     combination.add(new ParameterSet(boolean_, string, string));
     lAvailableMethods.put(MethodOperator.SUBSTRINGOF.toUriLiteral(), new InfoMethod(MethodOperator.SUBSTRINGOF, 1, -1,
         combination));
+    
+    // replace
+    combination = new ParameterSetCombination.PSCflex();
+    combination.add(new ParameterSet(string, string, string, string));
+    lAvailableMethods.put(MethodOperator.REPLACE.toUriLiteral(), new InfoMethod(MethodOperator.REPLACE, 3, 3,
+        combination));
 
     // concat
     combination = new ParameterSetCombination.PSCflex();

@@ -27,7 +27,7 @@ public enum MethodOperator {
   ENDSWITH("endswith"), INDEXOF("indexof"), STARTSWITH("startswith"), TOLOWER("tolower"), TOUPPER("toupper"), TRIM(
       "trim"), SUBSTRING("substring"), SUBSTRINGOF("substringof"), CONCAT("concat"), LENGTH("length"), YEAR("year"),
   MONTH("month"), DAY("day"), HOUR("hour"), MINUTE("minute"), SECOND("second"), ROUND("round"), FLOOR("floor"),
-  CEILING("ceiling");
+  CEILING("ceiling"), REPLACE("replace");
 
   private String syntax;
   private String stringRespresentation;

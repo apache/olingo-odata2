@@ -385,6 +385,8 @@ public class TestAbapCompatibility extends TestBase {
     // lcl_helper=>veri_type( iv_expression = `second(datetimeoffset'2002-10-10T12:00:00-05:00')` io_expected_type =
     // lo_simple_type ).
     GetPTF("second(datetimeoffset'2002-10-10T12:00:00-05:00')").aEdmType(EdmInt32.getInstance());
+    
+    GetPTF("replace('aBa','B','CCC')").aEdmType(EdmString.getInstance());
   }
 
   @Test
@@ -595,22 +597,16 @@ public class TestAbapCompatibility extends TestBase {
     // iv_expected_textid = /iwcor/cx_ds_expr_syntax_error=>function_invalid
     // iv_expected_msg = `Invalid function 'replace' detected` ).
     // -->see test method abapMethodRleplaceNotAllowed()
-  }
-
-  @Test
-  public void abapMethodRleplaceNotAllowed() // copy of ABAP method test_filter_parser
-  {
-    // Filter method is NOT allowed
-    // lcl_helper=>veri_expression_ex(
-    // iv_expression = `replace('aBa','B','CCC')`
-    // iv_expected_textid = /iwcor/cx_ds_expr_syntax_error=>function_invalid
-    // iv_expected_msg = `Invalid function 'replace' detected` ).
-
-    // http://services.odata.org/Northwind/Northwind.svc/Products/?$filter=replace('aBa','B','CCC')
-    // -->Unknown function 'replace' at position 0.
-    GetPTF("replace('aBa','B','CCC')").aExMsgText(
-        "Unknown function \"replace\" at position 1 in \"replace('aBa','B','CCC')\".");
-
+    
+    GetPTF("replace('a','b')")
+    .aExMsgText(
+        "No applicable method found for \"replace\" at position 1 in \"replace('a','b')\" "
+        + "with the specified arguments. Method \"replace\" requires exact 3 argument(s).");
+    
+    GetPTF("replace('a',1,2)")
+    .aExMsgText(
+        "No applicable method found for \"replace\" at position 1 in "
+        + "\"replace('a',1,2)\" for the specified argument types.");
   }
 
 }
