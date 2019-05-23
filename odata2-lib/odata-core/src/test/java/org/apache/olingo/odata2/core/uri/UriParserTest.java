@@ -256,11 +256,6 @@ public class UriParserTest extends BaseTest {
   }
   
   @Test
-  public void parseEmployeesEntityWithEmptyKey() throws Exception {
-    parseWrongUri("/Employees('')", UriSyntaxException.INVALIDVALUE.addContent("''"));
-  }
-  
-  @Test
   public void parseEmployeesEntityWithNullKey() throws Exception {
     parseWrongUri("/Employees(null)", UriSyntaxException.INCOMPATIBLELITERAL);
   }

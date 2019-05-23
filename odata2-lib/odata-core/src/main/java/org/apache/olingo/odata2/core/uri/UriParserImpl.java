@@ -469,10 +469,6 @@ public class UriParserImpl extends UriParser {
         }
       }
       
-      if("''".equals(value) || value==null){
-        throw new UriSyntaxException(UriSyntaxException.INVALIDVALUE.addContent(value));
-      }
-
       EdmProperty keyProperty = null;
       for (final EdmProperty testKeyProperty : keyProperties) {
         if (testKeyProperty.getName().equals(name)) {
