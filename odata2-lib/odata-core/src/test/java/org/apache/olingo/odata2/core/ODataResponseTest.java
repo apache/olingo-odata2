@@ -134,4 +134,11 @@ public class ODataResponseTest extends BaseTest {
     assertEquals("id", responseCopy.getIdLiteral());
     assertEquals("body", responseCopy.getEntity());
   }
+  
+  @Test
+  public void buildResponseWithStatusCode420() {
+    ODataResponse response = ODataResponse.entity("NOT OK").status(HttpStatusCodes.METHOD_FAILED).build();
+    assertEquals(HttpStatusCodes.METHOD_FAILED, response.getStatus());
+    assertEquals("NOT OK", response.getEntity());
+  }
 }
