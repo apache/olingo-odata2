@@ -74,6 +74,7 @@ public class UriInfoImpl implements UriInfo {
   private Map<String, EdmLiteral> functionImportParameters = Collections.emptyMap();
   private Map<String, String> customQueryOptions = Collections.emptyMap();
   private boolean rawEntity = false;
+  private boolean composeWhere = true;
   private boolean isNew = false;
   private List<ClientCallback> clientCallbacks;
 
@@ -335,6 +336,14 @@ public class UriInfoImpl implements UriInfo {
 
   public void setRawEntity(boolean rawEntity) {
     this.rawEntity = rawEntity;
+  }
+
+  public boolean composeWhere() {
+    return composeWhere;
+  }
+
+  public void composeWhere(boolean composeWhere) {
+    this.composeWhere = composeWhere;
   }
 
   @Override

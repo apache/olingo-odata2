@@ -235,6 +235,8 @@ public interface UriInfo extends GetServiceDocumentUriInfo,
 
   boolean isNew();
 
+  boolean composeWhere();
+
   @Override
   public List<ClientCallback> getClientCallbacks();
 }
