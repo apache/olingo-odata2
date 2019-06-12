@@ -565,7 +565,9 @@ public class JPAProcessorImpl implements JPAProcessor {
           createView.getNavigationSegments().clear();
         }
 
+        ((UriInfoImpl) createView).composeWhere(false);
         Object resultEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build((GetEntityUriInfo) createView), (UriInfo) createView);
+        ((UriInfoImpl) createView).composeWhere(true);
 
         if (resultEntity == null) {
           throw new RuntimeException("Entity not found after insert, check your query and default values");
