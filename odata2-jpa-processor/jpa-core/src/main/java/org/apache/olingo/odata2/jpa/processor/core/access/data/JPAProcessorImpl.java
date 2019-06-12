@@ -547,7 +547,7 @@ public class JPAProcessorImpl implements JPAProcessor {
 
         List<KeyPredicate> predicates = new ArrayList<KeyPredicate>();
 
-       ((UriInfoImpl) createView).setKeyPredicates(predicates);
+        ((UriInfoImpl) createView).setKeyPredicates(predicates);
         ((UriInfoImpl) createView).setRawEntity(false);
 
         em.flush();
@@ -566,6 +566,10 @@ public class JPAProcessorImpl implements JPAProcessor {
         }
 
         Object resultEntity = readEntity(new JPAQueryBuilder(oDataJPAContext).build((GetEntityUriInfo) createView), (UriInfo) createView);
+
+        if (resultEntity == null) {
+          throw new RuntimeException("Entity not found after insert, check your query and default values");
+        }
 
         if (listener != null) {
           listener.execEvent(((UriInfoImpl) createView), oDataEntityType, "afterInsert", resultEntity);
