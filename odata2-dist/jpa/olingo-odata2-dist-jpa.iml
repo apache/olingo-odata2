@@ -9,14 +9,27 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.eclipse.persistence:javax.persistence:2.0.5" level="project" />
     <orderEntry type="module" module-name="olingo-odata2-api-annotation" />
     <orderEntry type="module" module-name="olingo-odata2-api" />
     <orderEntry type="module" module-name="olingo-odata2-core" />
     <orderEntry type="library" name="Maven: javax.ws.rs:javax.ws.rs-api:2.0-m10" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.6" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.4" level="project" />
+    <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-core:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-impl:2.3.0" level="project" />
     <orderEntry type="module" module-name="olingo-odata2-jpa-processor-api" />
+    <orderEntry type="library" name="Maven: org.eclipse.persistence:eclipselink:2.7.4" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.persistence:jakarta.persistence:2.2.2" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.persistence:commonj.sdo:2.1.1" level="project" />
     <orderEntry type="module" module-name="olingo-odata2-jpa-processor-core" />
-    <orderEntry type="library" name="Maven: org.eclipse.persistence:javax.persistence:2.0.5" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.jaxb:jaxb-runtime:2.3.2" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:2.3.2" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.jaxb:txw2:2.3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.istack:istack-commons-runtime:3.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.jvnet.staxex:stax-ex:1.8.1" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.xml.fastinfoset:FastInfoset:1.2.16" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.activation:jakarta.activation-api:1.2.1" level="project" />
   </component>
 </module>
