@@ -92,7 +92,7 @@ public class JsonEntryEntitySerializer {
       } 
       writeProperties(entityInfo, data.getProperties(), type, containsMetadata);
 
-      writeNavigationProperties(writer, entityInfo, data.getNavigations(), type);
+      writeNavigationProperties(writer, entityInfo, data.getNavigations(), type, data.getProperties().isEmpty());
       jsonStreamWriter.endObject();
       
       writer.flush();
@@ -107,7 +107,7 @@ public class JsonEntryEntitySerializer {
 
   private void writeNavigationProperties(final Writer writer, final EntityInfoAggregator entityInfo,
       final Map<String, Object> data,
-      final EdmEntityType type) throws EdmException, EntityProviderException, IOException {
+      final EdmEntityType type, boolean emptyData) throws EdmException, EntityProviderException, IOException {
     for (final String navigationPropertyName : type.getNavigationPropertyNames()) {
       if (data.containsKey(navigationPropertyName)) {
         if (data.get(navigationPropertyName) == null) {
@@ -115,7 +115,10 @@ public class JsonEntryEntitySerializer {
         }
         if (data.get(navigationPropertyName) instanceof Entity || 
             data.get(navigationPropertyName) instanceof EntityCollection) {
-          jsonStreamWriter.separator();
+          if( !emptyData){
+            jsonStreamWriter.separator();
+          }
+          emptyData=false;
           jsonStreamWriter.name(navigationPropertyName);
           writeExpandedNavigationProperty(writer, entityInfo, data, type, navigationPropertyName);
         } else if (data.get(navigationPropertyName) instanceof Map<?,?>){
@@ -157,8 +160,7 @@ public class JsonEntryEntitySerializer {
       if(inlineData == null){
         throw new EntityProviderException(EntityProviderException.NULL_VALUE);
       }
-      if (inlineData != null && inlineData.getProperties() != null && 
-          !inlineData.getProperties().isEmpty()) {
+      if (inlineData != null && inlineData.getProperties() != null) {
         final EntitySerializerProperties inlineProperties = inlineData.getWriteProperties() == null ?
             EntitySerializerProperties.
             serviceRoot(properties.getServiceRoot()).build() : inlineData.getWriteProperties();

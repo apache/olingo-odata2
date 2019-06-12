@@ -739,6 +739,51 @@ public class JsonEntryEntitySerializerTest extends BaseTest {
     assertNotNull(json);
     assertEquals("{\"Id\":\"1\",\"Version\":1,\"nr_Building\":{\"Id\":\"1\",\"Name\":\"Building1\"}}", json);
   }
+  
+  @Test
+  public void unbalancedPropertyEntryWithMultipleInlineEntry() throws Exception {
+    final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
+    Entity roomData = new Entity();
+    roomData.addProperty("Id", "1");
+    roomData.addProperty("Version", 1);
+    
+    Entity nrBuildingData = new Entity();
+    EntityCollection roomsCollection = new EntityCollection();
+    Entity nbRoomData = new Entity();
+    nbRoomData.addProperty("Id", "1");
+    nbRoomData.addProperty("Version", 1);
+    roomsCollection.addEntity(nbRoomData);
+    nrBuildingData.addNavigation("nb_Rooms", roomsCollection);
+    roomData.addNavigation("nr_Building", nrBuildingData);
+    
+    EntityCollection nrEmployeeCollection = new EntityCollection();
+    Entity employeeData = new Entity();
+    Entity managerData = new Entity();
+    managerData.addProperty("EmployeeId", "1");
+    managerData.addProperty("ImageUrl", "hhtp://url");
+    employeeData.addNavigation("ne_Manager", managerData);
+    Entity neRoomData = new Entity();
+    neRoomData.addProperty("Id", "1");
+    neRoomData.addProperty("Version", 1);
+    employeeData.addNavigation("ne_Room", neRoomData);
+    nrEmployeeCollection.addEntity(employeeData);
+    nrEmployeeCollection.addEntity(managerData);
+    roomData.addNavigation("nr_Employees", nrEmployeeCollection);
+    
+    final ODataResponse response =
+        new JsonSerializerDeserializer().writeEntry(entitySet, roomData);
+    assertNotNull(response);
+    assertNotNull(response.getEntity());
+    assertNull("EntitypProvider must not set content header", response.getContentHeader());
+
+    final String json = StringHelper.inputStreamToString((InputStream) response.getEntity());
+    assertNotNull(json);
+    assertEquals("{\"Id\":\"1\",\"Version\":1,\"nr_Employees\":[{" +
+        "\"ne_Manager\":{\"EmployeeId\":\"1\"},\"ne_Room\":{\"Id\":\"1\",\"Version\":1}},"+
+        "{\"EmployeeId\":\"1\",\"ImageUrl\":\"hhtp://url\"}],"+
+        "\"nr_Building\":{\"nb_Rooms\":[{\"Id\":\"1\",\"Version\":1}]}}", json);
+  }
+  
   @Test
   public void entryWithEmptyInlineEntry() throws Exception {
     final EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms");
