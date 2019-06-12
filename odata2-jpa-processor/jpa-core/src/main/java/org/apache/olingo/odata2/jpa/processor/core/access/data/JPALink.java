@@ -196,6 +196,10 @@ public class JPALink {
               targetJPAEntities.add(targetJPAEntity);
             }
           }
+          if (targetJPAEntity == null){
+            throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND
+                .addContent(navPropertyName), null);
+          }
           if (!targetJPAEntities.isEmpty()) {
             linkJPAEntities(targetJPAEntities, sourceJPAEntity, navProperty);
           }
@@ -306,6 +310,10 @@ public class JPALink {
       }
 
       targetJPAEntity = jpaProcessor.process((GetEntityUriInfo) getUriInfo);
+      if (targetJPAEntity == null){
+        throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.RESOURCE_X_NOT_FOUND
+            .addContent(navigationProperty.getName()), null);
+      }
       if (targetJPAEntity != null && sourceJPAEntity == null) {
         int index = context.getODataContext().getPathInfo().getODataSegments().size() - 2;
         getUriInfo = parser.parseURISegment(0, index);
