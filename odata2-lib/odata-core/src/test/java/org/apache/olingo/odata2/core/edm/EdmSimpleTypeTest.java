@@ -1655,6 +1655,9 @@ public class EdmSimpleTypeTest extends BaseTest {
     dateTime.set(Calendar.HOUR_OF_DAY, 23);
     dateTime.set(Calendar.MINUTE, 32);
     dateTime.set(Calendar.SECOND, 3);
+    dateTime.set(Calendar.YEAR, 0);
+    dateTime.set(Calendar.MONTH, 0);
+    dateTime.set(Calendar.DAY_OF_YEAR, 0);
     assertEquals(dateTime, instance.valueOfString("PT23H32M3S", EdmLiteralKind.DEFAULT, null, Calendar.class));
     assertEquals(Long.valueOf(dateTime.getTimeInMillis()), instance.valueOfString("PT84723S", EdmLiteralKind.DEFAULT,
         null, Long.class));
@@ -1709,11 +1712,40 @@ public class EdmSimpleTypeTest extends BaseTest {
         EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED);
     expectErrorInValueOfString(instance, "P2012Y2M29DT23H32M2S", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
-    expectErrorInValueOfString(instance, "PT24H", EdmLiteralKind.DEFAULT, null,
-        EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
-    expectErrorInValueOfString(instance, "PT99999S", EdmLiteralKind.JSON, null,
-        EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
+    dateTime.clear();
+    dateTime.set(Calendar.MINUTE, 0);
+    dateTime.set(Calendar.SECOND, 0);
+    dateTime.set(Calendar.YEAR, 0);
+    dateTime.set(Calendar.MONTH, 0);
+    dateTime.set(Calendar.DAY_OF_YEAR, 0);
+    dateTime.set(Calendar.HOUR_OF_DAY, 24);
+    assertEquals(dateTime.getTimeInMillis(),
+        instance.valueOfString("PT24H", EdmLiteralKind.DEFAULT, null, Time.class).getTime());
+    dateTime.clear();
+    dateTime.set(Calendar.MINUTE, 0);
+    dateTime.set(Calendar.SECOND, 99999);
+    dateTime.set(Calendar.YEAR, 0);
+    dateTime.set(Calendar.MONTH, 0);
+    dateTime.set(Calendar.DAY_OF_YEAR, 0);
+    dateTime.set(Calendar.HOUR_OF_DAY, 0);
+    assertEquals(dateTime.getTimeInMillis(),
+        instance.valueOfString("PT99999S", EdmLiteralKind.DEFAULT, null, Time.class).getTime());
+    dateTime.clear();
+    dateTime.set(Calendar.MINUTE, 10);
+    dateTime.set(Calendar.SECOND, 10);
+    dateTime.set(Calendar.YEAR, 0);
+    dateTime.set(Calendar.MONTH, 0);
+    dateTime.set(Calendar.DAY_OF_YEAR, 10);
+    dateTime.set(Calendar.HOUR_OF_DAY, 10);
+    assertEquals(dateTime.getTimeInMillis(),
+        instance.valueOfString("P10DT10H10M10S", EdmLiteralKind.DEFAULT, null, Time.class).getTime());
+    assertEquals(dateTime,
+        instance.valueOfString("P10DT10H10M10S", EdmLiteralKind.DEFAULT, null, Calendar.class));
+    assertEquals(200800000,
+        instance.valueOfString("P10DT10H10M10.2008S", EdmLiteralKind.DEFAULT, null, Timestamp.class).getNanos());
     expectErrorInValueOfString(instance, "PT999H", EdmLiteralKind.DEFAULT, null,
+        EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
+    expectErrorInValueOfString(instance, "P0D", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
     expectErrorInValueOfString(instance, "PT", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);

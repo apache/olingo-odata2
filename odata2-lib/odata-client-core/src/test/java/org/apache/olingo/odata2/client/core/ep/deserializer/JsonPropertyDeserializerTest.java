@@ -180,7 +180,7 @@ public class JsonPropertyDeserializerTest extends BaseTest {
     resultMap = execute(edmProperty, reader);
     assertTrue(Arrays.equals(new byte[] { (byte) 0xAA, (byte) 0xBB, (byte) 0xCC },
         (byte[]) resultMap.get("Name")));
-    // Time
+ // Time
     simplePropertyJson = "{\"d\":{\"Name\":\"PT23H32M3S\"}}";
     reader = prepareReader(simplePropertyJson);
     when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Time.getEdmSimpleTypeInstance());
@@ -190,6 +190,9 @@ public class JsonPropertyDeserializerTest extends BaseTest {
     dateTime.set(Calendar.HOUR_OF_DAY, 23);
     dateTime.set(Calendar.MINUTE, 32);
     dateTime.set(Calendar.SECOND, 3);
+    dateTime.set(Calendar.YEAR, 0);
+    dateTime.set(Calendar.MONTH, 0);
+    dateTime.set(Calendar.DAY_OF_YEAR, 0);
     assertEquals(dateTime, resultMap.get("Name"));
   }
 

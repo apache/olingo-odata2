@@ -39,9 +39,11 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
  * 
  */
 public class EdmTime extends AbstractSimpleType {
-
+  
   private static final Pattern PATTERN = Pattern.compile(
-      "PT(?:(\\p{Digit}{1,2})H)?(?:(\\p{Digit}{1,4})M)?(?:(\\p{Digit}{1,5})(?:\\.(\\p{Digit}+?)0*)?S)?");
+      "P(?:(\\p{Digit}{1,2})Y)?(?:(\\p{Digit}{1,2})M)?(?:(\\p{Digit}{1,2})D)?"
+      + "T(?:(\\p{Digit}{1,2})H)?(?:(\\p{Digit}{1,4})M)?(?:(\\p{Digit}{1,5})(?:\\.(\\p{Digit}+?)0*)?S)?");
+  
   private static final EdmTime instance = new EdmTime();
   private static final TimeZone TIME_ZONE_GMT = TimeZone.getTimeZone("GMT");
 
@@ -67,23 +69,30 @@ public class EdmTime extends AbstractSimpleType {
     final Matcher matcher = PATTERN.matcher(
         literalKind == EdmLiteralKind.URI ? value.substring(5, value.length() - 1) : value);
     if (!matcher.matches()
-        || (matcher.group(1) == null && matcher.group(2) == null && matcher.group(3) == null)) {
+        || (matcher.group(1) == null && matcher.group(2) == null && matcher.group(3) == null 
+        && matcher.group(4) == null && matcher.group(5) == null && matcher.group(6) == null)) {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
     }
 
     Calendar dateTimeValue = Calendar.getInstance();
     dateTimeValue.clear();
 
-    dateTimeValue.set(Calendar.HOUR_OF_DAY,
+    dateTimeValue.set(Calendar.YEAR, 
         matcher.group(1) == null ? 0 : Integer.parseInt(matcher.group(1)));
-    dateTimeValue.set(Calendar.MINUTE,
+    dateTimeValue.set(Calendar.MONTH, 
         matcher.group(2) == null ? 0 : Integer.parseInt(matcher.group(2)));
-    dateTimeValue.set(Calendar.SECOND,
+    dateTimeValue.set(Calendar.DAY_OF_YEAR, 
         matcher.group(3) == null ? 0 : Integer.parseInt(matcher.group(3)));
+    dateTimeValue.set(Calendar.HOUR_OF_DAY,
+        matcher.group(4) == null ? 0 : Integer.parseInt(matcher.group(4)));
+    dateTimeValue.set(Calendar.MINUTE,
+        matcher.group(5) == null ? 0 : Integer.parseInt(matcher.group(5)));
+    dateTimeValue.set(Calendar.SECOND,
+        matcher.group(6) == null ? 0 : Integer.parseInt(matcher.group(6)));
 
     int nanoSeconds = 0;
-    if (matcher.group(4) != null) {
-      final String decimals = matcher.group(4);
+    if (matcher.group(7) != null) {
+      final String decimals = matcher.group(7);
       if (facets == null || facets.getPrecision() == null || facets.getPrecision() >= decimals.length()) {
         nanoSeconds = Integer.parseInt(decimals + "000000000".substring(decimals.length()));
         if (!(returnType.isAssignableFrom(Timestamp.class))) {
@@ -96,10 +105,6 @@ public class EdmTime extends AbstractSimpleType {
       } else {
         throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_FACETS_NOT_MATCHED.addContent(value, facets));
       }
-    }
-
-    if (dateTimeValue.get(Calendar.DAY_OF_YEAR) != 1) {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
     }
 
     if (returnType.isAssignableFrom(Calendar.class)) {
