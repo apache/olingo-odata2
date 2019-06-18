@@ -22,29 +22,19 @@
     <orderEntry type="library" name="Maven: javax.ws.rs:javax.ws.rs-api:2.0-m10" level="project" />
     <orderEntry type="library" name="Maven: org.apache.cxf:cxf-rt-bindings-xml:2.7.10" level="project" />
     <orderEntry type="library" name="Maven: org.apache.cxf:cxf-rt-transports-http:2.7.10" level="project" />
-    <orderEntry type="module" module-name="olingo-odata2-core" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-core:2.2.3" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.6" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.4" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.3.0" level="project" />
     <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-core:2.3.0" level="project" />
     <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-impl:2.3.0" level="project" />
-    <orderEntry type="module" module-name="olingo-odata2-api" />
-    <orderEntry type="module" module-name="olingo-odata2-jpa-processor-api" />
-    <orderEntry type="library" name="Maven: org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final" level="project" />
-    <orderEntry type="module" module-name="olingo-odata2-jpa-processor-core" />
-    <orderEntry type="library" name="Maven: org.glassfish.jaxb:jaxb-runtime:2.3.2" level="project" />
-    <orderEntry type="library" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:2.3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish.jaxb:txw2:2.3.2" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.istack:istack-commons-runtime:3.0.8" level="project" />
-    <orderEntry type="library" name="Maven: org.jvnet.staxex:stax-ex:1.8.1" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.xml.fastinfoset:FastInfoset:1.2.16" level="project" />
-    <orderEntry type="library" name="Maven: jakarta.activation:jakarta.activation-api:1.2.1" level="project" />
-    <orderEntry type="module" module-name="olingo-odata2-api-annotation" />
-    <orderEntry type="module" module-name="olingo-odata2-jpa-processor-ref" />
-    <orderEntry type="library" name="Maven: org.hsqldb:hsqldb:2.3.2" level="project" />
-    <orderEntry type="module" module-name="olingo-odata2-annotation-processor-api" />
-    <orderEntry type="module" module-name="olingo-odata2-annotation-processor-core" />
-    <orderEntry type="module" module-name="olingo-odata2-annotation-processor-ref" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-api:2.2.3" level="project" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-jpa-processor-api:2.2.3" level="project" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-jpa-processor-core:2.2.3" level="project" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-jpa-processor-ref:2.2.3" level="project" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-annotation-processor-api:2.2.3" level="project" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-annotation-processor-core:2.2.3" level="project" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-annotation-processor-ref:2.2.3" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.7.1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.1" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />

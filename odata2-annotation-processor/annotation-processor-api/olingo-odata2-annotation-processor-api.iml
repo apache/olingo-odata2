@@ -9,6 +9,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="olingo-odata2-api" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-api:2.2.3" level="project" />
   </component>
 </module>

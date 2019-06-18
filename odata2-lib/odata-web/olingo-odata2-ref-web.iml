@@ -35,10 +35,10 @@
     <orderEntry type="library" name="Maven: javax.ws.rs:javax.ws.rs-api:2.0-m10" level="project" />
     <orderEntry type="library" name="Maven: org.apache.cxf:cxf-rt-bindings-xml:2.7.10" level="project" />
     <orderEntry type="library" name="Maven: org.apache.cxf:cxf-rt-transports-http:2.7.10" level="project" />
-    <orderEntry type="module" module-name="olingo-odata2-ref" />
-    <orderEntry type="module" module-name="olingo-odata2-api" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-ref:2.2.3" level="project" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-api:2.2.3" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.1" level="project" />
-    <orderEntry type="module" module-name="olingo-odata2-core" />
+    <orderEntry type="library" name="Maven: io.cronapp:olingo-odata2-core:2.2.3" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.6" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.4" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.3.0" level="project" />
