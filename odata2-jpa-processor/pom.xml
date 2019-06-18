@@ -26,6 +26,5 @@
         <module>jpa-api</module>
         <module>jpa-core</module>
         <module>jpa-ref</module>
-        <module>jpa-web</module>
     </modules>
 </project>
