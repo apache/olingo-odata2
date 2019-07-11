@@ -77,12 +77,15 @@ public class EdmTime extends AbstractSimpleType {
     Calendar dateTimeValue = Calendar.getInstance();
     dateTimeValue.clear();
 
-    dateTimeValue.set(Calendar.YEAR, 
-        matcher.group(1) == null ? 0 : Integer.parseInt(matcher.group(1)));
-    dateTimeValue.set(Calendar.MONTH, 
-        matcher.group(2) == null ? 0 : Integer.parseInt(matcher.group(2)));
-    dateTimeValue.set(Calendar.DAY_OF_YEAR, 
-        matcher.group(3) == null ? 0 : Integer.parseInt(matcher.group(3)));
+    if (matcher.group(1) != null) {
+      dateTimeValue.set(Calendar.YEAR, Integer.parseInt(matcher.group(1)));
+    }
+    if (matcher.group(2) != null) {
+      dateTimeValue.set(Calendar.MONTH, Integer.parseInt(matcher.group(2)));
+    }
+    if (matcher.group(3) != null) {
+      dateTimeValue.set(Calendar.DAY_OF_YEAR, Integer.parseInt(matcher.group(3)));
+    }
     dateTimeValue.set(Calendar.HOUR_OF_DAY,
         matcher.group(4) == null ? 0 : Integer.parseInt(matcher.group(4)));
     dateTimeValue.set(Calendar.MINUTE,
