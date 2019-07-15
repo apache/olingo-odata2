@@ -387,6 +387,7 @@ public class JPAEntity {
                 if (expression != null) {
                   try {
                     Object o = jpaEntity;
+                    Object current = o;
                     Object lastObject = o;
                     Method lastSet = null;
                     Method mget = null;
@@ -398,7 +399,6 @@ public class JPAEntity {
                       Class clazz = jpaEntity.getClass();
                       for (int i = start; i < parts.length; i++) {
                         String p = parts[i];
-                        mget = ReflectionUtil.getMethod(o, "get" + p);
 
                         if (i == parts.length - 1) {
                           Field f = ReflectionUtil.getField(clazz, p);
@@ -406,7 +406,9 @@ public class JPAEntity {
                             canContinue = f.getAnnotation(Id.class) != null;
                           }
                         } else {
+                          mget = ReflectionUtil.getMethod(o, "get" + p);
                           clazz = mget.getReturnType();
+                          current = mget.invoke(current);
                         }
                       }
                     }
