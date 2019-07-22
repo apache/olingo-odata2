@@ -199,14 +199,15 @@ public class JPAQueryBuilder {
       throws EdmException,
       ODataJPAModelException, ODataJPARuntimeException {
 
-    if (uriParserResultView.getFilter() != null) {
-      ODataJPAQueryExtensionEntityListener listener = null;
-      try {
-        listener = getODataJPAQueryEntityListener(uriParserResultView);
-      } catch (Exception e) {
-       //NoCommand
-      }
+    ODataJPAQueryExtensionEntityListener listener = null;
 
+    try {
+      listener = getODataJPAQueryEntityListener(uriParserResultView);
+    } catch (Exception e) {
+      //NoCommand
+    }
+
+    if (uriParserResultView.getFilter() != null) {
       if (listener != null && !ignoreListener) {
         listener.checkFilter(uriParserResultView.getTargetEntitySet().getEntityType(), uriParserResultView.getFilter());
       }
@@ -229,7 +230,17 @@ public class JPAQueryBuilder {
             } else if (param.getValue() instanceof Time) {
               query.setParameter(param.getKey(), (Time) param.getValue(), TemporalType.TIME);
             } else {
-              query.setParameter(param.getKey(), param.getValue());
+              try {
+                query.setParameter(param.getKey(), param.getValue());
+              } catch(Exception e) {
+                Class clazz = query.getParameter(param.getKey()).getParameterType();
+
+                if (clazz != null) {
+                  query.setParameter(param.getKey(), listener.convert(param.getValue(), clazz));
+                } else {
+                  throw new RuntimeException(e);
+                }
+              }
             }
           }
           parameterizedMap.remove(parameterEntry.getKey());
