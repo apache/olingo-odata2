@@ -187,7 +187,15 @@ public class JsonPropertyConsumer {
     } else {
       switch (EdmSimpleTypeKind.valueOf(type.getName())) {
       case Boolean:
-        if (tokenType == JsonToken.BOOLEAN) {
+        if (tokenType == JsonToken.NUMBER) {
+          double v = reader.nextDouble();
+          value = v>0?"true":"false";
+        }
+        else if (tokenType == JsonToken.STRING) {
+          value = reader.nextString();
+          value = value.toString();
+        }
+        else if (tokenType == JsonToken.BOOLEAN) {
           value = reader.nextBoolean();
           value = value.toString();
         } else {
@@ -200,8 +208,8 @@ public class JsonPropertyConsumer {
       case Int16:
       case Int32:
       case Int64:
-        if (tokenType == JsonToken.NUMBER) {
-          value = reader.nextInt();
+        if (tokenType == JsonToken.NUMBER || tokenType == JsonToken.STRING) {
+          value = Math.round(reader.nextDouble());
           value = value.toString();
         } else {
           throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE
@@ -222,7 +230,11 @@ public class JsonPropertyConsumer {
         }
         break;
       default:
-        if (tokenType == JsonToken.STRING) {
+        if (tokenType == JsonToken.NUMBER) {
+          value = Math.round(reader.nextDouble());
+          value = value.toString();
+        }
+        else if (tokenType == JsonToken.STRING) {
           value = reader.nextString();
         } else {
           throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE

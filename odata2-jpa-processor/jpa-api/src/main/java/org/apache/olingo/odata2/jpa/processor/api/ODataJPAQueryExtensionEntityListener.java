@@ -196,4 +196,8 @@ public abstract class ODataJPAQueryExtensionEntityListener extends ODataJPATombs
     return false;
   }
 
+  public Object convert(Object obj, Class clazz) {
+    throw new RuntimeException("Not Implemented");
+  }
+
 }

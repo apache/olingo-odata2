@@ -37,6 +37,7 @@ import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
  */
 public class EdmDateTimeOffset extends AbstractSimpleType {
 
+  public static final Pattern PATTERN_NUMBER = Pattern.compile("\\d+");
   public static final Pattern PATTERN = Pattern.compile(
       "\\p{Digit}{1,4}-\\p{Digit}{1,2}-\\p{Digit}{1,2}"
           + "T\\p{Digit}{1,2}:\\p{Digit}{1,2}(?::\\p{Digit}{1,2}(?:\\.\\p{Digit}{1,7})?)?"
@@ -97,26 +98,34 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
 
     int nanoSeconds = 0;
     if (dateTimeValue == null) {
-      final Matcher matcher = PATTERN.matcher(value);
-      if (!matcher.matches()) {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
-      }
+      final Matcher matcherNumber = PATTERN_NUMBER.matcher(value);
+      if (matcherNumber.matches()) {
+        millis = Long.valueOf(value);
+        dateTimeValue = Calendar.getInstance();
+        dateTimeValue.setTimeInMillis(millis);
+      } else {
 
-      final String timeZoneOffset =
-          matcher.group(1) != null && matcher.group(2) != null && !matcher.group(2).matches("[-+]0+:0+") ? matcher
-              .group(2) : null;
-      dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT" + timeZoneOffset));
-      if (dateTimeValue.get(Calendar.ZONE_OFFSET) == 0 && timeZoneOffset != null) {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
-      }
-      dateTimeValue.clear();
-      final Timestamp timestamp = EdmDateTime.getInstance().internalValueOfString(
-          value.substring(0, matcher.group(1) == null ? value.length() : matcher.start(1)),
-          EdmLiteralKind.DEFAULT, facets, Timestamp.class);
-      millis = timestamp.getTime() - dateTimeValue.get(Calendar.ZONE_OFFSET);
-      nanoSeconds = timestamp.getNanos();
-      if (nanoSeconds % (1000 * 1000) != 0 && !returnType.isAssignableFrom(Timestamp.class)) {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
+        final Matcher matcher = PATTERN.matcher(value);
+        if (!matcher.matches()) {
+          throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
+        }
+
+        final String timeZoneOffset =
+            matcher.group(1) != null && matcher.group(2) != null && !matcher.group(2).matches("[-+]0+:0+") ? matcher
+                .group(2) : null;
+        dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT" + timeZoneOffset));
+        if (dateTimeValue.get(Calendar.ZONE_OFFSET) == 0 && timeZoneOffset != null) {
+          throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
+        }
+        dateTimeValue.clear();
+        final Timestamp timestamp = EdmDateTime.getInstance().internalValueOfString(
+            value.substring(0, matcher.group(1) == null ? value.length() : matcher.start(1)),
+            EdmLiteralKind.DEFAULT, facets, Timestamp.class);
+        millis = timestamp.getTime() - dateTimeValue.get(Calendar.ZONE_OFFSET);
+        nanoSeconds = timestamp.getNanos();
+        if (nanoSeconds % (1000 * 1000) != 0 && !returnType.isAssignableFrom(Timestamp.class)) {
+          throw new EdmSimpleTypeException(EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT.addContent(value));
+        }
       }
     }
 
