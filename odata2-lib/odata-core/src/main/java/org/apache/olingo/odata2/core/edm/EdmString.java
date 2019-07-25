@@ -89,12 +89,6 @@ public class EdmString extends AbstractSimpleType {
       throws EdmSimpleTypeException {
     final String result = value instanceof String ? (String) value : String.valueOf(value);
 
-    if (facets != null
-        && (facets.isUnicode() != null && !facets.isUnicode() && !PATTERN_ASCII.matcher(result).matches()
-        || facets.getMaxLength() != null && facets.getMaxLength() < result.length())) {
-      throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED.addContent(value, facets));
-    }
-
     return result;
   }
 
