@@ -517,7 +517,6 @@ public class ODataExpressionParser {
       Class<?> edmMappedType, Map<Integer, Object> positionalParameters, int index) throws ODataJPARuntimeException {
     if (EdmSimpleTypeKind.String.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)
         || EdmSimpleTypeKind.Guid.getEdmSimpleTypeInstance().isCompatible(edmSimpleType)) {
-      uriLiteral = uriLiteral.replaceAll("'", "''");
       uriLiteral = updateValueIfWildcards(uriLiteral);
       if (!positionalParameters.containsKey(index)) {
         if(edmMappedType != null){

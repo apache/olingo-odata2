@@ -51,7 +51,7 @@ public class ODataFilterExpressionParserTest {
   private static final String[] EXPRESSION_EQ = { "id eq '123'", "(E1.id LIKE '123' ESCAPE '\\')" };
   private static final String[] EXPRESSION_NE = { "id ne '123'", "(E1.id NOT LIKE '123' ESCAPE '\\')" };
   private static final String[] EXPRESSION_NE_SPECIAL = { "id ne '1_3'", "(E1.id NOT LIKE '1_3' ESCAPE '\\')" };
-  private static final String[] EXPRESSION_ESCAPE = { "id ne '123''22'", "(E1.id NOT LIKE '123''22' ESCAPE '\\')" };
+  private static final String[] EXPRESSION_ESCAPE = { "id ne '123''22'", "(E1.id NOT LIKE '123'22' ESCAPE '\\')" };
    private static final String[] EXPRESSION_BINARY_AND =
   {
       "id le '123' and soId eq 123L and not (substringof(id,'123') eq false) eq true",
@@ -81,21 +81,21 @@ public class ODataFilterExpressionParserTest {
       "(SUBSTRING(E1.oValue.Currency, 1 + 1 , 3) LIKE 'INR' ESCAPE '\\')" };
   private static final String[] EXPRESSION_SUBSTRINGOF_INJECTION1 = {
       "substringof('a'' OR 1=1 OR E1.id LIKE ''b',id) eq true",
-      "((CASE WHEN (E1.id LIKE CONCAT('%',CONCAT('a'' OR 1=1 OR E1.id LIKE ''b','%')) ESCAPE '\\') "
+      "((CASE WHEN (E1.id LIKE CONCAT('%',CONCAT('a' OR 1=1 OR E1.id LIKE 'b','%')) ESCAPE '\\') "
           + "THEN TRUE ELSE FALSE END) = true)" };
   private static final String[] EXPRESSION_SUBSTRINGOF_INJECTION2 =
   {
       "substringof('substringof(''a'' OR 1=1 OR E1.id LIKE ''b'',id)',id) eq true",
-      "((CASE WHEN (E1.id LIKE CONCAT('%',CONCAT('substringof(''a'' OR 1=1 OR E1.id LIKE ''b'',id)','%')) ESCAPE '\\') "
+      "((CASE WHEN (E1.id LIKE CONCAT('%',CONCAT('substringof('a' OR 1=1 OR E1.id LIKE 'b',id)','%')) ESCAPE '\\') "
           + "THEN TRUE ELSE FALSE END) = true)" };
   private static final String[] EXPRESSION_SUBSTRINGOF_INJECTION3 =
   {
       "substringof( substring(' ) OR execute_my_sql OR '' LIKE ',3),'de''') eq true",
-      "((CASE WHEN ('de''' LIKE CONCAT('%',CONCAT(SUBSTRING(' ) OR execute_my_sql OR '' LIKE ', 3 + 1 ),'%')"
+      "((CASE WHEN ('de'' LIKE CONCAT('%',CONCAT(SUBSTRING(' ) OR execute_my_sql OR ' LIKE ', 3 + 1 ),'%')"
       + ") ESCAPE '\\') "
           + "THEN TRUE ELSE FALSE END) = true)" };
   private static final String[] EXPRESSION_ENDSWITH_INJECTION1 = { "endswith(id,'Str''eet') eq true",
-      "(E1.id LIKE CONCAT('%','Str''eet') ESCAPE '\\' )" };
+      "(E1.id LIKE CONCAT('%','Str'eet') ESCAPE '\\' )" };
   private static final String[] EXPRESSION_PRECEDENCE = {
       "id eq '123' and id ne '123' or (id eq '123' and id ne '123')",
       "(((E1.id LIKE '123' ESCAPE '\\') AND (E1.id NOT LIKE '123' ESCAPE '\\')) OR ((E1.id LIKE '123' ESCAPE '\\') "
