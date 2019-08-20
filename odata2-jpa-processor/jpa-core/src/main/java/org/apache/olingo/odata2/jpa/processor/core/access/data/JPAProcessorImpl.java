@@ -651,6 +651,7 @@ public class JPAProcessorImpl implements JPAProcessor {
         overridePut = listener.overridePut((UriInfo) updateView, jpaEntity);
       }
 
+      ((UriInfoImpl) updateView).setRawEntity(false);
       if (overridePut != null) {
         jpaEntity = overridePut;
       } else {
@@ -669,9 +670,6 @@ public class JPAProcessorImpl implements JPAProcessor {
           oDataJPAContext.getODataJPATransaction().commit();
         }
       }
-
-      ((UriInfoImpl) updateView).setRawEntity(false);
-
 
     } catch (ODataBadRequestException e) {
       throw new RuntimeException(e);
