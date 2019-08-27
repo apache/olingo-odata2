@@ -22,6 +22,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
@@ -78,7 +79,7 @@ public class JPATypeConverter {
       return EdmSimpleTypeKind.Double;
     } else if (jpaType.equals(Float.class) || jpaType.equals(float.class)) {
       return EdmSimpleTypeKind.Single;
-    } else if (jpaType.equals(BigDecimal.class)) {
+    } else if (jpaType.equals(BigInteger.class) || jpaType.equals(BigDecimal.class)) {
       return EdmSimpleTypeKind.Decimal;
     } else if (jpaType.equals(byte[].class)) {
       return EdmSimpleTypeKind.Binary;
