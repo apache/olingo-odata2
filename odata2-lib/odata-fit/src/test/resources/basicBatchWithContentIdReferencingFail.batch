@@ -1,0 +1,65 @@
+--batch_123
+Content-Type: multipart/mixed; boundary=changeset_005056A5-09B1-1ED1-BF82-409B26A80301
+
+
+--changeset_005056A5-09B1-1ED1-BF82-409B26A80301
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST Rooms HTTP/1.1
+Content-Type: application/atom+xml
+Content-ID: 2
+
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+<content type="application/xml">
+<m:properties>
+<d:Id>100</d:Id>
+<d:Name>Room 1</d:Name>
+<d:Seats>10-12-2019</d:Seats>
+<d:Version>1</d:Version>
+</m:properties>
+</content>
+</entry>
+
+--changeset_005056A5-09B1-1ED1-BF82-409B26A80301--
+
+
+--batch_123
+Content-Type: multipart/mixed; boundary=changeset_005056A5-09B1-1ED1-BF82-409B26A80302
+
+--changeset_005056A5-09B1-1ED1-BF82-409B26A80302
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST Rooms HTTP/1.1
+Content-Type: application/atom+xml
+Content-ID: 3
+
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+<content type="application/xml">
+<m:properties>
+<d:Id>300</d:Id>
+<d:Name>Room 1</d:Name>
+<d:Seats>1</d:Seats>
+<d:Version>1</d:Version>
+</m:properties>
+</content>
+</entry>
+
+--changeset_005056A5-09B1-1ED1-BF82-409B26A80302--
+
+--batch_123
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET $2 HTTP/1.1
+
+
+--batch_123
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET $3 HTTP/1.1
+
+
+--batch_123--

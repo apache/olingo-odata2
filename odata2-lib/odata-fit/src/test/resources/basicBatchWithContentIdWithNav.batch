@@ -1,0 +1,37 @@
+--batch_123
+Content-Type: multipart/mixed; boundary=changeset_005056A5-09B1-1ED1-BF82-409B26A80301
+
+
+--changeset_005056A5-09B1-1ED1-BF82-409B26A80301
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST Rooms HTTP/1.1
+Content-Type: application/json
+Content-ID: 2
+
+{
+    "d": {
+        "Id": "100",
+        "Name": "Room 100",
+        "Seats": 1,
+        "Version": 1,
+        "nr_Building": {
+			"Id": "100",
+			"Name": "Building 100",
+			"Image": null
+        }
+    }
+}
+
+--changeset_005056A5-09B1-1ED1-BF82-409B26A80301--
+
+--batch_123
+Content-Type: application/http
+Accept: application/json
+Content-Transfer-Encoding: binary
+
+GET $2/nr_Building HTTP/1.1
+
+
+--batch_123--

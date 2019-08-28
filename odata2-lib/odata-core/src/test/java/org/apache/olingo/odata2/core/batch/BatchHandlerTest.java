@@ -108,6 +108,25 @@ public class BatchHandlerTest {
   }
 
   @Test
+  public void contentIdReferencingForGet() throws Exception {
+    SERVICE_ROOT = SERVICE_BASE;
+    PathInfoImpl pathInfo = new PathInfoImpl();
+    pathInfo.setServiceRoot(new URI(SERVICE_ROOT));
+    pathInfo.setODataPathSegment(Collections.<PathSegment> singletonList(
+        new ODataPathSegmentImpl("$batch", null)));
+    EntityProviderBatchProperties properties = EntityProviderBatchProperties.init().pathInfo(pathInfo).build();
+    InputStream content = readFile("/batchContentIdReferencingForGet.batch");
+    List<BatchRequestPart> parsedRequest = EntityProvider.parseBatchRequest(CONTENT_TYPE, content, properties);
+
+    PathInfo firstPathInfo = parsedRequest.get(0).getRequests().get(0).getPathInfo();
+    assertFirst(firstPathInfo);
+    
+    handler.handleBatchPart(parsedRequest.get(0));
+    handler.handleBatchPart(parsedRequest.get(1));
+  }
+
+  
+  @Test
   public void contentIdReferencingWithAdditionalSegments() throws Exception {
     SERVICE_ROOT = SERVICE_BASE + "seg1/seg2/";
     PathInfoImpl pathInfo = new PathInfoImpl();

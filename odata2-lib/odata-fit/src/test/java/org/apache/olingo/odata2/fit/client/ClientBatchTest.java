@@ -351,4 +351,106 @@ public class ClientBatchTest extends AbstractRefTest {
           + "\"Could not find an entity set or function import for 'nonsense'.\"}}}", response.getBody());
     }
   }
+  
+  @Test
+  public void testContentIDReferencing() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
+
+    String body = StringHelper.inputStreamToStringCRLFLineBreaks(
+        this.getClass().getResourceAsStream("/basicBatchWithContentIdReferencing.batch"));
+    HttpEntity entity = new StringEntity(body);
+    post.setEntity(entity);
+    HttpResponse batchResponse = getHttpClient().execute(post);
+
+    assertNotNull(batchResponse);
+    assertEquals(202, batchResponse.getStatusLine().getStatusCode());
+    
+    InputStream responseBody = batchResponse.getEntity().getContent();
+    String contentType = batchResponse.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
+    List<BatchSingleResponse> responses = EntityProvider.parseBatchResponse(responseBody, contentType);
+    assertEquals("201", responses.get(0).getStatusCode());
+    assertEquals("Created", responses.get(0).getStatusInfo());
+    assertEquals("201", responses.get(1).getStatusCode());
+    assertEquals("Created", responses.get(1).getStatusInfo());
+    assertEquals("200", responses.get(2).getStatusCode());
+    assertEquals("OK", responses.get(2).getStatusInfo());
+  }
+  
+  @Test
+  public void testContentIDReferencingfail() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
+
+    String body = StringHelper.inputStreamToStringCRLFLineBreaks(
+        this.getClass().getResourceAsStream("/basicBatchWithContentIdReferencingFail.batch"));
+    HttpEntity entity = new StringEntity(body);
+    post.setEntity(entity);
+    HttpResponse batchResponse = getHttpClient().execute(post);
+
+    assertNotNull(batchResponse);
+    assertEquals(202, batchResponse.getStatusLine().getStatusCode());
+    
+    InputStream responseBody = batchResponse.getEntity().getContent();
+    String contentType = batchResponse.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
+    List<BatchSingleResponse> responses = EntityProvider.parseBatchResponse(responseBody, contentType);
+    assertEquals("400", responses.get(0).getStatusCode());
+    assertEquals("Bad Request", responses.get(0).getStatusInfo());
+    assertEquals("201", responses.get(1).getStatusCode());
+    assertEquals("Created", responses.get(1).getStatusInfo());
+    assertEquals("404", responses.get(2).getStatusCode());
+    assertEquals("Not Found", responses.get(2).getStatusInfo());
+    assertEquals("200", responses.get(3).getStatusCode());
+    assertEquals("OK", responses.get(3).getStatusInfo());
+  }
+  
+  @Test
+  public void testContentIDReferencingWithNav() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
+
+    String body = StringHelper.inputStreamToStringCRLFLineBreaks(
+        this.getClass().getResourceAsStream("/basicBatchWithContentIdWithNav.batch"));
+    HttpEntity entity = new StringEntity(body);
+    post.setEntity(entity);
+    HttpResponse batchResponse = getHttpClient().execute(post);
+
+    assertNotNull(batchResponse);
+    assertEquals(202, batchResponse.getStatusLine().getStatusCode());
+    
+    InputStream responseBody = batchResponse.getEntity().getContent();
+    String contentType = batchResponse.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
+    List<BatchSingleResponse> responses = EntityProvider.parseBatchResponse(responseBody, contentType);
+    assertEquals("201", responses.get(0).getStatusCode());
+    assertEquals("Created", responses.get(0).getStatusInfo());
+    assertEquals("200", responses.get(1).getStatusCode());
+    assertEquals("OK", responses.get(1).getStatusInfo());
+    assertTrue(responses.get(1).getBody().contains("Building 100"));
+  }
+  
+  @Test
+  public void testContentIDReferencingWithNavFail() throws Exception {
+    final HttpPost post = new HttpPost(URI.create(getEndpoint().toString() + "$batch"));
+    post.setHeader("Content-Type", "multipart/mixed;boundary=" + BOUNDARY);
+
+    String body = StringHelper.inputStreamToStringCRLFLineBreaks(
+        this.getClass().getResourceAsStream("/basicBatchWithContentIdWithNavFail.batch"));
+    HttpEntity entity = new StringEntity(body);
+    post.setEntity(entity);
+    HttpResponse batchResponse = getHttpClient().execute(post);
+
+    assertNotNull(batchResponse);
+    assertEquals(202, batchResponse.getStatusLine().getStatusCode());
+    
+    InputStream responseBody = batchResponse.getEntity().getContent();
+    String contentType = batchResponse.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue();
+    List<BatchSingleResponse> responses = EntityProvider.parseBatchResponse(responseBody, contentType);
+    assertEquals("400", responses.get(0).getStatusCode());
+    assertEquals("Bad Request", responses.get(0).getStatusInfo());
+    assertTrue(responses.get(0).getBody().contains("The request body is malformed."));
+    assertEquals("404", responses.get(1).getStatusCode());
+    assertEquals("Not Found", responses.get(1).getStatusInfo());
+    assertTrue(responses.get(1).getBody().contains(
+        "Could not find an entity set or function import for '$2'."));
+  }
 }

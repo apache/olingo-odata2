@@ -53,25 +53,31 @@ public class BatchHandlerImpl implements BatchHandler {
   public BatchHandlerImpl(final ODataServiceFactory factory, final ODataService service) {
     this.factory = factory;
     this.service = service;
+    contentIdMap = new HashMap<String, String>();
   }
 
   @Override
   public BatchResponsePart handleBatchPart(final BatchRequestPart batchPart) throws ODataException {
     if (batchPart.isChangeSet()) {
       List<ODataRequest> changeSetRequests = batchPart.getRequests();
-      contentIdMap = new HashMap<String, String>();
       return service.getBatchProcessor().executeChangeSet(this, changeSetRequests);
     } else {
       if (batchPart.getRequests().size() != 1) {
         throw new ODataException("Query Operation should contain one request");
       }
       ODataRequest request = batchPart.getRequests().get(0);
-      ODataRequestHandler handler = createHandler(request);
       String mimeHeaderContentId =
           request.getRequestHeaderValue(BatchHelper.MIME_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH));
       String requestHeaderContentId =
           request.getRequestHeaderValue(BatchHelper.REQUEST_HEADER_CONTENT_ID.toLowerCase(Locale.ENGLISH));
-      ODataResponse response = setContentIdHeader(handler.handle(request), mimeHeaderContentId, requestHeaderContentId);
+
+      List<PathSegment> odataSegments = request.getPathInfo().getODataSegments();
+      if (!odataSegments.isEmpty() && odataSegments.get(0).getPath().matches("\\$.*")) {
+        request = modifyRequest(request, odataSegments);
+      }
+      ODataRequestHandler handler = createHandler(request);
+      ODataResponse response = setContentIdHeader(request, handler.handle(request), 
+          mimeHeaderContentId, requestHeaderContentId);
       List<ODataResponse> responses = new ArrayList<ODataResponse>(1);
       responses.add(response);
       return BatchResponsePart.responses(responses).changeSet(false).build();
@@ -95,7 +101,7 @@ public class BatchHandlerImpl implements BatchHandler {
     ODataRequestHandler handler = createHandler(request);
     ODataResponse response = handler.handle(request);
     if (response.getStatus().getStatusCode() < BAD_REQUEST) {
-      response = setContentIdHeader(response, mimeHeaderContentId, requestHeaderContentId);
+      response = setContentIdHeader(request, response, mimeHeaderContentId, requestHeaderContentId);
     }
     if (request.getMethod().equals(ODataHttpMethod.POST)) {
       String baseUri = getBaseUri(request);
@@ -151,10 +157,13 @@ public class BatchHandlerImpl implements BatchHandler {
     return modifiedRequest;
   }
 
-  private ODataResponse setContentIdHeader(final ODataResponse response, final String mimeHeaderContentId,
-      final String requestHeaderContentId) {
+  private ODataResponse setContentIdHeader(ODataRequest request, final ODataResponse response, 
+      final String mimeHeaderContentId, final String requestHeaderContentId) {
     ODataResponse modifiedResponse;
     if (requestHeaderContentId != null && mimeHeaderContentId != null) {
+      String baseUri = getBaseUri(request);
+      fillContentIdMap(response, requestHeaderContentId, baseUri);
+      fillContentIdMap(response, mimeHeaderContentId, baseUri);
       modifiedResponse =
           ODataResponse.fromResponse(response).header(BatchHelper.REQUEST_HEADER_CONTENT_ID, requestHeaderContentId)
               .header(BatchHelper.MIME_HEADER_CONTENT_ID, mimeHeaderContentId).build();
