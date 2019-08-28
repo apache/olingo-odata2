@@ -23,10 +23,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.callback.OnReadInlineContent;
@@ -221,11 +223,20 @@ public class JsonEntryDeepInsertFeedTest extends AbstractConsumerTest {
   private class FeedCallback implements OnReadInlineContent {
     private ODataFeed feed;
     private FeedCallback innerCallback;
-
+    private Map<String, Object> navigationProp = new HashMap<String, Object>();
+    private String id = "";
+    
     public FeedCallback() {
 
     }
 
+    /**
+     * @return the navigationPropFeed
+     */
+    public Map<String, Object> getNavigationProperties() {
+      return navigationProp;
+    }
+    
     public ODataFeed getFeed() {
       return feed;
     }
@@ -237,14 +248,72 @@ public class JsonEntryDeepInsertFeedTest extends AbstractConsumerTest {
 
     @Override
     public void handleReadFeed(final ReadFeedResult context) {
+      this.id = context.getParentEntryId();
       feed = context.getResult();
+      handleFeed(context);
     }
 
+    private void handleFeed(final ReadFeedResult context) {
+      try {
+        String navigationPropertyName = context.getNavigationProperty().getName();
+        if (navigationPropertyName != null) {
+          navigationProp.put(navigationPropertyName + id, (ODataFeed) context.getResult());
+        } else {
+          throw new RuntimeException("Invalid title");
+        }
+      } catch (EdmException e) {
+        throw new RuntimeException("Invalid title");
+      }
+    }
+    
     @Override
     public EntityProviderReadProperties receiveReadProperties(final EntityProviderReadProperties readProperties,
         final EdmNavigationProperty navString) {
       return EntityProviderReadProperties.init().mergeSemantic(false).callback(innerCallback).build();
     }
   }
+  
+  @Test
+  public void innerFeedWithCallback() throws Exception {
+    FeedCallback callback = new FeedCallback();
+    EntityProviderReadProperties readProperties =
+        EntityProviderReadProperties.init().mergeSemantic(false).callback(callback).build();
+    EdmEntitySet entitySet = MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Buildings");
+    String content = readFile("JsonBuildingWithInlineRoomsFeedToEmployees.json");
+    assertNotNull(content);
+    InputStream contentBody = createContentAsStream(content);
 
+    // execute
+    JsonEntityConsumer xec = new JsonEntityConsumer();
+    ODataEntry result = xec.readEntry(entitySet, contentBody, readProperties);
+    assertNotNull(result);
+    
+    ODataFeed innerRoomFeed = (ODataFeed) result.getProperties().get("nb_Rooms");
+    assertNull(innerRoomFeed);
+
+    innerRoomFeed = callback.getFeed();
+
+    List<ODataEntry> rooms = innerRoomFeed.getEntries();
+    assertNotNull(rooms);
+    assertEquals(1, rooms.size());
+
+    ODataEntry room = rooms.get(0);
+    Map<String, Object> roomProperties = room.getProperties();
+
+    assertEquals(5, roomProperties.size());
+    assertEquals("1", roomProperties.get("Id"));
+    assertEquals("Room 1", roomProperties.get("Name"));
+    assertEquals(Short.valueOf("1"), roomProperties.get("Version"));
+    assertEquals(Short.valueOf("1"), roomProperties.get("Seats"));
+
+    Map<String, Object> inlineEntries = callback.getNavigationProperties();
+    getExpandedData(inlineEntries, result, entitySet.getEntityType());
+    List<ODataEntry> roomsFeed = ((ODataFeed)result.getProperties().get("nb_Rooms")).getEntries();
+    List<ODataEntry> employeesFeed = ((ODataFeed)roomsFeed.get(0).getProperties().
+        get("nr_Employees")).getEntries();
+    assertEquals(1, employeesFeed.size());
+    assertEquals(10, employeesFeed.get(0).getProperties().size());
+    assertEquals(3, ((ODataEntry)employeesFeed.get(0).getProperties().get("ne_Team")).
+        getProperties().size());
+  }
 }

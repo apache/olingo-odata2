@@ -321,7 +321,7 @@ public class JsonEntryConsumer {
               resultEntry.setContainsInlineEntry(true);
             } else {
               ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty, 
-                  feed, entryMetadata.getId());
+                  feed, entryMetadata.getId() != null ? entryMetadata.getId() : fetchParentIdInfo(eia, resultEntry));
               callback.handleReadFeed(result);
             }
           } else {
@@ -333,7 +333,7 @@ public class JsonEntryConsumer {
               resultEntry.setContainsInlineEntry(true);
             } else {
               ReadEntryResult result = new ReadEntryResult(inlineReadProperties, navigationProperty, 
-                  entry, entryMetadata.getId());
+                  entry, entryMetadata.getId() != null ? entryMetadata.getId() : fetchParentIdInfo(eia, resultEntry));
               callback.handleReadEntry(result);
             }
           }
@@ -374,7 +374,7 @@ public class JsonEntryConsumer {
         resultEntry.setContainsInlineEntry(true);
       } else {
         ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty,
-            feed, entryMetadata.getId());
+            feed, entryMetadata.getId() != null ? entryMetadata.getId() : fetchParentIdInfo(eia, resultEntry));
         try {
           callback.handleReadFeed(result);
         } catch (final ODataApplicationException e) {
@@ -385,6 +385,31 @@ public class JsonEntryConsumer {
     }
   }
 
+  /**
+   * 
+   * @param eia
+   * @param resultEntry
+   * @return
+   * @throws EdmException
+   */
+  private String fetchParentIdInfo(EntityInfoAggregator eia, ODataEntryImpl resultEntry) throws EdmException {
+    String keyInfo = "";
+    if (null != resultEntry) {
+      if (eia != null && eia.getEntityType() != null) {
+        List<String> keys = eia.getEntityType().getKeyPropertyNames();
+        int i = 0;
+        for (String key : keys) {
+          keyInfo += key + "=" + resultEntry.getProperties().get(key);
+          i++;
+          if (i < keys.size()) {
+            keyInfo += ",";
+          }
+        }
+      }
+    }
+    return keyInfo;
+  }
+  
   private void updateExpandSelectTree(final String navigationPropertyName, final ODataFeed feed) {
     List<ODataEntry> entries = feed.getEntries();
     if (!entries.isEmpty()) {

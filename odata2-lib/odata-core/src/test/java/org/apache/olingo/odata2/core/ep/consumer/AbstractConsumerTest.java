@@ -26,19 +26,25 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
+import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
+import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.ep.EntityProviderReadProperties;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.uri.ExpandSelectTreeNode;
 import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.apache.olingo.odata2.testutil.mock.MockFacade;
 
@@ -172,4 +178,85 @@ public abstract class AbstractConsumerTest extends BaseTest {
     return result;
   }
 
+  /**
+   * @param inlineEntries
+   * @param feed
+   * @param entry
+   * @param edmEntityType 
+   * @throws EdmException 
+   */
+  protected void getExpandedData(Map<String, Object> inlineEntries, 
+      ODataEntry entry, EdmType edmType) throws EdmException {
+    assertNotNull(entry);
+    Map<String, ExpandSelectTreeNode> expandNodes = entry.getExpandSelectTree().getLinks();
+    for (Entry<String, ExpandSelectTreeNode> expand : expandNodes.entrySet()) {
+      assertNotNull(expand.getKey());
+      String keyName = extractKey(entry, (EdmEntityType)edmType, expand);
+      if (inlineEntries.containsKey(keyName)) {
+        if (inlineEntries.get(keyName) instanceof ODataFeed) {
+          ODataFeed innerFeed = (ODataFeed) inlineEntries.get(keyName);
+          assertNotNull(innerFeed);
+          getExpandedData(inlineEntries, innerFeed,
+              ((EdmNavigationProperty)((EdmEntityType)edmType).getProperty(expand.getKey())).getType());
+          entry.getProperties().put(expand.getKey(), innerFeed);
+        } else if (inlineEntries.get(keyName) instanceof ODataEntry) {
+          ODataEntry innerEntry = (ODataEntry) inlineEntries.get(keyName);
+          assertNotNull(innerEntry);
+          getExpandedData(inlineEntries, innerEntry,
+              ((EdmNavigationProperty)((EdmEntityType)edmType).getProperty(expand.getKey())).getType());
+          entry.getProperties().put(expand.getKey(), innerEntry);
+        }
+      }
+    }
+  }
+  
+  /**
+   * Extract key information to map the parent entry to child entry
+   * @param entry
+   * @param edmEntityType
+   * @param expand
+   * @return
+   * @throws EdmException
+   */
+  private String extractKey(ODataEntry entry, EdmEntityType edmEntityType, Entry<String, 
+      ExpandSelectTreeNode> expand) throws EdmException {
+    return entry.getMetadata().getId() != null ?
+        (expand.getKey() + entry.getMetadata().getId()) : 
+          (expand.getKey() + edmEntityType.getKeyPropertyNames().get(0) + "=" + 
+        entry.getProperties().get(edmEntityType.getKeyPropertyNames().get(0)));
+  }
+
+  /**
+   * @param inlineEntries
+   * @param feed
+   * @param entry
+   * @throws EdmException 
+   */
+  protected void getExpandedData(Map<String, Object> inlineEntries, 
+      ODataFeed feed, EdmType edmType) throws EdmException {
+    assertNotNull(feed.getEntries());
+    List<ODataEntry> entries = feed.getEntries();
+    for (ODataEntry entry : entries) {
+      Map<String, ExpandSelectTreeNode> expandNodes = entry.getExpandSelectTree().getLinks();
+      for (Entry<String, ExpandSelectTreeNode> expand : expandNodes.entrySet()) {
+        assertNotNull(expand.getKey());
+        String keyName = extractKey(entry, (EdmEntityType) edmType, expand);
+        if (inlineEntries.containsKey(keyName)) {
+          if (inlineEntries.get(keyName) instanceof ODataFeed) {
+            ODataFeed innerFeed = (ODataFeed) inlineEntries.get(keyName);
+            assertNotNull(innerFeed);
+            getExpandedData(inlineEntries, innerFeed,
+                ((EdmNavigationProperty)((EdmEntityType)edmType).getProperty(expand.getKey())).getType());
+            feed.getEntries().get(feed.getEntries().indexOf(entry)).getProperties().put(expand.getKey(), innerFeed);
+          } else if (inlineEntries.get(keyName) instanceof ODataEntry) {
+            ODataEntry innerEntry = (ODataEntry) inlineEntries.get(keyName);
+            assertNotNull(innerEntry);
+            getExpandedData(inlineEntries, innerEntry,
+                ((EdmNavigationProperty)((EdmEntityType)edmType).getProperty(expand.getKey())).getType());
+            feed.getEntries().get(feed.getEntries().indexOf(entry)).getProperties().put(expand.getKey(), innerEntry);
+          }
+        }
+      }
+    }
+  }
 }
