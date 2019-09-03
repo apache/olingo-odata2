@@ -771,6 +771,9 @@ public class FilterParserImpl implements FilterParser {
     combination.add(new ParameterSet(boolean_, string, int64));
     combination.add(new ParameterSet(boolean_, int64, string));
 
+    combination.add(new ParameterSet(boolean_, string, double_));
+    combination.add(new ParameterSet(boolean_, double_, string));
+
     combination.add(new ParameterSet(boolean_, string, null_));
     combination.add(new ParameterSet(boolean_, null_, string));
     
