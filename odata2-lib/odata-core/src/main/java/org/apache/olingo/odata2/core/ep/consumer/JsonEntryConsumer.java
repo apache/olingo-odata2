@@ -1,3 +1,4 @@
+//FIX_001 - QAIBT-2101 - Falha ao tentar inserir na classe com FK User
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -275,114 +276,130 @@ public class JsonEntryConsumer {
   private void readNavigationProperty(final String navigationPropertyName) throws IOException, EntityProviderException,
       EdmException {
     NavigationPropertyInfo navigationPropertyInfo = eia.getNavigationPropertyInfo(navigationPropertyName);
+    //BEGIN FIX_001
+    /*DESCRIPTION:
+      QAIBT-2101 - Falha ao tentar inserir na classe com FK User
+      Caso haja algum atributo que não seja navigationProperty, significa que é um attr gerado, e ignora o mesmo
+      Ignora tambem o value (skipValue), para poder continuar a iteração do reader
+    */
+    /*OLD CODE
     if (navigationPropertyInfo == null) {
       throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent(navigationPropertyName));
     }
-
-    JsonToken peek = reader.peek();
-    if (peek == JsonToken.BEGIN_OBJECT) {
-      reader.beginObject();
-      String name = reader.nextName();
-      if (FormatJson.DEFERRED.equals(name)) {
+    */
+    //FIX CODE
+    if (navigationPropertyInfo == null) {
+      reader.skipValue();
+    }
+    //END FIX_001
+    else {
+      JsonToken peek = reader.peek();
+      if (peek == JsonToken.BEGIN_OBJECT) {
         reader.beginObject();
-        String uri = reader.nextName();
-        if (FormatJson.URI.equals(uri)) {
-          String value = reader.nextString();
-          entryMetadata.putAssociationUri(navigationPropertyInfo.getName(), value);
+        String name = reader.nextName();
+        if (FormatJson.DEFERRED.equals(name)) {
+          reader.beginObject();
+          String uri = reader.nextName();
+          if (FormatJson.URI.equals(uri)) {
+            String value = reader.nextString();
+            entryMetadata.putAssociationUri(navigationPropertyInfo.getName(), value);
+          } else {
+            throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent(uri));
+          }
+          reader.endObject();
         } else {
-          throw new EntityProviderException(EntityProviderException.ILLEGAL_ARGUMENT.addContent(uri));
+          EdmNavigationProperty navigationProperty =
+              (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
+          EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navigationProperty);
+          EntityInfoAggregator inlineEia = EntityInfoAggregator.create(inlineEntitySet);
+          EntityProviderReadProperties inlineReadProperties;
+          OnReadInlineContent callback = readProperties.getCallback();
+          try {
+            if (callback == null) {
+              inlineReadProperties =
+                  EntityProviderReadProperties.init()
+                      .mergeSemantic(readProperties.getMergeSemantic())
+                      .isValidatingFacets(readProperties.isValidatingFacets())
+                      .build();
+
+            } else {
+              inlineReadProperties = callback.receiveReadProperties(readProperties, navigationProperty);
+            }
+
+            if (navigationProperty.getMultiplicity() == EdmMultiplicity.MANY) {
+              JsonFeedConsumer inlineConsumer = new JsonFeedConsumer(reader, inlineEia, inlineReadProperties);
+              ODataFeed feed = inlineConsumer.readStartedInlineFeed(name);
+              updateExpandSelectTree(navigationPropertyName, feed);
+              if (callback == null) {
+                properties.put(navigationPropertyName, feed);
+                resultEntry.setContainsInlineEntry(true);
+              } else {
+                ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty,
+                    feed, entryMetadata.getId());
+                callback.handleReadFeed(result);
+              }
+            } else {
+              JsonEntryConsumer inlineConsumer = new JsonEntryConsumer(reader, inlineEia, inlineReadProperties);
+              ODataEntry entry = inlineConsumer.readInlineEntry(name);
+              updateExpandSelectTree(navigationPropertyName, entry);
+              if (callback == null) {
+                properties.put(navigationPropertyName, entry);
+                resultEntry.setContainsInlineEntry(true);
+              } else {
+                ReadEntryResult result = new ReadEntryResult(inlineReadProperties, navigationProperty,
+                    entry, entryMetadata.getId());
+                callback.handleReadEntry(result);
+              }
+            }
+
+          } catch (ODataApplicationException e) {
+            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+                .getSimpleName()), e);
+          }
         }
         reader.endObject();
+      } else if (peek == JsonToken.NULL) {
+        reader.nextNull();
       } else {
-        EdmNavigationProperty navigationProperty =
+        final EdmNavigationProperty navigationProperty =
             (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
-        EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navigationProperty);
-        EntityInfoAggregator inlineEia = EntityInfoAggregator.create(inlineEntitySet);
-        EntityProviderReadProperties inlineReadProperties;
+        final EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navigationProperty);
+        final EntityInfoAggregator inlineInfo = EntityInfoAggregator.create(inlineEntitySet);
         OnReadInlineContent callback = readProperties.getCallback();
-        try {
-          if (callback == null) {
-            inlineReadProperties =
-                EntityProviderReadProperties.init()
-                    .mergeSemantic(readProperties.getMergeSemantic())
-                    .isValidatingFacets(readProperties.isValidatingFacets())
-                    .build();
-
-          } else {
+        EntityProviderReadProperties inlineReadProperties;
+        if (callback == null) {
+          inlineReadProperties =
+              EntityProviderReadProperties.init()
+                  .mergeSemantic(readProperties.getMergeSemantic())
+                  .isValidatingFacets(readProperties.isValidatingFacets())
+                  .build();
+        } else {
+          try {
             inlineReadProperties = callback.receiveReadProperties(readProperties, navigationProperty);
+          } catch (final ODataApplicationException e) {
+            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+                .getSimpleName()), e);
           }
-
-          if (navigationProperty.getMultiplicity() == EdmMultiplicity.MANY) {
-            JsonFeedConsumer inlineConsumer = new JsonFeedConsumer(reader, inlineEia, inlineReadProperties);
-            ODataFeed feed = inlineConsumer.readStartedInlineFeed(name);
-            updateExpandSelectTree(navigationPropertyName, feed);
-            if (callback == null) {
-              properties.put(navigationPropertyName, feed);
-              resultEntry.setContainsInlineEntry(true);
-            } else {
-              ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty, 
-                  feed, entryMetadata.getId());
-              callback.handleReadFeed(result);
-            }
-          } else {
-            JsonEntryConsumer inlineConsumer = new JsonEntryConsumer(reader, inlineEia, inlineReadProperties);
-            ODataEntry entry = inlineConsumer.readInlineEntry(name);
-            updateExpandSelectTree(navigationPropertyName, entry);
-            if (callback == null) {
-              properties.put(navigationPropertyName, entry);
-              resultEntry.setContainsInlineEntry(true);
-            } else {
-              ReadEntryResult result = new ReadEntryResult(inlineReadProperties, navigationProperty, 
-                  entry, entryMetadata.getId());
-              callback.handleReadEntry(result);
-            }
+        }
+        ODataFeed feed = new JsonFeedConsumer(reader, inlineInfo, inlineReadProperties).readInlineFeedStandalone();
+        updateExpandSelectTree(navigationPropertyName, feed);
+        if (callback == null) {
+          properties.put(navigationPropertyName, feed);
+          resultEntry.setContainsInlineEntry(true);
+        } else {
+          ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty,
+              feed, entryMetadata.getId());
+          try {
+            callback.handleReadFeed(result);
+          } catch (final ODataApplicationException e) {
+            throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
+                .getSimpleName()), e);
           }
+        }
+      }
 
-        } catch (ODataApplicationException e) {
-          throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-              .getSimpleName()), e);
-        }
-      }
-      reader.endObject();
-    } else if (peek == JsonToken.NULL) {
-      reader.nextNull();
-    } else {
-      final EdmNavigationProperty navigationProperty =
-          (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
-      final EdmEntitySet inlineEntitySet = eia.getEntitySet().getRelatedEntitySet(navigationProperty);
-      final EntityInfoAggregator inlineInfo = EntityInfoAggregator.create(inlineEntitySet);
-      OnReadInlineContent callback = readProperties.getCallback();
-      EntityProviderReadProperties inlineReadProperties;
-      if (callback == null) {
-        inlineReadProperties =
-            EntityProviderReadProperties.init()
-                .mergeSemantic(readProperties.getMergeSemantic())
-                .isValidatingFacets(readProperties.isValidatingFacets())
-                .build();
-      } else {
-        try {
-          inlineReadProperties = callback.receiveReadProperties(readProperties, navigationProperty);
-        } catch (final ODataApplicationException e) {
-          throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-              .getSimpleName()), e);
-        }
-      }
-      ODataFeed feed = new JsonFeedConsumer(reader, inlineInfo, inlineReadProperties).readInlineFeedStandalone();
-      updateExpandSelectTree(navigationPropertyName, feed);
-      if (callback == null) {
-        properties.put(navigationPropertyName, feed);
-        resultEntry.setContainsInlineEntry(true);
-      } else {
-        ReadFeedResult result = new ReadFeedResult(inlineReadProperties, navigationProperty,
-            feed, entryMetadata.getId());
-        try {
-          callback.handleReadFeed(result);
-        } catch (final ODataApplicationException e) {
-          throw new EntityProviderException(EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getClass()
-              .getSimpleName()), e);
-        }
-      }
     }
+
   }
 
   private void updateExpandSelectTree(final String navigationPropertyName, final ODataFeed feed) {
