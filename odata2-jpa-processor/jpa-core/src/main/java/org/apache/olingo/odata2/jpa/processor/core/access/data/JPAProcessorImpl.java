@@ -427,6 +427,19 @@ public class JPAProcessorImpl implements JPAProcessor {
 
   }
 
+  //Caso o target seja diferente do internal, significa que é a fonte de dados, precisa pegar as permissoes da fonte de dados.
+  private void recreateJPAEntityIfTargetIsNotEntitySet(final PostUriInfo createView, final JPAEntity virtualJPAEntity) throws EdmException, ODataJPARuntimeException {
+    EdmEntityType edmEntityType = createView.getTargetEntitySet().getEntityType();
+    EdmEntityType edmEntityTypeBase = createView.getEntityContainer().getEntitySet(createView.getTargetEntitySet()
+        .getEntityType().getMapping().getInternalName()).getEntityType();
+
+    if (edmEntityType != null && edmEntityTypeBase != null && !edmEntityType.equals(edmEntityTypeBase) ) {
+      JPAEntityParser jpaResultParser = new JPAEntityParser(oDataJPAContext, (UriInfo) createView);
+      HashMap<String, Object> edmPropertyValueMap  = jpaResultParser.parse2EdmPropertyValueMap(virtualJPAEntity.getJPAEntity(), edmEntityType);
+      virtualJPAEntity.create(edmPropertyValueMap);
+    }
+  }
+
   private Object processCreate(final PostUriInfo createView, final InputStream content,
       final Map<String, Object> properties,
       final String requestedContentType) throws ODataJPAModelException,
@@ -452,14 +465,15 @@ public class JPAProcessorImpl implements JPAProcessor {
 
       if (content != null) {
         final ODataEntityParser oDataEntityParser = new ODataEntityParser(oDataJPAContext);
-        final ODataEntry oDataEntry =
-            oDataEntityParser.parseEntry((UriInfo) createView, oDataEntitySet, content, requestedContentType, false);
+        final ODataEntry oDataEntry = oDataEntityParser.parseEntry((UriInfo) createView, oDataEntitySet, content, requestedContentType, false);
         virtualJPAEntity.create(oDataEntry);
+        recreateJPAEntityIfTargetIsNotEntitySet(createView, virtualJPAEntity);
       } else if (properties != null) {
         virtualJPAEntity.create(properties);
       } else {
         return null;
       }
+
 
       boolean isLocalTransaction = setTransaction();
       jpaEntity = virtualJPAEntity.getJPAEntity();
