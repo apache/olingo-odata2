@@ -96,11 +96,6 @@
         </dependency>
         <dependency>
             <groupId>io.cronapp</groupId>
-            <artifactId>olingo-odata2-jpa-processor-ref</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cronapp</groupId>
             <artifactId>olingo-odata2-annotation-processor-api</artifactId>
             <version>${project.version}</version>
         </dependency>

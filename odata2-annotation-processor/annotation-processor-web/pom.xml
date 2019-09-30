@@ -45,11 +45,7 @@
     </resources>
 
     <plugins>
-      <plugin>
-        <groupId>com.sap.research</groupId>
-        <artifactId>nwcloud-maven-plugin</artifactId>
-        <version>1.0.0.RELEASE</version>
-      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
