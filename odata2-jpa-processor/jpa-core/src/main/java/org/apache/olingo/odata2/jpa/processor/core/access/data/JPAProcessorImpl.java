@@ -762,14 +762,24 @@ public class JPAProcessorImpl implements JPAProcessor {
 
           List<Object> newEntities = new ArrayList<Object>(entities.size());
           for (Object obj : entities) {
-            VirtualClassInterface entity;
+            VirtualClassInterface entity = null;
+            boolean extractItens = false;
 
             if (obj instanceof JsonElement) {
               entity = new VirtualClassWrapper(obj);
             }
             else if (obj instanceof VirtualClassInterface) {
               entity = (VirtualClassInterface) obj;
+              if (entity.getObject() != null && entity.getObject().getClass().isArray()) {
+                obj = entity.getObject();
+                extractItens = true;
+              }
             } else {
+              extractItens = true;
+            }
+
+
+            if (extractItens) {
               entity = new VirtualClass();
               if (obj.getClass().isArray()) {
                 int i = 0;

@@ -42,4 +42,9 @@ public class VirtualClassWrapper implements VirtualClassInterface {
 
     return this;
   }
+
+  @Override
+  public Object getObject() {
+    return object;
+  }
 }

@@ -5,4 +5,6 @@ public interface VirtualClassInterface {
   public Object get(String name);
 
   public VirtualClassInterface set(String name, Object value);
+
+  public Object getObject();
 }

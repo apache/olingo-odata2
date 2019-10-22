@@ -14,4 +14,9 @@ public class VirtualClass implements VirtualClassInterface {
 
     return this;
   }
+
+  @Override
+  public Object getObject() {
+    return map;
+  }
 }
