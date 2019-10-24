@@ -130,7 +130,9 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
       return returnType.cast(new Date(millis));
     } else if (returnType.isAssignableFrom(Timestamp.class)) {
         Timestamp timestamp = new Timestamp(millis);
-        timestamp.setNanos(nanoSeconds);
+        if (literalKind != EdmLiteralKind.JSON) {
+          timestamp.setNanos(nanoSeconds);
+        }
         return returnType.cast(timestamp);
     } else {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType));

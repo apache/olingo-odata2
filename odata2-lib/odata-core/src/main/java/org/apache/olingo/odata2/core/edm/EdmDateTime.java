@@ -146,7 +146,9 @@ public class EdmDateTime extends AbstractSimpleType {
       return returnType.cast(dateTimeValue.getTime());
     } else if (returnType.isAssignableFrom(Timestamp.class)) {
         Timestamp timestamp = new Timestamp(dateTimeValue.getTimeInMillis());
-        timestamp.setNanos(nanoSeconds);
+        if (literalKind != EdmLiteralKind.JSON) {
+          timestamp.setNanos(nanoSeconds);
+        }
         return returnType.cast(timestamp);
     } else {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType));

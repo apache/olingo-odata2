@@ -1230,6 +1230,11 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertEquals(dateTime, instance.valueOfString("datetimeoffset'2012-02-29T01:02:03Z'", EdmLiteralKind.URI, null,
         Calendar.class));
 
+    assertEquals(Long.parseLong("1454889571199"), instance.valueOfString("/Date(1454889571199)/", 
+        EdmLiteralKind.JSON, null, Timestamp.class).getTime());
+    assertEquals(Long.parseLong("145488957119912456"), instance.valueOfString("/Date(145488957119912456)/", 
+        EdmLiteralKind.JSON, null, Timestamp.class).getTime());
+        
     dateTime.clear();
     dateTime.setTimeZone(TimeZone.getTimeZone("GMT-01:30"));
     dateTime.set(2012, 1, 29, 1, 2, 3);
