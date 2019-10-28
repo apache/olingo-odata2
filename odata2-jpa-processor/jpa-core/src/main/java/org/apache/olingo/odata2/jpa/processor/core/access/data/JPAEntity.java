@@ -666,8 +666,12 @@ public class JPAEntity {
             new Timestamp(((Calendar) entityPropertyValue).getTimeInMillis()) : null;
         method.invoke(entity, ts);
       } else if (parameterType.equals(java.util.Date.class)) {
-        Date d = entityPropertyValue != null ? ((Calendar) entityPropertyValue).getTime(): null;
-        method.invoke(entity, d);
+        if (entityPropertyValue instanceof Date) {
+          method.invoke(entity, (Date) entityPropertyValue);
+        } else {
+          Date d = entityPropertyValue != null ? ((Calendar) entityPropertyValue).getTime() : null;
+          method.invoke(entity, d);
+        }
       } else if (parameterType.equals(java.sql.Date.class)) {
         java.sql.Date d = entityPropertyValue != null ? 
             new java.sql.Date(((Calendar) entityPropertyValue).getTimeInMillis()) : null;
