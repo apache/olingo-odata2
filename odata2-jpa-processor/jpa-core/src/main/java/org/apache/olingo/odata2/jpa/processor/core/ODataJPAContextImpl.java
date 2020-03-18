@@ -33,7 +33,7 @@ public class ODataJPAContextImpl implements ODataJPAContext {
 
   private String pUnitName;
   private EntityManagerFactory emf;
-  private EntityManager em = null;
+  private static final ThreadLocal<EntityManager> emThreadLocal = new ThreadLocal<>();
   private ODataContext odataContext;
   private ODataProcessor processor;
   private EdmProvider edmProvider;
@@ -122,10 +122,12 @@ public class ODataJPAContextImpl implements ODataJPAContext {
 
   @Override
   public EntityManager getEntityManager() {
-    if (em == null || !em.isOpen()) {
-      em = emf.createEntityManager();
-    }
-    return em;
+    EntityManager em = emThreadLocal.get();
+        if (em == null || !em.isOpen()) {
+            em = emf.createEntityManager();
+            setEntityManager(em);
+        }
+        return em;
   }
 
   @Override
@@ -198,6 +200,6 @@ public class ODataJPAContextImpl implements ODataJPAContext {
 
   @Override
   public void setEntityManager(EntityManager em) {
-    this.em = em;
+    emThreadLocal.set(em);
   }
 }
