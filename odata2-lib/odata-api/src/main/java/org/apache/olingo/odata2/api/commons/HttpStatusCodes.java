@@ -39,7 +39,7 @@ public enum HttpStatusCodes {
   PRECONDITION_FAILED(412, "Precondition Failed"), REQUEST_ENTITY_TOO_LARGE(413, "Request Entity Too Large"),
   REQUEST_URI_TOO_LONG(414, "Request-URI Too Long"), UNSUPPORTED_MEDIA_TYPE(415, "Unsupported Media Type"),
   REQUESTED_RANGE_NOT_SATISFIABLE(416, "Requested Range Not Satisfiable"),
-  EXPECTATION_FAILED(417, "Expectation Failed"), PRECONDITION_REQUIRED(428, "Precondition Required"),
+  EXPECTATION_FAILED(417, "Expectation Failed"),  UNPROCESSABLE_ENTITY(422, "Unprocessable Entity"), PRECONDITION_REQUIRED(428, "Precondition Required"),
   METHOD_FAILED(420, "Method Failed"),
 
   INTERNAL_SERVER_ERROR(500, "Internal Server Error"), NOT_IMPLEMENTED(501, "Not Implemented"), BAD_GATEWAY(502,
