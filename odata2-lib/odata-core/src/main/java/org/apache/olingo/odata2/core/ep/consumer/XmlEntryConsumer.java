@@ -31,6 +31,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
@@ -170,9 +171,11 @@ public class XmlEntryConsumer {
             final EntityPropertyInfo propertyInfo = getValidatedPropertyInfo(eia, tagName);
             final Class<?> typeMapping = typeMappings.getMappingClass(propertyInfo.getName());
             final EdmSimpleType type = (EdmSimpleType) propertyInfo.getType();
+            final Class<?> typeMappingClass = typeMapping == null ? type.getDefaultType() : (Class<?>) typeMapping;
+        	final EdmFacets facets = readProperties == null || readProperties.isValidatingFacets() ?
+        			propertyInfo.getFacets() : null;
             final Object value = type.valueOfString(text, EdmLiteralKind.DEFAULT,
-                readProperties == null || readProperties.isValidatingFacets() ? propertyInfo.getFacets() : null,
-                typeMapping == null ? type.getDefaultType() : typeMapping);
+                facets, typeMappingClass);
             properties.put(tagName, value);
           }
         }

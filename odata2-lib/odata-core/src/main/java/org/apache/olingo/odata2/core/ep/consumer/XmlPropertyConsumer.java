@@ -203,8 +203,10 @@ public class XmlPropertyConsumer {
   private Object convert(final EntityPropertyInfo property, final String value, final Class<?> typeMapping,
       final EntityProviderReadProperties readProperties) throws EdmSimpleTypeException {
     final EdmSimpleType type = (EdmSimpleType) property.getType();
-    return type.valueOfString(value, EdmLiteralKind.DEFAULT,
-        readProperties == null || readProperties.isValidatingFacets() ? property.getFacets() : null,
-        typeMapping == null ? type.getDefaultType() : typeMapping);
+    final Class<?> typeMappingClass = typeMapping == null ? type.getDefaultType() : (Class<?>) typeMapping;
+	final EdmFacets facets = readProperties == null || readProperties.isValidatingFacets() ?
+			property.getFacets() : null;
+			return type.valueOfString(value, EdmLiteralKind.DEFAULT,
+					facets, typeMappingClass);
   }
 }
