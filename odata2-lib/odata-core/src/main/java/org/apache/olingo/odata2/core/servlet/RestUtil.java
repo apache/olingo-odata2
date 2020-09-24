@@ -239,11 +239,12 @@ public class RestUtil {
         if (!"".equals(ps.getPath()) && ps.getPath().length() > 0) {
           stringBuilder.append("/").append(ps.getPath());
         }
-        for (final String key : ps.getMatrixParameters().keySet()) {
-          List<String> matrixParameters = ps.getMatrixParameters().get(key);
+        Map<String, List<String>> matrixParams = ps.getMatrixParameters();
+        for (final String key : matrixParams.keySet()) {
+          List<String> matrixParameters = matrixParams.get(key);
           String matrixParameterString = ";" + key + "=";
           for (String matrixParam : matrixParameters) {
-            matrixParameterString += Decoder.decode(matrixParam) + ",";
+            matrixParameterString += (matrixParam.length() > 0) ? (Decoder.decode(matrixParam) + ",") : "";
           }
           stringBuilder.append(matrixParameterString.substring(0, matrixParameterString.length() - 1));
         }

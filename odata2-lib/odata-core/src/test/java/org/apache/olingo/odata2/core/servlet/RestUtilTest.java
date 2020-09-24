@@ -19,10 +19,16 @@
 package org.apache.olingo.odata2.core.servlet;
 
 import junit.framework.Assert;
+
+import org.apache.olingo.odata2.api.exception.ODataException;
+import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class RestUtilTest {
 
@@ -80,5 +86,17 @@ public class RestUtilTest {
     Assert.assertEquals("application/xml", result.get(2));
     Assert.assertEquals("image/webp", result.get(3));
     Assert.assertEquals("*/*", result.get(4));
+  }
+  
+  @Test
+  public void testBuildODataPathInfo() throws ODataException {
+	  HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+	  Mockito.when(req.getRequestURI()).thenReturn("http://localhost:80/odata/"
+	  		+ "catalogSrv/odata.svc;v=1;mo/BookCollection?$top=10");
+	  Mockito.when(req.getServletPath()).thenReturn("/odata");
+	  Mockito.when(req.getContextPath()).thenReturn("");
+	  PathInfo pathInfo = RestUtil.buildODataPathInfo(req, 2);
+	  Assert.assertEquals(1, pathInfo.getODataSegments().size());
+	  Assert.assertEquals(2, pathInfo.getPrecedingSegments().size());
   }
 }
