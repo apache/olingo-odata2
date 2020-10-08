@@ -219,6 +219,14 @@ public class JsonPropertyConsumer {
               .addContent(entityPropertyInfo.getName()));
         }
         break;
+      case Decimal:
+    	  if (tokenType == JsonToken.NUMBER || tokenType == JsonToken.STRING) {
+              value = reader.nextString();
+            } else {
+              throw new EntityProviderException(EntityProviderException.INVALID_PROPERTY_VALUE
+                  .addContent(entityPropertyInfo.getName()));
+            }
+    	  break;
       default:
         if (tokenType == JsonToken.STRING) {
           value = reader.nextString();

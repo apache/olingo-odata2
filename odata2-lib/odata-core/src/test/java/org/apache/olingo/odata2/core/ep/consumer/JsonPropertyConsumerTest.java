@@ -97,6 +97,21 @@ public class JsonPropertyConsumerTest extends BaseTest {
     when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Int32.getEdmSimpleTypeInstance());
     resultMap = execute(edmProperty, reader);
     assertEquals(Integer.valueOf("67"), resultMap.get("Age"));
+    // Decimal
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Decimal.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(BigDecimal.valueOf(67), resultMap.get("Age"));
+    //Decimal
+    simplePropertyJson = "{\"d\":{\"Revenue\":67.56}}";
+    edmProperty = mock(EdmProperty.class);
+    when(edmProperty.getName()).thenReturn("Revenue");
+    when(edmProperty.isSimple()).thenReturn(true);
+    
+    reader = prepareReader(simplePropertyJson);
+    when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.Decimal.getEdmSimpleTypeInstance());
+    resultMap = execute(edmProperty, reader);
+    assertEquals(BigDecimal.valueOf(67.56), resultMap.get("Revenue"));
   }
 
   @Test

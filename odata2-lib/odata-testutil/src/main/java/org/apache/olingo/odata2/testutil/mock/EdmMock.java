@@ -180,11 +180,13 @@ class EdmMock {
     createProperty("NGO", EdmSimpleTypeKind.Boolean, companyType);
 
     EdmEntityType organizationType = organizationsEntitySet.getEntityType();
-    when(organizationType.getPropertyNames()).thenReturn(Arrays.asList("Id", "Name", "Kind", "Location", "NoOfTeam"));
+    when(organizationType.getPropertyNames()).thenReturn(Arrays.asList("Id", "Name", "Kind", "Location", "NoOfTeam"
+    		, "Revenue"));
     when(organizationType.getProperty("Location")).thenReturn(locationComplexProperty);
     EdmProperty orgName = createProperty("Name", EdmSimpleTypeKind.String, organizationType);
     EdmProperty orgKind = createProperty("Kind", EdmSimpleTypeKind.String, organizationType);
     createProperty("NoOfTeam", EdmSimpleTypeKind.Int16, organizationType);
+    createProperty("Revenue", EdmSimpleTypeKind.Decimal, organizationType);
     
     EdmFacets orgNameFacets = mock(EdmFacets.class);
     when(orgNameFacets.isNullable()).thenReturn(null);

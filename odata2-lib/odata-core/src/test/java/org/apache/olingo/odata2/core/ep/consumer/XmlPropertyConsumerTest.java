@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -66,6 +67,18 @@ public class XmlPropertyConsumerTest extends AbstractXmlConsumerTest {
     Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, null);
 
     assertEquals(Integer.valueOf(67), resultMap.get("Age"));
+  }
+  
+  @Test
+  public void readDecimalProperty() throws Exception {
+    String xml = "<Revenue xmlns=\"" + Edm.NAMESPACE_D_2007_08 + "\">67.56</Revenue>";
+    XMLStreamReader reader = createReaderForTest(xml, true);
+    final EdmProperty property =
+        (EdmProperty) MockFacade.getMockEdm().getEntityType("RefScenario", "Organization").getProperty("Revenue");
+
+    Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, null);
+
+    assertEquals(BigDecimal.valueOf(67.56), resultMap.get("Revenue"));
   }
 
   @Test
