@@ -116,7 +116,11 @@ public class JsonEntryEntityProducer {
         jsonStreamWriter.separator();
         jsonStreamWriter.name(navigationPropertyName);
         if (entityInfo.getExpandedNavigationPropertyNames().contains(navigationPropertyName)) {
-          if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
+
+        String navigationPropertyNameFqn = concat(entityInfo.getEntityType().getName(), navigationPropertyName);
+        Map<String, ODataCallback> callbacks = properties.getCallbacks();
+        if (callbacks != null && (callbacks.containsKey(navigationPropertyName) || 
+                callbacks.containsKey(navigationPropertyNameFqn))) {
             writeExpandedNavigationProperty(writer, entityInfo, data, type, navigationPropertyName);
           } else {
             writeDeferredUri(entityInfo, navigationPropertyName);
@@ -126,6 +130,10 @@ public class JsonEntryEntityProducer {
         }
       }
     }
+  }
+
+  private String concat(String s1, String s2) {
+    return s1.concat(".").concat(s2);
   }
 
   private void writeExpandedNavigationProperty(final Writer writer, final EntityInfoAggregator entityInfo,
@@ -145,7 +153,10 @@ public class JsonEntryEntityProducer {
     context.setCurrentExpandSelectTreeNode(properties.getExpandSelectTree().getLinks().get(
         navigationPropertyName));
 
-    ODataCallback callback = properties.getCallbacks().get(navigationPropertyName);
+    Map<String, ODataCallback> callbacks = properties.getCallbacks();
+    String navigationPropertyNameFqn = concat(entityInfo.getEntityType().getName(), navigationPropertyName);
+    ODataCallback callback = callbacks.get(navigationPropertyName);
+    callback = callback == null ? callbacks.get(navigationPropertyNameFqn) : callback;
     if (callback == null) {
       throw new EntityProviderProducerException(EntityProviderException.EXPANDNOTSUPPORTED);
     }

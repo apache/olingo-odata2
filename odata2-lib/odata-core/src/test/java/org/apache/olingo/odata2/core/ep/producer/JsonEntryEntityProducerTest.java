@@ -880,8 +880,17 @@ public class JsonEntryEntityProducerTest extends BaseTest {
         + "\"nr_Employees\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Rooms('1')/nr_Employees\"}},"
         + "\"nr_Building\":{\"__deferred\":{\"uri\":\"" + BASE_URI + "Rooms('1')/nr_Building\"}}}]}}}",
         json);
+
+    callbacks.clear();
+    callbacks.put("Building.nb_Rooms", new DataFeedCallback());
+    final ODataResponse responseWithNavigation =
+        new JsonEntityProvider().writeEntry(entitySet, buildingData,
+            EntityProviderWriteProperties.serviceRoot(URI.create(BASE_URI)).expandSelectTree(node1)
+                .callbacks(callbacks).build());
+    final String jsonWithNavigation = verifyResponse(responseWithNavigation);
+    assertEquals(json, jsonWithNavigation);
   }
-  
+
   class DataFeedCallback implements OnWriteFeedContent {
     @Override
     public WriteFeedCallbackResult retrieveFeedResult(final WriteFeedCallbackContext context)
