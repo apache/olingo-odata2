@@ -87,8 +87,7 @@ public class ProviderFacadeImpl implements EntityProviderInterface {
   @Override
   public ODataResponse writeErrorDocument(final ODataErrorContext context) {
     try {
-      return create(context.getContentType()).writeErrorDocument(context.getHttpStatus(), context.getErrorCode(),
-          context.getMessage(), context.getLocale(), context.getInnerError());
+      return create(context.getContentType()).writeErrorDocument(context);
     } catch (EntityProviderException e) {
       throw new ODataRuntimeException(e);
     }

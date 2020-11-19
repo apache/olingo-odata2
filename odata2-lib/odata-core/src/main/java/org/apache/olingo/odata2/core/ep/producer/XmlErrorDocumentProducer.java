@@ -18,26 +18,40 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.ep.producer;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.olingo.odata2.api.edm.Edm;
+import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.core.ep.util.FormatXml;
 
 public class XmlErrorDocumentProducer {
 
   public void writeErrorDocument(final XMLStreamWriter writer, final String errorCode, final String message,
       final Locale locale, final String innerError) throws XMLStreamException {
+      ODataErrorContext context = new ODataErrorContext();
+      context.setErrorCode(errorCode);
+      context.setMessage(message);
+      context.setLocale(locale);
+      context.setInnerError(innerError);
+
+      writeErrorDocument(writer, context);
+  }
+
+  public void writeErrorDocument(final XMLStreamWriter writer, ODataErrorContext context) throws XMLStreamException {
+    Locale locale = context.getLocale();
+    String errorCode = context.getErrorCode();
+    String message = context.getMessage();
+    String innerError = context.getInnerError();
+    Collection<ODataErrorContext> errorDetails = context.getErrorDetails();
+
     writer.writeStartDocument();
     writer.writeStartElement(FormatXml.M_ERROR);
     writer.writeDefaultNamespace(Edm.NAMESPACE_M_2007_08);
-    writer.writeStartElement(FormatXml.M_CODE);
-    if (errorCode != null) {
-      writer.writeCharacters(errorCode);
-    }
-    writer.writeEndElement();
+    writeSimpleElement(writer, FormatXml.M_CODE, errorCode);
     writer.writeStartElement(FormatXml.M_MESSAGE);
     if (locale != null) {
       writer.writeAttribute(Edm.PREFIX_XML, Edm.NAMESPACE_XML_1998, FormatXml.XML_LANG, getLocale(locale));
@@ -49,13 +63,31 @@ public class XmlErrorDocumentProducer {
     }
     writer.writeEndElement();
 
-    if (innerError != null) {
-      writer.writeStartElement(FormatXml.M_INNER_ERROR);
-      writer.writeCharacters(innerError);
-      writer.writeEndElement();
+    if (!errorDetails.isEmpty()) {
+    	writeErrorDetails(writer, errorDetails);
+    } else if (innerError != null) {
+      writeSimpleElement(writer, FormatXml.M_INNER_ERROR, innerError);
     }
 
     writer.writeEndDocument();
+  }
+
+  private void writeErrorDetails(final XMLStreamWriter writer, Collection<ODataErrorContext> errorDetails)
+          throws XMLStreamException {
+      writer.writeStartElement(FormatXml.M_INNER_ERROR);
+      writer.writeStartElement(FormatXml.M_ERROR_DETAILS);
+      for (ODataErrorContext detail : errorDetails) {
+            writer.writeStartElement(FormatXml.M_ERROR_DETAIL);
+
+            writeSimpleElement(writer, FormatXml.M_CODE, detail.getErrorCode());
+            writeSimpleElement(writer, FormatXml.M_MESSAGE, detail.getMessage());
+            writeSimpleElement(writer, FormatXml.M_TARGET, detail.getTarget());
+            writeSimpleElement(writer, FormatXml.M_SEVERITY, detail.getSeverity());
+
+            writer.writeEndElement();
+      }
+      writer.writeEndElement();
+      writer.writeEndElement();
   }
 
   /**
@@ -69,4 +101,12 @@ public class XmlErrorDocumentProducer {
     }
   }
 
+  private void writeSimpleElement(final XMLStreamWriter writer, String elementName, String value)
+          throws XMLStreamException {
+      writer.writeStartElement(elementName);
+      if (null != value) {
+          writer.writeCharacters(value);
+      }
+      writer.writeEndElement();
+  }
 }

@@ -85,15 +85,34 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
   @Override
   public ODataResponse writeErrorDocument(final HttpStatusCodes status, final String errorCode, final String message,
       final Locale locale, final String innerError) {
+      ODataErrorContext context = new ODataErrorContext();
+      context.setHttpStatus(status);
+      context.setErrorCode(errorCode);
+      context.setMessage(message);
+      context.setLocale(locale);
+      context.setInnerError(innerError);
+
+      return writeErrorDocument(context);
+  }
+
+  /**
+   * <p>Serializes an error message according to the OData standard.</p>
+   * <p>In case an error occurs, it is logged.
+   * An exception is not thrown because this method is used in exception handling.</p>
+   * @param context the {@link ODataErrorContext} associated with this error
+   * @return an {@link ODataResponse} containing the serialized error message
+   */
+  @Override
+  public ODataResponse writeErrorDocument(ODataErrorContext context) {
     CircleStreamBuffer buffer = new CircleStreamBuffer();
 
     try {
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(buffer.getOutputStream(), DEFAULT_CHARSET));
-      new JsonErrorDocumentProducer().writeErrorDocument(writer, errorCode, message, locale, innerError);
+      new JsonErrorDocumentProducer().writeErrorDocument(writer, context);
       writer.flush();
       buffer.closeWrite();
 
-      return ODataResponse.status(status)
+      return ODataResponse.status(context.getHttpStatus())
           .entity(buffer.getInputStream())
           .header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10)
           .build();

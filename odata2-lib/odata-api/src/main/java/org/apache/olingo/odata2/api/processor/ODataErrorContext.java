@@ -19,6 +19,8 @@
 package org.apache.olingo.odata2.api.processor;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,16 +38,24 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
  */
 public class ODataErrorContext {
 
+  // General purpose attributes
   private String contentType;
   private HttpStatusCodes httpStatus;
-  private String errorCode;
-  private String message;
-  private Locale locale;
   private Exception exception;
   private Map<String, List<String>> requestHeaders;
-  private URI requestUri;
-  private String innerError;
   private PathInfo pathInfo;
+  private URI requestUri;
+
+  // Standard OData Error Response
+  private String errorCode;
+  private Locale locale;
+  private String message;
+  private String innerError;
+
+  // Extended OData Error Response
+  private String severity;
+  private String target;
+  private Collection<ODataErrorContext> errorDetails = new ArrayList<ODataErrorContext>();
 
   /**
    * create a new context object
@@ -119,6 +129,22 @@ public class ODataErrorContext {
   }
 
   /**
+   * Return OData severity that is returned in error response.
+   * @return an application defined severity
+   */
+  public String getSeverity() {
+	return severity;
+}
+  
+  /**
+   * Set OData severity that should be returned in error response.
+   * @param severity an application defined severity
+   */
+  public void setSeverity(String severity) {
+    this.severity = severity;
+  }
+
+/**
    * Return a translated error message.
    * @return translated message
    */
@@ -206,6 +232,39 @@ public class ODataErrorContext {
    */
   public void setInnerError(final String innerError) {
     this.innerError = innerError;
+  }
+
+  /**
+   * Get a collection of detailed errors for a OData inner error to be returned in error response.
+   * @return a inner error message
+   */
+  public Collection<ODataErrorContext> getErrorDetails() {
+    return errorDetails;
+  }
+
+  /**
+   * Get a target of detailed error for a OData inner error to be returned in error response.
+   * @return a target
+   */
+  public String getTarget() {
+    return target;
+ }
+
+  /**
+   * Set a target for a OData detailed error to be returned in error response.
+   * @param target a target
+   */
+  public void setTarget(String target) {
+    this.target = target;
+  }
+
+/**
+   * Set a collection of detailed errors for a OData inner error to be returned in error response.
+   * If set, will overwrite the <code>innerError</code> element.
+   * @param errorDetails a inner error message
+   */
+  public void setErrorDetails(Collection<ODataErrorContext> errorDetails) {
+    this.errorDetails = errorDetails;
   }
 
   /**

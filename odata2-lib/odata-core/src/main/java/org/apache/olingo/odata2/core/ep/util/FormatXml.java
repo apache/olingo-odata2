@@ -40,9 +40,13 @@ public class FormatXml {
   public static final String M_INLINE = "inline";
 
   public static final String M_ERROR = "error";
+  public static final String M_SEVERITY = "severity";
+  public static final String M_TARGET = "target";
   public static final String M_CODE = "code";
   public static final String M_MESSAGE = "message";
   public static final String M_INNER_ERROR = "innererror";
+  public static final String M_ERROR_DETAILS = "errordetails";
+  public static final String M_ERROR_DETAIL = "errordetail";
 
   public static final String D_ELEMENT = "element";
   public static final String D_LINKS = "links";

@@ -46,9 +46,12 @@ public class FormatJson {
   public static final String ERROR = "error";
   public static final String CODE = "code";
   public static final String MESSAGE = "message";
+  public static final String TARGET = "target";
+  public static final String SEVERITY = "severity";
   public static final String LANG = "lang";
   public static final String VALUE = "value";
   public static final String INNER_ERROR = "innererror";
+  public static final String ERROR_DETAILS = "errordetails";
   public static final String DELTA = "__delta";
   public static final String ODATA_CONTEXT = "@odata.context";
   public static final String DELTA_CONTEXT_PREFIX = "$metadata#";

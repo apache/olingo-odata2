@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Locale;
 
+import org.apache.olingo.odata2.api.processor.ODataErrorContext;
 import org.apache.olingo.odata2.core.ep.util.FormatJson;
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 
@@ -32,13 +33,25 @@ public class JsonErrorDocumentProducer {
 
   public void writeErrorDocument(final Writer writer, final String errorCode, final String message,
       final Locale locale, final String innerError) throws IOException {
-    JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
+      ODataErrorContext context = new ODataErrorContext();
+      context.setErrorCode(errorCode);
+      context.setMessage(message);
+      context.setLocale(locale);
+      context.setInnerError(innerError);
 
+      writeErrorDocument(writer, context);
+  }
+
+  public void writeErrorDocument(final Writer writer, ODataErrorContext context) throws IOException {
+    Locale locale = context.getLocale();
+    String innerError = context.getInnerError();
+
+    JsonStreamWriter jsonStreamWriter = new JsonStreamWriter(writer);
     jsonStreamWriter
         .beginObject()
         .name(FormatJson.ERROR)
         .beginObject()
-        .namedStringValue(FormatJson.CODE, errorCode)
+        .namedStringValue(FormatJson.CODE, context.getErrorCode())
         .separator()
         .name(FormatJson.MESSAGE)
         .beginObject()
@@ -48,12 +61,28 @@ public class JsonErrorDocumentProducer {
                 locale.getLanguage()
                     + (locale.getCountry() == null || locale.getCountry().isEmpty() ? "" : ("-" + locale.getCountry())))
         .separator()
-        .namedStringValue(FormatJson.VALUE, message)
+        .namedStringValue(FormatJson.VALUE, context.getMessage())
         .endObject();
-    if (innerError != null) {
-      jsonStreamWriter.separator()
-          .namedStringValue(FormatJson.INNER_ERROR, innerError);
-    }
+        if (!context.getErrorDetails().isEmpty()) {
+            int cntr = 0;
+            jsonStreamWriter.separator().name(FormatJson.INNER_ERROR).beginObject().name(FormatJson.ERROR_DETAILS)
+                    .beginArray();
+            for (ODataErrorContext detail : context.getErrorDetails()) {
+                if (cntr > 0) {
+                    jsonStreamWriter.separator();
+                }
+                cntr++;
+                jsonStreamWriter.beginObject()
+                .namedStringValue(FormatJson.CODE, detail.getErrorCode()).separator()
+                .namedStringValue(FormatJson.MESSAGE, detail.getMessage()).separator()
+                .namedStringValue(FormatJson.TARGET, detail.getTarget()).separator()
+                .namedStringValue(FormatJson.SEVERITY, detail.getSeverity())
+                .endObject();
+            }
+            jsonStreamWriter.endArray().endObject();
+        } else if (innerError != null) {
+            jsonStreamWriter.separator().namedStringValue(FormatJson.INNER_ERROR, innerError);
+        }
     jsonStreamWriter.endObject()
         .endObject();
   }

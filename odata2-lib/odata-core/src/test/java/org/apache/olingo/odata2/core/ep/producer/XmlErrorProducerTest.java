@@ -27,6 +27,7 @@ import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -149,6 +150,38 @@ public class XmlErrorProducerTest extends AbstractXmlProducerTestHelper {
   }
 
   @Test
+  public void withErrorDetails() throws Exception {
+    String errorCode = "500";
+    String message = "Main message";
+    String detailedMessage = "Detailed message";
+    String severity = "error";
+    String target = "element1";
+    Locale locale = Locale.GERMAN;
+    String innerError = "Inner Error";
+
+    ODataErrorContext detailed = new ODataErrorContext();
+    detailed.setErrorCode(errorCode);
+    detailed.setMessage(detailedMessage);
+    detailed.setSeverity(severity);
+    detailed.setTarget(target);
+
+    ODataErrorContext ctx = new ODataErrorContext();
+    ctx.setContentType(contentType);
+    ctx.setErrorCode(errorCode);
+    ctx.setHttpStatus(expectedStatus);
+    ctx.setLocale(locale);
+    ctx.setMessage(message);
+    ctx.setInnerError(innerError);
+    ctx.setErrorDetails(Collections.singletonList(detailed));
+
+    ODataResponse response = new ProviderFacadeImpl().writeErrorDocument(ctx);
+    String errorXml = verifyResponse(response);
+    System.out.println(errorXml);
+    verifyXml(errorCode, message, locale, innerError, errorXml);
+    verifyDetailsXml(errorCode, detailedMessage, severity, target, errorXml);
+  }
+
+  @Test
   public void normal() throws Exception {
     serializeError(null, "Message", null, Locale.GERMAN);
     serializeError(null, "Message", null, Locale.ENGLISH);
@@ -222,8 +255,14 @@ public class XmlErrorProducerTest extends AbstractXmlProducerTestHelper {
   private void
       serializeError(final String errorCode, final String message, final String innerError, final Locale locale)
           throws Exception {
+    ODataErrorContext context = new ODataErrorContext();
+    context.setHttpStatus(expectedStatus);
+    context.setErrorCode(errorCode);
+    context.setMessage(message);
+    context.setLocale(locale);
+    context.setInnerError(innerError);
     ODataResponse response =
-        new AtomEntityProvider().writeErrorDocument(expectedStatus, errorCode, message, locale, innerError);
+        new AtomEntityProvider().writeErrorDocument(context);
     String errorXml = verifyResponse(response);
     verifyXml(errorCode, message, locale, innerError, errorXml);
   }
@@ -267,4 +306,23 @@ public class XmlErrorProducerTest extends AbstractXmlProducerTestHelper {
       assertXpathExists("/a:error/a:innererror", errorXml);
     }
   }
+
+  private void verifyDetailsXml(final String errorCode, final String message, 
+          String severity, String target, final String errorXml) throws Exception {
+    assertXpathExists("/a:error/a:innererror/a:errordetails/a:errordetail", errorXml);
+
+    if (errorCode != null) {
+        assertXpathEvaluatesTo(errorCode, "/a:error/a:innererror/a:errordetails/a:errordetail/a:code", errorXml);
+    }
+    if (message != null) {
+        assertXpathEvaluatesTo(message, "/a:error/a:innererror/a:errordetails/a:errordetail/a:message", errorXml);
+    }
+    if (severity != null) {
+        assertXpathEvaluatesTo(severity, "/a:error/a:innererror/a:errordetails/a:errordetail/a:severity", errorXml);
+    }
+    if (target != null) {
+        assertXpathEvaluatesTo(target, "/a:error/a:innererror/a:errordetails/a:errordetail/a:target", errorXml);
+    }
+  }
+
 }

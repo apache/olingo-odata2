@@ -81,6 +81,8 @@ public interface ContentTypeBasedEntityProvider {
   ODataResponse writeErrorDocument(HttpStatusCodes status, String errorCode, String message, Locale locale,
       String innerError);
 
+  ODataResponse writeErrorDocument(ODataErrorContext context);
+
   ServiceDocument readServiceDocument(InputStream serviceDocument) throws EntityProviderException;
 
   ODataDeltaFeed readDeltaFeed(EdmEntitySet entitySet, InputStream content, EntityProviderReadProperties properties)

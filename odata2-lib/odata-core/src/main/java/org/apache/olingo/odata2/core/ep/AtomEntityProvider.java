@@ -103,6 +103,25 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
   @Override
   public ODataResponse writeErrorDocument(final HttpStatusCodes status, final String errorCode, final String message,
       final Locale locale, final String innerError) {
+      ODataErrorContext context = new ODataErrorContext();
+      context.setHttpStatus(status);
+      context.setErrorCode(errorCode);
+      context.setMessage(message);
+      context.setLocale(locale);
+      context.setInnerError(innerError);
+
+      return writeErrorDocument(context);
+  }
+
+  /**
+   * <p>Serializes an error message according to the OData standard.</p>
+   * <p>In case an error occurs, it is logged.
+   * An exception is not thrown because this method is used in exception handling.</p>
+   * @param context the {@link ODataErrorContext} associated with this error
+   * @return an {@link ODataResponse} containing the serialized error message
+   */
+  @Override
+  public ODataResponse writeErrorDocument(ODataErrorContext context) {
     CircleStreamBuffer csb = new CircleStreamBuffer();
 
     try {
@@ -110,14 +129,14 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
       XMLStreamWriter writer = XmlHelper.getXMLOutputFactory().createXMLStreamWriter(outStream, DEFAULT_CHARSET);
 
       XmlErrorDocumentProducer producer = new XmlErrorDocumentProducer();
-      producer.writeErrorDocument(writer, errorCode, message, locale, innerError);
+      producer.writeErrorDocument(writer, context);
 
       writer.flush();
       csb.closeWrite();
 
       ODataResponseBuilder response = ODataResponse.entity(csb.getInputStream())
           .header(ODataHttpHeaders.DATASERVICEVERSION, ODataServiceVersion.V10)
-          .status(status);
+          .status(context.getHttpStatus());
       return response.build();
     } catch (Exception e) {
       csb.close();
