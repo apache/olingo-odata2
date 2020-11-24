@@ -143,45 +143,26 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
   protected <T> String internalValueToString(final T value, final EdmLiteralKind literalKind, final EdmFacets facets)
       throws EdmSimpleTypeException {
     Long milliSeconds; // number of milliseconds since 1970-01-01T00:00:00Z
-    int offset; // offset in milliseconds from GMT to the requested time zone
     if (value instanceof Date) {
       milliSeconds = ((Date) value).getTime();
-      // Although java.util.Date, as stated in its documentation,
-      // "is intended to reflect coordinated universal time (UTC)",
-      // its toString() method uses the default time zone. And so do we.
-      Calendar dateTimeValue = Calendar.getInstance();
-      dateTimeValue.setTime((Date) value);
-      offset = dateTimeValue.get(Calendar.ZONE_OFFSET) + dateTimeValue.get(Calendar.DST_OFFSET);
     } else if (value instanceof Calendar) {
       final Calendar dateTimeValue = (Calendar) ((Calendar) value).clone();
       milliSeconds = dateTimeValue.getTimeInMillis();
-      offset = dateTimeValue.get(Calendar.ZONE_OFFSET) + dateTimeValue.get(Calendar.DST_OFFSET);
     } else if (value instanceof Long) {
       milliSeconds = (Long) value;
-      offset = 0;
     } else {
       throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(value.getClass()));
     }
 
-    milliSeconds += offset; // Convert from UTC to local time.
-    final int offsetInMinutes = offset / 60 / 1000;
 
     if (literalKind == EdmLiteralKind.JSON) {
-      if (value instanceof Timestamp && ((Timestamp) value).getNanos() % (1000 * 1000) != 0) {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT.addContent(value));
-      } else {
-        return "/Date(" + milliSeconds + (offset == 0 ? "" : String.format("%+05d", offsetInMinutes)) + ")/";
-      }
-
+        return "/Date(" + milliSeconds + ")/";
     } else {
       final String localTimeString =
           EdmDateTime.getInstance().valueToString(
               value instanceof Timestamp ? value : milliSeconds, EdmLiteralKind.DEFAULT, facets);
-      final int offsetHours = offsetInMinutes / 60;
-      final int offsetMinutes = Math.abs(offsetInMinutes % 60);
-      final String offsetString = offset == 0 ? "Z" : String.format("%+03d:%02d", offsetHours, offsetMinutes);
 
-      return localTimeString + offsetString;
+      return localTimeString + "Z";
     }
   }
 
