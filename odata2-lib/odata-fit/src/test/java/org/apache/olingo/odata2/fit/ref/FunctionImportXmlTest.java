@@ -20,7 +20,6 @@ package org.apache.olingo.odata2.fit.ref;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
-import static org.custommonkey.xmlunit.XMLAssert.assertXpathNotExists;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -55,10 +54,9 @@ public class FunctionImportXmlTest extends AbstractRefXmlTest {
 
   @Test
   public void functionImports() throws Exception {
-    HttpResponse response = callUri("EmployeeSearch('1')/ne_Room/Id/$value?q='alter'");
-    checkMediaType(response, HttpContentType.TEXT_PLAIN_UTF8);
-    checkEtag(response, "W/\"1\"");
-    assertEquals("1", getBody(response));
+    HttpResponse response = callUri("EmployeeSearch?q='alter'");
+    checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
+    assertXpathEvaluatesTo("Walter Winter", "/atom:feed/atom:entry[1]/atom:title", getBody(response));
 
     assertFalse(getBody(callUri("EmployeeSearch?q='-'")).contains("entry"));
 
@@ -140,10 +138,9 @@ public class FunctionImportXmlTest extends AbstractRefXmlTest {
 
   @Test
   public void functionImportsDefaultAccept() throws Exception {
-    HttpResponse response = callUri("EmployeeSearch('1')/ne_Room/Id/$value?q='alter'");
-    checkMediaType(response, HttpContentType.TEXT_PLAIN_UTF8);
-    checkEtag(response, "W/\"1\"");
-    assertEquals("1", getBody(response));
+    HttpResponse response = callUri("EmployeeSearch?q='alter'");
+    checkMediaType(response, HttpContentType.APPLICATION_XML_UTF8);
+    assertXpathEvaluatesTo("Walter Winter", "/atom:feed/atom:entry[1]/atom:title", getBody(response));
 
     assertFalse(getBody(callUri("EmployeeSearch?q='-'")).contains("entry"));
 
@@ -196,22 +193,5 @@ public class FunctionImportXmlTest extends AbstractRefXmlTest {
     ContentType responseContentType =
         ContentType.parse(response.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
     Assert.assertEquals(expectedContentType, responseContentType);
-  }
-
-  @Test
-  public void select() throws Exception {
-    HttpResponse response = callUri("EmployeeSearch?q='ede'&$select=Age");
-    checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=feed");
-    String body = getBody(response);
-    assertXpathEvaluatesTo(EMPLOYEE_2_AGE, "/atom:feed/atom:entry/m:properties/d:Age", body);
-    assertXpathNotExists("/atom:feed/atom:entry/m:properties/d:Location", body);
-    assertXpathEvaluatesTo("2", "count(/atom:feed/atom:entry/atom:link)", body);
-
-    response = callUri("EmployeeSearch('2')/ne_Room?q='ede'&$select=Seats");
-    checkMediaType(response, HttpContentType.APPLICATION_ATOM_XML_UTF8 + ";type=entry");
-    body = getBody(response);
-    assertXpathEvaluatesTo("5", "/atom:entry/atom:content/m:properties/d:Seats", body);
-    assertXpathNotExists("/atom:entry/atom:content/m:properties/d:Id", body);
-    assertXpathEvaluatesTo("1", "count(/atom:entry/atom:link)", body);
   }
 }

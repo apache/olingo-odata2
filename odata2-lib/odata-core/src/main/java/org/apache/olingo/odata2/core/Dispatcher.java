@@ -193,6 +193,7 @@ public class Dispatcher {
       }
 
     case URI10:
+    case URI10a:
     case URI11:
     case URI12:
     case URI13:
@@ -289,6 +290,7 @@ public class Dispatcher {
       feature = BatchProcessor.class;
       break;
     case URI10:
+    case URI10a:
     case URI11:
     case URI12:
     case URI13:

@@ -275,6 +275,7 @@ public class ODataRequestHandler {
       break;
 
     case URI10:
+    case URI10a:
     case URI11:
     case URI12:
     case URI13:

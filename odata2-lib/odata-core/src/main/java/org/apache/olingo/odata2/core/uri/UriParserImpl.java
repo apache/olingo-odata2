@@ -551,11 +551,6 @@ public class UriParserImpl extends UriParser {
       final EdmType type = returnType.getType();
       final boolean isCollection = returnType.getMultiplicity() == EdmMultiplicity.MANY;
   
-      if (type.getKind() == EdmTypeKind.ENTITY && isCollection) {
-        handleEntitySet(functionImport.getEntitySet(), keyPredicate);
-        return;
-      }
-  
       if (emptyParentheses != null) {
         throw new UriSyntaxException(UriSyntaxException.INVALIDSEGMENT.addContent(emptyParentheses));
       }
@@ -569,7 +564,7 @@ public class UriParserImpl extends UriParser {
         uriResult.setUriType(isCollection ? UriType.URI11 : UriType.URI12);
         break;
       case ENTITY:
-        uriResult.setUriType(UriType.URI10);
+        uriResult.setUriType(isCollection ? UriType.URI10a : UriType.URI10);
         break;
       default:
         throw new UriSyntaxException(UriSyntaxException.INVALIDRETURNTYPE.addContent(type.getKind()));

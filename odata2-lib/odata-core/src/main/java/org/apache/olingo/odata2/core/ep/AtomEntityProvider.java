@@ -349,17 +349,22 @@ public class AtomEntityProvider implements ContentTypeBasedEntityProvider {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public ODataResponse writeFunctionImport(final EdmFunctionImport functionImport, final Object data,
       final EntityProviderWriteProperties properties) throws EntityProviderException {
     try {
       if(functionImport.getReturnType() !=null){
         final EdmType type = functionImport.getReturnType().getType();
         final boolean isCollection = functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY;
-  
+
         if (type.getKind() == EdmTypeKind.ENTITY) {
-          @SuppressWarnings("unchecked")
-          Map<String, Object> map = (Map<String, Object>) data;
-          return writeEntry(functionImport.getEntitySet(), map, properties);
+            if (isCollection) {
+                 List<Map<String, Object>> dataList = (List<Map<String, Object>>) data;
+                 return writeFeed(functionImport.getEntitySet(), dataList, properties);
+            } else {
+                Map<String, Object> map = (Map<String, Object>) data;
+                return writeEntry(functionImport.getEntitySet(), map, properties);
+            }
         }
         final EntityPropertyInfo info = EntityInfoAggregator.create(functionImport);
         if (isCollection) {

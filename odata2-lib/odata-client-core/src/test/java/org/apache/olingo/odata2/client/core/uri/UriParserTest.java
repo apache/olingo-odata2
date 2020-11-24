@@ -621,7 +621,7 @@ public class UriParserTest {
     UriInfoImpl result = parse("EmployeeSearch");
     assertEquals("EmployeeSearch", result.getFunctionImport().getName());
     assertEquals(EdmTypeKind.ENTITY, result.getTargetType().getKind());
-    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(UriType.URI10a, result.getUriType());
 
     result = parse("AllLocations");
     assertEquals("AllLocations", result.getFunctionImport().getName());

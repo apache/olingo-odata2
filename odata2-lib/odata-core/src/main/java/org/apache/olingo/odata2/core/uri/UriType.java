@@ -82,6 +82,10 @@ public enum UriType {
    */
   URI10(SystemQueryOption.$format),
   /**
+   * Function import returning an entity set
+   */
+  URI10a(SystemQueryOption.$format),
+  /**
    * Function import returning a collection of complex-type instances
    */
   URI11(SystemQueryOption.$format),

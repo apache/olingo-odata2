@@ -371,7 +371,7 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
 
   private void wrongFunctionHttpMethod(final ODataHttpMethod method, final UriType uriType) throws ODataException {
     wrongRequest(method,
-        uriType == UriType.URI1 ? Arrays.asList("EmployeeSearch") : createPathSegments(uriType, false, false),
+        uriType == UriType.URI10a ? Arrays.asList("EmployeeSearch") : createPathSegments(uriType, false, false),
         null);
   }
 
@@ -531,7 +531,7 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
 
   @Test
   public void functionImportWrongHttpMethod() throws Exception {
-    wrongFunctionHttpMethod(ODataHttpMethod.POST, UriType.URI1);
+    wrongFunctionHttpMethod(ODataHttpMethod.POST, UriType.URI10a);
     wrongFunctionHttpMethod(ODataHttpMethod.PUT, UriType.URI10);
     wrongFunctionHttpMethod(ODataHttpMethod.POST, UriType.URI11);
     wrongFunctionHttpMethod(ODataHttpMethod.PATCH, UriType.URI12);

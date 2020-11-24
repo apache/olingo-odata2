@@ -221,7 +221,7 @@ public class ScenarioDataSource {
         throw new ODataNotFoundException(null);
       } else {
         final List<Employee> found = searchEmployees((String) parameters.get("q"));
-        if (keys.isEmpty()) {
+        if (null == keys || keys.isEmpty()) {
           return found;
         } else {
           for (final Employee employee : found) {

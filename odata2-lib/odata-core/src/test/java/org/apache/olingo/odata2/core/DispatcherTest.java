@@ -274,6 +274,7 @@ public class DispatcherTest extends BaseTest {
     checkDispatch(ODataHttpMethod.POST, UriType.URI9, "executeBatch");
 
     checkDispatch(ODataHttpMethod.GET, UriType.URI10, "executeFunctionImport");
+    checkDispatch(ODataHttpMethod.GET, UriType.URI10a, "executeFunctionImport");
     checkDispatch(ODataHttpMethod.GET, UriType.URI11, "executeFunctionImport");
     checkDispatch(ODataHttpMethod.GET, UriType.URI12, "executeFunctionImport");
     checkDispatch(ODataHttpMethod.GET, UriType.URI13, "executeFunctionImport");

@@ -302,18 +302,23 @@ public class JsonEntityProvider implements ContentTypeBasedEntityProvider {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public ODataResponse writeFunctionImport(final EdmFunctionImport functionImport, final Object data,
       final EntityProviderWriteProperties properties) throws EntityProviderException {
     try {
       if(functionImport.getReturnType() !=null){
+        final boolean isCollection = functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY;
         if (functionImport.getReturnType().getType().getKind() == EdmTypeKind.ENTITY) {
-          @SuppressWarnings("unchecked")
-          Map<String, Object> map = (Map<String, Object>) data;
-          return writeEntry(functionImport.getEntitySet(), map, properties);
+          if (isCollection) {
+               List<Map<String, Object>> dataList = (List<Map<String, Object>>) data;
+               return writeFeed(functionImport.getEntitySet(), dataList, properties);
+          } else {
+               return writeEntry(functionImport.getEntitySet(), (Map<String, Object>)data, properties);
+          }
         }
-  
+
         final EntityPropertyInfo info = EntityInfoAggregator.create(functionImport);
-        if (functionImport.getReturnType().getMultiplicity() == EdmMultiplicity.MANY) {
+        if (isCollection) {
           return writeCollection(info, (List<?>) data);
         } else {
           return writeSingleTypedElement(info, data);
