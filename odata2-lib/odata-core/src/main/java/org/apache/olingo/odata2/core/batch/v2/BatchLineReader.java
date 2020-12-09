@@ -40,6 +40,7 @@ public class BatchLineReader {
   public static final String BOUNDARY = "boundary";
   public static final String DOUBLE_DASH = "--";
   public static final String CRLF = "\r\n";
+  public static final String LFS = "\n";
   private Charset currentCharset = DEFAULT_CHARSET;
   private String currentBoundary = null;
   private ReadState readState = new ReadState();
@@ -98,7 +99,8 @@ public class BatchLineReader {
   private void updateCurrentCharset(String currentLine) {
     if(currentLine != null) {
       if(isContentTypeHeaderLine(currentLine)) {
-        currentLine = currentLine.substring(13, currentLine.length() - 2).trim();
+        int cutOff = currentLine.endsWith(CRLF) ? 2 : currentLine.endsWith(LFS) ? 1 : 0;
+        currentLine = currentLine.substring(13, currentLine.length() - cutOff).trim();
         ContentType ct = ContentType.parse(currentLine);
         if (ct != null) {
           String charsetString = ct.getParameters().get(ContentType.PARAMETER_CHARSET);
@@ -117,7 +119,7 @@ public class BatchLineReader {
             currentBoundary = DOUBLE_DASH + boundary;
           }
         }
-      } else if(CRLF.equals(currentLine)) {
+      } else if(CRLF.equals(currentLine) || LFS.equals(currentLine)) {
         readState.foundLinebreak();
       } else if(isBoundary(currentLine)) {
         readState.foundBoundary();
@@ -130,9 +132,10 @@ public class BatchLineReader {
   }
 
   private boolean isBoundary(String currentLine) {
-    if((currentBoundary + CRLF).equals(currentLine)) {
+    if((currentBoundary + CRLF).equals(currentLine) || (currentBoundary + LFS).equals(currentLine)) {
       return true;
-    } else if((currentBoundary + DOUBLE_DASH + CRLF).equals(currentLine)) {
+    } else if((currentBoundary + DOUBLE_DASH + CRLF).equals(currentLine) 
+        || (currentBoundary + DOUBLE_DASH + LFS).equals(currentLine)) {
       return true;
     }
     return false;

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -227,7 +227,41 @@ public class BatchLineReaderTest {
     reader.close();
   }
 
+  @Test
+  public void specialCharacters() throws Exception {
+    final String text = "\r\n"
+        + "Content-Type: text/plain; charset=UTF-8\r\n"
+        + "\r\n"
+        + "ä€\r\n"
+        + "\uFDFC\r\n"  // RIAL SIGN
+        // Unicode characters outside the Basic Multilingual Plane are stored
+        // in a Java String in two surrogate characters.
+        + String.valueOf(Character.toChars(0x1F603));
+    BatchLineReader reader = create(text);
+    reader.readLine();
+    reader.readLine();
+    reader.readLine();
+    assertEquals("ä€\r\n", reader.readLine());
+    assertEquals("\uFDFC\r\n", reader.readLine());
+    assertEquals(String.valueOf(Character.toChars(0x1F603)), reader.readLine());
+    assertNull(reader.readLine());
+    reader.close();
+  }
 
+  @Test
+  public void specialCharactersInJsonWithNewline() throws Exception {
+    final String text = "\n"
+        + "Content-Type: application/json\n"
+        + "\n"
+        + "{\"text\": \"ä€ß\"}\n";
+    BatchLineReader reader = create(text);
+    reader.readLine();
+    reader.readLine();
+    reader.readLine();
+    assertEquals("{\"text\": \"ä€ß\"}\n", reader.readLine());
+    assertNull(reader.readLine());
+    reader.close();
+  }
 
   @Test(expected = IllegalArgumentException.class)
   public void testFailBufferSizeZero() throws IOException {
@@ -276,7 +310,7 @@ public class BatchLineReaderTest {
       throws UnsupportedEncodingException {
     return new BatchLineReader(new ByteArrayInputStream(inputString.getBytes("UTF-8")), bufferSize);
   }
-  
+
   @Test
   public void rawBytes() throws Exception {
     byte[] content = new byte[Byte.MAX_VALUE - Byte.MIN_VALUE + 1];
@@ -292,7 +326,7 @@ public class BatchLineReaderTest {
     assertNull(reader.readLine());
     reader.close();
   }
-  
+
   @Test
   public void imageTest() throws Exception {
     byte[] data = getImageData("/Employee_1.png");
@@ -302,7 +336,7 @@ public class BatchLineReaderTest {
     for (Line content : contentString) {
       finalContent += content.toString();
     }
-    
+
     assertArrayEquals(data, finalContent.getBytes(Charset.forName("ISO-8859-1")));
     reader.close();
   }
