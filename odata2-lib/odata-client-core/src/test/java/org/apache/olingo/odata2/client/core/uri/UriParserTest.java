@@ -40,6 +40,7 @@ import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.Edm;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
 import org.apache.olingo.odata2.api.exception.MessageReference;
@@ -688,6 +689,7 @@ public class UriParserTest {
     parseWrongUri("MaximalAge/somethingwrong", UriSyntaxException.INVALIDSEGMENT);
     parseWrongUri("ManagerPhoto", UriSyntaxException.MISSINGPARAMETER);
     parseWrongUri("ManagerPhoto?Id='", UriSyntaxException.UNKNOWNLITERAL);
+    parseWrongUri("OldestEmployee?$filter=EmployeeId%20eq%20%271%27", UriSyntaxException.INCOMPATIBLESYSTEMQUERYOPTION);
   }
 
   @Test
@@ -768,6 +770,12 @@ public class UriParserTest {
     assertNotNull(result.getFilter());
     assertNotNull(result.getOrderBy());
     assertEquals("EmployeeName desc", result.getOrderBy().getUriLiteral());
+    
+    result = parse("EmployeeSearch?$filter=EmployeeId%20eq%20%271%27");
+    assertEquals("Employee", result.getFunctionImport().getReturnType().getType().getName());
+    assertEquals(EdmMultiplicity.MANY, result.getFunctionImport().getReturnType().getMultiplicity());
+    assertEquals(UriType.URI10a, result.getUriType());
+    assertNotNull(result.getFilter());
   }
   
   @Test(expected=UriSyntaxException.class)

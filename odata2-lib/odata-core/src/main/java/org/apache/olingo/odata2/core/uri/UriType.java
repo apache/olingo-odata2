@@ -84,7 +84,9 @@ public enum UriType {
   /**
    * Function import returning an entity set
    */
-  URI10a(SystemQueryOption.$format),
+  URI10a(SystemQueryOption.$format, SystemQueryOption.$filter, SystemQueryOption.$inlinecount,
+	      SystemQueryOption.$orderby, SystemQueryOption.$skiptoken, SystemQueryOption.$skip, SystemQueryOption.$top,
+	      SystemQueryOption.$expand, SystemQueryOption.$select),
   /**
    * Function import returning a collection of complex-type instances
    */
