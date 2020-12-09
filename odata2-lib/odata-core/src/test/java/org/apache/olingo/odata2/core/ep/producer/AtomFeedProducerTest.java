@@ -369,6 +369,20 @@ public class AtomFeedProducerTest extends AbstractProviderTest {
     assertXpathNotExists("/a:entry/m:properties", xmlString);
     assertXpathExists("/a:entry/a:link", xmlString);
     verifyEmployees(employeeXPathString, xmlString);
+
+    callbacks.clear();
+    callbacks.put("Room.nr_Employees", callback);
+    properties = EntityProviderWriteProperties.serviceRoot(BASE_URI).expandSelectTree(selectTree).
+        callbacks(callbacks).isDataBasedPropertySerialization(true).build();
+    provider = createAtomEntityProvider();
+    response =
+        provider.writeEntry(MockFacade.getMockEdm().getDefaultEntityContainer().getEntitySet("Rooms"), roomData,
+            properties);
+
+    xmlString = verifyResponse(response);
+    assertXpathNotExists("/a:entry/m:properties", xmlString);
+    assertXpathExists("/a:entry/a:link", xmlString);
+    verifyEmployees(employeeXPathString, xmlString);
   }
     
   private ExpandSelectTreeNode getSelectExpandTree(final String pathSegment, final String selectString,

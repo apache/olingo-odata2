@@ -253,12 +253,19 @@ public class AtomEntryEntityProducer {
     }
   }
 
+  private String concat(String s1, String s2) {
+    return s1.concat(".").concat(s2);
+  }
+
   private void appendInlineFeed(final XMLStreamWriter writer, final String navigationPropertyName,
       final EntityInfoAggregator eia, final Map<String, Object> data, final String self)
       throws EntityProviderException, XMLStreamException, EdmException, URISyntaxException {
 
     if (eia.getExpandedNavigationPropertyNames().contains(navigationPropertyName)) {
-      if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
+      String navigationPropertyNameFqn = concat(eia.getEntityType().getName(), navigationPropertyName);
+      Map<String, ODataCallback> callbacks = properties.getCallbacks();
+    if (callbacks != null && callbacks.containsKey(navigationPropertyName) ||
+        callbacks.containsKey(navigationPropertyNameFqn)) {
 
         EdmNavigationProperty navProp = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
         WriteFeedCallbackContext context = new WriteFeedCallbackContext();
@@ -270,7 +277,8 @@ public class AtomEntryEntityProducer {
         context.setCurrentExpandSelectTreeNode(subNode);
         context.setSelfLink(new URI(self));
 
-        ODataCallback callback = properties.getCallbacks().get(navigationPropertyName);
+        ODataCallback callback = callbacks.get(navigationPropertyName);
+        callback = callback == null ? callbacks.get(navigationPropertyNameFqn) : callback;
         if (callback == null) {
           throw new EntityProviderProducerException(EntityProviderException.EXPANDNOTSUPPORTED);
         }
@@ -308,7 +316,10 @@ public class AtomEntryEntityProducer {
       XMLStreamException, EdmException {
 
     if (eia.getExpandedNavigationPropertyNames().contains(navigationPropertyName)) {
-      if (properties.getCallbacks() != null && properties.getCallbacks().containsKey(navigationPropertyName)) {
+      Map<String, ODataCallback> callbacks = properties.getCallbacks();
+      String navigationPropertyNameFqn = concat(eia.getEntityType().getName(), navigationPropertyName);
+	if (callbacks != null && callbacks.containsKey(navigationPropertyName) || 
+        callbacks.containsKey(navigationPropertyNameFqn)) {
 
         EdmNavigationProperty navProp = (EdmNavigationProperty) eia.getEntityType().getProperty(navigationPropertyName);
         WriteEntryCallbackContext context = new WriteEntryCallbackContext();
@@ -319,7 +330,8 @@ public class AtomEntryEntityProducer {
         ExpandSelectTreeNode subNode = properties.getExpandSelectTree().getLinks().get(navigationPropertyName);
         context.setCurrentExpandSelectTreeNode(subNode);
 
-        ODataCallback callback = properties.getCallbacks().get(navigationPropertyName);
+        ODataCallback callback = callbacks.get(navigationPropertyName);
+        callback = callback == null ? callbacks.get(navigationPropertyNameFqn) : callback;
         if (callback == null) {
           throw new EntityProviderProducerException(EntityProviderException.EXPANDNOTSUPPORTED);
         }
