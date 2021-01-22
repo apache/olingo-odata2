@@ -71,6 +71,7 @@ import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeExcep
 import org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser;
 import org.apache.olingo.odata2.jpa.processor.core.callback.JPAExpandCallBack;
 import org.apache.olingo.odata2.jpa.processor.core.callback.JPATombstoneCallBack;
+import org.apache.olingo.odata2.jpa.processor.core.callback.JPATombstoneCallBackFI;
 
 public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBuilder {
 
@@ -301,37 +302,54 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
       JPAEntityParser jpaResultParser = new JPAEntityParser();
       EdmType edmType = null;
       EdmFunctionImport functionImport = null;
-      Map<String, Object> edmPropertyValueMap = null;
       List<Map<String, Object>> edmEntityList = null;
       Object result = null;
       try {
-        EntityProviderWriteProperties feedProperties =
-            EntityProviderWriteProperties.serviceRoot(oDataJPAContext.getODataContext().getPathInfo().getServiceRoot())
-                .build();
-
+      
         functionImport = resultsView.getFunctionImport();
         edmType = functionImport.getReturnType().getType();
+        
+        final List<SelectItem> selectedItems = resultsView.getSelect();
+        List<ArrayList<NavigationPropertySegment>> expandList = null;
+        EntityProviderWriteProperties feedProperties = null;
 
         if (edmType.getKind().equals(EdmTypeKind.ENTITY) || edmType.getKind().equals(EdmTypeKind.COMPLEX)) {
-          if (functionImport.getReturnType().getMultiplicity().equals(EdmMultiplicity.MANY)) {
-            edmEntityList = new ArrayList<Map<String, Object>>();
-            for (Object jpaEntity : resultList) {
-              edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(jpaEntity, (EdmStructuralType) edmType);
-              edmEntityList.add(edmPropertyValueMap);
-            }
-            result = edmEntityList;
-          } else {
+	    	if (selectedItems != null && !selectedItems.isEmpty()) {
+	            edmEntityList =
+	                jpaResultParser.parse2EdmEntityList(resultList, 
+	                		buildSelectItemList(selectedItems, (EdmEntityType) edmType));
+	          } else {
+	              edmEntityList = jpaResultParser.parse2EdmEntityList(resultList, (EdmEntityType) edmType);
+	          }
+	    	expandList = resultsView.getExpand();
+	        if (expandList != null && !expandList.isEmpty()) {
+	          int count = 0;
+	          List<EdmNavigationProperty> edmNavPropertyList = constructListofNavProperty(expandList);
+	          for (Object jpaEntity : resultList) {
+	            Map<String, Object> relationShipMap = edmEntityList.get(count);
+	            HashMap<String, Object> navigationMap =
+	                jpaResultParser.parse2EdmNavigationValueMap(jpaEntity, edmNavPropertyList);
+	            relationShipMap.putAll(navigationMap);
+	            count++;
+	          }
+	        }
+	        if (functionImport.getReturnType().getMultiplicity().equals(EdmMultiplicity.MANY)) {
+	        	result = edmEntityList;
+	        } else {
+	        	result = edmEntityList.get(0);
+	        }
+	    	feedProperties = 
+	        		getEntityProviderProperties(oDataJPAContext, resultsView, edmEntityList);
 
-            Object resultObject = resultList.get(0);
-            edmPropertyValueMap = jpaResultParser.parse2EdmPropertyValueMap(resultObject, (EdmStructuralType) edmType);
-
-            result = edmPropertyValueMap;
-          }
 
         } else if (edmType.getKind().equals(EdmTypeKind.SIMPLE)) {
           result = resultList.get(0);
+          feedProperties =
+                  EntityProviderWriteProperties.serviceRoot(
+                		  oDataJPAContext.getODataContext().getPathInfo().getServiceRoot())
+                      .build();
         }
-
+        
         odataResponse =
             EntityProvider.writeFunctionImport(contentType, resultsView.getFunctionImport(), result, feedProperties);
         odataResponse = ODataResponse.fromResponse(odataResponse).status(HttpStatusCodes.OK).build();
@@ -471,6 +489,63 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     }// Inlinecount of None is handled by default - null
     return count;
   }
+  
+  /*
+   * Method to build the entity provider Property.Callbacks for $expand would
+   * be registered here
+   */
+  private static EntityProviderWriteProperties getEntityProviderProperties(final ODataJPAContext odataJPAContext,
+      final GetFunctionImportUriInfo resultsView, final List<Map<String, Object>> edmEntityList)
+      throws ODataJPARuntimeException {
+    ODataEntityProviderPropertiesBuilder entityFeedPropertiesBuilder = null;
+    ODataContext context = odataJPAContext.getODataContext();
+
+    Integer count = null;
+    if (resultsView.getInlineCount() != null) {
+       count = getInlineCountForNonFilterQueryEntitySet(edmEntityList, resultsView);
+    }
+
+    try {
+      PathInfo pathInfo = context.getPathInfo();
+      URI serviceRoot = pathInfo.getServiceRoot();
+
+      entityFeedPropertiesBuilder =
+          EntityProviderWriteProperties.serviceRoot(pathInfo.getServiceRoot());
+      JPAPaging paging = odataJPAContext.getPaging();
+      if (odataJPAContext.getPageSize() > 0 && paging != null && paging.getNextPage() > 0) {
+        String nextLink =
+            serviceRoot.relativize(pathInfo.getRequestUri()).toString();
+        nextLink = percentEncodeNextLink(nextLink);
+        nextLink += (nextLink != null ? nextLink.contains("?") ? "&" : "?" : "?")
+            + "$skiptoken=" + odataJPAContext.getPaging().getNextPage();
+        entityFeedPropertiesBuilder.nextLink(nextLink);
+      }
+      entityFeedPropertiesBuilder.inlineCount(count);
+      entityFeedPropertiesBuilder.inlineCountType(resultsView.getInlineCount());
+      ExpandSelectTreeNode expandSelectTree =
+          UriParser.createExpandSelectTree(resultsView.getSelect(), resultsView.getExpand());
+
+      Map<String, ODataCallback> expandCallBack =
+          JPAExpandCallBack.getCallbacks(serviceRoot, expandSelectTree, resultsView.getExpand());
+
+      Map<String, ODataCallback> callBackMap = new HashMap<String, ODataCallback>();
+      callBackMap.putAll(expandCallBack);
+      
+      String deltaToken = ODataJPATombstoneContext.getDeltaToken();
+      if (deltaToken != null) {
+        callBackMap.put(TombstoneCallback.CALLBACK_KEY_TOMBSTONE, new JPATombstoneCallBackFI(serviceRoot.toString(),
+            resultsView, deltaToken));
+      }
+
+      entityFeedPropertiesBuilder.callbacks(callBackMap);
+      entityFeedPropertiesBuilder.expandSelectTree(expandSelectTree);
+      
+    } catch (ODataException e) {
+      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
+    }
+
+    return entityFeedPropertiesBuilder.build();
+  }
 
   /*
    * Method to build the entity provider Property.Callbacks for $expand would
@@ -549,6 +624,30 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
    */
   private static Integer getInlineCountForNonFilterQueryEntitySet(final List<Map<String, Object>> edmEntityList,
       final GetEntitySetUriInfo resultsView) {
+    // when $skip and/or $top is present with $inlinecount, first get the total count
+    Integer count = null;
+    if (resultsView.getInlineCount() == InlineCount.ALLPAGES) {
+      count = edmEntityList.size();
+      if (resultsView.getCustomQueryOptions() != null) {
+        String countValue = resultsView.getCustomQueryOptions().get(COUNT);
+        if (countValue != null && isNumeric(countValue)) {
+          count = Integer.parseInt(countValue);
+          resultsView.getCustomQueryOptions().remove(COUNT);
+          if (resultsView.getCustomQueryOptions().size() == 0) {
+            ((UriInfoImpl) resultsView).setCustomQueryOptions(null);
+          }
+        }
+      }
+    }// Inlinecount of None is handled by default - null
+    return count;
+  }
+  
+  /*
+   * This method handles $inlinecount request. It also modifies the list of results in case of
+   * $inlinecount and $top/$skip combinations. Specific to Entity Set.
+   */
+  private static Integer getInlineCountForNonFilterQueryEntitySet(final List<Map<String, Object>> edmEntityList,
+      final GetFunctionImportUriInfo resultsView) {
     // when $skip and/or $top is present with $inlinecount, first get the total count
     Integer count = null;
     if (resultsView.getInlineCount() == InlineCount.ALLPAGES) {

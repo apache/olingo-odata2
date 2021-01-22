@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,14 +38,17 @@ import org.apache.olingo.odata2.api.edm.EdmEntityContainer;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.edm.EdmEntityType;
 import org.apache.olingo.odata2.api.edm.EdmException;
+import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmLiteralKind;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
+import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.EdmNavigationProperty;
 import org.apache.olingo.odata2.api.edm.EdmProperty;
 import org.apache.olingo.odata2.api.edm.EdmSimpleType;
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeException;
 import org.apache.olingo.odata2.api.edm.EdmType;
 import org.apache.olingo.odata2.api.edm.EdmTypeKind;
+import org.apache.olingo.odata2.api.edm.EdmTyped;
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
 import org.apache.olingo.odata2.api.edm.provider.Facets;
 import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
@@ -57,6 +61,7 @@ import org.apache.olingo.odata2.api.uri.PathInfo;
 import org.apache.olingo.odata2.api.uri.SelectItem;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.GetEntityUriInfo;
+import org.apache.olingo.odata2.api.uri.info.GetFunctionImportUriInfo;
 import org.apache.olingo.odata2.core.uri.UriInfoImpl;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAResponseBuilder;
@@ -440,6 +445,7 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     try {
       EasyMock.expect(objEdmEntityType.getName()).andStubReturn("SalesOderHeaders");
       EasyMock.expect(objEdmEntityType.getNamespace()).andStubReturn("SalesOderHeaders");
+      EasyMock.expect(objEdmEntityType.getKind()).andStubReturn(EdmTypeKind.ENTITY);
       EasyMock.expect(objEdmEntityType.hasStream()).andStubReturn(false);
       EasyMock.expect(objEdmEntityType.hasStream()).andStubReturn(false);
       ArrayList<String> propertyNames = new ArrayList<String>();
@@ -611,5 +617,117 @@ public class ODataJPAResponseBuilderTest extends JPAEdmTestModelView {
     EasyMock.replay(navPropertySegment);
     return navPropertySegment;
   }
+  
+  private GetFunctionImportUriInfo mockFunctionImportUriInfo() {
 
+    List<SelectItem> selectItemList = new ArrayList<SelectItem>();
+    List<ArrayList<NavigationPropertySegment>> expandList = new 
+    		ArrayList<ArrayList<NavigationPropertySegment>>();
+    ArrayList<NavigationPropertySegment> navigationPropertyList = new ArrayList<NavigationPropertySegment>();
+    // Mocking the navigation property
+    EdmNavigationProperty navigationProperty = EasyMock.createMock(EdmNavigationProperty.class);
+    try {
+      EasyMock.expect(navigationProperty.getName()).andStubReturn("SalesOrderItemDetails");
+    } catch (EdmException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + 
+    		  ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+    EasyMock.replay(navigationProperty);
+    
+    // Mocking the navigation property segments and adding to expand list
+    NavigationPropertySegment navigationPropertySegment = EasyMock.createMock(NavigationPropertySegment.class);
+    EasyMock.expect(navigationPropertySegment.getNavigationProperty()).andStubReturn(navigationProperty);
+    EasyMock.expect(navigationPropertySegment.getTargetEntitySet())
+    .andStubReturn(getTargetEntitySetForExpand());
+    EasyMock.replay(navigationPropertySegment);
+    navigationPropertyList.add(navigationPropertySegment);
+    expandList.add(navigationPropertyList);
+    // Mocking EntityUriInfo
+    UriInfoImpl functionImportUriInfo = EasyMock.createMock(UriInfoImpl.class);
+    EasyMock.expect(functionImportUriInfo.getSelect()).andStubReturn(selectItemList);
+    EasyMock.expect(functionImportUriInfo.getExpand()).andStubReturn(expandList);
+    EasyMock.expect(functionImportUriInfo.getInlineCount()).andStubReturn(InlineCount.ALLPAGES);
+    EasyMock.expect(functionImportUriInfo.getFunctionImport()).andStubReturn(mockEdmFunctionImport());
+    EasyMock.expect(functionImportUriInfo.getCustomQueryOptions()).andStubReturn(null);
+    EasyMock.replay(functionImportUriInfo);
+    return functionImportUriInfo;
+  }
+  
+  private EdmFunctionImport mockEdmFunctionImport() {
+  EdmFunctionImport funcImport = EasyMock.createMock(EdmFunctionImport.class);
+    try {
+		EasyMock.expect(funcImport.getName()).andStubReturn("FindAllSalesOrders");
+		EasyMock.expect(funcImport.getEntitySet()).andStubReturn(getLocalTargetEntitySet());
+		EasyMock.expect(funcImport.getParameterNames()).andStubReturn(
+				Arrays.asList("DeliveryStatusCode"));
+		EdmTyped typed = EasyMock.createMock(EdmTyped.class);
+		EasyMock.expect(typed.getName()).andStubReturn("SalesOrder");
+		EasyMock.expect(typed.getMultiplicity()).andStubReturn(EdmMultiplicity.MANY);
+		EasyMock.expect(typed.getType()).andStubReturn(getLocalEdmEntityType());
+		EasyMock.replay(typed);
+		EasyMock.expect(funcImport.getReturnType()).andStubReturn(typed);
+	} catch (EdmException e) {
+		fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + 
+				e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+	}
+    EasyMock.replay(funcImport);
+    return funcImport;
+  }
+  /*
+   * This Unit is supposed to test the building of Entity Provider Properties for function import
+   */
+  @Test
+  public void testFunctionImportProviderProperties() {
+
+    // Getting the EntityUriInfo
+    GetFunctionImportUriInfo getfuncImportUriInfo = mockFunctionImportUriInfo();
+    ODataJPAContext oDataJPAContext = getODataJPAContext();
+    Class<?> clazz = ODataJPAResponseBuilderDefault.class;
+ // Building the edm entity
+    List<Map<String, Object>> edmEntityList = new ArrayList<Map<String, Object>>();
+    Map<String, Object> edmEntity = new HashMap<String, Object>();
+    edmEntity.put("ID", 1);
+    edmEntityList.add(edmEntity);
+    Object[] actualParameters = { oDataJPAContext, getfuncImportUriInfo, edmEntityList };
+    Class<?>[] formalParameters = { ODataJPAContext.class, GetFunctionImportUriInfo.class, List.class };
+    EntityProviderWriteProperties providerProperties = null;
+    try {
+      Method method = clazz.getDeclaredMethod("getEntityProviderProperties", formalParameters);
+      method.setAccessible(true);
+      providerProperties = (EntityProviderWriteProperties) method.invoke(responseBuilder, actualParameters);
+      assertEquals(1, providerProperties.getExpandSelectTree().getLinks().size());
+      assertEquals(InlineCount.ALLPAGES, providerProperties.getInlineCountType());
+    } catch (SecurityException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (NoSuchMethodException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (IllegalArgumentException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (IllegalAccessException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    } catch (InvocationTargetException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+
+  }
+
+  @Test
+  public void testBuildListOfGetFunctionimportUriInfo() throws Exception {
+    try {
+      assertNotNull(responseBuilder.build(getFIResultsView(), getJPAEntities(), "application/xml"));
+    } catch (ODataJPARuntimeException e) {
+      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
+    }
+
+  }
+  
+  private GetFunctionImportUriInfo getFIResultsView() {
+	GetFunctionImportUriInfo objGetFunctionImportUriInfo = EasyMock.createMock(GetFunctionImportUriInfo.class);
+    EasyMock.expect(objGetFunctionImportUriInfo.getInlineCount()).andStubReturn(getLocalInlineCount());
+    EasyMock.expect(objGetFunctionImportUriInfo.getFunctionImport()).andStubReturn(mockEdmFunctionImport());
+    EasyMock.expect(objGetFunctionImportUriInfo.getSelect()).andStubReturn(getSelectItemList());
+    EasyMock.expect(objGetFunctionImportUriInfo.getExpand()).andStubReturn(getExpandList());
+    EasyMock.replay(objGetFunctionImportUriInfo);
+    return objGetFunctionImportUriInfo;
+  }
 }

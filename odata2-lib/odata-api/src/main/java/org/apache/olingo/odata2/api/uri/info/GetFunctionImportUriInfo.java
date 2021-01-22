@@ -18,10 +18,15 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.api.uri.info;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.odata2.api.commons.InlineCount;
 import org.apache.olingo.odata2.api.edm.EdmFunctionImport;
 import org.apache.olingo.odata2.api.edm.EdmLiteral;
+import org.apache.olingo.odata2.api.uri.NavigationPropertySegment;
+import org.apache.olingo.odata2.api.uri.SelectItem;
 
 /**
  * Access to the parts of the request URI that are relevant for requests
@@ -57,4 +62,25 @@ public interface GetFunctionImportUriInfo {
    * @return Map of {@literal <String, String>} custom query options
    */
   public Map<String, String> getCustomQueryOptions();
+  
+  /**
+   * Gets the value of the $inlinecount system query option.
+   * @return {@link InlineCount} the inline count or null
+   */
+  public InlineCount getInlineCount();
+  
+  /**
+   * Gets the value of the $select system query option as a list of select items,
+   * or an empty list if not used.
+   * @return List of {@link SelectItem} to be selected
+   */
+  public List<SelectItem> getSelect();
+  
+  /**
+   * Gets the value of the $expand system query option as a list of
+   * lists of navigation-property segments, or an empty list if not used.
+   * @return List of a list of {@link NavigationPropertySegment} to be expanded
+   */
+  public List<ArrayList<NavigationPropertySegment>> getExpand();
+
 }
