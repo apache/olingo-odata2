@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -48,7 +48,7 @@ import org.apache.olingo.odata2.testutil.fit.BaseTest;
 import org.junit.Test;
 
 /**
- *  
+ *
  */
 public class EdmSimpleTypeTest extends BaseTest {
 
@@ -657,7 +657,7 @@ public class EdmSimpleTypeTest extends BaseTest {
     		, instance.valueToString(timestamp, EdmLiteralKind.JSON, null));
     assertEquals("datetimeoffset'2012-02-29T23:32:03.007111Z'"
     		, instance.valueToString(timestamp, EdmLiteralKind.URI, null));
-    
+
     timestamp.setNanos(42);
     expectErrorInValueToString(instance, timestamp, EdmLiteralKind.DEFAULT, getPrecisionScaleFacets(8, null),
         EdmSimpleTypeException.VALUE_FACETS_NOT_MATCHED);
@@ -666,7 +666,7 @@ public class EdmSimpleTypeTest extends BaseTest {
         EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED);
     expectErrorInValueToString(instance, dateTime, null, null, EdmSimpleTypeException.LITERAL_KIND_MISSING);
   }
-  
+
   @Test
   public void valueToStringDecimal() throws Exception {
     final EdmSimpleType instance = EdmSimpleTypeKind.Decimal.getEdmSimpleTypeInstance();
@@ -1149,7 +1149,7 @@ public class EdmSimpleTypeTest extends BaseTest {
         Date.class));
     assertEquals(dateTime, instance.valueOfString("datetime'2012-02-29T23:32:03.001'", EdmLiteralKind.URI, null,
         Calendar.class));
-    
+
     //OLINGO-883 prefix is case insensitive
     assertEquals(dateTime, instance.valueOfString("DaTeTiMe'2012-02-29T23:32:03.001'", EdmLiteralKind.URI, null,
         Calendar.class));
@@ -1240,11 +1240,11 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertEquals(dateTime, instance.valueOfString("datetimeoffset'2012-02-29T01:02:03Z'", EdmLiteralKind.URI, null,
         Calendar.class));
 
-    assertEquals(Long.parseLong("1454889571199"), instance.valueOfString("/Date(1454889571199)/", 
+    assertEquals(Long.parseLong("1454889571199"), instance.valueOfString("/Date(1454889571199)/",
         EdmLiteralKind.JSON, null, Timestamp.class).getTime());
-    assertEquals(Long.parseLong("145488957119912456"), instance.valueOfString("/Date(145488957119912456)/", 
+    assertEquals(Long.parseLong("145488957119912456"), instance.valueOfString("/Date(145488957119912456)/",
         EdmLiteralKind.JSON, null, Timestamp.class).getTime());
-        
+
     dateTime.clear();
     dateTime.setTimeZone(TimeZone.getTimeZone("GMT-01:30"));
     dateTime.set(2012, 1, 29, 1, 2, 3);
@@ -1254,12 +1254,12 @@ public class EdmSimpleTypeTest extends BaseTest {
         Calendar.class));
     assertEquals(dateTime, instance.valueOfString("datetimeoffset'2012-02-29T01:02:03-01:30'", EdmLiteralKind.URI,
         null, Calendar.class));
-    
+
     //OLINGO-883 prefix is case insensitive
     assertEquals(dateTime, instance.valueOfString("DaTeTiMeoFFset'2012-02-29T01:02:03-01:30'", EdmLiteralKind.URI,
         null, Calendar.class));
-    
-    
+
+
     dateTime.clear();
     dateTime.setTimeZone(TimeZone.getTimeZone("GMT+11:00"));
     dateTime.set(2012, 1, 29, 1, 2, 3);
@@ -1462,11 +1462,11 @@ public class EdmSimpleTypeTest extends BaseTest {
         UUID.class));
     assertEquals(uuid, instance.valueOfString("guid'AABBCCDD-aabb-ccdd-eeff-AABBCCDDEEFF'", EdmLiteralKind.URI, null,
         UUID.class));
-    
+
     //OLINGO-883 prefix is case insensitive
     assertEquals(uuid, instance.valueOfString("GuId'AABBCCDD-aabb-ccdd-eeff-AABBCCDDEEFF'", EdmLiteralKind.URI, null,
         UUID.class));
-    
+
     expectErrorInValueOfString(instance, "AABBCCDDAABBCCDDEEFFAABBCCDDEEFF", EdmLiteralKind.DEFAULT, null,
         EdmSimpleTypeException.LITERAL_ILLEGAL_CONTENT);
     expectErrorInValueOfString(instance, "uid'AABBCCDD-aabb-ccdd-eeff-AABBCCDDEEFF'", EdmLiteralKind.URI, null,
@@ -1680,10 +1680,10 @@ public class EdmSimpleTypeTest extends BaseTest {
     assertEquals(dateTime, instance.valueOfString("PT23H32M3.001S", EdmLiteralKind.DEFAULT, null, Calendar.class));
     assertEquals(dateTime, instance.valueOfString("PT23H32M3.001S", EdmLiteralKind.JSON, null, Calendar.class));
     assertEquals(dateTime, instance.valueOfString("time'PT23H32M3.001S'", EdmLiteralKind.URI, null, Calendar.class));
-    
+
     //OLINGO-883 prefix is case insensitive
     assertEquals(dateTime, instance.valueOfString("TiMe'PT23H32M3.001S'", EdmLiteralKind.URI, null, Calendar.class));
-    
+
     dateTime.add(Calendar.MILLISECOND, -1);
     assertEquals(dateTime, instance.valueOfString("PT23H32M3S", EdmLiteralKind.DEFAULT,
         getPrecisionScaleFacets(0, null), Calendar.class));
@@ -1788,5 +1788,15 @@ public class EdmSimpleTypeTest extends BaseTest {
         getPrecisionScaleFacets(null, null)));
     assertFalse(EdmSimpleTypeKind.Decimal.getEdmSimpleTypeInstance().validate("1.2", EdmLiteralKind.DEFAULT,
         getPrecisionScaleFacets(null, 0)));
+    assertTrue(EdmSimpleTypeKind.Decimal.getEdmSimpleTypeInstance().validate("1.2", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(2, null)));
+    assertFalse(EdmSimpleTypeKind.Decimal.getEdmSimpleTypeInstance().validate("10.2", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(2, null)));
+    assertTrue(EdmSimpleTypeKind.Decimal.getEdmSimpleTypeInstance().validate("1.2", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(3, 1)));
+    assertTrue(EdmSimpleTypeKind.Decimal.getEdmSimpleTypeInstance().validate("10.2", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(3, 1)));
+    assertFalse(EdmSimpleTypeKind.Decimal.getEdmSimpleTypeInstance().validate("100", EdmLiteralKind.DEFAULT,
+        getPrecisionScaleFacets(3, 1)));
   }
 }
