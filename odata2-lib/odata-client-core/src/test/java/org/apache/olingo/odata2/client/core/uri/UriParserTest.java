@@ -657,6 +657,13 @@ public class UriParserTest {
     result = parse("OldestEmployee");
     assertEquals("OldestEmployee", result.getFunctionImport().getName());
     assertEquals(UriType.URI10, result.getUriType());
+    
+    result = parse("EmployeeSearch?$filter=EmployeeId%20eq%20%271%27&$select=EmployeeName");
+    assertEquals("Employee", result.getFunctionImport().getReturnType().getType().getName());
+    assertEquals(EdmMultiplicity.MANY, result.getFunctionImport().getReturnType().getMultiplicity());
+    assertEquals(UriType.URI10a, result.getUriType());
+    assertNotNull(result.getFilter());
+    assertEquals(1, result.getSelect().size());
   }
 
   @Test
