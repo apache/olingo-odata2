@@ -39,10 +39,18 @@ package org.apache.olingo.odata2.jpa.processor.api.factory;
  */
 public abstract class ODataJPAFactory {
 
-  private static final String IMPLEMENTATION =
+  private static String IMPLEMENTATION =
       "org.apache.olingo.odata2.jpa.processor.core.factory.ODataJPAFactoryImpl";
   private static ODataJPAFactory factoryImpl;
 
+  /**
+   * Method sets the implementation of the ODataJPAFactory. This makes
+   * it possible to change some default implementation like JPAAccessFactory,
+   * JPQLBuilderFactory, and JPQLBuilderFactory
+   */
+  public static void setImplementation(Class<?> clazz) {
+      IMPLEMENTATION = clazz.getName();
+  }
   /**
    * Method creates a factory instance. The instance returned is singleton.
    * The instance of this factory can be used for creating other factory
