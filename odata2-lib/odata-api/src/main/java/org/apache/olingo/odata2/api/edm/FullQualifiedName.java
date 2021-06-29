@@ -27,6 +27,7 @@ public class FullQualifiedName {
 
   private final String namespace;
   private final String name;
+  private final String fullQualifiedName;
 
   /**
    * @param namespace
@@ -35,6 +36,7 @@ public class FullQualifiedName {
   public FullQualifiedName(final String namespace, final String name) {
     this.namespace = namespace;
     this.name = name;
+    this.fullQualifiedName = namespace + Edm.DELIMITER + name;
   }
 
   /**
@@ -70,6 +72,6 @@ public class FullQualifiedName {
 
   @Override
   public String toString() {
-    return namespace + Edm.DELIMITER + name;
+    return fullQualifiedName;
   }
 }
