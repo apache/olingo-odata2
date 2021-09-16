@@ -317,9 +317,9 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
 	    	if (selectedItems != null && !selectedItems.isEmpty()) {
 	            edmEntityList =
 	                jpaResultParser.parse2EdmEntityList(resultList, 
-	                		buildSelectItemList(selectedItems, (EdmEntityType) edmType));
+	                		buildSelectItemList(selectedItems, (EdmStructuralType) edmType));
 	          } else {
-	              edmEntityList = jpaResultParser.parse2EdmEntityList(resultList, (EdmEntityType) edmType);
+	              edmEntityList = jpaResultParser.parse2EdmEntityList(resultList, (EdmStructuralType) edmType);
 	          }
 	    	expandList = resultsView.getExpand();
 	        if (expandList != null && !expandList.isEmpty()) {
@@ -697,8 +697,8 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
     return entityFeedPropertiesBuilder.build();
   }
 
-  private static List<EdmProperty> buildSelectItemList(final List<SelectItem> selectItems, final EdmEntityType entity)
-      throws ODataJPARuntimeException {
+  private static List<EdmProperty> buildSelectItemList(final List<SelectItem> selectItems, 
+		  final EdmStructuralType entity) throws ODataJPARuntimeException {
     boolean flag = false;
     List<EdmProperty> selectPropertyList = new ArrayList<EdmProperty>();
     try {
@@ -712,19 +712,21 @@ public final class ODataJPAResponseBuilderDefault implements ODataJPAResponseBui
           }
         }
       }
-      for (EdmProperty keyProperty : entity.getKeyProperties()) {
-        flag = true;
-        for (SelectItem selectedItem : selectItems) {
-          if (!selectedItem.isStar() && keyProperty.equals(selectedItem.getProperty())) {
-            flag = false;
-            break;
-          }
-        }
-        if (flag) {
-          selectPropertyList.add(keyProperty);
-        }
+      if (entity instanceof EdmEntityType) {
+    	  EdmEntityType edmEntity = (EdmEntityType)entity;
+	      for (EdmProperty keyProperty : edmEntity.getKeyProperties()) {
+	        flag = true;
+	        for (SelectItem selectedItem : selectItems) {
+	          if (!selectedItem.isStar() && keyProperty.equals(selectedItem.getProperty())) {
+	            flag = false;
+	            break;
+	          }
+	        }
+	        if (flag) {
+	          selectPropertyList.add(keyProperty);
+	        }
+	      }
       }
-
     } catch (EdmException e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.GENERAL.addContent(e.getMessage()), e);
     }
