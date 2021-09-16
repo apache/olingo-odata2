@@ -1097,7 +1097,116 @@ public class UriParserTest extends BaseTest {
     parseWrongUri("Employees?$filter=EmployeeId+eq+%271%27&odata-accept-forms-encoding=asdf", 
         UriSyntaxException.INVALIDFILTEREXPRESSION);
   }
+
   
+  @Test
+  public void parseSystemQueryOptionHavingPlusAsValueFilterFormEncoding1() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=EmployeeId+eq+%27A+B%27&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("EmployeeId eq 'A+B'", result.getFilter().getUriLiteral());
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }
+  
+  @Test
+  public void parseSystemQueryOptionHavingPlusAsValueFilterFormEncoding2() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=EmployeeId+eq+%27A+B+C%27&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("EmployeeId eq 'A+B+C'", result.getFilter().getExpressionString());
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }
+  
+  @Test
+  public void parseSystemQueryOptionHavingPlusAsValueANDFilterFormEncoding() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=EmployeeId+eq+%27A+B%27+and+"
+    		+ "EmployeeName+eq+%27Sam%27&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("EmployeeId eq 'A+B' and EmployeeName eq 'Sam'", result.getFilter().getExpressionString());
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }
+  
+  @Test
+  public void parseSystemQueryOptionHavingPlusAsValuestartswithFilterFormEncoding() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=substring(EmployeeId,1)+eq+%27A+B%27"
+    		+ "&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("substring(EmployeeId,1) eq 'A+B'", result.getFilter().getExpressionString());
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }
+  
+  @Test
+  public void parseSystemQueryOptionHavingPlusAsValuesubstringofilterFormEncoding() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=startswith(EmployeeId,%27A+B%27)&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("startswith(EmployeeId,'A+B')", result.getFilter().getExpressionString());
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  } 
+  
+  @Test
+  public void parseSystemQueryOptionHavingPlusAsValueendswithFilterFormEncoding() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=endswith(EmployeeId,%27A+B%27)&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("endswith(EmployeeId,'A+B')", result.getFilter().getExpressionString());
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  } 
+
+  @Test
+  public void parseSystemQueryOptionHavingPlusAsValueORFilterFormEncoding1() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=EmployeeId+eq+%27A+B%27+or+"
+    		+ "EmployeeName+eq+%27A%20B%27&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("EmployeeId eq 'A+B' or EmployeeName eq 'A B'", result.getFilter().getExpressionString());
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }
+  
+  @Test
+  public void parseSystemQueryOptionHavingPlusAsValueorderbyAndsubstringofilterFormEncoding() throws Exception {
+    UriInfoImpl result = parse("Employees?$orderby=EmployeeId%20asc&$filter=substringof(%27GW%27,EmployeeId)"
+    		+ "%20and%20substringof(%27IWBEP%27,EmployeeName)%20and%20substringof(%27%20%27,EmployeeId)"
+    		+ "&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("substringof('GW',EmployeeId) and substringof('IWBEP',EmployeeName) and substringof(' ',EmployeeId)",
+    		result.getFilter().getExpressionString());
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }  
+   
+  
+  @Test
+  public void parseSystemQueryOptionHavingPlusAsValueORFilterFormEncoding2() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=EmployeeId+eq+%27A%20B%27+or+"
+    		+ "EmployeeName+eq+%27A+B%27&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("EmployeeId eq 'A B' or EmployeeName eq 'A+B'", result.getFilter().getExpressionString());
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }
+  
+  @Test
+  public void parseSystemQueryOptionHavingPlusAsValueANDsubsctringofFilterFormEncoding() throws Exception {
+    UriInfoImpl result = parse("Employees?$filter=substring(EmployeeId,1)+eq+"
+    		+ "%27A+B%27+and+EmployeeId+ne+%27C+D%27&odata-accept-forms-encoding=true");
+    assertEquals("Employees", result.getTargetEntitySet().getName());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals(UriType.URI1, result.getUriType());
+    assertEquals("substring(EmployeeId,1) eq 'A+B' and EmployeeId ne 'C+D'", result.getFilter().getExpressionString());
+    assertNull(result.getCustomQueryOptions().get(ACCEPT_FORM_ENCODING));
+  }   
+    
   @Test
   public void parseSystemQueryOptionExpand() throws Exception {
     UriInfoImpl result = parse("Managers('1')?$expand=nm_Employees");

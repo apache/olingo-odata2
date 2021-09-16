@@ -65,6 +65,8 @@ public class FilterParserImpl implements FilterParser {
   protected EdmEntityType resourceEntityType = null;
   protected TokenList tokenList = null;
   protected String curExpression;
+  protected String originalFilterString = "";
+  protected String decodedFilterString  = "";
 
   /**
    * Creates a new FilterParser implementation
@@ -73,6 +75,16 @@ public class FilterParserImpl implements FilterParser {
   public FilterParserImpl(final EdmEntityType resourceEntityType) {
     this.resourceEntityType = resourceEntityType;
   }
+  
+  /**
+   * Creates a new FilterParser implementation
+   * @param resourceEntityType EntityType of the resource on which the filter is applied
+   * @param originalFilterString String original filter string prior to decoding 
+   */
+  public FilterParserImpl(final EdmEntityType resourceEntityType,  String originalFilterString) {
+    this.resourceEntityType = resourceEntityType;
+    this.originalFilterString = originalFilterString;
+  }    
 
   @Override
   public FilterExpression parseFilterString(final String filterExpression) throws ExpressionParserException,
@@ -84,6 +96,7 @@ public class FilterParserImpl implements FilterParser {
       throws ExpressionParserException, ExpressionParserInternalError {
     CommonExpression node = null;
     curExpression = filterExpression;
+    decodedFilterString = filterExpression;
     try {
       // Throws TokenizerException and FilterParserException. FilterParserException is caught somewhere above
       tokenList = new Tokenizer(filterExpression).tokenize();
@@ -120,8 +133,11 @@ public class FilterParserImpl implements FilterParser {
       throw FilterParserExceptionImpl.createTYPE_EXPECTED_AT(EdmBoolean.getInstance(), node.getEdmType(), 1,
           curExpression);
     }
-
-    return new FilterExpressionImpl(filterExpression, node);
+    if (filterExpression.equals(decodedFilterString)) {
+        return new FilterExpressionImpl(filterExpression, node);
+    } else {
+        return new FilterExpressionImpl(decodedFilterString, node);
+    } 
   }
 
   protected CommonExpression readElements(final CommonExpression leftExpression, final int priority)
@@ -363,7 +379,8 @@ public class FilterParserImpl implements FilterParser {
     // -->Check if token is a terminal
     // is a terminal e.g. a Value like an EDM.String 'hugo' or 125L or 1.25D"
     if (token.getKind() == TokenKind.SIMPLE_TYPE) {
-      LiteralExpression literal = new LiteralExpressionImpl(token.getUriLiteral(), token.getJavaLiteral());
+    	 LiteralExpression literal = new LiteralExpressionImpl(
+       		  getEncodedUriLiteral(token.getUriLiteral(),token.getPosition()), token.getJavaLiteral());
       return literal;
     }
 
@@ -622,6 +639,23 @@ public class FilterParserImpl implements FilterParser {
     }
     methodExpression.setEdmType(parameterSet.getReturnType());
   }
+  
+  /*
+   * In case we have + in the string literal and is replaced with ' '(space) in UriParserImpl
+   * it needs to be changed back to +
+   */
+  private String getEncodedUriLiteral(String uriLiteral,int pos) {
+	  if (originalFilterString.length()!=0 && uriLiteral.contains(" ")) {
+			String encodedUriLiteral = uriLiteral.replaceAll(" ", "+");
+			String originalFilterToken = originalFilterString.substring(pos,pos+uriLiteral.length());
+			if (originalFilterToken!=null && originalFilterToken.equals(encodedUriLiteral)) {
+				decodedFilterString=decodedFilterString.substring(0, pos)+encodedUriLiteral+
+						decodedFilterString.substring(pos+uriLiteral.length());
+				uriLiteral = encodedUriLiteral;
+			}
+		}
+	  return uriLiteral;
+  }   
 
   static void initAvailTables() {
     Map<String, InfoBinaryOperator> lAvailableBinaryOperators = new HashMap<String, InfoBinaryOperator>();

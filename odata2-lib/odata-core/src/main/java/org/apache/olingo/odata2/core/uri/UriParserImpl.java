@@ -92,6 +92,7 @@ public class UriParserImpl extends UriParser {
   private UriInfoImpl uriResult;
   private Map<SystemQueryOption, String> systemQueryOptions;
   private Map<String, String> otherQueryParameters;
+  private String originalFilterString = "";
 
   public UriParserImpl(final Edm edm) {
     this.edm = edm;
@@ -635,6 +636,9 @@ public class UriParserImpl extends UriParser {
       if (valueList.size() >= 1) {
         String value = valueList.get(0);
         if(formEncoding){
+        	if(decodedString.equalsIgnoreCase(SystemQueryOption.$filter.toString())){
+                originalFilterString = value;
+        	}
           value = getFormEncodedValue(value);
         }
         if (decodedString.startsWith("$")) {
@@ -731,7 +735,8 @@ public class UriParserImpl extends UriParser {
     final EdmType targetType = uriResult.getTargetType();
     if (targetType instanceof EdmEntityType) {
       try {
-        uriResult.setFilter(new FilterParserImpl((EdmEntityType) targetType).parseFilterString(filter, true));
+        uriResult.setFilter(new FilterParserImpl((EdmEntityType) targetType,originalFilterString).
+        		parseFilterString(filter, true));
       } catch (ExpressionParserException e) {
         throw new UriSyntaxException(UriSyntaxException.INVALIDFILTEREXPRESSION.addContent(filter), e);
       } catch (ODataMessageException e) {
