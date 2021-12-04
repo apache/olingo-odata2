@@ -18,10 +18,13 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.access.data;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.matchers.JUnitMatchers.either;
 
 import java.net.URISyntaxException;
 
@@ -196,7 +199,9 @@ public class JPAEntityTest {
       jpaEntity = new JPAEntity(edmEntityType, edmEntitySet, mockODataJPAContextWithoutCallBack());
       jpaEntity.create(ODataEntryMockUtil.mockODataEntryProperties(JPATypeMock.ENTITY_NAME));
     } catch (ODataJPARuntimeException e) {
-      assertEquals(ODataJPARuntimeException.ERROR_JPA_BLOB_NULL.getKey(), e.getMessageReference().getKey());
+      assertThat(e.getMessageReference().getKey(), either(
+          is(ODataJPARuntimeException.ERROR_JPA_BLOB_NULL.getKey())).or(
+          is(ODataJPARuntimeException.ERROR_JPA_CLOB_NULL.getKey())));
       return;
     } catch (EdmException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage()
