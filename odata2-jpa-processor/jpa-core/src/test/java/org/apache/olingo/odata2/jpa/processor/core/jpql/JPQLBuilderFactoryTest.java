@@ -236,22 +236,16 @@ public class JPQLBuilderFactoryTest {
     ODataJPAFactoryImpl oDataJPAFactoryImpl = new ODataJPAFactoryImpl();
     JPAAccessFactory jpaAccessFactory = oDataJPAFactoryImpl.getJPAAccessFactory();
     ODataJPAContextImpl oDataJPAContextImpl = new ODataJPAContextImpl();
-    Class<?> clazz = oDataJPAContextImpl.getClass();
     try {
-      Field field = clazz.getDeclaredField("em");
-      field.setAccessible(true);
-      field.set(oDataJPAContextImpl, new JPAProcessorImplTest().getLocalEntityManager());
+      oDataJPAContextImpl.setEntityManager(new JPAProcessorImplTest().getLocalEntityManager());
     } catch (SecurityException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    } catch (NoSuchFieldException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     } catch (IllegalArgumentException e) {
       fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-    } catch (IllegalAccessException e) {
-      fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
     }
     final EntityManager em = EasyMock.createMock(EntityManager.class);
-    EasyMock.expect(em.getMetamodel()).andReturn(null);
+    Metamodel metamodel = EasyMock.createMock(Metamodel.class);
+    EasyMock.expect(em.getMetamodel()).andReturn(metamodel).anyTimes();
     EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
     EasyMock.replay(em);
 
@@ -270,7 +264,8 @@ public class JPQLBuilderFactoryTest {
     ODataJPAContextImpl oDataJPAContextImpl = new ODataJPAContextImpl();
 
     final EntityManager em = EasyMock.createMock(EntityManager.class);
-    EasyMock.expect(em.getMetamodel()).andReturn(null);
+    Metamodel metamodel = EasyMock.createMock(Metamodel.class);
+    EasyMock.expect(em.getMetamodel()).andReturn(metamodel).anyTimes();
     EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
     EasyMock.replay(em);
 
@@ -288,8 +283,9 @@ public class JPQLBuilderFactoryTest {
     ODataJPAContextImpl oDataJPAContextImpl = new ODataJPAContextImpl();
 
     final EntityManager em = EasyMock.createMock(EntityManager.class);
-    EasyMock.expect(em.getMetamodel()).andReturn(null);
-    EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
+    Metamodel metamodel = EasyMock.createMock(Metamodel.class);
+    EasyMock.expect(em.getMetamodel()).andReturn(metamodel).anyTimes();
+    EasyMock.expect(em.isOpen()).andReturn(true);
     EasyMock.replay(em);
 
     oDataJPAContextImpl.setEntityManagerFactory(new TestEntityManagerFactory(em));
@@ -308,7 +304,8 @@ public class JPQLBuilderFactoryTest {
     ODataJPAContextImpl oDataJPAContextImpl = new ODataJPAContextImpl();
 
     EntityManager em = EasyMock.createMock(EntityManager.class);
-    EasyMock.expect(em.getMetamodel()).andReturn(null);
+    Metamodel metamodel = EasyMock.createMock(Metamodel.class);
+    EasyMock.expect(em.getMetamodel()).andReturn(metamodel).anyTimes();
     EasyMock.expect(em.isOpen()).andReturn(true).anyTimes();
     EasyMock.replay(em);
 
