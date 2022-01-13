@@ -46,6 +46,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.release>8</maven.compiler.release>
 		<javadoc.phase>package</javadoc.phase>
 
         <!-- required for correct Sonar coverage data reporting (list of artifactIds) -->
