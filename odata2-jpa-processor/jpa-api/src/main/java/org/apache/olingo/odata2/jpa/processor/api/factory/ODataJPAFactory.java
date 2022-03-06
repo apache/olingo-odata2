@@ -51,6 +51,7 @@ public abstract class ODataJPAFactory {
   public static void setImplementation(Class<?> clazz) {
       IMPLEMENTATION = clazz.getName();
   }
+
   /**
    * Method creates a factory instance. The instance returned is singleton.
    * The instance of this factory can be used for creating other factory
@@ -59,22 +60,17 @@ public abstract class ODataJPAFactory {
    * @return instance of type {@link org.apache.olingo.odata2.jpa.processor.api.factory.ODataJPAFactory} .
    */
   public static ODataJPAFactory createFactory() {
-
-    if (factoryImpl != null) {
-      return factoryImpl;
-    } else {
+    if (factoryImpl == null) {
       try {
         Class<?> clazz = Class.forName(ODataJPAFactory.IMPLEMENTATION);
 
         Object object = clazz.newInstance();
         factoryImpl = (ODataJPAFactory) object;
-
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
-
-      return factoryImpl;
     }
+    return factoryImpl;
   }
 
   /**
@@ -86,7 +82,7 @@ public abstract class ODataJPAFactory {
    */
   public JPQLBuilderFactory getJPQLBuilderFactory() {
     return null;
-  };
+  }
 
   /**
    * The method returns a null reference to JPA Access Factory. Override this
@@ -97,7 +93,7 @@ public abstract class ODataJPAFactory {
    */
   public JPAAccessFactory getJPAAccessFactory() {
     return null;
-  };
+  }
 
   /**
    * The method returns a null reference to OData JPA Access Factory. Override
@@ -108,6 +104,5 @@ public abstract class ODataJPAFactory {
    */
   public ODataJPAAccessFactory getODataJPAAccessFactory() {
     return null;
-  };
-
+  }
 }
