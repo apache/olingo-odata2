@@ -24,6 +24,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -146,17 +147,18 @@ public class ClassHelper {
 
   private static Collection<String> getClassFqnFromJar(final URI uri, final String packageToScan) {
     final String jarFilePath;
-    String filepath = uri.getSchemeSpecificPart().substring(5);
+    String filepath = uri.toString();
     String[] split = filepath.split(JAR_RESOURCE_SEPARATOR);
-    if (split.length == 2) {
-      jarFilePath = split[0];
+    if (split.length > 1) {
+  	  jarFilePath = filepath.substring(0, filepath.lastIndexOf("!")+2);
     } else {
       throw new IllegalArgumentException("Illegal jar file path '" + filepath + "'.");
     }
-
     JarFile jarFile = null;
     try {
-      jarFile = new JarFile(jarFilePath);
+      URL url = new URL(jarFilePath);
+      JarURLConnection connection = (JarURLConnection) url.openConnection();
+      jarFile = connection.getJarFile();
       List<String> classFileNames = new ArrayList<String>();
       Enumeration<JarEntry> entries = jarFile.entries();
 
