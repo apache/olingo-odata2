@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>Annotation for definition of EdmFactes on an EdmProperty (for an EdmEntityType or EdmComplexType
+ * <p>Annotation for definition of EdmFacets on an EdmProperty (for an EdmEntityType or EdmComplexType
  * which contains the EdmProperty as a field).</p>
  */
 @Retention(RetentionPolicy.RUNTIME)
