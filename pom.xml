@@ -364,6 +364,7 @@
 										<exclude>**/*.batch</exclude>
 										<exclude>**/NOTICE</exclude>
 										<exclude>**/DEPENDENCIES</exclude>
+										<exclude>**/SECURITY.md</exclude>
 										<exclude>**/goal.txt</exclude>
 										<exclude>**/target/**</exclude>
 										<exclude>**/*.iml</exclude>
