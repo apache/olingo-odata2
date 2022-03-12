@@ -346,6 +346,7 @@ public class ODataJPADefaultProcessorTest extends JPAEdmTestModelView {
     tx.commit();// testing void method
     tx.rollback();// testing void method
     EasyMock.expect(tx.isActive()).andReturn(false);
+    EasyMock.expect(tx.isActive()).andReturn(false);
     EasyMock.replay(tx);
     return tx;
   }
