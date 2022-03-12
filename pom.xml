@@ -56,9 +56,9 @@
         <!-- <jsr311.version>1.1.1</jsr311.version> -->
         <joda.version>2.1</joda.version>
         <cxf.version>2.7.10</cxf.version>
-        <jetty.version>7.5.4.v20111024</jetty.version>
-        <httpclient.version>4.2.3</httpclient.version>
-        <httpcore.version>4.2.3</httpcore.version>
+        <jetty.version>7.6.21.v20160908</jetty.version>
+        <httpclient.version>4.2.5</httpclient.version>
+        <httpcore.version>4.2.5</httpcore.version>
         <slf4j.version>1.7.1</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <commonscodec.version>1.6</commonscodec.version>
@@ -68,8 +68,8 @@
 		<antlr.version>3.4</antlr.version>
 
 		<mockito.version>1.9.0</mockito.version>
-		<junit.version>4.10</junit.version>
-		<xmlunit.version>1.3</xmlunit.version>
+		<junit.version>4.13.2</junit.version>
+		<xmlunit.version>1.6</xmlunit.version>
 
 		<version.eclipselink>2.5.1</version.eclipselink>
 		<version.javax.persistence>2.0.5</version.javax.persistence>
