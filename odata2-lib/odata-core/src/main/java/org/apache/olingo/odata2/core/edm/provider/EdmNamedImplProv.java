@@ -50,8 +50,8 @@ import org.apache.olingo.odata2.api.edm.EdmNamed;
  */
 public abstract class EdmNamedImplProv implements EdmNamed {
 
-  private static final Pattern PATTERN_VALID_NAME = Pattern.compile(
-      "\\A[_\\p{L}\\p{Nl}][_\\p{L}\\p{Nl}\\p{Nd}\\p{Mn}\\p{Mc}\\p{Pc}\\p{Cf}]{0,}\\Z");
+  private static final Pattern ODATA_PROPERTY_NAME_PATTERN = Pattern
+      .compile("\\A[_\\p{L}\\p{Nl}][_.\\p{L}\\p{Nl}\\p{Nd}\\p{Mn}\\p{Mc}\\p{Pc}\\p{Cf}]{0,}\\Z");
   protected EdmImplProv edm;
   private String name;
 
