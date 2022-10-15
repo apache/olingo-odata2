@@ -66,6 +66,9 @@ public class JsonErrorDocumentConsumer {
     } catch (IOException e) {
       throw new EntityProviderException(
           EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getMessage()), e);
+    } catch (IllegalStateException e) {
+      throw new EntityProviderException(
+          EntityProviderException.EXCEPTION_OCCURRED.addContent(e.getMessage()), e);
     }
   }
 
