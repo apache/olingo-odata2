@@ -93,6 +93,7 @@ public class UriParserImpl extends UriParser {
   private Map<SystemQueryOption, String> systemQueryOptions;
   private Map<String, String> otherQueryParameters;
   private String originalFilterString = "";
+  private boolean strictFilter = true;
 
   public UriParserImpl(final Edm edm) {
     this.edm = edm;
@@ -111,6 +112,13 @@ public class UriParserImpl extends UriParser {
   public UriInfo parse(final List<PathSegment> pathSegments, final Map<String, String> queryParameters)
       throws UriSyntaxException, UriNotMatchingException, EdmException {
 
+    return parseAll(pathSegments, convertFromSingleMapToMultiMap(queryParameters));
+  }
+
+  @Override
+  public UriInfo parse(List<PathSegment> pathSegments, Map<String, String> queryParameters, boolean strictFilter)
+      throws UriSyntaxException, UriNotMatchingException, EdmException {
+    this.strictFilter = strictFilter;
     return parseAll(pathSegments, convertFromSingleMapToMultiMap(queryParameters));
   }
 
@@ -735,7 +743,7 @@ public class UriParserImpl extends UriParser {
     final EdmType targetType = uriResult.getTargetType();
     if (targetType instanceof EdmEntityType) {
       try {
-        uriResult.setFilter(new FilterParserImpl((EdmEntityType) targetType,originalFilterString).
+        uriResult.setFilter(new FilterParserImpl((EdmEntityType) targetType, strictFilter, originalFilterString).
         		parseFilterString(filter, true));
       } catch (ExpressionParserException e) {
         throw new UriSyntaxException(UriSyntaxException.INVALIDFILTEREXPRESSION.addContent(filter), e);
@@ -1004,7 +1012,7 @@ public class UriParserImpl extends UriParser {
   @Override
   public FilterExpression parseFilterString(final EdmEntityType entityType, final String expression)
       throws ODataMessageException {
-    return new FilterParserImpl(entityType).parseFilterString(expression);
+    return new FilterParserImpl(entityType, strictFilter).parseFilterString(expression);
   }
 
   @Override

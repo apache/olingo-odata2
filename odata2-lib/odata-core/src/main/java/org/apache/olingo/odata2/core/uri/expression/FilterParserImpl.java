@@ -67,6 +67,8 @@ public class FilterParserImpl implements FilterParser {
   protected String curExpression;
   protected String originalFilterString = "";
   protected String decodedFilterString  = "";
+  private boolean strictFilter = true;
+
 
   /**
    * Creates a new FilterParser implementation
@@ -75,16 +77,29 @@ public class FilterParserImpl implements FilterParser {
   public FilterParserImpl(final EdmEntityType resourceEntityType) {
     this.resourceEntityType = resourceEntityType;
   }
-  
+
   /**
    * Creates a new FilterParser implementation
    * @param resourceEntityType EntityType of the resource on which the filter is applied
-   * @param originalFilterString String original filter string prior to decoding 
+   * @param strictFilter boolean check to decide weather to validate filter
    */
-  public FilterParserImpl(final EdmEntityType resourceEntityType,  String originalFilterString) {
+  public FilterParserImpl(final EdmEntityType resourceEntityType, boolean strictFilter) {
     this.resourceEntityType = resourceEntityType;
+    this.strictFilter = strictFilter;
+  }
+
+  /**
+   * Creates a new FilterParser implementation
+   * @param resourceEntityType EntityType of the resource on which the filter is applied
+   * @param strictFilter boolean check to decide weather to validate filter
+   * @param originalFilterString String original filter string prior to decoding
+   */
+  public FilterParserImpl(final EdmEntityType resourceEntityType, boolean strictFilter,
+                          String originalFilterString) {
+    this.resourceEntityType = resourceEntityType;
+    this.strictFilter = strictFilter;
     this.originalFilterString = originalFilterString;
-  }    
+  }
 
   @Override
   public FilterExpression parseFilterString(final String filterExpression) throws ExpressionParserException,
@@ -524,7 +539,7 @@ public class FilterParserImpl implements FilterParser {
         property.setEdmProperty(edmProperty);
         property.setEdmType(edmProperty.getType());
         if(isLastFilterElement(propertyName)) {
-          if (edmProperty.getMultiplicity() == EdmMultiplicity.MANY) {
+          if (edmProperty.getMultiplicity() == EdmMultiplicity.MANY && strictFilter) {
             throw new ExpressionParserException(
                 ExpressionParserException.INVALID_MULTIPLICITY.create()
                     .addContent(propertyName)

@@ -125,6 +125,13 @@ public class ODataClientImpl extends ODataClient implements DeserializerMetadata
   }
 
   @Override
+  public UriInfo parseUri(Edm edm, List<PathSegment> pathSegments,
+                          Map<String, String> queryParameters, boolean strictFilter)
+      throws UriSyntaxException, UriNotMatchingException, EdmException {
+    return new UriParserImpl(edm).parse(pathSegments, queryParameters, strictFilter);
+  }
+
+  @Override
   public UriInfo parseUri(Edm edm, String uri) throws UriSyntaxException, UriNotMatchingException, EdmException {
     final String[] path = uri.split(QUESTIONMARK, -1);
     if (path.length > 2) {
@@ -142,6 +149,28 @@ public class ODataClientImpl extends ODataClient implements DeserializerMetadata
     
     return new UriParserImpl(edm).parseAll(pathSegments, queryParameters);
   }
+
+  @Override
+  public UriInfo parseUri(Edm edm, String uri, boolean strictFilter)
+      throws UriSyntaxException, UriNotMatchingException, EdmException {
+
+    final String[] path = uri.split(QUESTIONMARK, -1);
+    if (path.length > 2) {
+      throw new UriSyntaxException(UriSyntaxException.URISYNTAX);
+    }
+
+    final List<PathSegment> pathSegments = getPathSegments(path[0]);
+
+    Map<String, String> queryParameters;
+    if (path.length == 2) {
+      queryParameters = getQueryParametersWithStrictFilter(unescape(path[1]));
+    } else {
+      queryParameters = new HashMap<String, String>();
+    }
+
+    return new UriParserImpl(edm).parse(pathSegments, queryParameters, strictFilter);
+  }
+
   /**
    * Fetch query parameters
    * @param uri
@@ -162,6 +191,25 @@ public class ODataClientImpl extends ODataClient implements DeserializerMetadata
 
     return allQueryParameters;
   }
+
+  /**
+   * Fetch Query parameters
+   * @param uri
+   * @return
+   */
+  private Map<String, String> getQueryParametersWithStrictFilter(String uri) {
+    Map<String, String> queryParameters = new HashMap<String, String>();
+    for (final String option : uri.split(AMP)) {
+      final String[] keyAndValue = option.split(EQUAL);
+      if (keyAndValue.length == 2) {
+        queryParameters.put(keyAndValue[0], keyAndValue[1]);
+      } else {
+        queryParameters.put(keyAndValue[0], "");
+      }
+    }
+    return queryParameters;
+  }
+
   /**
    * Fetch path segments
    * @param uri
