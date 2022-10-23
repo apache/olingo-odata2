@@ -54,9 +54,24 @@ public abstract class UriParser {
   }
 
   /**
+   * Parses path segments and query parameters for the given EDM.
+   * Will not be available in higher versions
+   * @param edm Entity Data Model
+   * @param pathSegments list of path segments
+   * @param queryParameters query parameters
+   * @param strictFilter for URI Parsing of filter parameters
+   * @return {@link UriInfo} information about the parsed URI
+   * @throws ODataException
+   */
+  public static UriInfo parse(final Edm edm, final List<PathSegment> pathSegments,
+                              final Map<String, String> queryParameters, boolean strictFilter) throws ODataException {
+    return RuntimeDelegate.getUriParser(edm).parse(pathSegments, queryParameters, strictFilter);
+  }
+
+  /**
    * Parses path segments and query parameters.
    * This method ignores redundant system query parameters.
-   * 
+   *
    * @param pathSegments list of path segments
    * @param queryParameters query parameters
    * @return {@link UriInfo} information about the parsed URI
@@ -66,6 +81,23 @@ public abstract class UriParser {
    */
   public abstract UriInfo parse(List<PathSegment> pathSegments, Map<String, String> queryParameters)
       throws UriSyntaxException, UriNotMatchingException, EdmException;
+
+  /**
+   * Parses path segments and query parameters.
+   * This method ignores redundant system query parameters.
+   *
+   * @param pathSegments list of path segments
+   * @param queryParameters query parameters
+   * @param strictFilter for URI Parsing of filter parameters
+   * @return {@link UriInfo} information about the parsed URI
+   * @throws UriSyntaxException
+   * @throws UriNotMatchingException
+   * @throws EdmException
+   */
+  public abstract UriInfo parse(List<PathSegment> pathSegments,
+                                Map<String, String> queryParameters, boolean strictFilter)
+      throws UriSyntaxException, UriNotMatchingException, EdmException;
+
 
   /**
    * Parses path segments and query parameters.

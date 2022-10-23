@@ -109,16 +109,45 @@ public abstract class ODataClient {
   /**
    * Parses the uri and returns UriInfo
    * @param edm
+   * @param pathSegments
+   * @param queryParameters
+   * @param strictFilter
+   * @return UriInfo
+   * @throws EntityProviderException
+   * @throws EdmException
+   */
+
+  public abstract UriInfo parseUri(final Edm edm, final List<PathSegment> pathSegments,
+      final Map<String, String> queryParameters, boolean strictFilter)
+      throws UriSyntaxException, UriNotMatchingException, EdmException; //NOPMD  - suppressed
+
+  /**
+   * Parses the uri and returns UriInfo
+   * @param edm
    * @param uri
    * @return UriInfo
    * @throws UriSyntaxException
    * @throws UriNotMatchingException
    * @throws EdmException
    */
-  
-  public abstract UriInfo parseUri(final Edm edm, final String uri) 
+
+  public abstract UriInfo parseUri(final Edm edm, final String uri)
       throws UriSyntaxException, UriNotMatchingException, EdmException; //NOPMD  - suppressed
-   
+
+  /**
+   * Parses the uri and returns UriInfo
+   * @param edm
+   * @param uri
+   * @param strictFilter
+   * @return UriInfo
+   * @throws UriSyntaxException
+   * @throws UriNotMatchingException
+   * @throws EdmException
+   */
+
+  public abstract UriInfo parseUri(final Edm edm, final String uri, boolean strictFilter)
+      throws UriSyntaxException, UriNotMatchingException, EdmException; //NOPMD  - suppressed
+
   
   
   /**
