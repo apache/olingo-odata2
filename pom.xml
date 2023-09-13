@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>org.apache</groupId>
 		<artifactId>apache</artifactId>
-		<version>25</version>
+		<version>30</version>
 	</parent>
 
 	<inceptionYear>2013</inceptionYear>
@@ -49,21 +49,24 @@
 		<maven.compiler.release>8</maven.compiler.release>
 		<javadoc.phase>package</javadoc.phase>
 
-        <!-- required for correct Sonar coverage data reporting (list of artifactIds) -->
-        <projectsToInstrument>org.apache.olingo.odata2.api,org.apache.olingo.odata2.core,org.apache.olingo.odata2.ref</projectsToInstrument>
-        <sonar.skippedModules>org.apache.olingo.odata2.expr</sonar.skippedModules>
-        <jax.ws.rs.version>2.0-m10</jax.ws.rs.version>
-        <!-- <jsr311.version>1.1.1</jsr311.version> -->
-        <joda.version>2.1</joda.version>
-        <cxf.version>2.7.10</cxf.version>
-        <jetty.version>7.6.21.v20160908</jetty.version>
-        <httpclient.version>4.2.5</httpclient.version>
-        <httpcore.version>4.2.5</httpcore.version>
-        <slf4j.version>1.7.1</slf4j.version>
-        <log4j.version>1.2.17</log4j.version>
-        <commonscodec.version>1.6</commonscodec.version>
-        <commonslang.version>3.1</commonslang.version>
-        <gson.version>2.9.1</gson.version>
+		<!-- required for correct Sonar coverage data reporting (list of artifactIds) -->
+		<projectsToInstrument>org.apache.olingo.odata2.api,org.apache.olingo.odata2.core,org.apache.olingo.odata2.ref</projectsToInstrument>
+		<sonar.skippedModules>org.apache.olingo.odata2.expr</sonar.skippedModules>
+		<jax.ws.rs.version>2.0-m10</jax.ws.rs.version>
+		<!-- <jsr311.version>1.1.1</jsr311.version> -->
+		<joda.version>2.1</joda.version>
+		<cxf.version>2.7.18</cxf.version>
+		<jetty.version>7.6.21.v20160908</jetty.version>
+		<!-- Newer version causes test issues (https://issues.apache.org/jira/browse/OLINGO-1607) -->
+		<!-- ServiceResolutionTest.testBaseUriWithEncoding:293->validateServiceRoot:298 -->
+		<httpclient.version>4.5.7</httpclient.version>
+		<httpcore.version>4.4.16</httpcore.version>
+		<slf4j.version>1.7.36</slf4j.version>
+		<log4j.version>1.2.17</log4j.version>
+		<commonscodec.version>1.6</commonscodec.version>
+		<commonslang.version>3.1</commonslang.version>
+		<gson.version>2.9.1</gson.version>
+		<hsqldb.version>2.7.2</hsqldb.version>
 
 		<antlr.version>3.4</antlr.version>
 
@@ -71,8 +74,8 @@
 		<junit.version>4.13.2</junit.version>
 		<xmlunit.version>1.6</xmlunit.version>
 
-		<version.eclipselink>2.5.1</version.eclipselink>
-		<version.javax.persistence>2.0.5</version.javax.persistence>
+		<version.eclipselink>2.7.13</version.eclipselink>
+		<version.javax.persistence>2.2.1</version.javax.persistence>
 
 		<spring.version>3.2.12.RELEASE</spring.version>
 
