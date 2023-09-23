@@ -30,9 +30,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.persistence.Cache;
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnitUtil;
+import javax.persistence.Query;
+import javax.persistence.SynchronizationType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
 
@@ -342,6 +345,21 @@ public class JPQLBuilderFactoryTest {
     }
 
     @Override
+    public void addNamedQuery(String s, Query query) {
+
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> aClass) {
+      return null;
+    }
+
+    @Override
+    public <T> void addNamedEntityGraph(String s, EntityGraph<T> entityGraph) {
+
+    }
+
+    @Override
     public Metamodel getMetamodel() {
       return null;
     }
@@ -360,6 +378,16 @@ public class JPQLBuilderFactoryTest {
     @Override
     public EntityManager createEntityManager(final Map arg0) {
       return em;
+    }
+
+    @Override
+    public EntityManager createEntityManager(SynchronizationType synchronizationType) {
+      return null;
+    }
+
+    @Override
+    public EntityManager createEntityManager(SynchronizationType synchronizationType, Map map) {
+      return null;
     }
 
     @Override

@@ -22,8 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHeaders;
@@ -49,6 +47,8 @@ import org.apache.olingo.odata2.testutil.fit.AbstractFitTest;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.junit.Ignore;
+
+import java.net.URI;
 
 /**
  * Abstract base class for tests employing the reference scenario.
@@ -104,7 +104,7 @@ public class AbstractRefTest extends AbstractFitTest {
             httpMethod == ODataHttpMethod.DELETE ? new HttpDelete() :
                 httpMethod == ODataHttpMethod.POST ? new HttpPost() :
                     httpMethod == ODataHttpMethod.PUT ? new HttpPut() : new HttpPatch();
-    request.setURI(URI.create(getEndpoint() + uri));
+    request.setURI(URI.create(getEndpoint().toString() + uri));
     if (additionalHeader != null) {
       request.addHeader(additionalHeader, additionalHeaderValue);
     }

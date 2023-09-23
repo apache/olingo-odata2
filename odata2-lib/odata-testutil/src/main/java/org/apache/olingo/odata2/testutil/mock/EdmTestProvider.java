@@ -187,17 +187,17 @@ public class EdmTestProvider extends EdmProvider {
     schema.setAnnotationElements(schemaElements);
     schemas.add(schema);
 
-    schema = new Schema();
-    schema.setNamespace(NAMESPACE_2);
+    Schema schemaNamespace2 = new Schema();
+    schemaNamespace2.setNamespace(NAMESPACE_2);
 
-    schema.setEntityTypes(Arrays.asList(getEntityType(ENTITY_TYPE_2_1)));
+    schemaNamespace2.setEntityTypes(Arrays.asList(getEntityType(ENTITY_TYPE_2_1)));
 
     entityContainer = new EntityContainer();
     entityContainer.setName(ENTITY_CONTAINER_2);
     entityContainer.setEntitySets(Arrays.asList(getEntitySet(ENTITY_CONTAINER_2, ENTITY_SET_2_1)));
-    schema.setEntityContainers(Arrays.asList(entityContainer));
+    schemaNamespace2.setEntityContainers(Arrays.asList(entityContainer));
 
-    schemas.add(schema);
+    schemas.add(schemaNamespace2);
 
     return schemas;
   }
