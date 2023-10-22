@@ -28,7 +28,7 @@
     <version.eclipse-plugin>2.9</version.eclipse-plugin>
     <version.jetty-plugin>8.1.14.v20131031</version.jetty-plugin>
     <!-- Dependency Versions -->
-    <version.cxf>2.7.6</version.cxf>
+    <version.cxf>2.7.8</version.cxf>
     <version.servlet-api>2.5</version.servlet-api>
     <version.jaxrs-api>2.0-m10</version.jaxrs-api>
     <version.slf4j>1.7.1</version.slf4j>
