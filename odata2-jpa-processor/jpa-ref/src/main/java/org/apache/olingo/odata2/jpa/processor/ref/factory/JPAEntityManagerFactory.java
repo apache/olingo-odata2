@@ -20,8 +20,8 @@ package org.apache.olingo.odata2.jpa.processor.ref.factory;
 
 import java.util.HashMap;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 public class JPAEntityManagerFactory {
   private static HashMap<String, EntityManagerFactory> emfMap;

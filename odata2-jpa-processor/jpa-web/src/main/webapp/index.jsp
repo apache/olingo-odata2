@@ -19,10 +19,10 @@
 <%@page
 	import="org.apache.olingo.odata2.jpa.processor.ref.factory.JPAEntityManagerFactory"%>
 <%@page import="java.util.List"%>
-<%@page import="javax.persistence.EntityManager"%>
-<%@page import="javax.persistence.EntityManagerFactory"%>
-<%@page import="javax.persistence.Persistence"%>
-<%@page import="javax.persistence.Query"%>
+<%@page import="jakarta.persistence.EntityManager"%>
+<%@page import="jakarta.persistence.EntityManagerFactory"%>
+<%@page import="jakarta.persistence.Persistence"%>
+<%@page import="jakarta.persistence.Query"%>
 <%@page
 	import="org.apache.olingo.odata2.jpa.processor.ref.web.JPAReferenceServiceFactory"%>
 <%@page

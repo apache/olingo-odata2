@@ -20,9 +20,9 @@ package org.apache.olingo.odata2.jpa.processor.ref.listeners;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PostLoad;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.Query;
 
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneContext;

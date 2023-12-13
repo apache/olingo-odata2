@@ -23,7 +23,7 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.olingo.odata2.core.ep.util.JsonStreamWriter;
 

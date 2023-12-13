@@ -22,7 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.jpa.processor.core.mock.model.JPAMetaModelMock;

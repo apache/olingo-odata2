@@ -21,9 +21,9 @@ package org.apache.olingo.odata2.jpa.processor.core.model;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EmbeddableType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.EmbeddableType;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -127,7 +127,7 @@ public class JPAEdmTestModelView implements JPAEdmAssociationEndView, JPAEdmAsso
   }
 
   @Override
-  public javax.persistence.metamodel.EntityType<?> getJPAEntityType() {
+  public jakarta.persistence.metamodel.EntityType<?> getJPAEntityType() {
     return null;
   }
 

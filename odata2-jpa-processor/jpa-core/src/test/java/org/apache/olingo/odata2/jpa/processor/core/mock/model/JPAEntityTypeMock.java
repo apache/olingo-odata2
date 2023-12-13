@@ -20,16 +20,16 @@ package org.apache.olingo.odata2.jpa.processor.core.mock.model;
 
 import java.util.Set;
 
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.CollectionAttribute;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.IdentifiableType;
-import javax.persistence.metamodel.ListAttribute;
-import javax.persistence.metamodel.MapAttribute;
-import javax.persistence.metamodel.PluralAttribute;
-import javax.persistence.metamodel.SetAttribute;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.CollectionAttribute;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.IdentifiableType;
+import jakarta.persistence.metamodel.ListAttribute;
+import jakarta.persistence.metamodel.MapAttribute;
+import jakarta.persistence.metamodel.PluralAttribute;
+import jakarta.persistence.metamodel.SetAttribute;
+import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.metamodel.Type;
 
 public abstract class JPAEntityTypeMock<X> implements EntityType<X> {
 
@@ -224,7 +224,7 @@ public abstract class JPAEntityTypeMock<X> implements EntityType<X> {
   }
 
   @Override
-  public javax.persistence.metamodel.Type.PersistenceType getPersistenceType() {
+  public jakarta.persistence.metamodel.Type.PersistenceType getPersistenceType() {
     return null;
   }
 
@@ -234,7 +234,7 @@ public abstract class JPAEntityTypeMock<X> implements EntityType<X> {
   }
 
   @Override
-  public javax.persistence.metamodel.Bindable.BindableType getBindableType() {
+  public jakarta.persistence.metamodel.Bindable.BindableType getBindableType() {
     return null;
   }
 

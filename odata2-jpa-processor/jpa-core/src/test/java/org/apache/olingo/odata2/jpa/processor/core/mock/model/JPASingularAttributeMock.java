@@ -20,9 +20,9 @@ package org.apache.olingo.odata2.jpa.processor.core.mock.model;
 
 import java.lang.reflect.Member;
 
-import javax.persistence.metamodel.ManagedType;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type;
+import jakarta.persistence.metamodel.ManagedType;
+import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.metamodel.Type;
 
 public class JPASingularAttributeMock<X, T> implements SingularAttribute<X, T> {
 
@@ -47,7 +47,7 @@ public class JPASingularAttributeMock<X, T> implements SingularAttribute<X, T> {
   }
 
   @Override
-  public javax.persistence.metamodel.Attribute.PersistentAttributeType getPersistentAttributeType() {
+  public jakarta.persistence.metamodel.Attribute.PersistentAttributeType getPersistentAttributeType() {
     return null;
   }
 
@@ -67,7 +67,7 @@ public class JPASingularAttributeMock<X, T> implements SingularAttribute<X, T> {
   }
 
   @Override
-  public javax.persistence.metamodel.Bindable.BindableType getBindableType() {
+  public jakarta.persistence.metamodel.Bindable.BindableType getBindableType() {
     return null;
   }
 

@@ -68,7 +68,7 @@ public class ODataApplicationTest {
   private ServletContextHandler createContextHandler() {
     final CXFNonSpringJaxrsServlet odataServlet = new CXFNonSpringJaxrsServlet();
     final ServletHolder odataServletHolder = new ServletHolder(odataServlet);
-    odataServletHolder.setInitParameter("javax.ws.rs.Application",
+    odataServletHolder.setInitParameter("jakarta.ws.rs.Application",
         ODataApplication_.class.getName());
 
     final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);

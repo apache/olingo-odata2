@@ -21,9 +21,9 @@ package org.apache.olingo.odata2.jpa.processor.core.mock.model;
 import java.lang.reflect.Member;
 import java.util.ArrayList;
 
-import javax.persistence.metamodel.ManagedType;
-import javax.persistence.metamodel.PluralAttribute;
-import javax.persistence.metamodel.Type;
+import jakarta.persistence.metamodel.ManagedType;
+import jakarta.persistence.metamodel.PluralAttribute;
+import jakarta.persistence.metamodel.Type;
 
 public class JPAPluralAttributeMock implements PluralAttribute<Object, ArrayList<String>, String> {
 
@@ -34,7 +34,7 @@ public class JPAPluralAttributeMock implements PluralAttribute<Object, ArrayList
   }
 
   @Override
-  public javax.persistence.metamodel.Attribute.PersistentAttributeType getPersistentAttributeType() {
+  public jakarta.persistence.metamodel.Attribute.PersistentAttributeType getPersistentAttributeType() {
     // TODO Auto-generated method stub
     return null;
   }
@@ -69,7 +69,7 @@ public class JPAPluralAttributeMock implements PluralAttribute<Object, ArrayList
   }
 
   @Override
-  public javax.persistence.metamodel.Bindable.BindableType getBindableType() {
+  public jakarta.persistence.metamodel.Bindable.BindableType getBindableType() {
     // TODO Auto-generated method stub
     return null;
   }
@@ -81,7 +81,7 @@ public class JPAPluralAttributeMock implements PluralAttribute<Object, ArrayList
   }
 
   @Override
-  public javax.persistence.metamodel.PluralAttribute.CollectionType getCollectionType() {
+  public jakarta.persistence.metamodel.PluralAttribute.CollectionType getCollectionType() {
     // TODO Auto-generated method stub
     return null;
   }

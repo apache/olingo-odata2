@@ -18,8 +18,8 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.api;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.apache.olingo.odata2.api.edm.provider.EdmProvider;
 import org.apache.olingo.odata2.api.processor.ODataContext;
@@ -111,7 +111,7 @@ public interface ODataJPAContext {
    * context.
    * 
    * @param emf
-   * is of type {@link javax.persistence.EntityManagerFactory}
+   * is of type {@link jakarta.persistence.EntityManagerFactory}
    * 
    */
   public void setEntityManagerFactory(EntityManagerFactory emf);
@@ -159,7 +159,7 @@ public interface ODataJPAContext {
    * Hence all entities that are accessed within JPA processor are managed by
    * single entity manager.
    * 
-   * @return an instance of type {@link javax.persistence.EntityManager}
+   * @return an instance of type {@link jakarta.persistence.EntityManager}
    */
   public EntityManager getEntityManager();
 
