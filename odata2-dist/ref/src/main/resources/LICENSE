@@ -917,7 +917,7 @@
   - EclipseLink (non-OSGi) (http://www.eclipse.org/eclipselink) 
     org.eclipse.persistence:eclipselink:jar:2.5.0
   - Javax Persistence (http://www.eclipse.org/eclipselink) 
-    org.eclipse.persistence:javax.persistence:jar:2.0.5
+    jakarta.persistence:jakarta.persistence-api:jar:2.0.5
     License: Eclipse Public License v1.0  (http://www.eclipse.org/legal/epl-v10.html)    
     License: Eclipse Distribution License v. 1.0  
     (http://www.eclipse.org/org/documents/edl-v10.php)

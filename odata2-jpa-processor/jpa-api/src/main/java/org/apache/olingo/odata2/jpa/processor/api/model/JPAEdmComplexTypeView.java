@@ -58,9 +58,9 @@ public interface JPAEdmComplexTypeView extends JPAEdmBaseView {
    * The method returns an JPA embeddable type that is currently being
    * processed.
    * 
-   * @return an instance of type {@link javax.persistence.metamodel.EmbeddableType}
+   * @return an instance of type {@linkjakarta.persistence.metamodel.EmbeddableType}
    */
-  public javax.persistence.metamodel.EmbeddableType<?> getJPAEmbeddableType();
+  public jakarta.persistence.metamodel.EmbeddableType<?> getJPAEmbeddableType();
 
   /**
    * The method returns a consistent list of EDM complex types.

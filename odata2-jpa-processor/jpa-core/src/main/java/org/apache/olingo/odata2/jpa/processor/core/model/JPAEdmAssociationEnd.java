@@ -28,11 +28,11 @@ import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmEntityTypeView;
 import org.apache.olingo.odata2.jpa.processor.api.model.JPAEdmPropertyView;
 import org.apache.olingo.odata2.jpa.processor.core.access.model.JPAEdmNameBuilder;
 
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.metamodel.Attribute.PersistentAttributeType;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.metamodel.Attribute.PersistentAttributeType;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Array;
 import java.util.List;

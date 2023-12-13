@@ -24,8 +24,8 @@ import java.io.Reader;
 import java.sql.Clob;
 import java.sql.SQLException;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 import org.hsqldb.jdbc.JDBCClob;
 

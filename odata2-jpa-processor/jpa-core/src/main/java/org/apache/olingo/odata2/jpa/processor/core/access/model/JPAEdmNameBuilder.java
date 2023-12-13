@@ -21,10 +21,10 @@ package org.apache.olingo.odata2.jpa.processor.core.access.model;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 
-import javax.persistence.Column;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.ManagedType;
-import javax.persistence.metamodel.PluralAttribute;
+import jakarta.persistence.Column;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.ManagedType;
+import jakarta.persistence.metamodel.PluralAttribute;
 
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;

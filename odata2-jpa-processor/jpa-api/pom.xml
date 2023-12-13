@@ -76,9 +76,8 @@
 	<dependencies>
 		<!-- JPA Support -->
 		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.persistence</artifactId>
-			<version>${version.javax.persistence}</version>
+		    <groupId>jakarta.persistence</groupId>
+		    <artifactId>jakarta.persistence-api</artifactId>
 		</dependency>
 
 		<!-- OData Java Library -->

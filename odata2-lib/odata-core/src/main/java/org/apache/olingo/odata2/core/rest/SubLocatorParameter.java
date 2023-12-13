@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.core.rest;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Request;
 
 import org.apache.olingo.odata2.api.ODataServiceFactory;

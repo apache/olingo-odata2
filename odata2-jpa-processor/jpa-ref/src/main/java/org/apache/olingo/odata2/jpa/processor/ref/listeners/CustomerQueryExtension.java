@@ -20,8 +20,8 @@ package org.apache.olingo.odata2.jpa.processor.ref.listeners;
 
 import java.util.Locale;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 import org.apache.olingo.odata2.api.uri.expression.FilterExpression;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetCountUriInfo;

@@ -23,9 +23,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Type;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Type;
 
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;
@@ -205,7 +205,7 @@ public class JPAEdmNavigationPropertyTest extends JPAEdmTestModelView {
   private class ElementType implements Type<String> {
 
     @Override
-    public javax.persistence.metamodel.Type.PersistenceType getPersistenceType() {
+    public jakarta.persistence.metamodel.Type.PersistenceType getPersistenceType() {
       return PersistenceType.BASIC;
     }
 

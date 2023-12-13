@@ -21,7 +21,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<version.cxf>2.7.6</version.cxf>
 		<version.eclipselink>2.5.1</version.eclipselink>
-		<version.javax.persistence>2.0.5</version.javax.persistence>
 		<version.hsqldb>2.3.2</version.hsqldb>
 		<version.olingo>2.0.13</version.olingo>
 	</properties>
@@ -77,12 +76,6 @@
 		</dependency>
 
 		<!-- Web Support -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-frontend-jaxrs</artifactId>

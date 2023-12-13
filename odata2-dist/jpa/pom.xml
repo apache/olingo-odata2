@@ -99,11 +99,5 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-            <version>${version.javax.persistence}</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 </project>

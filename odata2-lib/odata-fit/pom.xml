@@ -205,19 +205,16 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
 			<scope>test</scope>
 		</dependency>
         <dependency>
           <groupId>xmlunit</groupId>
           <artifactId>xmlunit</artifactId>
-          <version>${xmlunit.version}</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-log4j12</artifactId>
-          <version>${slf4j.version}</version>
           <scope>test</scope>
         </dependency>
 	</dependencies>

@@ -22,9 +22,9 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
 
-import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialClob;
-import javax.sql.rowset.serial.SerialException;
+import jakarta.sql.rowset.serial.SerialBlob;
+import jakarta.sql.rowset.serial.SerialClob;
+import jakarta.sql.rowset.serial.SerialException;
 
 import org.apache.olingo.odata2.jpa.processor.api.OnJPAWriteContent;
 import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;

@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.rest;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;

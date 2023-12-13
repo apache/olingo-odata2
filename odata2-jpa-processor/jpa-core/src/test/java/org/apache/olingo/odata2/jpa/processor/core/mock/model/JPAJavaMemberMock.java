@@ -22,7 +22,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Member;
 
-import javax.persistence.JoinColumns;
+import jakarta.persistence.JoinColumns;
 
 public class JPAJavaMemberMock implements Member, AnnotatedElement, Annotation {
 

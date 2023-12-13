@@ -20,8 +20,8 @@ package org.apache.olingo.odata2.jpa.processor.ref.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class SalesOrderItemKey implements Serializable {

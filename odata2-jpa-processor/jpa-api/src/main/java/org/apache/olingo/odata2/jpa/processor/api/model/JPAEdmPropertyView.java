@@ -20,7 +20,7 @@ package org.apache.olingo.odata2.jpa.processor.api.model;
 
 import java.util.List;
 
-import javax.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.Attribute;
 
 import org.apache.olingo.odata2.api.edm.provider.Property;
 import org.apache.olingo.odata2.api.edm.provider.SimpleProperty;
@@ -74,16 +74,16 @@ public interface JPAEdmPropertyView extends JPAEdmBaseView {
   /**
    * The method returns a JPA Attribute for the given JPA entity type.
    * 
-   * @return an instance of type {@link javax.persistence.metamodel.Attribute
+   * @return an instance of type {@linkjakarta.persistence.metamodel.Attribute
    * <?, ?>}
    */
   Attribute<?, ?> getJPAAttribute();
 
   /**
-   * The method returns a JPA Attribute referenced by a JPA Attribute in the {@link javax.persistence.JoinColumn}
+   * The method returns a JPA Attribute referenced by a JPA Attribute in the {@linkjakarta.persistence.JoinColumn}
    * annotation for the given JPA entity type .
    * 
-   * @return an instance of type {@link javax.persistence.metamodel.Attribute
+   * @return an instance of type {@linkjakarta.persistence.metamodel.Attribute
    * <?, ?>}
    */
   Attribute<?, ?> getJPAReferencedAttribute();

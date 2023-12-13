@@ -20,14 +20,14 @@ package org.apache.olingo.odata2.jpa.processor.core.mock.model;
 
 import java.util.Set;
 
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.CollectionAttribute;
-import javax.persistence.metamodel.ListAttribute;
-import javax.persistence.metamodel.ManagedType;
-import javax.persistence.metamodel.MapAttribute;
-import javax.persistence.metamodel.PluralAttribute;
-import javax.persistence.metamodel.SetAttribute;
-import javax.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.CollectionAttribute;
+import jakarta.persistence.metamodel.ListAttribute;
+import jakarta.persistence.metamodel.ManagedType;
+import jakarta.persistence.metamodel.MapAttribute;
+import jakarta.persistence.metamodel.PluralAttribute;
+import jakarta.persistence.metamodel.SetAttribute;
+import jakarta.persistence.metamodel.SingularAttribute;
 
 public class JPAManagedTypeMock<X> implements ManagedType<X> {
 
@@ -37,7 +37,7 @@ public class JPAManagedTypeMock<X> implements ManagedType<X> {
   }
 
   @Override
-  public javax.persistence.metamodel.Type.PersistenceType getPersistenceType() {
+  public jakarta.persistence.metamodel.Type.PersistenceType getPersistenceType() {
     return null;
   }
 

@@ -31,7 +31,6 @@
     <version.cxf>2.7.6</version.cxf>
     <version.servlet-api>2.5</version.servlet-api>
     <version.jaxrs-api>2.0-m10</version.jaxrs-api>
-    <version.slf4j>1.7.1</version.slf4j>
     <version.olingo>2.0.13</version.olingo>
   </properties>
 
@@ -59,8 +58,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${version.compiler-plugin}</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>17</source>
+          <target>17</target>
         </configuration>
       </plugin>
       <plugin>
@@ -124,16 +123,8 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>${version.slf4j}</version>
     </dependency>
     <!-- Servlet/REST dependencies -->
-    <dependency>
-      <!-- required because of auto detection of web facet 2.5 -->
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>${version.servlet-api}</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>javax.ws.rs-api</artifactId>

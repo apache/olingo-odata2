@@ -85,7 +85,7 @@ public abstract class ODataJPAServiceFactory extends ODataServiceFactory {
 
   /**
    * Implement this method and initialize OData JPA Context. It is mandatory
-   * to set an instance of type {@link javax.persistence.EntityManagerFactory} into the context. An exception of type
+   * to set an instance of type {@linkjakarta.persistence.EntityManagerFactory} into the context. An exception of type
    * {@link org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException} is thrown if
    * EntityManagerFactory is not initialized. <br>
    * <br>

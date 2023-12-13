@@ -20,8 +20,8 @@ package org.apache.olingo.odata2.jpa.processor.core.model;
 
 import java.lang.reflect.AnnotatedElement;
 
-import javax.persistence.Column;
-import javax.persistence.metamodel.Attribute;
+import jakarta.persistence.Column;
+import jakarta.persistence.metamodel.Attribute;
 
 import org.apache.olingo.odata2.api.edm.EdmSimpleTypeKind;
 import org.apache.olingo.odata2.api.edm.provider.Facets;

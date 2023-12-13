@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file
-    distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you under
-    the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may
-    obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to
-    in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
-    ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements. See the NOTICE file
+    distributed with this work for additional information regarding copyright
+ownership. The ASF licenses this file to you under
+    the Apache License, Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may
+    obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to
+    in writing, software distributed under the License is distributed on an "AS IS"
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+    ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under
     the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.apache.olingo</groupId>
@@ -49,39 +56,38 @@
 		<maven.compiler.release>8</maven.compiler.release>
 		<javadoc.phase>package</javadoc.phase>
 
-		<!-- required for correct Sonar coverage data reporting (list of artifactIds) -->
-		<projectsToInstrument>org.apache.olingo.odata2.api,org.apache.olingo.odata2.core,org.apache.olingo.odata2.ref</projectsToInstrument>
+		<!-- required for correct Sonar coverage data reporting (list of
+		artifactIds) -->
+		<projectsToInstrument>
+			org.apache.olingo.odata2.api,org.apache.olingo.odata2.core,org.apache.olingo.odata2.ref</projectsToInstrument>
 		<sonar.skippedModules>org.apache.olingo.odata2.expr</sonar.skippedModules>
 		<jax.ws.rs.version>2.0-m10</jax.ws.rs.version>
 		<!-- <jsr311.version>1.1.1</jsr311.version> -->
 		<joda.version>2.1</joda.version>
-		<cxf.version>2.7.18</cxf.version>
-<!--		<jetty.version>7.6.21.v20160908</jetty.version>-->
-		<jetty.version>8.0.4.v20111024</jetty.version>
-		<!-- Newer version causes test issues (https://issues.apache.org/jira/browse/OLINGO-1607) -->
-		<!-- ServiceResolutionTest.testBaseUriWithEncoding:293->validateServiceRoot:298 -->
-		<httpclient.version>4.5.6</httpclient.version>
-		<httpcore.version>4.4.16</httpcore.version>
-		<slf4j.version>1.7.36</slf4j.version>
+		<!-- <cxf.version>4.0.3</cxf.version>  -->
+		<!--<jetty.version>11.0.18</jetty.version>-->
+		<jetty.version>11.0.18</jetty.version>
+		<cxf.version>4.0.3</cxf.version>
+
+		<!-- Newer version causes test issues
+		(https://issues.apache.org/jira/browse/OLINGO-1607) -->
+		<!--
+		ServiceResolutionTest.testBaseUriWithEncoding:293->validateServiceRoot:298 -->
+		<httpclient.version>4.5.14</httpclient.version>
 		<log4j.version>1.2.17</log4j.version>
-		<commonscodec.version>1.6</commonscodec.version>
-		<commonslang.version>3.1</commonslang.version>
-		<gson.version>2.9.1</gson.version>
-		<hsqldb.version>2.5.2</hsqldb.version>
+		<gson.version>2.10.1</gson.version>
+		<hsqldb.version>2.7.2</hsqldb.version>
 
-		<antlr.version>3.4</antlr.version>
+		<antlr.version>3.5.3</antlr.version>
 
-		<mockito.version>1.9.0</mockito.version>
-		<junit.version>4.13.2</junit.version>
 		<xmlunit.version>1.6</xmlunit.version>
 
-		<version.eclipselink>2.7.13</version.eclipselink>
-		<version.javax.persistence>2.2.1</version.javax.persistence>
+		<version.eclipselink>4.0.2</version.eclipselink>
 
-		<spring.version>3.2.12.RELEASE</spring.version>
+		<!-- Setting needed for Java 8 release builds -->
+		<additionalparam>-Xdoclint:none</additionalparam>
 
-    <!-- Setting needed for Java 8 release builds -->
-    <additionalparam>-Xdoclint:none</additionalparam>
+		<spring.boot.version>3.2.0</spring.boot.version>
 	</properties>
 
 	<modules>
@@ -89,7 +95,7 @@
 		<module>odata2-jpa-processor</module>
 		<module>odata2-annotation-processor</module>
 		<module>odata2-dist</module>
-		<module>odata2-sample</module>
+		<!--<module>odata2-sample</module>-->
 	</modules>
 
 	<build>
@@ -100,12 +106,12 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>buildnumber-maven-plugin</artifactId>
-					<version>1.2</version>
+					<version>3.2.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.rat</groupId>
 					<artifactId>apache-rat-plugin</artifactId>
-					<version>0.9</version>
+					<version>0.15</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-checkstyle-plugin</artifactId>
@@ -114,37 +120,37 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
+					<version>3.11.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.3.2</version>
+					<version>3.3.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>2.2.1</version>
+					<version>3.3.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.9</version>
+					<version>3.6.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.4</version>
+					<version>3.6.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.7</version>
+					<version>3.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-eclipse-plugin</artifactId>
-					<version>2.9</version>
+					<version>2.10</version>
 				</plugin>
 				<plugin>
 					<groupId>org.antlr</groupId>
@@ -154,27 +160,27 @@
 				<plugin>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-bundle-plugin</artifactId>
-					<version>2.3.7</version>
+					<version>5.1.9</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-remote-resources-plugin</artifactId>
-					<version>1.5</version>
+					<version>3.1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.7</version>
+					<version>3.1.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
-					<version>2.4</version>
+					<version>3.4.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>cobertura-maven-plugin</artifactId>
-					<version>2.6</version>
+					<version>2.7</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -187,8 +193,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>17</source>
+					<target>17</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -270,7 +276,8 @@
 								<projectName>Apache Olingo</projectName>
 							</properties>
 							<resourceBundles>
-								<resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
+								<resourceBundle>
+									org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
 							</resourceBundles>
 						</configuration>
 					</execution>
@@ -282,7 +289,8 @@
 					<webResources>
 						<resource>
 							<!-- this is relative to the pom.xml directory -->
-							<directory>${project.build.directory}/maven-shared-archive-resources</directory>
+							<directory>
+								${project.build.directory}/maven-shared-archive-resources</directory>
 							<includes>
 								<include>META-INF/*</include>
 							</includes>
@@ -298,7 +306,8 @@
 						<excludes>
 							<exclude>org/apache/olingo/odata2/**/api/**/*.class</exclude>
 							<exclude>org/apache/olingo/odata2/**/ref/**/*.class</exclude>
-							<exclude>org/apache/olingo/odata2/**/testutil/**/*.class</exclude>
+							<exclude>
+								org/apache/olingo/odata2/**/testutil/**/*.class</exclude>
 						</excludes>
 					</instrumentation>
 				</configuration>
@@ -307,17 +316,17 @@
 	</build>
 
 	<profiles>
-    <profile>
+		<profile>
 			<id>spring</id>
-      <modules>
-        <module>odata2-spring</module>
-      </modules>
+			<modules>
+				<module>odata2-spring</module>
+			</modules>
 		</profile>
 		<profile>
 			<id>build.fast</id>
 			<properties>
 				<maven.test.skip>true</maven.test.skip>
-				<javadoc.phase/>
+				<javadoc.phase />
 			</properties>
 		</profile>
 		<profile>
@@ -372,7 +381,7 @@
 										<exclude>**/goal.txt</exclude>
 										<exclude>**/target/**</exclude>
 										<exclude>**/*.iml</exclude>
-                    <exclude>.repository/**</exclude>
+										<exclude>.repository/**</exclude>
 									</excludes>
 								</configuration>
 							</execution>
@@ -398,13 +407,15 @@
 								<configuration>
 									<tags>
 										<tag>
-											<name>org.apache.olingo.odata2.DoNotImplement</name>
+											<name>
+												org.apache.olingo.odata2.DoNotImplement</name>
 											<placement>a</placement>
-											<head>Do not implement this interface or derive from class.</head>
+											<head>Do not implement this
+												interface or derive from class.</head>
 										</tag>
 									</tags>
 									<excludePackageNames>
-                                        org.apache.olingo.odata2.core:org.apache.olingo.odata2.core.*:org.apache.olingo.odata2.jpa.processor.core:org.apache.olingo.odata2.jpa.processor.core.*:org.apache.olingo.odata2.annotation.processor.core:org.apache.olingo.odata2.annotation.processor.core.*:org.apache.olingo.odata2.testutil:org.apache.olingo.odata2.testutil.*
+										org.apache.olingo.odata2.core:org.apache.olingo.odata2.core.*:org.apache.olingo.odata2.jpa.processor.core:org.apache.olingo.odata2.jpa.processor.core.*:org.apache.olingo.odata2.annotation.processor.core:org.apache.olingo.odata2.annotation.processor.core.*:org.apache.olingo.odata2.testutil:org.apache.olingo.odata2.testutil.*
 									</excludePackageNames>
 									<additionalJOptions>
 										<additionalJOption>-quiet</additionalJOption>
@@ -412,27 +423,34 @@
 									<groups>
 										<group>
 											<title>OData Lib</title>
-											<packages>org.apache.olingo.odata2.api:org.apache.olingo.odata2.api.*</packages>
+											<packages>
+												org.apache.olingo.odata2.api:org.apache.olingo.odata2.api.*</packages>
 										</group>
 										<group>
 											<title>OData Reference Scenario</title>
-											<packages>org.apache.olingo.odata2.ref:org.apache.olingo.odata2.ref.*</packages>
+											<packages>
+												org.apache.olingo.odata2.ref:org.apache.olingo.odata2.ref.*</packages>
 										</group>
 										<group>
 											<title>OData JPA Processor</title>
-											<packages>org.apache.olingo.odata2.jpa.processor.api:org.apache.olingo.odata2.jpa.processor.api.*</packages>
+											<packages>
+												org.apache.olingo.odata2.jpa.processor.api:org.apache.olingo.odata2.jpa.processor.api.*</packages>
 										</group>
 										<group>
 											<title>OData Annotation Processor</title>
-											<packages>org.apache.olingo.odata2.annotation.processor.api:org.apache.olingo.odata2.annotation.processor.api.*</packages>
+											<packages>
+												org.apache.olingo.odata2.annotation.processor.api:org.apache.olingo.odata2.annotation.processor.api.*</packages>
 										</group>
 										<group>
 											<title>OData JPA Reference Scenario</title>
-											<packages>org.apache.olingo.odata2.jpa.processor.ref:org.apache.olingo.odata2.jpa.processor.ref.*</packages>
+											<packages>
+												org.apache.olingo.odata2.jpa.processor.ref:org.apache.olingo.odata2.jpa.processor.ref.*</packages>
 										</group>
 										<group>
-											<title>OData Annotation Reference Scenario</title>
-											<packages>org.apache.olingo.odata2.annotation.processor.ref:org.apache.olingo.odata2.annotation.processor.ref.*</packages>
+											<title>OData Annotation Reference
+												Scenario</title>
+											<packages>
+												org.apache.olingo.odata2.annotation.processor.ref:org.apache.olingo.odata2.annotation.processor.ref.*</packages>
 										</group>
 									</groups>
 								</configuration>
@@ -444,39 +462,51 @@
 		</profile>
 	</profiles>
 
-    <repositories>
-        <repository>
-            <id>oss.sonatype.org</id>
-            <name>OSS Sonatype Staging</name>
-            <url>https://oss.sonatype.org/content/groups/staging</url>
-        </repository>
-    </repositories>
+	<repositories>
+		<repository>
+			<id>oss.sonatype.org</id>
+			<name>OSS Sonatype Staging</name>
+			<url>https://oss.sonatype.org/content/groups/staging</url>
+		</repository>
+	</repositories>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>xmlunit</groupId>
+				<artifactId>xmlunit</artifactId>
+				<version>${xmlunit.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-servlet</artifactId>
+				<version>${jetty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-server</artifactId>
+				<version>${jetty.version}</version>
+			</dependency>
+		    <dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-security</artifactId>
+				<version>12.0.4</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
-    <dependencyManagement>
-      <dependencies>
-          <dependency>
-              <groupId>junit</groupId>
-              <artifactId>junit</artifactId>
-              <version>${junit.version}</version>
-          </dependency>
-          <dependency>
-              <groupId>org.mockito</groupId>
-              <artifactId>mockito-all</artifactId>
-              <version>${mockito.version}</version>
-          </dependency>
-          <dependency>
-              <groupId>xmlunit</groupId>
-              <artifactId>xmlunit</artifactId>
-              <version>${xmlunit.version}</version>
-          </dependency>
-      </dependencies>
-    </dependencyManagement>
-    
-    <distributionManagement>
-      <repository>
-          <id>github</id>
-          <name>GitHub Apache Maven Packages</name>
-          <url>https://maven.pkg.github.com/dirigiblelabs/olingo-odata2</url>
-      </repository>
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/dirigiblelabs/olingo-odata2</url>
+		</repository>
 	</distributionManagement>
 </project>
