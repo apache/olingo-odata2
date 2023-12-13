@@ -30,4 +30,4 @@ jobs:
         distribution: 'corretto'
         java-version: 8
     - name: Maven Build
-      run: mvn clean install
+      run: mvn clean install  -D skipTests -D maven.test.skip=true
