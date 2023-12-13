@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;

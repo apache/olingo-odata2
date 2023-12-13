@@ -124,8 +124,8 @@ public class TestServer {
         switch (servletType) {
             case JAXRS_SERVLET:
                 CXFNonSpringJaxrsServlet cxfNonSpringJaxrsServlet = new CXFNonSpringJaxrsServlet();
-                odataServletHolder = new ServletHolder();
-                odataServletHolder.setInitParameter("javax.ws.rs.Application", "org.apache.olingo.odata2.core.rest.app.ODataApplication");
+                odataServletHolder = new ServletHolder(cxfNonSpringJaxrsServlet);
+                odataServletHolder.setInitParameter("jakarta.ws.rs.Application", "org.apache.olingo.odata2.core.rest.app.ODataApplication");
                 odataServletHolder.setInitParameter(ODataServiceFactory.FACTORY_LABEL, factoryClass.getCanonicalName());
                 break;
             case ODATA_SERVLET:

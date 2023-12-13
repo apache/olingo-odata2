@@ -497,8 +497,8 @@
 
 
 =====================================================================
-  - javax.ws.rs-api (http://jax-rs-spec.java.net)
-    javax.ws.rs:javax.ws.rs-api:jar:2.0-m10
+  - jakarta.ws.rs-api (http://jax-rs-spec.java.net)
+    jakarta.ws.rs:jakarta.ws.rs-api:jar:2.0-m10
   - JAXB Reference Implementation (http://jaxb.java.net/)
     com.sun.xml.bind:jaxb-impl:jar:2.2.6
     License: CDDL 1.1  (https://glassfish.java.net/public/CDDL+GPL_1_1.html)

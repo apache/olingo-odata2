@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.core.commons.ContentType.ODataFormat;

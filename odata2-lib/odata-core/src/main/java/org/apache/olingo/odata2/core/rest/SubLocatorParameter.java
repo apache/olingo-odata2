@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.core.rest;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Request;
+import jakarta.ws.rs.core.Request;
 
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 
@@ -30,9 +30,9 @@ import org.apache.olingo.odata2.api.ODataServiceFactory;
  */
 public class SubLocatorParameter {
 
-  private List<javax.ws.rs.core.PathSegment> pathSegments;
-  private javax.ws.rs.core.HttpHeaders httpHeaders;
-  private javax.ws.rs.core.UriInfo uriInfo;
+  private List<jakarta.ws.rs.core.PathSegment> pathSegments;
+  private jakarta.ws.rs.core.HttpHeaders httpHeaders;
+  private jakarta.ws.rs.core.UriInfo uriInfo;
   private Request request;
   private int pathSplit;
   private ODataServiceFactory serviceFactory;
@@ -46,27 +46,27 @@ public class SubLocatorParameter {
     this.serviceFactory = serviceFactory;
   }
 
-  public List<javax.ws.rs.core.PathSegment> getPathSegments() {
+  public List<jakarta.ws.rs.core.PathSegment> getPathSegments() {
     return pathSegments;
   }
 
-  public void setPathSegments(final List<javax.ws.rs.core.PathSegment> pathSegments) {
+  public void setPathSegments(final List<jakarta.ws.rs.core.PathSegment> pathSegments) {
     this.pathSegments = pathSegments;
   }
 
-  public javax.ws.rs.core.HttpHeaders getHttpHeaders() {
+  public jakarta.ws.rs.core.HttpHeaders getHttpHeaders() {
     return httpHeaders;
   }
 
-  public void setHttpHeaders(final javax.ws.rs.core.HttpHeaders httpHeaders) {
+  public void setHttpHeaders(final jakarta.ws.rs.core.HttpHeaders httpHeaders) {
     this.httpHeaders = httpHeaders;
   }
 
-  public javax.ws.rs.core.UriInfo getUriInfo() {
+  public jakarta.ws.rs.core.UriInfo getUriInfo() {
     return uriInfo;
   }
 
-  public void setUriInfo(final javax.ws.rs.core.UriInfo uriInfo) {
+  public void setUriInfo(final jakarta.ws.rs.core.UriInfo uriInfo) {
     this.uriInfo = uriInfo;
   }
 

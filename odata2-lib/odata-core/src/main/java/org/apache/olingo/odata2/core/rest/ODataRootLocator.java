@@ -22,16 +22,16 @@ import java.util.List;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.http.HttpServletRequest;
-import javax.ws.rs.Encoded;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.PathSegment;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.Encoded;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.PathSegment;
+import jakarta.ws.rs.core.Request;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;

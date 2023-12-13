@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.ws.rs.HttpMethod;
+import jakarta.ws.rs.HttpMethod;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

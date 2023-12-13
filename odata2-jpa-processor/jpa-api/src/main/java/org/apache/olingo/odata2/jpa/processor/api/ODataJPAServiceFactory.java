@@ -59,7 +59,7 @@ import org.apache.olingo.odata2.jpa.processor.api.factory.ODataJPAFactory;
  *  <servlet-name>ReferenceScenarioServlet</servlet-name>
  *  <servlet-class>org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet</servlet-class>
  *  <init-param>
- *    <param-name>javax.ws.rs.Application</param-name>
+ *    <param-name>jakarta.ws.rs.Application</param-name>
  *    <param-value>org.apache.olingo.odata2.core.rest.ODataApplication</param-value>
  *  </init-param>
  *  <init-param>
