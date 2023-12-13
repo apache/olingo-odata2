@@ -143,7 +143,7 @@ public class DispatcherTest extends BaseTest {
 
     private static Answer<ODataResponse> getAnswer() {
         return invocation -> mockResponse(invocation.getMethod()
-                                      .getName());
+                                                    .getName());
     }
 
     private static ODataResponse mockResponse(final String value) {
@@ -165,8 +165,9 @@ public class DispatcherTest extends BaseTest {
             final String expectedMethodName) throws ODataException {
         ODataServiceFactory factory = mock(ODataServiceFactory.class);
 
+        InputStream body = mock(InputStream.class);
         final ODataResponse response =
-                new Dispatcher(factory, getMockService()).dispatch(method, mockUriInfo(uriType, isValue), null, "application/xml", "*/*");
+                new Dispatcher(factory, getMockService()).dispatch(method, mockUriInfo(uriType, isValue), body, "application/xml", "*/*");
         assertEquals(expectedMethodName, response.getEntity());
     }
 

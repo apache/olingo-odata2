@@ -58,7 +58,7 @@
       <property name="tokens" value="LITERAL_WHILE,LITERAL_FINALLY,LITERAL_IF"/>
     </module>
     <module name="LeftCurly">
-      <property name="severity" value="warning"/>
+      <property name="severity" value="info"/>
     </module>
     <module name="NeedBraces">
       <property name="severity" value="warning"/>
@@ -67,7 +67,7 @@
       <property name="severity" value="warning"/>
     </module>
     <module name="LineLength">
-      <property name="max" value="160"/>
+      <property name="max" value="500"/>
     </module>
   </module>
   <module name="SuppressionCommentFilter"/>

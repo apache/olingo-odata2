@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -227,6 +228,7 @@ public class ODataRequestHandlerValidationTest extends BaseTest {
         if (httpHeaderName == HttpHeaders.ACCEPT) {
             when(request.getAcceptHeaders()).thenReturn(Arrays.asList(httpHeaderValue));
         }
+        when(request.getBody()).thenReturn(mock(InputStream.class));
         return request;
     }
 

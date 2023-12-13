@@ -1,20 +1,16 @@
 /*******************************************************************************
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * 
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package org.apache.olingo.odata2.fit.basic;
 
@@ -22,14 +18,13 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathValuesEqual;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import org.apache.http.HttpResponse;
 import org.apache.olingo.odata2.api.commons.HttpStatusCodes;
 import org.apache.olingo.odata2.api.edm.Edm;
@@ -49,35 +44,31 @@ import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.apache.olingo.odata2.testutil.server.ServletType;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
+import org.mockito.ArgumentMatcher;
 
 /**
- *  
+ *
  */
 public class HttpExceptionResponseTest extends AbstractBasicTest {
 
-  public HttpExceptionResponseTest(final ServletType servletType) {
-    super(servletType);
-  }
+    public HttpExceptionResponseTest(final ServletType servletType) {
+        super(servletType);
+    }
 
-  private ODataSingleProcessor processor;
+    private ODataSingleProcessor processor;
 
-  @Override
-  protected ODataSingleProcessor createProcessor() throws ODataException {
-    processor = mock(ODataSingleProcessor.class);
+    @Override
+    protected ODataSingleProcessor createProcessor() throws ODataException {
+        processor = mock(ODataSingleProcessor.class);
 
-    return processor;
-  }
+        return processor;
+    }
 
-  @Override
-  protected EdmProvider createEdmProvider() {
-    final EdmProvider provider = new ScenarioEdmProvider();
-    return provider;
-  }
+    @Override
+    protected EdmProvider createEdmProvider() {
+        return new ScenarioEdmProvider();
+    }
 
   @Test
   public void test404HttpNotFound() throws Exception {
@@ -95,82 +86,85 @@ public class HttpExceptionResponseTest extends AbstractBasicTest {
     assertXpathValuesEqual("\"" + MessageService.getMessage(Locale.ENGLISH, ODataNotFoundException.ENTITY).getText()
         + "\"", "/a:error/a:message", content);
   }
-  
-  @Test
-  public void test400BadRequestRedundantSystemQueryOptions() throws Exception {
-    HttpResponse response = executeGetRequest("Employees?$top=1&$top=3");
-    assertEquals(HttpStatusCodes.BAD_REQUEST.getStatusCode(), response.getStatusLine().getStatusCode());
-    
-    final String content = StringHelper.inputStreamToString(response.getEntity().getContent());
-    assertEquals("<?xml version='1.0' encoding='UTF-8'?><error xmlns=\"http://schemas.microsoft.com/ado/2007/"
-        + "08/dataservices/metadata\"><code/><message xml:lang=\"en\">Duplicate system query parameter names: "
-        + "'$top'.</message></error>", content);
-  }
-  
-  @Test
-  public void genericHttpExceptions() throws Exception {
-    disableLogging();
 
-    final List<ODataHttpException> toTestExceptions = getHttpExceptionsForTest();
+    @Test
+    public void test400BadRequestRedundantSystemQueryOptions() throws Exception {
+        HttpResponse response = executeGetRequest("Employees?$top=1&$top=3");
+        assertEquals(HttpStatusCodes.BAD_REQUEST.getStatusCode(), response.getStatusLine()
+                                                                          .getStatusCode());
 
-    int firstKey = 1;
-    for (final ODataHttpException oDataException : toTestExceptions) {
-      final String key = String.valueOf(firstKey++);
-      final Matcher<GetEntityUriInfo> match = new EntityKeyMatcher(key);
-      when(processor.readEntity(Matchers.argThat(match), any(String.class))).thenThrow(oDataException);
-
-      final HttpResponse response = executeGetRequest("Managers('" + key + "')");
-
-      assertEquals("Expected status code does not match for exception type '"
-          + oDataException.getClass().getSimpleName() + "'.",
-          oDataException.getHttpStatus().getStatusCode(), response.getStatusLine().getStatusCode());
-
-      final String content = StringHelper.inputStreamToString(response.getEntity().getContent());
-      Map<String, String> prefixMap = new HashMap<String, String>();
-      prefixMap.put("a", Edm.NAMESPACE_M_2007_08);
-      XMLUnit.setXpathNamespaceContext(new SimpleNamespaceContext(prefixMap));
-      assertXpathExists("/a:error/a:code", content);
+        final String content = StringHelper.inputStreamToString(response.getEntity()
+                                                                        .getContent());
+        assertEquals("<?xml version='1.0' encoding='UTF-8'?><error xmlns=\"http://schemas.microsoft.com/ado/2007/"
+                + "08/dataservices/metadata\"><code/><message xml:lang=\"en\">Duplicate system query parameter names: "
+                + "'$top'.</message></error>", content);
     }
 
-  }
+    @Test
+    public void genericHttpExceptions() throws Exception {
+        disableLogging();
 
-  private List<ODataHttpException> getHttpExceptionsForTest() throws Exception {
-    final List<Class<ODataHttpException>> exClasses =
-        ClassHelper.getAssignableClasses("org.apache.olingo.odata2.api.exception", ODataHttpException.class);
+        final List<ODataHttpException> toTestExceptions = getHttpExceptionsForTest();
 
-    final MessageReference mr = MessageReference.create(ODataHttpException.class, "SIMPLE FOR TEST");
-    return ClassHelper.getClassInstances(exClasses, new Class<?>[] { MessageReference.class }, new Object[] { mr });
-  }
+        int firstKey = 1;
+        for (final ODataHttpException oDataException : toTestExceptions) {
+            final String key = String.valueOf(firstKey++);
+            final ArgumentMatcher<GetEntityUriInfo> match = new EntityKeyMatcher(key);
+            when(processor.readEntity(argThat(match), any(String.class))).thenThrow(oDataException);
 
-  private class EntityKeyMatcher extends BaseMatcher<GetEntityUriInfo> {
+            final HttpResponse response = executeGetRequest("Managers('" + key + "')");
 
-    private final String keyLiteral;
+            assertEquals("Expected status code does not match for exception type '" + oDataException.getClass()
+                                                                                                    .getSimpleName()
+                    + "'.",
+                    oDataException.getHttpStatus()
+                                  .getStatusCode(),
+                    response.getStatusLine()
+                            .getStatusCode());
 
-    public EntityKeyMatcher(final String keyLiteral) {
-      if (keyLiteral == null) {
-        throw new IllegalArgumentException("Key parameter MUST NOT be NULL.");
-      }
-      this.keyLiteral = keyLiteral;
-    }
-
-    @Override
-    public boolean matches(final Object item) {
-      if (item instanceof UriInfoImpl) {
-        final UriInfoImpl upr = (UriInfoImpl) item;
-        final List<KeyPredicate> keyPredicates = upr.getKeyPredicates();
-        for (final KeyPredicate keyPredicate : keyPredicates) {
-          if (keyLiteral.equals(keyPredicate.getLiteral())) {
-            return true;
-          }
+            final String content = StringHelper.inputStreamToString(response.getEntity()
+                                                                            .getContent());
+            Map<String, String> prefixMap = new HashMap<String, String>();
+            prefixMap.put("a", Edm.NAMESPACE_M_2007_08);
+            XMLUnit.setXpathNamespaceContext(new SimpleNamespaceContext(prefixMap));
+            assertXpathExists("/a:error/a:code", content);
         }
-      }
-      return false;
+
     }
 
-    @Override
-    public void describeTo(final Description description) {
-      // description.appendText("");
+    private List<ODataHttpException> getHttpExceptionsForTest() throws Exception {
+        final List<Class<ODataHttpException>> exClasses =
+                ClassHelper.getAssignableClasses("org.apache.olingo.odata2.api.exception", ODataHttpException.class);
+
+        final MessageReference mr = MessageReference.create(ODataHttpException.class, "SIMPLE FOR TEST");
+        return ClassHelper.getClassInstances(exClasses, new Class<?>[] {MessageReference.class}, new Object[] {mr});
     }
 
-  }
+    private class EntityKeyMatcher implements ArgumentMatcher<GetEntityUriInfo> {
+
+        private final String keyLiteral;
+
+        public EntityKeyMatcher(final String keyLiteral) {
+            if (keyLiteral == null) {
+                throw new IllegalArgumentException("Key parameter MUST NOT be NULL.");
+            }
+            this.keyLiteral = keyLiteral;
+        }
+
+
+        @Override
+        public boolean matches(GetEntityUriInfo item) {
+            if (item instanceof UriInfoImpl) {
+                final UriInfoImpl upr = (UriInfoImpl) item;
+                final List<KeyPredicate> keyPredicates = upr.getKeyPredicates();
+                for (final KeyPredicate keyPredicate : keyPredicates) {
+                    if (keyLiteral.equals(keyPredicate.getLiteral())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+    }
 }
