@@ -31,11 +31,11 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-maven-
 
-    - name: Set up JDK Corretto 8
+    - name: Set up JDK Corretto
       uses: actions/setup-java@v3
       with:
         distribution: 'corretto'
-        java-version: '8'
+        java-version: '11'
         architecture: x64
 
     - name: "Configure Git"
