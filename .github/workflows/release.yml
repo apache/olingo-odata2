@@ -48,8 +48,27 @@ jobs:
     - name: "Maven: Set Release Version"
       run: mvn versions:set -DnewVersion=${{ github.event.inputs.releaseVersion }}
 
+    - name: Setup Maven settings.xml
+      uses: whelk-io/maven-settings-xml-action@v11
+      with:
+        servers:
+          '[
+            {
+              "id": "github",
+              "username": "${env.GITHUB_USERNAME}",
+              "password": "${env.GITHUB_TOKEN}"
+            }
+          ]'
+
     - name: Build Project
       run: mvn clean install
+
+    - name: Publish to GitHub Packages Apache Maven
+      run: mvn deploy
+      env:
+        GITHUB_USERNAME: x-access-token
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        BUILD_ENV: 'github-actions'
 
     - name: "Git: Commit Release Version"
       run: |
