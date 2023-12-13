@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.apache.olingo</groupId>
         <artifactId>olingo-odata2-parent</artifactId>
-        <version>3.0.2-SNAPSHOT</version>
+        <version>3.0.2</version>
         <relativePath>..</relativePath>
     </parent>
 
