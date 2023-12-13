@@ -15,7 +15,7 @@ on:
 run-name: 'version set to ${{ github.event.inputs.releaseVersion }} for release'
 
 jobs:
-  build:
+  release-project:
     runs-on: ubuntu-latest
     steps:
 
