@@ -471,4 +471,12 @@
           </dependency>
       </dependencies>
     </dependencyManagement>
+    
+    <distributionManagement>
+      <repository>
+          <id>github</id>
+          <name>GitHub Apache Maven Packages</name>
+          <url>https://maven.pkg.github.com/dirigiblelabs/olingo-odata2</url>
+      </repository>
+	</distributionManagement>
 </project>
