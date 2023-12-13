@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.model;
 
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;

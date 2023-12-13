@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.spring;
 import org.apache.olingo.odata2.api.ODataServiceFactory;
 import org.apache.olingo.odata2.core.rest.ODataRootLocator;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 /**
  * Default OData root locator responsible to handle the whole path and delegate all calls to a sub locator:<p>

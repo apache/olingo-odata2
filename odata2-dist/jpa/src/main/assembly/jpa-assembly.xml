@@ -28,7 +28,7 @@
                 <include>org.apache.olingo:olingo-odata2-api-annotation</include>
                 <include>org.apache.olingo:olingo-odata2-jpa-processor-api</include>
                 <include>org.apache.olingo:olingo-odata2-jpa-processor-core</include>
-                <include>org.eclipse.persistence:javax.persistence</include>
+                <include>jakarta.persistence:jakarta.persistence-api</include>
             </includes>
         </dependencySet>
     </dependencySets>

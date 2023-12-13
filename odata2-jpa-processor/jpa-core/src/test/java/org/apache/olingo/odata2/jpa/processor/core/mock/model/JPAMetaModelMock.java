@@ -20,10 +20,10 @@ package org.apache.olingo.odata2.jpa.processor.core.mock.model;
 
 import java.util.Set;
 
-import javax.persistence.metamodel.EmbeddableType;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.ManagedType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.EmbeddableType;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.ManagedType;
+import jakarta.persistence.metamodel.Metamodel;
 
 public class JPAMetaModelMock implements Metamodel {
 

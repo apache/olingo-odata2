@@ -20,8 +20,8 @@ package org.apache.olingo.odata2.jpa.processor.ref.converter;
 
 import java.util.UUID;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class UUIDConverter implements AttributeConverter<UUID, String> {

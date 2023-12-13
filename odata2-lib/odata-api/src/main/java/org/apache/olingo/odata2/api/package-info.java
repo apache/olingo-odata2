@@ -31,7 +31,7 @@
  * <p>
  * Entry point to the service is a JAX-RS servlet. At this servlet init parameters for a
  * <code>ODataServiceFactory</code>
- * is configured. The parameter <code>javax.ws.rs.Application</code> is a default by JAX-RS and has to be present
+ * is configured. The parameter <code>jakarta.ws.rs.Application</code> is a default by JAX-RS and has to be present
  * always.
  * <p>
  * <pre> {@code
@@ -45,7 +45,7 @@
  *     <servlet-name>MyODataServlet</servlet-name>
  *     <servlet-class>org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet</servlet-class>
  *     <init-param>
- *      <param-name>javax.ws.rs.Application</param-name>
+ *      <param-name>jakarta.ws.rs.Application</param-name>
  *      <param-value>org.apache.olingo.odata2.core.rest.app.ODataApplication</param-value>
  *     </init-param>
  *     <init-param>

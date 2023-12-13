@@ -21,7 +21,7 @@ package org.apache.olingo.odata2.jpa.processor.core.access.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAPaging;
 

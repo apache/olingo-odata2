@@ -20,8 +20,8 @@ package org.apache.olingo.odata2.jpa.processor.core.mock.model;
 
 import java.lang.reflect.Member;
 
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.ManagedType;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.ManagedType;
 
 public abstract class JPAAttributeMock<X, Y> implements Attribute<X, Y> {
 
@@ -46,7 +46,7 @@ public abstract class JPAAttributeMock<X, Y> implements Attribute<X, Y> {
   }
 
   @Override
-  public javax.persistence.metamodel.Attribute.PersistentAttributeType getPersistentAttributeType() {
+  public jakarta.persistence.metamodel.Attribute.PersistentAttributeType getPersistentAttributeType() {
     return null;
   }
 
