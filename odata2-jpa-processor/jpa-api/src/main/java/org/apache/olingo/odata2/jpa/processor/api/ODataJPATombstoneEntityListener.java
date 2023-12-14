@@ -40,20 +40,20 @@ public abstract class ODataJPATombstoneEntityListener {
   }
 
   /**
-   * Implement this method to create a {@linkjakarta.persistence.Query} object. The Query object can be created from
+   * Implement this method to create a {@link jakarta.persistence.Query} object. The Query object can be created from
    * OData requests. The query instance thus created can be used for handling delta JPA entities. The delta token passed
    * from OData request can
    * be accessed from {@link com.sap.core.odata.processor.api.jpa.ODataJPATombstoneContext}.
    * @param resultsView is a reference to OData request
-   * @param em is a reference to {@linkjakarta.persistence.EntityManager}
-   * @return an instance of type {@linkjakarta.persistence.Query}
+   * @param em is a reference to {@link jakarta.persistence.EntityManager}
+   * @return an instance of type {@link jakarta.persistence.Query}
    */
   public abstract Query getQuery(GetEntitySetUriInfo resultsView, EntityManager em) throws ODataJPARuntimeException;
 
   /**
    * Implement this method to create a delta token.
    * @param deltas is list of delta JPA Entities
-   * @param query is an instance of type {@linkjakarta.persistence.Query} that was used for handling delta entites
+   * @param query is an instance of type {@link jakarta.persistence.Query} that was used for handling delta entites
    * @return a delta token of type String
    */
   public abstract String generateDeltaToken(List<Object> deltas, Query query);

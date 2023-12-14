@@ -46,7 +46,7 @@ public interface JPAEdmBaseView {
   /**
    * The method returns the Java Persistence MetaModel
    * 
-   * @return a meta model of type {@linkjakarta.persistence.metamodel.Metamodel}
+   * @return a meta model of type {@link jakarta.persistence.metamodel.Metamodel}
    */
   public Metamodel getJPAMetaModel();
 

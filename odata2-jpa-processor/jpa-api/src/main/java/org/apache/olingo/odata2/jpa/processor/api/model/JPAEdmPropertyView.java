@@ -74,16 +74,16 @@ public interface JPAEdmPropertyView extends JPAEdmBaseView {
   /**
    * The method returns a JPA Attribute for the given JPA entity type.
    * 
-   * @return an instance of type {@linkjakarta.persistence.metamodel.Attribute
+   * @return an instance of type {@link jakarta.persistence.metamodel.Attribute
    * <?, ?>}
    */
   Attribute<?, ?> getJPAAttribute();
 
   /**
-   * The method returns a JPA Attribute referenced by a JPA Attribute in the {@linkjakarta.persistence.JoinColumn}
+   * The method returns a JPA Attribute referenced by a JPA Attribute in the {@link jakarta.persistence.JoinColumn}
    * annotation for the given JPA entity type .
    * 
-   * @return an instance of type {@linkjakarta.persistence.metamodel.Attribute
+   * @return an instance of type {@link jakarta.persistence.metamodel.Attribute
    * <?, ?>}
    */
   Attribute<?, ?> getJPAReferencedAttribute();

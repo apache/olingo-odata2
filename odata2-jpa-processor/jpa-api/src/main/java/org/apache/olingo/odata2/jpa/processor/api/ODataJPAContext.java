@@ -111,7 +111,7 @@ public interface ODataJPAContext {
    * context.
    * 
    * @param emf
-   * is of type {@linkjakarta.persistence.EntityManagerFactory}
+   * is of type {@link jakarta.persistence.EntityManagerFactory}
    * 
    */
   public void setEntityManagerFactory(EntityManagerFactory emf);
@@ -159,7 +159,7 @@ public interface ODataJPAContext {
    * Hence all entities that are accessed within JPA processor are managed by
    * single entity manager.
    * 
-   * @return an instance of type {@linkjakarta.persistence.EntityManager}
+   * @return an instance of type {@link jakarta.persistence.EntityManager}
    */
   public EntityManager getEntityManager();
 
