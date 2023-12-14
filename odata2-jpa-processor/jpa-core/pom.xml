@@ -123,10 +123,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.easymock</groupId>
-			<artifactId>easymock</artifactId>
-			<version>3.1</version>
-                        <scope>test</scope>
+		    <groupId>org.easymock</groupId>
+		    <artifactId>easymock</artifactId>
+		    <version>5.2.0</version>
+		    <scope>test</scope>
 		</dependency>
 
 		<!-- ########################## -->

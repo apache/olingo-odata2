@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.core.mock.data;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public class EntityWithXmlAdapterOnProperty {
 	private EntityWithXmlAdapterOnProperty self;

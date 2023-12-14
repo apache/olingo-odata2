@@ -378,7 +378,8 @@ public class JPAEntityParserTest {
 
             assertEquals("getField1", name);
 
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                | SecurityException e) {
             fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
 
         }
@@ -401,7 +402,8 @@ public class JPAEntityParserTest {
             String name = (String) getGetterName.invoke(resultParser, params);
             assertNull(name);
 
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                | SecurityException e) {
             fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
 
         }
@@ -410,7 +412,7 @@ public class JPAEntityParserTest {
     /*
      * TestCase - getGetterName is a private method in JPAResultParser. The method is uses reflection to
      * derive the property access methods from EdmProperty
-     * 
+     *
      * EdmProperty name could have been modified. Then mapping object of EdmProperty should be used for
      * deriving the name
      */
@@ -432,7 +434,8 @@ public class JPAEntityParserTest {
             String name = (String) getGetterName.invoke(resultParser, params);
             assertEquals("getField1", name);
 
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                | SecurityException e) {
             fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
 
         }
@@ -492,15 +495,13 @@ public class JPAEntityParserTest {
             getGetters.setAccessible(true);
             try {
                 getGetters.invoke(resultParser, jpaEntity, structuralType);
-            } catch (IllegalAccessException e) {
-                fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalAccessException | IllegalArgumentException e) {
                 fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
             } catch (InvocationTargetException e) {
                 assertTrue(true);
             }
         } catch (NoSuchMethodException e) {
-            assertEquals("org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser.getGetters(java.lang.Object, "
+            assertEquals("org.apache.olingo.odata2.jpa.processor.core.access.data.JPAEntityParser.getGetters(java.lang.Object,"
                     + "org.apache.olingo.odata2.api.edm.EdmStructuralType)", e.getMessage());
         } catch (SecurityException | EdmException e) {
             fail(ODataJPATestConstants.EXCEPTION_MSG_PART_1 + e.getMessage() + ODataJPATestConstants.EXCEPTION_MSG_PART_2);
