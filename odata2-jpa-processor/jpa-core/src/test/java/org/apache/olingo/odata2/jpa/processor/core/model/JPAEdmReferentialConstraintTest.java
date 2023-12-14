@@ -28,9 +28,9 @@ import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.ManagedType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.ManagedType;
 
 import org.apache.olingo.odata2.api.edm.FullQualifiedName;
 import org.apache.olingo.odata2.api.edm.provider.Association;

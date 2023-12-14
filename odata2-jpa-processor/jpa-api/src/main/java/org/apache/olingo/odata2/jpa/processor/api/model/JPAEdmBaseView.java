@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.api.model;
 
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmMappingModelAccess;
@@ -46,7 +46,7 @@ public interface JPAEdmBaseView {
   /**
    * The method returns the Java Persistence MetaModel
    * 
-   * @return a meta model of type {@link javax.persistence.metamodel.Metamodel}
+   * @return a meta model of type {@link jakarta.persistence.metamodel.Metamodel}
    */
   public Metamodel getJPAMetaModel();
 

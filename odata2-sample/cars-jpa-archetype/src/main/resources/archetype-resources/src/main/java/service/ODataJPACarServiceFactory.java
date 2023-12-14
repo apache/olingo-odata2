@@ -28,11 +28,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.persistence.config.PersistenceUnitProperties;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
@@ -133,7 +133,7 @@ public class ODataJPACarServiceFactory extends ODataJPAServiceFactory {
 						Persistence.createEntityManagerFactory(PUNIT_NAME_DEFAULT, properties);
 				emf.createEntityManager();
 				return new EmfHolder(emf, PUNIT_NAME_DEFAULT);
-			} catch (javax.persistence.PersistenceException e) {
+			} catch (jakarta.persistence.PersistenceException e) {
 				return new EmfHolder(Persistence.createEntityManagerFactory(PUNIT_NAME), PUNIT_NAME);
 			} catch (NamingException e) {
 				return new EmfHolder(Persistence.createEntityManagerFactory(PUNIT_NAME), PUNIT_NAME);

@@ -20,8 +20,8 @@ package org.apache.olingo.odata2.jpa.processor.core;
 
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATransaction;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 public class ODataJPATransactionLocalDefault implements ODataJPATransaction {
 

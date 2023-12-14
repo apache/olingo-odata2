@@ -20,9 +20,9 @@ package org.apache.olingo.odata2.jpa.processor.ref.extension;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.Query;
 
 import org.apache.olingo.odata2.api.annotation.edm.EdmFacets;
 import org.apache.olingo.odata2.api.annotation.edm.EdmFunctionImport;

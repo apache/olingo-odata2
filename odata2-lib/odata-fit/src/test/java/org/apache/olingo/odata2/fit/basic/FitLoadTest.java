@@ -19,7 +19,7 @@
 package org.apache.olingo.odata2.fit.basic;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;

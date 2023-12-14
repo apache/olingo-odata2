@@ -21,10 +21,10 @@
 		<class>${package}.model.Car</class>
 		<class>${package}.model.Manufacturer</class>
 		<properties>
-			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:org.apache.olingo.jpa.sample" />
-			<property name="javax.persistence.jdbc.user" value="sa" />
-			<property name="javax.persistence.jdbc.password" value="" />
+			<property name="jakarta.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
+			<property name="jakarta.persistence.jdbc.url" value="jdbc:hsqldb:mem:org.apache.olingo.jpa.sample" />
+			<property name="jakarta.persistence.jdbc.user" value="sa" />
+			<property name="jakarta.persistence.jdbc.password" value="" />
 			<property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.HSQLPlatform" />
 			<property name="eclipselink.logging.level" value="ALL" />
 			<property name="eclipselink.orm.throw.exceptions" value="true" />

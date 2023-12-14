@@ -18,7 +18,7 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.jpa.processor.api;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.apache.olingo.odata2.api.processor.ODataSingleProcessor;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAProcessor;

@@ -1,0 +1,106 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: Release Version
+        required: true
+        default: 3.0.0
+      snapshotVersion:
+        description: Snapshot Version
+        required: true
+        default: 3.0.1-SNAPSHOT
+
+run-name: 'version set to ${{ github.event.inputs.releaseVersion }} for release'
+
+jobs:
+  release-project:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Cache local Maven repository
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-maven-
+
+    - name: Set up JDK Corretto
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'corretto'
+        java-version: '17'
+        architecture: x64
+
+    - name: "Configure Git"
+      run: |
+        git fetch
+        git checkout ${{ github.event.inputs.branch }}
+        git config user.name "$GITHUB_ACTOR"
+        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+    - name: "Maven: Set Release Version"
+      run: mvn versions:set -DnewVersion=${{ github.event.inputs.releaseVersion }}
+
+    - name: Setup Maven settings.xml
+      uses: whelk-io/maven-settings-xml-action@v11
+      with:
+        servers:
+          '[
+            {
+              "id": "github",
+              "username": "${env.GITHUB_USERNAME}",
+              "password": "${env.GITHUB_TOKEN}"
+            }
+          ]'
+
+    - name: Build Project
+      run: mvn clean install
+
+    - name: Publish to GitHub Packages Apache Maven
+      run: mvn deploy
+      env:
+        GITHUB_USERNAME: x-access-token
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        BUILD_ENV: 'github-actions'
+
+    - name: "Git: Commit Release Version"
+      run: |
+        git add '**pom.xml'
+        git commit -m "version set to ${{ github.event.inputs.releaseVersion }} for release"
+
+    - name: "Maven: Set Snapshot Version"
+      run: mvn versions:set -DnewVersion=${{ github.event.inputs.snapshotVersion }}
+
+    - name: "Git: Commit Snapshot Version"
+      run: |
+        git add '**pom.xml'
+        git commit -m "version set to ${{ github.event.inputs.snapshotVersion }} for development"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.event.inputs.releaseVersion }}
+        release_name: Release ${{ github.event.inputs.releaseVersion }}
+        body: |
+          Changes in this Release:
+          - First Change
+          - Second Change
+        draft: false
+        prerelease: false
+
+    - name: "Git: Push Changes"
+      run: |
+        git checkout -B ${{ github.event.inputs.releaseVersion }}
+        git push --set-upstream origin ${{ github.event.inputs.releaseVersion }}
+        git checkout -B master
+        git push --set-upstream origin master

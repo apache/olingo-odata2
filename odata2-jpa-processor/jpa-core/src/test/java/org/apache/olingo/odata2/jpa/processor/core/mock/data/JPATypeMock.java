@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /* ========================================================================= */
 public class JPATypeMock {

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import javax.persistence.EntityListeners;
+import jakarta.persistence.EntityListeners;
 
 import org.apache.olingo.odata2.api.edm.provider.EntityType;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPATombstoneEntityListener;
@@ -46,7 +46,7 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntity
 
   private JPAEdmSchemaView schemaView = null;
   private EntityType currentEdmEntityType = null;
-  private javax.persistence.metamodel.EntityType<?> currentJPAEntityType = null;
+  private jakarta.persistence.metamodel.EntityType<?> currentJPAEntityType = null;
   private EntityTypeList<EntityType> consistentEntityTypes = null;
 
   private HashMap<String, EntityType> consistentEntityTypeMap;
@@ -72,7 +72,7 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntity
   }
 
   @Override
-  public javax.persistence.metamodel.EntityType<?> getJPAEntityType() {
+  public jakarta.persistence.metamodel.EntityType<?> getJPAEntityType() {
     return currentJPAEntityType;
   }
 
@@ -92,7 +92,7 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntity
     @Override
     public void build() throws ODataJPAModelException, ODataJPARuntimeException {
 
-      Collection<javax.persistence.metamodel.EntityType<?>> jpaEntityTypes = metaModel.getEntities();
+      Collection<jakarta.persistence.metamodel.EntityType<?>> jpaEntityTypes = metaModel.getEntities();
 
       if (jpaEntityTypes == null || jpaEntityTypes.isEmpty() == true) {
         return;
@@ -102,7 +102,7 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntity
       }
 
       jpaEntityTypes = sortJPAEntityTypes(jpaEntityTypes);
-      for (javax.persistence.metamodel.EntityType<?> jpaEntityType : jpaEntityTypes) {
+      for (jakarta.persistence.metamodel.EntityType<?> jpaEntityType : jpaEntityTypes) {
         currentEdmEntityType = new EntityType();
         currentJPAEntityType = jpaEntityType;
 
@@ -144,15 +144,15 @@ public class JPAEdmEntityType extends JPAEdmBaseViewImpl implements JPAEdmEntity
 
     }
 
-    private List<javax.persistence.metamodel.EntityType<?>> sortJPAEntityTypes(
-      final Collection<javax.persistence.metamodel.EntityType<?>> entities) {
+    private List<jakarta.persistence.metamodel.EntityType<?>> sortJPAEntityTypes(
+      final Collection<jakarta.persistence.metamodel.EntityType<?>> entities) {
 
-      List<javax.persistence.metamodel.EntityType<?>> entityTypeList =
-        new ArrayList<javax.persistence.metamodel.EntityType<?>>(entities.size());
+      List<jakarta.persistence.metamodel.EntityType<?>> entityTypeList =
+        new ArrayList<jakarta.persistence.metamodel.EntityType<?>>(entities.size());
 
-        Iterator<javax.persistence.metamodel.EntityType<?>> itr;
-        javax.persistence.metamodel.EntityType<?> smallestJpaEntity;
-        javax.persistence.metamodel.EntityType<?> currentJpaEntity;
+        Iterator<jakarta.persistence.metamodel.EntityType<?>> itr;
+       jakarta.persistence.metamodel.EntityType<?> smallestJpaEntity;
+       jakarta.persistence.metamodel.EntityType<?> currentJpaEntity;
         while (!entities.isEmpty()) {
           itr = entities.iterator();
           smallestJpaEntity = itr.next();

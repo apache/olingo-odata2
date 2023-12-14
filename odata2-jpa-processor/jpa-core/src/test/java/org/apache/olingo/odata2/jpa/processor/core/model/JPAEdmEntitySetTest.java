@@ -27,9 +27,9 @@ import static org.junit.Assert.fail;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.apache.olingo.odata2.api.edm.provider.Schema;
 import org.apache.olingo.odata2.jpa.processor.api.access.JPAEdmBuilder;

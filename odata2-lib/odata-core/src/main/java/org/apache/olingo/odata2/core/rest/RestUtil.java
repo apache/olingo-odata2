@@ -31,13 +31,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.exception.ODataBadRequestException;
@@ -93,7 +93,7 @@ public class RestUtil {
    * @param headers JAX-RS header map
    * @return header value or null
    */
-  private static String getSafeHeader(final String name, final javax.ws.rs.core.HttpHeaders headers) {
+  private static String getSafeHeader(final String name, final jakarta.ws.rs.core.HttpHeaders headers) {
     List<String> header = headers.getRequestHeader(name);
     if (header != null && !header.isEmpty()) {
       return header.get(0);
@@ -172,7 +172,7 @@ public class RestUtil {
     return toSort;
   }
 
-  public static Map<String, String> extractRequestHeaders(final javax.ws.rs.core.HttpHeaders httpHeaders) {
+  public static Map<String, String> extractRequestHeaders(final jakarta.ws.rs.core.HttpHeaders httpHeaders) {
     final MultivaluedMap<String, String> headers = httpHeaders.getRequestHeaders();
     Map<String, String> headerMap = new HashMap<String, String>();
 
@@ -198,8 +198,8 @@ public class RestUtil {
   private static PathInfoImpl splitPath(final SubLocatorParameter param) throws ODataException {
     PathInfoImpl pathInfo = new PathInfoImpl();
 
-    List<javax.ws.rs.core.PathSegment> precedingPathSegments;
-    List<javax.ws.rs.core.PathSegment> pathSegments;
+    List<jakarta.ws.rs.core.PathSegment> precedingPathSegments;
+    List<jakarta.ws.rs.core.PathSegment> pathSegments;
 
     if (param.getPathSplit() == 0) {
       precedingPathSegments = Collections.emptyList();
@@ -219,7 +219,7 @@ public class RestUtil {
     pathInfo.setPrecedingPathSegment(convertPathSegmentList(precedingPathSegments));
 
     List<PathSegment> odataSegments = new ArrayList<PathSegment>();
-    for (final javax.ws.rs.core.PathSegment segment : pathSegments) {
+    for (final jakarta.ws.rs.core.PathSegment segment : pathSegments) {
       if (segment.getMatrixParameters() == null || segment.getMatrixParameters().isEmpty()) {
         odataSegments.add(new ODataPathSegmentImpl(segment.getPath(), null));
       } else {
@@ -280,9 +280,9 @@ public class RestUtil {
     return requestUri;
   }
 
-  private static List<PathSegment> convertPathSegmentList(final List<javax.ws.rs.core.PathSegment> pathSegments) {
+  private static List<PathSegment> convertPathSegmentList(final List<jakarta.ws.rs.core.PathSegment> pathSegments) {
     ArrayList<PathSegment> converted = new ArrayList<PathSegment>();
-    for (final javax.ws.rs.core.PathSegment pathSegment : pathSegments) {
+    for (final jakarta.ws.rs.core.PathSegment pathSegment : pathSegments) {
       final PathSegment segment =
           new ODataPathSegmentImpl(Decoder.decode(pathSegment.getPath()), pathSegment.getMatrixParameters());
       converted.add(segment);

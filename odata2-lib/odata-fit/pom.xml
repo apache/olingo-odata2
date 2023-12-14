@@ -17,7 +17,8 @@
          specific language governing permissions and limitations
          under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -28,7 +29,7 @@
 	<parent>
 		<groupId>org.apache.olingo</groupId>
 		<artifactId>olingo-odata2-lib</artifactId>
-		<version>2.0.13</version>
+		<version>3.0.3-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -85,7 +86,8 @@
 											<groupId>org.apache.olingo</groupId>
 											<artifactId>olingo-odata2-api</artifactId>
 											<version>${project.version}</version>
-											<outputDirectory>${project.build.directory}/api_dependency</outputDirectory>
+											<outputDirectory>
+												${project.build.directory}/api_dependency</outputDirectory>
 											<overWrite>true</overWrite>
 										</artifactItem>
 									</artifactItems>
@@ -103,7 +105,8 @@
 											<groupId>org.apache.olingo</groupId>
 											<artifactId>olingo-odata2-core</artifactId>
 											<version>${project.version}</version>
-											<outputDirectory>${project.build.directory}/core_dependency</outputDirectory>
+											<outputDirectory>
+												${project.build.directory}/core_dependency</outputDirectory>
 											<overWrite>true</overWrite>
 										</artifactItem>
 									</artifactItems>
@@ -121,7 +124,8 @@
 											<groupId>org.apache.olingo</groupId>
 											<artifactId>olingo-odata2-ref</artifactId>
 											<version>${project.version}</version>
-											<outputDirectory>${project.build.directory}/ref_dependency</outputDirectory>
+											<outputDirectory>
+												${project.build.directory}/ref_dependency</outputDirectory>
 											<overWrite>true</overWrite>
 										</artifactItem>
 									</artifactItems>
@@ -142,7 +146,8 @@
 								</goals>
 								<configuration>
 									<instrumentationPaths>
-										<param>${project.build.directory}/api_dependency</param>
+										<param>
+											${project.build.directory}/api_dependency</param>
 									</instrumentationPaths>
 								</configuration>
 							</execution>
@@ -154,7 +159,8 @@
 								</goals>
 								<configuration>
 									<instrumentationPaths>
-										<param>${project.build.directory}/core_dependency</param>
+										<param>
+											${project.build.directory}/core_dependency</param>
 									</instrumentationPaths>
 								</configuration>
 							</execution>
@@ -166,7 +172,8 @@
 								</goals>
 								<configuration>
 									<instrumentationPaths>
-										<param>${project.build.directory}/ref_dependency</param>
+										<param>
+											${project.build.directory}/ref_dependency</param>
 									</instrumentationPaths>
 								</configuration>
 							</execution>
@@ -177,7 +184,8 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<!-- use the instrumented classes for test execution -->
-							<classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>
+							<classesDirectory>
+								${project.build.directory}/generated-classes/emma/classes</classesDirectory>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -205,21 +213,34 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-          <groupId>xmlunit</groupId>
-          <artifactId>xmlunit</artifactId>
-          <version>${xmlunit.version}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-          <version>${slf4j.version}</version>
-          <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>xmlunit</groupId>
+			<artifactId>xmlunit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-http</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>

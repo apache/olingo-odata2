@@ -29,15 +29,15 @@ import java.lang.reflect.Member;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.Attribute.PersistentAttributeType;
-import javax.persistence.metamodel.EmbeddableType;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
-import javax.persistence.metamodel.Type;
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.Attribute.PersistentAttributeType;
+import jakarta.persistence.metamodel.EmbeddableType;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.Type;
 
 import org.apache.olingo.odata2.api.edm.EdmFacets;
 import org.apache.olingo.odata2.api.edm.EdmMultiplicity;
@@ -467,7 +467,7 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
       }
 
       @Override
-      public javax.persistence.metamodel.Attribute.PersistentAttributeType getPersistentAttributeType() {
+      public jakarta.persistence.metamodel.Attribute.PersistentAttributeType getPersistentAttributeType() {
         return ATTRIBUTE_TYPE;
       }
 
@@ -486,7 +486,7 @@ public class JPAEdmPropertyTest extends JPAEdmTestModelView {
           }
 
           @Override
-          public javax.persistence.metamodel.Type.PersistenceType getPersistenceType() {
+          public jakarta.persistence.metamodel.Type.PersistenceType getPersistenceType() {
             return null;
           }
 

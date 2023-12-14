@@ -17,7 +17,7 @@
 	<parent>
 		<groupId>org.apache.olingo</groupId>
 		<artifactId>olingo-odata2-jpa-processor</artifactId>
-		<version>2.0.13</version>
+		<version>3.0.3-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -73,14 +73,12 @@
 			<version>${version.eclipselink}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.persistence</artifactId>
-			<version>${version.javax.persistence}</version>
+		    <groupId>jakarta.persistence</groupId>
+		    <artifactId>jakarta.persistence-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>${hsqldb.version}</version>
 		</dependency>
 
 		<!-- OData Annotation Support -->

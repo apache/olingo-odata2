@@ -17,7 +17,8 @@
          specific language governing permissions and limitations
          under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -28,7 +29,7 @@
 	<parent>
 		<groupId>org.apache.olingo</groupId>
 		<artifactId>olingo-odata2-lib</artifactId>
-		<version>2.0.13</version>
+		<version>3.0.3-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -52,7 +53,8 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
 					<archive>
-						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+						<manifestFile>
+							${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
 					</archive>
 				</configuration>
 			</plugin>
@@ -72,15 +74,15 @@
 				<configuration>
 					<instructions>
 						<Import-Package>
-							javax.ws.rs,
-							javax.ws.rs.*,
+							jakarta.ws.rs,
+							jakarta.ws.rs.*,
 							com.google.gson.*;version="[2.2,$(version;+;${gson.version}))",
 							*
 						</Import-Package>
 						<Export-Package>
 							org.apache.olingo.odata2.core.rest.app;version=${project.version},
 							org.apache.olingo.odata2.core.rt;version=${project.version},
-                            org.apache.olingo.odata2.core.servlet;version=${project.version},
+							org.apache.olingo.odata2.core.servlet;version=${project.version},
 						</Export-Package>
 						<Bundle-DocURL>${project.url}</Bundle-DocURL>
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
@@ -88,7 +90,7 @@
 					</instructions>
 				</configuration>
 			</plugin>
-    </plugins>
+		</plugins>
 	</build>
 
 	<profiles>
@@ -116,9 +118,11 @@
 									<artifactItems>
 										<artifactItem>
 											<groupId>org.apache.olingo</groupId>
-											<artifactId>org.apache.olingo.odata2.api</artifactId>
+											<artifactId>
+												org.apache.olingo.odata2.api</artifactId>
 											<version>${project.version}</version>
-											<outputDirectory>${project.build.directory}/api_dependency</outputDirectory>
+											<outputDirectory>
+												${project.build.directory}/api_dependency</outputDirectory>
 											<overWrite>true</overWrite>
 										</artifactItem>
 									</artifactItems>
@@ -139,7 +143,8 @@
 								</goals>
 								<configuration>
 									<instrumentationPaths>
-										<param>${project.build.directory}/api_dependency</param>
+										<param>
+											${project.build.directory}/api_dependency</param>
 									</instrumentationPaths>
 								</configuration>
 							</execution>
@@ -150,7 +155,8 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<!-- use the instrumented classes for test execution -->
-							<classesDirectory>${project.build.directory}/generated-classes/emma/classes</classesDirectory>
+							<classesDirectory>
+								${project.build.directory}/generated-classes/emma/classes</classesDirectory>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -160,16 +166,14 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
 		</dependency>
-        <dependency>
-          <groupId>javax.ws.rs</groupId>
-          <artifactId>javax.ws.rs-api</artifactId>
-          <version>${jax.ws.rs.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
+			<version>4.0.3</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.olingo</groupId>
@@ -179,48 +183,45 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>${commonscodec.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
 		</dependency>
-    
-        <!-- Test dependencies -->
-        <dependency>
-            <groupId>org.apache.olingo</groupId>
-            <artifactId>olingo-odata2-testutil</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
-            <scope>test</scope>
-        </dependency>
+
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>org.apache.olingo</groupId>
+			<artifactId>olingo-odata2-testutil</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>xmlunit</groupId>
+			<artifactId>xmlunit</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>
