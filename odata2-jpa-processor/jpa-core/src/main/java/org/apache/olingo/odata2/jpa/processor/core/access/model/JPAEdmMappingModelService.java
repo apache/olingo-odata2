@@ -74,7 +74,8 @@ public class JPAEdmMappingModelService implements JPAEdmMappingModelAccess {
 
             } catch (JAXBException e) {
                 mappingModelExists = false;
-                ODataJPAModelException.throwException(ODataJPAModelException.GENERAL, e);
+                ODataJPAModelException ex = ODataJPAModelException.throwException(ODataJPAModelException.GENERAL, e);
+                throw new IllegalStateException("Failed to load model", ex);
             } finally {
                 try {
                     if (is != null) {

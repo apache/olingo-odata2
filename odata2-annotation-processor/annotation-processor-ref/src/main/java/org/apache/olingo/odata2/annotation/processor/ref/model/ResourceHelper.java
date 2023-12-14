@@ -33,7 +33,9 @@ public class ResourceHelper {
     public static byte[] load(final String resource, final byte[] defaultResult) {
         InputStream instream = null;
         try {
-            instream = ResourceHelper.class.getResourceAsStream(resource);
+            instream = Thread.currentThread()
+                             .getContextClassLoader()
+                             .getResourceAsStream(resource);
             if (instream == null) {
                 return defaultResult;
             }

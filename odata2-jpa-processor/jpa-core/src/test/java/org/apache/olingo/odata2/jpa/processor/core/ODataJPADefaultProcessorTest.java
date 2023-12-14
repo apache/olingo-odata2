@@ -476,21 +476,26 @@ public class ODataJPADefaultProcessorTest extends JPAEdmTestModelView {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             Address other = (Address) obj;
-            if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+            if (!getEnclosingInstance().equals(other.getEnclosingInstance())) {
                 return false;
+            }
             return Objects.equals(soId, other.soId);
         }
 
         private ODataJPADefaultProcessorTest getEnclosingInstance() {
             return ODataJPADefaultProcessorTest.this;
         }
+
     }
 
     private Metamodel mockMetaModel() {
