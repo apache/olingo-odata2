@@ -1,4 +1,4 @@
-package org.apache.olingo.odata2.core;
+package org.apache.olingo.odata2.testutil.helper;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;

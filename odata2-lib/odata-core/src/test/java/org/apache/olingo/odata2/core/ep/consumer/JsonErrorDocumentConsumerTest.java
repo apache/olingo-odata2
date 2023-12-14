@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.Locale;
 import org.apache.olingo.odata2.api.ep.EntityProviderException;
 import org.apache.olingo.odata2.api.processor.ODataErrorContext;
-import org.apache.olingo.odata2.core.LocaleAsserter;
+import org.apache.olingo.odata2.testutil.helper.LocaleAsserter;
 import org.apache.olingo.odata2.testutil.helper.StringHelper;
 import org.junit.Test;
 

@@ -74,34 +74,65 @@ public final class ODataSubLocator {
     }
 
     @POST
-    public Response handlePost(@HeaderParam("X-HTTP-Method") final String xHttpMethod) throws ODataException {
-        Response response;
+    public Response handlePost(@HeaderParam("X-HTTP-Method") final String xHttpMethod,
+            @HeaderParam("X-HTTP-Method-Override") String xHttpMethodOverride) throws ODataException {
+        if (xHttpMethod == null && xHttpMethodOverride != null) {
+            return handleMethodOverride(xHttpMethodOverride);
+        }
 
         if (xHttpMethod == null) {
-            response = handle(ODataHttpMethod.POST);
-        } else {
-            /* tunneling */
-            if ("MERGE".equals(xHttpMethod)) {
-                response = handle(ODataHttpMethod.MERGE);
-            } else if ("PATCH".equals(xHttpMethod)) {
-                response = handle(ODataHttpMethod.PATCH);
-            } else if (HttpMethod.DELETE.equals(xHttpMethod)) {
-                response = handle(ODataHttpMethod.DELETE);
-            } else if (HttpMethod.PUT.equals(xHttpMethod)) {
-                response = handle(ODataHttpMethod.PUT);
-            } else if (HttpMethod.GET.equals(xHttpMethod)) {
-                response = handle(ODataHttpMethod.GET);
-            } else if (HttpMethod.POST.equals(xHttpMethod)) {
-                response = handle(ODataHttpMethod.POST);
-            } else if (HttpMethod.HEAD.equals(xHttpMethod)) {
-                response = handleHead();
-            } else if (HttpMethod.OPTIONS.equals(xHttpMethod)) {
-                response = handleOptions();
-            } else {
-                response = returnNotImplementedResponse(ODataNotImplementedException.TUNNELING);
-            }
+            return handle(ODataHttpMethod.POST);
         }
-        return response;
+
+        /* tunneling */
+        if ("MERGE".equals(xHttpMethod)) {
+            return handle(ODataHttpMethod.MERGE);
+        }
+        if ("PATCH".equals(xHttpMethod)) {
+            return handle(ODataHttpMethod.PATCH);
+        }
+        if (HttpMethod.DELETE.equals(xHttpMethod)) {
+            return handle(ODataHttpMethod.DELETE);
+        }
+        if (HttpMethod.PUT.equals(xHttpMethod)) {
+            return handle(ODataHttpMethod.PUT);
+        }
+        if (HttpMethod.GET.equals(xHttpMethod)) {
+            return handle(ODataHttpMethod.GET);
+        }
+        if (HttpMethod.POST.equals(xHttpMethod)) {
+            return handle(ODataHttpMethod.POST);
+        }
+        if (HttpMethod.HEAD.equals(xHttpMethod)) {
+            return handleHead();
+        }
+        if (HttpMethod.OPTIONS.equals(xHttpMethod)) {
+            return handleOptions();
+        }
+        return returnNotImplementedResponse(ODataNotImplementedException.TUNNELING);
+    }
+
+    private Response handleMethodOverride(String xHttpMethodOverride) throws ODataException {
+        switch (xHttpMethodOverride.toUpperCase()) {
+            case HttpMethod.OPTIONS:
+                return handleOptions();
+            case HttpMethod.GET:
+                return handleGet();
+            case HttpMethod.DELETE:
+                return handleDelete();
+            case HttpMethod.HEAD:
+                return handleHead();
+            case "MERGE":
+                return handleMerge();
+            case HttpMethod.PATCH:
+                return handlePatch();
+            case HttpMethod.POST:
+                return handle(ODataHttpMethod.POST);
+            case HttpMethod.PUT:
+                return handlePut();
+            default:
+                return returnNotImplementedResponse(ODataNotImplementedException.COMMON);
+        }
     }
 
     private Response returnNotImplementedResponse(final MessageReference messageReference) {
@@ -128,7 +159,7 @@ public final class ODataSubLocator {
     }
 
     @OPTIONS
-    public Response handleOptions() throws ODataException {
+    public Response handleOptions() {
         // RFC 2616, 5.1.1: "An origin server SHOULD return the status code [...]
         // 501 (Not Implemented) if the method is unrecognized or not implemented
         // by the origin server."

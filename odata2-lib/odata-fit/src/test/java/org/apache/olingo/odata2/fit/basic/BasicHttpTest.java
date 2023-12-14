@@ -240,8 +240,8 @@ public class BasicHttpTest extends AbstractBasicTest {
         HttpOptions options = new HttpOptions(endpoint);
         HttpClient httpClient = getHttpClient();
         HttpResponse response = httpClient.execute(options);
-        assertEquals(HttpStatusCodes.NOT_IMPLEMENTED.getStatusCode(), response.getStatusLine()
-                                                                              .getStatusCode());
+        assertEquals(HttpStatusCodes.NOT_FOUND.getStatusCode(), response.getStatusLine()
+                                                                        .getStatusCode());
     }
 
     @Test
