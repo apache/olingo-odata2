@@ -19,8 +19,7 @@
 package org.apache.olingo.odata2.api;
 
 /**
- *  
- *
+ * Debug callback interface.
  */
 public interface ODataDebugCallback extends ODataCallback {
 

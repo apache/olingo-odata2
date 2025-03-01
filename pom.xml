@@ -19,7 +19,7 @@ governing permissions and limitations under
 
 	<groupId>org.apache.olingo</groupId>
 	<artifactId>olingo-odata2-parent</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0-RC01</version>
 	<packaging>pom</packaging>
 
 	<name>${project.artifactId}</name>
