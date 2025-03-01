@@ -64,7 +64,7 @@ governing permissions and limitations under
 		<!-- <jsr311.version>1.1.1</jsr311.version> -->
 		<joda.version>2.1</joda.version>
 		<!-- <cxf.version>4.0.3</cxf.version>  -->
-		<!--<jetty.version>11.0.18</jetty.version>-->
+		<!--<jetty.version>11.0.24</jetty.version>-->
 		<jetty.version>11.0.18</jetty.version>
 		<cxf.version>4.0.3</cxf.version>
 
