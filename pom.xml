@@ -19,7 +19,7 @@ governing permissions and limitations under
 
 	<groupId>org.apache.olingo</groupId>
 	<artifactId>olingo-odata2-parent</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<packaging>pom</packaging>
 
 	<name>${project.artifactId}</name>
@@ -27,7 +27,7 @@ governing permissions and limitations under
 	<parent>
 		<groupId>org.apache</groupId>
 		<artifactId>apache</artifactId>
-		<version>30</version>
+		<version>33</version>
 	</parent>
 
 	<inceptionYear>2013</inceptionYear>
@@ -53,7 +53,7 @@ governing permissions and limitations under
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.release>8</maven.compiler.release>
+		<maven.compiler.release>11</maven.compiler.release>
 		<javadoc.phase>package</javadoc.phase>
 
 		<!-- required for correct Sonar coverage data reporting (list of
@@ -85,7 +85,7 @@ governing permissions and limitations under
 
 		<!-- Setting needed for Java 8 release builds -->
 		<additionalparam>-Xdoclint:none</additionalparam>
-<!---->
+		<!--  -->
 		<spring.boot.version>3.2.0</spring.boot.version>
 	</properties>
 
@@ -94,7 +94,7 @@ governing permissions and limitations under
 		<module>odata2-jpa-processor</module>
 		<module>odata2-annotation-processor</module>
 		<module>odata2-dist</module>
-		<!--<module>odata2-sample</module>-->
+		<module>odata2-sample</module>
 	</modules>
 
 	<build>
@@ -134,7 +134,7 @@ governing permissions and limitations under
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.6.3</version>
+					<version>3.11.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -406,19 +406,17 @@ governing permissions and limitations under
 								<configuration>
 									<tags>
 										<tag>
-											<name>
-												org.apache.olingo.odata2.DoNotImplement</name>
+											<name>org.apache.olingo.odata2.DoNotImplement</name>
 											<placement>a</placement>
-											<head>Do not implement this
-												interface or derive from class.</head>
+											<head>Do not implement this interface or derive from class.</head>
 										</tag>
 									</tags>
+<!--									<doclint>none</doclint>-->
+<!--									<failOnError>false</failOnError>-->
+<!--									<failOnWarnings>false</failOnWarnings>-->
 									<excludePackageNames>
 										org.apache.olingo.odata2.core:org.apache.olingo.odata2.core.*:org.apache.olingo.odata2.jpa.processor.core:org.apache.olingo.odata2.jpa.processor.core.*:org.apache.olingo.odata2.annotation.processor.core:org.apache.olingo.odata2.annotation.processor.core.*:org.apache.olingo.odata2.testutil:org.apache.olingo.odata2.testutil.*
 									</excludePackageNames>
-									<additionalJOptions>
-										<additionalJOption>-quiet</additionalJOption>
-									</additionalJOptions>
 									<groups>
 										<group>
 											<title>OData Lib</title>
