@@ -47,7 +47,7 @@ public class EdmDateTime extends AbstractSimpleType {
 
   @Override
   public Class<?> getDefaultType() {
-    return Calendar.class;
+    return Timestamp.class;
   }
 
   @Override
@@ -73,6 +73,8 @@ public class EdmDateTime extends AbstractSimpleType {
           dateTimeValue.clear();
           dateTimeValue.setTimeInMillis(millis);
           return returnType.cast(dateTimeValue);
+        } else if (returnType.isAssignableFrom(Timestamp.class)) {
+          return returnType.cast(new Timestamp(millis));
         } else {
           throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_TYPE_NOT_SUPPORTED.addContent(returnType));
         }
@@ -170,11 +172,7 @@ public class EdmDateTime extends AbstractSimpleType {
     }
 
     if (literalKind == EdmLiteralKind.JSON) {
-      if (value instanceof Timestamp && ((Timestamp) value).getNanos() % (1000 * 1000) != 0) {
-        throw new EdmSimpleTypeException(EdmSimpleTypeException.VALUE_ILLEGAL_CONTENT.addContent(value));
-      } else {
-        return "/Date(" + timeInMillis + ")/";
-      }
+      return "/Date(" + timeInMillis + ")/";
     }
 
     Calendar dateTimeValue = Calendar.getInstance(TimeZone.getTimeZone("GMT"));

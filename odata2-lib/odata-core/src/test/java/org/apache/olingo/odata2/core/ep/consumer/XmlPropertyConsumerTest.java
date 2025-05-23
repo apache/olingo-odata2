@@ -27,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -172,7 +173,7 @@ public class XmlPropertyConsumerTest extends AbstractXmlConsumerTest {
 
     final Map<String, Object> resultMap = new XmlPropertyConsumer().readProperty(reader, property, null);
 
-    assertEquals(86400000L, ((Calendar) resultMap.get("EntryDate")).getTimeInMillis());
+    assertEquals(86400000L, ((Timestamp) resultMap.get("EntryDate")).getTime());
   }
 
   @Test(expected = EntityProviderException.class)

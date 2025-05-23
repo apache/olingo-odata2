@@ -25,12 +25,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
-import java.util.Calendar;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1855,9 +1854,8 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Integer.valueOf(52), properties.get("Age"));
-    Calendar entryDate = (Calendar) properties.get("EntryDate");
-    assertEquals(915148800000L, entryDate.getTimeInMillis());
-    assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
+    Timestamp entryDate = (Timestamp) properties.get("EntryDate");
+    assertEquals(915148800000L, entryDate.getTime());
     assertEquals("Employees('1')/$value", properties.get("ImageUrl"));
   }
 
@@ -1901,9 +1899,8 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Integer.valueOf(52), properties.get("Age"));
-    Calendar entryDate = (Calendar) properties.get("EntryDate");
-    assertEquals(915148800000L, entryDate.getTimeInMillis());
-    assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
+    Timestamp entryDate = (Timestamp) properties.get("EntryDate");
+    assertEquals(915148800000L, entryDate.getTime());
     assertEquals("Employees('1')/$value", properties.get("ImageUrl"));
   }
 
@@ -1936,9 +1933,8 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Integer.valueOf(52), properties.get("Age"));
-    Calendar entryDate = (Calendar) properties.get("EntryDate");
-    assertEquals(915148800000L, entryDate.getTimeInMillis());
-    assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
+    Timestamp entryDate = (Timestamp) properties.get("EntryDate");
+    assertEquals(915148800000L, entryDate.getTime());
     assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
@@ -1972,9 +1968,8 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Integer.valueOf(52), properties.get("Age"));
-    Calendar entryDate = (Calendar) properties.get("EntryDate");
-    assertEquals(915148800000L, entryDate.getTimeInMillis());
-    assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
+    Timestamp entryDate = (Timestamp) properties.get("EntryDate");
+    assertEquals(915148800000L, entryDate.getTime());
     assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
@@ -2011,9 +2006,8 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Integer.valueOf(52), properties.get("Age"));
-    Calendar entryDate = (Calendar) properties.get("EntryDate");
-    assertEquals(915148800000L, entryDate.getTimeInMillis());
-    assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
+    Timestamp entryDate = (Timestamp) properties.get("EntryDate");
+    assertEquals(915148800000L, entryDate.getTime());
     assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
@@ -2105,9 +2099,8 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals(2, city.size());
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
-    Calendar entryDate = (Calendar) properties.get("EntryDate");
-    assertEquals(915148800000L, entryDate.getTimeInMillis());
-    assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
+    Timestamp entryDate = (Timestamp) properties.get("EntryDate");
+    assertEquals(915148800000L, entryDate.getTime());
     assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
@@ -2178,9 +2171,8 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Integer.valueOf(52), properties.get("Age"));
-    Calendar entryDate = (Calendar) properties.get("EntryDate");
-    assertEquals(915148800000L, entryDate.getTimeInMillis());
-    assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
+    Timestamp entryDate = (Timestamp) properties.get("EntryDate");
+    assertEquals(915148800000L, entryDate.getTime());
     assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
@@ -2211,9 +2203,8 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Integer.valueOf(52), properties.get("Age"));
-    Calendar entryDate = (Calendar) properties.get("EntryDate");
-    assertEquals(915148800000L, entryDate.getTimeInMillis());
-    assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
+    Timestamp entryDate = (Timestamp) properties.get("EntryDate");
+    assertEquals(915148800000L, entryDate.getTime());
     assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 
@@ -2243,9 +2234,8 @@ public class XmlEntityConsumerTest extends AbstractXmlConsumerTest {
     assertEquals("69124", city.get("PostalCode"));
     assertEquals("Heidelberg", city.get("CityName"));
     assertEquals(Integer.valueOf(52), properties.get("Age"));
-    Calendar entryDate = (Calendar) properties.get("EntryDate");
-    assertEquals(915148800000L, entryDate.getTimeInMillis());
-    assertEquals(TimeZone.getTimeZone("GMT"), entryDate.getTimeZone());
+    Timestamp entryDate = (Timestamp) properties.get("EntryDate");
+    assertEquals(915148800000L, entryDate.getTime());
     assertEquals("/SAP/PUBLIC/BC/NWDEMO_MODEL/IMAGES/Employee_1.png", properties.get("ImageUrl"));
   }
 

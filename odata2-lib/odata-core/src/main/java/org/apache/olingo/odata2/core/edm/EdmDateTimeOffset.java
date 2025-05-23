@@ -52,7 +52,7 @@ public class EdmDateTimeOffset extends AbstractSimpleType {
 
   @Override
   public Class<?> getDefaultType() {
-    return Calendar.class;
+    return Timestamp.class;
   }
 
   @Override

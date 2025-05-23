@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -126,15 +127,15 @@ public class JsonPropertyConsumerTest extends BaseTest {
     JsonReader reader = prepareReader(simplePropertyJson);
     when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance());
     Map<String, Object> resultMap = execute(edmProperty, reader);
-    Calendar entryDate = (Calendar) resultMap.get("Name");
-    assertEquals(Long.valueOf(915148800000l), Long.valueOf(entryDate.getTimeInMillis()));
+    Timestamp entryDate = (Timestamp) resultMap.get("Name");
+    assertEquals(Long.valueOf(915148800000l), Long.valueOf(entryDate.getTime()));
     // DateTimeOffset
     simplePropertyJson = "{\"d\":{\"Name\":\"\\/Date(915148800000)\\/\"}}";
     reader = prepareReader(simplePropertyJson);
     when(edmProperty.getType()).thenReturn(EdmSimpleTypeKind.DateTime.getEdmSimpleTypeInstance());
     resultMap = execute(edmProperty, reader);
-    entryDate = (Calendar) resultMap.get("Name");
-    assertEquals(Long.valueOf(915148800000l), Long.valueOf(entryDate.getTimeInMillis()));
+    entryDate = (Timestamp) resultMap.get("Name");
+    assertEquals(Long.valueOf(915148800000l), Long.valueOf(entryDate.getTime()));
     // Decimal
     simplePropertyJson = "{\"d\":{\"Name\":\"123456789\"}}";
     reader = prepareReader(simplePropertyJson);
