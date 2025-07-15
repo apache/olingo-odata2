@@ -19,7 +19,9 @@
 package org.apache.olingo.odata2.core.batch;
 
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
+import org.apache.olingo.odata2.api.client.batch.BatchInputResource;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +30,7 @@ import java.util.Map;
 public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   private String method;
   private Map<String, String> headers = new HashMap<String, String>();
-  private Object body;
+  private BatchInputResource batchInputResource;
   private String uri;
   private String cntId;
   private static final String CHANGE_METHODS = "(PUT|POST|DELETE|MERGE|PATCH)";
@@ -39,21 +41,8 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   }
 
   @Override
-  public String getBody() {
-    return body.toString();
-  }
-
-  @Override
-  public byte[] getBodyAsBytes() {
-    if(body == null) {
-      return new byte[0];
-    }
-    Charset charset = getCharset();
-    if (body instanceof byte[]) {
-      return (byte[]) body; //NOSONAR
-    } else {
-      return body.toString().getBytes(charset);
-    }
+  public BatchInputResource getBatchInputResource() {
+    return batchInputResource;
   }
 
   private Charset getCharset() {
@@ -78,9 +67,10 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
   public class BatchChangeSetRequestBuilderImpl extends BatchChangeSetPartBuilder {
     private String method;
     private Map<String, String> headers = new HashMap<String, String>();
-    private Object body;
+    private BatchInputResource batchInputResource;
     private String uri;
     private String contentId;
+    private String stringBody;
 
     @Override
     public BatchChangeSetPart build() {
@@ -89,7 +79,8 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
       }
       BatchChangeSetPartImpl.this.method = method;
       BatchChangeSetPartImpl.this.headers = headers;
-      BatchChangeSetPartImpl.this.body = body;
+      BatchChangeSetPartImpl.this.batchInputResource = batchInputResource != null ?
+        batchInputResource : stringBodyToBatchInputResource();
       BatchChangeSetPartImpl.this.uri = uri;
       BatchChangeSetPartImpl.this.cntId = contentId;
       return BatchChangeSetPartImpl.this;
@@ -103,13 +94,24 @@ public class BatchChangeSetPartImpl extends BatchChangeSetPart {
 
     @Override
     public BatchChangeSetPartBuilder body(final String body) {
-      this.body = body;
+      this.stringBody = body;
       return this;
+    }
+
+    private BatchInputResource stringBodyToBatchInputResource() {
+      byte[] bytes = stringBody.getBytes(getCharset());
+      return new BatchInputResource(new ByteArrayInputStream(bytes), bytes.length);
     }
     
     @Override
     public BatchChangeSetPartBuilder body(byte[] body) {
-      this.body = body;
+      this.batchInputResource = new BatchInputResource(new ByteArrayInputStream(body), body.length);
+      return this;
+    }
+
+    @Override
+    public BatchChangeSetPartBuilder body(BatchInputResource batchInputStream) {
+      this.batchInputResource = batchInputStream;
       return this;
     }
 

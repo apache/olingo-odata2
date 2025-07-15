@@ -19,16 +19,13 @@
 package org.apache.olingo.odata2.core.batch;
 
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
+import org.apache.olingo.odata2.api.client.batch.BatchInputResource;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
 import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.core.commons.ContentType;
 import org.apache.olingo.odata2.core.exception.ODataRuntimeException;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -119,29 +116,61 @@ public class BatchHelper {
    * Builder class to create the body and the header.
    */
   static class BodyBuilder {
+
+    private static final String OLINGO_TMPDIR_PROPERTY = "olingo.tmpdir";
+
     public static final int DEFAULT_SIZE = 8192;
+    private static final int THRESHOLD = DEFAULT_SIZE * 8;
     private final Charset CHARSET_ISO_8859_1 = Charset.forName("iso-8859-1");
+
     private ByteBuffer buffer = ByteBuffer.allocate(DEFAULT_SIZE);
+    private File fileBuffer = null;
+
     private boolean isClosed = false;
 
-    public byte[] getContent() {
-      isClosed = true;
-      byte[] tmp = new byte[buffer.position()];
-      buffer.flip();
-      buffer.get(tmp, 0, buffer.limit());
-      return tmp;
-    }
-
     public InputStream getContentAsStream() {
-      return new ByteArrayInputStream(getContent());
+      try {
+        return fileBuffer != null ?
+          new DeleteOnCloseFileInputStream(fileBuffer) : new ByteArrayInputStream(getBufferContent());
+      } catch (IOException exception) {
+        throw new ODataRuntimeException(exception);
+      }
     }
 
     public String getContentAsString(Charset charset) {
-      return new String(getContent(), charset);
+      if (fileBuffer != null) {
+        InputStreamReader reader = null;
+        try {
+          reader = new InputStreamReader(new DeleteOnCloseFileInputStream(fileBuffer), charset);
+
+          StringBuilder sb = new StringBuilder();
+          char[] buffer = new char[DEFAULT_SIZE];
+          int bytesCount;
+          while ((bytesCount = reader.read(buffer)) != -1) {
+            sb.append(buffer, 0, bytesCount);
+          }
+          reader.close();
+
+          return sb.toString();
+        } catch (IOException e) {
+          throw new ODataRuntimeException(e);
+        } finally {
+          if (reader != null) {
+            try {
+              reader.close();
+            } catch (IOException e) {}
+          }
+        }
+      }
+
+      return new String(getBufferContent(), charset);
     }
 
     public int getLength() {
-      return (buffer.limit() > buffer.position() ? buffer.limit(): buffer.position());
+      if (fileBuffer == null) {
+        return (Math.max(buffer.limit(), buffer.position()));
+      }
+      return (int) fileBuffer.length();
     }
 
     public BodyBuilder append(String string) {
@@ -151,17 +180,97 @@ public class BatchHelper {
     }
 
     private void put(byte[] b) {
+      put(new BatchInputResource(new ByteArrayInputStream(b), b.length));
+    }
+
+    private void put(BatchInputResource resource) {
       if(isClosed) {
         throw new RuntimeException("BodyBuilder is closed.");
       }
-      if(buffer.remaining() < b.length) {
-        buffer.flip();
-        int newSize = (buffer.limit() * 2) + b.length;
-        ByteBuffer tmp = ByteBuffer.allocate(newSize);
-        tmp.put(buffer);
-        buffer = tmp;
+
+      if (fileBuffer == null) {
+        if (buffer.remaining() < resource.size()) {
+          int newSize = (buffer.limit() * 2) + resource.size();
+          if (newSize > THRESHOLD) {
+            fileBuffer = createTempFile();
+            writeToFileBuffer(new ByteArrayInputStream(buffer.array(), 0, buffer.position()),
+              resource.getInputStream());
+            buffer = null;
+          } else {
+            buffer.flip();
+            ByteBuffer tmp = ByteBuffer.allocate(newSize);
+            tmp.put(buffer);
+            buffer = tmp;
+            writeToByteBuffer(resource.getInputStream());
+          }
+        } else {
+          writeToByteBuffer(resource.getInputStream());
+        }
+      } else {
+        writeToFileBuffer(resource.getInputStream());
       }
-      buffer.put(b);
+    }
+
+    File createTempFile() {
+      String tempDir = System.getProperty(OLINGO_TMPDIR_PROPERTY);
+      if (tempDir == null) {
+        tempDir = System.getProperty("java.io.tmpdir");
+      }
+
+      try {
+        return File.createTempFile("odata", "olingo", new File(tempDir));
+      } catch (IOException e) {
+        throw new ODataRuntimeException(e);
+      }
+    }
+
+    private void writeToByteBuffer(InputStream inputStream) {
+      int bytesCount;
+      try {
+        for (byte[] sbuf = new byte[DEFAULT_SIZE]; (bytesCount = inputStream.read(sbuf)) != -1;) {
+          buffer.put(sbuf, 0, bytesCount);
+        }
+      } catch (IOException e) {
+        throw new ODataRuntimeException(e);
+      }
+    }
+
+    private void writeToFileBuffer(InputStream... inputStreams) {
+      FileOutputStream fos = null;
+      try {
+        fos = new FileOutputStream(fileBuffer, true);
+        for (InputStream inputStream : inputStreams) {
+          copyStream(inputStream, fos);
+        }
+      } catch (IOException e) {
+        throw new ODataRuntimeException(e);
+      } finally {
+        if (fos != null) {
+          try {
+            fos.close();
+          } catch (IOException e) {}
+        }
+      }
+    }
+
+    private void copyStream(InputStream inputStream, FileOutputStream outputStream) {
+      try {
+        int bytesRead;
+        for (byte[] sbuf = new byte[DEFAULT_SIZE]; (bytesRead = inputStream.read(sbuf)) != -1; ) {
+          outputStream.write(sbuf, 0, bytesRead);
+        }
+        outputStream.flush();
+      } catch (IOException e) {
+        throw new ODataRuntimeException(e);
+      }
+    }
+
+    private byte[] getBufferContent() {
+      isClosed = true;
+      byte[] tmp = new byte[buffer.position()];
+      buffer.flip();
+      buffer.get(tmp, 0, buffer.limit());
+      return tmp;
     }
 
     public BodyBuilder append(int statusCode) {
@@ -169,7 +278,7 @@ public class BatchHelper {
     }
 
     public BodyBuilder append(Body body) {
-      put(body.getContent());
+      put(body.getBatchInputResource());
       return this;
     }
 
@@ -211,39 +320,33 @@ public class BatchHelper {
   static class Body {
     private static final int BUFFER_SIZE = 8192;
     public static final byte[] EMPTY_BYTES = new byte[0];
-    private final byte[] content;
+    private final BatchInputResource batchInputResource;
 
     public Body(BatchChangeSetPart response) {
-      this.content = getBody(response);
+      this.batchInputResource = response.getBatchInputResource();
     }
 
     public Body(ODataResponse response) {
-      this.content = getBody(response);
+      byte[] content = getBody(response);
+      this.batchInputResource = new BatchInputResource(
+        new ByteArrayInputStream(content), content.length);
     }
 
     public Body() {
-      this.content = EMPTY_BYTES;
+      this.batchInputResource = new BatchInputResource(new ByteArrayInputStream(EMPTY_BYTES), 0);
       setDefaultValues(ISO_ENCODING);
     }
 
     public int getLength() {
-      return content.length;
+      return batchInputResource.size();
     }
 
-    public byte[] getContent() {
-      return content;
+    public BatchInputResource getBatchInputResource() {
+      return batchInputResource;
     }
 
     public boolean isEmpty() {
-      return content.length == 0;
-    }
-
-    private byte[] getBody(final BatchChangeSetPart response) {
-      if (response == null || response.getBodyAsBytes() == null) {
-        return EMPTY_BYTES;
-      }
-
-      return response.getBodyAsBytes();
+      return batchInputResource.size() == 0;
     }
 
     private byte[] getBody(final ODataResponse response) {

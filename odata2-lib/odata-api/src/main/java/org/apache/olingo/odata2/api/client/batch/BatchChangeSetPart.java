@@ -18,9 +18,9 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.api.client.batch;
 
-import java.util.Map;
-
 import org.apache.olingo.odata2.api.rt.RuntimeDelegate;
+
+import java.util.Map;
 
 /**
  * A BatchChangeSetPart
@@ -30,9 +30,7 @@ public abstract class BatchChangeSetPart {
 
   public abstract Map<String, String> getHeaders();
 
-  public abstract Object getBody();
-
-  public abstract byte[] getBodyAsBytes();
+  public abstract BatchInputResource getBatchInputResource();
 
   public abstract String getUri();
 
@@ -61,6 +59,14 @@ public abstract class BatchChangeSetPart {
    * @return a new builder object
    */
   public static BatchChangeSetPartBuilder body(final byte[] body) {
+    return newBuilder().body(body);
+  }
+
+  /**
+   * @param body a change request body
+   * @return a new builder object
+   */
+  public static BatchChangeSetPartBuilder body(final BatchInputResource body) {
     return newBuilder().body(body);
   }
 
@@ -110,6 +116,8 @@ public abstract class BatchChangeSetPart {
     public abstract BatchChangeSetPartBuilder body(String body);
     
     public abstract BatchChangeSetPartBuilder body(byte[] body);
+
+    public abstract BatchChangeSetPartBuilder body(BatchInputResource inputStream);
 
     public abstract BatchChangeSetPartBuilder uri(String uri);
 

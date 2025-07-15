@@ -18,17 +18,16 @@
  ******************************************************************************/
 package org.apache.olingo.odata2.core.batch;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSet;
 import org.apache.olingo.odata2.api.client.batch.BatchChangeSetPart;
 import org.apache.olingo.odata2.api.client.batch.BatchPart;
 import org.apache.olingo.odata2.api.client.batch.BatchQueryPart;
 import org.apache.olingo.odata2.api.commons.HttpContentType;
 import org.apache.olingo.odata2.api.commons.HttpHeaders;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 public class BatchRequestWriter {
   private static final String REG_EX_BOUNDARY =
@@ -41,7 +40,7 @@ public class BatchRequestWriter {
   public static final String BOUNDARY_PREAMBLE = "changeset";
   public static final String HTTP_1_1 = "HTTP/1.1";
   private String batchBoundary;
-  private BatchHelper.BodyBuilder writer = new BatchHelper.BodyBuilder();
+  private final BatchHelper.BodyBuilder writer = new BatchHelper.BodyBuilder();
 
   public InputStream writeBatchRequest(final List<BatchPart> batchParts, final String boundary) {
     if (boundary.matches(REG_EX_BOUNDARY)) {
@@ -60,11 +59,8 @@ public class BatchRequestWriter {
       
     }
     writer.append("--").append(boundary).append("--");
-    InputStream batchRequestBody;
-    batchRequestBody = new ByteArrayInputStream(writer.getContent());
-    return batchRequestBody;
+    return writer.getContentAsStream();
   }
-
 
   private void appendChangeSet(final BatchChangeSet batchChangeSet) {
     String boundary = BatchHelper.generateBoundary(BOUNDARY_PREAMBLE);
