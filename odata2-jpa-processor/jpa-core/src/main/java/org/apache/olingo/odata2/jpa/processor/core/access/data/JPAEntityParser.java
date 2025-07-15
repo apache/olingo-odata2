@@ -34,6 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.apache.olingo.odata2.api.edm.EdmAssociationEnd;
 import org.apache.olingo.odata2.api.edm.EdmException;
 import org.apache.olingo.odata2.api.edm.EdmMapping;
@@ -242,7 +245,10 @@ public final class JPAEntityParser {
       method.setAccessible(true);
       Class<?> returnType = method.getReturnType();
 
-      if (returnType.equals(char[].class)) {
+      if(method.isAnnotationPresent(XmlJavaTypeAdapter.class)) {
+        XmlAdapter xmlAdapter = method.getAnnotation(XmlJavaTypeAdapter.class).value().newInstance();
+        propertyValue = xmlAdapter.marshal(method.invoke(entity));
+      } else if (returnType.equals(char[].class)) {
         char[] ch = (char[]) method.invoke(entity);
         if (ch != null) {
           propertyValue = (String) String.valueOf((char[]) method.invoke(entity));
@@ -270,13 +276,7 @@ public final class JPAEntityParser {
     		  propertyValue = method.invoke(entity);
     	  }
       }
-    } catch (IllegalAccessException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
-    } catch (IllegalArgumentException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
-    } catch (InvocationTargetException e) {
-      throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
-    } catch (SecurityException e) {
+    } catch (Exception e) {
       throw ODataJPARuntimeException.throwException(ODataJPARuntimeException.INNER_EXCEPTION, e);
     }
 

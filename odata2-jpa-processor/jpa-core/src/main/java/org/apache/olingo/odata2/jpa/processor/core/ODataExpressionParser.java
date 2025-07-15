@@ -537,8 +537,17 @@ public class ODataExpressionParser {
             (Calendar) edmSimpleType.valueOfString(uriLiteral, EdmLiteralKind.DEFAULT, null, edmSimpleType
                 .getDefaultType());
 
+        Object realDateTime = datetime;
+        if (edmMappedType != null && datetime != null) {
+          String edmMappedTypeName = edmMappedType.getName();
+          ODataJavaTimeCallback callback = ODataJPAContextImpl.getContextInThreadLocal().getServiceFactory().getCallback(ODataJavaTimeCallback.class);
+          if (callback != null) {
+              realDateTime = callback.convert(datetime, edmMappedTypeName);
+          }
+        }
+
         if (!positionalParameters.containsKey(index)) {
-          positionalParameters.put(index, datetime);
+          positionalParameters.put(index, realDateTime);
         }
         uriLiteral = "?" + index;
 
